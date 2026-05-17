@@ -1,0 +1,51 @@
+{
+  "name": "wanwu",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "万物 - 事物收集与浏览桌面应用",
+  "main": "out/main/index.js",
+  "author": "MonoKelvin",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MonoKelvin/Wanwu.git"
+  },
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "start": "electron-vite preview",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.web.json",
+    "seed:import": "tsx scripts/seed-import.ts",
+    "postinstall": "electron-rebuild -f -w better-sqlite3",
+    "rebuild": "electron-rebuild -f -w better-sqlite3"
+  },
+  "dependencies": {
+    "@vueuse/core": "^14.3.0",
+    "better-sqlite3": "^12.10.0",
+    "pinia": "^3.0.4",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.5.4",
+    "rss-parser": "^3.13.0",
+    "vue": "^3.5.29",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^3.7.1",
+    "@types/better-sqlite3": "^7.6.13",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "autoprefixer": "^10.4.27",
+    "electron": "^39.8.0",
+    "electron-builder": "^26.8.1",
+    "electron-vite": "^5.0.0",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^3.4.19",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vue-tsc": "^3.2.9"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}

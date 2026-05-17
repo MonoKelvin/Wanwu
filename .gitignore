@@ -1,0 +1,44 @@
+# 依赖
+node_modules/
+
+# 锁文件（本地 npm install 生成，不提交）
+package-lock.json
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+
+# 构建与生成产物
+dist/
+out/
+release/
+.vite/
+*.tsbuildinfo
+
+# Electron / Vite 中间文件
+.electron-vite/
+*.local
+
+# 运行时数据
+data/
+
+# 环境与日志
+.env
+.env.*
+!.env.example
+*.log
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo
+
+# 测试与覆盖率
+coverage/
+.nyc_output/

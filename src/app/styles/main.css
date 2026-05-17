@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Source Han Sans SC', 'PingFang SC', Inter, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ww-text);
+  background: var(--ww-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* PrimeVue 扁平化覆盖 */
+.p-component {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.p-inputtext,
+.p-textarea,
+.p-button {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: 1px solid var(--ww-border) !important;
+}
+
+.p-button {
+  background: var(--ww-bg) !important;
+  color: var(--ww-text) !important;
+}
+
+.p-button:hover {
+  background: var(--ww-bg-subtle) !important;
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
