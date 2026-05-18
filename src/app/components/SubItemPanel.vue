@@ -4,7 +4,8 @@ import { useRoute, useRouter } from 'vue-router'
 import Tree from 'primevue/tree'
 import type { TreeNode } from 'primevue/treenode'
 import IconField from 'primevue/iconfield'
-import InputIcon from 'primevue/inputicon'
+import WwIcon from '@shared/components/WwIcon.vue'
+import WwInputIcon from '@shared/components/WwInputIcon.vue'
 import InputText from 'primevue/inputtext'
 import { useLibraryStore } from '@shared/stores/library'
 import { useCustomStore } from '@shared/stores/custom'
@@ -121,14 +122,14 @@ function selectCustomCategory(catId: string) {
 
 <template>
   <aside class="ww-rss-panel flex w-[var(--ww-subpanel-width)] flex-col overflow-hidden" aria-label="分类">
-    <header class="px-3 pb-2 pt-3">
+    <header class="ww-chrome-safe px-3 pb-2">
       <h2 class="ww-section-label">{{ route.meta.title }}</h2>
     </header>
 
     <template v-if="module === 'library'">
       <div class="shrink-0 px-2 pb-2">
         <IconField class="ww-field-search w-full">
-          <InputIcon class="pi pi-search" />
+          <WwInputIcon name="search" />
           <InputText
             v-model="categorySearch"
             placeholder="搜索分类…"
@@ -166,7 +167,7 @@ function selectCustomCategory(catId: string) {
         :class="{ 'is-active': route.params.catId === cat.id }"
         @click="selectCustomCategory(cat.id)"
       >
-        <i class="pi pi-folder" aria-hidden="true" />
+        <WwIcon name="folder" size="sm" />
         <span class="min-w-0 flex-1 truncate">{{ cat.name }}</span>
       </button>
       <p v-if="customStore.categories.length === 0" class="px-2 py-8 text-center text-xs text-ww-ink-muted">

@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
-import Button from 'primevue/button'
 import IconField from 'primevue/iconfield'
-import InputIcon from 'primevue/inputicon'
 import Menu from 'primevue/menu'
 import SelectButton from 'primevue/selectbutton'
 import EmptyState from '@app/components/EmptyState.vue'
+import WwButton from '@shared/components/WwButton.vue'
+import WwIcon from '@shared/components/WwIcon.vue'
+import WwInputIcon from '@shared/components/WwInputIcon.vue'
+import type { WwIconName } from '@shared/icons/registry'
+import type { WwMenuItem } from '@shared/types/menu'
 import type { Item } from '@shared/types/item'
 
 export type LibraryViewMode = 'card' | 'list'
@@ -25,25 +28,25 @@ const emit = defineEmits<{
   selectItem: [item: Item]
 }>()
 
-const viewModeOptions = [
-  { label: '卡片', value: 'card' as const, icon: 'pi pi-th-large' },
-  { label: '列表', value: 'list' as const, icon: 'pi pi-list' }
+const viewModeOptions: Array<{ label: string; value: LibraryViewMode; wwIcon: WwIconName }> = [
+  { label: '卡片', value: 'card', wwIcon: 'layout-grid' },
+  { label: '列表', value: 'list', wwIcon: 'list' }
 ]
 
-const sortOptions = [
-  { label: '更新时间', value: 'updatedAt' as const, icon: 'pi pi-clock' },
-  { label: '添加时间', value: 'createdAt' as const, icon: 'pi pi-calendar-plus' },
-  { label: '名称', value: 'name' as const, icon: 'pi pi-sort-alpha-down' }
+const sortOptions: Array<{ label: string; value: LibrarySortField; wwIcon: WwIconName }> = [
+  { label: '更新时间', value: 'updatedAt', wwIcon: 'clock' },
+  { label: '添加时间', value: 'createdAt', wwIcon: 'calendar-plus' },
+  { label: '名称', value: 'name', wwIcon: 'arrow-down-a-z' }
 ]
 
 const sortMenu = ref<InstanceType<typeof Menu> | null>(null)
 
 const currentSort = computed(() => sortOptions.find((o) => o.value === sortField.value) ?? sortOptions[0])
 
-const sortMenuItems = computed(() =>
+const sortMenuItems = computed((): WwMenuItem[] =>
   sortOptions.map((opt) => ({
     label: opt.label,
-    icon: opt.icon,
+    wwIcon: opt.wwIcon,
     class: sortField.value === opt.value ? 'ww-page-toolbar-menu__item--active' : undefined,
     command: () => {
       sortField.value = opt.value
@@ -67,7 +70,7 @@ function clearSearch() {
 <template>
   <div class="ww-page-toolbar" role="toolbar" aria-label="全库列表工具">
     <IconField class="ww-field-search ww-page-toolbar__search">
-      <InputIcon class="pi pi-search" />
+      <WwInputIcon name="search" />
       <AutoComplete
         v-model="listSearch"
         :suggestions="suggestions"
@@ -104,10 +107,10 @@ function clearSearch() {
     </IconField>
 
     <div class="ww-page-toolbar__cluster">
-      <Button
+      <WwButton
         v-if="listSearch"
         type="button"
-        icon="pi pi-times"
+        icon="x"
         size="small"
         variant="text"
         rounded
@@ -126,16 +129,17 @@ function clearSearch() {
         class="ww-page-toolbar__segmented"
       >
         <template #option="{ option }">
-          <i
-            :class="option.icon"
+          <WwIcon
+            :name="option.wwIcon"
+            size="sm"
             v-tooltip.bottom="option.label"
             :aria-label="option.label"
           />
         </template>
       </SelectButton>
-      <Button
+      <WwButton
         type="button"
-        :icon="currentSort.icon"
+        :icon="currentSort.wwIcon"
         size="small"
         variant="outlined"
         severity="secondary"
@@ -143,7 +147,11 @@ function clearSearch() {
         v-tooltip.bottom="`排序：${currentSort.label}`"
         @click="toggleSortMenu"
       />
-      <Menu ref="sortMenu" :model="sortMenuItems" popup class="ww-page-toolbar-menu" />
+      <Menu ref="sortMenu" :model="sortMenuItems" popup class="ww-page-toolbar-menu">
+        <template #itemicon="{ item }">
+          <WwIcon v-if="item.wwIcon" :name="item.wwIcon" size="sm" class="ww-menu-item-icon" />
+        </template>
+      </Menu>
     </div>
   </div>
 </template>

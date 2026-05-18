@@ -1,10 +1,10 @@
 {
-  "version": 1,
+  "version": 2,
   "categories": [
     {
       "id": "cat",
       "name": "猫",
-      "icon": "pi pi-heart",
+      "icon": "heart",
       "subcategories": [
         { "id": "cat-europe", "name": "欧洲品种" },
         { "id": "cat-americas", "name": "美洲品种" },
@@ -15,7 +15,7 @@
     {
       "id": "dog",
       "name": "狗",
-      "icon": "pi pi-heart-fill",
+      "icon": "heart",
       "subcategories": [
         { "id": "dog-europe", "name": "欧洲犬种" },
         { "id": "dog-americas", "name": "美洲犬种" },
@@ -25,7 +25,7 @@
     {
       "id": "superhero",
       "name": "超级英雄",
-      "icon": "pi pi-bolt",
+      "icon": "zap",
       "subcategories": [
         { "id": "hero-marvel", "name": "漫威 Marvel" },
         { "id": "hero-dc", "name": "DC 漫画" },
@@ -35,7 +35,7 @@
     {
       "id": "supercar",
       "name": "超跑",
-      "icon": "pi pi-car",
+      "icon": "car",
       "subcategories": [
         { "id": "car-italy", "name": "意大利品牌" },
         { "id": "car-germany", "name": "德国品牌" },
@@ -45,7 +45,7 @@
     {
       "id": "plant",
       "name": "植物",
-      "icon": "pi pi-sun",
+      "icon": "sun",
       "subcategories": [
         { "id": "plant-aroid", "name": "天南星科观叶" },
         { "id": "plant-succulent", "name": "多肉与仙人掌" }
@@ -54,7 +54,7 @@
     {
       "id": "anime",
       "name": "动漫作品",
-      "icon": "pi pi-sparkles",
+      "icon": "sparkles",
       "subcategories": [
         { "id": "anime-shonen", "name": "少年热血" },
         { "id": "anime-fantasy", "name": "奇幻冒险" }
@@ -63,7 +63,7 @@
     {
       "id": "transformers",
       "name": "变形金刚",
-      "icon": "pi pi-star",
+      "icon": "star",
       "subcategories": [
         { "id": "tf-autobot", "name": "汽车人 Autobot" },
         { "id": "tf-decepticon", "name": "霸天虎 Decepticon" }
@@ -72,16 +72,63 @@
     {
       "id": "motorcycle",
       "name": "摩托车",
-      "icon": "pi pi-compass",
+      "icon": "compass",
       "subcategories": [
         { "id": "moto-italy", "name": "意大利品牌" },
-        { "id": "moto-america", "name": "美式巡航" }
+        { "id": "moto-america", "name": "美式巡航" },
+        { "id": "moto-japan", "name": "日本品牌" }
+      ]
+    },
+    {
+      "id": "movie",
+      "name": "电影",
+      "icon": "video",
+      "subcategories": [
+        { "id": "movie-scifi", "name": "科幻悬疑" },
+        { "id": "movie-fantasy", "name": "奇幻动画" },
+        { "id": "movie-action", "name": "动作犯罪" }
+      ]
+    },
+    {
+      "id": "illustration",
+      "name": "立绘",
+      "icon": "palette",
+      "subcategories": [
+        { "id": "ill-digital", "name": "数字插画" },
+        { "id": "ill-classic", "name": "经典绘画" }
+      ]
+    },
+    {
+      "id": "ui-design",
+      "name": "UI 设计",
+      "icon": "smartphone",
+      "subcategories": [
+        { "id": "ui-mobile", "name": "移动端规范" },
+        { "id": "ui-web", "name": "Web 与组件" }
+      ]
+    },
+    {
+      "id": "interior",
+      "name": "家装设计",
+      "icon": "home",
+      "subcategories": [
+        { "id": "int-nordic", "name": "北欧简约" },
+        { "id": "int-zen", "name": "日式禅意" }
+      ]
+    },
+    {
+      "id": "industrial-design",
+      "name": "工业设计",
+      "icon": "box",
+      "subcategories": [
+        { "id": "id-product", "name": "消费电子" },
+        { "id": "id-home", "name": "家居产品" }
       ]
     },
     {
       "id": "history",
       "name": "历史遗迹",
-      "icon": "pi pi-book",
+      "icon": "book-open",
       "subcategories": [
         { "id": "hist-china", "name": "中国" },
         { "id": "hist-world", "name": "世界其他" }

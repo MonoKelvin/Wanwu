@@ -1,4 +1,9 @@
 import { ipcMain, app } from 'electron'
+import {
+  downloadMediaFile,
+  openExternalUrl,
+  showMediaInFolder
+} from '../services/shellMedia'
 import { getMainWindow, broadcastMaximizedState } from '../windowState'
 import type { DatabaseService } from '../services/database'
 import type { LibraryService } from '../services/libraryService'
@@ -170,4 +175,13 @@ export function registerIpcHandlers(services: AppServices): void {
   ipcMain.handle('window:close', () => {
     getMainWindow()?.close()
   })
+
+  ipcMain.handle('shell:openExternal', (_e, url: string) => openExternalUrl(url))
+
+  ipcMain.handle(
+    'shell:downloadFile',
+    (_e, params: { url: string; defaultName?: string }) => downloadMediaFile(params.url, params.defaultName)
+  )
+
+  ipcMain.handle('shell:showItemInFolder', (_e, url: string) => showMediaInFolder(url))
 }

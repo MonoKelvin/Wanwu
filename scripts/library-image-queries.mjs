@@ -33,7 +33,20 @@ export const LIBRARY_IMAGE_QUERIES = {
   'superhero-spiderman': 'spiderman superhero cosplay',
   'superhero-batman-tas': 'gotham city night skyline dark',
   'history-terracotta-army': 'terracotta warriors china',
-  'history-great-wall': 'great wall of china'
+  'history-great-wall': 'great wall of china',
+  'history-angkor-wat': 'angkor wat temple cambodia sunrise',
+  'cat-persian': 'persian cat fluffy long hair',
+  'cat-japanese-bobtail': 'japanese bobtail cat',
+  'cat-dragon-li': 'tabby cat chinese',
+  'dog-corgi': 'corgi dog pembroke',
+  'supercar-mclaren-720s': 'mclaren supercar orange',
+  'plant-snake-plant': 'snake plant sansevieria indoor',
+  'hero-iron-man': 'futuristic armor technology',
+  'hero-wonder-woman': 'wonder woman superhero',
+  'hero-captain-america': 'captain america shield',
+  'tf-megatron': 'transformer robot tank',
+  'anime-your-name': 'japanese town sunset sky anime',
+  'motorcycle-honda-cb650r': 'honda motorcycle street cafe racer'
 }
 
 export function librarySearchQuery(item) {

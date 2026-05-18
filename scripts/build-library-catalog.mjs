@@ -5,6 +5,7 @@
 import { writeFileSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { extraCatalogItems } from './library-catalog-extra-items.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const outPath = join(root, 'assets', 'seed', 'library', 'catalog.json')
@@ -551,11 +552,13 @@ const items = [
       世界遗产: '1987',
       热门段: '八达岭、慕田峪'
     }
-  )
+  ),
+
+  ...extraCatalogItems(item)
 ]
 
 const catalog = {
-  version: 6,
+  version: 7,
   mediaProvider: 'pixabay',
   mediaConfigVersion: 2,
   items

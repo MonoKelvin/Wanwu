@@ -11,8 +11,8 @@ function loadLibraryCategoriesMeta(): Array<{ id: string; name: string; icon: st
     return file.categories.map((c) => ({ id: c.id, name: c.name, icon: c.icon }))
   }
   return [
-    { id: 'cat', name: '猫', icon: 'pi pi-heart' },
-    { id: 'dog', name: '狗', icon: 'pi pi-heart-fill' }
+    { id: 'cat', name: '猫', icon: 'heart' },
+    { id: 'dog', name: '狗', icon: 'heart' }
   ]
 }
 

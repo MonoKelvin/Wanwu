@@ -3,19 +3,15 @@ import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'
+import { MODULE_NAV_ITEMS } from '@app/config/module-nav'
+import WwIcon from '@shared/components/WwIcon.vue'
 import type { ModuleId } from '@shared/stores/app'
 
 const router = useRouter()
 const route = useRoute()
 const { settings } = storeToRefs(useSettingsStore())
 
-const modules: Array<{ id: ModuleId; label: string; icon: string; path: string }> = [
-  { id: 'library', label: '全库', icon: 'pi pi-database', path: '/library' },
-  { id: 'rss', label: 'RSS', icon: 'pi pi-globe', path: '/rss' },
-  { id: 'custom', label: '自建', icon: 'pi pi-folder', path: '/custom' },
-  { id: 'personal', label: '个人', icon: 'pi pi-user', path: '/personal' },
-  { id: 'settings', label: '设置', icon: 'pi pi-cog', path: '/settings' }
-]
+const modules = MODULE_NAV_ITEMS
 
 const showLabel = computed(() => settings.value.navDisplay === 'both')
 const useTooltip = computed(() => !showLabel.value)
@@ -38,24 +34,31 @@ function isActive(id: ModuleId) {
     :class="navAlignClass"
     aria-label="模块"
   >
-    <div class="ww-module-nav__group">
-      <button
-        v-for="m in modules"
-        :key="m.id"
-        v-tooltip.right="useTooltip ? m.label : undefined"
-        type="button"
-        class="ww-module-btn"
-        :class="{
-          'is-active': isActive(m.id),
-          'ww-module-btn--labeled': showLabel
-        }"
-        :aria-label="m.label"
-        :aria-current="isActive(m.id) ? 'page' : undefined"
-        @click="navigate(m.path)"
-      >
-        <i :class="m.icon" aria-hidden="true" />
-        <span v-if="showLabel" class="ww-module-btn__label">{{ m.label }}</span>
-      </button>
+    <div class="ww-module-nav__inner ww-chrome-safe">
+      <div v-if="settings.navAlign === 'start'" class="ww-module-nav__brand" aria-hidden="true">
+        <span class="ww-module-nav__brand-mark">万</span>
+        <span class="ww-module-nav__brand-text">万物</span>
+      </div>
+
+      <div class="ww-module-nav__group">
+        <button
+          v-for="m in modules"
+          :key="m.id"
+          v-tooltip.right="useTooltip ? m.label : undefined"
+          type="button"
+          class="ww-module-btn"
+          :class="{
+            'is-active': isActive(m.id),
+            'ww-module-btn--labeled': showLabel
+          }"
+          :aria-label="m.label"
+          :aria-current="isActive(m.id) ? 'page' : undefined"
+          @click="navigate(m.path)"
+        >
+          <WwIcon :name="m.icon" size="md" class="ww-module-btn__icon" />
+          <span v-if="showLabel" class="ww-module-btn__label">{{ m.label }}</span>
+        </button>
+      </div>
     </div>
   </nav>
 </template>

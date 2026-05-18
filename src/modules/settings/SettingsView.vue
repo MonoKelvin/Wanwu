@@ -11,6 +11,7 @@ import { useSettingsStore } from '@shared/stores/settings'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 
 import SettingsRow from '@features/settings/SettingsRow.vue'
+import WwIcon from '@shared/components/WwIcon.vue'
 
 import type { NavAlign, NavDisplay, RssFetchLimit } from '@shared/types/settings'
 
@@ -290,7 +291,7 @@ async function onRssFetchLimitChange(v: RssFetchLimit) {
 
             >
 
-              <i class="pi pi-github text-base" aria-hidden="true" />
+              <WwIcon name="github" size="md" />
 
               <span class="max-w-[14rem] truncate">{{ githubUrl }}</span>
 

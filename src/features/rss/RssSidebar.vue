@@ -6,9 +6,10 @@ import Tree from 'primevue/tree'
 import type { TreeNode } from 'primevue/treenode'
 import type { TreeNodeDropEvent } from 'primevue/tree'
 import ContextMenu from 'primevue/contextmenu'
-import Button from 'primevue/button'
 import Badge from 'primevue/badge'
-import type { MenuItem } from 'primevue/menuitem'
+import WwButton from '@shared/components/WwButton.vue'
+import WwIcon from '@shared/components/WwIcon.vue'
+import type { WwMenuItem } from '@shared/types/menu'
 import { useRssStore } from '@shared/stores/rss'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
@@ -38,7 +39,7 @@ const confirm = useWanwuConfirm()
 const expandedKeys = ref<Record<string, boolean>>({})
 const selectionKeys = ref<Record<string, boolean>>({})
 const contextMenu = ref()
-const menuItems = ref<MenuItem[]>([])
+const menuItems = ref<WwMenuItem[]>([])
 const feedDialogVisible = ref(false)
 const moveDialogVisible = ref(false)
 const editingFeed = ref<RssFeed | null>(null)
@@ -58,7 +59,6 @@ const rssTree = computed<TreeNode[]>(() => {
   const nodes: TreeNode[] = sidebarGroups.value.map((group) => ({
     key: `group:${group.id}`,
     label: group.name,
-    icon: 'pi pi-folder',
     selectable: false,
     draggable: false,
     droppable: true,
@@ -72,7 +72,6 @@ const rssTree = computed<TreeNode[]>(() => {
     nodes.push({
       key: `group:${recycle.id}`,
       label: recycle.name,
-      icon: 'pi pi-trash',
       selectable: false,
       draggable: false,
       droppable: false,
@@ -81,7 +80,6 @@ const rssTree = computed<TreeNode[]>(() => {
       children: recycleFeeds.value.map((feed) => ({
         key: `recycle:${feed.id}`,
         label: feed.title,
-        icon: 'pi pi-inbox',
         leaf: true,
         selectable: false,
         draggable: false,
@@ -292,9 +290,9 @@ function onNodeContextMenu(event: Event, node: TreeNode) {
 
 function showFeedMenu(event: Event, feed: RssFeed) {
   menuItems.value = [
-    { label: '编辑订阅', icon: 'pi pi-pencil', command: () => openEditFeed(feed) },
-    { label: '移至分组…', icon: 'pi pi-arrow-right', command: () => openMoveFeed(feed) },
-    { label: '删除', icon: 'pi pi-trash', command: () => void softDelete(feed.id) }
+    { label: '编辑订阅', wwIcon: 'pencil', command: () => openEditFeed(feed) },
+    { label: '移至分组…', wwIcon: 'arrow-right', command: () => openMoveFeed(feed) },
+    { label: '删除', wwIcon: 'trash-2', command: () => void softDelete(feed.id) }
   ]
   contextMenu.value.show(event)
 }
@@ -302,16 +300,16 @@ function showFeedMenu(event: Event, feed: RssFeed) {
 function showGroupMenu(event: Event, group: RssGroup) {
   if (group.isSystem || group.isRecycleBin) return
   menuItems.value = [
-    { label: '重命名', icon: 'pi pi-pencil', command: () => openRenameGroup(group) },
-    { label: '删除分组', icon: 'pi pi-trash', command: () => void removeGroup(group.id) }
+    { label: '重命名', wwIcon: 'pencil', command: () => openRenameGroup(group) },
+    { label: '删除分组', wwIcon: 'trash-2', command: () => void removeGroup(group.id) }
   ]
   contextMenu.value.show(event)
 }
 
 function showRecycleMenu(event: Event, feed: RssFeed) {
   menuItems.value = [
-    { label: '还原', icon: 'pi pi-replay', command: () => void restore(feed.id) },
-    { label: '彻底删除', icon: 'pi pi-times', command: () => void permanentDelete(feed.id) }
+    { label: '还原', wwIcon: 'rotate-ccw', command: () => void restore(feed.id) },
+    { label: '彻底删除', wwIcon: 'x', command: () => void permanentDelete(feed.id) }
   ]
   contextMenu.value.show(event)
 }
@@ -389,8 +387,8 @@ async function removeGroup(groupId: string) {
 <template>
   <div class="ww-rss-sidebar flex min-h-0 flex-1 flex-col">
     <div class="flex shrink-0 items-center gap-1 px-2 pb-2 pt-1">
-      <Button
-        icon="pi pi-plus"
+      <WwButton
+        icon="plus"
         label="订阅"
         size="small"
         severity="secondary"
@@ -398,8 +396,8 @@ async function removeGroup(groupId: string) {
         class="!flex-1"
         @click="openAddFeed()"
       />
-      <Button
-        icon="pi pi-folder-plus"
+      <WwButton
+        icon="folder-plus"
         size="small"
         severity="secondary"
         text
@@ -429,16 +427,13 @@ async function removeGroup(groupId: string) {
             :icon-url="feedFromNode(node)!.feed.iconUrl"
             size="sm"
           />
-          <i
+          <WwIcon
             v-else-if="groupFromNode(node)"
-            class="pi pi-folder ww-rss-folder-icon"
-            aria-hidden="true"
+            :name="groupFromNode(node)!.group.isRecycleBin ? 'trash-2' : 'folder'"
+            size="sm"
+            class="ww-rss-folder-icon"
           />
-          <i
-            v-else-if="recycleFeedFromNode(node)"
-            class="pi pi-inbox"
-            aria-hidden="true"
-          />
+          <WwIcon v-else-if="recycleFeedFromNode(node)" name="inbox" size="sm" class="ww-rss-folder-icon" />
         </template>
 
         <template #default="{ node }">
@@ -453,9 +448,9 @@ async function removeGroup(groupId: string) {
                 severity="secondary"
                 class="ww-rss-tree-badge"
               />
-              <Button
+              <WwButton
                 v-if="!groupFromNode(node)!.group.isRecycleBin"
-                icon="pi pi-plus"
+                icon="plus"
                 size="small"
                 severity="secondary"
                 text
@@ -464,9 +459,9 @@ async function removeGroup(groupId: string) {
                 aria-label="在此分组添加订阅"
                 @click.stop="openAddFeed(groupFromNode(node)!.groupId)"
               />
-              <Button
+              <WwButton
                 v-else
-                icon="pi pi-trash"
+                icon="trash-2"
                 size="small"
                 severity="secondary"
                 text
@@ -481,24 +476,28 @@ async function removeGroup(groupId: string) {
 
             <template v-else-if="feedFromNode(node)">
               <span class="ww-rss-tree-label__text truncate">{{ node.label }}</span>
-              <i
+              <WwIcon
                 v-if="feedFromNode(node)!.feed.accessWarning"
-                class="pi pi-exclamation-circle ww-rss-tree-warn shrink-0"
+                name="circle-alert"
+                size="sm"
+                class="ww-rss-tree-warn shrink-0"
                 v-tooltip.right="feedFromNode(node)!.feed.accessWarning"
                 @click.stop
               />
-              <i
+              <WwIcon
                 v-else-if="rssStore.isFeedProbing(feedFromNode(node)!.feedId)"
-                class="pi pi-spin pi-spinner ww-rss-tree-status shrink-0"
-                aria-hidden="true"
+                name="loader"
+                size="sm"
+                spin
+                class="ww-rss-tree-status shrink-0"
               />
             </template>
 
             <template v-else-if="recycleFeedFromNode(node)">
               <span class="ww-rss-tree-label__text truncate text-ww-ink-muted">{{ node.label }}</span>
               <span class="ww-rss-tree-recycle-actions">
-                <Button
-                  icon="pi pi-replay"
+                <WwButton
+                  icon="rotate-ccw"
                   size="small"
                   severity="secondary"
                   text
@@ -508,8 +507,8 @@ async function removeGroup(groupId: string) {
                   aria-label="还原"
                   @click.stop="restore(recycleFeedFromNode(node)!.feedId)"
                 />
-                <Button
-                  icon="pi pi-times"
+                <WwButton
+                  icon="x"
                   size="small"
                   severity="danger"
                   text
@@ -534,7 +533,11 @@ async function removeGroup(groupId: string) {
       </Tree>
     </div>
 
-    <ContextMenu ref="contextMenu" :model="menuItems" />
+    <ContextMenu ref="contextMenu" :model="menuItems">
+      <template #itemicon="{ item }">
+        <WwIcon v-if="item.wwIcon" :name="item.wwIcon" size="sm" class="ww-menu-item-icon" />
+      </template>
+    </ContextMenu>
 
     <RssFeedDialog
       v-model:visible="feedDialogVisible"

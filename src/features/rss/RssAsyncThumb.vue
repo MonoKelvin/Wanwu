@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue'
+import WwIcon from '@shared/components/WwIcon.vue'
+import type { WwIconName } from '@shared/icons/registry'
 
 export type RssThumbSource = {
   url: string
@@ -9,15 +11,13 @@ export type RssThumbSource = {
 const props = withDefaults(
   defineProps<{
     sources?: RssThumbSource[] | string[]
-    /** PrimeIcons 占位（无 placeholderSrc 时使用） */
-    placeholderIcon?: string
-    /** 图片占位（侧栏站点 favicon 等），始终可见直至上层图加载成功 */
+    placeholderIcon?: WwIconName
     placeholderSrc?: string
     placeholderFallbackSrc?: string
   }>(),
   {
     sources: () => [],
-    placeholderIcon: 'pi pi-image',
+    placeholderIcon: 'image',
     placeholderSrc: '',
     placeholderFallbackSrc: ''
   }
@@ -112,10 +112,11 @@ function onError() {
       class="ww-rss-async-thumb__placeholder-img"
       @error="onPlaceholderImgError"
     />
-    <i
-      v-else
-      :class="[placeholderIcon, 'ww-rss-async-thumb__placeholder']"
-      aria-hidden="true"
+    <WwIcon
+      v-else-if="placeholderIcon"
+      :name="placeholderIcon"
+      size="sm"
+      class="ww-rss-async-thumb__placeholder"
     />
     <img
       v-if="showImage"

@@ -18,7 +18,7 @@ const siteUrl = computed(() => props.feedUrl?.trim() || '')
 const isSidebar = computed(() => props.size !== 'md')
 const faviconSz = computed(() => (isSidebar.value ? 32 : 64) as 32 | 64)
 
-/** 侧栏：始终先显示站点 favicon / 默认 RSS 图；卡片区仍用 PrimeIcons 占位 */
+/** 侧栏：始终先显示站点 favicon / 默认 RSS 图；卡片区用 Lucide 占位 */
 const placeholderSrc = computed(() =>
   isSidebar.value ? feedIconPlaceholderUrl(siteUrl.value, faviconSz.value) : ''
 )
@@ -27,7 +27,7 @@ const placeholderFallbackSrc = computed(() =>
   isSidebar.value ? defaultRssFeedIconUrl() : ''
 )
 
-const placeholderIcon = computed(() => (isSidebar.value ? '' : 'pi pi-image'))
+const placeholderIcon = computed(() => (isSidebar.value ? undefined : ('image' as const)))
 
 const sources = computed(() => {
   if (!siteUrl.value) return []
@@ -59,7 +59,7 @@ const sources = computed(() => {
       :sources="sources"
       :placeholder-src="placeholderSrc"
       :placeholder-fallback-src="placeholderFallbackSrc"
-      :placeholder-icon="placeholderIcon || 'pi pi-image'"
+      :placeholder-icon="placeholderIcon"
     />
   </span>
 </template>

@@ -198,11 +198,12 @@ const hasCategory = computed(() => Boolean(route.params.catId))
     <div v-else class="ww-scroll-main ww-library-grid-wrap min-h-0 flex-1">
       <p class="ww-library-list-meta">{{ listCountLabel }}</p>
 
-      <div v-if="isCardView" class="ww-library-grid">
+      <div v-if="isCardView" class="ww-library-grid ww-stagger-children">
         <ItemCard
-          v-for="item in displayedItems"
+          v-for="(item, index) in displayedItems"
           :key="item.id"
           :item="item"
+          :stagger-index="index"
           @click="openItem(item.id)"
         />
       </div>

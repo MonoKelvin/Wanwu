@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import Button from 'primevue/button'
+import WwButton from '@shared/components/WwButton.vue'
 import Skeleton from 'primevue/skeleton'
 import { useRssStore } from '@shared/stores/rss'
 import { useSettingsStore } from '@shared/stores/settings'
@@ -64,9 +64,9 @@ watch(
       :subtitle="currentFeed?.accessWarning ? '境内可能无法稳定访问' : '资讯订阅'"
     >
       <template #actions>
-        <Button
+        <WwButton
           v-if="feedId"
-          icon="pi pi-refresh"
+          icon="refresh-cw"
           :loading="isRefreshing"
           size="small"
           variant="outlined"

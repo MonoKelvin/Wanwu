@@ -16,7 +16,6 @@ export function useWanwuConfirm() {
       confirm.require({
         header: options.header ?? '确认',
         message: options.message,
-        icon: 'pi pi-exclamation-triangle',
         rejectLabel: options.rejectLabel ?? '取消',
         acceptLabel: options.acceptLabel ?? '确定',
         rejectProps: {

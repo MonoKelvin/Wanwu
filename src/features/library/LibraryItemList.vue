@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Tag from 'primevue/tag'
+import WwIcon from '@shared/components/WwIcon.vue'
 import type { Item } from '@shared/types/item'
 
 defineProps<{ items: Item[] }>()
@@ -24,7 +25,7 @@ defineEmits<{ select: [id: string] }>()
             />
           </div>
         </div>
-        <i class="pi pi-chevron-right ww-library-list__chevron" aria-hidden="true" />
+        <WwIcon name="chevron-right" size="sm" class="ww-library-list__chevron" />
       </button>
     </li>
   </ul>

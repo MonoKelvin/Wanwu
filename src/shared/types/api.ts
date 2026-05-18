@@ -56,4 +56,12 @@ export interface WanwuApi {
     close: () => Promise<void>
     onMaximizedChange: (listener: (maximized: boolean) => void) => () => void
   }
+  shell: {
+    openExternal: (url: string) => Promise<void>
+    downloadFile: (params: {
+      url: string
+      defaultName?: string
+    }) => Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }>
+    showItemInFolder: (url: string) => Promise<{ ok: boolean }>
+  }
 }

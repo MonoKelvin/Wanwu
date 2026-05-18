@@ -1,6 +1,8 @@
 :root {
   /* 布局 */
-  --ww-titlebar-height: 2rem;
+  --ww-titlebar-height: 1.75rem;
+  --ww-viewer-inset: 0.75rem;
+  --ww-hero-height: min(34rem, 62vh);
   --ww-sidebar-width: 5.25rem;
   --ww-subpanel-width: 15.5rem;
   --ww-content-max: 68rem;
@@ -51,4 +53,15 @@
   --ww-blur-glass: 12px;
   --ww-menu-blur: 24px;
   --ww-menu-shadow: 0 18px 44px -6px rgb(18 18 22 / 0.16), 0 8px 20px -4px rgb(18 18 22 / 0.1);
+
+  /* 装饰网格（灵感：21st 编辑/杂志风 Hero 微网格） */
+  --ww-grid-dot: rgb(18 18 22 / 0.055);
+  --ww-grid-size: 20px;
+  --ww-focus-ring: 0 0 0 2px var(--ww-content), 0 0 0 4px rgb(18 18 22 / 0.18);
+
+  /* Lucide 图标描边（与 WwIcon 默认一致） */
+  --ww-icon-stroke: 1.5;
+
+  /* RSS 侧栏订阅源站点 favicon */
+  --ww-rss-feed-icon-size: 0.875rem;
 }

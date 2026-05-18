@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
-import Button from 'primevue/button'
+import WwButton from '@shared/components/WwButton.vue'
 import Badge from 'primevue/badge'
 import PageHeader from '@app/components/PageHeader.vue'
 
@@ -33,7 +33,7 @@ async function save() {
   <div class="flex h-full flex-col overflow-hidden">
     <PageHeader title="个人" subtitle="资料与收藏">
       <template #actions>
-        <Button label="保存" icon="pi pi-check" size="small" @click="save" />
+        <WwButton label="保存" icon="check" size="small" @click="save" />
       </template>
     </PageHeader>
 

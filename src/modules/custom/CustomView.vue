@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import InputText from 'primevue/inputtext'
-import Button from 'primevue/button'
+import WwButton from '@shared/components/WwButton.vue'
 import Message from 'primevue/message'
 import Skeleton from 'primevue/skeleton'
 import { useCustomStore } from '@shared/stores/custom'
@@ -47,7 +47,7 @@ async function checkName() {
         <label for="cat-name" class="text-xs text-ww-ink-muted">分类名</label>
         <div class="mt-2 flex gap-2">
           <InputText id="cat-name" v-model="categoryName" class="flex-1" placeholder="植物图鉴" />
-          <Button label="检查" icon="pi pi-search" size="small" @click="checkName" />
+          <WwButton label="检查" icon="search" size="small" @click="checkName" />
         </div>
         <Message v-if="duplicateHint" :severity="isWarning ? 'warn' : 'success'" :closable="false" class="mt-3 text-sm">
           {{ duplicateHint }}

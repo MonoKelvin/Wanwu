@@ -1,6 +1,9 @@
 # 依赖
 node_modules/
 
+# 未接入的旧版 Figma 生成图标
+src/shared/icons/generated/
+
 # 锁文件（本地 npm install 生成，不提交）
 package-lock.json
 npm-debug.log*

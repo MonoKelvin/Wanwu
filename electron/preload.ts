@@ -56,6 +56,11 @@ const api: WanwuApi = {
       ipcRenderer.on('window:maximized-changed', handler)
       return () => ipcRenderer.removeListener('window:maximized-changed', handler)
     }
+  },
+  shell: {
+    openExternal: (url) => ipcRenderer.invoke('shell:openExternal', url),
+    downloadFile: (params) => ipcRenderer.invoke('shell:downloadFile', params),
+    showItemInFolder: (url) => ipcRenderer.invoke('shell:showItemInFolder', url)
   }
 }
 

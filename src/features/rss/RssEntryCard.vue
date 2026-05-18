@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import Button from 'primevue/button'
+import WwButton from '@shared/components/WwButton.vue'
 import RssAsyncThumb from '@features/rss/RssAsyncThumb.vue'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { formatRssDate, linkHost, stripHtml } from '@shared/utils/rss'
@@ -74,7 +74,7 @@ async function copyLink() {
       class="ww-rss-card__thumb"
       aria-hidden="true"
     >
-      <RssAsyncThumb :sources="thumbSources" placeholder-icon="pi pi-image" />
+      <RssAsyncThumb :sources="thumbSources" placeholder-icon="image" />
     </div>
 
     <div class="ww-rss-card__body min-w-0 flex-1">
@@ -100,9 +100,9 @@ async function copyLink() {
     </div>
 
     <div v-if="display.showOpen || display.showCopy" class="ww-rss-card__actions">
-      <Button
+      <WwButton
         v-if="display.showOpen && entry.link"
-        icon="pi pi-external-link"
+        icon="external-link"
         severity="secondary"
         text
         rounded
@@ -111,9 +111,9 @@ async function copyLink() {
         aria-label="在浏览器打开"
         @click="openLink"
       />
-      <Button
+      <WwButton
         v-if="display.showCopy && entry.link"
-        icon="pi pi-copy"
+        icon="copy"
         severity="secondary"
         text
         rounded

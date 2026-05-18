@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import Skeleton from 'primevue/skeleton'
 import EmptyState from '@app/components/EmptyState.vue'
-import UnsplashAttribution from '@features/item/UnsplashAttribution.vue'
+import ItemDetailHeroActions from '@features/item/ItemDetailHeroActions.vue'
 import ItemMarkdown from '@features/item/ItemMarkdown.vue'
+import ImageViewer from '@shared/components/ImageViewer.vue'
+import WwButton from '@shared/components/WwButton.vue'
+import WwIcon from '@shared/components/WwIcon.vue'
+import UnsplashAttribution from '@features/item/UnsplashAttribution.vue'
+import type { ImageViewerSlide } from '@shared/types/image-viewer'
 import type { Item } from '@shared/types/item'
 import type { MediaAttribution } from '@shared/types/unsplash'
 
@@ -15,6 +19,11 @@ const router = useRouter()
 const item = ref<Item | null>(null)
 const loading = ref(true)
 const activeImage = ref<string | null>(null)
+const heroHover = ref(false)
+const heroMenuOpen = ref(false)
+const heroActionsVisible = computed(() => heroHover.value || heroMenuOpen.value)
+const lightboxOpen = ref(false)
+const lightboxIndex = ref(0)
 
 const specEntries = computed(() => Object.entries(item.value?.specs ?? {}))
 
@@ -35,10 +44,27 @@ const gallerySlides = computed(() => {
   return list
 })
 
+const lightboxSlides = computed<ImageViewerSlide[]>(() =>
+  gallerySlides.value.map((s) => ({
+    url: s.url,
+    alt: item.value?.name,
+    attribution: s.attribution
+  }))
+)
+
 const activeAttribution = computed(() => {
   const url = activeImage.value
   if (!url) return null
   return gallerySlides.value.find((s) => s.url === url)?.attribution ?? null
+})
+
+const sourceUrl = computed(() => activeAttribution.value?.photoPageUrl ?? null)
+
+const activeSlideIndex = computed(() => {
+  const url = activeImage.value
+  if (!url) return 0
+  const i = gallerySlides.value.findIndex((s) => s.url === url)
+  return i >= 0 ? i : 0
 })
 
 onMounted(async () => {
@@ -49,6 +75,11 @@ onMounted(async () => {
     activeImage.value = item.value?.coverPath ?? null
   }
   loading.value = false
+})
+
+watch(lightboxIndex, (i) => {
+  const slide = gallerySlides.value[i]
+  if (slide) activeImage.value = slide.url
 })
 
 function goBack() {
@@ -63,13 +94,44 @@ async function toggleFavorite() {
 function selectImage(url: string) {
   activeImage.value = url
 }
+
+function openLightbox() {
+  lightboxIndex.value = activeSlideIndex.value
+  lightboxOpen.value = true
+}
+
+function onHeroOpenClick(e: MouseEvent) {
+  if (!activeImage.value) return
+  if ((e.target as HTMLElement).closest('.ww-product-detail__hero-actions')) return
+  openLightbox()
+}
+
+async function downloadActiveImage() {
+  const url = activeImage.value
+  if (!url || !item.value) return
+  const ext = url.includes('.png') ? 'png' : 'jpg'
+  await window.wanwu.shell.downloadFile({
+    url,
+    defaultName: `${item.value.name}.${ext}`
+  })
+}
+
+async function openSourceLink() {
+  if (sourceUrl.value) await window.wanwu.shell.openExternal(sourceUrl.value)
+}
+
+async function revealInFolder() {
+  const url = activeImage.value
+  if (!url) return
+  await window.wanwu.shell.showItemInFolder(url)
+}
 </script>
 
 <template>
   <div class="ww-product-detail">
-    <header class="ww-product-detail__bar">
-      <Button
-        icon="pi pi-arrow-left"
+    <header class="ww-product-detail__bar ww-chrome-safe">
+      <WwButton
+        icon="arrow-left"
         variant="text"
         rounded
         severity="secondary"
@@ -81,9 +143,9 @@ function selectImage(url: string) {
         <span v-if="item?.subCategoryName" class="ww-product-detail__crumb-sep" aria-hidden="true">/</span>
         <span class="ww-product-detail__crumb-current">{{ item?.name ?? '详情' }}</span>
       </nav>
-      <Button
+      <WwButton
         v-if="item"
-        icon="pi pi-heart"
+        icon="heart"
         variant="text"
         rounded
         severity="secondary"
@@ -113,22 +175,42 @@ function selectImage(url: string) {
       <article class="ww-product-detail__inner">
         <div class="ww-product-detail__main">
           <section class="ww-product-detail__gallery" aria-label="图片">
-            <div class="ww-product-detail__hero">
-              <div class="ww-product-detail__hero-frame">
+            <div
+              class="ww-product-detail__hero-stage ww-surface-grid"
+              @mouseenter="heroHover = true"
+              @mouseleave="heroHover = false"
+            >
+              <div
+                class="ww-product-detail__hero-frame"
+                :class="{ 'ww-product-detail__hero-frame--openable': activeImage }"
+                @click="onHeroOpenClick"
+              >
                 <img
                   v-if="activeImage"
                   :src="activeImage"
                   :alt="item.name"
                   class="ww-product-detail__hero-img"
                 />
-                <i v-else class="pi pi-image ww-product-detail__hero-placeholder" aria-hidden="true" />
+                <WwIcon v-else name="image" size="lg" class="ww-product-detail__hero-placeholder" />
               </div>
-              <UnsplashAttribution
-                v-if="activeAttribution"
-                class="ww-product-detail__credit"
-                :attribution="activeAttribution"
+
+              <ItemDetailHeroActions
+                v-if="activeImage"
+                v-model:menu-open="heroMenuOpen"
+                :visible="heroActionsVisible"
+                :has-source-link="Boolean(sourceUrl)"
+                @open-lightbox="openLightbox"
+                @download="downloadActiveImage"
+                @reveal-in-folder="revealInFolder"
+                @open-source="openSourceLink"
               />
             </div>
+
+            <UnsplashAttribution
+              v-if="activeAttribution"
+              class="ww-product-detail__credit"
+              :attribution="activeAttribution"
+            />
 
             <div v-if="gallerySlides.length > 1" class="ww-product-detail__thumbs" role="tablist" aria-label="图集">
               <button
@@ -176,7 +258,7 @@ function selectImage(url: string) {
             </div>
 
             <div class="ww-product-detail__actions">
-              <Button icon="pi pi-heart" label="加入收藏" size="small" variant="outlined" @click="toggleFavorite" />
+              <WwButton icon="heart" label="加入收藏" size="small" variant="outlined" @click="toggleFavorite" />
             </div>
           </section>
         </div>
@@ -187,5 +269,11 @@ function selectImage(url: string) {
         </section>
       </article>
     </div>
+
+    <ImageViewer
+      v-model:open="lightboxOpen"
+      v-model:index="lightboxIndex"
+      :slides="lightboxSlides"
+    />
   </div>
 </template>
