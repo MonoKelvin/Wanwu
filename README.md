@@ -33,6 +33,20 @@ npm run dev
 
 > 首次 `npm install` 会编译 `better-sqlite3` 原生模块，可能需要数分钟。
 
+### 常见问题
+
+**`crypto.hash is not a function`（运行 `npm run dev` 时报错）**
+
+当前工具链（Vite 7）需要 **Node ≥ 20.19** 或 **≥ 22.12**。若终端里是较旧的 Node（例如 20.9），请升级后重试：
+
+```bash
+node -v          # 确认版本
+nvm use          # 若已安装 nvm，项目根目录有 .nvmrc（22）
+# 或从 https://nodejs.org/ 安装 Node 22 LTS
+```
+
+也可直接运行 `start-dev.bat`，会在启动前检查 Node 版本并给出提示。
+
 ## 常用命令
 
 | 命令 | 说明 |

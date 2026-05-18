@@ -11,7 +11,7 @@
     "url": "https://github.com/MonoKelvin/Wanwu.git"
   },
   "scripts": {
-    "dev": "electron-vite dev",
+    "dev": "node scripts/check-node.mjs && electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
     "start": "electron-vite preview",
@@ -46,6 +46,6 @@
     "vue-tsc": "^3.2.9"
   },
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=20.19.0 || >=22.12.0"
   }
 }
