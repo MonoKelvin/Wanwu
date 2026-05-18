@@ -17,7 +17,8 @@
       "@app/*": ["src/app/*"],
       "@modules/*": ["src/modules/*"],
       "@features/*": ["src/features/*"],
-      "@shared/*": ["src/shared/*"]
+      "@shared/*": ["src/shared/*"],
+      "@assets/*": ["assets/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.d.ts"]

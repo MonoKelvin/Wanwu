@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import Skeleton from 'primevue/skeleton'
 import { useLibraryStore } from '@shared/stores/library'
+import PageHeader from '@app/components/PageHeader.vue'
+import EmptyState from '@app/components/EmptyState.vue'
 import ItemCard from '@features/item/ItemCard.vue'
 
 const route = useRoute()
@@ -21,6 +24,8 @@ watch(
   async ([catId, subId]) => {
     if (typeof catId === 'string') {
       await store.loadItems(catId, subId as string | undefined)
+    } else {
+      store.items = []
     }
   }
 )
@@ -28,37 +33,60 @@ watch(
 function openItem(id: string) {
   router.push({ name: 'item-detail', params: { source: 'library', id } })
 }
+
+const headerSubtitle = computed(() => {
+  const catId = route.params.catId as string | undefined
+  if (!catId) return '选择左侧分类'
+  const cat = store.categories.find((c) => c.id === catId)
+  const subId = route.params.subId as string | undefined
+  if (subId && cat?.children) {
+    const sub = cat.children.find((s) => s.id === subId)
+    return sub ? `${cat.name} · ${sub.name}` : cat?.name
+  }
+  return cat?.name
+})
 </script>
 
 <template>
   <div class="flex h-full flex-col overflow-hidden">
-    <header class="flex items-center justify-between border-b border-ww-border px-6 py-4">
-      <div>
-        <h1 class="text-lg font-medium">全库</h1>
-        <p class="text-xs text-ww-muted">系统预置内容，可浏览、编辑与补充</p>
+    <PageHeader title="全库" :subtitle="headerSubtitle" />
+
+    <EmptyState
+      v-if="!route.params.catId"
+      variant="guide"
+      code="—"
+      title="尚未选择分类"
+      description="在左侧展开分类树，浏览该类别下的物品。"
+    />
+
+    <div v-else-if="store.loading" class="ww-scroll-main">
+      <div class="grid grid-cols-12 gap-3">
+        <div v-for="i in 8" :key="i" class="col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3">
+          <Skeleton height="11rem" class="mb-2 !bg-ww-panel" />
+          <Skeleton width="65%" height="0.875rem" class="!bg-ww-panel" />
+        </div>
       </div>
-    </header>
-
-    <div v-if="!route.params.catId" class="flex flex-1 flex-col items-center justify-center gap-2 text-ww-muted">
-      <i class="pi pi-arrow-left text-2xl" />
-      <p class="text-sm">请从左侧选择分类</p>
     </div>
 
-    <div v-else-if="store.loading" class="flex flex-1 items-center justify-center text-ww-muted">加载中…</div>
-
-    <div
+    <EmptyState
       v-else-if="store.items.length === 0"
-      class="flex flex-1 flex-col items-center justify-center gap-2 text-ww-muted"
+      code="EMPTY"
+      title="这里还是空的"
+      description="当前分类下没有物品。可导入示例数据开始体验。"
     >
-      <p class="text-sm">该分类暂无物品</p>
-      <p class="text-xs">可运行 npm run seed:import 导入示例数据</p>
-    </div>
+      <code>npm run seed:import</code>
+    </EmptyState>
 
-    <div
-      v-else
-      class="grid flex-1 grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 overflow-y-auto p-6"
-    >
-      <ItemCard v-for="item in store.items" :key="item.id" :item="item" @click="openItem(item.id)" />
+    <div v-else class="ww-scroll-main">
+      <div class="grid grid-cols-12 gap-3">
+        <div
+          v-for="item in store.items"
+          :key="item.id"
+          class="col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3"
+        >
+          <ItemCard :item="item" @click="openItem(item.id)" />
+        </div>
+      </div>
     </div>
   </div>
 </template>

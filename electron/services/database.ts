@@ -2,6 +2,7 @@ import Database from 'better-sqlite3'
 import { existsSync, mkdirSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
+import { seedDefaultRssFeeds } from './rssFeeds'
 
 const LIBRARY_CATEGORIES = [
   { id: 'cat', name: '猫', icon: 'pi pi-heart' },
@@ -67,6 +68,10 @@ export class DatabaseService {
         source TEXT NOT NULL,
         viewed_at TEXT NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS app_settings (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        json TEXT NOT NULL
+      );
     `)
     const row = this.userDb.prepare('SELECT id FROM profiles LIMIT 1').get()
     if (!row) {
@@ -74,6 +79,41 @@ export class DatabaseService {
         .prepare('INSERT INTO profiles (id, nickname, bio, updated_at) VALUES (?, ?, ?, ?)')
         .run(randomUUID(), '万物探索者', '记录世间万物', new Date().toISOString())
     }
+    const settingsRow = this.userDb.prepare('SELECT id FROM app_settings WHERE id = 1').get()
+    if (!settingsRow) {
+      this.userDb
+        .prepare('INSERT INTO app_settings (id, json) VALUES (1, ?)')
+        .run(
+          JSON.stringify({
+            navAlign: 'start',
+            navDisplay: 'icon',
+            rssFetchLimit: 20
+          })
+        )
+    }
+  }
+
+  getAppSettings(): { navAlign: string; navDisplay: string } {
+    const row = this.userDb.prepare('SELECT json FROM app_settings WHERE id = 1').get() as
+      | { json: string }
+      | undefined
+    if (!row) {
+      return { navAlign: 'start', navDisplay: 'icon' }
+    }
+    try {
+      return JSON.parse(row.json) as { navAlign: string; navDisplay: string }
+    } catch {
+      return { navAlign: 'start', navDisplay: 'icon' }
+    }
+  }
+
+  updateAppSettings(settings: { navAlign: string; navDisplay: string }): void {
+    this.userDb
+      .prepare(
+        `INSERT INTO app_settings (id, json) VALUES (1, ?)
+         ON CONFLICT(id) DO UPDATE SET json = excluded.json`
+      )
+      .run(JSON.stringify(settings))
   }
 
   private initCustomSchema(): void {
@@ -135,13 +175,7 @@ export class DatabaseService {
         raw TEXT
       );
     `)
-    const count = this.rssDb.prepare('SELECT COUNT(*) as c FROM rss_feeds').get() as { c: number }
-    if (count.c === 0) {
-      const insert = this.rssDb.prepare(
-        'INSERT INTO rss_feeds (id, title, url, is_default, enabled) VALUES (?, ?, ?, 1, 1)'
-      )
-      insert.run(randomUUID(), 'Wikipedia 每日精选', 'https://zh.wikipedia.org/w/api.php?action=featuredfeed&feed=featured&feedformat=atom')
-    }
+    seedDefaultRssFeeds(this.rssDb)
   }
 
   private initLibraryDb(categoryId: string, categoryName: string): void {

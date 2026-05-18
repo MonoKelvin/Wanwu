@@ -1,6 +1,6 @@
 {
   "name": "wanwu",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "万物 - 事物收集与浏览桌面应用",
   "main": "out/main/index.js",
@@ -21,12 +21,14 @@
     "rebuild": "electron-rebuild -f -w better-sqlite3"
   },
   "dependencies": {
+    "@primeuix/themes": "^2.0.3",
     "@vueuse/core": "^14.3.0",
     "better-sqlite3": "^12.10.0",
     "pinia": "^3.0.4",
     "primeicons": "^7.0.0",
     "primevue": "^4.5.4",
     "rss-parser": "^3.13.0",
+    "tailwindcss-primeui": "^0.6.1",
     "vue": "^3.5.29",
     "vue-router": "^4.6.4"
   },

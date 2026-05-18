@@ -2,6 +2,7 @@ import { app, BrowserWindow, shell } from 'electron'
 import { existsSync } from 'fs'
 import { join } from 'path'
 import { registerIpcHandlers } from './ipc/handlers'
+import { setMainWindow, broadcastMaximizedState } from './windowState'
 import { DatabaseService } from './services/database'
 import { LibraryService } from './services/libraryService'
 import { RssService } from './services/rssService'
@@ -25,8 +26,12 @@ function createWindow(): void {
     minWidth: 1024,
     minHeight: 640,
     show: false,
+    frame: false,
     title: '万物',
     autoHideMenuBar: true,
+    resizable: true,
+    // Windows 无边框时保留边缘拖拽缩放
+    thickFrame: process.platform === 'win32',
     webPreferences: {
       preload: (() => {
         const mjs = join(__dirname, '../preload/index.mjs')
@@ -39,9 +44,15 @@ function createWindow(): void {
     }
   })
 
+  setMainWindow(mainWindow)
+
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show()
+    broadcastMaximizedState()
   })
+
+  mainWindow.on('maximize', broadcastMaximizedState)
+  mainWindow.on('unmaximize', broadcastMaximizedState)
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
@@ -68,6 +79,7 @@ async function initServices(): Promise<void> {
 app.whenReady().then(async () => {
   await initServices()
   createWindow()
+  void services.rss?.pruneUnhealthyDefaultFeeds().catch(() => {})
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
@@ -75,6 +87,7 @@ app.whenReady().then(async () => {
 })
 
 app.on('window-all-closed', () => {
+  setMainWindow(null)
   services.db?.close()
   if (process.platform !== 'darwin') app.quit()
 })

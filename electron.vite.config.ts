@@ -38,7 +38,8 @@ export default defineConfig({
         '@app': resolve(__dirname, 'src/app'),
         '@modules': resolve(__dirname, 'src/modules'),
         '@features': resolve(__dirname, 'src/features'),
-        '@shared': resolve(__dirname, 'src/shared')
+        '@shared': resolve(__dirname, 'src/shared'),
+        '@assets': resolve(__dirname, 'assets')
       }
     },
     plugins: [vue()]

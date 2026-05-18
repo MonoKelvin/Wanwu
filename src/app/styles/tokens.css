@@ -1,19 +1,39 @@
 :root {
-  --ww-bg: #ffffff;
-  --ww-bg-subtle: #f5f5f5;
-  --ww-text: #111111;
-  --ww-text-muted: #666666;
-  --ww-border: #e5e5e5;
-  --ww-accent: #111111;
-  --ww-sidebar-width: 72px;
-  --ww-subpanel-width: 280px;
-}
+  /* 布局 */
+  --ww-titlebar-height: 2rem;
+  --ww-sidebar-width: 5.25rem;
+  --ww-subpanel-width: 15.5rem;
+  --ww-content-max: 68rem;
+  --ww-page-padding: 1.125rem;
 
-[data-theme='dark'] {
-  --ww-bg: #111111;
-  --ww-bg-subtle: #1a1a1a;
-  --ww-text: #f5f5f5;
-  --ww-text-muted: #999999;
-  --ww-border: #333333;
-  --ww-accent: #ffffff;
+  /* 层次背景：中性灰阶，无彩色倾向 */
+  --ww-canvas: #eaeaec;
+  --ww-rail: #e2e2e5;
+  --ww-panel: #eeeeef;
+  --ww-content: #ffffff;
+  --ww-elevated: #ffffff;
+  --ww-inset: #f5f5f6;
+
+  /* 黑白主色 + 深灰点缀（比 muted 略深） */
+  --ww-ink: #121214;
+  --ww-ink-muted: #5a5a62;
+  --ww-ink-faint: #888890;
+  --ww-accent: #3a3a42;
+  --ww-accent-hover: #242428;
+  --ww-accent-soft: #ececee;
+  --ww-warn: #8a6b38;
+  --ww-warn-soft: #f3efe6;
+
+  /* 动效 */
+  --ww-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ww-ease-out-slow: cubic-bezier(0.16, 1, 0.3, 1);
+  --ww-duration-fast: 0.22s;
+  --ww-duration: 0.36s;
+  --ww-duration-slow: 0.48s;
+
+  /* 阴影：中性黑，略大略偏下 */
+  --ww-shadow-hover: 0 40px 72px -14px rgb(18 18 22 / 0.12), 0 22px 48px -12px rgb(18 18 22 / 0.08);
+  --ww-shadow-soft: 0 14px 36px -8px rgb(18 18 22 / 0.1), 0 6px 16px -6px rgb(18 18 22 / 0.06);
+  --ww-shadow-card: 0 8px 24px -6px rgb(18 18 22 / 0.08), 0 3px 10px -3px rgb(18 18 22 / 0.05);
+  --ww-blur-glass: 12px;
 }

@@ -3,10 +3,13 @@ import { onMounted, ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
+import Badge from 'primevue/badge'
+import PageHeader from '@app/components/PageHeader.vue'
 
 const nickname = ref('')
 const bio = ref('')
 const favorites = ref<unknown[]>([])
+const saved = ref(false)
 
 onMounted(async () => {
   const profile = await window.wanwu.user.getProfile()
@@ -19,29 +22,43 @@ onMounted(async () => {
 
 async function save() {
   await window.wanwu.user.updateProfile({ nickname: nickname.value, bio: bio.value })
+  saved.value = true
+  setTimeout(() => {
+    saved.value = false
+  }, 2000)
 }
 </script>
 
 <template>
   <div class="flex h-full flex-col overflow-hidden">
-    <header class="border-b border-ww-border px-6 py-4">
-      <h1 class="text-lg font-medium">个人</h1>
-      <p class="text-xs text-ww-muted">资料、收藏与主页</p>
-    </header>
+    <PageHeader title="个人" subtitle="资料与收藏">
+      <template #actions>
+        <Button label="保存" icon="pi pi-check" size="small" @click="save" />
+      </template>
+    </PageHeader>
 
-    <div class="flex-1 overflow-y-auto p-6">
-      <section class="max-w-lg">
-        <h2 class="mb-4 text-sm font-medium">基本资料</h2>
-        <label class="mb-1 block text-xs text-ww-muted">昵称</label>
-        <InputText v-model="nickname" class="mb-4 w-full" />
-        <label class="mb-1 block text-xs text-ww-muted">简介</label>
-        <Textarea v-model="bio" class="mb-4 w-full" rows="4" />
-        <Button label="保存" size="small" @click="save" />
+    <div class="ww-scroll-main mx-auto w-full max-w-lg space-y-8">
+      <section class="rounded-lg bg-ww-content p-4 space-y-3">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-ww-ink-faint">资料</h2>
+        <div class="space-y-1.5">
+          <label for="nickname" class="text-xs text-ww-ink-muted">昵称</label>
+          <InputText id="nickname" v-model="nickname" class="w-full" />
+        </div>
+        <div class="space-y-1.5">
+          <label for="bio" class="text-xs text-ww-ink-muted">简介</label>
+          <Textarea id="bio" v-model="bio" class="w-full" rows="3" auto-resize />
+        </div>
+        <p v-if="saved" class="text-xs text-ww-accent">已保存</p>
       </section>
 
-      <section class="mt-10 max-w-lg">
-        <h2 class="mb-2 text-sm font-medium">收藏</h2>
-        <p class="text-xs text-ww-muted">{{ favorites.length }} 项收藏</p>
+      <section class="rounded-lg bg-ww-content p-4 space-y-2">
+        <h2 class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ww-ink-faint">
+          收藏
+          <Badge :value="favorites.length" severity="secondary" />
+        </h2>
+        <p class="text-xs text-ww-ink-muted">
+          {{ favorites.length ? `${favorites.length} 项` : '详情页可收藏' }}
+        </p>
       </section>
     </div>
   </div>

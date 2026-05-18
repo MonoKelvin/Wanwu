@@ -1,17 +1,27 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useSettingsStore } from '@shared/stores/settings'
 import type { ModuleId } from '@shared/stores/app'
 
 const router = useRouter()
 const route = useRoute()
+const { settings } = storeToRefs(useSettingsStore())
 
 const modules: Array<{ id: ModuleId; label: string; icon: string; path: string }> = [
   { id: 'library', label: '全库', icon: 'pi pi-database', path: '/library' },
-  { id: 'rss', label: 'RSS', icon: 'pi pi-rss', path: '/rss' },
+  { id: 'rss', label: 'RSS', icon: 'pi pi-globe', path: '/rss' },
   { id: 'custom', label: '自建', icon: 'pi pi-folder', path: '/custom' },
   { id: 'personal', label: '个人', icon: 'pi pi-user', path: '/personal' },
   { id: 'settings', label: '设置', icon: 'pi pi-cog', path: '/settings' }
 ]
+
+const showLabel = computed(() => settings.value.navDisplay === 'both')
+const useTooltip = computed(() => !showLabel.value)
+const navAlignClass = computed(() =>
+  settings.value.navAlign === 'center' ? 'ww-module-nav--center' : 'ww-module-nav--start'
+)
 
 function navigate(path: string) {
   router.push(path)
@@ -24,23 +34,28 @@ function isActive(id: ModuleId) {
 
 <template>
   <nav
-    class="flex w-[var(--ww-sidebar-width)] flex-col items-center gap-1 border-r border-ww-border bg-ww-bg py-4"
-    aria-label="模块导航"
+    class="ww-module-nav h-full shrink-0 bg-ww-rail"
+    :class="navAlignClass"
+    aria-label="模块"
   >
-    <div class="mb-6 text-xs font-medium tracking-widest text-ww-muted" style="writing-mode: vertical-rl">
-      万物
+    <div class="ww-module-nav__group">
+      <button
+        v-for="m in modules"
+        :key="m.id"
+        v-tooltip.right="useTooltip ? m.label : undefined"
+        type="button"
+        class="ww-module-btn"
+        :class="{
+          'is-active': isActive(m.id),
+          'ww-module-btn--labeled': showLabel
+        }"
+        :aria-label="m.label"
+        :aria-current="isActive(m.id) ? 'page' : undefined"
+        @click="navigate(m.path)"
+      >
+        <i :class="m.icon" aria-hidden="true" />
+        <span v-if="showLabel" class="ww-module-btn__label">{{ m.label }}</span>
+      </button>
     </div>
-    <button
-      v-for="m in modules"
-      :key="m.id"
-      type="button"
-      class="flex w-full flex-col items-center gap-1 px-2 py-3 text-xs transition-colors duration-ww"
-      :class="isActive(m.id) ? 'bg-ww-bg-subtle text-ww-text' : 'text-ww-muted hover:bg-ww-bg-subtle hover:text-ww-text'"
-      :title="m.label"
-      @click="navigate(m.path)"
-    >
-      <i :class="m.icon" class="text-lg" />
-      <span>{{ m.label }}</span>
-    </button>
   </nav>
 </template>

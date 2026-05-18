@@ -1,112 +1,130 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import Button from 'primevue/button'
+import Skeleton from 'primevue/skeleton'
+import { useRssStore } from '@shared/stores/rss'
+import { useSettingsStore } from '@shared/stores/settings'
+import { useWanwuToast } from '@shared/composables/useWanwuToast'
+import { DEFAULT_RSS_DISPLAY } from '@shared/types/rss'
+import PageHeader from '@app/components/PageHeader.vue'
+import EmptyState from '@app/components/EmptyState.vue'
+import RssEntryCard from '@features/rss/RssEntryCard.vue'
 
-interface Feed {
-  id: string
-  title: string
-  url: string
-  enabled: boolean
-  isDefault: boolean
-  lastFetchedAt: string | null
-}
+const route = useRoute()
+const rssStore = useRssStore()
+const settingsStore = useSettingsStore()
+const toast = useWanwuToast()
+const loadingMore = ref(false)
 
-interface Entry {
-  id: string
-  title: string
-  summary: string
-  link: string
-  publishedAt: string
-}
-
-const feeds = ref<Feed[]>([])
-const entries = ref<Entry[]>([])
-const selectedFeedId = ref<string | null>(null)
-const loading = ref(false)
-const error = ref('')
+const feedId = computed(() => route.params.feedId as string | undefined)
+const currentFeed = computed(() => (feedId.value ? rssStore.getFeed(feedId.value) : undefined))
+const display = computed(() => currentFeed.value?.display ?? DEFAULT_RSS_DISPLAY)
+const isRefreshing = computed(() => rssStore.isFeedRefreshing(feedId.value))
 
 onMounted(async () => {
-  feeds.value = await window.wanwu.rss.listFeeds()
-  if (feeds.value.length) {
-    selectedFeedId.value = feeds.value[0].id
-    await loadEntries()
-  }
+  if (!settingsStore.loaded) await settingsStore.load()
+  if (!rssStore.groups.length) await rssStore.loadAll()
 })
 
-async function loadEntries() {
-  if (!selectedFeedId.value) return
-  entries.value = await window.wanwu.rss.listEntries(selectedFeedId.value)
+async function refreshCurrentFeed(targetId = feedId.value, notifyOnError = false) {
+  if (!targetId) return false
+  const ok = await rssStore.refreshFeed(targetId)
+  if (feedId.value !== targetId) return ok
+  if (notifyOnError && !ok && rssStore.error) toast.error(rssStore.error)
+  return ok
 }
 
-async function refresh() {
-  if (!selectedFeedId.value) return
-  loading.value = true
-  error.value = ''
-  const result = await window.wanwu.rss.fetchFeed(selectedFeedId.value)
-  loading.value = false
-  if (!result.ok) {
-    error.value = result.error ?? '刷新失败'
-    return
-  }
-  await loadEntries()
+async function loadMore() {
+  if (!feedId.value || loadingMore.value) return
+  loadingMore.value = true
+  await rssStore.loadMoreEntries(feedId.value)
+  loadingMore.value = false
 }
 
-function selectFeed(id: string) {
-  selectedFeedId.value = id
-  loadEntries()
-}
+watch(
+  feedId,
+  async (id) => {
+    if (!id) return
+    rssStore.cancelPendingRefresh()
+    rssStore.entries = []
+    rssStore.entryTotal = 0
+    await rssStore.loadEntries(id)
+    if (feedId.value !== id) return
+    await refreshCurrentFeed(id, false)
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
   <div class="flex h-full flex-col overflow-hidden">
-    <header class="flex items-center justify-between border-b border-ww-border px-6 py-4">
-      <div>
-        <h1 class="text-lg font-medium">RSS</h1>
-        <p class="text-xs text-ww-muted">订阅与浏览资讯流</p>
-      </div>
-      <Button label="刷新" :loading="loading" size="small" @click="refresh" />
-    </header>
+    <PageHeader
+      :title="currentFeed?.title ?? 'RSS'"
+      :subtitle="currentFeed?.accessWarning ? '境内可能无法稳定访问' : '资讯订阅'"
+    >
+      <template #actions>
+        <Button
+          v-if="feedId"
+          icon="pi pi-refresh"
+          :loading="isRefreshing"
+          size="small"
+          variant="outlined"
+          v-tooltip.bottom="'重新拉取'"
+          aria-label="重新拉取"
+          @click="refreshCurrentFeed(feedId, true)"
+        />
+      </template>
+    </PageHeader>
 
-    <p v-if="error" class="border-b border-ww-border bg-ww-bg-subtle px-6 py-2 text-xs text-red-600">
-      {{ error }}
-    </p>
+    <EmptyState
+      v-if="!feedId"
+      variant="rss"
+      title="选择订阅源"
+      description="左侧选择分组与订阅，将自动拉取最新文章。"
+    />
 
-    <div class="flex flex-1 overflow-hidden">
-      <ul class="w-56 shrink-0 overflow-y-auto border-r border-ww-border">
-        <li v-for="feed in feeds" :key="feed.id">
-          <button
-            type="button"
-            class="w-full px-4 py-2.5 text-left text-sm transition-colors hover:bg-ww-bg-subtle"
-            :class="selectedFeedId === feed.id ? 'bg-ww-bg-subtle font-medium' : ''"
-            @click="selectFeed(feed.id)"
-          >
-            {{ feed.title }}
-            <span v-if="feed.isDefault" class="ml-1 text-xs text-ww-muted">默认</span>
-          </button>
-        </li>
-      </ul>
+    <div
+      v-else-if="isRefreshing && rssStore.entries.length === 0"
+      class="ww-scroll-main ww-rss-list space-y-2.5"
+    >
+      <Skeleton v-for="i in 4" :key="i" height="6rem" class="!rounded-lg !bg-ww-panel" />
+    </div>
 
-      <ul class="flex-1 overflow-y-auto p-4">
-        <li
-          v-for="entry in entries"
+    <EmptyState
+      v-else-if="!isRefreshing && rssStore.entries.length === 0"
+      variant="rss"
+      code="FEED"
+      title="尚无文章"
+      description="该源暂无内容，或拉取失败。可点击右上角重试。"
+    />
+
+    <div v-else class="ww-scroll-main flex flex-col">
+      <div class="ww-rss-list flex-1">
+        <RssEntryCard
+          v-for="entry in rssStore.entries"
           :key="entry.id"
-          class="border-b border-ww-border py-4 last:border-0"
+          :entry="entry"
+          :display="display"
+          :feed-url="currentFeed?.url"
+          :feed-icon-url="currentFeed?.iconUrl"
+        />
+      </div>
+
+      <div v-if="rssStore.hasMoreEntries" class="ww-rss-load-more">
+        <button
+          type="button"
+          class="ww-rss-load-more__btn"
+          :disabled="loadingMore"
+          @click="loadMore"
         >
-          <a
-            :href="entry.link"
-            class="text-sm font-medium hover:underline"
-            target="_blank"
-            rel="noopener"
-          >
-            {{ entry.title }}
-          </a>
-          <p v-if="entry.summary" class="mt-1 line-clamp-2 text-xs text-ww-muted">{{ entry.summary }}</p>
-          <time class="mt-1 block text-xs text-ww-muted">{{ entry.publishedAt }}</time>
-        </li>
-        <li v-if="entries.length === 0" class="py-8 text-center text-sm text-ww-muted">
-          暂无条目，点击刷新拉取
-        </li>
-      </ul>
+          <i class="pi" :class="loadingMore ? 'pi-spin pi-spinner' : 'pi-arrow-down'" />
+          <span>{{ loadingMore ? '加载中…' : `加载更多（每次 ${settingsStore.settings.rssFetchLimit} 条）` }}</span>
+        </button>
+        <p class="ww-rss-load-more__hint">
+          已显示 {{ rssStore.entries.length }} / {{ rssStore.entryTotal }} 条
+        </p>
+      </div>
     </div>
   </div>
 </template>
