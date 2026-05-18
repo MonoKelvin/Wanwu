@@ -1,35 +1,58 @@
 <script setup lang="ts">
 import Tag from 'primevue/tag'
+import UnsplashAttribution from '@features/item/UnsplashAttribution.vue'
 import type { Item } from '@shared/types/item'
 
 defineProps<{ item: Item }>()
 defineEmits<{ click: [] }>()
+
+const specPreview = (item: Item) => {
+  const entries = Object.entries(item.specs ?? {})
+  return entries.slice(0, 2)
+}
 </script>
 
 <template>
-  <article class="ww-item-card flex h-full cursor-pointer flex-col overflow-hidden rounded-lg" @click="$emit('click')">
-    <div class="ww-item-media relative flex aspect-[4/3] items-center justify-center">
+  <article class="ww-product-card" @click="$emit('click')">
+    <div class="ww-product-card__media">
       <img
         v-if="item.coverPath"
         :src="item.coverPath"
         :alt="item.name"
-        class="h-full w-full object-cover"
+        class="ww-product-card__img"
+        loading="lazy"
       />
-      <i v-else class="pi pi-image text-2xl text-ww-ink-faint opacity-40" />
+      <div v-else class="ww-product-card__img ww-product-card__img--empty">
+        <i class="pi pi-image" aria-hidden="true" />
+      </div>
+      <span v-if="item.subCategoryName" class="ww-product-card__badge">{{ item.subCategoryName }}</span>
+      <UnsplashAttribution
+        v-if="item.coverAttribution"
+        class="ww-product-card__credit"
+        :attribution="item.coverAttribution"
+        compact
+      />
     </div>
-    <div class="flex flex-1 flex-col gap-1 p-3">
-      <h3 class="line-clamp-1 text-[0.8125rem] font-semibold text-ww-ink">{{ item.name }}</h3>
-      <p v-if="item.summary" class="line-clamp-2 text-xs leading-relaxed text-ww-ink-muted">
-        {{ item.summary }}
-      </p>
-      <div v-if="item.tags?.length" class="mt-auto flex flex-wrap gap-1 pt-1">
+
+    <div class="ww-product-card__body">
+      <h3 class="ww-product-card__title">{{ item.name }}</h3>
+      <p v-if="item.summary" class="ww-product-card__summary">{{ item.summary }}</p>
+
+      <dl v-if="specPreview(item).length" class="ww-product-card__specs">
+        <template v-for="[key, val] in specPreview(item)" :key="key">
+          <dt>{{ key }}</dt>
+          <dd>{{ val }}</dd>
+        </template>
+      </dl>
+
+      <div v-if="item.tags?.length" class="ww-product-card__tags">
         <Tag
-          v-for="tag in item.tags.slice(0, 2)"
+          v-for="tag in item.tags.slice(0, 3)"
           :key="tag"
           :value="tag"
           severity="secondary"
           rounded
-          class="!text-[10px]"
+          class="ww-product-card__tag"
         />
       </div>
     </div>

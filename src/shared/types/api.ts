@@ -1,4 +1,4 @@
-import type { Category, Item } from './item'
+import type { Category, Item, LibrarySearchHit } from './item'
 import type { AppSettings } from './settings'
 import type { RssEntry, RssFeed, RssFeedInput, RssFeedUpdate, RssGroup } from './rss'
 
@@ -6,6 +6,7 @@ export interface WanwuApi {
   library: {
     listCategories: () => Promise<Category[]>
     listItems: (params: { categoryId: string; subCategoryId?: string }) => Promise<Item[]>
+    searchItems: (params: { query: string; limit?: number }) => Promise<LibrarySearchHit[]>
     getItem: (id: string) => Promise<Item | null>
     updateItem: (item: Item) => Promise<Item>
     createItem: (item: Partial<Item>) => Promise<Item>

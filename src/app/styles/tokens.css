@@ -21,8 +21,21 @@
   --ww-accent: #3a3a42;
   --ww-accent-hover: #242428;
   --ww-accent-soft: #ececee;
+  /* 列表 hover / 选中（对齐 Prime Aura highlight / surface.100–200） */
+  --ww-list-hover-bg: #ececee;
+  --ww-list-selected-bg: #e0e0e4;
+  --ww-list-selected-ring: rgb(18 18 22 / 0.14);
+  --ww-list-hover-ring: rgb(18 18 22 / 0.08);
+  --ww-list-selected-accent: #3a3a42;
   --ww-warn: #8a6b38;
   --ww-warn-soft: #f3efe6;
+
+  /* 正文 / Markdown（与 body 字号一致） */
+  --ww-prose-size: 0.8125rem;
+  --ww-prose-leading: 1.55;
+  --ww-prose-gap: 0.5rem;
+  --ww-border-subtle: rgb(18 18 22 / 0.06);
+  --ww-border-faint: rgb(18 18 22 / 0.05);
 
   /* 动效 */
   --ww-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -36,4 +49,6 @@
   --ww-shadow-soft: 0 14px 36px -8px rgb(18 18 22 / 0.1), 0 6px 16px -6px rgb(18 18 22 / 0.06);
   --ww-shadow-card: 0 8px 24px -6px rgb(18 18 22 / 0.08), 0 3px 10px -3px rgb(18 18 22 / 0.05);
   --ww-blur-glass: 12px;
+  --ww-menu-blur: 24px;
+  --ww-menu-shadow: 0 18px 44px -6px rgb(18 18 22 / 0.16), 0 8px 20px -4px rgb(18 18 22 / 0.1);
 }

@@ -10,8 +10,9 @@ const props = withDefaults(
     title: string
     description?: string
     code?: string
+    compact?: boolean
   }>(),
-  { variant: 'empty' }
+  { variant: 'empty', compact: false }
 )
 
 const illustration = computed(() => {
@@ -29,7 +30,7 @@ const illustration = computed(() => {
 </script>
 
 <template>
-  <div class="ww-empty-state" role="status">
+  <div class="ww-empty-state" :class="{ 'ww-empty-state--compact': compact }" role="status">
     <div class="ww-empty-state__glow ww-empty-state__glow--a" aria-hidden="true" />
     <div class="ww-empty-state__glow ww-empty-state__glow--b" aria-hidden="true" />
 

@@ -1,6 +1,8 @@
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, net, protocol, shell } from 'electron'
 import { existsSync } from 'fs'
 import { join } from 'path'
+import { pathToFileURL } from 'url'
+import { resolveLibraryMediaAbsolute } from './services/libraryMedia'
 import { registerIpcHandlers } from './ipc/handlers'
 import { setMainWindow, broadcastMaximizedState } from './windowState'
 import { DatabaseService } from './services/database'
@@ -9,6 +11,20 @@ import { RssService } from './services/rssService'
 import { MediaService } from './services/mediaService'
 
 const isDev = !app.isPackaged
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'wanwu-media',
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      stream: true,
+      bypassCSP: true,
+      corsEnabled: true
+    }
+  }
+])
 
 let mainWindow: BrowserWindow | null = null
 
@@ -77,6 +93,15 @@ async function initServices(): Promise<void> {
 }
 
 app.whenReady().then(async () => {
+  protocol.handle('wanwu-media', async (request) => {
+    const raw = decodeURIComponent(request.url.replace(/^wanwu-media:\/\//i, ''))
+    const abs = resolveLibraryMediaAbsolute(raw)
+    if (!abs) {
+      return new Response('Not Found', { status: 404 })
+    }
+    return net.fetch(pathToFileURL(abs).href)
+  })
+
   await initServices()
   createWindow()
   void services.rss?.pruneUnhealthyDefaultFeeds().catch(() => {})

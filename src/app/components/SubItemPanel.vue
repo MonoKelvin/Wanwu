@@ -3,6 +3,9 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Tree from 'primevue/tree'
 import type { TreeNode } from 'primevue/treenode'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
+import InputText from 'primevue/inputtext'
 import { useLibraryStore } from '@shared/stores/library'
 import { useCustomStore } from '@shared/stores/custom'
 import RssSidebar from '@features/rss/RssSidebar.vue'
@@ -15,23 +18,44 @@ const customStore = useCustomStore()
 const module = computed(() => route.meta.module as string)
 const expandedKeys = ref<Record<string, boolean>>({})
 const selectionKeys = ref<Record<string, boolean>>({})
+const categorySearch = ref('')
 
 const libraryTree = computed<TreeNode[]>(() =>
   libraryStore.categories.map((cat) => ({
     key: cat.id,
     label: cat.name,
-    icon: cat.icon ?? 'pi pi-folder',
     children:
       cat.children && cat.children.length > 0
         ? cat.children.map((sub) => ({
             key: `${cat.id}::${sub.id}`,
             label: sub.name,
-            icon: 'pi pi-circle-fill',
             leaf: true
           }))
         : undefined
   }))
 )
+
+const filteredLibraryTree = computed<TreeNode[]>(() => {
+  const q = categorySearch.value.trim().toLowerCase()
+  if (!q) return libraryTree.value
+
+  const result: TreeNode[] = []
+  for (const node of libraryTree.value) {
+    const label = String(node.label ?? '').toLowerCase()
+    const catMatch = label.includes(q)
+    const children = node.children?.filter((child) =>
+      String(child.label ?? '')
+        .toLowerCase()
+        .includes(q)
+    )
+    if (catMatch) {
+      result.push(node)
+    } else if (children?.length) {
+      result.push({ ...node, children })
+    }
+  }
+  return result
+})
 
 function syncLibrarySelection() {
   const catId = route.params.catId as string | undefined
@@ -40,7 +64,6 @@ function syncLibrarySelection() {
     selectionKeys.value = {}
     return
   }
-  // 保留已展开的分类，支持同时展开多个
   expandedKeys.value = { ...expandedKeys.value, [catId]: true }
   if (subId) {
     selectionKeys.value = { [`${catId}::${subId}`]: true }
@@ -102,16 +125,35 @@ function selectCustomCategory(catId: string) {
       <h2 class="ww-section-label">{{ route.meta.title }}</h2>
     </header>
 
-    <div v-if="module === 'library'" class="min-h-0 flex-1 overflow-y-auto px-1.5 pb-3">
-      <Tree
-        v-model:expanded-keys="expandedKeys"
-        v-model:selection-keys="selectionKeys"
-        :value="libraryTree"
-        selection-mode="single"
-        class="ww-library-tree w-full border-0 bg-transparent p-0"
-        @node-select="onLibrarySelect"
-      />
-    </div>
+    <template v-if="module === 'library'">
+      <div class="shrink-0 px-2 pb-2">
+        <IconField class="ww-field-search w-full">
+          <InputIcon class="pi pi-search" />
+          <InputText
+            v-model="categorySearch"
+            placeholder="搜索分类…"
+            class="w-full"
+            aria-label="搜索全库分类"
+          />
+        </IconField>
+      </div>
+      <div class="min-h-0 flex-1 overflow-y-auto px-1.5 pb-3">
+        <Tree
+          v-model:expanded-keys="expandedKeys"
+          v-model:selection-keys="selectionKeys"
+          :value="filteredLibraryTree"
+          selection-mode="single"
+          class="ww-library-tree w-full border-0 bg-transparent p-0"
+          @node-select="onLibrarySelect"
+        />
+        <p
+          v-if="categorySearch && filteredLibraryTree.length === 0"
+          class="px-2 py-6 text-center text-xs text-ww-ink-muted"
+        >
+          无匹配分类
+        </p>
+      </div>
+    </template>
 
     <RssSidebar v-else-if="module === 'rss'" class="min-h-0 flex-1" />
 

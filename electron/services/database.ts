@@ -1,25 +1,22 @@
 import Database from 'better-sqlite3'
-import { existsSync, mkdirSync, readFileSync } from 'fs'
+import { mkdirSync } from 'fs'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
 import { seedDefaultRssFeeds } from './rssFeeds'
+import { importLibraryCatalog, loadLibraryCategories } from './librarySeed'
 
-const LIBRARY_CATEGORIES = [
-  { id: 'cat', name: '猫', icon: 'pi pi-heart' },
-  { id: 'dog', name: '狗', icon: 'pi pi-heart-fill' },
-  { id: 'supercar', name: '超跑', icon: 'pi pi-car' },
-  { id: 'illustration', name: '立绘', icon: 'pi pi-image' },
-  { id: 'ui-design', name: 'UI设计', icon: 'pi pi-palette' },
-  { id: 'plant', name: '植物', icon: 'pi pi-sun' },
-  { id: 'motorcycle', name: '摩托', icon: 'pi pi-compass' },
-  { id: 'interior', name: '家装设计', icon: 'pi pi-home' },
-  { id: 'industrial', name: '工业设计', icon: 'pi pi-box' },
-  { id: 'transformers', name: '变形金刚', icon: 'pi pi-star' },
-  { id: 'superhero-anime', name: '超级英雄动漫', icon: 'pi pi-bolt' },
-  { id: 'anime', name: '日漫', icon: 'pi pi-sparkles' },
-  { id: 'history', name: '历史', icon: 'pi pi-book' },
-  { id: 'movie', name: '电影', icon: 'pi pi-video' }
-]
+function loadLibraryCategoriesMeta(): Array<{ id: string; name: string; icon: string }> {
+  const file = loadLibraryCategories()
+  if (file?.categories?.length) {
+    return file.categories.map((c) => ({ id: c.id, name: c.name, icon: c.icon }))
+  }
+  return [
+    { id: 'cat', name: '猫', icon: 'pi pi-heart' },
+    { id: 'dog', name: '狗', icon: 'pi pi-heart-fill' }
+  ]
+}
+
+const LIBRARY_CATEGORIES = loadLibraryCategoriesMeta()
 
 export class DatabaseService {
   private userDb: Database.Database
@@ -44,7 +41,7 @@ export class DatabaseService {
     for (const cat of LIBRARY_CATEGORIES) {
       this.initLibraryDb(cat.id, cat.name)
     }
-    this.seedIfEmpty()
+    importLibraryCatalog(this)
   }
 
   private initUserSchema(): void {
@@ -197,6 +194,7 @@ export class DatabaseService {
         description TEXT,
         tags TEXT,
         cover_path TEXT,
+        cover_attribution TEXT,
         created_at TEXT,
         updated_at TEXT
       );
@@ -204,7 +202,8 @@ export class DatabaseService {
         id TEXT PRIMARY KEY,
         item_id TEXT NOT NULL,
         path TEXT NOT NULL,
-        sort_order INTEGER DEFAULT 0
+        sort_order INTEGER DEFAULT 0,
+        attribution TEXT
       );
     `)
     const root = db.prepare('SELECT id FROM categories WHERE parent_id IS NULL LIMIT 1').get()
@@ -214,60 +213,16 @@ export class DatabaseService {
         rootId,
         categoryName
       )
-      const subs = this.defaultSubCategories(categoryId)
-      subs.forEach((name, i) => {
-        db.prepare(
-          'INSERT INTO categories (id, name, parent_id, sort_order) VALUES (?, ?, ?, ?)'
-        ).run(`${categoryId}-${i}`, name, rootId, i)
-      })
+      const def = loadLibraryCategories()?.categories.find((c) => c.id === categoryId)
+      if (def) {
+        def.subcategories.forEach((sub, i) => {
+          db.prepare(
+            'INSERT INTO categories (id, name, parent_id, sort_order) VALUES (?, ?, ?, ?)'
+          ).run(sub.id, sub.name, rootId, i)
+        })
+      }
     }
     this.libraryDbs.set(categoryId, db)
-  }
-
-  private defaultSubCategories(categoryId: string): string[] {
-    const map: Record<string, string[]> = {
-      cat: ['品种', '习性', '护理'],
-      dog: ['品种', '训练', '健康'],
-      supercar: ['品牌', '车型', '赛事'],
-      plant: ['观叶', '花卉', '多肉'],
-      movie: ['华语', '欧美', '动画']
-    }
-    return map[categoryId] ?? ['概览', '精选', '更多']
-  }
-
-  private seedIfEmpty(): void {
-    const seedPath = join(process.cwd(), 'assets', 'seed', 'sample-items.json')
-    if (!existsSync(seedPath)) return
-    const seeds = JSON.parse(readFileSync(seedPath, 'utf-8')) as Array<{
-      categoryId: string
-      subCategoryId: string
-      name: string
-      summary: string
-      description: string
-      tags: string[]
-    }>
-    for (const s of seeds) {
-      const db = this.libraryDbs.get(s.categoryId)
-      if (!db) continue
-      const exists = db.prepare('SELECT id FROM items WHERE name = ?').get(s.name)
-      if (exists) continue
-      const id = randomUUID()
-      const now = new Date().toISOString()
-      db.prepare(
-        `INSERT INTO items (id, category_id, sub_category_id, name, summary, description, tags, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-      ).run(
-        id,
-        s.categoryId,
-        s.subCategoryId,
-        s.name,
-        s.summary,
-        s.description,
-        JSON.stringify(s.tags),
-        now,
-        now
-      )
-    }
   }
 
   getLibraryDb(categoryId: string): Database.Database | undefined {
@@ -334,7 +289,7 @@ export class DatabaseService {
     this.userDb.close()
     this.customDb.close()
     this.rssDb.close()
-    for (const db of this.libraryDbs.values()) db.close()
+    this.libraryDbs.forEach((db) => db.close())
   }
 }
 

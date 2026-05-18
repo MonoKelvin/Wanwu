@@ -6,6 +6,7 @@ import ConfirmationService from 'primevue/confirmationservice'
 import Tooltip from 'primevue/tooltip'
 import 'primeicons/primeicons.css'
 import { WanwuPreset } from '@app/theme/preset'
+import { primeVueZhCn } from '@app/locale/primevue-zh-cn'
 import '@app/styles/tokens.css'
 import '@app/styles/main.css'
 import App from '@app/App.vue'
@@ -19,6 +20,7 @@ app.use(ToastService)
 app.use(ConfirmationService)
 app.use(PrimeVue, {
   ripple: false,
+  locale: primeVueZhCn,
   theme: {
     preset: WanwuPreset,
     options: {

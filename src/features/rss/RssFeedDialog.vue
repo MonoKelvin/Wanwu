@@ -142,7 +142,13 @@ function submit() {
 
       <div>
         <label class="ww-form-label">分组</label>
-        <Select v-model="groupId" :options="groupOptions" option-label="label" option-value="value" class="w-full" />
+        <Select
+          v-model="groupId"
+          :options="groupOptions"
+          option-label="label"
+          option-value="value"
+          class="w-full"
+        />
       </div>
 
       <fieldset class="ww-rss-display-fieldset">

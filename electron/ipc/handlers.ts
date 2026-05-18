@@ -21,6 +21,10 @@ export function registerIpcHandlers(services: AppServices): void {
     return services.library?.listItems(params.categoryId, params.subCategoryId) ?? []
   })
 
+  ipcMain.handle('library:searchItems', (_e, params: { query: string; limit?: number }) => {
+    return services.library?.searchItems(params.query, params.limit) ?? []
+  })
+
   ipcMain.handle('library:getItem', (_e, id: string) => {
     return services.library?.getItem(id) ?? null
   })

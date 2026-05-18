@@ -1,0 +1,166 @@
+{
+  "version": 2,
+  "defaults": {
+    "provider": "pixabay",
+    "imageType": "photo",
+    "orientation": "all",
+    "minMatchScore": 1,
+    "perPage": 24
+  },
+  "providers": {
+    "pixabay": {
+      "envKey": "PIXABAY_API_KEY",
+      "docs": "https://pixabay.com/api/docs/"
+    },
+    "unsplash": {
+      "envKey": "UNSPLASH_ACCESS_KEY",
+      "docs": "https://unsplash.com/developers"
+    },
+    "manual": {
+      "note": "将 cover.jpg、gallery-01~03.jpg 放入 assets/library/{categoryId}/{slug}/"
+    }
+  },
+  "items": {
+    "cat-british-shorthair": {
+      "query": "british shorthair cat portrait",
+      "category": "animals",
+      "matchTags": ["cat", "shorthair", "british"]
+    },
+    "cat-maine-coon": {
+      "query": "maine coon cat",
+      "category": "animals",
+      "matchTags": ["cat", "maine", "coon"]
+    },
+    "cat-ragdoll": {
+      "query": "ragdoll cat blue eyes",
+      "category": "animals",
+      "matchTags": ["cat", "ragdoll"]
+    },
+    "cat-dragon-li": {
+      "query": "tabby cat chinese domestic",
+      "category": "animals",
+      "matchTags": ["cat", "tabby"]
+    },
+    "cat-japanese-bobtail": {
+      "query": "japanese bobtail cat",
+      "category": "animals",
+      "matchTags": ["cat", "bobtail", "japan"]
+    },
+    "dog-border-collie": {
+      "query": "border collie dog",
+      "category": "animals",
+      "matchTags": ["dog", "collie", "border"]
+    },
+    "dog-golden-retriever": {
+      "query": "golden retriever dog",
+      "category": "animals",
+      "matchTags": ["dog", "golden", "retriever"]
+    },
+    "dog-shiba-inu": {
+      "query": "shiba inu dog",
+      "category": "animals",
+      "matchTags": ["dog", "shiba"]
+    },
+    "hero-spiderman": {
+      "query": "spiderman superhero cosplay",
+      "category": "people",
+      "requiredTags": ["spiderman"],
+      "matchTags": ["spiderman", "superhero"]
+    },
+    "hero-iron-man": {
+      "query": "iron man armor cosplay",
+      "category": "people",
+      "matchTags": ["iron", "armor", "marvel"]
+    },
+    "hero-captain-america": {
+      "query": "captain america shield cosplay",
+      "category": "people",
+      "matchTags": ["captain", "america", "shield"]
+    },
+    "hero-batman-dc": {
+      "query": "batman cosplay dark knight",
+      "category": "people",
+      "matchTags": ["batman", "cosplay"]
+    },
+    "hero-superman-dc": {
+      "query": "superman cosplay costume",
+      "category": "people",
+      "matchTags": ["superman", "cosplay"]
+    },
+    "supercar-ferrari-488": {
+      "query": "ferrari 488 sports car",
+      "category": "transportation",
+      "matchTags": ["ferrari", "car"]
+    },
+    "supercar-lamborghini-huracan": {
+      "query": "lamborghini huracan",
+      "category": "transportation",
+      "matchTags": ["lamborghini", "car"]
+    },
+    "supercar-porsche-911": {
+      "query": "porsche 911 sports car",
+      "category": "transportation",
+      "matchTags": ["porsche", "911"]
+    },
+    "plant-monstera": {
+      "query": "monstera deliciosa houseplant",
+      "category": "nature",
+      "matchTags": ["monstera", "plant"]
+    },
+    "plant-fiddle-leaf-fig": {
+      "query": "fiddle leaf fig plant indoor",
+      "category": "nature",
+      "matchTags": ["fiddle", "fig", "plant"]
+    },
+    "plant-echeveria": {
+      "query": "echeveria succulent",
+      "category": "nature",
+      "matchTags": ["echeveria", "succulent"]
+    },
+    "anime-one-piece": {
+      "query": "one piece anime figure luffy",
+      "category": "people",
+      "matchTags": ["anime", "figure"]
+    },
+    "anime-demon-slayer": {
+      "query": "demon slayer anime cosplay",
+      "category": "people",
+      "matchTags": ["anime", "cosplay"]
+    },
+    "anime-attack-on-titan": {
+      "query": "attack on titan cosplay survey corps",
+      "category": "people",
+      "matchTags": ["cosplay", "anime"]
+    },
+    "transformers-optimus-prime": {
+      "query": "optimus prime transformer truck toy",
+      "category": "transportation",
+      "matchTags": ["truck", "transformer"]
+    },
+    "transformers-bumblebee": {
+      "query": "bumblebee transformer yellow car",
+      "category": "transportation",
+      "matchTags": ["yellow", "car", "transformer"]
+    },
+    "motorcycle-ducati-panigale": {
+      "query": "ducati panigale motorcycle",
+      "category": "transportation",
+      "matchTags": ["ducati", "motorcycle"]
+    },
+    "motorcycle-harley-street": {
+      "query": "harley davidson motorcycle cruiser",
+      "category": "transportation",
+      "matchTags": ["harley", "motorcycle"]
+    },
+    "history-terracotta-army": {
+      "query": "terracotta warriors xian china",
+      "category": "places",
+      "matchTags": ["terracotta", "warrior"]
+    },
+    "history-great-wall": {
+      "query": "great wall of china",
+      "category": "places",
+      "matchTags": ["wall", "china", "great"]
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "cat",
+      "name": "猫",
+      "icon": "pi pi-heart",
+      "subcategories": [
+        { "id": "cat-europe", "name": "欧洲品种" },
+        { "id": "cat-americas", "name": "美洲品种" },
+        { "id": "cat-china", "name": "中国品种" },
+        { "id": "cat-japan", "name": "日本品种" }
+      ]
+    },
+    {
+      "id": "dog",
+      "name": "狗",
+      "icon": "pi pi-heart-fill",
+      "subcategories": [
+        { "id": "dog-europe", "name": "欧洲犬种" },
+        { "id": "dog-americas", "name": "美洲犬种" },
+        { "id": "dog-asia", "name": "亚洲犬种" }
+      ]
+    },
+    {
+      "id": "superhero",
+      "name": "超级英雄",
+      "icon": "pi pi-bolt",
+      "subcategories": [
+        { "id": "hero-marvel", "name": "漫威 Marvel" },
+        { "id": "hero-dc", "name": "DC 漫画" },
+        { "id": "hero-other", "name": "其他宇宙" }
+      ]
+    },
+    {
+      "id": "supercar",
+      "name": "超跑",
+      "icon": "pi pi-car",
+      "subcategories": [
+        { "id": "car-italy", "name": "意大利品牌" },
+        { "id": "car-germany", "name": "德国品牌" },
+        { "id": "car-britain", "name": "英国品牌" }
+      ]
+    },
+    {
+      "id": "plant",
+      "name": "植物",
+      "icon": "pi pi-sun",
+      "subcategories": [
+        { "id": "plant-aroid", "name": "天南星科观叶" },
+        { "id": "plant-succulent", "name": "多肉与仙人掌" }
+      ]
+    },
+    {
+      "id": "anime",
+      "name": "动漫作品",
+      "icon": "pi pi-sparkles",
+      "subcategories": [
+        { "id": "anime-shonen", "name": "少年热血" },
+        { "id": "anime-fantasy", "name": "奇幻冒险" }
+      ]
+    },
+    {
+      "id": "transformers",
+      "name": "变形金刚",
+      "icon": "pi pi-star",
+      "subcategories": [
+        { "id": "tf-autobot", "name": "汽车人 Autobot" },
+        { "id": "tf-decepticon", "name": "霸天虎 Decepticon" }
+      ]
+    },
+    {
+      "id": "motorcycle",
+      "name": "摩托车",
+      "icon": "pi pi-compass",
+      "subcategories": [
+        { "id": "moto-italy", "name": "意大利品牌" },
+        { "id": "moto-america", "name": "美式巡航" }
+      ]
+    },
+    {
+      "id": "history",
+      "name": "历史遗迹",
+      "icon": "pi pi-book",
+      "subcategories": [
+        { "id": "hist-china", "name": "中国" },
+        { "id": "hist-world", "name": "世界其他" }
+      ]
+    }
+  ]
+}

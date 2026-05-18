@@ -1,17 +1,15 @@
 /**
- * 种子数据导入脚本
- * 用法: npm run seed:import
+ * 提示：全库图鉴请使用 npm run seed:library
  */
 import { readFileSync, existsSync } from 'fs'
 import { join } from 'path'
 
-const seedPath = join(process.cwd(), 'assets', 'seed', 'sample-items.json')
-
-if (!existsSync(seedPath)) {
-  console.error('未找到', seedPath)
-  process.exit(1)
+const catalog = join(process.cwd(), 'assets', 'seed', 'library', 'catalog.json')
+if (existsSync(catalog)) {
+  const data = JSON.parse(readFileSync(catalog, 'utf-8')) as { items: unknown[] }
+  console.log(`全库目录已就绪：${data.items.length} 条（catalog.json）`)
+  console.log('下载配图: 配置 PIXABAY_API_KEY 后 npm run seed:library:media -- --force')
+  console.log('导入数据库: npm run seed:library:reimport 或重启应用')
+} else {
+  console.log('未找到 catalog.json，请先运行: npm run seed:library:placeholders')
 }
-
-const items = JSON.parse(readFileSync(seedPath, 'utf-8'))
-console.log(`种子文件共 ${items.length} 条物品记录。`)
-console.log('请在应用首次启动时自动导入，或于 Electron 主进程中调用 DatabaseService.seedIfEmpty()。')
