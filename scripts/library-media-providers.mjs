@@ -117,7 +117,18 @@ export async function downloadItemMedia({ assetsLib, item, config, provider, api
   }
 
   if (!force && targets.every((t) => existsSync(t.abs))) {
-    return { skipped: true }
+    if (provider === 'manual') return { skipped: true }
+    const hits = await fetchHitsForItem(provider, apiKeys, config)
+    if (!hits?.length) return { skipped: true }
+    const attribFn = (h) => attributionFromHit(provider, h)
+    const packed = packCatalogMedia(item, hits, attribFn)
+    return {
+      skipped: true,
+      coverFile: packed.coverFile,
+      galleryFiles: packed.galleryFiles,
+      coverAttribution: packed.coverAttribution,
+      galleryAttributions: packed.galleryAttributions
+    }
   }
 
   const hits = await fetchHitsForItem(provider, apiKeys, config)

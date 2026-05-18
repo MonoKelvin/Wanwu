@@ -24,143 +24,1401 @@
     "cat-british-shorthair": {
       "query": "british shorthair cat portrait",
       "category": "animals",
-      "matchTags": ["cat", "shorthair", "british"]
+      "matchTags": [
+        "cat",
+        "british",
+        "shorthair"
+      ],
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ]
     },
     "cat-maine-coon": {
       "query": "maine coon cat",
       "category": "animals",
-      "matchTags": ["cat", "maine", "coon"]
+      "matchTags": [
+        "cat",
+        "maine",
+        "coon"
+      ],
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ]
     },
     "cat-ragdoll": {
       "query": "ragdoll cat blue eyes",
       "category": "animals",
-      "matchTags": ["cat", "ragdoll"]
+      "matchTags": [
+        "cat",
+        "ragdoll"
+      ],
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ]
     },
     "cat-dragon-li": {
-      "query": "tabby cat chinese domestic",
+      "query": "tabby cat portrait",
       "category": "animals",
-      "matchTags": ["cat", "tabby"]
+      "matchTags": [
+        "cat",
+        "tabby"
+      ],
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ]
     },
     "cat-japanese-bobtail": {
       "query": "japanese bobtail cat",
       "category": "animals",
-      "matchTags": ["cat", "bobtail", "japan"]
+      "matchTags": [
+        "cat",
+        "bobtail"
+      ],
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ]
     },
     "dog-border-collie": {
       "query": "border collie dog",
       "category": "animals",
-      "matchTags": ["dog", "collie", "border"]
+      "matchTags": [
+        "dog",
+        "border",
+        "collie"
+      ],
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ]
     },
     "dog-golden-retriever": {
       "query": "golden retriever dog",
       "category": "animals",
-      "matchTags": ["dog", "golden", "retriever"]
+      "matchTags": [
+        "dog",
+        "golden",
+        "retriever"
+      ],
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ]
     },
     "dog-shiba-inu": {
       "query": "shiba inu dog",
       "category": "animals",
-      "matchTags": ["dog", "shiba"]
+      "matchTags": [
+        "dog",
+        "shiba"
+      ],
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ]
     },
     "hero-spiderman": {
       "query": "spiderman superhero cosplay",
       "category": "people",
-      "requiredTags": ["spiderman"],
-      "matchTags": ["spiderman", "superhero"]
+      "requiredTags": [
+        "spiderman"
+      ],
+      "matchTags": [
+        "spiderman",
+        "superhero"
+      ]
     },
     "hero-iron-man": {
       "query": "iron man armor cosplay",
       "category": "people",
-      "matchTags": ["iron", "armor", "marvel"]
+      "matchTags": [
+        "iron",
+        "armor",
+        "marvel"
+      ]
     },
     "hero-captain-america": {
       "query": "captain america shield cosplay",
       "category": "people",
-      "matchTags": ["captain", "america", "shield"]
+      "matchTags": [
+        "captain",
+        "america",
+        "shield"
+      ]
     },
     "hero-batman-dc": {
       "query": "batman cosplay dark knight",
       "category": "people",
-      "matchTags": ["batman", "cosplay"]
+      "matchTags": [
+        "batman",
+        "cosplay"
+      ]
     },
     "hero-superman-dc": {
       "query": "superman cosplay costume",
       "category": "people",
-      "matchTags": ["superman", "cosplay"]
+      "matchTags": [
+        "superman",
+        "cosplay"
+      ]
     },
     "supercar-ferrari-488": {
       "query": "ferrari 488 sports car",
       "category": "transportation",
-      "matchTags": ["ferrari", "car"]
+      "matchTags": [
+        "ferrari",
+        "car"
+      ]
     },
     "supercar-lamborghini-huracan": {
       "query": "lamborghini huracan",
       "category": "transportation",
-      "matchTags": ["lamborghini", "car"]
+      "matchTags": [
+        "lamborghini",
+        "car"
+      ]
     },
     "supercar-porsche-911": {
       "query": "porsche 911 sports car",
       "category": "transportation",
-      "matchTags": ["porsche", "911"]
+      "matchTags": [
+        "porsche",
+        "911"
+      ]
     },
     "plant-monstera": {
       "query": "monstera deliciosa houseplant",
       "category": "nature",
-      "matchTags": ["monstera", "plant"]
+      "matchTags": [
+        "monstera",
+        "plant"
+      ]
     },
     "plant-fiddle-leaf-fig": {
       "query": "fiddle leaf fig plant indoor",
       "category": "nature",
-      "matchTags": ["fiddle", "fig", "plant"]
+      "matchTags": [
+        "fiddle",
+        "fig",
+        "plant"
+      ]
     },
     "plant-echeveria": {
       "query": "echeveria succulent",
       "category": "nature",
-      "matchTags": ["echeveria", "succulent"]
+      "matchTags": [
+        "echeveria",
+        "succulent"
+      ]
     },
     "anime-one-piece": {
       "query": "one piece anime figure luffy",
       "category": "people",
-      "matchTags": ["anime", "figure"]
+      "matchTags": [
+        "anime",
+        "figure"
+      ]
     },
     "anime-demon-slayer": {
       "query": "demon slayer anime cosplay",
       "category": "people",
-      "matchTags": ["anime", "cosplay"]
+      "matchTags": [
+        "anime",
+        "cosplay"
+      ]
     },
     "anime-attack-on-titan": {
       "query": "attack on titan cosplay survey corps",
       "category": "people",
-      "matchTags": ["cosplay", "anime"]
+      "matchTags": [
+        "cosplay",
+        "anime"
+      ]
     },
     "transformers-optimus-prime": {
       "query": "optimus prime transformer truck toy",
       "category": "transportation",
-      "matchTags": ["truck", "transformer"]
+      "matchTags": [
+        "truck",
+        "transformer"
+      ]
     },
     "transformers-bumblebee": {
       "query": "bumblebee transformer yellow car",
       "category": "transportation",
-      "matchTags": ["yellow", "car", "transformer"]
+      "matchTags": [
+        "yellow",
+        "car",
+        "transformer"
+      ]
     },
     "motorcycle-ducati-panigale": {
       "query": "ducati panigale motorcycle",
       "category": "transportation",
-      "matchTags": ["ducati", "motorcycle"]
+      "matchTags": [
+        "ducati",
+        "motorcycle"
+      ]
     },
     "motorcycle-harley-street": {
       "query": "harley davidson motorcycle cruiser",
       "category": "transportation",
-      "matchTags": ["harley", "motorcycle"]
+      "matchTags": [
+        "harley",
+        "motorcycle"
+      ]
     },
     "history-terracotta-army": {
       "query": "terracotta warriors xian china",
       "category": "places",
-      "matchTags": ["terracotta", "warrior"]
+      "matchTags": [
+        "terracotta",
+        "warrior"
+      ]
     },
     "history-great-wall": {
       "query": "great wall of china",
       "category": "places",
-      "matchTags": ["wall", "china", "great"]
+      "matchTags": [
+        "wall",
+        "china",
+        "great"
+      ]
+    },
+    "cat-persian": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "persian cat fluffy",
+      "matchTags": [
+        "cat",
+        "persian"
+      ]
+    },
+    "cat-scottish-fold": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "scottish fold cat",
+      "matchTags": [
+        "cat",
+        "fold"
+      ]
+    },
+    "cat-russian-blue": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "russian blue cat",
+      "matchTags": [
+        "cat",
+        "russian",
+        "blue"
+      ]
+    },
+    "cat-norwegian-forest": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "norwegian forest cat",
+      "matchTags": [
+        "cat",
+        "norwegian"
+      ]
+    },
+    "cat-chartreux": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "chartreux cat grey",
+      "matchTags": [
+        "cat",
+        "chartreux",
+        "grey"
+      ]
+    },
+    "cat-turkish-angora": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "turkish angora white cat",
+      "matchTags": [
+        "cat",
+        "angora",
+        "white"
+      ]
+    },
+    "cat-turkish-van": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "turkish van cat",
+      "matchTags": [
+        "cat",
+        "van"
+      ]
+    },
+    "cat-devon-rex": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "devon rex cat",
+      "matchTags": [
+        "cat",
+        "rex"
+      ]
+    },
+    "cat-cornish-rex": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "cornish rex cat",
+      "matchTags": [
+        "cat",
+        "rex"
+      ]
+    },
+    "cat-sphynx": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "sphynx hairless cat",
+      "matchTags": [
+        "cat",
+        "sphynx"
+      ]
+    },
+    "cat-manx": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "manx cat tailless",
+      "matchTags": [
+        "cat",
+        "manx"
+      ]
+    },
+    "cat-exotic-shorthair": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "exotic shorthair cat flat face",
+      "matchTags": [
+        "cat",
+        "persian"
+      ]
+    },
+    "cat-nebelung": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "russian blue longhair cat",
+      "matchTags": [
+        "cat",
+        "blue"
+      ]
+    },
+    "cat-birman": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "birman cat blue eyes",
+      "matchTags": [
+        "cat",
+        "birman"
+      ]
+    },
+    "cat-american-shorthair": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "american shorthair tabby cat",
+      "matchTags": [
+        "cat",
+        "tabby"
+      ]
+    },
+    "cat-american-curl": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "american curl cat",
+      "matchTags": [
+        "cat",
+        "curl"
+      ]
+    },
+    "cat-american-bobtail": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "american bobtail cat",
+      "matchTags": [
+        "cat",
+        "bobtail"
+      ]
+    },
+    "cat-bengal": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "bengal cat leopard",
+      "matchTags": [
+        "cat",
+        "bengal"
+      ]
+    },
+    "cat-bombay": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "black cat copper eyes",
+      "matchTags": [
+        "cat",
+        "black"
+      ]
+    },
+    "cat-savannah": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "savannah cat serval",
+      "matchTags": [
+        "cat",
+        "savannah"
+      ]
+    },
+    "cat-ocicat": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "ocicat spotted cat",
+      "matchTags": [
+        "cat",
+        "ocicat"
+      ]
+    },
+    "cat-ragamuffin": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "ragdoll longhair cat",
+      "matchTags": [
+        "cat",
+        "ragdoll"
+      ]
+    },
+    "cat-selkirk-rex": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "selkirk rex curly cat",
+      "matchTags": [
+        "cat",
+        "rex"
+      ]
+    },
+    "cat-laperm": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "curly cat laperm",
+      "matchTags": [
+        "cat",
+        "curly"
+      ]
+    },
+    "cat-munchkin": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "munchkin cat short legs",
+      "matchTags": [
+        "cat",
+        "munchkin"
+      ]
+    },
+    "cat-pixiebob": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "pixie bob cat wild",
+      "matchTags": [
+        "cat",
+        "bobtail"
+      ]
+    },
+    "cat-siamese": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "siamese cat seal point",
+      "matchTags": [
+        "cat",
+        "siamese"
+      ]
+    },
+    "cat-korat": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "korat cat silver blue",
+      "matchTags": [
+        "cat",
+        "korat"
+      ]
+    },
+    "cat-burmese": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "burmese cat golden eyes",
+      "matchTags": [
+        "cat",
+        "burmese"
+      ]
+    },
+    "cat-orange-tabby": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "orange tabby cat",
+      "matchTags": [
+        "cat",
+        "orange",
+        "tabby"
+      ]
+    },
+    "cat-cow-cat": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "black and white cat",
+      "matchTags": [
+        "cat",
+        "black",
+        "white"
+      ]
+    },
+    "cat-tortoiseshell": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "tortoiseshell cat",
+      "matchTags": [
+        "cat",
+        "tortoiseshell"
+      ]
+    },
+    "cat-linqing-lion": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "white longhair cat",
+      "matchTags": [
+        "cat",
+        "white"
+      ]
+    },
+    "cat-jianzhou": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "chinese domestic cat",
+      "matchTags": [
+        "cat"
+      ]
+    },
+    "cat-chinese-white": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "white cat portrait",
+      "matchTags": [
+        "cat",
+        "white"
+      ]
+    },
+    "cat-singapura": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "singapura cat small",
+      "matchTags": [
+        "cat",
+        "singapura"
+      ]
+    },
+    "cat-abyssinian": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "abyssinian cat ticked",
+      "matchTags": [
+        "cat",
+        "abyssinian"
+      ]
+    },
+    "cat-calico-chinese": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "calico cat tricolor",
+      "matchTags": [
+        "cat",
+        "calico"
+      ]
+    },
+    "cat-kurilian-bobtail": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "kurilian bobtail cat",
+      "matchTags": [
+        "cat",
+        "bobtail"
+      ]
+    },
+    "cat-japanese-bobtail-longhair": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "japanese bobtail longhair cat",
+      "matchTags": [
+        "cat",
+        "bobtail"
+      ]
+    },
+    "cat-mi-ke": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "calico japanese cat",
+      "matchTags": [
+        "cat",
+        "calico"
+      ]
+    },
+    "cat-japanese-domestic": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "japanese cat street",
+      "matchTags": [
+        "cat",
+        "japan"
+      ]
+    },
+    "cat-toybob": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "small cat portrait",
+      "matchTags": [
+        "cat",
+        "kitten"
+      ]
+    },
+    "cat-hokkaido-cat": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "fluffy cat winter",
+      "matchTags": [
+        "cat",
+        "fluffy"
+      ]
+    },
+    "cat-okinawa-cat": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "street cat tropical",
+      "matchTags": [
+        "cat"
+      ]
+    },
+    "cat-maneki-neko": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "maneki neko lucky cat",
+      "matchTags": [
+        "cat",
+        "lucky"
+      ]
+    },
+    "cat-japanese-chin-longhair": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "cat"
+      ],
+      "query": "longhair cat oriental",
+      "matchTags": [
+        "cat",
+        "longhair"
+      ]
+    },
+    "dog-corgi": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "pembroke welsh corgi dog",
+      "matchTags": [
+        "dog",
+        "corgi"
+      ]
+    },
+    "dog-german-shepherd": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "german shepherd dog",
+      "matchTags": [
+        "dog",
+        "shepherd"
+      ]
+    },
+    "dog-french-bulldog": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "french bulldog dog",
+      "matchTags": [
+        "dog",
+        "bulldog"
+      ]
+    },
+    "dog-english-bulldog": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "english bulldog dog",
+      "matchTags": [
+        "dog",
+        "bulldog"
+      ]
+    },
+    "dog-rottweiler": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "rottweiler dog",
+      "matchTags": [
+        "dog",
+        "rottweiler"
+      ]
+    },
+    "dog-doberman": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "doberman pinscher dog",
+      "matchTags": [
+        "dog",
+        "doberman"
+      ]
+    },
+    "dog-boxer": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "boxer dog portrait",
+      "matchTags": [
+        "dog",
+        "boxer"
+      ]
+    },
+    "dog-dalmatian": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "dalmatian dog spots",
+      "matchTags": [
+        "dog",
+        "dalmatian"
+      ]
+    },
+    "dog-great-dane": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "great dane dog",
+      "matchTags": [
+        "dog",
+        "dane"
+      ]
+    },
+    "dog-cocker-spaniel": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "cocker spaniel dog",
+      "matchTags": [
+        "dog",
+        "spaniel"
+      ]
+    },
+    "dog-poodle": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "poodle dog",
+      "matchTags": [
+        "dog",
+        "poodle"
+      ]
+    },
+    "dog-beagle": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "beagle dog",
+      "matchTags": [
+        "dog",
+        "beagle"
+      ]
+    },
+    "dog-shetland-sheepdog": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "shetland sheepdog dog",
+      "matchTags": [
+        "dog",
+        "sheltie"
+      ]
+    },
+    "dog-cardigan-corgi": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "cardigan welsh corgi dog",
+      "matchTags": [
+        "dog",
+        "corgi"
+      ]
+    },
+    "dog-scottish-terrier": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "scottish terrier dog",
+      "matchTags": [
+        "dog",
+        "terrier"
+      ]
+    },
+    "dog-bernese-mountain": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "bernese mountain dog",
+      "matchTags": [
+        "dog",
+        "bernese"
+      ]
+    },
+    "dog-greyhound": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "greyhound dog running",
+      "matchTags": [
+        "dog",
+        "greyhound"
+      ]
+    },
+    "dog-saint-bernard": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "saint bernard dog",
+      "matchTags": [
+        "dog",
+        "bernard"
+      ]
+    },
+    "dog-irish-setter": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "irish setter dog red",
+      "matchTags": [
+        "dog",
+        "setter"
+      ]
+    },
+    "dog-labrador-retriever": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "labrador retriever dog",
+      "matchTags": [
+        "dog",
+        "labrador"
+      ]
+    },
+    "dog-australian-shepherd": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "australian shepherd dog",
+      "matchTags": [
+        "dog",
+        "australian"
+      ]
+    },
+    "dog-australian-cattle-dog": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "australian cattle dog",
+      "matchTags": [
+        "dog",
+        "cattle"
+      ]
+    },
+    "dog-boston-terrier": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "boston terrier dog",
+      "matchTags": [
+        "dog",
+        "boston"
+      ]
+    },
+    "dog-american-pit-bull": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "pit bull terrier dog",
+      "matchTags": [
+        "dog",
+        "pitbull"
+      ]
+    },
+    "dog-alaskan-malamute": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "alaskan malamute dog",
+      "matchTags": [
+        "dog",
+        "malamute"
+      ]
+    },
+    "dog-chesapeake-bay-retriever": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "chesapeake bay retriever dog",
+      "matchTags": [
+        "dog",
+        "retriever"
+      ]
+    },
+    "dog-american-staffordshire": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "staffordshire terrier dog",
+      "matchTags": [
+        "dog",
+        "staffordshire"
+      ]
+    },
+    "dog-nova-scotia-tolling": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "nova scotia duck tolling retriever",
+      "matchTags": [
+        "dog",
+        "retriever"
+      ]
+    },
+    "dog-american-eskimo": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "american eskimo dog white",
+      "matchTags": [
+        "dog",
+        "eskimo"
+      ]
+    },
+    "dog-catahoula-leopard": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "catahoula leopard dog",
+      "matchTags": [
+        "dog",
+        "catahoula"
+      ]
+    },
+    "dog-xoloitzcuintli": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "xoloitzcuintli hairless dog",
+      "matchTags": [
+        "dog",
+        "xolo"
+      ]
+    },
+    "dog-vizsla": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "vizsla dog",
+      "matchTags": [
+        "dog",
+        "vizsla"
+      ]
+    },
+    "dog-samoyed": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "samoyed dog white",
+      "matchTags": [
+        "dog",
+        "samoyed"
+      ]
+    },
+    "dog-akita": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "akita inu dog",
+      "matchTags": [
+        "dog",
+        "akita"
+      ]
+    },
+    "dog-chow-chow": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "chow chow dog",
+      "matchTags": [
+        "dog",
+        "chow"
+      ]
+    },
+    "dog-shar-pei": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "shar pei dog",
+      "matchTags": [
+        "dog",
+        "shar"
+      ]
+    },
+    "dog-pekingese": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "pekingese dog",
+      "matchTags": [
+        "dog",
+        "pekingese"
+      ]
+    },
+    "dog-shih-tzu": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "shih tzu dog",
+      "matchTags": [
+        "dog",
+        "shih"
+      ]
+    },
+    "dog-tibetan-mastiff": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "tibetan mastiff dog",
+      "matchTags": [
+        "dog",
+        "mastiff"
+      ]
+    },
+    "dog-korean-jindo": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "korean jindo dog",
+      "matchTags": [
+        "dog",
+        "jindo"
+      ]
+    },
+    "dog-siberian-husky": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "siberian husky dog",
+      "matchTags": [
+        "dog",
+        "husky"
+      ]
+    },
+    "dog-hokkaido": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "hokkaido dog japan",
+      "matchTags": [
+        "dog",
+        "japan"
+      ]
+    },
+    "dog-chinese-crested": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "chinese crested dog",
+      "matchTags": [
+        "dog",
+        "crested"
+      ]
+    },
+    "dog-pug": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "pug dog portrait",
+      "matchTags": [
+        "dog",
+        "pug"
+      ]
+    },
+    "dog-thai-ridgeback": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "thai ridgeback dog",
+      "matchTags": [
+        "dog",
+        "ridgeback"
+      ]
+    },
+    "dog-formosan-mountain": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "taiwan dog mountain",
+      "matchTags": [
+        "dog",
+        "taiwan"
+      ]
+    },
+    "dog-miniature-schnauzer": {
+      "category": "animals",
+      "provider": "pixabay",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "miniature schnauzer dog",
+      "matchTags": [
+        "dog",
+        "schnauzer"
+      ]
     }
   }
 }

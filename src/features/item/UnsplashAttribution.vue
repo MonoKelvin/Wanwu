@@ -17,7 +17,10 @@ const source = computed(() => mediaAttributionSource(props.attribution))
 
 const brandLabel = computed(() => (source.value === 'pixabay' ? 'Pixabay' : 'Unsplash'))
 
-const creditPrefix = computed(() => (source.value === 'pixabay' ? 'Image by' : 'Photo by'))
+const creditPrefix = computed(() => {
+  if (props.compact) return 'by'
+  return source.value === 'pixabay' ? 'Image by' : 'Photo by'
+})
 </script>
 
 <template>

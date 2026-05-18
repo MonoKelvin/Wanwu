@@ -1,6 +1,8 @@
 /**
- * 为 catalog.json 补充 Unsplash 摄影师归属（需 UNSPLASH_ACCESS_KEY）
- * 按 library-unsplash-curated.mjs 中实际下载的图片 ID 查询，与展示 JPG 一致。
+ * 为 catalog.json 补充 Unsplash 精选图的摄影师归属（需 UNSPLASH_ACCESS_KEY）
+ * 按 library-unsplash-curated.mjs 中实际下载的图片 ID 查询。
+ *
+ * Pixabay 全库归属请用: npm run seed:library:media（本地已有 JPG 时仅同步归属）
  *
  * 用法: npm run seed:library:attribution
  */

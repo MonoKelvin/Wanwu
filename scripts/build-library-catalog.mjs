@@ -2,10 +2,12 @@
  * 生成 assets/seed/library/catalog.json（v6 细分类 + 详实条目）
  * 运行: node scripts/build-library-catalog.mjs
  */
-import { writeFileSync } from 'fs'
+import { writeFileSync, readFileSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { extraCatalogItems } from './library-catalog-extra-items.mjs'
+import { catCatalogItems } from './library-catalog-cat-items.mjs'
+import { dogCatalogItems } from './library-catalog-dog-items.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const outPath = join(root, 'assets', 'seed', 'library', 'catalog.json')
@@ -142,62 +144,6 @@ const items = [
       标志: '短尾、修长四肢',
       文化: '招猫、三毛猫象征',
       性格: '活泼、亲人、爱叫'
-    }
-  ),
-
-  // —— 狗 ——
-  item(
-    'dog-border-collie',
-    'dog',
-    'dog-europe',
-    '边境牧羊犬',
-    '源自英苏边境的牧羊犬，智商极高、工作驱动强，飞盘与敏捷赛常见冠军。',
-    '边境牧羊犬（Border Collie）在苏格兰–英格兰边境地区培育，以「眼神控制」牲畜闻名。被多数犬类智商排名列为第一，需要大量运动与脑力刺激。\n\n不适合长期关笼或无聊居家；适合敏捷、服从、飞盘等活动。被毛有中长型，需定期梳理。常见黑白双色，也有陨石色等。\n\n相关：与澳洲牧牛犬、喜乐蒂有工作犬血缘关联；电影《灵犬莱西》提升其知名度。',
-    ['牧羊犬', '欧洲', '高智商', '运动型'],
-    {
-      分类: '欧洲犬种',
-      原产地: '英国/苏格兰边境',
-      体重: '12–20 kg',
-      寿命: '12–15 年',
-      用途: '牧羊、敏捷、伴侣',
-      运动需求: '极高',
-      性格: '专注、敏感、忠诚'
-    }
-  ),
-  item(
-    'dog-golden-retriever',
-    'dog',
-    'dog-americas',
-    '金毛寻回犬',
-    '19 世纪苏格兰选育的寻回犬，金色被毛、性格温和，常担任导盲犬与家庭犬。',
-    '金毛寻回犬（Golden Retriever）由 Dudley Marjoribanks 等在苏格兰高地选育，用于水禽寻回。被毛浓密防水，需要定期梳理换毛期。\n\n性格友善、耐心，广泛用于导盲、治疗与搜救工作。注意髋关节发育不良（HD）筛查与体重管理。\n\n相关：与拉布拉多、平毛寻回犬为相近工作犬系；是欧美最受欢迎家庭犬之一。',
-    ['寻回犬', '美洲', '导盲', '家庭犬'],
-    {
-      分类: '美洲犬种',
-      育成地: '苏格兰（后流行于北美）',
-      体重: '25–34 kg',
-      寿命: '10–12 年',
-      被毛: '中长、金色系',
-      工作: '寻回、导盲、治疗',
-      性格: '温和、忠诚、爱玩'
-    }
-  ),
-  item(
-    'dog-shiba-inu',
-    'dog',
-    'dog-asia',
-    '柴犬',
-    '日本国宝级犬种，卷尾、三角耳、独立性格，网络「表情包」柴犬形象来源。',
-    '柴犬（Shiba Inu）是日本六大天然纪念犬种之一，名字意为「灌木丛中的小狗」。体型紧凑、双层被毛，常见赤色、黑色、胡麻色。\n\n性格独立、警惕、对主人忠诚但不一定黏人。需早期社会化训练。2010 年前后因网络迷因在全球走红。\n\n相关：与秋田犬、北海道犬等同为日本天然纪念犬；加密货币 Dogecoin 标志为柴犬形象。',
-    ['日本', '亚洲', '天然纪念', '独立'],
-    {
-      分类: '亚洲犬种',
-      原产地: '日本',
-      体重: '8–11 kg',
-      寿命: '13–16 年',
-      标志: '卷尾、三角立耳',
-      保护: '日本天然纪念物',
-      性格: '独立、机警、忠诚'
     }
   ),
 
@@ -554,15 +500,55 @@ const items = [
     }
   ),
 
+  ...catCatalogItems(item),
+  ...dogCatalogItems(item),
   ...extraCatalogItems(item)
 ]
+
+/** 重建 catalog 时保留已有配图归属（由 seed-library-media 写入） */
+function mergeExistingMediaFields(nextItems, catalogPath) {
+  if (!existsSync(catalogPath)) return nextItems
+  try {
+    const prev = JSON.parse(readFileSync(catalogPath, 'utf-8'))
+    const bySlug = new Map((prev.items ?? []).map((i) => [i.slug, i]))
+    return nextItems.map((entry) => {
+      const old = bySlug.get(entry.slug)
+      if (!old) return entry
+      return {
+        ...entry,
+        ...(old.coverAttribution ? { coverAttribution: old.coverAttribution } : {}),
+        ...(old.galleryAttributions?.length
+          ? { galleryAttributions: old.galleryAttributions }
+          : {})
+      }
+    })
+  } catch {
+    return nextItems
+  }
+}
+
+const mergedItems = mergeExistingMediaFields(items, outPath)
 
 const catalog = {
   version: 7,
   mediaProvider: 'pixabay',
   mediaConfigVersion: 2,
-  items
+  items: mergedItems
 }
 
 writeFileSync(outPath, JSON.stringify(catalog, null, 2), 'utf-8')
 console.log(`Wrote ${items.length} items to ${outPath}`)
+
+// 同步猫 / 狗类 Pixabay 搜索配置
+try {
+  const { spawnSync } = await import('child_process')
+  for (const cat of ['cat', 'dog']) {
+    const r = spawnSync(process.execPath, ['scripts/sync-library-media-manifest.mjs', `--category=${cat}`], {
+      cwd: root,
+      stdio: 'inherit'
+    })
+    if (r.status !== 0) console.warn(`sync media (${cat}) 未成功，可手动运行`)
+  }
+} catch {
+  /* 构建 catalog 不阻断 */
+}

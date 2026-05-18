@@ -20,11 +20,11 @@
     "seed:library": "node scripts/seed-library-media.mjs",
     "seed:library:catalog": "node scripts/build-library-catalog.mjs",
     "seed:library:media": "node scripts/seed-library-media.mjs",
+    "seed:library:sync-media": "node scripts/sync-library-media-manifest.mjs",
     "seed:library:audit": "node scripts/audit-library-media.mjs",
     "seed:library:reimport": "tsx scripts/reimport-library-catalog.ts",
     "seed:library:legacy-unsplash": "node scripts/seed-library.mjs",
     "seed:library:attribution": "node scripts/enrich-library-attribution.mjs",
-    "seed:library:pixabay": "node scripts/seed-library-media.mjs",
     "postinstall": "electron-rebuild -f -w better-sqlite3",
     "rebuild": "electron-rebuild -f -w better-sqlite3"
   },

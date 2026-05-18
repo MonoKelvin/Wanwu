@@ -5,7 +5,7 @@ import type Database from 'better-sqlite3'
 import type { DatabaseService } from './database'
 import type { MediaAttribution } from '../../src/shared/types/unsplash'
 
-export const LIBRARY_CATALOG_VERSION = 6
+export const LIBRARY_CATALOG_VERSION = 7
 
 export interface LibraryCatalogItem {
   slug: string

@@ -57,12 +57,21 @@ export function resolveMediaConfig(slug, catalogItem = {}) {
     entry.query ??
     fallbackQueryFromSlug(slug, catalogItem)
 
+  const categoryId = slug.split('-')[0]
+  const petCategory = ['cat', 'dog'].includes(categoryId)
+    ? categoryId
+    : ['cat', 'dog'].includes(catalogItem.categoryId)
+      ? catalogItem.categoryId
+      : null
+
   return {
     provider,
     query,
-    category: entry.category,
-    matchTags: entry.matchTags ?? [],
-    requiredTags: entry.requiredTags ?? [],
+    category: entry.category ?? (petCategory ? 'animals' : undefined),
+    matchTags:
+      entry.matchTags ??
+      (petCategory ? [petCategory, ...slug.replace(new RegExp(`^${petCategory}-`), '').split('-').slice(0, 2)] : []),
+    requiredTags: entry.requiredTags ?? (petCategory ? [petCategory] : []),
     minMatchScore: entry.minMatchScore ?? defaults.minMatchScore ?? 1,
     imageType: entry.imageType ?? defaults.imageType ?? 'photo',
     orientation: entry.orientation ?? defaults.orientation ?? 'all',

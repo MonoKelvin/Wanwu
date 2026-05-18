@@ -7,6 +7,7 @@
  *   npm run seed:library:media -- --slug=cat-british-shorthair
  *   npm run seed:library:media -- --provider=manual
  *   npm run seed:library:media -- --limit=3
+ *   npm run seed:library:media -- --category=cat --force
  *
  * 环境变量见 media.json → providers（PIXABAY_API_KEY / UNSPLASH_ACCESS_KEY）
  */
@@ -28,14 +29,16 @@ function parseArgs() {
   const limit = limitArg ? Number(limitArg.split('=')[1]) : 0
   const slugArg = argv.find((a) => a.startsWith('--slug='))
   const slug = slugArg ? slugArg.split('=')[1] : null
+  const categoryArg = argv.find((a) => a.startsWith('--category='))
+  const category = categoryArg ? categoryArg.split('=')[1] : null
   const providerArg = argv.find((a) => a.startsWith('--provider='))
   const providerOverride = providerArg ? providerArg.split('=')[1] : null
-  return { force, limit, slug, providerOverride }
+  return { force, limit, slug, category, providerOverride }
 }
 
 async function main() {
   loadEnvFileSync(root)
-  const { force, limit, slug, providerOverride } = parseArgs()
+  const { force, limit, slug, category, providerOverride } = parseArgs()
 
   if (!existsSync(catalogPath)) {
     console.error(`未找到 ${catalogPath}`)
@@ -50,13 +53,18 @@ async function main() {
   const catalog = JSON.parse(readFileSync(catalogPath, 'utf-8'))
   let items = catalog.items ?? []
   if (slug) items = items.filter((i) => i.slug === slug)
+  else if (category) items = items.filter((i) => i.categoryId === category)
   if (limit > 0) items = items.slice(0, limit)
 
   const defaultProvider = providerOverride ?? 'pixabay'
   if (!providerOverride && defaultProvider !== 'manual' && !apiKeys.pixabay && !apiKeys.unsplash) {
-    console.error('请在 .env 配置 PIXABAY_API_KEY（推荐）或 UNSPLASH_ACCESS_KEY')
+    console.error('请配置 PIXABAY_API_KEY：项目 .env，或 Cursor MCP「pixabay-mcp」')
     console.error('配置说明见 assets/seed/library/media.json')
     process.exit(1)
+  }
+
+  if (apiKeys.pixabay && !existsSync(join(root, '.env'))) {
+    console.log('已使用 Cursor MCP（pixabay-mcp）中的 PIXABAY_API_KEY\n')
   }
 
   console.log(`全库配图 · 配置 media.json · --force=${force}\n`)
@@ -89,9 +97,20 @@ async function main() {
       })
 
       if (media?.skipped) {
-        console.log('  (跳过下载)')
+        const hasAttribution = Boolean(media.coverAttribution)
+        console.log(hasAttribution ? '  (跳过下载，已同步归属)' : '  (跳过下载)')
         skip++
-        updatedMap.set(item.slug, { ...item })
+        updatedMap.set(item.slug, {
+          ...item,
+          ...(media.coverFile ? { coverFile: media.coverFile } : {}),
+          ...(media.galleryFiles ? { galleryFiles: media.galleryFiles } : {}),
+          ...(media.coverAttribution
+            ? {
+                coverAttribution: media.coverAttribution,
+                galleryAttributions: media.galleryAttributions
+              }
+            : {})
+        })
         continue
       }
 
@@ -127,7 +146,7 @@ async function main() {
     [...updatedMap.values()].find((i) => i.mediaProvider)?.mediaProvider ??
     defaultProvider
 
-  catalog.version = 6
+  catalog.version = 7
   catalog.mediaProvider = usedProvider
   catalog.mediaConfigVersion = 2
 

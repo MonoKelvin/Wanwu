@@ -12,18 +12,40 @@ import { join } from 'path'
 export const IMAGES_PER_ITEM = 4
 export const DOWNLOAD_GAP_MS = 350
 
+/** 与 Cursor MCP「pixabay-mcp」共用密钥（.env 未配置时回退） */
+export function loadPixabayKeyFromCursorMcp() {
+  if (process.env.PIXABAY_API_KEY?.trim()) return true
+  const home = process.env.USERPROFILE || process.env.HOME || ''
+  if (!home) return false
+  const mcpPath = join(home, '.cursor', 'mcp.json')
+  if (!existsSync(mcpPath)) return false
+  try {
+    const data = JSON.parse(readFileSync(mcpPath, 'utf8'))
+    const key = data.mcpServers?.['pixabay-mcp']?.env?.PIXABAY_API_KEY
+    if (typeof key === 'string' && key.trim()) {
+      process.env.PIXABAY_API_KEY = key.trim()
+      return true
+    }
+  } catch {
+    /* ignore */
+  }
+  return false
+}
+
 export function loadEnvFileSync(root) {
   const envPath = join(root, '.env')
-  if (!existsSync(envPath)) return
-  for (const line of readFileSync(envPath, 'utf8').split(/\r?\n/)) {
-    const trimmed = line.trim()
-    if (!trimmed || trimmed.startsWith('#')) continue
-    const i = trimmed.indexOf('=')
-    if (i < 1) continue
-    const key = trimmed.slice(0, i).trim()
-    const val = trimmed.slice(i + 1).trim().replace(/^["']|["']$/g, '')
-    if (!process.env[key]) process.env[key] = val
+  if (existsSync(envPath)) {
+    for (const line of readFileSync(envPath, 'utf8').split(/\r?\n/)) {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith('#')) continue
+      const i = trimmed.indexOf('=')
+      if (i < 1) continue
+      const key = trimmed.slice(0, i).trim()
+      const val = trimmed.slice(i + 1).trim().replace(/^["']|["']$/g, '')
+      if (!process.env[key]) process.env[key] = val
+    }
   }
+  loadPixabayKeyFromCursorMcp()
 }
 
 export function relPath(categoryId, slug, filename) {
