@@ -26,6 +26,10 @@ const mediaPath = join(root, 'assets', 'seed', 'library', 'media.json')
 
 let _cache = null
 
+export function clearMediaManifestCache() {
+  _cache = null
+}
+
 export function loadMediaManifest() {
   if (_cache) return _cache
   if (!existsSync(mediaPath)) {
