@@ -1,0 +1,31 @@
+{
+  "id": "66ab957e-905f-4600-9126-48440b8e44e2",
+  "slug": "illustration-vocaloid-miku",
+  "subCategoryId": "ill-digital",
+  "name": "初音未来 Hatsune Miku",
+  "summary": "Crypton 发行的 Vocaloid 2 虚拟歌手角色，双马尾青色形象席卷同人创作与演唱会文化。",
+  "description": "初音未来（初音ミク）使用 Yamaha Vocaloid 2 语音合成引擎，声库取样自声优藤田咲。2007 年由 Crypton Future Media 以「角色驱动」方式发行，催生 NicoNico 动画、MikuMikuDance（MMD）等创作生态。\n\n形象由 KEI 设计，标志性双马尾与领带元素。Magical Mirai、MIKU EXPO 等演唱会使用全息/大屏技术。版权采用「Piapro 角色使用指南」，鼓励非商业与限定商业二次创作。\n\n**相关**：镜音铃·连、巡音流歌等同属 Crypton 角色；是虚拟偶像与 UGC 文化的里程碑。",
+  "tags": [
+    "Vocaloid",
+    "虚拟歌手",
+    "同人",
+    "Crypton"
+  ],
+  "specs": {
+    "分类": "数字插画",
+    "引擎": "Vocaloid 2",
+    "发行": "2007",
+    "开发商": "Crypton Future Media",
+    "形象设计": "KEI",
+    "声源": "藤田咲",
+    "文化": "Piapro / MMD"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "vocaloid miku cosplay",
+    "matchTags": [
+      "vocaloid",
+      "miku"
+    ]
+  }
+}

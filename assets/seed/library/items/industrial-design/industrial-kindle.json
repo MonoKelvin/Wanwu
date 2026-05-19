@@ -1,0 +1,30 @@
+{
+  "id": "4d0466e5-daf6-4201-83aa-8bf32fd82f88",
+  "slug": "industrial-kindle",
+  "subCategoryId": "id-product",
+  "name": "Kindle 电子书",
+  "summary": "电子墨水阅读器，护眼与长续航。",
+  "description": "Kindle 电子书由Amazon推出，属阅读器领域工业设计典范，2007 年间影响用户习惯与行业标准。造型、人机工程与材料工艺共同定义产品识别度。\n\n设计史课程常将其与 Dieter Rams、Jony Ive 等人物及方法论关联讨论。\n\n**设计原则**：功能、可用性、美学与成本平衡\n\n**相关**：与包豪斯、现代主义、极简主义设计运动一脉相承",
+  "tags": [
+    "工业设计",
+    "Amazon",
+    "阅读器",
+    "经典"
+  ],
+  "specs": {
+    "分类": "产品设计",
+    "品牌": "Amazon",
+    "类型": "阅读器",
+    "时期": "2007",
+    "领域": "消费科技",
+    "影响": "行业标杆"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "e reader product design",
+    "matchTags": [
+      "ereader",
+      "product"
+    ]
+  }
+}

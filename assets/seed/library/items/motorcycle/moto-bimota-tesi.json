@@ -1,0 +1,33 @@
+{
+  "id": "1b6f72ab-3ba7-40dd-baf6-149fae665f35",
+  "slug": "moto-bimota-tesi",
+  "subCategoryId": "moto-italy",
+  "name": "比摩塔 Tesi",
+  "summary": "轮毂转向技术实验品牌，限量手工。",
+  "description": "比摩塔 Tesi代表意大利Bimota在摩托车工程与造型上的传统：独特转向动力、精细底盘与独特排气声浪。意大利品牌常参与 MotoGP 并将赛事技术转化至民用车。\n\n博洛尼亚、瓦雷泽等产地汇聚杜卡迪、阿普利亚、MV Agusta 等名厂，以设计驱动品牌溢价。\n\n**骑行要点**：独特转向，小众，弯道精准\n\n**相关**：与日系仿赛对比更重风格与电子套件差异",
+  "tags": [
+    "意大利",
+    "Bimota",
+    "摩托",
+    "仿赛"
+  ],
+  "specs": {
+    "分类": "意大利品牌",
+    "厂商": "Bimota",
+    "发动机": "独特转向",
+    "功率": "小众",
+    "总部": "意大利",
+    "文化": "MotoGP 血统"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "比摩塔 Tesi 意大利",
+    "matchTags": [
+      "意大利",
+      "Bimota",
+      "摩托",
+      "bimota",
+      "tesi"
+    ]
+  }
+}

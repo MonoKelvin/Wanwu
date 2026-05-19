@@ -1,0 +1,34 @@
+{
+  "id": "43f71100-440a-417f-9ee9-b357ad938827",
+  "slug": "cat-abyssinian",
+  "subCategoryId": "cat-china",
+  "name": "阿比西尼亚猫 Abyssinian",
+  "summary": "古老 ticked 短毛品种，体型修长肌肉型，性格活泼好奇，起源有埃塞俄比亚说。",
+  "description": "阿比西尼亚猫（Abyssinian）被毛为 ticked tabby（每根毛多段色），外观似小型山猫。体型修长、耳大、性格极活跃。起源说法包括埃塞俄比亚、埃及港口等，基因研究支持东南亚起源假说。\n\n需攀爬与互动，不宜无聊饲养。与索马里猫（长毛型）为同系。毛色常见 ruddy、sorrel、蓝色等。\n\n**相关**：与新加坡猫、埃及猫在「古老东方型」讨论中并列；是猫展常青品种。",
+  "tags": [
+    "ticked",
+    "短毛",
+    "活跃",
+    "古老品种"
+  ],
+  "specs": {
+    "分类": "中国品种（东亚）",
+    "体重": "2.5–4.5 kg",
+    "寿命": "12–16 年",
+    "被毛": "ticked agouti",
+    "性格": "活泼、好奇、聪明",
+    "关联": "索马里长毛型"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "abyssinian cat ticked",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "abyssinian"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

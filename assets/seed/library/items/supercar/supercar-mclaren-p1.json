@@ -1,0 +1,34 @@
+{
+  "id": "4930a2b7-1ec5-4e7d-867b-b8bb8dd8936d",
+  "slug": "supercar-mclaren-p1",
+  "subCategoryId": "car-britain",
+  "name": "迈凯伦 P1",
+  "summary": "混动超跑三杰，碳纤 MonoCell 与 Instant Power Assist。",
+  "description": "迈凯伦 P1承载英国McLaren在轻量化、空气动力学或奢华手工方面的传统，2013 年代表英伦跑车从经典 GT 到现代混动/纯电的演进。\n\n英国超跑品牌常具小规模量产、赛车血统与定制服务特色，在古德伍德、银石等赛车文化中孕育。\n\n**性能要点**：3.8L V8 混动，约 916 hp\n\n**相关**：与迈凯伦、阿斯顿·马丁、宾利等构成英国性能车谱系",
+  "tags": [
+    "英国",
+    "McLaren",
+    "超跑",
+    "GT"
+  ],
+  "specs": {
+    "分类": "英国品牌",
+    "厂商": "McLaren",
+    "上市": "2013",
+    "发动机": "3.8L V8 混动",
+    "功率": "约 916 hp",
+    "总部": "英国",
+    "传统": "赛车血统"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "迈凯伦 P1 英国",
+    "matchTags": [
+      "英国",
+      "McLaren",
+      "超跑",
+      "mclaren",
+      "p1"
+    ]
+  }
+}

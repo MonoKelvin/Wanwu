@@ -1,0 +1,33 @@
+{
+  "id": "ac47b0ae-6664-48af-a2ab-da79c6573228",
+  "slug": "dog-vizsla",
+  "subCategoryId": "dog-americas",
+  "name": "维兹拉犬",
+  "summary": "匈牙利指针犬，赤金色短毛，贴人「Velcro dog」，狩猎与伴侣。",
+  "description": "维兹拉犬（Vizsla）为匈牙利国犬，短毛赤金，用于猎鸟指示。极度亲人，有「魔术贴犬」昵称。\n\n运动需求高，适合跑步与狩猎活动。被毛短易护理。二战后随移民传播至美国。\n\n**相关**：与魏玛猎犬毛色相近但体型更轻；与指针犬同组。",
+  "tags": [
+    "指针犬",
+    "匈牙利",
+    "赤金",
+    "狩猎"
+  ],
+  "specs": {
+    "分类": "美洲犬种",
+    "原产地": "匈牙利",
+    "体重": "20–30 kg",
+    "寿命": "12–14 年",
+    "性格": "极度亲人、精力充沛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "vizsla dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "vizsla"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

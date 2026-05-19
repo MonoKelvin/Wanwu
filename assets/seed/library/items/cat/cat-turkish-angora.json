@@ -1,0 +1,36 @@
+{
+  "id": "554dd771-e9f1-4af0-845c-9377a0a8a0ce",
+  "slug": "cat-turkish-angora",
+  "subCategoryId": "cat-europe",
+  "name": "土耳其安哥拉猫 Turkish Angora",
+  "summary": "土耳其古老长毛品种，丝质被毛、尾羽蓬松，常白毛蓝眼或异色眼。",
+  "description": "土耳其安哥拉猫（Turkish Angora）起源于安卡拉（古称安哥拉）地区，为现代长毛猫祖先之一。被毛单丝质、少底绒，尾如羽扇。除白色外亦有多种毛色。\n\n性格活泼、聪明、爱高处。安卡拉动物园有保种计划。与波斯猫选育史有交叉，今日强调保持修长体态。\n\n**相关**：与土耳其梵猫（Van）同为土耳其国猫；与波斯猫相比体型更修长、被毛更丝滑。",
+  "tags": [
+    "长毛",
+    "欧洲",
+    "土耳其",
+    "丝质毛"
+  ],
+  "specs": {
+    "分类": "欧洲品种",
+    "原产地": "土耳其",
+    "体重": "2.5–5 kg",
+    "寿命": "12–18 年",
+    "特征": "丝质长毛、尾羽状",
+    "眼色": "蓝/异色/琥珀",
+    "性格": "活泼、聪明"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "turkish angora white cat",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "angora",
+      "white"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

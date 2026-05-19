@@ -1,0 +1,34 @@
+{
+  "id": "048ef4f5-4bef-45df-bb0d-585190eac535",
+  "slug": "dog-beagle",
+  "subCategoryId": "dog-europe",
+  "name": "比格犬",
+  "summary": "英国嗅猎小型犬，三色短毛、垂耳，嗅觉灵敏，需防走失与吠叫管理。",
+  "description": "比格犬（Beagle）用于兔猎等小型猎物，嗅觉极佳、吠叫追踪（bay）。体型小至中型，常见黑褐白三色。\n\n性格友善、好奇，易因气味分心走失。需围栏与牵引。实验犬史引发动物福利讨论。\n\n**相关**：与哈利犬等英国嗅猎犬同源；史努比形象为比格。",
+  "tags": [
+    "嗅猎犬",
+    "英国",
+    "三色",
+    "小型"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "英国",
+    "体重": "9–11 kg",
+    "寿命": "12–15 年",
+    "特征": "垂耳、三色",
+    "性格": "友善、好奇、固执"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "beagle dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "beagle"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

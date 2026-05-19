@@ -1,0 +1,31 @@
+{
+  "id": "0a59fd49-7393-4dc9-a370-aadedebfb367",
+  "slug": "movie-fantastic-beasts",
+  "subCategoryId": "movie-fantasy",
+  "name": "神奇动物在哪里",
+  "summary": "哈利·波特前传，纽特·斯卡曼德魔法生物。",
+  "description": "神奇动物在哪里构建魔法世界叙事宇宙，2016 年间以美术、服装与配乐塑造异世界沉浸感。奇幻电影常借用神话、民间传说与魔法规则探讨善恶、成长与生态。\n\n与科幻不同，奇幻较少依赖科学解释而重象征与寓言。\n\n**世界观**：魔法世界\n\n**相关**：与原著小说、游戏联动形成跨媒体宇宙",
+  "tags": [
+    "奇幻",
+    "电影",
+    "魔法世界",
+    "史诗"
+  ],
+  "specs": {
+    "分类": "奇幻电影",
+    "年份": "2016",
+    "导演": "叶茨",
+    "类型": "魔法世界",
+    "改编": "文学 / 原创",
+    "受众": "全年龄至成人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "vintage suitcase magic fantasy",
+    "matchTags": [
+      "vintage",
+      "fantasy"
+    ],
+    "minMatchScore": 0
+  }
+}

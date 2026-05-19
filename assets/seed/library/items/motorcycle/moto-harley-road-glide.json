@@ -1,0 +1,33 @@
+{
+  "id": "1841bc45-3c68-4cf8-8786-5a63e9b7653b",
+  "slug": "moto-harley-road-glide",
+  "subCategoryId": "moto-america",
+  "name": "哈雷 Road Glide",
+  "summary": "鲨鱼鼻整流罩长途_BAGGER，高速稳定。",
+  "description": "哈雷 Road Glide体现美国Harley-Davidson巡航文化：Milwaukee-Eight，风格偏向旅行。哈雷与印第安为美国摩托车双雄，密尔沃基与明尼阿波利斯产地象征自由公路与改装文化。\n\nH.O.G. 车主会与印第安骑手社区组织大型集会，排气声浪与低座高定义美式骑行体验。\n\n**骑行要点**：Milwaukee-Eight，旅行，长途舒适或城市灵活因车型而异\n\n**相关**：与日系、欧系仿赛用户群差异大；改装件市场丰富",
+  "tags": [
+    "美式",
+    "Harley-Davidson",
+    "巡航",
+    "旅行"
+  ],
+  "specs": {
+    "分类": "美式巡航",
+    "厂商": "Harley-Davidson",
+    "发动机": "Milwaukee-Eight",
+    "风格": "旅行",
+    "总部": "美国",
+    "文化": "公路与改装"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "哈雷 Road Glide 美式",
+    "matchTags": [
+      "美式",
+      "Harley-Davidson",
+      "巡航",
+      "harley",
+      "road"
+    ]
+  }
+}

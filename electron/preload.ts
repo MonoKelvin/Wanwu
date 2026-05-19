@@ -33,6 +33,12 @@ const api: WanwuApi = {
     getProfile: () => ipcRenderer.invoke('user:getProfile'),
     updateProfile: (profile) => ipcRenderer.invoke('user:updateProfile', profile),
     listFavorites: () => ipcRenderer.invoke('user:listFavorites'),
+    listFavoriteGroups: () => ipcRenderer.invoke('user:listFavoriteGroups'),
+    listFavoriteGroupsForPicker: () => ipcRenderer.invoke('user:listFavoriteGroupsForPicker'),
+    createFavoriteGroup: (name) => ipcRenderer.invoke('user:createFavoriteGroup', name),
+    isFavorite: (params) => ipcRenderer.invoke('user:isFavorite', params),
+    addFavorite: (params) => ipcRenderer.invoke('user:addFavorite', params),
+    removeFavorite: (params) => ipcRenderer.invoke('user:removeFavorite', params),
     toggleFavorite: (params) => ipcRenderer.invoke('user:toggleFavorite', params)
   },
   app: {
@@ -55,7 +61,9 @@ const api: WanwuApi = {
   shell: {
     openExternal: (url) => ipcRenderer.invoke('shell:openExternal', url),
     downloadFile: (params) => ipcRenderer.invoke('shell:downloadFile', params),
-    showItemInFolder: (url) => ipcRenderer.invoke('shell:showItemInFolder', url)
+    showItemInFolder: (url) => ipcRenderer.invoke('shell:showItemInFolder', url),
+    copyText: (text) => ipcRenderer.invoke('shell:copyText', text),
+    savePngDataUrl: (params) => ipcRenderer.invoke('shell:savePngDataUrl', params)
   }
 }
 

@@ -1,0 +1,35 @@
+{
+  "id": "26c00e32-48d1-4b27-96ec-e4e517f07032",
+  "slug": "cat-scottish-fold",
+  "subCategoryId": "cat-europe",
+  "name": "苏格兰折耳猫 Scottish Fold",
+  "summary": "苏格兰突变折耳基因品种，圆脸折叠耳，性格温和，需关注软骨发育问题。",
+  "description": "苏格兰折耳猫（Scottish Fold）1961 年在苏格兰发现折耳突变，由 Pat Turner 等选育。耳朵向前折叠，圆脸大眼，体态圆润。被 CFA、TICA 等认可，有短毛与长毛（Highland Fold）型。\n\n**饲养要点**：仅与同品种或立耳猫配种有遗传争议，需选购正规猫舍并关注骨关节健康。毛色多样，虎斑、纯色、渐层均有。\n\n**相关**：与英国短毛猫在体型上常被比较；折耳基因与 osteochondrodysplasia 关联为繁育伦理讨论焦点。",
+  "tags": [
+    "折耳",
+    "短毛",
+    "欧洲",
+    "苏格兰"
+  ],
+  "specs": {
+    "分类": "欧洲品种",
+    "原产地": "苏格兰",
+    "体重": "2.7–6 kg",
+    "寿命": "11–15 年",
+    "特征": "折耳、圆脸",
+    "性格": "温和、安静",
+    "注意": "软骨与关节健康筛查"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "scottish fold cat",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "fold"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

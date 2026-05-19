@@ -1,0 +1,33 @@
+{
+  "id": "2f6ddfec-41f4-4d7d-a3d5-dab85413265d",
+  "slug": "moto-yamaha-xsr900",
+  "subCategoryId": "moto-japan",
+  "name": "雅马哈 XSR900",
+  "summary": "复古运动三缸，咖啡赛车风格。",
+  "description": "雅马哈 XSR900为日本Yamaha代表作，890 三缸，定位复古。日系厂商以可靠性与高转四缸技术统治全球仿赛与街车市场，常称霸 WSBK 与 MotoGP。\n\n保养经济、配件丰富，适合赛道日与日常通勤的多场景需求。\n\n**骑行要点**：890 三缸，高转性能或扭力特性因车系而异\n\n**相关**：与欧系意系对比更重性价比与电子辅助普及",
+  "tags": [
+    "日本",
+    "Yamaha",
+    "摩托",
+    "复古"
+  ],
+  "specs": {
+    "分类": "日本品牌",
+    "厂商": "Yamaha",
+    "发动机": "890 三缸",
+    "定位": "复古",
+    "总部": "日本",
+    "赛事": "MotoGP / WSBK"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "雅马哈 XSR900 日本",
+    "matchTags": [
+      "日本",
+      "Yamaha",
+      "摩托",
+      "yamaha",
+      "xsr900"
+    ]
+  }
+}

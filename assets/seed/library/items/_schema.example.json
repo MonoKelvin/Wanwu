@@ -1,0 +1,21 @@
+{
+  "id": "00000000-0000-4000-8000-000000000001",
+  "slug": "cat-example",
+  "subCategoryId": "cat-europe",
+  "name": "示例条目",
+  "summary": "一句话摘要",
+  "description": "正文。\n\n饲养要点：第二段起「标签：」在 build 时会加粗。",
+  "tags": [
+    "标签"
+  ],
+  "specs": {
+    "键": "值"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "example cat portrait",
+    "matchTags": [
+      "cat"
+    ]
+  }
+}

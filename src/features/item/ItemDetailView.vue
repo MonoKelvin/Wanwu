@@ -6,8 +6,9 @@ import Skeleton from 'primevue/skeleton'
 import EmptyState from '@app/components/EmptyState.vue'
 import ItemDetailHeroActions from '@features/item/ItemDetailHeroActions.vue'
 import ItemMarkdown from '@features/item/ItemMarkdown.vue'
+import FavoriteGroupPickerDialog from '@features/item/FavoriteGroupPickerDialog.vue'
+import ItemShareCardDialog from '@features/item/ItemShareCardDialog.vue'
 import ImageViewer from '@shared/components/ImageViewer.vue'
-import WwButton from '@shared/components/WwButton.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import UnsplashAttribution from '@features/item/UnsplashAttribution.vue'
 import type { ImageViewerSlide } from '@shared/types/image-viewer'
@@ -24,8 +25,17 @@ const heroMenuOpen = ref(false)
 const heroActionsVisible = computed(() => heroHover.value || heroMenuOpen.value)
 const lightboxOpen = ref(false)
 const lightboxIndex = ref(0)
+const isFavorited = ref(false)
+const groupPickerOpen = ref(false)
+const shareCardOpen = ref(false)
+const toast = ref('')
 
 const specEntries = computed(() => Object.entries(item.value?.specs ?? {}))
+const shortId = computed(() => {
+  const id = item.value?.id ?? ''
+  if (id.length <= 12) return id
+  return `${id.slice(0, 8)}…`
+})
 
 const gallerySlides = computed(() => {
   if (!item.value) return []
@@ -67,15 +77,39 @@ const activeSlideIndex = computed(() => {
   return i >= 0 ? i : 0
 })
 
-onMounted(async () => {
+let toastTimer: ReturnType<typeof setTimeout> | null = null
+
+function showToast(message: string) {
+  toast.value = message
+  if (toastTimer) clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => {
+    toast.value = ''
+  }, 2400)
+}
+
+async function loadItem() {
+  loading.value = true
+  isFavorited.value = false
+  item.value = null
+  activeImage.value = null
+
   const id = route.params.id as string
   const source = route.params.source as string
   if (source === 'library') {
     item.value = await window.wanwu.library.getItem(id)
     activeImage.value = item.value?.coverPath ?? null
+    if (item.value) {
+      isFavorited.value = await window.wanwu.user.isFavorite({
+        itemId: item.value.id,
+        source: item.value.source
+      })
+    }
   }
   loading.value = false
-})
+}
+
+onMounted(loadItem)
+watch(() => `${route.params.source}:${route.params.id}`, loadItem)
 
 watch(lightboxIndex, (i) => {
   const slide = gallerySlides.value[i]
@@ -86,9 +120,52 @@ function goBack() {
   router.back()
 }
 
-async function toggleFavorite() {
+async function onFavoriteClick() {
   if (!item.value) return
-  await window.wanwu.user.toggleFavorite({ itemId: item.value.id, source: item.value.source })
+  if (isFavorited.value) {
+    await window.wanwu.user.removeFavorite({
+      itemId: item.value.id,
+      source: item.value.source
+    })
+    isFavorited.value = false
+    showToast('?????')
+    return
+  }
+  groupPickerOpen.value = true
+}
+
+async function onFavoriteGroupPicked(groupId: string) {
+  if (!item.value) return
+  await window.wanwu.user.addFavorite({
+    itemId: item.value.id,
+    source: item.value.source,
+    groupId
+  })
+  isFavorited.value = true
+  showToast('?????')
+}
+
+function buildShareText(): string {
+  if (!item.value) return ''
+  const lines = [item.value.name]
+  if (item.value.summary) lines.push(item.value.summary)
+  if (item.value.subCategoryName) lines.push(item.value.subCategoryName)
+  lines.push(`ID: ${item.value.id}`)
+  lines.push('? ?? Wanwu')
+  return lines.join('\n')
+}
+
+async function shareItem() {
+  const text = buildShareText()
+  if (!text) return
+  await window.wanwu.shell.copyText(text)
+  showToast('???????')
+}
+
+async function copyItemId() {
+  if (!item.value) return
+  await window.wanwu.shell.copyText(item.value.id)
+  showToast('??? ID')
 }
 
 function selectImage(url: string) {
@@ -130,30 +207,24 @@ async function revealInFolder() {
 <template>
   <div class="ww-product-detail">
     <header class="ww-product-detail__bar ww-chrome-safe">
-      <WwButton
-        icon="arrow-left"
-        variant="text"
-        rounded
-        severity="secondary"
+      <button
+        type="button"
+        class="ww-product-detail__back ww-glass-btn ww-glass-btn--icon"
         aria-label="返回"
         @click="goBack"
-      />
-      <nav class="ww-product-detail__crumb" aria-label="面包屑">
+      >
+        <WwIcon name="arrow-left" size="sm" />
+      </button>
+      <nav class="ww-product-detail__crumb" aria-label="breadcrumb">
         <span v-if="item?.subCategoryName" class="ww-product-detail__crumb-muted">{{ item.subCategoryName }}</span>
         <span v-if="item?.subCategoryName" class="ww-product-detail__crumb-sep" aria-hidden="true">/</span>
-        <span class="ww-product-detail__crumb-current">{{ item?.name ?? '详情' }}</span>
+        <span class="ww-product-detail__crumb-current">{{ item?.name ?? '??' }}</span>
       </nav>
-      <WwButton
-        v-if="item"
-        icon="heart"
-        variant="text"
-        rounded
-        severity="secondary"
-        class="ww-product-detail__fav"
-        aria-label="收藏"
-        @click="toggleFavorite"
-      />
     </header>
+
+    <Transition name="ww-toast">
+      <p v-if="toast" class="ww-product-detail__toast" role="status">{{ toast }}</p>
+    </Transition>
 
     <div v-if="loading" class="ww-product-detail__scroll">
       <div class="ww-product-detail__inner ww-product-detail__skeleton">
@@ -167,8 +238,8 @@ async function revealInFolder() {
       v-else-if="!item"
       variant="not-found"
       code="404"
-      title="未找到物品"
-      description="该条目可能已被移除。"
+      title="未找到物�?
+      description="该条目可能已被移除�?
     />
 
     <div v-else class="ww-product-detail__scroll">
@@ -221,7 +292,7 @@ async function revealInFolder() {
                 class="ww-product-detail__thumb"
                 :class="{ 'ww-product-detail__thumb--active': activeImage === slide.url }"
                 :aria-selected="activeImage === slide.url"
-                :aria-label="`图 ${i + 1}`"
+                :aria-label="`�?${i + 1}`"
                 @click="selectImage(slide.url)"
               >
                 <img :src="slide.url" alt="" />
@@ -257,9 +328,53 @@ async function revealInFolder() {
               </dl>
             </div>
 
-            <div class="ww-product-detail__actions">
-              <WwButton icon="heart" label="加入收藏" size="small" variant="outlined" @click="toggleFavorite" />
-            </div>
+            <footer class="ww-product-detail__footer">
+              <button
+                type="button"
+                class="ww-product-detail__id-tag"
+                :title="item.id"
+                @click="copyItemId"
+              >
+                ID {{ shortId }}
+              </button>
+
+              <div class="ww-product-detail__dock" role="toolbar" aria-label="物品操作">
+                <button
+                  type="button"
+                  class="ww-product-detail__dock-btn"
+                  :class="{ 'ww-product-detail__dock-btn--active': isFavorited }"
+                  :aria-pressed="isFavorited"
+                  :aria-label="isFavorited ? '取消收藏' : '加入收藏'"
+                  @click="onFavoriteClick"
+                >
+                  <WwIcon name="heart" size="sm" :filled="isFavorited" />
+                </button>
+                <button
+                  type="button"
+                  class="ww-product-detail__dock-btn"
+                  aria-label="分享"
+                  @click="shareItem"
+                >
+                  <WwIcon name="share" size="sm" />
+                </button>
+                <button
+                  type="button"
+                  class="ww-product-detail__dock-btn"
+                  aria-label="生成分享卡片"
+                  @click="shareCardOpen = true"
+                >
+                  <WwIcon name="sparkles" size="sm" />
+                </button>
+                <button
+                  type="button"
+                  class="ww-product-detail__dock-btn"
+                  aria-label="复制 ID"
+                  @click="copyItemId"
+                >
+                  <WwIcon name="copy" size="sm" />
+                </button>
+              </div>
+            </footer>
           </section>
         </div>
 
@@ -270,10 +385,14 @@ async function revealInFolder() {
       </article>
     </div>
 
-    <ImageViewer
-      v-model:open="lightboxOpen"
-      v-model:index="lightboxIndex"
-      :slides="lightboxSlides"
+    <ImageViewer v-model:open="lightboxOpen" v-model:index="lightboxIndex" :slides="lightboxSlides" />
+
+    <FavoriteGroupPickerDialog
+      v-model:visible="groupPickerOpen"
+      :item-name="item?.name"
+      @confirm="onFavoriteGroupPicked"
     />
+
+    <ItemShareCardDialog v-model:visible="shareCardOpen" :item="item" />
   </div>
 </template>

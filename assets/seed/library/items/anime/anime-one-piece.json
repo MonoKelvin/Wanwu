@@ -1,0 +1,31 @@
+{
+  "id": "d1dfc2ac-eeb1-4646-a949-3e8ba52612d9",
+  "slug": "anime-one-piece",
+  "subCategoryId": "anime-shonen",
+  "name": "海贼王 One Piece",
+  "summary": "尾田荣一郎长篇少年漫画，路飞率草帽海贼团寻找「One Piece」成为海贼王。",
+  "description": "《海贼王》（ONE PIECE）1997 年起在《周刊少年 Jump》连载，作者尾田荣一郎。主角蒙奇·D·路飞误食橡胶果实成为橡胶人，立志成为海贼王，组建草帽海贼团航行伟大航路。\n\n世界观含恶魔果实、霸气、世界政府与四皇等势力。全球销量最高的漫画系列之一。动画由东映动画制作；剧场版与游戏众多。\n\n**相关**：与《火影忍者》《死神》并称 Jump 三大台柱；设定影响众多后续少年漫画。",
+  "tags": [
+    "少年Jump",
+    "海贼",
+    "路飞",
+    "长篇"
+  ],
+  "specs": {
+    "分类": "少年热血",
+    "作者": "尾田荣一郎",
+    "连载": "1997–（周刊少年 Jump）",
+    "动画": "东映动画",
+    "主角": "蒙奇·D·路飞",
+    "主题": "冒险、友情、自由"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "one piece anime figure luffy",
+    "category": "people",
+    "matchTags": [
+      "anime",
+      "one piece"
+    ]
+  }
+}

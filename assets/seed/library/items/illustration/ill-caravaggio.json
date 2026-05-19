@@ -1,0 +1,31 @@
+{
+  "id": "79f0db07-4ebd-4bec-8c7d-89b7e7ed4b38",
+  "slug": "ill-caravaggio",
+  "subCategoryId": "ill-classic",
+  "name": "卡拉瓦乔光影",
+  "summary": "明暗对照法戏剧性宗教与世俗题材。",
+  "description": "卡拉瓦乔光影由卡拉瓦乔创作，属巴洛克重要作品，约1600s年。作品在艺术史教材、博物馆常设展与流行文化引用中反复出现。\n\n古典绘画技法、颜料介质与历史语境构成鉴赏基础，数字复制品亦广泛用于艺术教育。\n\n**艺术史**：巴洛克，卡拉瓦乔，1600s\n\n**相关**：与同期流派画家并列研究；博物馆巡展常借展",
+  "tags": [
+    "艺术史",
+    "巴洛克",
+    "卡拉瓦乔",
+    "名画"
+  ],
+  "specs": {
+    "分类": "古典绘画",
+    "艺术家": "卡拉瓦乔",
+    "流派": "巴洛克",
+    "年代": "1600s",
+    "媒介": "油画 / 版画等",
+    "收藏": "全球主要博物馆"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "baroque painting chiaroscuro light",
+    "matchTags": [
+      "painting",
+      "baroque"
+    ],
+    "minMatchScore": 0
+  }
+}

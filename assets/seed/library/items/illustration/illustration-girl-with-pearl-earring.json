@@ -1,0 +1,31 @@
+{
+  "id": "310e1001-a714-4b6c-97c6-e3b74b43d0ba",
+  "slug": "illustration-girl-with-pearl-earring",
+  "subCategoryId": "ill-classic",
+  "name": "戴珍珠耳环的少女",
+  "summary": "17 世纪荷兰画家维米尔代表作，少女回眸与珍珠耳饰被誉为「北方的蒙娜丽莎」。",
+  "description": "《戴珍珠耳环的少女》（Meisje met de parel）约创作于 1665 年，作者约翰内斯·维米尔（Johannes Vermeer）。现藏荷兰海牙莫瑞泰斯皇家美术馆。画面以深蓝头巾、珍珠耳饰与侧光面部为焦点，背景极简。\n\n**技法**：可能使用相机 obscura 辅助透视；有限颜料与细腻层次体现荷兰黄金时代室内画特色。2003 年电影《戴珍珠耳环的少女》由 Scarlett Johansson、Colin Firth 主演，带动大众认知。\n\n**相关**：与《倒牛奶的女仆》等同为维米尔室内题材；荷兰黄金时代绘画研究核心作品。",
+  "tags": [
+    "维米尔",
+    "荷兰黄金时代",
+    "油画",
+    "肖像"
+  ],
+  "specs": {
+    "分类": "经典绘画",
+    "作者": "Johannes Vermeer",
+    "年代": "约 1665",
+    "馆藏": "莫瑞泰斯皇家美术馆（海牙）",
+    "媒介": "油画布本",
+    "别名": "北方的蒙娜丽莎",
+    "题材": "tronie 头像研究"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "girl pearl earring painting",
+    "matchTags": [
+      "pearl",
+      "painting"
+    ]
+  }
+}

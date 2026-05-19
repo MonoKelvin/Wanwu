@@ -1,0 +1,28 @@
+{
+  "id": "72ccec7d-8dcf-41b4-b524-249f466e2085",
+  "slug": "hero-black-panther",
+  "subCategoryId": "hero-marvel",
+  "name": "黑豹 Black Panther",
+  "summary": "瓦坎达国王特查拉，心形草与振金战衣象征非洲未来主义。",
+  "description": "黑豹 1966 年登场，为主流漫画首位非裔超级英雄主角。瓦坎达虚构科技强国，MCU《黑豹》获奥斯卡最佳影片提名。\n\n查德维克·博斯曼饰演影响深远。\n\n**能力要点**：增强体能、振金战衣、天才战术\n\n**相关作品**：《黑豹》《复仇者联盟3/4》",
+  "tags": [
+    "漫威",
+    "瓦坎达",
+    "振金"
+  ],
+  "specs": {
+    "宇宙": "漫威 Marvel",
+    "首次登场": "1966",
+    "本名": "特查拉",
+    "国家": "瓦坎达",
+    "MCU饰演": "查德维克·博斯曼"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "black panther marvel cosplay",
+    "matchTags": [
+      "panther",
+      "marvel"
+    ]
+  }
+}

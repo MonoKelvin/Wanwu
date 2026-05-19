@@ -1,0 +1,31 @@
+{
+  "id": "8aab2b89-bca4-4900-a4c7-58dd8735510a",
+  "slug": "motorcycle-ducati-panigale",
+  "subCategoryId": "moto-italy",
+  "name": "杜卡迪 Panigale V4",
+  "summary": "意大利博洛尼亚高性能跑车，V4 发动机、Desmosedici 气门技术，MotoGP 技术下放。",
+  "description": "杜卡迪 Panigale V4 搭载 1103 cc V4 发动机，源自 MotoGP Desmosedici 技术路线，约 214 马力。名称 Panigale 来自意大利博洛尼亚「Borgo Panigale」厂区。\n\n配备 Öhlins 悬挂、弯道 ABS、牵引力控制等电子套件。是杜卡迪旗舰仿赛，对标日系四大天王。\n\n**品牌**：Ducati，1926 年由 Antonio Cavalieri Ducati 创立，现属奥迪集团，以 L 型双缸与 V4 闻名。",
+  "tags": [
+    "杜卡迪",
+    "意大利",
+    "V4",
+    "仿赛"
+  ],
+  "specs": {
+    "分类": "意大利品牌",
+    "厂商": "Ducati",
+    "发动机": "1103 cc V4",
+    "功率": "约 214 hp",
+    "总部": "意大利博洛尼亚",
+    "技术": "Desmodromic 气门"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "ducati panigale motorcycle",
+    "category": "transportation",
+    "matchTags": [
+      "ducati",
+      "motorcycle"
+    ]
+  }
+}

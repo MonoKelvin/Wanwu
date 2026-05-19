@@ -1,0 +1,31 @@
+{
+  "id": "8355ffa4-f34a-4194-8a06-f8a55a4d59c7",
+  "slug": "supercar-jaguar-f-type",
+  "subCategoryId": "car-britain",
+  "name": "捷豹 F-Type",
+  "summary": "英伦声浪代表，敞篷与轿跑多形态。",
+  "description": "捷豹 F-Type承载英国Jaguar在轻量化、空气动力学或奢华手工方面的传统，2013 年代表英伦跑车从经典 GT 到现代混动/纯电的演进。\n\n英国超跑品牌常具小规模量产、赛车血统与定制服务特色，在古德伍德、银石等赛车文化中孕育。\n\n**性能要点**：V8 / 四缸，约 575 hp\n\n**相关**：与迈凯伦、阿斯顿·马丁、宾利等构成英国性能车谱系",
+  "tags": [
+    "英国",
+    "Jaguar",
+    "超跑",
+    "GT"
+  ],
+  "specs": {
+    "分类": "英国品牌",
+    "厂商": "Jaguar",
+    "上市": "2013",
+    "发动机": "V8 / 四缸",
+    "功率": "约 575 hp",
+    "总部": "英国",
+    "传统": "赛车血统"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "jaguar f type sports car",
+    "matchTags": [
+      "jaguar",
+      "car"
+    ]
+  }
+}

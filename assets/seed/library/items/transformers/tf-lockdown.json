@@ -1,0 +1,30 @@
+{
+  "id": "609305d1-8845-477a-b165-4d23b279248a",
+  "slug": "tf-lockdown",
+  "subCategoryId": "tf-decepticon",
+  "name": "禁闭 Lockdown",
+  "summary": "赏金猎人，多种载具，跨阵营狩猎变形金刚。",
+  "description": "禁闭 Lockdown为霸天虎（Decepticon）阵营成员，追求征服赛博坦与地球资源。变形形态常为肌肉车，职能偏向赏金猎人。\n\n与汽车人长期战争，威震天（及惊破天）为领袖；红蜘蛛等角色以背叛与阴谋著称。\n\n**变形形态**：肌肉车\n\n**相关**：合体金刚、磁带战士为经典子系列；电影与 G1 设定有差异",
+  "tags": [
+    "霸天虎",
+    "反派",
+    "变形",
+    "赏金猎人"
+  ],
+  "specs": {
+    "分类": "霸天虎 Decepticon",
+    "阵营": "霸天虎",
+    "变形": "肌肉车",
+    "角色": "赏金猎人",
+    "领袖": "威震天 / 惊破天",
+    "特点": "赏金猎人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "black sports car transformer",
+    "matchTags": [
+      "transformer",
+      "sports"
+    ]
+  }
+}

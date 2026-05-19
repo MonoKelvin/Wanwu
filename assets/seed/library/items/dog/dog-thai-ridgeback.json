@@ -1,0 +1,34 @@
+{
+  "id": "6e15d811-3590-48d4-a669-4ead4d585843",
+  "slug": "dog-thai-ridgeback",
+  "subCategoryId": "dog-asia",
+  "name": "泰国脊背犬",
+  "summary": "泰国本土犬，背脊毛逆向生长形成「脊线」，短毛、肌肉型。",
+  "description": "泰国脊背犬（Thai Ridgeback）背脊有一条毛发逆向的脊线（ridge），与罗德西亚脊背犬基因独立。短毛、耳大。\n\n性格独立、护主，需社会化。在泰国仍见乡村饲养，国际稀有。\n\n**相关**：与罗德西亚脊背、菲律宾脊背犬为 ridgeback 组；泰国古代壁画有类似形象。",
+  "tags": [
+    "泰国",
+    "脊背线",
+    "本土",
+    "短毛"
+  ],
+  "specs": {
+    "分类": "亚洲犬种",
+    "原产地": "泰国",
+    "体重": "20–25 kg",
+    "寿命": "12–13 年",
+    "特征": "背脊逆向毛",
+    "性格": "独立、护主"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "thai ridgeback dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "ridgeback"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

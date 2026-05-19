@@ -1,0 +1,30 @@
+{
+  "id": "2804b48f-6aa3-4f6d-8918-a305a1051dc6",
+  "slug": "ui-shadcn",
+  "subCategoryId": "ui-web",
+  "name": "shadcn/ui",
+  "summary": "基于 Radix 与 Tailwind 的可复制组件代码模式。",
+  "description": "shadcn/ui代表 Web 端组件方向，常用技术栈包括React。现代网页强调性能（Core Web Vitals）、可访问性与设计系统一致性。\n\n从着陆页到复杂 Dashboard，需平衡信息密度与视觉层级。\n\n**实现要点**：React，语义 HTML，响应式\n\n**相关**：与 Tailwind、组件库、设计 Token 工作流紧密相关",
+  "tags": [
+    "Web",
+    "UI",
+    "React",
+    "组件"
+  ],
+  "specs": {
+    "分类": "Web UI",
+    "技术": "React",
+    "重点": "组件",
+    "交付": "设计 + 前端",
+    "趋势": "Server Components",
+    "工具": "Figma / Storybook"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "modern web ui components",
+    "matchTags": [
+      "web",
+      "components"
+    ]
+  }
+}

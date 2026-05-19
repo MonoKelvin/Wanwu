@@ -1,0 +1,33 @@
+{
+  "id": "7be64187-c0eb-4c59-943a-d6d3a12c281d",
+  "slug": "movie-mission-impossible",
+  "subCategoryId": "movie-action",
+  "name": "碟中谍 Mission: Impossible",
+  "summary": "汤姆·克鲁斯实拍特技，不可能任务局。",
+  "description": "碟中谍 Mission: Impossible以特工动作见长，1996– 上映后影响动作片剪辑、特技与类型公式。导演多位在场面调度、节奏与角色张力上树立标杆。\n\n动作片融合犯罪、特工、武术或战争元素，全球票房与流媒体反复验证系列 IP 价值。\n\n**动作设计**：特工动作\n\n**相关**：与同类系列构成马拉松观影；配乐与剪辑节奏是分析重点",
+  "tags": [
+    "动作",
+    "电影",
+    "特工动作",
+    "多位"
+  ],
+  "specs": {
+    "分类": "动作 / 犯罪电影",
+    "年份": "1996–",
+    "导演": "多位",
+    "类型": "特工动作",
+    "特技": "实拍 / 特技混合",
+    "影响": "类型模板"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "碟中谍 Mission Impossible 动作",
+    "matchTags": [
+      "动作",
+      "电影",
+      "特工动作",
+      "mission",
+      "impossible"
+    ]
+  }
+}

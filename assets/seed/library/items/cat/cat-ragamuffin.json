@@ -1,0 +1,34 @@
+{
+  "id": "ecea05d6-a4df-4f82-b5cc-a46d9673f913",
+  "slug": "cat-ragamuffin",
+  "subCategoryId": "cat-americas",
+  "name": "褴褛猫 Ragamuffin",
+  "summary": "布偶系分支大型长毛猫，毛色丰富、性格极温顺，抱持柔软。",
+  "description": "褴褛猫（Ragamuffin）由 Ragdoll 爱好者在 1990 年代分离选育，允许更多毛色与图案（除重点色外扩展）。体型大、被毛厚密、性格温顺亲人。\n\n需定期梳毛。与布偶猫在基因与协会上为不同品种。适合室内伴侣。\n\n**相关**：与布偶猫、伯曼猫同属「温顺长毛」类型；TICA 全面认可。",
+  "tags": [
+    "长毛",
+    "大型",
+    "温顺",
+    "美洲"
+  ],
+  "specs": {
+    "分类": "美洲品种",
+    "育成地": "美国",
+    "体重": "4.5–9 kg",
+    "寿命": "12–18 年",
+    "被毛": "长而密",
+    "性格": "极温顺、亲人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "ragdoll longhair cat",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "ragdoll"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

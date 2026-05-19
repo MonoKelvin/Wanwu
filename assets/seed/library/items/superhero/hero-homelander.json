@@ -1,0 +1,29 @@
+{
+  "id": "f8e197e2-4861-49e6-aaa0-784169f913e3",
+  "slug": "hero-homelander",
+  "subCategoryId": "hero-other",
+  "name": "祖国人 Homelander",
+  "summary": "《黑袍纠察队》Vought 招牌英雄，表面正义实则自恋残暴。",
+  "description": "祖国人（Homelander）Garth Ennis《黑袍纠察队》漫画，Amazon 剧集由安东尼·斯塔尔饰演。拥有超人般飞行、热视线、力量，但缺乏真正同理心。\n\n**主题**：讽刺超级英雄产业化、媒体操控与粉丝文化。\n\n**设定要点**：飞行、热视线、超级力量；心理病态",
+  "tags": [
+    "黑袍纠察队",
+    "讽刺",
+    "反派",
+    "Vought"
+  ],
+  "specs": {
+    "作品": "The Boys",
+    "公司": "Vought International",
+    "特点": "超人讽刺",
+    "剧集": "Amazon Prime",
+    "饰演": "安东尼·斯塔尔"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "superhero cape cosplay villain",
+    "matchTags": [
+      "superhero",
+      "cape"
+    ]
+  }
+}

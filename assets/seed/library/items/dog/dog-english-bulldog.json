@@ -1,0 +1,35 @@
+{
+  "id": "7d4a9122-8d78-4c3f-b9ce-056a504bb273",
+  "slug": "dog-english-bulldog",
+  "subCategoryId": "dog-europe",
+  "name": "英国斗牛犬",
+  "summary": "英国国犬形象，矮胖、皱面、步态/swagger，性格沉稳友善。",
+  "description": "英国斗牛犬（English Bulldog）历史与斗牛活动相关，现代已选育为温顺伴侣犬。体型矮壮、头大而皱、四肢短。\n\n运动需求低，怕热，需面部褶皱清洁。剖腹产比例高。性格通常沉稳、对儿童友善。\n\n**相关**：与法国斗牛犬、美国斗牛犬为不同分支；常作英国文化符号。",
+  "tags": [
+    "斗牛犬",
+    "英国",
+    "伴侣犬",
+    "国犬"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "英国",
+    "体重": "18–25 kg",
+    "寿命": "8–10 年",
+    "特征": "皱面、矮壮",
+    "注意": "呼吸、繁殖",
+    "性格": "沉稳、友善"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "english bulldog dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "bulldog"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

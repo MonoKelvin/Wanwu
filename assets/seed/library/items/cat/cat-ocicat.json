@@ -1,0 +1,34 @@
+{
+  "id": "494c03ea-6d99-4234-9917-963ad0b458e9",
+  "slug": "cat-ocicat",
+  "subCategoryId": "cat-americas",
+  "name": "奥西猫 Ocicat",
+  "summary": "美国选育豹纹家猫（无野生豹猫血缘），斑点纹、肌肉型，性格外向犬系。",
+  "description": "奥西猫（Ocicat）1964 年由 Virginia Daly 在美国以暹罗、阿比西尼亚与美国短毛杂交意外得到斑点纹而定名，名字来自 Ocelot（豹猫）但无野生豹猫基因。毛色有 tawny、巧克力、银色等。\n\n性格外向、可训练、喜家庭。被毛短密易护理。适合互动与玩具丰富环境。\n\n**相关**：与孟加拉豹纹视觉相似但血统完全不同；是 CFA 认可品种。",
+  "tags": [
+    "斑点",
+    "短毛",
+    "美洲",
+    "犬系"
+  ],
+  "specs": {
+    "分类": "美洲品种",
+    "育成地": "美国密歇根",
+    "体重": "3–6.5 kg",
+    "寿命": "12–18 年",
+    "纹色": "豹点斑",
+    "性格": "外向、聪明、可训练"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "ocicat spotted cat",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "ocicat"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "6b4499b6-e604-4523-be52-2ad77beb9133",
+  "slug": "hero-doctor-strange",
+  "subCategoryId": "hero-marvel",
+  "name": "奇异博士 Doctor Strange",
+  "summary": "史蒂芬·斯特兰奇习得卡玛泰姬神秘术，守护时间宝石的至尊法师。",
+  "description": "奇异博士 1963 年登场，前神经外科医生在尼泊尔拜师古一，掌握传送门与时间法术。\n\n**MCU 引入多元宇宙，与《蜘蛛侠**：英雄无归》联动。\n\n**能力要点**：魔法、维度旅行、时间法术\n\n**相关作品**：《奇异博士》系列",
+  "tags": [
+    "漫威",
+    "魔法",
+    "至尊法师"
+  ],
+  "specs": {
+    "宇宙": "漫威 Marvel",
+    "首次登场": "1963",
+    "本名": "史蒂芬·斯特兰奇",
+    "神器": "阿戈摩托之眼",
+    "MCU饰演": "本尼迪克特·康伯巴奇"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "doctor strange marvel cosplay",
+    "matchTags": [
+      "strange",
+      "marvel"
+    ]
+  }
+}

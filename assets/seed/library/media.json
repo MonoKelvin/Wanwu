@@ -5,7 +5,11 @@
     "imageType": "photo",
     "orientation": "all",
     "minMatchScore": 1,
-    "perPage": 24
+    "perPage": 24,
+    "category": "animals",
+    "requiredTags": [
+      "dog"
+    ]
   },
   "providers": {
     "pixabay": {
@@ -22,2928 +26,2981 @@
   },
   "items": {
     "cat-british-shorthair": {
-      "query": "british shorthair cat portrait",
-      "category": "animals",
-      "matchTags": [
-        "cat",
-        "british",
-        "shorthair"
-      ],
       "provider": "pixabay",
+      "query": "英国短毛猫 短毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
+      ],
+      "matchTags": [
+        "短毛",
+        "欧洲",
+        "室内猫",
+        "british",
+        "shorthair"
       ]
     },
     "cat-maine-coon": {
-      "query": "maine coon cat",
-      "category": "animals",
-      "matchTags": [
-        "cat",
-        "maine",
-        "coon"
-      ],
       "provider": "pixabay",
+      "query": "缅因猫 长毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
+      ],
+      "matchTags": [
+        "长毛",
+        "大型",
+        "美洲",
+        "maine",
+        "coon"
       ]
     },
     "cat-ragdoll": {
-      "query": "ragdoll cat blue eyes",
-      "category": "animals",
-      "matchTags": [
-        "cat",
-        "ragdoll"
-      ],
       "provider": "pixabay",
+      "query": "布偶猫 长毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
+      ],
+      "matchTags": [
+        "长毛",
+        "蓝眼",
+        "重点色",
+        "ragdoll"
       ]
     },
     "cat-dragon-li": {
-      "query": "tabby cat portrait",
-      "category": "animals",
-      "matchTags": [
-        "cat",
-        "tabby"
-      ],
       "provider": "pixabay",
+      "query": "中华狸花猫 狸花",
+      "category": "animals",
       "requiredTags": [
         "cat"
+      ],
+      "matchTags": [
+        "狸花",
+        "中国",
+        "本土",
+        "dragon",
+        "li"
       ]
     },
     "cat-japanese-bobtail": {
-      "query": "japanese bobtail cat",
-      "category": "animals",
-      "matchTags": [
-        "cat",
-        "bobtail"
-      ],
       "provider": "pixabay",
+      "query": "日本短尾猫 短尾",
+      "category": "animals",
       "requiredTags": [
         "cat"
+      ],
+      "matchTags": [
+        "短尾",
+        "日本",
+        "三花",
+        "japanese",
+        "bobtail"
       ]
     },
     "dog-border-collie": {
-      "query": "border collie dog",
-      "category": "animals",
-      "matchTags": [
-        "dog",
-        "border",
-        "collie"
-      ],
       "provider": "pixabay",
+      "query": "边境牧羊犬 牧羊犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
+      ],
+      "matchTags": [
+        "牧羊犬",
+        "欧洲",
+        "高智商",
+        "border",
+        "collie"
       ]
     },
     "dog-golden-retriever": {
-      "query": "golden retriever dog",
-      "category": "animals",
-      "matchTags": [
-        "dog",
-        "golden",
-        "retriever"
-      ],
       "provider": "pixabay",
+      "query": "金毛寻回犬 寻回犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
+      ],
+      "matchTags": [
+        "寻回犬",
+        "美洲",
+        "导盲",
+        "golden",
+        "retriever"
       ]
     },
     "dog-shiba-inu": {
-      "query": "shiba inu dog",
-      "category": "animals",
-      "matchTags": [
-        "dog",
-        "shiba"
-      ],
       "provider": "pixabay",
+      "query": "柴犬 日本",
+      "category": "animals",
       "requiredTags": [
         "dog"
+      ],
+      "matchTags": [
+        "日本",
+        "亚洲",
+        "天然纪念",
+        "shiba",
+        "inu"
       ]
     },
-    "hero-spiderman": {
-      "query": "spiderman superhero cosplay",
-      "category": "people",
-      "requiredTags": [
-        "spiderman"
-      ],
-      "matchTags": [
-        "spiderman",
-        "superhero"
-      ],
-      "provider": "pixabay"
-    },
-    "hero-iron-man": {
-      "query": "iron man armor cosplay",
-      "category": "people",
-      "matchTags": [
-        "iron",
-        "man",
-        "armor"
-      ],
-      "provider": "pixabay"
-    },
-    "hero-captain-america": {
-      "query": "captain america shield cosplay",
-      "category": "people",
-      "matchTags": [
-        "captain",
-        "america"
-      ],
-      "provider": "pixabay"
-    },
-    "hero-batman-dc": {
-      "query": "batman cosplay dark knight",
-      "category": "people",
-      "matchTags": [
-        "batman",
-        "dc"
-      ],
-      "provider": "pixabay"
-    },
-    "hero-superman-dc": {
-      "query": "superman cosplay costume",
-      "category": "people",
-      "matchTags": [
-        "superman",
-        "dc"
-      ],
-      "provider": "pixabay"
-    },
     "supercar-ferrari-488": {
-      "query": "ferrari 488 sports car",
-      "category": "transportation",
+      "provider": "pixabay",
+      "query": "法拉利 488 GTB 法拉利",
+      "requiredTags": [],
       "matchTags": [
+        "法拉利",
+        "意大利",
+        "V8",
         "ferrari",
-        "car"
-      ],
-      "provider": "pixabay"
+        "488"
+      ]
     },
     "supercar-lamborghini-huracan": {
-      "query": "lamborghini huracan",
-      "category": "transportation",
+      "provider": "pixabay",
+      "query": "兰博基尼 Hurac n 兰博基尼",
+      "requiredTags": [],
       "matchTags": [
+        "兰博基尼",
+        "意大利",
+        "V10",
         "lamborghini",
-        "car"
-      ],
-      "provider": "pixabay"
+        "huracan"
+      ]
     },
     "supercar-porsche-911": {
-      "query": "porsche 911 sports car",
-      "category": "transportation",
+      "provider": "pixabay",
+      "query": "保时捷 911 保时捷",
+      "requiredTags": [],
       "matchTags": [
+        "保时捷",
+        "德国",
+        "后置",
         "porsche",
-        "car"
-      ],
-      "provider": "pixabay"
+        "911"
+      ]
     },
     "plant-monstera": {
-      "query": "monstera deliciosa houseplant",
-      "category": "nature",
+      "provider": "pixabay",
+      "query": "龟背竹 Monstera deliciosa 观叶",
+      "requiredTags": [],
       "matchTags": [
-        "monstera",
-        "plant"
-      ],
-      "provider": "pixabay"
+        "观叶",
+        "天南星科",
+        "热带",
+        "monstera"
+      ]
     },
     "plant-fiddle-leaf-fig": {
-      "query": "fiddle leaf fig plant indoor",
-      "category": "nature",
+      "provider": "pixabay",
+      "query": "琴叶榕 Ficus lyrata 琴叶榕",
+      "requiredTags": [],
       "matchTags": [
+        "琴叶榕",
+        "桑科",
+        "观叶",
         "fiddle",
-        "plant"
-      ],
-      "provider": "pixabay"
+        "leaf"
+      ]
     },
     "plant-echeveria": {
-      "query": "echeveria succulent",
-      "category": "nature",
+      "provider": "pixabay",
+      "query": "拟石莲 Echeveria 多肉",
+      "requiredTags": [],
       "matchTags": [
-        "echeveria",
-        "succulent"
-      ],
-      "provider": "pixabay"
+        "多肉",
+        "景天科",
+        "耐旱",
+        "echeveria"
+      ]
     },
     "anime-one-piece": {
-      "query": "one piece anime figure luffy",
-      "category": "people",
+      "provider": "pixabay",
+      "query": "海贼王 One Piece 少年Jump",
+      "requiredTags": [],
       "matchTags": [
-        "anime",
-        "one piece"
-      ],
-      "provider": "pixabay"
+        "少年Jump",
+        "海贼",
+        "路飞",
+        "one",
+        "piece"
+      ]
     },
     "anime-demon-slayer": {
-      "query": "demon slayer anime cosplay",
-      "category": "people",
+      "provider": "pixabay",
+      "query": "鬼灭之刃 Kimetsu no 鬼杀队",
+      "requiredTags": [],
       "matchTags": [
+        "鬼杀队",
+        "Jump",
+        "ufotable",
         "demon",
         "slayer"
-      ],
-      "provider": "pixabay"
+      ]
     },
     "anime-attack-on-titan": {
-      "query": "attack on titan cosplay survey corps",
-      "category": "people",
+      "provider": "pixabay",
+      "query": "进击的巨人 Attack on 巨人",
+      "requiredTags": [],
       "matchTags": [
+        "巨人",
+        "调查兵团",
+        "谏山创",
         "attack",
-        "titan"
-      ],
-      "provider": "pixabay"
+        "on"
+      ]
     },
     "transformers-optimus-prime": {
-      "query": "optimus prime transformer truck toy",
-      "category": "transportation",
+      "provider": "pixabay",
+      "query": "擎天柱 Optimus Prime 汽车人",
+      "requiredTags": [],
       "matchTags": [
+        "汽车人",
+        "Hasbro",
+        "卡车",
         "optimus",
-        "transformer"
-      ],
-      "provider": "pixabay"
+        "prime"
+      ]
     },
     "transformers-bumblebee": {
-      "query": "bumblebee transformer yellow car",
-      "category": "transportation",
+      "provider": "pixabay",
+      "query": "大黄蜂 Bumblebee 汽车人",
+      "requiredTags": [],
       "matchTags": [
-        "bumblebee",
-        "transformer"
-      ],
-      "provider": "pixabay"
+        "汽车人",
+        "大黄蜂",
+        "甲壳虫",
+        "bumblebee"
+      ]
     },
     "motorcycle-ducati-panigale": {
-      "query": "ducati panigale motorcycle",
-      "category": "transportation",
+      "provider": "pixabay",
+      "query": "杜卡迪 Panigale V4 杜卡迪",
+      "requiredTags": [],
       "matchTags": [
+        "杜卡迪",
+        "意大利",
+        "V4",
         "ducati",
-        "motorcycle"
-      ],
-      "provider": "pixabay"
+        "panigale"
+      ]
     },
     "motorcycle-harley-street": {
-      "query": "harley davidson motorcycle cruiser",
-      "category": "transportation",
+      "provider": "pixabay",
+      "query": "哈雷戴维森 Street 750 哈雷",
+      "requiredTags": [],
       "matchTags": [
+        "哈雷",
+        "美式",
+        "巡航",
         "harley",
-        "motorcycle"
-      ],
-      "provider": "pixabay"
+        "street"
+      ]
     },
     "history-terracotta-army": {
-      "query": "terracotta warriors xian china",
-      "category": "places",
+      "provider": "pixabay",
+      "query": "秦始皇兵马俑 秦朝",
+      "requiredTags": [],
       "matchTags": [
+        "秦朝",
+        "西安",
+        "世界遗产",
         "terracotta",
-        "china"
-      ],
-      "provider": "pixabay"
+        "army"
+      ]
     },
     "history-great-wall": {
-      "query": "great wall of china",
-      "category": "places",
+      "provider": "pixabay",
+      "query": "万里长城 明朝",
+      "requiredTags": [],
       "matchTags": [
-        "great wall",
-        "china"
-      ],
-      "provider": "pixabay"
+        "明朝",
+        "世界遗产",
+        "北京",
+        "great",
+        "wall"
+      ]
     },
     "cat-persian": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "波斯猫 Persian 长毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "persian cat fluffy",
       "matchTags": [
-        "cat",
+        "长毛",
+        "扁脸",
+        "欧洲",
         "persian"
       ]
     },
     "cat-scottish-fold": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "苏格兰折耳猫 Scottish Fold 折耳",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "scottish fold cat",
       "matchTags": [
-        "cat",
+        "折耳",
+        "短毛",
+        "欧洲",
+        "scottish",
         "fold"
       ]
     },
     "cat-russian-blue": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "俄罗斯蓝猫 Russian Blue 短毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "russian blue cat",
       "matchTags": [
-        "cat",
+        "短毛",
+        "蓝毛",
+        "欧洲",
         "russian",
         "blue"
       ]
     },
     "cat-norwegian-forest": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "挪威森林猫 Norwegian Forest 长毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "norwegian forest cat",
       "matchTags": [
-        "cat",
-        "norwegian"
+        "长毛",
+        "大型",
+        "欧洲",
+        "norwegian",
+        "forest"
       ]
     },
     "cat-chartreux": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "夏特尔猫 Chartreux 短毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "chartreux cat grey",
       "matchTags": [
-        "cat",
-        "chartreux",
-        "grey"
+        "短毛",
+        "蓝灰",
+        "欧洲",
+        "chartreux"
       ]
     },
     "cat-turkish-angora": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "土耳其安哥拉猫 Turkish Angora 长毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "turkish angora white cat",
       "matchTags": [
-        "cat",
-        "angora",
-        "white"
+        "长毛",
+        "欧洲",
+        "土耳其",
+        "turkish",
+        "angora"
       ]
     },
     "cat-turkish-van": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "土耳其梵猫 Turkish Van 半长毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "turkish van cat",
       "matchTags": [
-        "cat",
+        "半长毛",
+        "游泳",
+        "土耳其",
+        "turkish",
         "van"
       ]
     },
     "cat-devon-rex": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "德文卷毛猫 Devon Rex 卷毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "devon rex cat",
       "matchTags": [
-        "cat",
+        "卷毛",
+        "短毛",
+        "欧洲",
+        "devon",
         "rex"
       ]
     },
     "cat-cornish-rex": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "康沃尔卷毛猫 Cornish Rex 卷毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "cornish rex cat",
       "matchTags": [
-        "cat",
+        "卷毛",
+        "流线型",
+        "欧洲",
+        "cornish",
         "rex"
       ]
     },
     "cat-sphynx": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "斯芬克斯猫 Sphynx 无毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "sphynx hairless cat",
       "matchTags": [
-        "cat",
+        "无毛",
+        "特殊被毛",
+        "室内猫",
         "sphynx"
       ]
     },
     "cat-manx": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "马恩岛猫 Manx 无尾",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "manx cat tailless",
       "matchTags": [
-        "cat",
+        "无尾",
+        "短毛",
+        "欧洲",
         "manx"
       ]
     },
     "cat-exotic-shorthair": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "异国短毛猫 Exotic Shorthair 短毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "exotic shorthair cat flat face",
       "matchTags": [
-        "cat",
-        "persian"
+        "短毛",
+        "扁脸",
+        "波斯型",
+        "exotic",
+        "shorthair"
       ]
     },
     "cat-nebelung": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "内华达猫 Nebelung 长毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "russian blue longhair cat",
       "matchTags": [
-        "cat",
-        "blue"
+        "长毛",
+        "蓝毛",
+        "绿眼",
+        "nebelung"
       ]
     },
     "cat-birman": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "伯曼猫 Birman 长毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "birman cat blue eyes",
       "matchTags": [
-        "cat",
+        "长毛",
+        "重点色",
+        "蓝眼",
         "birman"
       ]
     },
     "cat-american-shorthair": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "美国短毛猫 American Shorthair 短毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "american shorthair tabby cat",
       "matchTags": [
-        "cat",
-        "tabby"
+        "短毛",
+        "虎斑",
+        "美洲",
+        "american",
+        "shorthair"
       ]
     },
     "cat-american-curl": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "美国卷耳猫 American Curl 卷耳",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "american curl cat",
       "matchTags": [
-        "cat",
+        "卷耳",
+        "美洲",
+        "加州",
+        "american",
         "curl"
       ]
     },
     "cat-american-bobtail": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "美国短尾猫 American Bobtail 短尾",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "american bobtail cat",
       "matchTags": [
-        "cat",
+        "短尾",
+        "美洲",
+        "野生外观",
+        "american",
         "bobtail"
       ]
     },
     "cat-bengal": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "孟加拉猫 Bengal 豹纹",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "bengal cat leopard",
       "matchTags": [
-        "cat",
+        "豹纹",
+        "杂交",
+        "美洲",
         "bengal"
       ]
     },
     "cat-bombay": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "孟买猫 Bombay 短毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "black cat copper eyes",
       "matchTags": [
-        "cat",
-        "black"
+        "短毛",
+        "纯黑",
+        "美洲",
+        "bombay"
       ]
     },
     "cat-savannah": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "萨凡纳猫 Savannah 杂交",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "savannah cat serval",
       "matchTags": [
-        "cat",
+        "杂交",
+        "大型",
+        "斑纹",
         "savannah"
       ]
     },
     "cat-ocicat": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "奥西猫 Ocicat 斑点",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "ocicat spotted cat",
       "matchTags": [
-        "cat",
+        "斑点",
+        "短毛",
+        "美洲",
         "ocicat"
       ]
     },
     "cat-ragamuffin": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "褴褛猫 Ragamuffin 长毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "ragdoll longhair cat",
       "matchTags": [
-        "cat",
-        "ragdoll"
+        "长毛",
+        "大型",
+        "温顺",
+        "ragamuffin"
       ]
     },
     "cat-selkirk-rex": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "塞尔凯克卷毛猫 Selkirk Rex 卷毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "selkirk rex curly cat",
       "matchTags": [
-        "cat",
+        "卷毛",
+        "蓬松",
+        "美洲",
+        "selkirk",
         "rex"
       ]
     },
     "cat-laperm": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "拉邦猫 LaPerm 卷毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "curly cat laperm",
       "matchTags": [
-        "cat",
-        "curly"
+        "卷毛",
+        "美洲",
+        "粘人",
+        "laperm"
       ]
     },
     "cat-munchkin": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "曼基康猫 Munchkin 矮腿",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "munchkin cat short legs",
       "matchTags": [
-        "cat",
+        "矮腿",
+        "突变",
+        "美洲",
         "munchkin"
       ]
     },
     "cat-pixiebob": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "像素豹猫 Pixiebob 短尾",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "pixie bob cat wild",
       "matchTags": [
-        "cat",
-        "bobtail"
+        "短尾",
+        "斑纹",
+        "美洲",
+        "pixiebob"
       ]
     },
     "cat-siamese": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "暹罗猫 Siamese 重点色",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "siamese cat seal point",
       "matchTags": [
-        "cat",
+        "重点色",
+        "蓝眼",
+        "泰国",
         "siamese"
       ]
     },
     "cat-korat": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "科拉特猫 Korat 短毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "korat cat silver blue",
       "matchTags": [
-        "cat",
+        "短毛",
+        "银蓝",
+        "泰国",
         "korat"
       ]
     },
     "cat-burmese": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "缅甸猫 Burmese 短毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "burmese cat golden eyes",
       "matchTags": [
-        "cat",
+        "短毛",
+        "缎光",
+        "东南亚",
         "burmese"
       ]
     },
     "cat-orange-tabby": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "橘猫 中华田园橘 橘猫",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "orange tabby cat",
       "matchTags": [
-        "cat",
+        "橘猫",
+        "田园猫",
+        "中国",
         "orange",
         "tabby"
       ]
     },
     "cat-cow-cat": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "奶牛猫 黑白花 黑白",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "black and white cat",
       "matchTags": [
-        "cat",
-        "black",
-        "white"
+        "黑白",
+        "田园猫",
+        "中国",
+        "cow",
+        "cat"
       ]
     },
     "cat-tortoiseshell": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "玳瑁猫 三花系 玳瑁",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "tortoiseshell cat",
       "matchTags": [
-        "cat",
+        "玳瑁",
+        "母猫",
+        "田园猫",
         "tortoiseshell"
       ]
     },
     "cat-linqing-lion": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "临清狮猫 长毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "white longhair cat",
       "matchTags": [
-        "cat",
-        "white"
+        "长毛",
+        "鸳鸯眼",
+        "山东",
+        "linqing",
+        "lion"
       ]
     },
     "cat-jianzhou": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "简州猫 四川四耳猫 地方品种",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "chinese domestic cat",
       "matchTags": [
-        "cat"
+        "地方品种",
+        "四川",
+        "四耳",
+        "jianzhou"
       ]
     },
     "cat-chinese-white": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "中国白猫 狮猫型白猫 白猫",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "white cat portrait",
       "matchTags": [
-        "cat",
+        "白猫",
+        "田园猫",
+        "中国",
+        "chinese",
         "white"
       ]
     },
     "cat-singapura": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "新加坡猫 Singapura 小型",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "singapura cat small",
       "matchTags": [
-        "cat",
+        "小型",
+        "短毛",
+        "东南亚",
         "singapura"
       ]
     },
     "cat-abyssinian": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "阿比西尼亚猫 Abyssinian ticked",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "abyssinian cat ticked",
       "matchTags": [
-        "cat",
+        "ticked",
+        "短毛",
+        "活跃",
         "abyssinian"
       ]
     },
     "cat-calico-chinese": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "三花猫 中华田园三花 三花",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "calico cat tricolor",
       "matchTags": [
-        "cat",
-        "calico"
+        "三花",
+        "母猫",
+        "田园猫",
+        "calico",
+        "chinese"
       ]
     },
     "cat-kurilian-bobtail": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "千岛短尾猫 Kurilian Bobtail 短尾",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "kurilian bobtail cat",
       "matchTags": [
-        "cat",
+        "短尾",
+        "日本",
+        "俄罗斯",
+        "kurilian",
         "bobtail"
       ]
     },
     "cat-japanese-bobtail-longhair": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "日本短尾猫 长毛型 短尾",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "japanese bobtail longhair cat",
       "matchTags": [
-        "cat",
+        "短尾",
+        "长毛",
+        "日本",
+        "japanese",
         "bobtail"
       ]
     },
     "cat-mi-ke": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "三毛猫 日本文化 三毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "calico japanese cat",
       "matchTags": [
-        "cat",
-        "calico"
+        "三毛",
+        "日本",
+        "吉祥",
+        "mi",
+        "ke"
       ]
     },
     "cat-japanese-domestic": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "日本家猫 日本猫 家猫",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "japanese cat street",
       "matchTags": [
-        "cat",
-        "japan"
+        "家猫",
+        "日本",
+        "本土",
+        "japanese",
+        "domestic"
       ]
     },
     "cat-toybob": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "玩具短尾猫 Toybob 短尾",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "small cat portrait",
       "matchTags": [
-        "cat",
-        "kitten"
+        "短尾",
+        "微型",
+        "稀有",
+        "toybob"
       ]
     },
     "cat-hokkaido-cat": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "北海道猫 地方型 地方型",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "fluffy cat winter",
       "matchTags": [
-        "cat",
-        "fluffy"
+        "地方型",
+        "北海道",
+        "耐寒",
+        "hokkaido",
+        "cat"
       ]
     },
     "cat-okinawa-cat": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "冲绳猫 琉球猫 琉球",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "street cat tropical",
       "matchTags": [
+        "琉球",
+        "冲绳",
+        "岛猫",
+        "okinawa",
         "cat"
       ]
     },
     "cat-maneki-neko": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "招猫 招财猫 招猫",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "maneki neko lucky cat",
       "matchTags": [
-        "cat",
-        "lucky"
+        "招猫",
+        "文化",
+        "日本",
+        "maneki",
+        "neko"
       ]
     },
     "cat-japanese-chin-longhair": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "日本长毛猫 展示型 长毛",
+      "category": "animals",
       "requiredTags": [
         "cat"
       ],
-      "query": "longhair cat oriental",
       "matchTags": [
-        "cat",
-        "longhair"
+        "长毛",
+        "展示型",
+        "日本",
+        "japanese",
+        "chin"
       ]
     },
     "dog-corgi": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "威尔士柯基犬 Pembroke 柯基",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "pembroke welsh corgi dog",
       "matchTags": [
-        "dog",
+        "柯基",
+        "英国",
+        "牧牛犬",
         "corgi"
       ]
     },
     "dog-german-shepherd": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "德国牧羊犬 工作犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "german shepherd dog",
       "matchTags": [
-        "dog",
+        "工作犬",
+        "德国",
+        "警犬",
+        "german",
         "shepherd"
       ]
     },
     "dog-french-bulldog": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "法国斗牛犬 斗牛犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "french bulldog dog",
       "matchTags": [
-        "dog",
+        "斗牛犬",
+        "法国",
+        "伴侣犬",
+        "french",
         "bulldog"
       ]
     },
     "dog-english-bulldog": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "英国斗牛犬 斗牛犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "english bulldog dog",
       "matchTags": [
-        "dog",
+        "斗牛犬",
+        "英国",
+        "伴侣犬",
+        "english",
         "bulldog"
       ]
     },
     "dog-rottweiler": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "罗威纳犬 护卫犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "rottweiler dog",
       "matchTags": [
-        "dog",
+        "护卫犬",
+        "德国",
+        "工作犬",
         "rottweiler"
       ]
     },
     "dog-doberman": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "杜宾犬 护卫犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "doberman pinscher dog",
       "matchTags": [
-        "dog",
+        "护卫犬",
+        "德国",
+        "警犬",
         "doberman"
       ]
     },
     "dog-boxer": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "拳师犬 工作犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "boxer dog portrait",
       "matchTags": [
-        "dog",
+        "工作犬",
+        "德国",
+        "家庭犬",
         "boxer"
       ]
     },
     "dog-dalmatian": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "大麦町犬 斑点",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "dalmatian dog spots",
       "matchTags": [
-        "dog",
+        "斑点",
+        "欧洲",
+        "运动型",
         "dalmatian"
       ]
     },
     "dog-great-dane": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "大丹犬 巨型犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "great dane dog",
       "matchTags": [
-        "dog",
+        "巨型犬",
+        "德国",
+        "伴侣犬",
+        "great",
         "dane"
       ]
     },
     "dog-cocker-spaniel": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "英国可卡犬 spaniel",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "cocker spaniel dog",
       "matchTags": [
-        "dog",
-        "spaniel"
+        "spaniel",
+        "猎犬",
+        "英国",
+        "cocker"
       ]
     },
     "dog-poodle": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "标准贵宾犬 贵宾",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "poodle dog",
       "matchTags": [
-        "dog",
+        "贵宾",
+        "卷毛",
+        "高智商",
         "poodle"
       ]
     },
     "dog-beagle": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "比格犬 嗅猎犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "beagle dog",
       "matchTags": [
-        "dog",
+        "嗅猎犬",
+        "英国",
+        "三色",
         "beagle"
       ]
     },
     "dog-shetland-sheepdog": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "喜乐蒂牧羊犬 牧羊犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "shetland sheepdog dog",
       "matchTags": [
-        "dog",
-        "sheltie"
+        "牧羊犬",
+        "苏格兰",
+        "小型",
+        "shetland",
+        "sheepdog"
       ]
     },
     "dog-cardigan-corgi": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "卡迪根威尔士柯基 柯基",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "cardigan welsh corgi dog",
       "matchTags": [
-        "dog",
+        "柯基",
+        "威尔士",
+        "长尾",
+        "cardigan",
         "corgi"
       ]
     },
     "dog-scottish-terrier": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "苏格兰梗 梗犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "scottish terrier dog",
       "matchTags": [
-        "dog",
+        "梗犬",
+        "苏格兰",
+        "刚毛",
+        "scottish",
         "terrier"
       ]
     },
     "dog-bernese-mountain": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "伯恩山犬 山地犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "bernese mountain dog",
       "matchTags": [
-        "dog",
-        "bernese"
+        "山地犬",
+        "瑞士",
+        "三色",
+        "bernese",
+        "mountain"
       ]
     },
     "dog-greyhound": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "灵缇 格力犬 视觉猎犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "greyhound dog running",
       "matchTags": [
-        "dog",
+        "视觉猎犬",
+        "高速",
+        "英国",
         "greyhound"
       ]
     },
     "dog-saint-bernard": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "圣伯纳犬 救援犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "saint bernard dog",
       "matchTags": [
-        "dog",
+        "救援犬",
+        "瑞士",
+        "巨型",
+        "saint",
         "bernard"
       ]
     },
     "dog-irish-setter": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "爱尔兰雪达犬 猎鸟犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "irish setter dog red",
       "matchTags": [
-        "dog",
+        "猎鸟犬",
+        "爱尔兰",
+        "红色",
+        "irish",
         "setter"
       ]
     },
     "dog-labrador-retriever": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "拉布拉多寻回犬 寻回犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "labrador retriever dog",
       "matchTags": [
-        "dog",
-        "labrador"
+        "寻回犬",
+        "加拿大",
+        "导盲",
+        "labrador",
+        "retriever"
       ]
     },
     "dog-australian-shepherd": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "澳洲牧羊犬 牧羊犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "australian shepherd dog",
       "matchTags": [
-        "dog",
-        "australian"
+        "牧羊犬",
+        "美国",
+        "陨石色",
+        "australian",
+        "shepherd"
       ]
     },
     "dog-australian-cattle-dog": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "澳洲牧牛犬 牧牛犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "australian cattle dog",
       "matchTags": [
-        "dog",
+        "牧牛犬",
+        "澳大利亚",
+        "斑点",
+        "australian",
         "cattle"
       ]
     },
     "dog-boston-terrier": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "波士顿梗 梗犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "boston terrier dog",
       "matchTags": [
-        "dog",
-        "boston"
+        "梗犬",
+        "美国",
+        "伴侣犬",
+        "boston",
+        "terrier"
       ]
     },
     "dog-american-pit-bull": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "美国比特犬 比特",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "pit bull terrier dog",
       "matchTags": [
-        "dog",
-        "pitbull"
+        "比特",
+        "美国",
+        "力量型",
+        "american",
+        "pit"
       ]
     },
     "dog-alaskan-malamute": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "阿拉斯加雪橇犬 雪橇犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "alaskan malamute dog",
       "matchTags": [
-        "dog",
+        "雪橇犬",
+        "阿拉斯加",
+        "大型",
+        "alaskan",
         "malamute"
       ]
     },
     "dog-chesapeake-bay-retriever": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "切萨皮克湾寻回犬 寻回犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "chesapeake bay retriever dog",
       "matchTags": [
-        "dog",
-        "retriever"
+        "寻回犬",
+        "美国",
+        "防水毛",
+        "chesapeake",
+        "bay"
       ]
     },
     "dog-american-staffordshire": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "美国斯塔福郡梗 梗犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "staffordshire terrier dog",
       "matchTags": [
-        "dog",
+        "梗犬",
+        "美国",
+        "力量型",
+        "american",
         "staffordshire"
       ]
     },
     "dog-nova-scotia-tolling": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "新斯科舍诱鸭寻回犬 寻回犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "nova scotia duck tolling retriever",
       "matchTags": [
-        "dog",
-        "retriever"
+        "寻回犬",
+        "加拿大",
+        "诱鸭",
+        "nova",
+        "scotia"
       ]
     },
     "dog-american-eskimo": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "美国爱斯基摩犬 斯皮茨",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "american eskimo dog white",
       "matchTags": [
-        "dog",
+        "斯皮茨",
+        "白色",
+        "美国",
+        "american",
         "eskimo"
       ]
     },
     "dog-catahoula-leopard": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "卡塔胡拉豹犬 工作犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "catahoula leopard dog",
       "matchTags": [
-        "dog",
-        "catahoula"
+        "工作犬",
+        "美国",
+        "豹纹",
+        "catahoula",
+        "leopard"
       ]
     },
     "dog-xoloitzcuintli": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "墨西哥无毛犬 无毛犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "xoloitzcuintli hairless dog",
       "matchTags": [
-        "dog",
-        "xolo"
+        "无毛犬",
+        "墨西哥",
+        "古老品种",
+        "xoloitzcuintli"
       ]
     },
     "dog-vizsla": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "维兹拉犬 指针犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "vizsla dog",
       "matchTags": [
-        "dog",
+        "指针犬",
+        "匈牙利",
+        "赤金",
         "vizsla"
       ]
     },
     "dog-samoyed": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "萨摩耶犬 雪橇犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "samoyed dog white",
       "matchTags": [
-        "dog",
+        "雪橇犬",
+        "西伯利亚",
+        "白色",
         "samoyed"
       ]
     },
     "dog-akita": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "秋田犬 日本",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "akita inu dog",
       "matchTags": [
-        "dog",
+        "日本",
+        "大型",
+        "天然纪念",
         "akita"
       ]
     },
     "dog-chow-chow": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "松狮犬 中国",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "chow chow dog",
       "matchTags": [
-        "dog",
+        "中国",
+        "古老",
+        "蓝舌",
         "chow"
       ]
     },
     "dog-shar-pei": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "中国沙皮犬 中国",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "shar pei dog",
       "matchTags": [
-        "dog",
-        "shar"
+        "中国",
+        "皱皮",
+        "短毛",
+        "shar",
+        "pei"
       ]
     },
     "dog-pekingese": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "北京犬 京巴 中国",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "pekingese dog",
       "matchTags": [
-        "dog",
+        "中国",
+        "宫廷",
+        "短鼻",
         "pekingese"
       ]
     },
     "dog-shih-tzu": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "西施犬 中国",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "shih tzu dog",
       "matchTags": [
-        "dog",
-        "shih"
+        "中国",
+        "长毛",
+        "伴侣犬",
+        "shih",
+        "tzu"
       ]
     },
     "dog-tibetan-mastiff": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "藏獒 藏獒",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "tibetan mastiff dog",
       "matchTags": [
-        "dog",
+        "藏獒",
+        "西藏",
+        "护卫",
+        "tibetan",
         "mastiff"
       ]
     },
     "dog-korean-jindo": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "韩国珍岛犬 韩国",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "korean jindo dog",
       "matchTags": [
-        "dog",
+        "韩国",
+        "天然纪念",
+        "忠诚",
+        "korean",
         "jindo"
       ]
     },
     "dog-siberian-husky": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "西伯利亚哈士奇 雪橇犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "siberian husky dog",
       "matchTags": [
-        "dog",
+        "雪橇犬",
+        "西伯利亚",
+        "蓝眼",
+        "siberian",
         "husky"
       ]
     },
     "dog-hokkaido": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "北海道犬 日本",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "hokkaido dog japan",
       "matchTags": [
-        "dog",
-        "japan"
+        "日本",
+        "天然纪念",
+        "北海道",
+        "hokkaido"
       ]
     },
     "dog-chinese-crested": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "中国冠毛犬 无毛犬",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "chinese crested dog",
       "matchTags": [
-        "dog",
+        "无毛犬",
+        "中国",
+        "小型",
+        "chinese",
         "crested"
       ]
     },
     "dog-pug": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "巴哥犬 哈巴狗 中国",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "pug dog portrait",
       "matchTags": [
-        "dog",
+        "中国",
+        "短鼻",
+        "小型",
         "pug"
       ]
     },
     "dog-thai-ridgeback": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "泰国脊背犬 泰国",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "thai ridgeback dog",
       "matchTags": [
-        "dog",
+        "泰国",
+        "脊背线",
+        "本土",
+        "thai",
         "ridgeback"
       ]
     },
     "dog-formosan-mountain": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "台湾高山犬 福尔摩沙犬 台湾",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "taiwan dog mountain",
       "matchTags": [
-        "dog",
-        "taiwan"
+        "台湾",
+        "本土",
+        "立耳",
+        "formosan",
+        "mountain"
       ]
     },
     "dog-miniature-schnauzer": {
-      "category": "animals",
       "provider": "pixabay",
+      "query": "迷你雪纳瑞 雪纳瑞",
+      "category": "animals",
       "requiredTags": [
         "dog"
       ],
-      "query": "miniature schnauzer dog",
       "matchTags": [
-        "dog",
+        "雪纳瑞",
+        "德国",
+        "梗犬",
+        "miniature",
         "schnauzer"
-      ]
-    },
-    "hero-thor": {
-      "provider": "pixabay",
-      "query": "thor marvel hammer cosplay",
-      "matchTags": [
-        "thor",
-        "marvel"
-      ]
-    },
-    "hero-hulk": {
-      "provider": "pixabay",
-      "query": "hulk marvel green cosplay",
-      "matchTags": [
-        "hulk",
-        "marvel"
-      ]
-    },
-    "hero-black-widow": {
-      "provider": "pixabay",
-      "query": "black widow marvel cosplay",
-      "matchTags": [
-        "widow",
-        "marvel"
-      ]
-    },
-    "hero-doctor-strange": {
-      "provider": "pixabay",
-      "query": "doctor strange marvel cosplay",
-      "matchTags": [
-        "strange",
-        "marvel"
-      ]
-    },
-    "hero-black-panther": {
-      "provider": "pixabay",
-      "query": "black panther marvel cosplay",
-      "matchTags": [
-        "panther",
-        "marvel"
-      ]
-    },
-    "hero-deadpool": {
-      "provider": "pixabay",
-      "query": "deadpool marvel cosplay",
-      "matchTags": [
-        "deadpool",
-        "marvel"
-      ]
-    },
-    "hero-wolverine": {
-      "provider": "pixabay",
-      "query": "wolverine marvel cosplay",
-      "matchTags": [
-        "wolverine",
-        "marvel"
-      ]
-    },
-    "hero-scarlet-witch": {
-      "provider": "pixabay",
-      "query": "scarlet witch cosplay marvel",
-      "matchTags": [
-        "witch",
-        "marvel"
-      ]
-    },
-    "hero-ant-man": {
-      "provider": "pixabay",
-      "query": "ant man marvel cosplay",
-      "matchTags": [
-        "ant",
-        "marvel"
-      ]
-    },
-    "hero-hawkeye": {
-      "provider": "pixabay",
-      "query": "hawkeye archer marvel cosplay",
-      "matchTags": [
-        "hawkeye",
-        "marvel"
-      ]
-    },
-    "hero-guardians-star-lord": {
-      "provider": "pixabay",
-      "query": "space galaxy stars night sky",
-      "matchTags": [
-        "space",
-        "stars"
-      ]
-    },
-    "hero-silver-surfer": {
-      "provider": "pixabay",
-      "query": "silver surfer marvel",
-      "matchTags": [
-        "silver",
-        "surfer"
-      ]
-    },
-    "hero-wonder-woman": {
-      "provider": "pixabay",
-      "query": "wonder woman cosplay",
-      "matchTags": [
-        "wonder",
-        "woman"
-      ]
-    },
-    "hero-flash-dc": {
-      "provider": "pixabay",
-      "query": "the flash dc cosplay",
-      "matchTags": [
-        "flash",
-        "dc"
-      ]
-    },
-    "hero-aquaman-dc": {
-      "provider": "pixabay",
-      "query": "aquaman dc cosplay trident",
-      "matchTags": [
-        "aquaman",
-        "dc"
-      ]
-    },
-    "hero-green-lantern": {
-      "provider": "pixabay",
-      "query": "green lantern cosplay",
-      "matchTags": [
-        "lantern",
-        "green"
-      ]
-    },
-    "hero-shazam-dc": {
-      "provider": "pixabay",
-      "query": "shazam dc cosplay",
-      "matchTags": [
-        "shazam",
-        "dc"
-      ]
-    },
-    "hero-nightwing-dc": {
-      "provider": "pixabay",
-      "query": "nightwing dc cosplay",
-      "matchTags": [
-        "nightwing",
-        "dc"
-      ]
-    },
-    "hero-green-arrow-dc": {
-      "provider": "pixabay",
-      "query": "green arrow dc cosplay",
-      "matchTags": [
-        "arrow",
-        "green"
-      ]
-    },
-    "hero-harley-quinn": {
-      "provider": "pixabay",
-      "query": "harley quinn cosplay",
-      "matchTags": [
-        "harley",
-        "quinn"
-      ]
-    },
-    "hero-joker-dc": {
-      "provider": "pixabay",
-      "query": "joker dc cosplay",
-      "matchTags": [
-        "joker",
-        "dc"
-      ]
-    },
-    "hero-cyborg-dc": {
-      "provider": "pixabay",
-      "query": "cyborg dc cosplay",
-      "matchTags": [
-        "cyborg",
-        "dc"
-      ]
-    },
-    "hero-martian-manhunter": {
-      "provider": "pixabay",
-      "query": "martian manhunter cosplay",
-      "matchTags": [
-        "martian",
-        "dc"
-      ]
-    },
-    "hero-constantine-dc": {
-      "provider": "pixabay",
-      "query": "constantine dc trench coat",
-      "matchTags": [
-        "constantine",
-        "dc"
-      ]
-    },
-    "hero-raven-dc": {
-      "provider": "pixabay",
-      "query": "raven teen titans cosplay",
-      "matchTags": [
-        "raven",
-        "titans"
-      ]
-    },
-    "hero-spawn": {
-      "provider": "pixabay",
-      "query": "spawn comic antihero cosplay",
-      "matchTags": [
-        "spawn",
-        "comic"
-      ]
-    },
-    "hero-invincible": {
-      "provider": "pixabay",
-      "query": "invincible superhero cosplay",
-      "matchTags": [
-        "invincible",
-        "hero"
-      ]
-    },
-    "hero-hellboy": {
-      "provider": "pixabay",
-      "query": "hellboy comic cosplay",
-      "matchTags": [
-        "hellboy",
-        "comic"
-      ]
-    },
-    "hero-witcher-geralt": {
-      "provider": "pixabay",
-      "query": "geralt witcher cosplay",
-      "matchTags": [
-        "witcher",
-        "geralt"
-      ]
-    },
-    "hero-tmnt-leonardo": {
-      "provider": "pixabay",
-      "query": "teenage mutant ninja turtles cosplay",
-      "matchTags": [
-        "tmnt",
-        "turtle"
-      ]
-    },
-    "hero-watchmen-rorschach": {
-      "provider": "pixabay",
-      "query": "watchmen rorschach mask",
-      "matchTags": [
-        "watchmen",
-        "mask"
-      ]
-    },
-    "hero-homelander": {
-      "provider": "pixabay",
-      "query": "superhero cape cosplay villain",
-      "matchTags": [
-        "superhero",
-        "cape"
-      ]
-    },
-    "hero-kick-ass": {
-      "provider": "pixabay",
-      "query": "kick ass superhero costume",
-      "matchTags": [
-        "superhero",
-        "costume"
-      ]
-    },
-    "hero-conan": {
-      "provider": "pixabay",
-      "query": "conan barbarian warrior cosplay",
-      "matchTags": [
-        "conan",
-        "warrior"
-      ]
-    },
-    "hero-the-boys-butcher": {
-      "provider": "pixabay",
-      "query": "leather coat vigilante cosplay",
-      "matchTags": [
-        "vigilante",
-        "coat"
-      ]
-    },
-    "hero-sailor-moon": {
-      "provider": "pixabay",
-      "query": "sailor moon cosplay",
-      "matchTags": [
-        "sailor",
-        "moon"
-      ]
-    },
-    "hero-goku": {
-      "provider": "pixabay",
-      "query": "goku dragon ball cosplay",
-      "matchTags": [
-        "goku",
-        "dragon"
       ]
     },
     "supercar-mclaren-720s": {
       "provider": "pixabay",
-      "query": "mclaren 720s supercar",
+      "query": "迈凯伦 720S 迈凯伦",
+      "requiredTags": [],
       "matchTags": [
+        "迈凯伦",
+        "英国",
+        "V8",
         "mclaren",
-        "car"
+        "720s"
       ]
     },
     "supercar-ferrari-sf90": {
       "provider": "pixabay",
-      "query": "ferrari sf90 supercar",
+      "query": "法拉利 SF90 Stradale 意大利",
+      "requiredTags": [],
       "matchTags": [
+        "意大利",
+        "Ferrari",
+        "超跑",
         "ferrari",
-        "car"
+        "sf90"
       ]
     },
     "supercar-lamborghini-aventador": {
       "provider": "pixabay",
-      "query": "lamborghini aventador",
+      "query": "兰博基尼 Aventador 意大利",
+      "requiredTags": [],
       "matchTags": [
+        "意大利",
+        "Lamborghini",
+        "超跑",
         "lamborghini",
-        "car"
+        "aventador"
       ]
     },
     "supercar-maserati-mc20": {
       "provider": "pixabay",
-      "query": "maserati mc20 sports car",
+      "query": "玛莎拉蒂 MC20 意大利",
+      "requiredTags": [],
       "matchTags": [
+        "意大利",
+        "Maserati",
+        "超跑",
         "maserati",
-        "car"
+        "mc20"
       ]
     },
     "supercar-pagani-huayra": {
       "provider": "pixabay",
-      "query": "pagani huayra hypercar",
+      "query": "帕加尼 Huayra 意大利",
+      "requiredTags": [],
       "matchTags": [
+        "意大利",
+        "Pagani",
+        "超跑",
         "pagani",
-        "car"
+        "huayra"
       ]
     },
     "supercar-ferrari-roma": {
       "provider": "pixabay",
-      "query": "ferrari roma coupe",
+      "query": "法拉利 Roma 意大利",
+      "requiredTags": [],
       "matchTags": [
+        "意大利",
+        "Ferrari",
+        "超跑",
         "ferrari",
-        "car"
+        "roma"
       ]
     },
     "supercar-lamborghini-revuelto": {
       "provider": "pixabay",
-      "query": "lamborghini hybrid supercar",
+      "query": "兰博基尼 Revuelto 意大利",
+      "requiredTags": [],
       "matchTags": [
+        "意大利",
+        "Lamborghini",
+        "超跑",
         "lamborghini",
-        "car"
+        "revuelto"
       ]
     },
     "supercar-porsche-918": {
       "provider": "pixabay",
-      "query": "porsche 918 spyder",
+      "query": "保时捷 918 Spyder 德国",
+      "requiredTags": [],
       "matchTags": [
+        "德国",
+        "Porsche",
+        "超跑",
         "porsche",
-        "spyder"
+        "918"
       ]
     },
     "supercar-mercedes-amg-gt": {
       "provider": "pixabay",
-      "query": "mercedes amg gt sports car",
+      "query": "奔驰 AMG GT 德国",
+      "requiredTags": [],
       "matchTags": [
+        "德国",
+        "Mercedes-AMG",
+        "超跑",
         "mercedes",
         "amg"
       ]
     },
     "supercar-audi-r8": {
       "provider": "pixabay",
-      "query": "audi r8 sports car",
+      "query": "奥迪 R8 德国",
+      "requiredTags": [],
       "matchTags": [
+        "德国",
+        "Audi",
+        "超跑",
         "audi",
         "r8"
       ]
     },
     "supercar-bmw-m8": {
       "provider": "pixabay",
-      "query": "bmw m8 coupe sports car",
+      "query": "宝马 M8 Competition 德国",
+      "requiredTags": [],
       "matchTags": [
+        "德国",
+        "BMW M",
+        "超跑",
         "bmw",
         "m8"
       ]
     },
     "supercar-porsche-taycan": {
       "provider": "pixabay",
-      "query": "porsche taycan electric",
+      "query": "保时捷 Taycan 德国",
+      "requiredTags": [],
       "matchTags": [
+        "德国",
+        "Porsche",
+        "超跑",
         "porsche",
-        "electric"
+        "taycan"
       ]
     },
     "supercar-aston-martin-db11": {
       "provider": "pixabay",
-      "query": "aston martin db11",
+      "query": "阿斯顿 马丁 DB11 英国",
+      "requiredTags": [],
       "matchTags": [
+        "英国",
+        "Aston Martin",
+        "超跑",
         "aston",
         "martin"
       ]
     },
     "supercar-bentley-continental-gt": {
       "provider": "pixabay",
-      "query": "bentley continental gt",
+      "query": "宾利欧陆 GT 英国",
+      "requiredTags": [],
       "matchTags": [
+        "英国",
+        "Bentley",
+        "超跑",
         "bentley",
-        "gt"
+        "continental"
       ]
     },
     "supercar-lotus-emira": {
       "provider": "pixabay",
-      "query": "lotus emira sports car",
+      "query": "路特斯 Emira 英国",
+      "requiredTags": [],
       "matchTags": [
+        "英国",
+        "Lotus",
+        "超跑",
         "lotus",
-        "car"
+        "emira"
       ]
     },
     "supercar-jaguar-f-type": {
       "provider": "pixabay",
-      "query": "jaguar f type sports car",
+      "query": "捷豹 F Type 英国",
+      "requiredTags": [],
       "matchTags": [
+        "英国",
+        "Jaguar",
+        "超跑",
         "jaguar",
-        "car"
+        "f"
       ]
     },
     "supercar-mclaren-artura": {
       "provider": "pixabay",
-      "query": "mclaren artura hybrid",
+      "query": "迈凯伦 Artura 英国",
+      "requiredTags": [],
       "matchTags": [
+        "英国",
+        "McLaren",
+        "超跑",
         "mclaren",
-        "hybrid"
+        "artura"
       ]
     },
     "plant-snake-plant": {
       "provider": "pixabay",
-      "query": "snake plant sansevieria",
+      "query": "虎尾兰 Sansevieria 多肉",
+      "requiredTags": [],
       "matchTags": [
+        "多肉",
+        "耐旱",
+        "室内",
         "snake",
         "plant"
       ]
     },
     "plant-philodendron": {
       "provider": "pixabay",
-      "query": "philodendron houseplant",
+      "query": "蔓绿绒 Philodendron 观叶",
+      "requiredTags": [],
       "matchTags": [
-        "philodendron",
-        "plant"
+        "观叶",
+        "天南星科",
+        "室内",
+        "philodendron"
       ]
     },
     "plant-alocasia": {
       "provider": "pixabay",
-      "query": "alocasia elephant ear plant",
+      "query": "海芋 Alocasia 观叶",
+      "requiredTags": [],
       "matchTags": [
-        "alocasia",
-        "plant"
+        "观叶",
+        "天南星科",
+        "室内",
+        "alocasia"
       ]
     },
     "plant-pothos": {
       "provider": "pixabay",
-      "query": "pothos ivy houseplant",
+      "query": "绿萝 Epipremnum 观叶",
+      "requiredTags": [],
       "matchTags": [
-        "pothos",
-        "plant"
+        "观叶",
+        "天南星科",
+        "室内",
+        "pothos"
       ]
     },
     "plant-anthurium": {
       "provider": "pixabay",
-      "query": "anthurium flower houseplant",
+      "query": "红掌 Anthurium 观叶",
+      "requiredTags": [],
       "matchTags": [
-        "anthurium",
-        "plant"
+        "观叶",
+        "天南星科",
+        "室内",
+        "anthurium"
       ]
     },
     "plant-caladium": {
       "provider": "pixabay",
-      "query": "caladium colorful leaves",
+      "query": "彩叶芋 Caladium 观叶",
+      "requiredTags": [],
       "matchTags": [
-        "caladium",
-        "plant"
+        "观叶",
+        "天南星科",
+        "室内",
+        "caladium"
       ]
     },
     "plant-aloe-vera": {
       "provider": "pixabay",
-      "query": "aloe vera succulent",
+      "query": "芦荟 Aloe vera 多肉",
+      "requiredTags": [],
       "matchTags": [
+        "多肉",
+        "耐旱",
+        "盆栽",
         "aloe",
-        "succulent"
+        "vera"
       ]
     },
     "plant-haworthia": {
       "provider": "pixabay",
-      "query": "haworthia succulent",
+      "query": "十二卷 Haworthia 多肉",
+      "requiredTags": [],
       "matchTags": [
-        "haworthia",
-        "succulent"
+        "多肉",
+        "耐旱",
+        "盆栽",
+        "haworthia"
       ]
     },
     "plant-lithops": {
       "provider": "pixabay",
-      "query": "lithops living stones succulent",
+      "query": "生石花 Lithops 多肉",
+      "requiredTags": [],
       "matchTags": [
-        "lithops",
-        "succulent"
+        "多肉",
+        "耐旱",
+        "盆栽",
+        "lithops"
       ]
     },
     "plant-cactus": {
       "provider": "pixabay",
-      "query": "cactus succulent pot",
+      "query": "仙人掌 Cactus 多肉",
+      "requiredTags": [],
       "matchTags": [
-        "cactus",
-        "succulent"
+        "多肉",
+        "耐旱",
+        "盆栽",
+        "cactus"
       ]
     },
     "plant-sedum": {
       "provider": "pixabay",
-      "query": "sedum succulent garden",
+      "query": "景天 Sedum 多肉",
+      "requiredTags": [],
       "matchTags": [
-        "sedum",
-        "succulent"
+        "多肉",
+        "耐旱",
+        "盆栽",
+        "sedum"
       ]
     },
     "plant-string-of-pearls": {
       "provider": "pixabay",
-      "query": "string of pearls succulent",
+      "query": "佛珠 String of 多肉",
+      "requiredTags": [],
       "matchTags": [
-        "succulent",
-        "pearls"
+        "多肉",
+        "耐旱",
+        "盆栽",
+        "string",
+        "of"
       ]
     },
     "plant-zz-plant": {
       "provider": "pixabay",
-      "query": "zz plant zamioculcas",
+      "query": "金钱树 ZZ Plant 观叶",
+      "requiredTags": [],
       "matchTags": [
+        "观叶",
+        "天南星科",
+        "室内",
         "zz",
         "plant"
       ]
     },
     "anime-your-name": {
       "provider": "pixabay",
-      "query": "anime sky comet scenery",
+      "query": "你的名字 君 名 新海诚",
+      "requiredTags": [],
       "matchTags": [
-        "anime",
-        "sky"
+        "新海诚",
+        "恋爱",
+        "时空",
+        "your",
+        "name"
       ]
     },
     "anime-naruto": {
       "provider": "pixabay",
-      "query": "naruto anime cosplay",
+      "query": "火影忍者 Naruto 少年漫",
+      "requiredTags": [],
       "matchTags": [
-        "naruto",
-        "anime"
+        "少年漫",
+        "热血",
+        "日本",
+        "naruto"
       ]
     },
     "anime-dragon-ball": {
       "provider": "pixabay",
-      "query": "dragon ball goku cosplay",
+      "query": "龙珠 Dragon Ball 少年漫",
+      "requiredTags": [],
       "matchTags": [
+        "少年漫",
+        "热血",
+        "日本",
         "dragon",
         "ball"
       ]
     },
     "anime-my-hero-academia": {
       "provider": "pixabay",
-      "query": "my hero academia cosplay",
+      "query": "我的英雄学院 少年漫",
+      "requiredTags": [],
       "matchTags": [
-        "hero",
-        "academia"
+        "少年漫",
+        "热血",
+        "日本",
+        "my",
+        "hero"
       ]
     },
     "anime-jujutsu-kaisen": {
       "provider": "pixabay",
-      "query": "jujutsu kaisen anime cosplay",
+      "query": "咒术回战 少年漫",
+      "requiredTags": [],
       "matchTags": [
+        "少年漫",
+        "热血",
+        "日本",
         "jujutsu",
-        "anime"
+        "kaisen"
       ]
     },
     "anime-chainsaw-man": {
       "provider": "pixabay",
-      "query": "chainsaw man anime cosplay",
+      "query": "链锯人 少年漫",
+      "requiredTags": [],
       "matchTags": [
+        "少年漫",
+        "热血",
+        "日本",
         "chainsaw",
-        "anime"
+        "man"
       ]
     },
     "anime-spy-x-family": {
       "provider": "pixabay",
-      "query": "spy family anime cosplay",
+      "query": "间谍过家家 少年漫",
+      "requiredTags": [],
       "matchTags": [
+        "少年漫",
+        "热血",
+        "日本",
         "spy",
-        "anime"
+        "x"
       ]
     },
     "anime-fullmetal-alchemist": {
       "provider": "pixabay",
-      "query": "fullmetal alchemist cosplay",
+      "query": "钢之炼金术师 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "alchemist",
-        "anime"
+        "奇幻",
+        "剧情",
+        "日本",
+        "fullmetal",
+        "alchemist"
       ]
     },
     "anime-death-note": {
       "provider": "pixabay",
-      "query": "death note anime cosplay",
+      "query": "死亡笔记 奇幻",
+      "requiredTags": [],
       "matchTags": [
+        "奇幻",
+        "剧情",
+        "日本",
         "death",
         "note"
       ]
     },
     "anime-steins-gate": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "tokyo city night urban",
+      "query": "命运石之门 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "tokyo",
-        "city"
-      ]
-    },
-    "anime-spirited-away": {
-      "provider": "pixabay",
-      "query": "spirited away anime style",
-      "matchTags": [
-        "spirited",
-        "anime"
+        "奇幻",
+        "剧情",
+        "日本",
+        "steins",
+        "gate"
       ]
     },
     "anime-howls-moving-castle": {
       "provider": "pixabay",
-      "query": "howls moving castle anime scenery",
+      "query": "哈尔的移动城堡 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "castle",
-        "anime"
+        "奇幻",
+        "剧情",
+        "日本",
+        "howls",
+        "moving"
       ]
     },
     "anime-sword-art-online": {
       "provider": "pixabay",
-      "query": "sword art online anime",
+      "query": "刀剑神域 奇幻",
+      "requiredTags": [],
       "matchTags": [
+        "奇幻",
+        "剧情",
+        "日本",
         "sword",
-        "anime"
+        "art"
       ]
     },
     "anime-made-in-abyss": {
       "provider": "pixabay",
-      "query": "anime fantasy adventure landscape",
+      "query": "来自深渊 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "anime",
-        "fantasy"
+        "奇幻",
+        "剧情",
+        "日本",
+        "made",
+        "in"
       ]
     },
     "anime-frieren": {
       "provider": "pixabay",
-      "query": "anime elf fantasy meadow",
+      "query": "葬送的芙莉莲 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "anime",
-        "fantasy"
-      ]
-    },
-    "tf-megatron": {
-      "provider": "pixabay",
-      "query": "megatron transformer toy",
-      "matchTags": [
-        "megatron",
-        "transformer"
-      ]
-    },
-    "tf-starscream": {
-      "provider": "pixabay",
-      "query": "starscream transformer jet toy",
-      "matchTags": [
-        "starscream",
-        "transformer"
-      ]
-    },
-    "tf-soundwave": {
-      "provider": "pixabay",
-      "query": "soundwave transformer cassette",
-      "matchTags": [
-        "soundwave",
-        "transformer"
-      ]
-    },
-    "tf-shockwave": {
-      "provider": "pixabay",
-      "query": "transformer robot toy purple",
-      "matchTags": [
-        "transformer",
-        "robot"
-      ]
-    },
-    "tf-jazz": {
-      "provider": "pixabay",
-      "query": "transformer car robot toy",
-      "matchTags": [
-        "transformer",
-        "car"
-      ]
-    },
-    "tf-ironhide": {
-      "provider": "pixabay",
-      "query": "transformer truck robot toy",
-      "matchTags": [
-        "transformer",
-        "truck"
-      ]
-    },
-    "tf-ratchet": {
-      "provider": "pixabay",
-      "query": "transformer ambulance robot",
-      "matchTags": [
-        "transformer",
-        "ambulance"
-      ]
-    },
-    "tf-wheeljack": {
-      "provider": "pixabay",
-      "query": "transformer sports car toy",
-      "matchTags": [
-        "transformer",
-        "sports"
-      ]
-    },
-    "tf-brawl": {
-      "provider": "pixabay",
-      "query": "transformer tank toy robot",
-      "matchTags": [
-        "transformer",
-        "tank"
-      ]
-    },
-    "tf-barricade": {
-      "provider": "pixabay",
-      "query": "police car transformer toy",
-      "matchTags": [
-        "police",
-        "transformer"
-      ]
-    },
-    "tf-blackout": {
-      "provider": "pixabay",
-      "query": "helicopter transformer toy",
-      "matchTags": [
-        "helicopter",
-        "transformer"
-      ]
-    },
-    "tf-lockdown": {
-      "provider": "pixabay",
-      "query": "black sports car transformer",
-      "matchTags": [
-        "transformer",
-        "sports"
-      ]
-    },
-    "tf-shockwave-decepticon": {
-      "provider": "pixabay",
-      "query": "decepticon transformer toy",
-      "matchTags": [
-        "decepticon",
-        "toy"
+        "奇幻",
+        "剧情",
+        "日本",
+        "frieren"
       ]
     },
     "motorcycle-honda-cb650r": {
       "provider": "pixabay",
-      "query": "honda cb650r motorcycle",
+      "query": "本田 CB650R 本田",
+      "requiredTags": [],
       "matchTags": [
+        "本田",
+        "街车",
+        "四缸",
         "honda",
-        "motorcycle"
+        "cb650r"
       ]
     },
     "motorcycle-yamaha-r1": {
       "provider": "pixabay",
-      "query": "yamaha r1 sportbike",
+      "query": "雅马哈 YZF R1 日本",
+      "requiredTags": [],
       "matchTags": [
+        "日本",
+        "Yamaha",
+        "摩托",
         "yamaha",
-        "motorcycle"
+        "r1"
       ]
     },
     "motorcycle-kawasaki-ninja": {
       "provider": "pixabay",
-      "query": "kawasaki ninja sportbike",
+      "query": "川崎 Ninja ZX 日本",
+      "requiredTags": [],
       "matchTags": [
+        "日本",
+        "Kawasaki",
+        "摩托",
         "kawasaki",
-        "motorcycle"
+        "ninja"
       ]
     },
     "motorcycle-suzuki-hayabusa": {
       "provider": "pixabay",
-      "query": "suzuki hayabusa motorcycle",
+      "query": "铃木 Hayabusa 日本",
+      "requiredTags": [],
       "matchTags": [
+        "日本",
+        "Suzuki",
+        "摩托",
         "suzuki",
-        "motorcycle"
-      ]
-    },
-    "motorcycle-bmw-s1000rr": {
-      "provider": "pixabay",
-      "query": "bmw s1000rr sportbike",
-      "matchTags": [
-        "bmw",
-        "motorcycle"
-      ]
-    },
-    "motorcycle-triumph-bonneville": {
-      "provider": "pixabay",
-      "query": "triumph bonneville motorcycle",
-      "matchTags": [
-        "triumph",
-        "motorcycle"
+        "hayabusa"
       ]
     },
     "motorcycle-aprilia-rsv4": {
       "provider": "pixabay",
-      "query": "aprilia rsv4 sportbike",
+      "query": "阿普利亚 RSV4 意大利",
+      "requiredTags": [],
       "matchTags": [
+        "意大利",
+        "Aprilia",
+        "摩托",
         "aprilia",
-        "motorcycle"
+        "rsv4"
       ]
     },
     "motorcycle-mv-agusta": {
       "provider": "pixabay",
-      "query": "mv agusta sportbike italy",
+      "query": "MV Agusta 意大利",
+      "requiredTags": [],
       "matchTags": [
-        "agusta",
-        "motorcycle"
+        "意大利",
+        "MV Agusta",
+        "摩托",
+        "mv",
+        "agusta"
       ]
     },
     "motorcycle-indian-scout": {
       "provider": "pixabay",
-      "query": "indian scout cruiser motorcycle",
+      "query": "印第安 Scout 美式",
+      "requiredTags": [],
       "matchTags": [
+        "美式",
+        "Indian",
+        "巡航",
         "indian",
-        "motorcycle"
+        "scout"
       ]
     },
     "motorcycle-harley-fat-boy": {
       "provider": "pixabay",
-      "query": "harley davidson fat boy",
+      "query": "哈雷 Fat Boy 美式",
+      "requiredTags": [],
       "matchTags": [
+        "美式",
+        "Harley-Davidson",
+        "巡航",
         "harley",
-        "cruiser"
+        "fat"
       ]
     },
     "motorcycle-indian-chief": {
       "provider": "pixabay",
-      "query": "indian chief motorcycle",
+      "query": "印第安 Chief 美式",
+      "requiredTags": [],
       "matchTags": [
+        "美式",
+        "Indian",
+        "巡航",
         "indian",
-        "motorcycle"
-      ]
-    },
-    "motorcycle-yamaha-vmax": {
-      "provider": "pixabay",
-      "query": "yamaha vmax power cruiser",
-      "matchTags": [
-        "yamaha",
-        "cruiser"
+        "chief"
       ]
     },
     "motorcycle-honda-gold-wing": {
       "provider": "pixabay",
-      "query": "honda gold wing touring motorcycle",
+      "query": "本田 Gold Wing 日本",
+      "requiredTags": [],
       "matchTags": [
+        "日本",
+        "Honda",
+        "摩托",
         "honda",
-        "touring"
+        "gold"
       ]
     },
     "movie-inception": {
       "provider": "pixabay",
-      "query": "inception dream city architecture",
+      "query": "盗梦空间 Inception 诺兰",
+      "requiredTags": [],
       "matchTags": [
-        "city",
-        "architecture"
+        "诺兰",
+        "科幻",
+        "梦境",
+        "inception"
       ]
     },
     "movie-spirited-away": {
       "provider": "pixabay",
-      "query": "spirited away bathhouse anime",
+      "query": "千与千寻 千 千尋 吉卜力",
+      "requiredTags": [],
       "matchTags": [
+        "吉卜力",
+        "宫崎骏",
+        "动画",
         "spirited",
-        "bathhouse"
+        "away"
       ]
     },
     "movie-the-dark-knight": {
       "provider": "pixabay",
-      "query": "dark knight batman city night",
+      "query": "蝙蝠侠 黑暗骑士 蝙蝠侠",
+      "requiredTags": [],
       "matchTags": [
-        "batman",
-        "night"
+        "蝙蝠侠",
+        "诺兰",
+        "DC",
+        "the",
+        "dark"
       ]
     },
     "movie-matrix": {
       "provider": "pixabay",
-      "query": "matrix green code cyberpunk",
+      "query": "黑客帝国 The Matrix 科幻",
+      "requiredTags": [],
       "matchTags": [
-        "matrix",
-        "cyberpunk"
+        "科幻",
+        "电影",
+        "赛博朋克",
+        "matrix"
       ]
     },
     "movie-blade-runner-2049": {
       "provider": "pixabay",
-      "query": "blade runner cyberpunk city rain",
+      "query": "银翼杀手 2049 科幻",
+      "requiredTags": [],
       "matchTags": [
-        "cyberpunk",
-        "city"
+        "科幻",
+        "电影",
+        "赛博朋克",
+        "blade",
+        "runner"
       ]
     },
     "movie-interstellar": {
       "provider": "pixabay",
-      "query": "interstellar space black hole",
+      "query": "星际穿越 Interstellar 科幻",
+      "requiredTags": [],
       "matchTags": [
-        "space",
-        "cosmos"
+        "科幻",
+        "电影",
+        "硬科幻",
+        "interstellar"
       ]
     },
     "movie-avatar": {
       "provider": "pixabay",
-      "query": "avatar pandora fantasy forest",
+      "query": "阿凡达 Avatar 科幻",
+      "requiredTags": [],
       "matchTags": [
-        "fantasy",
-        "forest"
+        "科幻",
+        "电影",
+        "太空殖民",
+        "avatar"
       ]
     },
     "movie-dune": {
       "provider": "pixabay",
-      "query": "dune desert sci fi landscape",
+      "query": "沙丘 Dune 科幻",
+      "requiredTags": [],
       "matchTags": [
-        "desert",
-        "sci fi"
+        "科幻",
+        "电影",
+        "太空歌剧",
+        "dune"
       ]
     },
     "movie-lord-of-the-rings": {
       "provider": "pixabay",
-      "query": "lord of the rings fantasy landscape",
+      "query": "指环王 The Lord 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "fantasy",
-        "mountain"
+        "奇幻",
+        "电影",
+        "史诗奇幻",
+        "lord",
+        "of"
       ]
     },
     "movie-harry-potter": {
       "provider": "pixabay",
-      "query": "harry potter castle magic",
+      "query": "哈利 波特 Harry 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "castle",
-        "magic"
+        "奇幻",
+        "电影",
+        "魔法奇幻",
+        "harry",
+        "potter"
       ]
     },
     "movie-studio-ghibli": {
       "provider": "pixabay",
-      "query": "ghibli anime landscape clouds",
+      "query": "吉卜力动画电影 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "ghibli",
-        "landscape"
+        "奇幻",
+        "电影",
+        "动画奇幻",
+        "studio",
+        "ghibli"
       ]
     },
     "movie-mad-max-fury-road": {
       "provider": "pixabay",
-      "query": "mad max desert chase wasteland",
+      "query": "疯狂的麦克斯 狂暴之路 动作",
+      "requiredTags": [],
       "matchTags": [
-        "desert",
-        "wasteland"
+        "动作",
+        "电影",
+        "废土动作",
+        "mad",
+        "max"
       ]
     },
     "movie-john-wick": {
       "provider": "pixabay",
-      "query": "john wick action neon city",
+      "query": "疾速追杀 John Wick 动作",
+      "requiredTags": [],
       "matchTags": [
-        "neon",
-        "city"
+        "动作",
+        "电影",
+        "动作惊悚",
+        "john",
+        "wick"
       ]
     },
     "movie-godfather": {
       "provider": "pixabay",
-      "query": "vintage italian restaurant cinematic",
+      "query": "教父 The Godfather 动作",
+      "requiredTags": [],
       "matchTags": [
-        "vintage",
-        "cinematic"
+        "动作",
+        "电影",
+        "犯罪剧情",
+        "godfather"
       ]
     },
     "movie-pulp-fiction": {
       "provider": "pixabay",
-      "query": "retro diner cinematic",
+      "query": "低俗小说 Pulp Fiction 动作",
+      "requiredTags": [],
       "matchTags": [
-        "diner",
-        "retro"
+        "动作",
+        "电影",
+        "犯罪喜剧",
+        "pulp",
+        "fiction"
       ]
     },
     "movie-parasite": {
       "provider": "pixabay",
-      "query": "modern house architecture cinematic",
+      "query": "寄生虫 Parasite 动作",
+      "requiredTags": [],
       "matchTags": [
-        "house",
-        "architecture"
+        "动作",
+        "电影",
+        "社会惊悚",
+        "parasite"
       ]
     },
     "illustration-vocaloid-miku": {
       "provider": "pixabay",
-      "query": "vocaloid miku cosplay",
+      "query": "初音未来 Hatsune Miku Vocaloid",
+      "requiredTags": [],
       "matchTags": [
+        "Vocaloid",
+        "虚拟歌手",
+        "同人",
         "vocaloid",
         "miku"
       ]
     },
     "illustration-girl-with-pearl-earring": {
       "provider": "pixabay",
-      "query": "girl pearl earring painting",
+      "query": "戴珍珠耳环的少女 维米尔",
+      "requiredTags": [],
       "matchTags": [
-        "pearl",
-        "painting"
+        "维米尔",
+        "荷兰黄金时代",
+        "油画",
+        "girl",
+        "with"
       ]
     },
     "illustration-starry-night": {
       "provider": "pixabay",
-      "query": "starry night van gogh style",
+      "query": "星夜 The Starry 艺术史",
+      "requiredTags": [],
       "matchTags": [
+        "艺术史",
+        "后印象派",
+        "梵高",
         "starry",
-        "painting"
+        "night"
       ]
     },
     "illustration-the-scream": {
       "provider": "pixabay",
-      "query": "the scream munch art",
+      "query": "呐喊 The Scream 艺术史",
+      "requiredTags": [],
       "matchTags": [
-        "scream",
-        "art"
+        "艺术史",
+        "表现主义",
+        "蒙克",
+        "the",
+        "scream"
       ]
     },
     "illustration-monet-water-lilies": {
       "provider": "pixabay",
-      "query": "water lilies monet impressionist",
+      "query": "睡莲 Water Lilies 艺术史",
+      "requiredTags": [],
       "matchTags": [
-        "water",
-        "lilies"
+        "艺术史",
+        "印象派",
+        "莫奈",
+        "monet",
+        "water"
       ]
     },
     "illustration-picasso-guernica": {
       "provider": "pixabay",
-      "query": "cubism abstract art painting",
+      "query": "格尔尼卡 Guernica 艺术史",
+      "requiredTags": [],
       "matchTags": [
-        "cubism",
-        "painting"
+        "艺术史",
+        "立体主义",
+        "毕加索",
+        "picasso",
+        "guernica"
       ]
     },
     "illustration-klimt-kiss": {
       "provider": "pixabay",
-      "query": "klimt gold art nouveau",
+      "query": "吻 The Kiss 艺术史",
+      "requiredTags": [],
       "matchTags": [
-        "gold",
-        "art"
+        "艺术史",
+        "新艺术",
+        "克里姆特",
+        "klimt",
+        "kiss"
       ]
     },
     "illustration-hokusai-wave": {
       "provider": "pixabay",
-      "query": "great wave japanese woodblock",
+      "query": "神奈川冲浪里 艺术史",
+      "requiredTags": [],
       "matchTags": [
-        "wave",
-        "japanese"
+        "艺术史",
+        "浮世绘",
+        "北斋",
+        "hokusai",
+        "wave"
       ]
     },
     "illustration-digital-concept-art": {
       "provider": "pixabay",
-      "query": "digital concept art fantasy",
+      "query": "数字概念艺术 数字绘画",
+      "requiredTags": [],
       "matchTags": [
+        "数字绘画",
+        "概念设计",
+        "Photoshop / Blender",
         "digital",
-        "fantasy"
+        "concept"
       ]
     },
     "illustration-character-design": {
       "provider": "pixabay",
-      "query": "character design sketch digital",
+      "query": "角色设计 数字绘画",
+      "requiredTags": [],
       "matchTags": [
+        "数字绘画",
+        "IP 开发",
+        "三视图",
         "character",
-        "sketch"
+        "design"
       ]
     },
     "illustration-anime-portrait": {
       "provider": "pixabay",
-      "query": "anime portrait digital art",
+      "query": "动漫肖像 数字绘画",
+      "requiredTags": [],
       "matchTags": [
+        "数字绘画",
+        "二次元",
+        "Procreate / CSP",
         "anime",
         "portrait"
       ]
     },
     "illustration-game-art": {
       "provider": "pixabay",
-      "query": "game concept art fantasy",
+      "query": "游戏美术 数字绘画",
+      "requiredTags": [],
       "matchTags": [
+        "数字绘画",
+        "游戏",
+        "Unity / Unreal",
         "game",
-        "fantasy"
-      ]
-    },
-    "ui-material-design-3": {
-      "provider": "pixabay",
-      "query": "material design mobile ui",
-      "matchTags": [
-        "material",
-        "ui"
-      ]
-    },
-    "ui-ios-human-interface": {
-      "provider": "pixabay",
-      "query": "ios app interface design",
-      "matchTags": [
-        "ios",
-        "interface"
-      ]
-    },
-    "ui-tailwind-css": {
-      "provider": "pixabay",
-      "query": "tailwind css web dashboard",
-      "matchTags": [
-        "dashboard",
-        "web"
-      ]
-    },
-    "ui-bootstrap": {
-      "provider": "pixabay",
-      "query": "bootstrap web responsive layout",
-      "matchTags": [
-        "bootstrap",
-        "web"
-      ]
-    },
-    "ui-ant-design": {
-      "provider": "pixabay",
-      "query": "antd dashboard ui design",
-      "matchTags": [
-        "dashboard",
-        "ui"
-      ]
-    },
-    "ui-figma-design": {
-      "provider": "pixabay",
-      "query": "figma ui design screen",
-      "matchTags": [
-        "figma",
-        "design"
-      ]
-    },
-    "ui-dark-mode": {
-      "provider": "pixabay",
-      "query": "dark mode app ui",
-      "matchTags": [
-        "dark",
-        "ui"
-      ]
-    },
-    "ui-accessibility": {
-      "provider": "pixabay",
-      "query": "accessibility web inclusive design",
-      "matchTags": [
-        "accessibility",
-        "web"
-      ]
-    },
-    "ui-micro-interaction": {
-      "provider": "pixabay",
-      "query": "mobile app animation ui",
-      "matchTags": [
-        "mobile",
-        "animation"
+        "art"
       ]
     },
     "ui-design-system": {
       "provider": "pixabay",
-      "query": "design system components ui",
+      "query": "设计系统 移动端",
+      "requiredTags": [],
       "matchTags": [
+        "移动端",
+        "UI",
+        "Storybook",
         "design",
-        "components"
-      ]
-    },
-    "ui-shadcn": {
-      "provider": "pixabay",
-      "query": "modern web ui components",
-      "matchTags": [
-        "web",
-        "components"
-      ]
-    },
-    "ui-glassmorphism": {
-      "provider": "pixabay",
-      "query": "glassmorphism ui card blur",
-      "matchTags": [
-        "glass",
-        "ui"
+        "system"
       ]
     },
     "interior-scandinavian-living": {
       "provider": "pixabay",
-      "query": "scandinavian living room interior",
+      "query": "北欧风客厅 北欧",
+      "requiredTags": [],
       "matchTags": [
+        "北欧",
+        "客厅",
+        "简约",
         "scandinavian",
         "living"
       ]
     },
     "interior-japanese-zen": {
       "provider": "pixabay",
-      "query": "japanese zen room tatami",
+      "query": "日式禅意和室 和室",
+      "requiredTags": [],
       "matchTags": [
+        "和室",
+        "榻榻米",
+        "侘寂",
         "japanese",
-        "tatami"
+        "zen"
       ]
     },
     "interior-minimalist-white": {
       "provider": "pixabay",
-      "query": "minimalist white interior living",
+      "query": "极简白调客厅 北欧",
+      "requiredTags": [],
       "matchTags": [
+        "北欧",
+        "家装",
+        "白色",
         "minimalist",
         "white"
       ]
     },
     "interior-industrial-loft": {
       "provider": "pixabay",
-      "query": "industrial loft interior brick",
+      "query": "工业风 Loft 北欧",
+      "requiredTags": [],
       "matchTags": [
-        "loft",
-        "industrial"
+        "北欧",
+        "家装",
+        "工业",
+        "industrial",
+        "loft"
       ]
     },
     "interior-mid-century": {
       "provider": "pixabay",
-      "query": "mid century modern living room",
+      "query": "中世纪现代 北欧",
+      "requiredTags": [],
       "matchTags": [
-        "mid century",
-        "living"
+        "北欧",
+        "家装",
+        "MCM",
+        "mid",
+        "century"
       ]
     },
     "interior-coastal": {
       "provider": "pixabay",
-      "query": "coastal beach house interior",
+      "query": "海岸风 北欧",
+      "requiredTags": [],
       "matchTags": [
-        "coastal",
-        "beach"
+        "北欧",
+        "家装",
+        "海岸",
+        "coastal"
       ]
     },
     "interior-wabi-sabi": {
       "provider": "pixabay",
-      "query": "wabi sabi interior clay",
+      "query": "侘寂 Wabi Sabi 日式",
+      "requiredTags": [],
       "matchTags": [
+        "日式",
+        "禅意",
+        "侘寂",
         "wabi",
-        "interior"
+        "sabi"
       ]
     },
     "interior-tea-room": {
       "provider": "pixabay",
-      "query": "japanese tea room interior",
+      "query": "茶室 日式",
+      "requiredTags": [],
       "matchTags": [
+        "日式",
+        "禅意",
+        "茶道",
         "tea",
-        "japanese"
+        "room"
       ]
     },
     "interior-shoji-screen": {
       "provider": "pixabay",
-      "query": "shoji screen japanese interior",
+      "query": "障子推拉门 日式",
+      "requiredTags": [],
       "matchTags": [
+        "日式",
+        "禅意",
+        "障子",
         "shoji",
-        "japanese"
+        "screen"
       ]
     },
     "interior-ryokan": {
       "provider": "pixabay",
-      "query": "ryokan japanese inn interior",
+      "query": "日式旅馆 日式",
+      "requiredTags": [],
       "matchTags": [
-        "ryokan",
-        "japanese"
+        "日式",
+        "禅意",
+        "旅馆",
+        "ryokan"
       ]
     },
     "interior-hygge-bedroom": {
       "provider": "pixabay",
-      "query": "hygge cozy bedroom scandinavian",
+      "query": "Hygge 卧室 北欧",
+      "requiredTags": [],
       "matchTags": [
+        "北欧",
+        "家装",
         "hygge",
         "bedroom"
       ]
     },
     "interior-ikea-showroom": {
       "provider": "pixabay",
-      "query": "modern ikea style living room",
+      "query": "IKEA 展厅风 北欧",
+      "requiredTags": [],
       "matchTags": [
-        "modern",
-        "living"
-      ]
-    },
-    "industrial-alessi-kettle": {
-      "provider": "pixabay",
-      "query": "alessi kettle design",
-      "matchTags": [
-        "alessi",
-        "kettle"
-      ]
-    },
-    "industrial-dyson-v15": {
-      "provider": "pixabay",
-      "query": "dyson vacuum cleaner product",
-      "matchTags": [
-        "dyson",
-        "vacuum"
-      ]
-    },
-    "industrial-iphone-design": {
-      "provider": "pixabay",
-      "query": "iphone smartphone product design",
-      "matchTags": [
-        "iphone",
-        "smartphone"
-      ]
-    },
-    "industrial-braun-dieter-rams": {
-      "provider": "pixabay",
-      "query": "braun minimal radio design",
-      "matchTags": [
-        "braun",
-        "minimal"
-      ]
-    },
-    "industrial-eames-chair": {
-      "provider": "pixabay",
-      "query": "eames lounge chair design",
-      "matchTags": [
-        "eames",
-        "chair"
-      ]
-    },
-    "industrial-vitra-chair": {
-      "provider": "pixabay",
-      "query": "modern designer chair interior",
-      "matchTags": [
-        "chair",
-        "design"
-      ]
-    },
-    "industrial-nespresso": {
-      "provider": "pixabay",
-      "query": "nespresso coffee machine design",
-      "matchTags": [
-        "nespresso",
-        "coffee"
-      ]
-    },
-    "industrial-playstation5": {
-      "provider": "pixabay",
-      "query": "playstation 5 console white",
-      "matchTags": [
-        "playstation",
-        "console"
-      ]
-    },
-    "industrial-kindle": {
-      "provider": "pixabay",
-      "query": "e reader product design",
-      "matchTags": [
-        "ereader",
-        "product"
-      ]
-    },
-    "industrial-muji-product": {
-      "provider": "pixabay",
-      "query": "muji minimal product design",
-      "matchTags": [
-        "muji",
-        "minimal"
-      ]
-    },
-    "industrial-herman-miller": {
-      "provider": "pixabay",
-      "query": "ergonomic office chair design",
-      "matchTags": [
-        "ergonomic",
-        "chair"
-      ]
-    },
-    "industrial-le-creuset": {
-      "provider": "pixabay",
-      "query": "cast iron dutch oven kitchen",
-      "matchTags": [
-        "cast iron",
-        "kitchen"
+        "北欧",
+        "家装",
+        "IKEA",
+        "ikea",
+        "showroom"
       ]
     },
     "history-angkor-wat": {
       "provider": "pixabay",
-      "query": "angkor wat cambodia temple",
+      "query": "吴哥窟 Angkor Wat 柬埔寨",
+      "requiredTags": [],
       "matchTags": [
+        "柬埔寨",
+        "世界遗产",
+        "高棉",
         "angkor",
-        "temple"
+        "wat"
       ]
     },
     "history-forbidden-city": {
       "provider": "pixabay",
-      "query": "forbidden city beijing palace",
+      "query": "故宫紫禁城 中国",
+      "requiredTags": [],
       "matchTags": [
+        "中国",
+        "世界遗产",
+        "北京",
         "forbidden",
-        "palace"
+        "city"
       ]
     },
     "history-potala-palace": {
       "provider": "pixabay",
-      "query": "potala palace tibet",
+      "query": "布达拉宫 中国",
+      "requiredTags": [],
       "matchTags": [
+        "中国",
+        "世界遗产",
+        "西藏",
         "potala",
-        "tibet"
+        "palace"
       ]
     },
     "history-summer-palace": {
       "provider": "pixabay",
-      "query": "summer palace beijing",
+      "query": "颐和园 中国",
+      "requiredTags": [],
       "matchTags": [
+        "中国",
+        "世界遗产",
+        "北京",
         "summer",
         "palace"
       ]
     },
     "history-mogao-caves": {
       "provider": "pixabay",
-      "query": "mogao caves dunhuang",
+      "query": "莫高窟 中国",
+      "requiredTags": [],
       "matchTags": [
-        "dunhuang",
+        "中国",
+        "世界遗产",
+        "甘肃",
+        "mogao",
         "caves"
       ]
     },
     "history-pingyao": {
       "provider": "pixabay",
-      "query": "pingyao ancient city china",
+      "query": "平遥古城 中国",
+      "requiredTags": [],
       "matchTags": [
-        "pingyao",
-        "ancient"
+        "中国",
+        "世界遗产",
+        "山西",
+        "pingyao"
       ]
     },
     "history-lijiang": {
       "provider": "pixabay",
-      "query": "lijiang old town china",
+      "query": "丽江古城 中国",
+      "requiredTags": [],
       "matchTags": [
-        "lijiang",
-        "old town"
+        "中国",
+        "世界遗产",
+        "云南",
+        "lijiang"
       ]
     },
     "history-machu-picchu": {
       "provider": "pixabay",
-      "query": "machu picchu peru ruins",
+      "query": "马丘比丘 世界遗产",
+      "requiredTags": [],
       "matchTags": [
+        "世界遗产",
+        "秘鲁",
+        "15 世纪",
         "machu",
         "picchu"
       ]
     },
     "history-petra": {
       "provider": "pixabay",
-      "query": "petra jordan ancient ruins",
+      "query": "佩特拉古城 世界遗产",
+      "requiredTags": [],
       "matchTags": [
-        "petra",
-        "jordan"
+        "世界遗产",
+        "约旦",
+        "公元前",
+        "petra"
       ]
     },
     "history-colosseum": {
       "provider": "pixabay",
-      "query": "colosseum rome italy",
+      "query": "罗马斗兽场 世界遗产",
+      "requiredTags": [],
       "matchTags": [
-        "colosseum",
-        "rome"
+        "世界遗产",
+        "意大利",
+        "公元 72–80",
+        "colosseum"
       ]
     },
     "history-stonehenge": {
       "provider": "pixabay",
-      "query": "stonehenge england stones",
+      "query": "巨石阵 世界遗产",
+      "requiredTags": [],
       "matchTags": [
-        "stonehenge",
-        "england"
+        "世界遗产",
+        "英国",
+        "史前",
+        "stonehenge"
       ]
     },
     "history-acropolis": {
       "provider": "pixabay",
-      "query": "acropolis athens greece",
+      "query": "雅典卫城 世界遗产",
+      "requiredTags": [],
       "matchTags": [
-        "acropolis",
-        "athens"
+        "世界遗产",
+        "希腊",
+        "公元前 5 世纪",
+        "acropolis"
       ]
     },
     "history-taj-mahal": {
       "provider": "pixabay",
-      "query": "taj mahal india",
+      "query": "泰姬陵 世界遗产",
+      "requiredTags": [],
       "matchTags": [
+        "世界遗产",
+        "印度",
+        "17 世纪",
         "taj",
         "mahal"
       ]
     },
     "history-chichen-itza": {
       "provider": "pixabay",
-      "query": "chichen itza mayan pyramid",
+      "query": "奇琴伊察 世界遗产",
+      "requiredTags": [],
       "matchTags": [
+        "世界遗产",
+        "墨西哥",
+        "公元 600–1200",
         "chichen",
-        "maya"
+        "itza"
       ]
     },
     "history-easter-island": {
       "provider": "pixabay",
-      "query": "easter island moai statues",
+      "query": "复活节岛摩艾 世界遗产",
+      "requiredTags": [],
       "matchTags": [
-        "moai",
-        "statues"
+        "世界遗产",
+        "智利",
+        "公元 1250–1500",
+        "easter",
+        "island"
       ]
     },
     "history-pyramids-giza": {
       "provider": "pixabay",
-      "query": "pyramids giza egypt",
+      "query": "吉萨金字塔 世界遗产",
+      "requiredTags": [],
       "matchTags": [
+        "世界遗产",
+        "埃及",
+        "公元前 26 世纪",
         "pyramids",
-        "egypt"
+        "giza"
       ]
     },
     "supercar-ferrari-f8": {
       "provider": "pixabay",
       "query": "法拉利 F8 Tributo 意大利",
+      "requiredTags": [],
       "matchTags": [
         "意大利",
         "Ferrari",
@@ -2955,6 +3012,7 @@
     "supercar-lamborghini-countach": {
       "provider": "pixabay",
       "query": "兰博基尼 Countach LPI 意大利",
+      "requiredTags": [],
       "matchTags": [
         "意大利",
         "Lamborghini",
@@ -2966,6 +3024,7 @@
     "supercar-maserati-grancabrio": {
       "provider": "pixabay",
       "query": "玛莎拉蒂 GranCabrio 意大利",
+      "requiredTags": [],
       "matchTags": [
         "意大利",
         "Maserati",
@@ -2977,6 +3036,7 @@
     "supercar-alfa-romeo-33": {
       "provider": "pixabay",
       "query": "阿尔法 罗密欧 33 意大利",
+      "requiredTags": [],
       "matchTags": [
         "意大利",
         "Alfa Romeo",
@@ -2988,6 +3048,7 @@
     "supercar-mercedes-slr": {
       "provider": "pixabay",
       "query": "奔驰 SLR McLaren 德国",
+      "requiredTags": [],
       "matchTags": [
         "德国",
         "Mercedes-Benz",
@@ -2999,6 +3060,7 @@
     "supercar-audi-r8-gt": {
       "provider": "pixabay",
       "query": "奥迪 R8 GT 德国",
+      "requiredTags": [],
       "matchTags": [
         "德国",
         "Audi",
@@ -3010,6 +3072,7 @@
     "supercar-bmw-m4-csl": {
       "provider": "pixabay",
       "query": "宝马 M4 CSL 德国",
+      "requiredTags": [],
       "matchTags": [
         "德国",
         "BMW M",
@@ -3021,6 +3084,7 @@
     "supercar-porsche-gt3-rs": {
       "provider": "pixabay",
       "query": "保时捷 911 GT3 德国",
+      "requiredTags": [],
       "matchTags": [
         "德国",
         "Porsche",
@@ -3032,6 +3096,7 @@
     "supercar-mercedes-amg-one": {
       "provider": "pixabay",
       "query": "奔驰 AMG ONE 德国",
+      "requiredTags": [],
       "matchTags": [
         "德国",
         "Mercedes-AMG",
@@ -3043,6 +3108,7 @@
     "supercar-audi-e-tron-gt": {
       "provider": "pixabay",
       "query": "奥迪 e tron 德国",
+      "requiredTags": [],
       "matchTags": [
         "德国",
         "Audi",
@@ -3054,6 +3120,7 @@
     "supercar-mclaren-p1": {
       "provider": "pixabay",
       "query": "迈凯伦 P1 英国",
+      "requiredTags": [],
       "matchTags": [
         "英国",
         "McLaren",
@@ -3065,6 +3132,7 @@
     "supercar-aston-valkyrie": {
       "provider": "pixabay",
       "query": "阿斯顿 马丁 Valkyrie 英国",
+      "requiredTags": [],
       "matchTags": [
         "英国",
         "Aston Martin",
@@ -3076,6 +3144,7 @@
     "supercar-mclaren-senna": {
       "provider": "pixabay",
       "query": "迈凯伦 Senna 英国",
+      "requiredTags": [],
       "matchTags": [
         "英国",
         "McLaren",
@@ -3087,6 +3156,7 @@
     "supercar-bentley-batur": {
       "provider": "pixabay",
       "query": "宾利 Batur 英国",
+      "requiredTags": [],
       "matchTags": [
         "英国",
         "Bentley",
@@ -3097,16 +3167,20 @@
     },
     "supercar-lotus-evija": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "electric hypercar sports car",
+      "query": "路特斯 Evija 英国",
+      "requiredTags": [],
       "matchTags": [
-        "car",
-        "sports"
+        "英国",
+        "Lotus",
+        "超跑",
+        "lotus",
+        "evija"
       ]
     },
     "supercar-jaguar-xj220": {
       "provider": "pixabay",
       "query": "捷豹 XJ220 英国",
+      "requiredTags": [],
       "matchTags": [
         "英国",
         "Jaguar",
@@ -3118,6 +3192,7 @@
     "plant-syngonium": {
       "provider": "pixabay",
       "query": "合果芋 Syngonium 观叶",
+      "requiredTags": [],
       "matchTags": [
         "观叶",
         "天南星科",
@@ -3128,6 +3203,7 @@
     "plant-scindapsus": {
       "provider": "pixabay",
       "query": "绿萝藤 Scindapsus 观叶",
+      "requiredTags": [],
       "matchTags": [
         "观叶",
         "天南星科",
@@ -3138,6 +3214,7 @@
     "plant-hoya": {
       "provider": "pixabay",
       "query": "球兰 Hoya 观叶",
+      "requiredTags": [],
       "matchTags": [
         "观叶",
         "天南星科",
@@ -3148,6 +3225,7 @@
     "plant-peace-lily": {
       "provider": "pixabay",
       "query": "白掌 Spathiphyllum 观叶",
+      "requiredTags": [],
       "matchTags": [
         "观叶",
         "天南星科",
@@ -3159,6 +3237,7 @@
     "plant-crassula": {
       "provider": "pixabay",
       "query": "青锁龙 Crassula 多肉",
+      "requiredTags": [],
       "matchTags": [
         "多肉",
         "耐旱",
@@ -3169,6 +3248,7 @@
     "plant-agave": {
       "provider": "pixabay",
       "query": "龙舌兰 Agave 多肉",
+      "requiredTags": [],
       "matchTags": [
         "多肉",
         "耐旱",
@@ -3179,6 +3259,7 @@
     "plant-kalanchoe": {
       "provider": "pixabay",
       "query": "长寿花 Kalanchoe 多肉",
+      "requiredTags": [],
       "matchTags": [
         "多肉",
         "耐旱",
@@ -3189,6 +3270,7 @@
     "plant-graptopetalum": {
       "provider": "pixabay",
       "query": "风车草 Graptopetalum 多肉",
+      "requiredTags": [],
       "matchTags": [
         "多肉",
         "耐旱",
@@ -3199,6 +3281,7 @@
     "anime-bleach": {
       "provider": "pixabay",
       "query": "死神 BLEACH 少年漫",
+      "requiredTags": [],
       "matchTags": [
         "少年漫",
         "热血",
@@ -3208,16 +3291,19 @@
     },
     "anime-haikyuu": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "volleyball sport action",
+      "query": "排球少年 少年漫",
+      "requiredTags": [],
       "matchTags": [
-        "volleyball",
-        "sport"
+        "少年漫",
+        "热血",
+        "日本",
+        "haikyuu"
       ]
     },
     "anime-hunter-x-hunter": {
       "provider": "pixabay",
       "query": "全职猎人 少年漫",
+      "requiredTags": [],
       "matchTags": [
         "少年漫",
         "热血",
@@ -3228,34 +3314,43 @@
     },
     "anime-blue-lock": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "soccer football player stadium",
+      "query": "蓝色监狱 少年漫",
+      "requiredTags": [],
       "matchTags": [
-        "soccer",
-        "football"
+        "少年漫",
+        "热血",
+        "日本",
+        "blue",
+        "lock"
       ]
     },
     "anime-rezero": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "fantasy medieval castle landscape",
+      "query": "Re 从零开始的异世界生活 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "castle",
-        "fantasy"
+        "奇幻",
+        "剧情",
+        "日本",
+        "rezero"
       ]
     },
     "anime-mushoku-tensei": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "fantasy landscape meadow river",
+      "query": "无职转生 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "fantasy",
-        "landscape"
+        "奇幻",
+        "剧情",
+        "日本",
+        "mushoku",
+        "tensei"
       ]
     },
     "anime-violet-evergarden": {
       "provider": "pixabay",
       "query": "紫罗兰永恒花园 奇幻",
+      "requiredTags": [],
       "matchTags": [
         "奇幻",
         "剧情",
@@ -3264,386 +3359,10 @@
         "evergarden"
       ]
     },
-    "tf-grimlock": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "dinosaur robot toy",
-      "matchTags": [
-        "dinosaur",
-        "toy"
-      ]
-    },
-    "tf-bumblebee-classic": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "yellow volkswagen beetle car",
-      "matchTags": [
-        "beetle",
-        "yellow"
-      ]
-    },
-    "tf-hot-rod": {
-      "provider": "pixabay",
-      "query": "热破 Hot Rod 汽车人",
-      "matchTags": [
-        "汽车人",
-        "Hasbro",
-        "变形",
-        "hot",
-        "rod"
-      ]
-    },
-    "tf-arcee": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "pink sports car",
-      "matchTags": [
-        "car",
-        "sports"
-      ]
-    },
-    "tf-ultra-magnus": {
-      "provider": "pixabay",
-      "query": "通天晓 Ultra Magnus 汽车人",
-      "matchTags": [
-        "汽车人",
-        "Hasbro",
-        "变形",
-        "ultra",
-        "magnus"
-      ]
-    },
-    "tf-sideswipe": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "sports car transformer toy",
-      "matchTags": [
-        "car",
-        "toy"
-      ]
-    },
-    "tf-ravage": {
-      "provider": "pixabay",
-      "query": "机器狗 Ravage 霸天虎",
-      "matchTags": [
-        "霸天虎",
-        "反派",
-        "变形",
-        "ravage"
-      ]
-    },
-    "tf-laserbeak": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "mechanical bird sculpture",
-      "matchTags": [
-        "bird",
-        "metal"
-      ]
-    },
-    "tf-devastator": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "construction excavator yellow",
-      "matchTags": [
-        "excavator",
-        "construction"
-      ]
-    },
-    "tf-galvatron": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "futuristic cannon weapon sci fi",
-      "matchTags": [
-        "sci",
-        "fi"
-      ]
-    },
-    "moto-ducati-streetfighter": {
-      "provider": "pixabay",
-      "query": "杜卡迪 Streetfighter V4 意大利",
-      "matchTags": [
-        "意大利",
-        "Ducati",
-        "摩托",
-        "ducati",
-        "streetfighter"
-      ]
-    },
-    "moto-aprilia-rs660": {
-      "provider": "pixabay",
-      "query": "阿普利亚 RS 660 意大利",
-      "matchTags": [
-        "意大利",
-        "Aprilia",
-        "摩托",
-        "aprilia",
-        "rs660"
-      ]
-    },
-    "moto-mv-agusta-superveloce": {
-      "provider": "pixabay",
-      "query": "MV Agusta Superveloce 意大利",
-      "matchTags": [
-        "意大利",
-        "MV Agusta",
-        "摩托",
-        "mv",
-        "agusta"
-      ]
-    },
-    "moto-ducati-scrambler": {
-      "provider": "pixabay",
-      "query": "杜卡迪 Scrambler 意大利",
-      "matchTags": [
-        "意大利",
-        "Ducati",
-        "摩托",
-        "ducati",
-        "scrambler"
-      ]
-    },
-    "moto-bimota-tesi": {
-      "provider": "pixabay",
-      "query": "比摩塔 Tesi 意大利",
-      "matchTags": [
-        "意大利",
-        "Bimota",
-        "摩托",
-        "bimota",
-        "tesi"
-      ]
-    },
-    "moto-guzzi-v7": {
-      "provider": "pixabay",
-      "query": "摩托古兹 V7 意大利",
-      "matchTags": [
-        "意大利",
-        "Moto Guzzi",
-        "摩托",
-        "guzzi",
-        "v7"
-      ]
-    },
-    "moto-aprilia-shiver": {
-      "provider": "pixabay",
-      "query": "阿普利亚 Shiver 900 意大利",
-      "matchTags": [
-        "意大利",
-        "Aprilia",
-        "摩托",
-        "aprilia",
-        "shiver"
-      ]
-    },
-    "moto-ducati-supersport": {
-      "provider": "pixabay",
-      "query": "杜卡迪 Supersport 950 意大利",
-      "matchTags": [
-        "意大利",
-        "Ducati",
-        "摩托",
-        "ducati",
-        "supersport"
-      ]
-    },
-    "moto-mv-agusta-f3": {
-      "provider": "pixabay",
-      "query": "MV Agusta F3 意大利",
-      "matchTags": [
-        "意大利",
-        "MV Agusta",
-        "摩托",
-        "mv",
-        "agusta"
-      ]
-    },
-    "moto-harley-sportster": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "harley davidson motorcycle black",
-      "matchTags": [
-        "harley",
-        "motorcycle"
-      ]
-    },
-    "moto-indian-scout-bobber": {
-      "provider": "pixabay",
-      "query": "印第安 Scout Bobber 美式",
-      "matchTags": [
-        "美式",
-        "Indian",
-        "巡航",
-        "indian",
-        "scout"
-      ]
-    },
-    "moto-harley-pan-america": {
-      "provider": "pixabay",
-      "query": "哈雷 Pan America 美式",
-      "matchTags": [
-        "美式",
-        "Harley-Davidson",
-        "巡航",
-        "harley",
-        "pan"
-      ]
-    },
-    "moto-indian-ftr": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "flat track motorcycle racing",
-      "matchTags": [
-        "motorcycle",
-        "racing"
-      ]
-    },
-    "moto-harley-livewire": {
-      "provider": "pixabay",
-      "query": "哈雷 LiveWire 美式",
-      "matchTags": [
-        "美式",
-        "Harley-Davidson",
-        "巡航",
-        "harley",
-        "livewire"
-      ]
-    },
-    "moto-harley-road-glide": {
-      "provider": "pixabay",
-      "query": "哈雷 Road Glide 美式",
-      "matchTags": [
-        "美式",
-        "Harley-Davidson",
-        "巡航",
-        "harley",
-        "road"
-      ]
-    },
-    "moto-indian-challenger": {
-      "provider": "pixabay",
-      "query": "印第安 Challenger 美式",
-      "matchTags": [
-        "美式",
-        "Indian",
-        "巡航",
-        "indian",
-        "challenger"
-      ]
-    },
-    "moto-harley-low-rider-st": {
-      "provider": "pixabay",
-      "query": "哈雷 Low Rider 美式",
-      "matchTags": [
-        "美式",
-        "Harley-Davidson",
-        "巡航",
-        "harley",
-        "low"
-      ]
-    },
-    "moto-yamaha-mt-09": {
-      "provider": "pixabay",
-      "query": "雅马哈 MT 09 日本",
-      "matchTags": [
-        "日本",
-        "Yamaha",
-        "摩托",
-        "yamaha",
-        "mt"
-      ]
-    },
-    "moto-kawasaki-z900": {
-      "provider": "pixabay",
-      "query": "川崎 Z900 日本",
-      "matchTags": [
-        "日本",
-        "Kawasaki",
-        "摩托",
-        "kawasaki",
-        "z900"
-      ]
-    },
-    "moto-suzuki-gsx-r750": {
-      "provider": "pixabay",
-      "query": "铃木 GSX R750 日本",
-      "matchTags": [
-        "日本",
-        "Suzuki",
-        "摩托",
-        "suzuki",
-        "gsx"
-      ]
-    },
-    "moto-honda-africa-twin": {
-      "provider": "pixabay",
-      "query": "本田 Africa Twin 日本",
-      "matchTags": [
-        "日本",
-        "Honda",
-        "摩托",
-        "honda",
-        "africa"
-      ]
-    },
-    "moto-yamaha-tracer": {
-      "provider": "pixabay",
-      "query": "雅马哈 Tracer 9 日本",
-      "matchTags": [
-        "日本",
-        "Yamaha",
-        "摩托",
-        "yamaha",
-        "tracer"
-      ]
-    },
-    "moto-kawasaki-versys": {
-      "provider": "pixabay",
-      "query": "川崎 Versys 650 日本",
-      "matchTags": [
-        "日本",
-        "Kawasaki",
-        "摩托",
-        "kawasaki",
-        "versys"
-      ]
-    },
-    "moto-suzuki-katana": {
-      "provider": "pixabay",
-      "query": "铃木 Katana 日本",
-      "matchTags": [
-        "日本",
-        "Suzuki",
-        "摩托",
-        "suzuki",
-        "katana"
-      ]
-    },
-    "moto-honda-rebel-1100": {
-      "provider": "pixabay",
-      "query": "本田 Rebel 1100 日本",
-      "matchTags": [
-        "日本",
-        "Honda",
-        "摩托",
-        "honda",
-        "rebel"
-      ]
-    },
-    "moto-yamaha-xsr900": {
-      "provider": "pixabay",
-      "query": "雅马哈 XSR900 日本",
-      "matchTags": [
-        "日本",
-        "Yamaha",
-        "摩托",
-        "yamaha",
-        "xsr900"
-      ]
-    },
     "movie-2001-space-odyssey": {
       "provider": "pixabay",
       "query": "2001 太空漫游 科幻",
+      "requiredTags": [],
       "matchTags": [
         "科幻",
         "电影",
@@ -3655,6 +3374,7 @@
     "movie-alien": {
       "provider": "pixabay",
       "query": "异形 Alien 科幻",
+      "requiredTags": [],
       "matchTags": [
         "科幻",
         "电影",
@@ -3665,6 +3385,7 @@
     "movie-terminator-2": {
       "provider": "pixabay",
       "query": "终结者 2 科幻",
+      "requiredTags": [],
       "matchTags": [
         "科幻",
         "电影",
@@ -3676,6 +3397,7 @@
     "movie-arrival": {
       "provider": "pixabay",
       "query": "降临 Arrival 科幻",
+      "requiredTags": [],
       "matchTags": [
         "科幻",
         "电影",
@@ -3686,6 +3408,7 @@
     "movie-ex-machina": {
       "provider": "pixabay",
       "query": "机械姬 Ex Machina 科幻",
+      "requiredTags": [],
       "matchTags": [
         "科幻",
         "电影",
@@ -3697,6 +3420,7 @@
     "movie-district-9": {
       "provider": "pixabay",
       "query": "第九区 District 9 科幻",
+      "requiredTags": [],
       "matchTags": [
         "科幻",
         "电影",
@@ -3707,34 +3431,44 @@
     },
     "movie-avatar-way-of-water": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "underwater ocean coral reef",
+      "query": "阿凡达 水之道 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "ocean",
-        "underwater"
+        "奇幻",
+        "电影",
+        "科幻奇幻",
+        "avatar",
+        "way"
       ]
     },
     "movie-pan-labyrinth": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "dark forest fairy tale",
+      "query": "潘神的迷宫 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "forest",
-        "dark"
+        "奇幻",
+        "电影",
+        "黑暗童话",
+        "pan",
+        "labyrinth"
       ]
     },
     "movie-princess-mononoke": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "japanese forest spirit nature",
+      "query": "幽灵公主 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "forest",
-        "nature"
+        "奇幻",
+        "电影",
+        "生态奇幻",
+        "princess",
+        "mononoke"
       ]
     },
     "movie-labyrinth": {
       "provider": "pixabay",
       "query": "魔幻迷宫 Labyrinth 奇幻",
+      "requiredTags": [],
       "matchTags": [
         "奇幻",
         "电影",
@@ -3745,6 +3479,7 @@
     "movie-the-wizard-of-oz": {
       "provider": "pixabay",
       "query": "绿野仙踪 奇幻",
+      "requiredTags": [],
       "matchTags": [
         "奇幻",
         "电影",
@@ -3756,6 +3491,7 @@
     "movie-coraline": {
       "provider": "pixabay",
       "query": "鬼妈妈 Coraline 奇幻",
+      "requiredTags": [],
       "matchTags": [
         "奇幻",
         "电影",
@@ -3766,6 +3502,7 @@
     "movie-guillermo-shape": {
       "provider": "pixabay",
       "query": "水形物语 奇幻",
+      "requiredTags": [],
       "matchTags": [
         "奇幻",
         "电影",
@@ -3776,16 +3513,20 @@
     },
     "movie-fantastic-beasts": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "vintage suitcase magic fantasy",
+      "query": "神奇动物在哪里 奇幻",
+      "requiredTags": [],
       "matchTags": [
-        "vintage",
-        "fantasy"
+        "奇幻",
+        "电影",
+        "魔法世界",
+        "fantastic",
+        "beasts"
       ]
     },
     "movie-die-hard": {
       "provider": "pixabay",
       "query": "虎胆龙威 Die Hard 动作",
+      "requiredTags": [],
       "matchTags": [
         "动作",
         "电影",
@@ -3796,6 +3537,7 @@
     "movie-mission-impossible": {
       "provider": "pixabay",
       "query": "碟中谍 Mission Impossible 动作",
+      "requiredTags": [],
       "matchTags": [
         "动作",
         "电影",
@@ -3807,6 +3549,7 @@
     "movie-james-bond-skyfall": {
       "provider": "pixabay",
       "query": "007 大破天幕杀机 Skyfall 动作",
+      "requiredTags": [],
       "matchTags": [
         "动作",
         "电影",
@@ -3817,16 +3560,20 @@
     },
     "movie-top-gun-maverick": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "fighter jet aircraft sky",
+      "query": "壮志凌云 2 独行侠 动作",
+      "requiredTags": [],
       "matchTags": [
-        "jet",
-        "aircraft"
+        "动作",
+        "电影",
+        "空战",
+        "top",
+        "gun"
       ]
     },
     "movie-raid": {
       "provider": "pixabay",
       "query": "突袭 The Raid 动作",
+      "requiredTags": [],
       "matchTags": [
         "动作",
         "电影",
@@ -3837,6 +3584,7 @@
     "movie-kill-bill": {
       "provider": "pixabay",
       "query": "杀死比尔 Kill Bill 动作",
+      "requiredTags": [],
       "matchTags": [
         "动作",
         "电影",
@@ -3845,280 +3593,10 @@
         "bill"
       ]
     },
-    "ill-pixiv-trending": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "digital art illustration colorful",
-      "matchTags": [
-        "digital",
-        "art"
-      ]
-    },
-    "ill-cyberpunk-city": {
-      "provider": "pixabay",
-      "query": "赛博朋克城市 数字绘画",
-      "matchTags": [
-        "数字绘画",
-        "科幻",
-        "霓虹",
-        "cyberpunk",
-        "city"
-      ]
-    },
-    "ill-game-ui-splash": {
-      "provider": "pixabay",
-      "query": "游戏启动图 数字绘画",
-      "matchTags": [
-        "数字绘画",
-        "商业",
-        "手游",
-        "game",
-        "ui"
-      ]
-    },
-    "ill-vtuber-model": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "anime girl portrait digital art",
-      "matchTags": [
-        "anime",
-        "portrait"
-      ]
-    },
-    "ill-light-novel-cover": {
-      "provider": "pixabay",
-      "query": "轻小说封面 数字绘画",
-      "matchTags": [
-        "数字绘画",
-        "出版",
-        "文库",
-        "light",
-        "novel"
-      ]
-    },
-    "ill-blender-3d": {
-      "provider": "pixabay",
-      "query": "Blender 3D 插画 数字绘画",
-      "matchTags": [
-        "数字绘画",
-        "3D",
-        "Blender",
-        "blender",
-        "3d"
-      ]
-    },
-    "ill-procreate-sketch": {
-      "provider": "pixabay",
-      "query": "Procreate 速写 数字绘画",
-      "matchTags": [
-        "数字绘画",
-        "速写",
-        "Procreate",
-        "procreate",
-        "sketch"
-      ]
-    },
-    "ill-rembrandt-night-watch": {
-      "provider": "pixabay",
-      "query": "夜巡 The Night 艺术史",
-      "matchTags": [
-        "艺术史",
-        "巴洛克",
-        "伦勃朗",
-        "rembrandt",
-        "night"
-      ]
-    },
-    "ill-da-vinci-mona-lisa": {
-      "provider": "pixabay",
-      "query": "蒙娜丽莎 Mona Lisa 艺术史",
-      "matchTags": [
-        "艺术史",
-        "文艺复兴",
-        "达芬奇",
-        "da",
-        "vinci"
-      ]
-    },
-    "ill-botticelli-birth-venus": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "renaissance painting museum art",
-      "matchTags": [
-        "painting",
-        "museum"
-      ]
-    },
-    "ill-munch-scream": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "expressionist painting orange blue",
-      "matchTags": [
-        "painting",
-        "art"
-      ]
-    },
-    "ill-renoir-dance": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "impressionist ball dance painting",
-      "matchTags": [
-        "dance",
-        "painting"
-      ]
-    },
-    "ill-caravaggio": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "baroque painting chiaroscuro light",
-      "matchTags": [
-        "painting",
-        "baroque"
-      ]
-    },
-    "ui-fluent-ios": {
-      "provider": "pixabay",
-      "query": "Fluent iOS 风格 移动端",
-      "matchTags": [
-        "移动端",
-        "UI",
-        "平台规范",
-        "fluent",
-        "ios"
-      ]
-    },
-    "ui-samsung-one-ui": {
-      "provider": "pixabay",
-      "query": "三星 One UI 移动端",
-      "matchTags": [
-        "移动端",
-        "UI",
-        "One UI",
-        "samsung",
-        "one"
-      ]
-    },
-    "ui-material-you-widget": {
-      "provider": "pixabay",
-      "query": "Material You 小组件 移动端",
-      "matchTags": [
-        "移动端",
-        "UI",
-        "Material 3",
-        "material",
-        "you"
-      ]
-    },
-    "ui-watchos": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "smartwatch apple watch screen",
-      "matchTags": [
-        "watch",
-        "smartwatch"
-      ]
-    },
-    "ui-android-14": {
-      "provider": "pixabay",
-      "query": "Android 14 界面 移动端",
-      "matchTags": [
-        "移动端",
-        "UI",
-        "Android 14",
-        "android",
-        "14"
-      ]
-    },
-    "ui-figma-to-code": {
-      "provider": "pixabay",
-      "query": "Figma 转代码 Web",
-      "matchTags": [
-        "Web",
-        "UI",
-        "DevMode",
-        "figma",
-        "to"
-      ]
-    },
-    "ui-chakra-ui": {
-      "provider": "pixabay",
-      "query": "Chakra UI Web",
-      "matchTags": [
-        "Web",
-        "UI",
-        "React",
-        "chakra",
-        "ui"
-      ]
-    },
-    "ui-radix-ui": {
-      "provider": "pixabay",
-      "query": "Radix UI Web",
-      "matchTags": [
-        "Web",
-        "UI",
-        "React",
-        "radix",
-        "ui"
-      ]
-    },
-    "ui-storybook": {
-      "provider": "pixabay",
-      "query": "Storybook Web",
-      "matchTags": [
-        "Web",
-        "UI",
-        "Storybook",
-        "storybook"
-      ]
-    },
-    "ui-responsive-grid": {
-      "provider": "pixabay",
-      "query": "响应式栅格 Web",
-      "matchTags": [
-        "Web",
-        "UI",
-        "CSS Grid",
-        "responsive",
-        "grid"
-      ]
-    },
-    "ui-notion-style": {
-      "provider": "pixabay",
-      "query": "Notion 风格 Web",
-      "matchTags": [
-        "Web",
-        "UI",
-        "SaaS",
-        "notion",
-        "style"
-      ]
-    },
-    "ui-stripe-dashboard": {
-      "provider": "pixabay",
-      "query": "Stripe Dashboard Web",
-      "matchTags": [
-        "Web",
-        "UI",
-        "Stripe",
-        "stripe",
-        "dashboard"
-      ]
-    },
-    "ui-vercel-design": {
-      "provider": "pixabay",
-      "query": "Vercel 设计 Web",
-      "matchTags": [
-        "Web",
-        "UI",
-        "Vercel",
-        "vercel",
-        "design"
-      ]
-    },
     "interior-scandi-kitchen": {
       "provider": "pixabay",
       "query": "北欧厨房 北欧",
+      "requiredTags": [],
       "matchTags": [
         "北欧",
         "家装",
@@ -4130,6 +3608,7 @@
     "interior-danish-hygge": {
       "provider": "pixabay",
       "query": "丹麦 Hygge 角落 北欧",
+      "requiredTags": [],
       "matchTags": [
         "北欧",
         "家装",
@@ -4141,6 +3620,7 @@
     "interior-swedish-cabin": {
       "provider": "pixabay",
       "query": "瑞典木屋 北欧",
+      "requiredTags": [],
       "matchTags": [
         "北欧",
         "家装",
@@ -4151,70 +3631,88 @@
     },
     "interior-norwegian-fjord-house": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "norway fjord house landscape",
+      "query": "挪威峡湾屋 北欧",
+      "requiredTags": [],
       "matchTags": [
-        "norway",
+        "北欧",
+        "家装",
+        "挪威",
+        "norwegian",
         "fjord"
       ]
     },
     "interior-finnish-sauna-room": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "sauna wooden interior finland",
+      "query": "芬兰桑拿房 北欧",
+      "requiredTags": [],
       "matchTags": [
-        "sauna",
-        "wood"
+        "北欧",
+        "家装",
+        "芬兰",
+        "finnish",
+        "sauna"
       ]
     },
     "interior-karesansui": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "zen rock garden japan",
+      "query": "枯山水 日式",
+      "requiredTags": [],
       "matchTags": [
-        "zen",
-        "garden"
+        "日式",
+        "禅意",
+        "枯山水",
+        "karesansui"
       ]
     },
     "interior-minka": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "traditional japanese house interior",
+      "query": "民家 日式",
+      "requiredTags": [],
       "matchTags": [
-        "japanese",
-        "house"
+        "日式",
+        "禅意",
+        "民家",
+        "minka"
       ]
     },
     "interior-tatami-bedroom": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "tatami room japanese interior",
+      "query": "榻榻米卧室 日式",
+      "requiredTags": [],
       "matchTags": [
+        "日式",
+        "禅意",
+        "榻榻米",
         "tatami",
-        "japanese"
+        "bedroom"
       ]
     },
     "interior-tokonoma": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "japanese alcove flower arrangement",
+      "query": "床之间 日式",
+      "requiredTags": [],
       "matchTags": [
-        "japanese",
-        "interior"
+        "日式",
+        "禅意",
+        "床之间",
+        "tokonoma"
       ]
     },
     "interior-engawa": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "japanese wooden veranda garden",
+      "query": "缘侧 日式",
+      "requiredTags": [],
       "matchTags": [
-        "japanese",
-        "garden"
+        "日式",
+        "禅意",
+        "缘侧",
+        "engawa"
       ]
     },
     "interior-onsen-ryokan": {
       "provider": "pixabay",
       "query": "温泉旅馆 日式",
+      "requiredTags": [],
       "matchTags": [
         "日式",
         "禅意",
@@ -4226,6 +3724,7 @@
     "interior-zen-balcony": {
       "provider": "pixabay",
       "query": "禅意阳台 日式",
+      "requiredTags": [],
       "matchTags": [
         "日式",
         "禅意",
@@ -4234,133 +3733,10 @@
         "balcony"
       ]
     },
-    "industrial-sony-walkman": {
-      "provider": "pixabay",
-      "query": "索尼 Walkman 工业设计",
-      "matchTags": [
-        "工业设计",
-        "Sony",
-        "音频",
-        "sony",
-        "walkman"
-      ]
-    },
-    "industrial-nintendo-switch": {
-      "provider": "pixabay",
-      "query": "任天堂 Switch 工业设计",
-      "matchTags": [
-        "工业设计",
-        "Nintendo",
-        "游戏",
-        "nintendo",
-        "switch"
-      ]
-    },
-    "industrial-tesla-model-s": {
-      "provider": "pixabay",
-      "query": "特斯拉 Model S 工业设计",
-      "matchTags": [
-        "工业设计",
-        "Tesla",
-        "电动车",
-        "tesla",
-        "model"
-      ]
-    },
-    "industrial-bang-olufsen": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "modern speaker audio design",
-      "matchTags": [
-        "speaker",
-        "audio"
-      ]
-    },
-    "industrial-leica-m": {
-      "provider": "pixabay",
-      "query": "徕卡 M 相机 工业设计",
-      "matchTags": [
-        "工业设计",
-        "Leica",
-        "相机",
-        "leica",
-        "m"
-      ]
-    },
-    "industrial-roomba": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "robot vacuum cleaner floor",
-      "matchTags": [
-        "vacuum",
-        "robot"
-      ]
-    },
-    "industrial-philips-hue": {
-      "provider": "pixabay",
-      "query": "Philips Hue 家居",
-      "matchTags": [
-        "家居",
-        "Philips",
-        "智能家居",
-        "philips",
-        "hue"
-      ]
-    },
-    "industrial-smeg-fridge": {
-      "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "retro refrigerator kitchen pastel",
-      "matchTags": [
-        "refrigerator",
-        "kitchen"
-      ]
-    },
-    "industrial-kitchenaid": {
-      "provider": "pixabay",
-      "query": "KitchenAid 厨师机 家居",
-      "matchTags": [
-        "家居",
-        "KitchenAid",
-        "厨具",
-        "kitchenaid"
-      ]
-    },
-    "industrial-aeropress": {
-      "provider": "pixabay",
-      "query": "AeroPress 爱乐压 家居",
-      "matchTags": [
-        "家居",
-        "AeroPress",
-        "咖啡",
-        "aeropress"
-      ]
-    },
-    "industrial-ikea-billy": {
-      "provider": "pixabay",
-      "query": "IKEA Billy 书柜 家居",
-      "matchTags": [
-        "家居",
-        "IKEA",
-        "家具",
-        "ikea",
-        "billy"
-      ]
-    },
-    "industrial-muuto-beam-lamp": {
-      "provider": "pixabay",
-      "query": "Muuto Beam 灯具 家居",
-      "matchTags": [
-        "家居",
-        "Muuto",
-        "灯具",
-        "muuto",
-        "beam"
-      ]
-    },
     "history-temple-of-heaven": {
       "provider": "pixabay",
       "query": "天坛 中国",
+      "requiredTags": [],
       "matchTags": [
         "中国",
         "世界遗产",
@@ -4372,6 +3748,7 @@
     "history-potala": {
       "provider": "pixabay",
       "query": "布达拉宫 历史词条 中国",
+      "requiredTags": [],
       "matchTags": [
         "中国",
         "世界遗产",
@@ -4382,6 +3759,7 @@
     "history-suzhou-garden": {
       "provider": "pixabay",
       "query": "苏州古典园林 中国",
+      "requiredTags": [],
       "matchTags": [
         "中国",
         "世界遗产",
@@ -4393,6 +3771,7 @@
     "history-dazu-rock-carvings": {
       "provider": "pixabay",
       "query": "大足石刻 中国",
+      "requiredTags": [],
       "matchTags": [
         "中国",
         "世界遗产",
@@ -4403,20 +3782,1849 @@
     },
     "history-parthenon": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "parthenon athens greece ruins",
+      "query": "帕特农神庙 世界遗产",
+      "requiredTags": [],
       "matchTags": [
-        "parthenon",
-        "athens"
+        "世界遗产",
+        "希腊",
+        "公元前 447",
+        "parthenon"
       ]
     },
     "history-angkor-thom": {
       "provider": "pixabay",
-      "minMatchScore": 0,
-      "query": "angkor thom bayon temple cambodia",
+      "query": "吴哥通王城 世界遗产",
+      "requiredTags": [],
       "matchTags": [
+        "世界遗产",
+        "柬埔寨",
+        "12 世纪",
         "angkor",
-        "temple"
+        "thom"
+      ]
+    },
+    "illustration-ill-pixiv-trending": {
+      "provider": "pixabay",
+      "query": "Pixiv 趋势插画 数字绘画",
+      "requiredTags": [],
+      "matchTags": [
+        "数字绘画",
+        "同人",
+        "Pixiv",
+        "ill",
+        "pixiv"
+      ]
+    },
+    "illustration-ill-cyberpunk-city": {
+      "provider": "pixabay",
+      "query": "赛博朋克城市 数字绘画",
+      "requiredTags": [],
+      "matchTags": [
+        "数字绘画",
+        "科幻",
+        "霓虹",
+        "ill",
+        "cyberpunk"
+      ]
+    },
+    "illustration-ill-game-ui-splash": {
+      "provider": "pixabay",
+      "query": "游戏启动图 数字绘画",
+      "requiredTags": [],
+      "matchTags": [
+        "数字绘画",
+        "商业",
+        "手游",
+        "ill",
+        "game"
+      ]
+    },
+    "illustration-ill-vtuber-model": {
+      "provider": "pixabay",
+      "query": "Vtuber 立绘 数字绘画",
+      "requiredTags": [],
+      "matchTags": [
+        "数字绘画",
+        "虚拟",
+        "Live2D",
+        "ill",
+        "vtuber"
+      ]
+    },
+    "illustration-ill-light-novel-cover": {
+      "provider": "pixabay",
+      "query": "轻小说封面 数字绘画",
+      "requiredTags": [],
+      "matchTags": [
+        "数字绘画",
+        "出版",
+        "文库",
+        "ill",
+        "light"
+      ]
+    },
+    "illustration-ill-blender-3d": {
+      "provider": "pixabay",
+      "query": "Blender 3D 插画 数字绘画",
+      "requiredTags": [],
+      "matchTags": [
+        "数字绘画",
+        "3D",
+        "Blender",
+        "ill",
+        "blender"
+      ]
+    },
+    "illustration-ill-procreate-sketch": {
+      "provider": "pixabay",
+      "query": "Procreate 速写 数字绘画",
+      "requiredTags": [],
+      "matchTags": [
+        "数字绘画",
+        "速写",
+        "Procreate",
+        "ill",
+        "procreate"
+      ]
+    },
+    "illustration-ill-rembrandt-night-watch": {
+      "provider": "pixabay",
+      "query": "夜巡 The Night 艺术史",
+      "requiredTags": [],
+      "matchTags": [
+        "艺术史",
+        "巴洛克",
+        "伦勃朗",
+        "ill",
+        "rembrandt"
+      ]
+    },
+    "illustration-ill-da-vinci-mona-lisa": {
+      "provider": "pixabay",
+      "query": "蒙娜丽莎 Mona Lisa 艺术史",
+      "requiredTags": [],
+      "matchTags": [
+        "艺术史",
+        "文艺复兴",
+        "达芬奇",
+        "ill",
+        "da"
+      ]
+    },
+    "illustration-ill-botticelli-birth-venus": {
+      "provider": "pixabay",
+      "query": "维纳斯的诞生 艺术史",
+      "requiredTags": [],
+      "matchTags": [
+        "艺术史",
+        "文艺复兴",
+        "波提切利",
+        "ill",
+        "botticelli"
+      ]
+    },
+    "illustration-ill-munch-scream": {
+      "provider": "pixabay",
+      "query": "呐喊 版画版 艺术史",
+      "requiredTags": [],
+      "matchTags": [
+        "艺术史",
+        "表现主义",
+        "蒙克",
+        "ill",
+        "munch"
+      ]
+    },
+    "illustration-ill-renoir-dance": {
+      "provider": "pixabay",
+      "query": "煎饼磨坊的舞会 艺术史",
+      "requiredTags": [],
+      "matchTags": [
+        "艺术史",
+        "印象派",
+        "雷诺阿",
+        "ill",
+        "renoir"
+      ]
+    },
+    "illustration-ill-caravaggio": {
+      "provider": "pixabay",
+      "query": "卡拉瓦乔光影 艺术史",
+      "requiredTags": [],
+      "matchTags": [
+        "艺术史",
+        "巴洛克",
+        "卡拉瓦乔",
+        "ill",
+        "caravaggio"
+      ]
+    },
+    "industrial-design-industrial-alessi-kettle": {
+      "provider": "pixabay",
+      "query": "阿莱西 9093 鸟鸣水壶 Alessi",
+      "requiredTags": [],
+      "matchTags": [
+        "Alessi",
+        "水壶",
+        "萨帕",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-dyson-v15": {
+      "provider": "pixabay",
+      "query": "戴森 V15 Detect 戴森",
+      "requiredTags": [],
+      "matchTags": [
+        "戴森",
+        "吸尘器",
+        "激光显尘",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-iphone-design": {
+      "provider": "pixabay",
+      "query": "iPhone 设计 工业设计",
+      "requiredTags": [],
+      "matchTags": [
+        "工业设计",
+        "Apple",
+        "智能手机",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-braun-dieter-rams": {
+      "provider": "pixabay",
+      "query": "博朗 迪特 拉姆斯 工业设计",
+      "requiredTags": [],
+      "matchTags": [
+        "工业设计",
+        "Braun",
+        "家电",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-playstation5": {
+      "provider": "pixabay",
+      "query": "PlayStation 5 工业设计",
+      "requiredTags": [],
+      "matchTags": [
+        "工业设计",
+        "Sony",
+        "游戏主机",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-kindle": {
+      "provider": "pixabay",
+      "query": "Kindle 电子书 工业设计",
+      "requiredTags": [],
+      "matchTags": [
+        "工业设计",
+        "Amazon",
+        "阅读器",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-muji-product": {
+      "provider": "pixabay",
+      "query": "无印良品 工业设计",
+      "requiredTags": [],
+      "matchTags": [
+        "工业设计",
+        "MUJI",
+        "生活",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-sony-walkman": {
+      "provider": "pixabay",
+      "query": "索尼 Walkman 工业设计",
+      "requiredTags": [],
+      "matchTags": [
+        "工业设计",
+        "Sony",
+        "音频",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-nintendo-switch": {
+      "provider": "pixabay",
+      "query": "任天堂 Switch 工业设计",
+      "requiredTags": [],
+      "matchTags": [
+        "工业设计",
+        "Nintendo",
+        "游戏",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-tesla-model-s": {
+      "provider": "pixabay",
+      "query": "特斯拉 Model S 工业设计",
+      "requiredTags": [],
+      "matchTags": [
+        "工业设计",
+        "Tesla",
+        "电动车",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-bang-olufsen": {
+      "provider": "pixabay",
+      "query": "B O 音响 工业设计",
+      "requiredTags": [],
+      "matchTags": [
+        "工业设计",
+        "Bang & Olufsen",
+        "音频",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-leica-m": {
+      "provider": "pixabay",
+      "query": "徕卡 M 相机 工业设计",
+      "requiredTags": [],
+      "matchTags": [
+        "工业设计",
+        "Leica",
+        "相机",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-roomba": {
+      "provider": "pixabay",
+      "query": "iRobot Roomba 工业设计",
+      "requiredTags": [],
+      "matchTags": [
+        "工业设计",
+        "iRobot",
+        "机器人",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-eames-chair": {
+      "provider": "pixabay",
+      "query": "伊姆斯躺椅 家居",
+      "requiredTags": [],
+      "matchTags": [
+        "家居",
+        "Herman Miller",
+        "家具",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-vitra-chair": {
+      "provider": "pixabay",
+      "query": "Vitra 家具 家居",
+      "requiredTags": [],
+      "matchTags": [
+        "家居",
+        "Vitra",
+        "家具",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-nespresso": {
+      "provider": "pixabay",
+      "query": "Nespresso 咖啡机 家居",
+      "requiredTags": [],
+      "matchTags": [
+        "家居",
+        "Nestlé",
+        "厨电",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-herman-miller": {
+      "provider": "pixabay",
+      "query": "Herman Miller Aeron 家居",
+      "requiredTags": [],
+      "matchTags": [
+        "家居",
+        "Herman Miller",
+        "办公",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-le-creuset": {
+      "provider": "pixabay",
+      "query": "Le Creuset 珐琅锅 家居",
+      "requiredTags": [],
+      "matchTags": [
+        "家居",
+        "Le Creuset",
+        "厨具",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-philips-hue": {
+      "provider": "pixabay",
+      "query": "Philips Hue 家居",
+      "requiredTags": [],
+      "matchTags": [
+        "家居",
+        "Philips",
+        "智能家居",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-smeg-fridge": {
+      "provider": "pixabay",
+      "query": "Smeg 冰箱 家居",
+      "requiredTags": [],
+      "matchTags": [
+        "家居",
+        "Smeg",
+        "厨电",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-kitchenaid": {
+      "provider": "pixabay",
+      "query": "KitchenAid 厨师机 家居",
+      "requiredTags": [],
+      "matchTags": [
+        "家居",
+        "KitchenAid",
+        "厨具",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-aeropress": {
+      "provider": "pixabay",
+      "query": "AeroPress 爱乐压 家居",
+      "requiredTags": [],
+      "matchTags": [
+        "家居",
+        "AeroPress",
+        "咖啡",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-ikea-billy": {
+      "provider": "pixabay",
+      "query": "IKEA Billy 书柜 家居",
+      "requiredTags": [],
+      "matchTags": [
+        "家居",
+        "IKEA",
+        "家具",
+        "design",
+        "industrial"
+      ]
+    },
+    "industrial-design-industrial-muuto-beam-lamp": {
+      "provider": "pixabay",
+      "query": "Muuto Beam 灯具 家居",
+      "requiredTags": [],
+      "matchTags": [
+        "家居",
+        "Muuto",
+        "灯具",
+        "design",
+        "industrial"
+      ]
+    },
+    "motorcycle-moto-ducati-streetfighter": {
+      "provider": "pixabay",
+      "query": "杜卡迪 Streetfighter V4 意大利",
+      "requiredTags": [],
+      "matchTags": [
+        "意大利",
+        "Ducati",
+        "摩托",
+        "moto",
+        "ducati"
+      ]
+    },
+    "motorcycle-moto-aprilia-rs660": {
+      "provider": "pixabay",
+      "query": "阿普利亚 RS 660 意大利",
+      "requiredTags": [],
+      "matchTags": [
+        "意大利",
+        "Aprilia",
+        "摩托",
+        "moto",
+        "aprilia"
+      ]
+    },
+    "motorcycle-moto-mv-agusta-superveloce": {
+      "provider": "pixabay",
+      "query": "MV Agusta Superveloce 意大利",
+      "requiredTags": [],
+      "matchTags": [
+        "意大利",
+        "MV Agusta",
+        "摩托",
+        "moto",
+        "mv"
+      ]
+    },
+    "motorcycle-moto-ducati-scrambler": {
+      "provider": "pixabay",
+      "query": "杜卡迪 Scrambler 意大利",
+      "requiredTags": [],
+      "matchTags": [
+        "意大利",
+        "Ducati",
+        "摩托",
+        "moto",
+        "ducati"
+      ]
+    },
+    "motorcycle-moto-bimota-tesi": {
+      "provider": "pixabay",
+      "query": "比摩塔 Tesi 意大利",
+      "requiredTags": [],
+      "matchTags": [
+        "意大利",
+        "Bimota",
+        "摩托",
+        "moto",
+        "bimota"
+      ]
+    },
+    "motorcycle-moto-guzzi-v7": {
+      "provider": "pixabay",
+      "query": "摩托古兹 V7 意大利",
+      "requiredTags": [],
+      "matchTags": [
+        "意大利",
+        "Moto Guzzi",
+        "摩托",
+        "moto",
+        "guzzi"
+      ]
+    },
+    "motorcycle-moto-aprilia-shiver": {
+      "provider": "pixabay",
+      "query": "阿普利亚 Shiver 900 意大利",
+      "requiredTags": [],
+      "matchTags": [
+        "意大利",
+        "Aprilia",
+        "摩托",
+        "moto",
+        "aprilia"
+      ]
+    },
+    "motorcycle-moto-ducati-supersport": {
+      "provider": "pixabay",
+      "query": "杜卡迪 Supersport 950 意大利",
+      "requiredTags": [],
+      "matchTags": [
+        "意大利",
+        "Ducati",
+        "摩托",
+        "moto",
+        "ducati"
+      ]
+    },
+    "motorcycle-moto-mv-agusta-f3": {
+      "provider": "pixabay",
+      "query": "MV Agusta F3 意大利",
+      "requiredTags": [],
+      "matchTags": [
+        "意大利",
+        "MV Agusta",
+        "摩托",
+        "moto",
+        "mv"
+      ]
+    },
+    "motorcycle-moto-harley-sportster": {
+      "provider": "pixabay",
+      "query": "哈雷 Sportster S 美式",
+      "requiredTags": [],
+      "matchTags": [
+        "美式",
+        "Harley-Davidson",
+        "巡航",
+        "moto",
+        "harley"
+      ]
+    },
+    "motorcycle-moto-indian-scout-bobber": {
+      "provider": "pixabay",
+      "query": "印第安 Scout Bobber 美式",
+      "requiredTags": [],
+      "matchTags": [
+        "美式",
+        "Indian",
+        "巡航",
+        "moto",
+        "indian"
+      ]
+    },
+    "motorcycle-moto-harley-pan-america": {
+      "provider": "pixabay",
+      "query": "哈雷 Pan America 美式",
+      "requiredTags": [],
+      "matchTags": [
+        "美式",
+        "Harley-Davidson",
+        "巡航",
+        "moto",
+        "harley"
+      ]
+    },
+    "motorcycle-moto-indian-ftr": {
+      "provider": "pixabay",
+      "query": "印第安 FTR 1200 美式",
+      "requiredTags": [],
+      "matchTags": [
+        "美式",
+        "Indian",
+        "巡航",
+        "moto",
+        "indian"
+      ]
+    },
+    "motorcycle-moto-harley-livewire": {
+      "provider": "pixabay",
+      "query": "哈雷 LiveWire 美式",
+      "requiredTags": [],
+      "matchTags": [
+        "美式",
+        "Harley-Davidson",
+        "巡航",
+        "moto",
+        "harley"
+      ]
+    },
+    "motorcycle-moto-harley-road-glide": {
+      "provider": "pixabay",
+      "query": "哈雷 Road Glide 美式",
+      "requiredTags": [],
+      "matchTags": [
+        "美式",
+        "Harley-Davidson",
+        "巡航",
+        "moto",
+        "harley"
+      ]
+    },
+    "motorcycle-moto-indian-challenger": {
+      "provider": "pixabay",
+      "query": "印第安 Challenger 美式",
+      "requiredTags": [],
+      "matchTags": [
+        "美式",
+        "Indian",
+        "巡航",
+        "moto",
+        "indian"
+      ]
+    },
+    "motorcycle-moto-harley-low-rider-st": {
+      "provider": "pixabay",
+      "query": "哈雷 Low Rider 美式",
+      "requiredTags": [],
+      "matchTags": [
+        "美式",
+        "Harley-Davidson",
+        "巡航",
+        "moto",
+        "harley"
+      ]
+    },
+    "motorcycle-moto-yamaha-mt-09": {
+      "provider": "pixabay",
+      "query": "雅马哈 MT 09 日本",
+      "requiredTags": [],
+      "matchTags": [
+        "日本",
+        "Yamaha",
+        "摩托",
+        "moto",
+        "yamaha"
+      ]
+    },
+    "motorcycle-moto-kawasaki-z900": {
+      "provider": "pixabay",
+      "query": "川崎 Z900 日本",
+      "requiredTags": [],
+      "matchTags": [
+        "日本",
+        "Kawasaki",
+        "摩托",
+        "moto",
+        "kawasaki"
+      ]
+    },
+    "motorcycle-moto-suzuki-gsx-r750": {
+      "provider": "pixabay",
+      "query": "铃木 GSX R750 日本",
+      "requiredTags": [],
+      "matchTags": [
+        "日本",
+        "Suzuki",
+        "摩托",
+        "moto",
+        "suzuki"
+      ]
+    },
+    "motorcycle-moto-honda-africa-twin": {
+      "provider": "pixabay",
+      "query": "本田 Africa Twin 日本",
+      "requiredTags": [],
+      "matchTags": [
+        "日本",
+        "Honda",
+        "摩托",
+        "moto",
+        "honda"
+      ]
+    },
+    "motorcycle-moto-yamaha-tracer": {
+      "provider": "pixabay",
+      "query": "雅马哈 Tracer 9 日本",
+      "requiredTags": [],
+      "matchTags": [
+        "日本",
+        "Yamaha",
+        "摩托",
+        "moto",
+        "yamaha"
+      ]
+    },
+    "motorcycle-moto-kawasaki-versys": {
+      "provider": "pixabay",
+      "query": "川崎 Versys 650 日本",
+      "requiredTags": [],
+      "matchTags": [
+        "日本",
+        "Kawasaki",
+        "摩托",
+        "moto",
+        "kawasaki"
+      ]
+    },
+    "motorcycle-moto-suzuki-katana": {
+      "provider": "pixabay",
+      "query": "铃木 Katana 日本",
+      "requiredTags": [],
+      "matchTags": [
+        "日本",
+        "Suzuki",
+        "摩托",
+        "moto",
+        "suzuki"
+      ]
+    },
+    "motorcycle-moto-honda-rebel-1100": {
+      "provider": "pixabay",
+      "query": "本田 Rebel 1100 日本",
+      "requiredTags": [],
+      "matchTags": [
+        "日本",
+        "Honda",
+        "摩托",
+        "moto",
+        "honda"
+      ]
+    },
+    "motorcycle-moto-yamaha-xsr900": {
+      "provider": "pixabay",
+      "query": "雅马哈 XSR900 日本",
+      "requiredTags": [],
+      "matchTags": [
+        "日本",
+        "Yamaha",
+        "摩托",
+        "moto",
+        "yamaha"
+      ]
+    },
+    "superhero-hero-spiderman": {
+      "provider": "pixabay",
+      "query": "蜘蛛侠 Spider Man 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "Marvel",
+        "纽约",
+        "hero",
+        "spiderman"
+      ]
+    },
+    "superhero-hero-iron-man": {
+      "provider": "pixabay",
+      "query": "钢铁侠 Iron Man 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "MCU",
+        "科技英雄",
+        "hero",
+        "iron"
+      ]
+    },
+    "superhero-hero-captain-america": {
+      "provider": "pixabay",
+      "query": "美国队长 Captain America 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "复仇者",
+        "超级士兵",
+        "hero",
+        "captain"
+      ]
+    },
+    "superhero-hero-batman-dc": {
+      "provider": "pixabay",
+      "query": "蝙蝠侠 Batman DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "哥谭",
+        "黑暗骑士",
+        "hero",
+        "batman"
+      ]
+    },
+    "superhero-hero-superman-dc": {
+      "provider": "pixabay",
+      "query": "超人 Superman DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "氪星",
+        "大都会",
+        "hero",
+        "superman"
+      ]
+    },
+    "superhero-hero-wonder-woman": {
+      "provider": "pixabay",
+      "query": "神奇女侠 Wonder Woman DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "亚马逊",
+        "女性英雄",
+        "hero",
+        "wonder"
+      ]
+    },
+    "superhero-hero-thor": {
+      "provider": "pixabay",
+      "query": "雷神 Thor 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "阿斯加德",
+        "雷霆",
+        "hero",
+        "thor"
+      ]
+    },
+    "superhero-hero-hulk": {
+      "provider": "pixabay",
+      "query": "绿巨人 Hulk 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "伽马",
+        "力量型",
+        "hero",
+        "hulk"
+      ]
+    },
+    "superhero-hero-black-widow": {
+      "provider": "pixabay",
+      "query": "黑寡妇 Black Widow 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "间谍",
+        "复仇者",
+        "hero",
+        "black"
+      ]
+    },
+    "superhero-hero-doctor-strange": {
+      "provider": "pixabay",
+      "query": "奇异博士 Doctor Strange 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "魔法",
+        "至尊法师",
+        "hero",
+        "doctor"
+      ]
+    },
+    "superhero-hero-black-panther": {
+      "provider": "pixabay",
+      "query": "黑豹 Black Panther 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "瓦坎达",
+        "振金",
+        "hero",
+        "black"
+      ]
+    },
+    "superhero-hero-deadpool": {
+      "provider": "pixabay",
+      "query": "死侍 Deadpool 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "反英雄",
+        "再生",
+        "hero",
+        "deadpool"
+      ]
+    },
+    "superhero-hero-wolverine": {
+      "provider": "pixabay",
+      "query": "金刚狼 Wolverine 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "X战警",
+        "变种人",
+        "hero",
+        "wolverine"
+      ]
+    },
+    "superhero-hero-scarlet-witch": {
+      "provider": "pixabay",
+      "query": "猩红女巫 Scarlet Witch 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "混沌魔法",
+        "旺达",
+        "hero",
+        "scarlet"
+      ]
+    },
+    "superhero-hero-ant-man": {
+      "provider": "pixabay",
+      "query": "蚁人 Ant Man 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "皮姆粒子",
+        "量子",
+        "hero",
+        "ant"
+      ]
+    },
+    "superhero-hero-hawkeye": {
+      "provider": "pixabay",
+      "query": "鹰眼 Hawkeye 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "射手",
+        "复仇者",
+        "hero",
+        "hawkeye"
+      ]
+    },
+    "superhero-hero-guardians-star-lord": {
+      "provider": "pixabay",
+      "query": "星爵 Star Lord 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "银河护卫队",
+        "太空",
+        "hero",
+        "guardians"
+      ]
+    },
+    "superhero-hero-silver-surfer": {
+      "provider": "pixabay",
+      "query": "银色冲浪者 Silver Surfer 漫威",
+      "requiredTags": [],
+      "matchTags": [
+        "漫威",
+        "宇宙",
+        "冲浪板",
+        "hero",
+        "silver"
+      ]
+    },
+    "superhero-hero-flash-dc": {
+      "provider": "pixabay",
+      "query": "闪电侠 The Flash DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "神速力",
+        "中央城",
+        "hero",
+        "flash"
+      ]
+    },
+    "superhero-hero-aquaman-dc": {
+      "provider": "pixabay",
+      "query": "海王 Aquaman DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "亚特兰蒂斯",
+        "海洋",
+        "hero",
+        "aquaman"
+      ]
+    },
+    "superhero-hero-green-lantern": {
+      "provider": "pixabay",
+      "query": "绿灯侠 Green Lantern DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "绿灯军团",
+        "戒指",
+        "hero",
+        "green"
+      ]
+    },
+    "superhero-hero-shazam-dc": {
+      "provider": "pixabay",
+      "query": "沙赞 Shazam DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "魔法",
+        "少年",
+        "hero",
+        "shazam"
+      ]
+    },
+    "superhero-hero-nightwing-dc": {
+      "provider": "pixabay",
+      "query": "夜翼 Nightwing DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "夜翼",
+        "迪克",
+        "hero",
+        "nightwing"
+      ]
+    },
+    "superhero-hero-green-arrow-dc": {
+      "provider": "pixabay",
+      "query": "绿箭侠 Green Arrow DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "弓箭",
+        "星城",
+        "hero",
+        "green"
+      ]
+    },
+    "superhero-hero-harley-quinn": {
+      "provider": "pixabay",
+      "query": "哈莉 奎茵 Harley DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "反英雄",
+        "小丑",
+        "hero",
+        "harley"
+      ]
+    },
+    "superhero-hero-joker-dc": {
+      "provider": "pixabay",
+      "query": "小丑 Joker DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "反派",
+        "哥谭",
+        "hero",
+        "joker"
+      ]
+    },
+    "superhero-hero-cyborg-dc": {
+      "provider": "pixabay",
+      "query": "钢骨 Cyborg DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "机械",
+        "正义联盟",
+        "hero",
+        "cyborg"
+      ]
+    },
+    "superhero-hero-martian-manhunter": {
+      "provider": "pixabay",
+      "query": "火星猎人 Martian Manhunter DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "火星",
+        "心灵感应",
+        "hero",
+        "martian"
+      ]
+    },
+    "superhero-hero-constantine-dc": {
+      "provider": "pixabay",
+      "query": "康斯坦丁 Constantine DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "魔法",
+        "驱魔",
+        "hero",
+        "constantine"
+      ]
+    },
+    "superhero-hero-raven-dc": {
+      "provider": "pixabay",
+      "query": "渡鸦 Raven DC",
+      "requiredTags": [],
+      "matchTags": [
+        "DC",
+        "少年泰坦",
+        "魔法",
+        "hero",
+        "raven"
+      ]
+    },
+    "superhero-hero-spawn": {
+      "provider": "pixabay",
+      "query": "再生侠 Spawn Image",
+      "requiredTags": [],
+      "matchTags": [
+        "Image",
+        "黑暗英雄",
+        "地狱",
+        "hero",
+        "spawn"
+      ]
+    },
+    "superhero-hero-invincible": {
+      "provider": "pixabay",
+      "query": "无敌少侠 Invincible Image",
+      "requiredTags": [],
+      "matchTags": [
+        "Image",
+        "动画",
+        "亚马逊",
+        "hero",
+        "invincible"
+      ]
+    },
+    "superhero-hero-hellboy": {
+      "provider": "pixabay",
+      "query": "地狱男爵 Hellboy Dark Horse",
+      "requiredTags": [],
+      "matchTags": [
+        "Dark Horse",
+        "恶魔",
+        "BPRD",
+        "hero",
+        "hellboy"
+      ]
+    },
+    "superhero-hero-witcher-geralt": {
+      "provider": "pixabay",
+      "query": "猎魔人杰洛特 Geralt 猎魔人",
+      "requiredTags": [],
+      "matchTags": [
+        "猎魔人",
+        "奇幻",
+        "Netflix",
+        "hero",
+        "witcher"
+      ]
+    },
+    "superhero-hero-tmnt-leonardo": {
+      "provider": "pixabay",
+      "query": "忍者神龟 Leonardo TMNT",
+      "requiredTags": [],
+      "matchTags": [
+        "TMNT",
+        "忍者",
+        "乌龟",
+        "hero",
+        "tmnt"
+      ]
+    },
+    "superhero-hero-watchmen-rorschach": {
+      "provider": "pixabay",
+      "query": "罗夏 Rorschach 守望者",
+      "requiredTags": [],
+      "matchTags": [
+        "守望者",
+        "DC",
+        "反英雄",
+        "hero",
+        "watchmen"
+      ]
+    },
+    "superhero-hero-homelander": {
+      "provider": "pixabay",
+      "query": "祖国人 Homelander 黑袍纠察队",
+      "requiredTags": [],
+      "matchTags": [
+        "黑袍纠察队",
+        "讽刺",
+        "反派",
+        "hero",
+        "homelander"
+      ]
+    },
+    "superhero-hero-kick-ass": {
+      "provider": "pixabay",
+      "query": "海扁王 Kick Ass 马克米勒",
+      "requiredTags": [],
+      "matchTags": [
+        "马克米勒",
+        "写实",
+        "喜剧",
+        "hero",
+        "kick"
+      ]
+    },
+    "superhero-hero-conan": {
+      "provider": "pixabay",
+      "query": "野蛮人柯南 Conan 剑与魔法",
+      "requiredTags": [],
+      "matchTags": [
+        "剑与魔法",
+        "野蛮人",
+        "奇幻",
+        "hero",
+        "conan"
+      ]
+    },
+    "superhero-hero-the-boys-butcher": {
+      "provider": "pixabay",
+      "query": "屠夫 Billy Butcher 黑袍纠察队",
+      "requiredTags": [],
+      "matchTags": [
+        "黑袍纠察队",
+        "人类",
+        "复仇",
+        "hero",
+        "the"
+      ]
+    },
+    "superhero-hero-sailor-moon": {
+      "provider": "pixabay",
+      "query": "水手月亮 Sailor Moon 魔法少女",
+      "requiredTags": [],
+      "matchTags": [
+        "魔法少女",
+        "武内直子",
+        "日本",
+        "hero",
+        "sailor"
+      ]
+    },
+    "superhero-hero-goku": {
+      "provider": "pixabay",
+      "query": "孙悟空 Goku 龙珠",
+      "requiredTags": [],
+      "matchTags": [
+        "龙珠",
+        "赛亚人",
+        "鸟山明",
+        "hero",
+        "goku"
+      ]
+    },
+    "transformers-tf-megatron": {
+      "provider": "pixabay",
+      "query": "威震天 Megatron 霸天虎",
+      "requiredTags": [],
+      "matchTags": [
+        "霸天虎",
+        "Decepticon",
+        "领袖",
+        "tf",
+        "megatron"
+      ]
+    },
+    "transformers-tf-jazz": {
+      "provider": "pixabay",
+      "query": "爵士 Jazz 汽车人",
+      "requiredTags": [],
+      "matchTags": [
+        "汽车人",
+        "Hasbro",
+        "变形",
+        "tf",
+        "jazz"
+      ]
+    },
+    "transformers-tf-ironhide": {
+      "provider": "pixabay",
+      "query": "铁皮 Ironhide 汽车人",
+      "requiredTags": [],
+      "matchTags": [
+        "汽车人",
+        "Hasbro",
+        "变形",
+        "tf",
+        "ironhide"
+      ]
+    },
+    "transformers-tf-ratchet": {
+      "provider": "pixabay",
+      "query": "救护车 Ratchet 汽车人",
+      "requiredTags": [],
+      "matchTags": [
+        "汽车人",
+        "Hasbro",
+        "变形",
+        "tf",
+        "ratchet"
+      ]
+    },
+    "transformers-tf-wheeljack": {
+      "provider": "pixabay",
+      "query": "千斤顶 Wheeljack 汽车人",
+      "requiredTags": [],
+      "matchTags": [
+        "汽车人",
+        "Hasbro",
+        "变形",
+        "tf",
+        "wheeljack"
+      ]
+    },
+    "transformers-tf-grimlock": {
+      "provider": "pixabay",
+      "query": "钢锁 Grimlock 汽车人",
+      "requiredTags": [],
+      "matchTags": [
+        "汽车人",
+        "Hasbro",
+        "变形",
+        "tf",
+        "grimlock"
+      ]
+    },
+    "transformers-tf-bumblebee-classic": {
+      "provider": "pixabay",
+      "query": "大黄蜂 G1 汽车人",
+      "requiredTags": [],
+      "matchTags": [
+        "汽车人",
+        "Hasbro",
+        "变形",
+        "tf",
+        "bumblebee"
+      ]
+    },
+    "transformers-tf-hot-rod": {
+      "provider": "pixabay",
+      "query": "热破 Hot Rod 汽车人",
+      "requiredTags": [],
+      "matchTags": [
+        "汽车人",
+        "Hasbro",
+        "变形",
+        "tf",
+        "hot"
+      ]
+    },
+    "transformers-tf-arcee": {
+      "provider": "pixabay",
+      "query": "阿尔茜 Arcee 汽车人",
+      "requiredTags": [],
+      "matchTags": [
+        "汽车人",
+        "Hasbro",
+        "变形",
+        "tf",
+        "arcee"
+      ]
+    },
+    "transformers-tf-ultra-magnus": {
+      "provider": "pixabay",
+      "query": "通天晓 Ultra Magnus 汽车人",
+      "requiredTags": [],
+      "matchTags": [
+        "汽车人",
+        "Hasbro",
+        "变形",
+        "tf",
+        "ultra"
+      ]
+    },
+    "transformers-tf-sideswipe": {
+      "provider": "pixabay",
+      "query": "横炮 Sideswipe 汽车人",
+      "requiredTags": [],
+      "matchTags": [
+        "汽车人",
+        "Hasbro",
+        "变形",
+        "tf",
+        "sideswipe"
+      ]
+    },
+    "transformers-tf-starscream": {
+      "provider": "pixabay",
+      "query": "红蜘蛛 Starscream 霸天虎",
+      "requiredTags": [],
+      "matchTags": [
+        "霸天虎",
+        "反派",
+        "变形",
+        "tf",
+        "starscream"
+      ]
+    },
+    "transformers-tf-soundwave": {
+      "provider": "pixabay",
+      "query": "声波 Soundwave 霸天虎",
+      "requiredTags": [],
+      "matchTags": [
+        "霸天虎",
+        "反派",
+        "变形",
+        "tf",
+        "soundwave"
+      ]
+    },
+    "transformers-tf-shockwave": {
+      "provider": "pixabay",
+      "query": "震荡波 Shockwave 霸天虎",
+      "requiredTags": [],
+      "matchTags": [
+        "霸天虎",
+        "反派",
+        "变形",
+        "tf",
+        "shockwave"
+      ]
+    },
+    "transformers-tf-brawl": {
+      "provider": "pixabay",
+      "query": "吵闹 Brawl 霸天虎",
+      "requiredTags": [],
+      "matchTags": [
+        "霸天虎",
+        "反派",
+        "变形",
+        "tf",
+        "brawl"
+      ]
+    },
+    "transformers-tf-barricade": {
+      "provider": "pixabay",
+      "query": "路障 Barricade 霸天虎",
+      "requiredTags": [],
+      "matchTags": [
+        "霸天虎",
+        "反派",
+        "变形",
+        "tf",
+        "barricade"
+      ]
+    },
+    "transformers-tf-blackout": {
+      "provider": "pixabay",
+      "query": "眩晕 Blackout 霸天虎",
+      "requiredTags": [],
+      "matchTags": [
+        "霸天虎",
+        "反派",
+        "变形",
+        "tf",
+        "blackout"
+      ]
+    },
+    "transformers-tf-lockdown": {
+      "provider": "pixabay",
+      "query": "禁闭 Lockdown 霸天虎",
+      "requiredTags": [],
+      "matchTags": [
+        "霸天虎",
+        "反派",
+        "变形",
+        "tf",
+        "lockdown"
+      ]
+    },
+    "transformers-tf-ravage": {
+      "provider": "pixabay",
+      "query": "机器狗 Ravage 霸天虎",
+      "requiredTags": [],
+      "matchTags": [
+        "霸天虎",
+        "反派",
+        "变形",
+        "tf",
+        "ravage"
+      ]
+    },
+    "transformers-tf-laserbeak": {
+      "provider": "pixabay",
+      "query": "激光鸟 Laserbeak 霸天虎",
+      "requiredTags": [],
+      "matchTags": [
+        "霸天虎",
+        "反派",
+        "变形",
+        "tf",
+        "laserbeak"
+      ]
+    },
+    "transformers-tf-devastator": {
+      "provider": "pixabay",
+      "query": "大力神 Devastator 霸天虎",
+      "requiredTags": [],
+      "matchTags": [
+        "霸天虎",
+        "反派",
+        "变形",
+        "tf",
+        "devastator"
+      ]
+    },
+    "transformers-tf-galvatron": {
+      "provider": "pixabay",
+      "query": "惊破天 Galvatron 霸天虎",
+      "requiredTags": [],
+      "matchTags": [
+        "霸天虎",
+        "反派",
+        "变形",
+        "tf",
+        "galvatron"
+      ]
+    },
+    "ui-design-ui-material-design-3": {
+      "provider": "pixabay",
+      "query": "Material Design 3 Google",
+      "requiredTags": [],
+      "matchTags": [
+        "Google",
+        "Android",
+        "设计系统",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-ios-human-interface": {
+      "provider": "pixabay",
+      "query": "Apple Human Interface Apple",
+      "requiredTags": [],
+      "matchTags": [
+        "Apple",
+        "iOS",
+        "HIG",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-figma-design": {
+      "provider": "pixabay",
+      "query": "Figma 设计 移动端",
+      "requiredTags": [],
+      "matchTags": [
+        "移动端",
+        "UI",
+        "Figma",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-dark-mode": {
+      "provider": "pixabay",
+      "query": "深色模式 移动端",
+      "requiredTags": [],
+      "matchTags": [
+        "移动端",
+        "UI",
+        "iOS / Android",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-accessibility": {
+      "provider": "pixabay",
+      "query": "无障碍设计 移动端",
+      "requiredTags": [],
+      "matchTags": [
+        "移动端",
+        "UI",
+        "WCAG",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-micro-interaction": {
+      "provider": "pixabay",
+      "query": "微交互 移动端",
+      "requiredTags": [],
+      "matchTags": [
+        "移动端",
+        "UI",
+        "Motion",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-fluent-ios": {
+      "provider": "pixabay",
+      "query": "Fluent iOS 风格 移动端",
+      "requiredTags": [],
+      "matchTags": [
+        "移动端",
+        "UI",
+        "平台规范",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-samsung-one-ui": {
+      "provider": "pixabay",
+      "query": "三星 One UI 移动端",
+      "requiredTags": [],
+      "matchTags": [
+        "移动端",
+        "UI",
+        "One UI",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-material-you-widget": {
+      "provider": "pixabay",
+      "query": "Material You 小组件 移动端",
+      "requiredTags": [],
+      "matchTags": [
+        "移动端",
+        "UI",
+        "Material 3",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-watchos": {
+      "provider": "pixabay",
+      "query": "watchOS 界面 移动端",
+      "requiredTags": [],
+      "matchTags": [
+        "移动端",
+        "UI",
+        "watchOS",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-android-14": {
+      "provider": "pixabay",
+      "query": "Android 14 界面 移动端",
+      "requiredTags": [],
+      "matchTags": [
+        "移动端",
+        "UI",
+        "Android 14",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-shadcn": {
+      "provider": "pixabay",
+      "query": "shadcn ui Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "React",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-glassmorphism": {
+      "provider": "pixabay",
+      "query": "玻璃拟态 Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "CSS",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-tailwind-css": {
+      "provider": "pixabay",
+      "query": "Tailwind CSS Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "Tailwind",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-bootstrap": {
+      "provider": "pixabay",
+      "query": "Bootstrap Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "Bootstrap",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-ant-design": {
+      "provider": "pixabay",
+      "query": "Ant Design Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "React",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-figma-to-code": {
+      "provider": "pixabay",
+      "query": "Figma 转代码 Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "DevMode",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-chakra-ui": {
+      "provider": "pixabay",
+      "query": "Chakra UI Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "React",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-radix-ui": {
+      "provider": "pixabay",
+      "query": "Radix UI Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "React",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-storybook": {
+      "provider": "pixabay",
+      "query": "Storybook Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "Storybook",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-responsive-grid": {
+      "provider": "pixabay",
+      "query": "响应式栅格 Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "CSS Grid",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-notion-style": {
+      "provider": "pixabay",
+      "query": "Notion 风格 Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "SaaS",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-stripe-dashboard": {
+      "provider": "pixabay",
+      "query": "Stripe Dashboard Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "Stripe",
+        "design",
+        "ui"
+      ]
+    },
+    "ui-design-ui-vercel-design": {
+      "provider": "pixabay",
+      "query": "Vercel 设计 Web",
+      "requiredTags": [],
+      "matchTags": [
+        "Web",
+        "UI",
+        "Vercel",
+        "design",
+        "ui"
+      ]
+    },
+    "undefined": {
+      "provider": "pixabay",
+      "imageType": "photo",
+      "orientation": "all",
+      "minMatchScore": 0,
+      "perPage": 24,
+      "query": "smartwatch apple watch screen",
+      "matchTags": [
+        "watch",
+        "smartwatch"
       ]
     }
   }

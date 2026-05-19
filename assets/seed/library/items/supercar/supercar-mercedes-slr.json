@@ -1,0 +1,34 @@
+{
+  "id": "ce196b46-f5c3-47ca-9ec5-cec837986a26",
+  "slug": "supercar-mercedes-slr",
+  "subCategoryId": "car-germany",
+  "name": "奔驰 SLR McLaren",
+  "summary": "奔驰与迈凯伦合作传奇，前置 V8 与 gullwing 门。",
+  "description": "奔驰 SLR McLaren体现德国Mercedes-Benz在精密工程、底盘调校与电子辅助系统上的优势，2003 年世代代表德系性能文化：赛道数据转化为公路驾驶信心。\n\n德国超跑与 GT 强调日常可用性、高速稳定性与制动表现，在纽博格林开发文化影响下诞生众多标杆车型。\n\n**性能要点**：5.4L V8 机械增压，约 617 hp，四驱或后驱依型号\n\n**相关**：与保时捷、AMG、奥迪 R8 等同属德国性能图谱；部分车型为限量或纪念版",
+  "tags": [
+    "德国",
+    "Mercedes-Benz",
+    "超跑",
+    "精密工程"
+  ],
+  "specs": {
+    "分类": "德国品牌",
+    "厂商": "Mercedes-Benz",
+    "上市": "2003",
+    "发动机": "5.4L V8 机械增压",
+    "功率": "约 617 hp",
+    "总部": "德国",
+    "特点": "赛道基因"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "奔驰 SLR McLaren 德国",
+    "matchTags": [
+      "德国",
+      "Mercedes-Benz",
+      "超跑",
+      "mercedes",
+      "slr"
+    ]
+  }
+}

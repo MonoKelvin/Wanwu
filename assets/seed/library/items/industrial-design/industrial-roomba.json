@@ -1,0 +1,31 @@
+{
+  "id": "ed34d90f-140d-4cf3-a225-6859fc9d01bd",
+  "slug": "industrial-roomba",
+  "subCategoryId": "id-product",
+  "name": "iRobot Roomba",
+  "summary": "家用扫地机器人普及者，传感器导航。",
+  "description": "iRobot Roomba由iRobot推出，属机器人领域工业设计典范，2002 年间影响用户习惯与行业标准。造型、人机工程与材料工艺共同定义产品识别度。\n\n设计史课程常将其与 Dieter Rams、Jony Ive 等人物及方法论关联讨论。\n\n**设计原则**：功能、可用性、美学与成本平衡\n\n**相关**：与包豪斯、现代主义、极简主义设计运动一脉相承",
+  "tags": [
+    "工业设计",
+    "iRobot",
+    "机器人",
+    "经典"
+  ],
+  "specs": {
+    "分类": "产品设计",
+    "品牌": "iRobot",
+    "类型": "机器人",
+    "时期": "2002",
+    "领域": "消费科技",
+    "影响": "行业标杆"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "robot vacuum cleaner floor",
+    "matchTags": [
+      "vacuum",
+      "robot"
+    ],
+    "minMatchScore": 0
+  }
+}

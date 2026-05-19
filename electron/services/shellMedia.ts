@@ -1,5 +1,5 @@
-import { dialog, shell } from 'electron'
-import { copyFileSync, existsSync } from 'fs'
+import { clipboard, dialog, shell } from 'electron'
+import { copyFileSync, existsSync, writeFileSync } from 'fs'
 import { basename } from 'path'
 import { fileURLToPath } from 'url'
 import { getMainWindow } from '../windowState'
@@ -58,4 +58,30 @@ export async function showMediaInFolder(url: string): Promise<{ ok: boolean }> {
   if (!abs || !existsSync(abs)) return { ok: false }
   shell.showItemInFolder(abs)
   return { ok: true }
+}
+
+export function copyTextToClipboard(text: string): void {
+  clipboard.writeText(text)
+}
+
+export async function savePngDataUrl(
+  dataUrl: string,
+  defaultName?: string
+): Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }> {
+  const match = dataUrl.match(/^data:image\/png;base64,(.+)$/i)
+  if (!match) return { ok: false, error: 'invalid_data_url' }
+
+  const win = getMainWindow()
+  const saveOptions = {
+    defaultPath: defaultName?.trim() || 'wanwu-card.png',
+    filters: [{ name: 'PNG 图片', extensions: ['png'] }]
+  }
+  const result = win
+    ? await dialog.showSaveDialog(win, saveOptions)
+    : await dialog.showSaveDialog(saveOptions)
+
+  if (result.canceled || !result.filePath) return { ok: false, canceled: true }
+
+  writeFileSync(result.filePath, Buffer.from(match[1], 'base64'))
+  return { ok: true, path: result.filePath }
 }

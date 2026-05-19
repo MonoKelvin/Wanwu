@@ -1,0 +1,28 @@
+{
+  "id": "4cbd19d1-db6e-444a-9793-312838908a73",
+  "slug": "hero-wolverine",
+  "subCategoryId": "hero-marvel",
+  "name": "金刚狼 Wolverine",
+  "summary": "罗根，艾德曼合金爪与再生能力，X 战警标志角色。",
+  "description": "金刚狼 1974 年登场，骨骼注入艾德曼合金，再生极强。休·杰克曼饰演二十余年成影史标志。\n\n故事涉及日本武士道篇章。\n\n**能力要点**：再生、合金爪、感官强化\n\n**相关作品**：《X战警》《LOGAN》",
+  "tags": [
+    "漫威",
+    "X战警",
+    "变种人"
+  ],
+  "specs": {
+    "宇宙": "漫威 Marvel",
+    "首次登场": "1974",
+    "本名": "罗根",
+    "材料": "艾德曼合金",
+    "饰演": "休·杰克曼"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "wolverine marvel cosplay",
+    "matchTags": [
+      "wolverine",
+      "marvel"
+    ]
+  }
+}

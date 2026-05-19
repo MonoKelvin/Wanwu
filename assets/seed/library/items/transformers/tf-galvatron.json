@@ -1,0 +1,31 @@
+{
+  "id": "08b0f00b-026a-4210-a10e-71173d0fc7fd",
+  "slug": "tf-galvatron",
+  "subCategoryId": "tf-decepticon",
+  "name": "惊破天 Galvatron",
+  "summary": "威震天重生体，宇宙大帝改造后的暴君。",
+  "description": "惊破天 Galvatron为霸天虎（Decepticon）阵营成员，追求征服赛博坦与地球资源。变形形态常为大炮 / 卡车，职能偏向霸天虎领袖。\n\n与汽车人长期战争，威震天（及惊破天）为领袖；红蜘蛛等角色以背叛与阴谋著称。\n\n**变形形态**：大炮 / 卡车\n\n**相关**：合体金刚、磁带战士为经典子系列；电影与 G1 设定有差异",
+  "tags": [
+    "霸天虎",
+    "反派",
+    "变形",
+    "霸天虎领袖"
+  ],
+  "specs": {
+    "分类": "霸天虎 Decepticon",
+    "阵营": "霸天虎",
+    "变形": "大炮 / 卡车",
+    "角色": "霸天虎领袖",
+    "领袖": "威震天 / 惊破天",
+    "特点": "霸天虎领袖"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "futuristic cannon weapon sci fi",
+    "matchTags": [
+      "sci",
+      "fi"
+    ],
+    "minMatchScore": 0
+  }
+}

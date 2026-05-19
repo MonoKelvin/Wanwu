@@ -1,0 +1,34 @@
+{
+  "id": "d3df4fe5-902b-40be-80bc-98c3d726ab5f",
+  "slug": "dog-chesapeake-bay-retriever",
+  "subCategoryId": "dog-americas",
+  "name": "切萨皮克湾寻回犬",
+  "summary": "美国本土寻回犬，被毛防水油腻，护主性强，狩猎水禽。",
+  "description": "切萨皮克湾寻回犬（Chesapeake Bay Retriever）在美国马里兰州切萨皮克湾地区育成，被毛短而密、防水性极强，毛色棕褐系。\n\n性格护主、独立，训练需坚定一致。适合狩猎与活跃家庭。美国少数原生寻回品种。\n\n**相关**：与拉布拉多、金毛为不同寻回分支；简称 Chessie。",
+  "tags": [
+    "寻回犬",
+    "美国",
+    "防水毛",
+    "狩猎"
+  ],
+  "specs": {
+    "分类": "美洲犬种",
+    "原产地": "美国",
+    "体重": "25–36 kg",
+    "寿命": "10–13 年",
+    "特征": "油腻防水被毛",
+    "性格": "护主、勇敢"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "chesapeake bay retriever dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "retriever"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

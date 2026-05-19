@@ -1,0 +1,34 @@
+{
+  "id": "87c13ea2-4081-4d39-8de3-37e18817b30d",
+  "slug": "cat-american-curl",
+  "subCategoryId": "cat-americas",
+  "name": "美国卷耳猫 American Curl",
+  "summary": "加州突变向后卷耳品种，楔形脸、被毛长短皆有，性格好奇友善。",
+  "description": "美国卷耳猫（American Curl）1981 年在加州发现卷耳突变，耳廓向后卷曲，非折耳基因。有短毛与长毛型，毛色丰富。\n\n性格好奇、社交、适应家庭与儿童。耳部软骨需轻柔护理，避免人为折压。TICA、CFA 均认可。\n\n**相关**：与苏格兰折耳基因完全不同；卷耳为 dominant 表现。",
+  "tags": [
+    "卷耳",
+    "美洲",
+    "加州",
+    "家庭猫"
+  ],
+  "specs": {
+    "分类": "美洲品种",
+    "原产地": "美国加州",
+    "体重": "2.5–5 kg",
+    "寿命": "12–16 年",
+    "特征": "向后卷耳",
+    "性格": "好奇、友善"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "american curl cat",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "curl"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

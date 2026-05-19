@@ -1,0 +1,35 @@
+{
+  "id": "2763d5f4-f36a-4f79-ac17-2351ee0e9b8f",
+  "slug": "cat-munchkin",
+  "subCategoryId": "cat-americas",
+  "name": "曼基康猫 Munchkin",
+  "summary": "天然矮腿突变品种，脊柱形态特殊，性格活泼，争议与喜爱并存。",
+  "description": "曼基康猫（Munchkin）1991 年在路易斯安那发现矮腿突变并选育，腿短为显性遗传。体态正常、运动能力仍强，常直立「袋鼠坐」。\n\n繁育伦理在部分协会存在争议（TICA 认可、FIFe 不承认）。选购需关注脊柱与关节健康。\n\n**相关**：与柯基犬矮腿基因为不同机制；有「腊肠猫」昵称。",
+  "tags": [
+    "矮腿",
+    "突变",
+    "美洲",
+    "争议品种"
+  ],
+  "specs": {
+    "分类": "美洲品种",
+    "原产地": "美国",
+    "体重": "2–4 kg",
+    "寿命": "12–15 年",
+    "特征": "天然短腿",
+    "性格": "活泼、外向",
+    "注意": "繁育伦理与健康"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "munchkin cat short legs",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "munchkin"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

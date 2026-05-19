@@ -1,0 +1,30 @@
+{
+  "id": "ec1d945a-7514-4d29-bfbc-88c6eef28fbe",
+  "slug": "movie-godfather",
+  "subCategoryId": "movie-action",
+  "name": "教父 The Godfather",
+  "summary": "科波拉黑手党家族史诗，马龙·白兰度影史经典。",
+  "description": "教父 The Godfather以犯罪剧情见长，1972 上映后影响动作片剪辑、特技与类型公式。导演科波拉在场面调度、节奏与角色张力上树立标杆。\n\n动作片融合犯罪、特工、武术或战争元素，全球票房与流媒体反复验证系列 IP 价值。\n\n**动作设计**：犯罪剧情\n\n**相关**：与同类系列构成马拉松观影；配乐与剪辑节奏是分析重点",
+  "tags": [
+    "动作",
+    "电影",
+    "犯罪剧情",
+    "科波拉"
+  ],
+  "specs": {
+    "分类": "动作 / 犯罪电影",
+    "年份": "1972",
+    "导演": "科波拉",
+    "类型": "犯罪剧情",
+    "特技": "实拍 / 特技混合",
+    "影响": "类型模板"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "vintage italian restaurant cinematic",
+    "matchTags": [
+      "vintage",
+      "cinematic"
+    ]
+  }
+}

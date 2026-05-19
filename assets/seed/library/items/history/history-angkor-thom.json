@@ -1,0 +1,31 @@
+{
+  "id": "c5eca002-0ffc-4ed5-a9f7-012ac97bbb87",
+  "slug": "history-angkor-thom",
+  "subCategoryId": "hist-world",
+  "name": "吴哥通王城",
+  "summary": "柬埔寨高棉帝国巴戎寺微笑佛像。",
+  "description": "吴哥通王城坐落于柬埔寨，兴盛于12 世纪，为世界遗产。见证古代文明的政治、宗教、建筑或天文成就，是环球旅行与考古学热点。\n\n气候变化、游客压力与战争曾威胁遗产安全，国际社会通过 UNESCO 框架推动保护。\n\n**旅行提示**：尊重当地文化，遵守摄影与攀爬禁令\n\n**相关**：与庞贝、吴哥窟、金字塔等同属必访史迹",
+  "tags": [
+    "世界遗产",
+    "柬埔寨",
+    "12 世纪",
+    "古代"
+  ],
+  "specs": {
+    "分类": "世界史迹",
+    "地点": "柬埔寨",
+    "时代": "12 世纪",
+    "地位": "世界遗产",
+    "文明": "多元古代文明",
+    "保护": "UNESCO"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "angkor thom bayon temple cambodia",
+    "matchTags": [
+      "angkor",
+      "temple"
+    ],
+    "minMatchScore": 0
+  }
+}

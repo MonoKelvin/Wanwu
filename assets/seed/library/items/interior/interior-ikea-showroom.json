@@ -1,0 +1,30 @@
+{
+  "id": "2d23f735-995e-44a4-ada3-303b1c19ad64",
+  "slug": "interior-ikea-showroom",
+  "subCategoryId": "int-nordic",
+  "name": "IKEA 展厅风",
+  "summary": "模块化储物、平价设计民主化样板空间。",
+  "description": "IKEA 展厅风体现北欧IKEA设计语言：功能优先、自然光最大化与展厅场景的人体工学。浅色系放大空间感，木材平衡冷调气候。\n\n可持续材料、节能窗与简化线脚是常见做法，IKEA 与 Hay 等品牌推动全球普及。\n\n**搭配要点**：IKEA色调，天然材质，简洁家具\n\n**相关**：与日式侘寂、现代极简有交叉借鉴",
+  "tags": [
+    "北欧",
+    "家装",
+    "IKEA",
+    "展厅"
+  ],
+  "specs": {
+    "分类": "北欧风格",
+    "风格": "IKEA",
+    "空间": "展厅",
+    "材质": "木、棉麻、羊毛",
+    "光线": "重视自然光",
+    "品牌": "IKEA / Hay 等"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "modern ikea style living room",
+    "matchTags": [
+      "modern",
+      "living"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "2abaa5e6-4f5b-4af2-bc4a-8fbe364a1ba0",
+  "slug": "movie-pulp-fiction",
+  "subCategoryId": "movie-action",
+  "name": "低俗小说 Pulp Fiction",
+  "summary": "昆汀非线性叙事，洛杉矶黑帮与对话黑色幽默。",
+  "description": "低俗小说 Pulp Fiction以犯罪喜剧见长，1994 上映后影响动作片剪辑、特技与类型公式。导演昆汀在场面调度、节奏与角色张力上树立标杆。\n\n动作片融合犯罪、特工、武术或战争元素，全球票房与流媒体反复验证系列 IP 价值。\n\n**动作设计**：犯罪喜剧\n\n**相关**：与同类系列构成马拉松观影；配乐与剪辑节奏是分析重点",
+  "tags": [
+    "动作",
+    "电影",
+    "犯罪喜剧",
+    "昆汀"
+  ],
+  "specs": {
+    "分类": "动作 / 犯罪电影",
+    "年份": "1994",
+    "导演": "昆汀",
+    "类型": "犯罪喜剧",
+    "特技": "实拍 / 特技混合",
+    "影响": "类型模板"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "retro diner cinematic",
+    "matchTags": [
+      "diner",
+      "retro"
+    ]
+  }
+}

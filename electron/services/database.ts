@@ -18,6 +18,8 @@ function loadLibraryCategoriesMeta(): Array<{ id: string; name: string; icon: st
 
 const LIBRARY_CATEGORIES = loadLibraryCategoriesMeta()
 
+export const DEFAULT_FAVORITE_GROUP_ID = 'default'
+
 export class DatabaseService {
   private userDb: Database.Database
   private rssDb: Database.Database
@@ -32,13 +34,24 @@ export class DatabaseService {
     this.rssDb = new Database(join(basePath, 'db', 'rss.sqlite'))
   }
 
-  async init(): Promise<void> {
+  getBasePath(): string {
+    return this.basePath
+  }
+
+  async init(options?: { skipLibrarySeed?: boolean }): Promise<void> {
     this.initUserSchema()
     this.initRssSchema()
     for (const cat of LIBRARY_CATEGORIES) {
       this.initLibraryDb(cat.id, cat.name)
     }
-    importLibraryCatalog(this)
+    if (!options?.skipLibrarySeed) {
+      const seedResult = importLibraryCatalog(this, { importNew: true })
+      if (seedResult.imported > 0) {
+        console.log(
+          `[librarySeed] 增量入库 ${seedResult.imported} 条（跳过 ${seedResult.skipped}）`
+        )
+      }
+    }
   }
 
   private initUserSchema(): void {
@@ -56,6 +69,7 @@ export class DatabaseService {
         source TEXT NOT NULL,
         created_at TEXT NOT NULL
       );
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_favorites_item ON favorites(item_id, source);
       CREATE TABLE IF NOT EXISTS history (
         id TEXT PRIMARY KEY,
         item_id TEXT NOT NULL,
@@ -67,6 +81,7 @@ export class DatabaseService {
         json TEXT NOT NULL
       );
     `)
+    this.ensureFavoriteGroupsSchema()
     const row = this.userDb.prepare('SELECT id FROM profiles LIMIT 1').get()
     if (!row) {
       this.userDb
@@ -206,22 +221,115 @@ export class DatabaseService {
       .run(profile.nickname, profile.bio, new Date().toISOString())
   }
 
-  listFavorites(): unknown[] {
-    return this.userDb.prepare('SELECT * FROM favorites ORDER BY created_at DESC').all()
+  private ensureFavoriteGroupsSchema(): void {
+    this.userDb.exec(`
+      CREATE TABLE IF NOT EXISTS favorite_groups (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        sort_order INTEGER DEFAULT 0,
+        created_at TEXT NOT NULL
+      );
+    `)
+    const cols = this.userDb.prepare('PRAGMA table_info(favorites)').all() as Array<{ name: string }>
+    if (!cols.some((c) => c.name === 'group_id')) {
+      this.userDb.exec('ALTER TABLE favorites ADD COLUMN group_id TEXT')
+    }
+    const hasDefault = this.userDb
+      .prepare('SELECT id FROM favorite_groups WHERE id = ?')
+      .get(DEFAULT_FAVORITE_GROUP_ID)
+    if (!hasDefault) {
+      this.userDb
+        .prepare(
+          'INSERT INTO favorite_groups (id, name, sort_order, created_at) VALUES (?, ?, 0, ?)'
+        )
+        .run(DEFAULT_FAVORITE_GROUP_ID, '默认收藏', new Date().toISOString())
+    }
+    this.userDb
+      .prepare("UPDATE favorites SET group_id = ? WHERE group_id IS NULL OR group_id = ''")
+      .run(DEFAULT_FAVORITE_GROUP_ID)
   }
 
-  toggleFavorite(itemId: string, source: string): boolean {
+  listFavoriteGroups(): Array<{
+    id: string
+    name: string
+    sort_order: number
+    created_at: string
+  }> {
+    return this.userDb
+      .prepare('SELECT id, name, sort_order, created_at FROM favorite_groups ORDER BY sort_order, created_at')
+      .all() as Array<{ id: string; name: string; sort_order: number; created_at: string }>
+  }
+
+  createFavoriteGroup(name: string): { id: string; name: string; sortOrder: number } {
+    const id = randomUUID()
+    const trimmed = name.trim() || '未命名分组'
+    const maxOrder = this.userDb
+      .prepare('SELECT COALESCE(MAX(sort_order), -1) as m FROM favorite_groups')
+      .get() as { m: number }
+    const sortOrder = (maxOrder?.m ?? -1) + 1
+    const now = new Date().toISOString()
+    this.userDb
+      .prepare(
+        'INSERT INTO favorite_groups (id, name, sort_order, created_at) VALUES (?, ?, ?, ?)'
+      )
+      .run(id, trimmed, sortOrder, now)
+    return { id, name: trimmed, sortOrder }
+  }
+
+  listFavorites(): Array<{
+    id: string
+    item_id: string
+    source: string
+    group_id: string
+    created_at: string
+  }> {
+    return this.userDb
+      .prepare(
+        'SELECT id, item_id, source, group_id, created_at FROM favorites ORDER BY created_at DESC'
+      )
+      .all() as Array<{
+      id: string
+      item_id: string
+      source: string
+      group_id: string
+      created_at: string
+    }>
+  }
+
+  isFavorite(itemId: string, source: string): boolean {
+    const row = this.userDb
+      .prepare('SELECT 1 FROM favorites WHERE item_id = ? AND source = ?')
+      .get(itemId, source)
+    return Boolean(row)
+  }
+
+  addFavorite(itemId: string, source: string, groupId: string): boolean {
+    if (this.isFavorite(itemId, source)) return true
+    const groupExists = this.userDb
+      .prepare('SELECT id FROM favorite_groups WHERE id = ?')
+      .get(groupId) as { id: string } | undefined
+    const gid = groupExists?.id ?? DEFAULT_FAVORITE_GROUP_ID
+    this.userDb
+      .prepare(
+        'INSERT INTO favorites (id, item_id, source, group_id, created_at) VALUES (?, ?, ?, ?, ?)'
+      )
+      .run(randomUUID(), itemId, source, gid, new Date().toISOString())
+    return true
+  }
+
+  removeFavorite(itemId: string, source: string): boolean {
     const existing = this.userDb
       .prepare('SELECT id FROM favorites WHERE item_id = ? AND source = ?')
       .get(itemId, source) as { id: string } | undefined
-    if (existing) {
-      this.userDb.prepare('DELETE FROM favorites WHERE id = ?').run(existing.id)
-      return false
-    }
-    this.userDb
-      .prepare('INSERT INTO favorites (id, item_id, source, created_at) VALUES (?, ?, ?, ?)')
-      .run(randomUUID(), itemId, source, new Date().toISOString())
+    if (!existing) return false
+    this.userDb.prepare('DELETE FROM favorites WHERE id = ?').run(existing.id)
     return true
+  }
+
+  /** @deprecated 使用 addFavorite / removeFavorite */
+  toggleFavorite(itemId: string, source: string): boolean {
+    if (this.isFavorite(itemId, source)) return !this.removeFavorite(itemId, source)
+    return this.addFavorite(itemId, source, DEFAULT_FAVORITE_GROUP_ID)
   }
 
   close(): void {

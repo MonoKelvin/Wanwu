@@ -1,0 +1,34 @@
+{
+  "id": "b2f6d26f-1f04-4461-9c57-d771707ccfe9",
+  "slug": "dog-cocker-spaniel",
+  "subCategoryId": "dog-europe",
+  "name": "英国可卡犬",
+  "summary": "英国猎禽 spaniel，长耳卷毛，性格活泼亲人，需耳部护理。",
+  "description": "英国可卡犬（English Cocker Spaniel）为猎鹬犬类，体型小于美式可卡。被毛中长、耳长下垂，需定期梳理与耳道清洁。\n\n性格活泼、亲人，适合家庭。与美式可卡为不同标准。注意肥胖与耳炎。\n\n**相关**：与史宾格犬、英国激飞猎犬同属 spaniel 组；迪士尼《小姐与流浪汉》可卡形象。",
+  "tags": [
+    "spaniel",
+    "猎犬",
+    "英国",
+    "长耳"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "英国",
+    "体重": "12–15 kg",
+    "寿命": "12–14 年",
+    "被毛": "中长卷毛",
+    "性格": "活泼、温顺"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cocker spaniel dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "spaniel"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

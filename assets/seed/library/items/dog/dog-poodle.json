@@ -1,0 +1,34 @@
+{
+  "id": "c8bc4788-bc02-4363-b7d3-14d5e1731a1d",
+  "slug": "dog-poodle",
+  "subCategoryId": "dog-europe",
+  "name": "标准贵宾犬",
+  "summary": "法国国犬，卷毛低掉毛，智商顶尖，水猎犬出身，多尺寸品种。",
+  "description": "标准贵宾犬（Standard Poodle）虽称法国国犬，可能源于德国水猎犬。卷毛需专业修剪，低掉毛，智商常列犬类前茅。\n\n有标准、迷你、玩具等体型。适合过敏家庭（无绝对不过敏）。擅长服从、敏捷与表演。\n\n**相关**：与贵宾混血「贵宾混血」全球流行；历史上作马戏与猎鸭犬。",
+  "tags": [
+    "贵宾",
+    "卷毛",
+    "高智商",
+    "法国"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "关联国": "法国",
+    "体重": "20–32 kg（标准）",
+    "寿命": "12–15 年",
+    "被毛": "卷毛",
+    "性格": "聪明、活跃"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "poodle dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "poodle"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

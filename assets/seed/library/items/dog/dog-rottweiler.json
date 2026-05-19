@@ -1,0 +1,34 @@
+{
+  "id": "4f0869f2-7930-45f6-a737-0322eb69a1e7",
+  "slug": "dog-rottweiler",
+  "subCategoryId": "dog-europe",
+  "name": "罗威纳犬",
+  "summary": "德国古老护卫犬，黑褐配色、体格强壮，需早期训练与社会化。",
+  "description": "罗威纳犬（Rottweiler）源于德国罗特韦尔镇，历史上拉车与护卫牲畜。现代为优秀护卫与家庭犬，肌肉发达、咬合力强。\n\n需负责任饲养、正规训练与社会化。适合有经验饲主。注意髋关节筛查。\n\n**相关**：与杜宾、德国牧羊犬同属工作护卫系；误解常来自不当饲养。",
+  "tags": [
+    "护卫犬",
+    "德国",
+    "工作犬",
+    "欧洲"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "德国",
+    "体重": "35–60 kg",
+    "寿命": "8–10 年",
+    "用途": "护卫、工作",
+    "性格": "自信、忠诚、警觉"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "rottweiler dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "rottweiler"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

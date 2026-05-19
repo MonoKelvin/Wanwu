@@ -1,0 +1,30 @@
+{
+  "id": "48bf58b7-c6db-4135-adb7-1ac1a9eb9cc9",
+  "slug": "ui-glassmorphism",
+  "subCategoryId": "ui-web",
+  "name": "玻璃拟态",
+  "summary": "背景模糊与半透明层叠的现代网页视觉。",
+  "description": "玻璃拟态代表 Web 端风格方向，常用技术栈包括CSS。现代网页强调性能（Core Web Vitals）、可访问性与设计系统一致性。\n\n从着陆页到复杂 Dashboard，需平衡信息密度与视觉层级。\n\n**实现要点**：CSS，语义 HTML，响应式\n\n**相关**：与 Tailwind、组件库、设计 Token 工作流紧密相关",
+  "tags": [
+    "Web",
+    "UI",
+    "CSS",
+    "风格"
+  ],
+  "specs": {
+    "分类": "Web UI",
+    "技术": "CSS",
+    "重点": "风格",
+    "交付": "设计 + 前端",
+    "趋势": "Server Components",
+    "工具": "Figma / Storybook"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "glassmorphism ui card blur",
+    "matchTags": [
+      "glass",
+      "ui"
+    ]
+  }
+}

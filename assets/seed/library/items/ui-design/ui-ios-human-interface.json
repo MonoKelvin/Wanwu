@@ -1,0 +1,31 @@
+{
+  "id": "b8baa5ff-c6fb-4964-91aa-c60be885f0f8",
+  "slug": "ui-ios-human-interface",
+  "subCategoryId": "ui-mobile",
+  "name": "Apple Human Interface Guidelines",
+  "summary": "苹果人机界面指南，定义 iOS/iPadOS 导航、触控目标与无障碍设计原则。",
+  "description": "Human Interface Guidelines（HIG）是 Apple 为 iOS、iPadOS、macOS、watchOS、visionOS 提供的设计与交互规范。强调清晰（Clarity）、遵从（Deference）、深度（Depth）三大原则。\n\n**要点**：44pt 最小触控目标、Safe Area、Navigation Bar / Tab Bar 模式、Dynamic Type 字体缩放、VoiceOver 无障碍。SwiftUI 与 UIKit 组件与 HIG 对齐。每年 WWDC 会更新视觉与交互建议。\n\n**相关**：与 Material Design、Fluent 对比常作为平台设计教学案例；App Store 审核亦参考体验一致性。",
+  "tags": [
+    "Apple",
+    "iOS",
+    "HIG",
+    "SwiftUI"
+  ],
+  "specs": {
+    "分类": "移动端规范",
+    "发布方": "Apple",
+    "适用": "iOS / iPadOS / macOS 等",
+    "原则": "清晰、遵从、深度",
+    "触控": "最小 44×44 pt",
+    "无障碍": "VoiceOver / Dynamic Type",
+    "更新": "WWDC 年度修订"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "ios app interface design",
+    "matchTags": [
+      "ios",
+      "interface"
+    ]
+  }
+}

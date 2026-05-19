@@ -1,0 +1,34 @@
+{
+  "id": "3edb9915-90f2-4fc7-9b1b-24fb97c10e70",
+  "slug": "cat-american-bobtail",
+  "subCategoryId": "cat-americas",
+  "name": "美国短尾猫 American Bobtail",
+  "summary": "自然短尾突变，野生外观、被毛中长，性格犬系、可训练性强。",
+  "description": "美国短尾猫（American Bobtail）1960 年代在美国亚利桑那等地发现短尾家猫选育。尾长可变，体态中等至大型，常被形容为「山猫外观」。\n\n性格聪明、亲人、部分个体可学会叼回、随行。需运动与互动。长毛与短毛型均有。\n\n**相关**：与日本短尾、马恩岛猫为不同短尾基因；适合敏捷与互动游戏。",
+  "tags": [
+    "短尾",
+    "美洲",
+    "野生外观",
+    "犬系性格"
+  ],
+  "specs": {
+    "分类": "美洲品种",
+    "原产地": "美国",
+    "体重": "3–7 kg",
+    "寿命": "13–15 年",
+    "尾型": "自然短尾",
+    "性格": "聪明、亲人、可训练"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "american bobtail cat",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "bobtail"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

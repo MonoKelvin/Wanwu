@@ -1,0 +1,31 @@
+{
+  "id": "7ae2791c-55cf-45b1-bafc-eeaace5f3d41",
+  "slug": "movie-the-dark-knight",
+  "subCategoryId": "movie-action",
+  "name": "蝙蝠侠：黑暗骑士",
+  "summary": "2008 年诺兰《黑暗骑士》三部曲第二部，希斯·莱杰饰小丑成影史反派标杆。",
+  "description": "《蝙蝠侠：黑暗骑士》（The Dark Knight）为 Christopher Nolan 蝙蝠侠三部曲中篇，Christian Bale 饰布鲁斯·韦恩，Heath Ledger 饰小丑（Joker）。故事围绕哥谭黑帮与小丑制造的混乱展开，探讨秩序、恐怖与英雄代价。\n\n拍摄大量使用 IMAX 胶片；芝加哥实景替代哥谭。Ledger 去世后获奥斯卡最佳男配角（遗作）。票房与口碑双丰收，常被列为影史最佳超级英雄电影。\n\n**相关**：前作《侠影之谜》、续作《黑暗骑士崛起》；与小丑角色在漫画史多次重启相关。",
+  "tags": [
+    "蝙蝠侠",
+    "诺兰",
+    "DC",
+    "小丑"
+  ],
+  "specs": {
+    "分类": "动作犯罪",
+    "导演": "Christopher Nolan",
+    "上映": "2008",
+    "主演": "Christian Bale / Heath Ledger",
+    "宇宙": "DC（独立三部曲）",
+    "摄影": "IMAX 实拍",
+    "特点": "现实主义犯罪叙事"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dark knight batman city night",
+    "matchTags": [
+      "batman",
+      "night"
+    ]
+  }
+}

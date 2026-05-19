@@ -1,0 +1,30 @@
+{
+  "id": "69b68655-c462-429a-89e1-e6180039cd0c",
+  "slug": "hero-constantine-dc",
+  "subCategoryId": "hero-dc",
+  "name": "康斯坦丁 Constantine",
+  "summary": "约翰·康斯坦丁，狡猾驱魔术士，烟与风衣的英伦神秘学反英雄。",
+  "description": "康斯坦丁（John Constantine）1985 年《沼泽怪物》#37 由 Alan Moore 等创作，属 Vertigo/DC 黑暗魔法线。驱魔、占卜、以诡计对抗地狱势力。\n\n**影视**：基努·里维斯电影与 Matt Ryan 剧集塑造经典形象。\n\n**能力要点**：魔法仪式、恶魔契约、策略欺骗",
+  "tags": [
+    "DC",
+    "魔法",
+    "驱魔",
+    "反英雄"
+  ],
+  "specs": {
+    "宇宙": "DC / Vertigo",
+    "首次登场": "1985",
+    "本名": "约翰·康斯坦丁",
+    "职业": "驱魔师",
+    "弱点": "人性自私（剧情）",
+    "饰演": "基努·里维斯 / Matt Ryan"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "constantine dc trench coat",
+    "matchTags": [
+      "constantine",
+      "dc"
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "id": "bab55128-137b-4392-b971-e0b334d3e419",
+  "slug": "dog-french-bulldog",
+  "subCategoryId": "dog-europe",
+  "name": "法国斗牛犬",
+  "summary": "小型短鼻伴侣犬，蝙蝠耳、肌肉紧凑，城市饲养流行，需注意呼吸散热。",
+  "description": "法国斗牛犬（French Bulldog）由英国玩具斗牛犬与巴黎本地犬杂交选育，非大型斗牛犬缩小版。体型紧凑、面部短扁、耳大直立。\n\n性格友善、喜室内，运动需求低但怕热。注意 BOAS（短头气道综合征）与脊柱问题。近年全球热度极高。\n\n**相关**：与英国斗牛犬、波士顿梗有血缘关联；适合公寓但需控制体重。",
+  "tags": [
+    "斗牛犬",
+    "法国",
+    "伴侣犬",
+    "短鼻"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "法国",
+    "体重": "8–14 kg",
+    "寿命": "10–12 年",
+    "特征": "蝙蝠耳、短鼻",
+    "注意": "呼吸与散热",
+    "性格": "友善、安静"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "french bulldog dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "bulldog"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

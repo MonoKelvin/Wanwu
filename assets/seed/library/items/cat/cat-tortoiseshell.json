@@ -1,0 +1,34 @@
+{
+  "id": "f5cb2d8c-8bbd-4fff-9b6c-3f69088a642e",
+  "slug": "cat-tortoiseshell",
+  "subCategoryId": "cat-china",
+  "name": "玳瑁猫（三花系）",
+  "summary": "黑橘（或蓝乳）镶嵌毛色，几乎均为母猫，民间视为镇宅猫。",
+  "description": "玳瑁猫（Tortoiseshell）毛色为黑与橘（或稀释蓝与乳）镶嵌，基因与 X 染色体相关，故几乎均为雌性。中国家中常见，与三花猫（加白）有交叉。\n\n性格「玳瑁脾气」（tortitude）在民间流传，科学上无定论。饲养同一般家猫，注意毛色基因与绝育。\n\n**相关**：与三花猫、_calico 为毛色近缘；日本三毛猫文化与之相关。",
+  "tags": [
+    "玳瑁",
+    "母猫",
+    "田园猫",
+    "中国"
+  ],
+  "specs": {
+    "分类": "中国品种",
+    "类型": "毛色型",
+    "性别": "几乎均为雌性",
+    "毛色": "黑橘镶嵌",
+    "文化": "镇宅猫",
+    "性格": "个体差异"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "tortoiseshell cat",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "tortoiseshell"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

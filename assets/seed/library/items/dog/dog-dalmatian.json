@@ -1,0 +1,35 @@
+{
+  "id": "ab18a264-9fcb-4ac5-bb51-c7d42786cc29",
+  "slug": "dog-dalmatian",
+  "subCategoryId": "dog-europe",
+  "name": "大麦町犬",
+  "summary": "斑点犬标志品种，短毛白底黑点，历史上曾作马车犬，精力旺盛。",
+  "description": "大麦町犬（Dalmatian）斑点为独特表型，起源有克罗地亚达尔马提亚等说法。被毛短、白底黑斑，幼犬出生时斑点不明显。\n\n运动需求高，适合跑步与骑行陪伴。注意耳聋基因（部分白犬）与尿酸代谢（尿酸盐结石）。因《101 忠狗》闻名。\n\n**相关**：与 POINTER 斑点基因研究相关；消防马车犬为历史形象。",
+  "tags": [
+    "斑点",
+    "欧洲",
+    "运动型",
+    "马车犬"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "历史": "达尔马提亚/欧洲",
+    "体重": "23–32 kg",
+    "寿命": "11–13 年",
+    "特征": "黑白斑点",
+    "注意": "耳聋筛查、尿酸",
+    "性格": "精力充沛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dalmatian dog spots",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "dalmatian"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "54641c79-70ae-487f-8543-cd1b00aa86f0",
+  "slug": "motorcycle-yamaha-r1",
+  "subCategoryId": "moto-japan",
+  "name": "雅马哈 YZF-R1",
+  "summary": "十字曲轴四缸仿赛，MotoGP 技术标杆。",
+  "description": "雅马哈 YZF-R1为日本Yamaha代表作，998 cc 四缸，定位约 200 hp。日系厂商以可靠性与高转四缸技术统治全球仿赛与街车市场，常称霸 WSBK 与 MotoGP。\n\n保养经济、配件丰富，适合赛道日与日常通勤的多场景需求。\n\n**骑行要点**：998 cc 四缸，高转性能或扭力特性因车系而异\n\n**相关**：与欧系意系对比更重性价比与电子辅助普及",
+  "tags": [
+    "日本",
+    "Yamaha",
+    "摩托",
+    "约 200 hp"
+  ],
+  "specs": {
+    "分类": "日本品牌",
+    "厂商": "Yamaha",
+    "发动机": "998 cc 四缸",
+    "定位": "约 200 hp",
+    "总部": "日本",
+    "赛事": "MotoGP / WSBK"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "yamaha r1 sportbike",
+    "matchTags": [
+      "yamaha",
+      "motorcycle"
+    ]
+  }
+}

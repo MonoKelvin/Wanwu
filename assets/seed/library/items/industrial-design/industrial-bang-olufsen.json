@@ -1,0 +1,31 @@
+{
+  "id": "8e9c1c13-246d-427d-ad74-069bbaed594e",
+  "slug": "industrial-bang-olufsen",
+  "subCategoryId": "id-product",
+  "name": "B&O 音响",
+  "summary": "丹麦雕塑感音响与铝材加工美学。",
+  "description": "B&O 音响由Bang & Olufsen推出，属音频领域工业设计典范，1925 年间影响用户习惯与行业标准。造型、人机工程与材料工艺共同定义产品识别度。\n\n设计史课程常将其与 Dieter Rams、Jony Ive 等人物及方法论关联讨论。\n\n**设计原则**：功能、可用性、美学与成本平衡\n\n**相关**：与包豪斯、现代主义、极简主义设计运动一脉相承",
+  "tags": [
+    "工业设计",
+    "Bang & Olufsen",
+    "音频",
+    "经典"
+  ],
+  "specs": {
+    "分类": "产品设计",
+    "品牌": "Bang & Olufsen",
+    "类型": "音频",
+    "时期": "1925",
+    "领域": "消费科技",
+    "影响": "行业标杆"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "modern speaker audio design",
+    "matchTags": [
+      "speaker",
+      "audio"
+    ],
+    "minMatchScore": 0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "id": "c6214098-c979-4e7e-b666-891680418830",
+  "slug": "cat-savannah",
+  "subCategoryId": "cat-americas",
+  "name": "萨凡纳猫 Savannah",
+  "summary": "薮猫与家猫杂交大型品种，斑纹长腿、跳跃力极强，部分地区的饲养受限。",
+  "description": "萨凡纳猫（Savannah）1986 年起由 Serval（非洲薮猫）与家猫杂交，体型大、耳大、斑纹明显，后腿较长可跳至 2 米以上。性格自信、好奇、需大量空间。\n\n早期世代（F1–F2）在许多国家/地区需特殊许可或禁止。饲主需了解当地法规与专业饲养条件。\n\n**相关**：与孟加拉猫同属杂交系；是家猫中体型最大之一。",
+  "tags": [
+    "杂交",
+    "大型",
+    "斑纹",
+    "美洲"
+  ],
+  "specs": {
+    "分类": "美洲品种",
+    "育成地": "美国",
+    "体重": "5.5–11 kg",
+    "寿命": "12–20 年",
+    "祖先": "Serval",
+    "特点": "高跳跃、运动量大",
+    "注意": "法规与许可"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "savannah cat serval",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "savannah"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

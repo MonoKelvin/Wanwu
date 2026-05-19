@@ -1,0 +1,30 @@
+{
+  "id": "da2b5ee1-2c9b-437b-bfcb-3405b779bcc6",
+  "slug": "movie-interstellar",
+  "subCategoryId": "movie-scifi",
+  "name": "星际穿越 Interstellar",
+  "summary": "诺兰五维空间与父女情感，黑洞科学顾问 Kip Thorne。",
+  "description": "星际穿越 Interstellar（2014）由诺兰执导，属硬科幻类型里程碑。影片在视觉特效、世界观设定或科学概念上影响后续工业与流行文化。\n\n科幻片通过未来技术反思当下社会、人性与宇宙位置，常与哲学、政治议题交织。\n\n**影像风格**：硬科幻\n\n**相关**：与同导演或同类型经典常组成观影清单；配乐与美术是学术分析热点",
+  "tags": [
+    "科幻",
+    "电影",
+    "硬科幻",
+    "诺兰"
+  ],
+  "specs": {
+    "分类": "科幻电影",
+    "年份": "2014",
+    "导演": "诺兰",
+    "类型": "硬科幻",
+    "语言": "英语为主",
+    "影响": "类型标杆"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "interstellar space black hole",
+    "matchTags": [
+      "space",
+      "cosmos"
+    ]
+  }
+}

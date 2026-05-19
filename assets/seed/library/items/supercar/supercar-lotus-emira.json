@@ -1,0 +1,31 @@
+{
+  "id": "2ee405cd-86b4-4210-94df-0da64e810b66",
+  "slug": "supercar-lotus-emira",
+  "subCategoryId": "car-britain",
+  "name": "路特斯 Emira",
+  "summary": "末代燃油路特斯，中置布局与轻量化哲学延续。",
+  "description": "路特斯 Emira承载英国Lotus在轻量化、空气动力学或奢华手工方面的传统，2021 年代表英伦跑车从经典 GT 到现代混动/纯电的演进。\n\n英国超跑品牌常具小规模量产、赛车血统与定制服务特色，在古德伍德、银石等赛车文化中孕育。\n\n**性能要点**：V6 / 四缸 turbo，约 400 hp\n\n**相关**：与迈凯伦、阿斯顿·马丁、宾利等构成英国性能车谱系",
+  "tags": [
+    "英国",
+    "Lotus",
+    "超跑",
+    "GT"
+  ],
+  "specs": {
+    "分类": "英国品牌",
+    "厂商": "Lotus",
+    "上市": "2021",
+    "发动机": "V6 / 四缸 turbo",
+    "功率": "约 400 hp",
+    "总部": "英国",
+    "传统": "赛车血统"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "lotus emira sports car",
+    "matchTags": [
+      "lotus",
+      "car"
+    ]
+  }
+}

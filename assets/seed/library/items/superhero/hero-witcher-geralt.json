@@ -1,0 +1,30 @@
+{
+  "id": "7888d0a6-6366-4981-9da6-3e33b078ea7f",
+  "slug": "hero-witcher-geralt",
+  "subCategoryId": "hero-other",
+  "name": "猎魔人杰洛特 Geralt",
+  "summary": "变异猎魔人行走道德灰色世界，剑术与法印对抗怪物。",
+  "description": "杰洛特（Geralt of Rivia）源自波兰作家 Andrzej Sapkowski 的《猎魔人》系列，经 CD Projekt RED《巫师》游戏与 Netflix 剧集全球知名。白发、猫瞳，以剑术与法印对抗怪物。\n\n**主题**：探讨命运、种族政治与父性（希里）。\n\n**设定要点**：剑术、法印、炼金药剂",
+  "tags": [
+    "猎魔人",
+    "奇幻",
+    "Netflix",
+    "游戏"
+  ],
+  "specs": {
+    "来源": "波兰文学",
+    "作者": "Andrzej Sapkowski",
+    "职业": "猎魔人",
+    "标志": "白发、两剑",
+    "游戏": "CDPR《巫师》",
+    "主题": "道德灰色"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "geralt witcher cosplay",
+    "matchTags": [
+      "witcher",
+      "geralt"
+    ]
+  }
+}

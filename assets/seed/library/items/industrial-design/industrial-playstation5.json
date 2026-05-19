@@ -1,0 +1,30 @@
+{
+  "id": "61933e2e-2c10-4387-8b76-92431aaf7674",
+  "slug": "industrial-playstation5",
+  "subCategoryId": "id-product",
+  "name": "PlayStation 5",
+  "summary": "白色流线主机与 DualSense 触觉反馈。",
+  "description": "PlayStation 5由Sony推出，属游戏主机领域工业设计典范，2020 年间影响用户习惯与行业标准。造型、人机工程与材料工艺共同定义产品识别度。\n\n设计史课程常将其与 Dieter Rams、Jony Ive 等人物及方法论关联讨论。\n\n**设计原则**：功能、可用性、美学与成本平衡\n\n**相关**：与包豪斯、现代主义、极简主义设计运动一脉相承",
+  "tags": [
+    "工业设计",
+    "Sony",
+    "游戏主机",
+    "经典"
+  ],
+  "specs": {
+    "分类": "产品设计",
+    "品牌": "Sony",
+    "类型": "游戏主机",
+    "时期": "2020",
+    "领域": "消费科技",
+    "影响": "行业标杆"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "playstation 5 console white",
+    "matchTags": [
+      "playstation",
+      "console"
+    ]
+  }
+}

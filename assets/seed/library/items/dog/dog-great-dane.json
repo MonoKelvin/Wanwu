@@ -1,0 +1,35 @@
+{
+  "id": "31333549-c125-40bc-b8eb-5e31fe2fb7ab",
+  "slug": "dog-great-dane",
+  "subCategoryId": "dog-europe",
+  "name": "大丹犬",
+  "summary": "「犬中阿波罗」，世界上最高大犬种之一，温和巨人，短毛。",
+  "description": "大丹犬（Great Dane）在德国选育，用于猎野猪（历史），现代为伴侣犬。肩高可达 80 cm 以上，体型巨大但性格常温和。\n\n需大空间与优质饮食，注意胃扭转（GDV）风险与关节负担。训练应从幼犬温和社会化开始。\n\n**相关**：与爱尔兰猎狼犬、圣伯纳等巨型犬并列；Scooby-Doo 形象源自大丹。",
+  "tags": [
+    "巨型犬",
+    "德国",
+    "伴侣犬",
+    "欧洲"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "德国",
+    "体重": "50–90 kg",
+    "寿命": "7–10 年",
+    "特征": "极高体型",
+    "注意": "胃扭转、关节",
+    "性格": "温和、亲人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "great dane dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "dane"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

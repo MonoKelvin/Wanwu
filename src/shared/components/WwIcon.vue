@@ -8,13 +8,17 @@ const props = withDefaults(
     size?: 'xs' | 'sm' | 'md' | 'lg' | number
     strokeWidth?: number
     spin?: boolean
+    filled?: boolean
   }>(),
   {
     size: 'md',
     strokeWidth: WW_ICON_STROKE,
-    spin: false
+    spin: false,
+    filled: false
   }
 )
+
+const fillValue = computed(() => (props.filled ? 'currentColor' : 'none'))
 
 const sizePx = computed(() => {
   if (typeof props.size === 'number') return props.size
@@ -32,6 +36,7 @@ const icon = computed(() => wwIcons[props.name])
     :class="{ 'ww-icon--spin': spin }"
     :size="sizePx"
     :stroke-width="strokeWidth"
+    :fill="fillValue"
     :absolute-stroke-width="true"
     aria-hidden="true"
   />

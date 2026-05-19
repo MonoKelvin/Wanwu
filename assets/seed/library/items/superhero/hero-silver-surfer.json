@@ -1,0 +1,27 @@
+{
+  "id": "26a48afe-267e-40c1-9d88-474735743da1",
+  "slug": "hero-silver-surfer",
+  "subCategoryId": "hero-marvel",
+  "name": "银色冲浪者 Silver Surfer",
+  "summary": "诺林·拉德，行星吞噬者前使者，宇宙级英雄。",
+  "description": "银色冲浪者 1966 年登场，乘冲浪板超光速旅行，掌握宇宙能量。\n\n哲学气质浓厚，粉丝期待电影改编。\n\n**能力要点**：宇宙能量、超光速\n\n**相关作品**：《神奇四侠》漫画",
+  "tags": [
+    "漫威",
+    "宇宙",
+    "冲浪板"
+  ],
+  "specs": {
+    "宇宙": "漫威 Marvel",
+    "首次登场": "1966",
+    "本名": "诺林·拉德",
+    "交通": "银色冲浪板"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "silver surfer marvel",
+    "matchTags": [
+      "silver",
+      "surfer"
+    ]
+  }
+}

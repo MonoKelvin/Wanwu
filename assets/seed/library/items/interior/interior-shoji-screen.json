@@ -1,0 +1,30 @@
+{
+  "id": "8f41ce0a-8844-4e12-affa-b68c9c7afee0",
+  "slug": "interior-shoji-screen",
+  "subCategoryId": "int-zen",
+  "name": "障子推拉门",
+  "summary": "木格纸屏分隔柔光，调节通风与隐私。",
+  "description": "障子推拉门源于日本障子传统，强调人与自然的隔断关系。材料多用竹、木、石与和纸，色调偏大地色系，减少视觉噪音以利冥想。\n\n现代都市住宅常将禅意元素局部化，如枯山水阳台或榻榻米角落。\n\n**营造要点**：障子，自然材质，留白与秩序\n\n**相关**：与北欧极简、中式园林可对话融合",
+  "tags": [
+    "日式",
+    "禅意",
+    "障子",
+    "隔断"
+  ],
+  "specs": {
+    "分类": "日式禅意",
+    "元素": "障子",
+    "空间": "隔断",
+    "材质": "木、竹、石、纸",
+    "原则": "留白、自然",
+    "场景": "茶、宿、庭"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "shoji screen japanese interior",
+    "matchTags": [
+      "shoji",
+      "japanese"
+    ]
+  }
+}

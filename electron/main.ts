@@ -1,8 +1,9 @@
-import { app, BrowserWindow, net, protocol, shell } from 'electron'
+import { app, BrowserWindow, nativeImage, protocol, shell } from 'electron'
 import { existsSync } from 'fs'
-import { join } from 'path'
-import { pathToFileURL } from 'url'
+import { readFile } from 'fs/promises'
+import { extname, join } from 'path'
 import { resolveLibraryMediaAbsolute } from './services/libraryMedia'
+import { resolveAppLogoPath } from './services/appAssets'
 import { registerIpcHandlers } from './ipc/handlers'
 import { setMainWindow, broadcastMaximizedState } from './windowState'
 import { DatabaseService } from './services/database'
@@ -11,6 +12,31 @@ import { RssService } from './services/rssService'
 import { MediaService } from './services/mediaService'
 
 const isDev = !app.isPackaged
+
+/** Windows：缓解 Chromium 网络/GPU 子进程崩溃导致无法启动 */
+if (process.platform === 'win32') {
+  app.disableHardwareAcceleration()
+  app.commandLine.appendSwitch('enable-features', 'NetworkServiceInProcess')
+  app.commandLine.appendSwitch(
+    'disable-features',
+    'NetworkServiceSandbox,SpareRendererForSitePerProcess'
+  )
+  app.commandLine.appendSwitch('disable-gpu-sandbox')
+  app.commandLine.appendSwitch('no-sandbox')
+}
+
+const MEDIA_MIME: Record<string, string> = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml'
+}
+
+function mediaMimeType(filePath: string): string {
+  return MEDIA_MIME[extname(filePath).toLowerCase()] ?? 'application/octet-stream'
+}
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -35,7 +61,30 @@ const services = {
   media: null as MediaService | null
 }
 
+async function loadDevRenderer(win: BrowserWindow, urls: string[]): Promise<void> {
+  const maxAttempts = 30
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const url = urls[attempt % urls.length]!
+    try {
+      await win.loadURL(url)
+      return
+    } catch (err) {
+      console.warn(`[wanwu] dev load retry ${attempt + 1}/${maxAttempts}`, url, err)
+      await new Promise((r) => setTimeout(r, 800))
+    }
+  }
+  const fallback = join(__dirname, '../renderer/index.html')
+  if (existsSync(fallback)) {
+    console.warn('[wanwu] dev http failed, fallback to built renderer:', fallback)
+    await win.loadFile(fallback)
+    return
+  }
+  throw new Error('dev renderer failed after retries')
+}
+
 function createWindow(): void {
+  const appIcon = resolveAppLogoPath(256)
+
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
@@ -44,6 +93,7 @@ function createWindow(): void {
     show: false,
     frame: false,
     title: '万物',
+    ...(appIcon ? { icon: appIcon } : {}),
     autoHideMenuBar: true,
     resizable: true,
     // Windows 无边框时保留边缘拖拽缩放
@@ -75,11 +125,42 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
+  mainWindow.webContents.on('did-fail-load', (_event, errorCode, errorDescription, url) => {
+    console.error('[wanwu] did-fail-load', errorCode, errorDescription, url)
+    mainWindow?.show()
+  })
+
   if (isDev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    const builtRenderer = join(__dirname, '../renderer/index.html')
+    // Windows：网络子进程异常时无法访问 Vite，改加载 out/renderer
+    if (process.platform === 'win32' && existsSync(builtRenderer)) {
+      console.log('[wanwu] Windows dev: loading built renderer at', builtRenderer)
+      void mainWindow.loadFile(builtRenderer).catch((err) => {
+        console.error('[wanwu] load built renderer failed', err)
+        mainWindow?.show()
+      })
+    } else {
+      const devBase = process.env['ELECTRON_RENDERER_URL'].replace(/\/$/, '')
+      const devUrls = [`${devBase}/`, devBase.replace('localhost', '127.0.0.1')]
+      void loadDevRenderer(mainWindow, devUrls).catch((err) => {
+        console.error('[wanwu] load dev renderer failed', err)
+        mainWindow?.show()
+      })
+    }
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    void mainWindow.loadFile(join(__dirname, '../renderer/index.html')).catch((err) => {
+      console.error('[wanwu] load renderer failed', err)
+      mainWindow?.show()
+    })
   }
+
+  // 若 ready-to-show 未触发，避免窗口一直不出现
+  setTimeout(() => {
+    if (mainWindow && !mainWindow.isDestroyed() && !mainWindow.isVisible()) {
+      console.warn('[wanwu] forcing window show after timeout')
+      mainWindow.show()
+    }
+  }, 8000)
 }
 
 async function initServices(): Promise<void> {
@@ -99,16 +180,41 @@ app.whenReady().then(async () => {
     if (!abs) {
       return new Response('Not Found', { status: 404 })
     }
-    return net.fetch(pathToFileURL(abs).href)
+    try {
+      const body = await readFile(abs)
+      return new Response(body, {
+        headers: {
+          'Content-Type': mediaMimeType(abs),
+          'Cache-Control': 'private, max-age=3600'
+        }
+      })
+    } catch (err) {
+      console.error('[wanwu] wanwu-media read failed', abs, err)
+      return new Response('Not Found', { status: 404 })
+    }
   })
 
-  await initServices()
+  try {
+    await initServices()
+  } catch (err) {
+    console.error('[wanwu] initServices failed', err)
+    throw err
+  }
+
+  const appIcon = resolveAppLogoPath(256)
+  if (appIcon && process.platform === 'darwin' && app.dock) {
+    app.dock.setIcon(nativeImage.createFromPath(appIcon))
+  }
+
   createWindow()
   void services.rss?.pruneUnhealthyDefaultFeeds().catch(() => {})
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+}).catch((err) => {
+  console.error('[wanwu] startup failed', err)
+  app.exit(1)
 })
 
 app.on('window-all-closed', () => {

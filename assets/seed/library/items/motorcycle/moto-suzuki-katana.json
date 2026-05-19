@@ -1,0 +1,33 @@
+{
+  "id": "a95eb9f2-a358-44ce-bca6-5c3424184b68",
+  "slug": "moto-suzuki-katana",
+  "subCategoryId": "moto-japan",
+  "name": "铃木 Katana",
+  "summary": "刀锋造型复兴，现代街车致敬 80 年代。",
+  "description": "铃木 Katana为日本Suzuki代表作，1000 四缸，定位街车。日系厂商以可靠性与高转四缸技术统治全球仿赛与街车市场，常称霸 WSBK 与 MotoGP。\n\n保养经济、配件丰富，适合赛道日与日常通勤的多场景需求。\n\n**骑行要点**：1000 四缸，高转性能或扭力特性因车系而异\n\n**相关**：与欧系意系对比更重性价比与电子辅助普及",
+  "tags": [
+    "日本",
+    "Suzuki",
+    "摩托",
+    "街车"
+  ],
+  "specs": {
+    "分类": "日本品牌",
+    "厂商": "Suzuki",
+    "发动机": "1000 四缸",
+    "定位": "街车",
+    "总部": "日本",
+    "赛事": "MotoGP / WSBK"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "铃木 Katana 日本",
+    "matchTags": [
+      "日本",
+      "Suzuki",
+      "摩托",
+      "suzuki",
+      "katana"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "e76d368e-4394-4233-8140-2cba62cd0ada",
+  "slug": "interior-mid-century",
+  "subCategoryId": "int-nordic",
+  "name": "中世纪现代",
+  "summary": "柚木、锥脚椅与复古几何纺织品。",
+  "description": "中世纪现代体现北欧MCM设计语言：功能优先、自然光最大化与复古场景的人体工学。浅色系放大空间感，木材平衡冷调气候。\n\n可持续材料、节能窗与简化线脚是常见做法，IKEA 与 Hay 等品牌推动全球普及。\n\n**搭配要点**：MCM色调，天然材质，简洁家具\n\n**相关**：与日式侘寂、现代极简有交叉借鉴",
+  "tags": [
+    "北欧",
+    "家装",
+    "MCM",
+    "复古"
+  ],
+  "specs": {
+    "分类": "北欧风格",
+    "风格": "MCM",
+    "空间": "复古",
+    "材质": "木、棉麻、羊毛",
+    "光线": "重视自然光",
+    "品牌": "IKEA / Hay 等"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "mid century modern living room",
+    "matchTags": [
+      "mid century",
+      "living"
+    ]
+  }
+}

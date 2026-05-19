@@ -1,0 +1,34 @@
+{
+  "id": "84145dd4-4e0e-4124-bb7d-9cbc89072ddd",
+  "slug": "supercar-aston-valkyrie",
+  "subCategoryId": "car-britain",
+  "name": "阿斯顿·马丁 Valkyrie",
+  "summary": "与 Red Bull 合作空气动力学怪兽，赛道优先。",
+  "description": "阿斯顿·马丁 Valkyrie承载英国Aston Martin在轻量化、空气动力学或奢华手工方面的传统，2021 年代表英伦跑车从经典 GT 到现代混动/纯电的演进。\n\n英国超跑品牌常具小规模量产、赛车血统与定制服务特色，在古德伍德、银石等赛车文化中孕育。\n\n**性能要点**：6.5L V12 混动，约 1160 hp\n\n**相关**：与迈凯伦、阿斯顿·马丁、宾利等构成英国性能车谱系",
+  "tags": [
+    "英国",
+    "Aston Martin",
+    "超跑",
+    "GT"
+  ],
+  "specs": {
+    "分类": "英国品牌",
+    "厂商": "Aston Martin",
+    "上市": "2021",
+    "发动机": "6.5L V12 混动",
+    "功率": "约 1160 hp",
+    "总部": "英国",
+    "传统": "赛车血统"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "阿斯顿 马丁 Valkyrie 英国",
+    "matchTags": [
+      "英国",
+      "Aston Martin",
+      "超跑",
+      "aston",
+      "valkyrie"
+    ]
+  }
+}

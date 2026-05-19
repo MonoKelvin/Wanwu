@@ -1,0 +1,34 @@
+{
+  "id": "84f0b392-570a-4b17-b6a1-c641300ad5b5",
+  "slug": "dog-xoloitzcuintli",
+  "subCategoryId": "dog-americas",
+  "name": "墨西哥无毛犬",
+  "summary": "墨西哥古老犬种，阿兹特克文化关联，有毛与无毛型，皮肤需护理。",
+  "description": "墨西哥无毛犬（Xoloitzcuintli）可追溯三千年前中美洲文明，名字源自火神 Xolotl。有无毛与短毛型，皮肤防晒保湿。\n\n性格冷静、对家人忠诚。是墨西哥国犬。体温较高。\n\n**相关**：与秘鲁无毛犬、中国冠毛犬为无毛犬组；简称 Xolo。",
+  "tags": [
+    "无毛犬",
+    "墨西哥",
+    "古老品种",
+    "国犬"
+  ],
+  "specs": {
+    "分类": "美洲犬种",
+    "原产地": "墨西哥",
+    "体重": "4–25 kg（分体型）",
+    "寿命": "13–18 年",
+    "护理": "皮肤防晒",
+    "性格": "冷静、忠诚"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "xoloitzcuintli hairless dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "xolo"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "4e43d225-9dcb-4ef7-9c08-4afeba4fcb9f",
+  "slug": "motorcycle-mv-agusta",
+  "subCategoryId": "moto-italy",
+  "name": "MV Agusta",
+  "summary": "意大利手工跑车美学，三缸/四缸高转。",
+  "description": "MV Agusta代表意大利MV Agusta在摩托车工程与造型上的传统：三缸 / 四缸动力、精细底盘与独特排气声浪。意大利品牌常参与 MotoGP 并将赛事技术转化至民用车。\n\n博洛尼亚、瓦雷泽等产地汇聚杜卡迪、阿普利亚、MV Agusta 等名厂，以设计驱动品牌溢价。\n\n**骑行要点**：三缸 / 四缸，限量精品，弯道精准\n\n**相关**：与日系仿赛对比更重风格与电子套件差异",
+  "tags": [
+    "意大利",
+    "MV Agusta",
+    "摩托",
+    "仿赛"
+  ],
+  "specs": {
+    "分类": "意大利品牌",
+    "厂商": "MV Agusta",
+    "发动机": "三缸 / 四缸",
+    "功率": "限量精品",
+    "总部": "意大利",
+    "文化": "MotoGP 血统"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "mv agusta sportbike italy",
+    "matchTags": [
+      "agusta",
+      "motorcycle"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "9fd63c70-fd72-470b-beeb-ffe5afbf3232",
+  "slug": "supercar-porsche-911",
+  "subCategoryId": "car-germany",
+  "name": "保时捷 911",
+  "summary": "德国斯图加特标志性后置跑车，历经八代演进，以独特操控与日常可用性著称。",
+  "description": "保时捷 911 自 1964 年延续至今，后置水平对置发动机布局为标志。当前为 992 世代，提供 Carrera、Turbo、GT3 等丰富型号。911 在纽博格林北环屡创佳绩，是跑车文化与日常驾驶兼顾的典范。\n\n**品牌**：保时捷（Porsche），1931 年由费迪南德·保时捷创立，总部德国斯图加特。与大众集团关系密切；919 Hybrid 曾赢得勒芒 24 小时耐力赛。",
+  "tags": [
+    "保时捷",
+    "德国",
+    "后置",
+    "911"
+  ],
+  "specs": {
+    "分类": "德国品牌",
+    "厂商": "Porsche",
+    "首发": "1964（初代）",
+    "布局": "后置水平对置",
+    "世代": "992（第八代）",
+    "总部": "德国斯图加特"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "porsche 911 sports car",
+    "category": "transportation",
+    "matchTags": [
+      "porsche",
+      "car"
+    ]
+  }
+}

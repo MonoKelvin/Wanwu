@@ -1,0 +1,30 @@
+{
+  "id": "9457350c-b087-47b1-b577-4487d7c04052",
+  "slug": "industrial-braun-dieter-rams",
+  "subCategoryId": "id-product",
+  "name": "博朗 × 迪特·拉姆斯",
+  "summary": "「少，但更好」 ten principles 影响现代设计。",
+  "description": "博朗 × 迪特·拉姆斯由Braun推出，属家电领域工业设计典范，1950s– 年间影响用户习惯与行业标准。造型、人机工程与材料工艺共同定义产品识别度。\n\n设计史课程常将其与 Dieter Rams、Jony Ive 等人物及方法论关联讨论。\n\n**设计原则**：功能、可用性、美学与成本平衡\n\n**相关**：与包豪斯、现代主义、极简主义设计运动一脉相承",
+  "tags": [
+    "工业设计",
+    "Braun",
+    "家电",
+    "经典"
+  ],
+  "specs": {
+    "分类": "产品设计",
+    "品牌": "Braun",
+    "类型": "家电",
+    "时期": "1950s–",
+    "领域": "消费科技",
+    "影响": "行业标杆"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "braun minimal radio design",
+    "matchTags": [
+      "braun",
+      "minimal"
+    ]
+  }
+}

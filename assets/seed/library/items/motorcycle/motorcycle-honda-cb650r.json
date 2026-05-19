@@ -1,0 +1,31 @@
+{
+  "id": "3bb140fd-758b-4659-a2ca-4b1de1bbe069",
+  "slug": "motorcycle-honda-cb650r",
+  "subCategoryId": "moto-japan",
+  "name": "本田 CB650R",
+  "summary": "日本本田「Neo Sports Café」四缸街车，649cc 水冷，复古现代造型。",
+  "description": "本田 CB650R 属于 CB 系列四缸街车，搭载 649 cc 直列四缸，约 95 马力，定位 A2 驾照可驾（欧洲）与日常运动骑行。Neo Sports Café 设计语言：圆灯、短尾、裸露车架。\n\n**品牌**：本田技研工业（Honda）1948 年由本田宗一郎创立，全球最大摩托车制造商之一。CB 系列从 1960 年代 CB750 四缸传奇影响业界。\n\n**相关**：与雅马哈 XSR700、川崎 Z650 为同级竞品；CBR650R 为同平台仿赛外壳。",
+  "tags": [
+    "本田",
+    "街车",
+    "四缸",
+    "日本"
+  ],
+  "specs": {
+    "分类": "日本品牌",
+    "厂商": "Honda",
+    "排量": "649 cc",
+    "发动机": "直列四缸水冷",
+    "功率": "约 95 hp",
+    "风格": "Neo Sports Café",
+    "姊妹车型": "CBR650R"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "honda cb650r motorcycle",
+    "matchTags": [
+      "honda",
+      "motorcycle"
+    ]
+  }
+}

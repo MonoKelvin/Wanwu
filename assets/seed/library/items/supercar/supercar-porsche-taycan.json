@@ -1,0 +1,31 @@
+{
+  "id": "c17b4c06-c0a4-4b0a-b80a-ed5b9bd4cce2",
+  "slug": "supercar-porsche-taycan",
+  "subCategoryId": "car-germany",
+  "name": "保时捷 Taycan",
+  "summary": "德系高性能纯电标杆，800V 架构与弹射起步。",
+  "description": "保时捷 Taycan体现德国Porsche在精密工程、底盘调校与电子辅助系统上的优势，2019 年世代代表德系性能文化：赛道数据转化为公路驾驶信心。\n\n德国超跑与 GT 强调日常可用性、高速稳定性与制动表现，在纽博格林开发文化影响下诞生众多标杆车型。\n\n**性能要点**：双电机纯电，约 761 hp，四驱或后驱依型号\n\n**相关**：与保时捷、AMG、奥迪 R8 等同属德国性能图谱；部分车型为限量或纪念版",
+  "tags": [
+    "德国",
+    "Porsche",
+    "超跑",
+    "精密工程"
+  ],
+  "specs": {
+    "分类": "德国品牌",
+    "厂商": "Porsche",
+    "上市": "2019",
+    "发动机": "双电机纯电",
+    "功率": "约 761 hp",
+    "总部": "德国",
+    "特点": "赛道基因"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "porsche taycan electric",
+    "matchTags": [
+      "porsche",
+      "electric"
+    ]
+  }
+}

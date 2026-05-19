@@ -1,0 +1,34 @@
+{
+  "id": "a44243d5-9fef-44f5-977e-636d76253dd3",
+  "slug": "dog-tibetan-mastiff",
+  "subCategoryId": "dog-asia",
+  "name": "藏獒",
+  "summary": "西藏大型护卫犬，厚毛、体格巨大，传统护卫羊群与院落。",
+  "description": "藏獒（Tibetan Mastiff）在青藏高原培育，适应高海拔寒冷。体型巨大、头宽、被毛厚。历史上护卫牲畜与庄园。\n\n需有经验饲养、充足空间。性格对家人护主、对陌生人警惕。市场炒作曾导致价格泡沫。\n\n**相关**：与西班牙獒、中亚牧羊犬等大型护卫犬功能类似；国际标准名 Tibetan Mastiff。",
+  "tags": [
+    "藏獒",
+    "西藏",
+    "护卫",
+    "巨型"
+  ],
+  "specs": {
+    "分类": "亚洲犬种",
+    "原产地": "青藏高原",
+    "体重": "45–73 kg",
+    "寿命": "10–12 年",
+    "用途": "护卫",
+    "性格": "护主、独立、威严"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "tibetan mastiff dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "mastiff"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

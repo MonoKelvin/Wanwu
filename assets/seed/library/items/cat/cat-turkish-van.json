@@ -1,0 +1,35 @@
+{
+  "id": "fbdb41a8-7bbb-4c92-b923-af517d033961",
+  "slug": "cat-turkish-van",
+  "subCategoryId": "cat-europe",
+  "name": "土耳其梵猫 Turkish Van",
+  "summary": "「游泳猫」之称，白身色尾、异色眼常见，被毛防水爱戏水。",
+  "description": "土耳其梵猫（Turkish Van）以「Van 图案」（除头尾外全身白）著称，来自凡湖地区。被毛半长、防水性佳，部分个体喜水、会游泳，故称 swimming cat。\n\n性格外向、好动、忠诚。需足够活动空间。与安哥拉猫同为土耳其保护品种，出口与血统管理严格。\n\n**相关**：与安哥拉猫、波斯猫在毛型上不同；「梵」图案也见于其他品种但基因为此品种标志。",
+  "tags": [
+    "半长毛",
+    "游泳",
+    "土耳其",
+    "异色眼"
+  ],
+  "specs": {
+    "分类": "欧洲品种",
+    "原产地": "土耳其凡湖",
+    "体重": "3–8 kg",
+    "寿命": "13–17 年",
+    "毛色": "Van 图案（色尾白身）",
+    "特点": "喜水、被毛防水",
+    "性格": "外向、好动"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "turkish van cat",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "van"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

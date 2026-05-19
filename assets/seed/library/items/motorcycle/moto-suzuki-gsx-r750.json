@@ -1,0 +1,33 @@
+{
+  "id": "ef316a7c-e316-49e6-8d41-e828eb719f4f",
+  "slug": "moto-suzuki-gsx-r750",
+  "subCategoryId": "moto-japan",
+  "name": "铃木 GSX-R750",
+  "summary": "750 仿赛经典，赛道日热门。",
+  "description": "铃木 GSX-R750为日本Suzuki代表作，750 四缸，定位仿赛。日系厂商以可靠性与高转四缸技术统治全球仿赛与街车市场，常称霸 WSBK 与 MotoGP。\n\n保养经济、配件丰富，适合赛道日与日常通勤的多场景需求。\n\n**骑行要点**：750 四缸，高转性能或扭力特性因车系而异\n\n**相关**：与欧系意系对比更重性价比与电子辅助普及",
+  "tags": [
+    "日本",
+    "Suzuki",
+    "摩托",
+    "仿赛"
+  ],
+  "specs": {
+    "分类": "日本品牌",
+    "厂商": "Suzuki",
+    "发动机": "750 四缸",
+    "定位": "仿赛",
+    "总部": "日本",
+    "赛事": "MotoGP / WSBK"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "铃木 GSX R750 日本",
+    "matchTags": [
+      "日本",
+      "Suzuki",
+      "摩托",
+      "suzuki",
+      "gsx"
+    ]
+  }
+}

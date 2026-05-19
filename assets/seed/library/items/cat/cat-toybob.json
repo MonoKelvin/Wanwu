@@ -1,0 +1,34 @@
+{
+  "id": "85d83484-2ec5-4173-ab85-e3e9f6488118",
+  "slug": "cat-toybob",
+  "subCategoryId": "cat-japan",
+  "name": "玩具短尾猫 Toybob",
+  "summary": "俄罗斯育成的微型短尾品种，体型极小、尾短，性格亲人，仍较稀有。",
+  "description": "玩具短尾猫（Toybob）1990 年代在俄罗斯育成，结合短尾与小型化选育，体重常仅 1–2 kg。短尾、圆脸、被毛短密。\n\n性格亲人、适合公寓。品种较新、数量少。与曼基康矮腿不同，强调整体微型化。\n\n**相关**：与日本短尾、千岛短尾在「短尾」主题上相关；主要在 WCF 等欧洲体系推广。",
+  "tags": [
+    "短尾",
+    "微型",
+    "稀有",
+    "日本关联"
+  ],
+  "specs": {
+    "分类": "日本品种",
+    "育成地": "俄罗斯",
+    "体重": "1–2 kg",
+    "特征": "迷你、短尾",
+    "性格": "亲人",
+    "状态": "稀有新兴品种"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "small cat portrait",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "kitten"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

@@ -1,7 +1,9 @@
 import { ipcMain, app } from 'electron'
 import {
+  copyTextToClipboard,
   downloadMediaFile,
   openExternalUrl,
+  savePngDataUrl,
   showMediaInFolder
 } from '../services/shellMedia'
 import { getMainWindow, broadcastMaximizedState } from '../windowState'
@@ -119,8 +121,40 @@ export function registerIpcHandlers(services: AppServices): void {
     return services.library?.listFavoriteEntries() ?? []
   })
 
+  ipcMain.handle('user:listFavoriteGroups', () => {
+    return services.library?.listFavoriteGroups() ?? []
+  })
+
+  ipcMain.handle('user:listFavoriteGroupsForPicker', () => {
+    return services.db?.listFavoriteGroups().map((g) => ({
+      id: g.id,
+      name: g.name,
+      sortOrder: g.sort_order
+    })) ?? []
+  })
+
+  ipcMain.handle('user:createFavoriteGroup', (_e, name: string) => {
+    return services.db?.createFavoriteGroup(name) ?? null
+  })
+
+  ipcMain.handle('user:isFavorite', (_e, params: { itemId: string; source: string }) => {
+    return services.db?.isFavorite(params.itemId, params.source) ?? false
+  })
+
+  ipcMain.handle(
+    'user:addFavorite',
+    (_e, params: { itemId: string; source: string; groupId: string }) => {
+      services.db?.addFavorite(params.itemId, params.source, params.groupId)
+      return true
+    }
+  )
+
+  ipcMain.handle('user:removeFavorite', (_e, params: { itemId: string; source: string }) => {
+    return services.db?.removeFavorite(params.itemId, params.source) ?? false
+  })
+
   ipcMain.handle('user:toggleFavorite', (_e, params: { itemId: string; source: string }) => {
-    return services.db?.toggleFavorite(params.itemId, params.source)
+    return services.db?.toggleFavorite(params.itemId, params.source) ?? false
   })
 
   ipcMain.handle('app:getPaths', () => ({
@@ -172,4 +206,14 @@ export function registerIpcHandlers(services: AppServices): void {
   )
 
   ipcMain.handle('shell:showItemInFolder', (_e, url: string) => showMediaInFolder(url))
+
+  ipcMain.handle('shell:copyText', (_e, text: string) => {
+    copyTextToClipboard(text)
+  })
+
+  ipcMain.handle(
+    'shell:savePngDataUrl',
+    (_e, params: { dataUrl: string; defaultName?: string }) =>
+      savePngDataUrl(params.dataUrl, params.defaultName)
+  )
 }

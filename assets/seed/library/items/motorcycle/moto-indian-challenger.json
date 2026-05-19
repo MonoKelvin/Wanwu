@@ -1,0 +1,33 @@
+{
+  "id": "ec454667-2d13-4a18-a043-3d38c39e9c1c",
+  "slug": "moto-indian-challenger",
+  "subCategoryId": "moto-america",
+  "name": "印第安 Challenger",
+  "summary": "对标哈雷滑翔系列的豪华_BAGGER。",
+  "description": "印第安 Challenger体现美国Indian巡航文化：PowerPlus，风格偏向豪华旅行。哈雷与印第安为美国摩托车双雄，密尔沃基与明尼阿波利斯产地象征自由公路与改装文化。\n\nH.O.G. 车主会与印第安骑手社区组织大型集会，排气声浪与低座高定义美式骑行体验。\n\n**骑行要点**：PowerPlus，豪华旅行，长途舒适或城市灵活因车型而异\n\n**相关**：与日系、欧系仿赛用户群差异大；改装件市场丰富",
+  "tags": [
+    "美式",
+    "Indian",
+    "巡航",
+    "豪华旅行"
+  ],
+  "specs": {
+    "分类": "美式巡航",
+    "厂商": "Indian",
+    "发动机": "PowerPlus",
+    "风格": "豪华旅行",
+    "总部": "美国",
+    "文化": "公路与改装"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "印第安 Challenger 美式",
+    "matchTags": [
+      "美式",
+      "Indian",
+      "巡航",
+      "indian",
+      "challenger"
+    ]
+  }
+}

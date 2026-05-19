@@ -1,4 +1,4 @@
-import type { FavoriteEntry } from './favorite'
+import type { FavoriteEntry, FavoriteGroup } from './favorite'
 import type { Category, Item, LibrarySearchHit } from './item'
 import type { AppSettings } from './settings'
 import type { RssEntry, RssFeed, RssFeedInput, RssFeedUpdate, RssGroup } from './rss'
@@ -37,6 +37,12 @@ export interface WanwuApi {
     getProfile: () => Promise<{ nickname: string; bio: string } | null>
     updateProfile: (profile: { nickname: string; bio: string }) => Promise<void>
     listFavorites: () => Promise<FavoriteEntry[]>
+    listFavoriteGroups: () => Promise<FavoriteGroup[]>
+    listFavoriteGroupsForPicker: () => Promise<Array<{ id: string; name: string; sortOrder: number }>>
+    createFavoriteGroup: (name: string) => Promise<{ id: string; name: string; sortOrder: number }>
+    isFavorite: (params: { itemId: string; source: string }) => Promise<boolean>
+    addFavorite: (params: { itemId: string; source: string; groupId: string }) => Promise<boolean>
+    removeFavorite: (params: { itemId: string; source: string }) => Promise<boolean>
     toggleFavorite: (params: { itemId: string; source: string }) => Promise<boolean>
   }
   app: {
@@ -59,5 +65,10 @@ export interface WanwuApi {
       defaultName?: string
     }) => Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }>
     showItemInFolder: (url: string) => Promise<{ ok: boolean }>
+    copyText: (text: string) => Promise<void>
+    savePngDataUrl: (params: {
+      dataUrl: string
+      defaultName?: string
+    }) => Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }>
   }
 }

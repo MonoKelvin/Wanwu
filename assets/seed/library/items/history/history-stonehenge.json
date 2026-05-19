@@ -1,0 +1,30 @@
+{
+  "id": "ad0084a7-6785-4702-b136-8388991247cd",
+  "slug": "history-stonehenge",
+  "subCategoryId": "hist-world",
+  "name": "巨石阵",
+  "summary": "英国威尔特郡史前石圈，天文与仪式之谜。",
+  "description": "巨石阵坐落于英国，兴盛于史前，为世界遗产。见证古代文明的政治、宗教、建筑或天文成就，是环球旅行与考古学热点。\n\n气候变化、游客压力与战争曾威胁遗产安全，国际社会通过 UNESCO 框架推动保护。\n\n**旅行提示**：尊重当地文化，遵守摄影与攀爬禁令\n\n**相关**：与庞贝、吴哥窟、金字塔等同属必访史迹",
+  "tags": [
+    "世界遗产",
+    "英国",
+    "史前",
+    "古代"
+  ],
+  "specs": {
+    "分类": "世界史迹",
+    "地点": "英国",
+    "时代": "史前",
+    "地位": "世界遗产",
+    "文明": "多元古代文明",
+    "保护": "UNESCO"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "stonehenge england stones",
+    "matchTags": [
+      "stonehenge",
+      "england"
+    ]
+  }
+}

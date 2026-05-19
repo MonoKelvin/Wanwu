@@ -1,0 +1,27 @@
+{
+  "id": "140809fa-c86a-479b-bd73-7e08ccb2b1f7",
+  "slug": "hero-deadpool",
+  "subCategoryId": "hero-marvel",
+  "name": "死侍 Deadpool",
+  "summary": "韦德·威尔逊再生能力与打破第四墙的反英雄。",
+  "description": "死侍 1991 年登场，癌症实验获再生能力，以幽默暴力与元叙事著称。\n\n瑞安·雷诺兹电影版 R 级成功。\n\n**能力要点**：再生、武术、枪械\n\n**相关作品**：《死侍》系列",
+  "tags": [
+    "漫威",
+    "反英雄",
+    "再生"
+  ],
+  "specs": {
+    "宇宙": "漫威 Marvel",
+    "首次登场": "1991",
+    "本名": "韦德·威尔逊",
+    "MCU饰演": "瑞安·雷诺兹"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "deadpool marvel cosplay",
+    "matchTags": [
+      "deadpool",
+      "marvel"
+    ]
+  }
+}

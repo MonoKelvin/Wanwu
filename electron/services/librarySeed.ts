@@ -5,9 +5,11 @@ import type Database from 'better-sqlite3'
 import type { DatabaseService } from './database'
 import type { MediaAttribution } from '../../src/shared/types/unsplash'
 
-export const LIBRARY_CATALOG_VERSION = 7
+export const LIBRARY_CATALOG_SCHEMA = 3
 
 export interface LibraryCatalogItem {
+  /** 全库唯一稳定 id（种子配置必填，禁止入库时随机生成） */
+  id: string
   slug: string
   categoryId: string
   subCategoryId: string
@@ -16,21 +18,50 @@ export interface LibraryCatalogItem {
   description: string
   tags: string[]
   specs: Record<string, string>
-  /** 封面文件是否已放入 assets/library/... */
   coverFile?: string
   galleryFiles?: string[]
   coverAttribution?: MediaAttribution
   galleryAttributions?: MediaAttribution[]
-  /** 本条目的配图来源（覆盖 catalog.mediaProvider） */
   mediaProvider?: string
 }
 
 export interface LibraryCatalog {
-  version: number
-  /** 默认配图来源：pixabay | unsplash | manual */
+  schema?: number
+  version?: number
   mediaProvider?: string
   mediaConfigVersion?: number
   items: LibraryCatalogItem[]
+}
+
+export interface ImportLibraryOptions {
+  /** 从 catalog 仅新增尚未入库的 id（应用启动默认） */
+  importNew?: boolean
+  /** 按稳定 id 强制从 catalog 更新（可重复执行） */
+  updateIds?: string[]
+  /** 全量同步 catalog（开发恢复用，会删除 catalog 外条目） */
+  full?: boolean
+}
+
+export interface ImportLibraryResult {
+  imported: number
+  skipped: number
+  updated: number
+}
+
+export interface LibraryCategoryDef {
+  id: string
+  name: string
+  icon: string
+  subcategories: Array<{ id: string; name: string }>
+}
+
+export interface LibraryCategoriesFile {
+  version: number
+  categories: LibraryCategoryDef[]
+}
+
+function seedRoot(): string {
+  return join(process.cwd(), 'assets', 'seed', 'library')
 }
 
 function ensureItemColumns(db: Database.Database): void {
@@ -40,6 +71,7 @@ function ensureItemColumns(db: Database.Database): void {
   if (!names.has('specs')) db.exec('ALTER TABLE items ADD COLUMN specs TEXT')
   if (!names.has('cover_attribution')) db.exec('ALTER TABLE items ADD COLUMN cover_attribution TEXT')
   db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_items_slug ON items(slug) WHERE slug IS NOT NULL')
+  db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_items_id ON items(id)')
 
   const mediaCols = db.prepare('PRAGMA table_info(item_media)').all() as Array<{ name: string }>
   if (!mediaCols.some((c) => c.name === 'attribution')) {
@@ -47,25 +79,44 @@ function ensureItemColumns(db: Database.Database): void {
   }
 }
 
-function upsertItem(db: Database.Database, item: LibraryCatalogItem): string {
+type UpsertMode = 'insert-only' | 'update' | 'upsert'
+
+function upsertItem(
+  db: Database.Database,
+  item: LibraryCatalogItem,
+  mode: UpsertMode
+): 'insert' | 'update' | 'skip' {
+  if (!item.id) {
+    throw new Error(`条目 ${item.slug} 缺少稳定 id，请先执行 seed:library -- build`)
+  }
+
   const cover = item.coverFile?.replace(/\\/g, '/') ?? null
   const coverAttributionJson = item.coverAttribution
     ? JSON.stringify(item.coverAttribution)
     : null
-
-  const existing = db.prepare('SELECT id FROM items WHERE slug = ?').get(item.slug) as
-    | { id: string }
-    | undefined
   const now = new Date().toISOString()
   const specsJson = JSON.stringify(item.specs ?? {})
 
-  if (existing) {
+  const existingById = db.prepare('SELECT id FROM items WHERE id = ?').get(item.id) as
+    | { id: string }
+    | undefined
+  const existingBySlug = item.slug
+    ? (db.prepare('SELECT id FROM items WHERE slug = ?').get(item.slug) as { id: string } | undefined)
+    : undefined
+
+  if (mode === 'insert-only') {
+    if (existingById) return 'skip'
+    if (existingBySlug && existingBySlug.id !== item.id) return 'skip'
+  }
+
+  if (existingById) {
     db.prepare(
-      `UPDATE items SET category_id = ?, sub_category_id = ?, name = ?, summary = ?, description = ?,
+      `UPDATE items SET category_id = ?, sub_category_id = ?, slug = ?, name = ?, summary = ?, description = ?,
        tags = ?, cover_path = ?, cover_attribution = ?, specs = ?, updated_at = ? WHERE id = ?`
     ).run(
       item.categoryId,
       item.subCategoryId,
+      item.slug,
       item.name,
       item.summary,
       item.description,
@@ -74,18 +125,19 @@ function upsertItem(db: Database.Database, item: LibraryCatalogItem): string {
       coverAttributionJson,
       specsJson,
       now,
-      existing.id
+      item.id
     )
-    syncMedia(db, existing.id, item)
-    return existing.id
+    syncMedia(db, item.id, item)
+    return mode === 'insert-only' ? 'skip' : 'update'
   }
 
-  const id = randomUUID()
+  if (existingBySlug && existingBySlug.id !== item.id && mode !== 'update') return 'skip'
+
   db.prepare(
     `INSERT INTO items (id, category_id, sub_category_id, slug, name, summary, description, tags, cover_path, cover_attribution, specs, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(
-    id,
+    item.id,
     item.categoryId,
     item.subCategoryId,
     item.slug,
@@ -99,8 +151,8 @@ function upsertItem(db: Database.Database, item: LibraryCatalogItem): string {
     now,
     now
   )
-  syncMedia(db, id, item)
-  return id
+  syncMedia(db, item.id, item)
+  return 'insert'
 }
 
 function syncMedia(db: Database.Database, itemId: string, item: LibraryCatalogItem): void {
@@ -116,20 +168,56 @@ function syncMedia(db: Database.Database, itemId: string, item: LibraryCatalogIt
   })
 }
 
-export interface LibraryCategoryDef {
-  id: string
-  name: string
-  icon: string
-  subcategories: Array<{ id: string; name: string }>
-}
+function importItems(
+  dbService: DatabaseService,
+  items: LibraryCatalogItem[],
+  mode: UpsertMode,
+  categoriesFile: LibraryCategoriesFile | null
+): ImportLibraryResult {
+  const categoryDefs = categoriesFile?.categories ?? []
+  let imported = 0
+  let skipped = 0
+  let updated = 0
+  const cleaned = new Set<string>()
 
-export interface LibraryCategoriesFile {
-  version: number
-  categories: LibraryCategoryDef[]
+  for (const item of items) {
+    const libDb = dbService.getLibraryDb(item.categoryId)
+    if (!libDb) continue
+    ensureItemColumns(libDb)
+
+    const catDef = categoryDefs.find((c) => c.id === item.categoryId)
+    if (catDef) syncLibraryCategories(libDb, catDef)
+
+    if (mode === 'upsert' && !cleaned.has(item.categoryId)) {
+      const validIds = new Set(
+        items.filter((i) => i.categoryId === item.categoryId).map((i) => i.id)
+      )
+      libDb.prepare("DELETE FROM items WHERE slug IS NULL OR slug = ''").run()
+      libDb.prepare(`DELETE FROM items WHERE cover_path LIKE '%.svg'`).run()
+      const rows = libDb.prepare('SELECT id, slug FROM items').all() as Array<{
+        id: string
+        slug: string | null
+      }>
+      for (const row of rows) {
+        if (!validIds.has(row.id)) {
+          libDb.prepare('DELETE FROM item_media WHERE item_id = ?').run(row.id)
+          libDb.prepare('DELETE FROM items WHERE id = ?').run(row.id)
+        }
+      }
+      cleaned.add(item.categoryId)
+    }
+
+    const result = upsertItem(libDb, item, mode)
+    if (result === 'insert') imported++
+    else if (result === 'update') updated++
+    else skipped++
+  }
+
+  return { imported, skipped, updated }
 }
 
 export function loadLibraryCategories(): LibraryCategoriesFile | null {
-  const path = join(process.cwd(), 'assets', 'seed', 'library', 'categories.json')
+  const path = join(seedRoot(), 'categories.json')
   if (!existsSync(path)) return null
   return JSON.parse(readFileSync(path, 'utf-8')) as LibraryCategoriesFile
 }
@@ -167,46 +255,45 @@ export function syncLibraryCategories(
 }
 
 export function loadLibraryCatalog(): LibraryCatalog | null {
-  const path = join(process.cwd(), 'assets', 'seed', 'library', 'catalog.json')
+  const path = join(seedRoot(), 'catalog.json')
   if (!existsSync(path)) return null
   return JSON.parse(readFileSync(path, 'utf-8')) as LibraryCatalog
 }
 
-export function importLibraryCatalog(dbService: DatabaseService): { imported: number } {
+function importCatalogItems(
+  dbService: DatabaseService,
+  items: LibraryCatalogItem[],
+  mode: UpsertMode
+): ImportLibraryResult {
+  return importItems(dbService, items, mode, loadLibraryCategories())
+}
+
+export function importLibraryCatalog(
+  dbService: DatabaseService,
+  options: ImportLibraryOptions = {}
+): ImportLibraryResult {
   const catalog = loadLibraryCatalog()
-  if (!catalog?.items?.length) return { imported: 0 }
+  if (!catalog?.items?.length) return { imported: 0, skipped: 0, updated: 0 }
 
-  const categoriesFile = loadLibraryCategories()
-  const categoryDefs = categoriesFile?.categories ?? []
-  const validSlugs = new Set(catalog.items.map((i) => i.slug))
-
-  let imported = 0
-  const cleaned = new Set<string>()
-  for (const item of catalog.items) {
-    const libDb = dbService.getLibraryDb(item.categoryId)
-    if (!libDb) continue
-    ensureItemColumns(libDb)
-
-    const catDef = categoryDefs.find((c) => c.id === item.categoryId)
-    if (catDef) syncLibraryCategories(libDb, catDef)
-
-    if (!cleaned.has(item.categoryId)) {
-      libDb.prepare("DELETE FROM items WHERE slug IS NULL OR slug = ''").run()
-      libDb.prepare(`DELETE FROM items WHERE cover_path LIKE '%.svg'`).run()
-      const rows = libDb.prepare('SELECT id, slug FROM items').all() as Array<{
-        id: string
-        slug: string | null
-      }>
-      for (const row of rows) {
-        if (row.slug && !validSlugs.has(row.slug)) {
-          libDb.prepare('DELETE FROM item_media WHERE item_id = ?').run(row.id)
-          libDb.prepare('DELETE FROM items WHERE id = ?').run(row.id)
-        }
-      }
-      cleaned.add(item.categoryId)
-    }
-    upsertItem(libDb, item)
-    imported += 1
+  if (options.full) {
+    return importCatalogItems(dbService, catalog.items, 'upsert')
   }
-  return { imported }
+
+  if (options.updateIds?.length) {
+    const byId = new Map(catalog.items.map((i) => [i.id, i]))
+    const targets = options.updateIds
+      .map((id) => byId.get(id))
+      .filter((i): i is LibraryCatalogItem => Boolean(i))
+    if (targets.length !== options.updateIds.length) {
+      const missing = options.updateIds.filter((id) => !byId.has(id))
+      console.warn('[librarySeed] catalog 中未找到 id:', missing.join(', '))
+    }
+    return importCatalogItems(dbService, targets, 'update')
+  }
+
+  if (options.importNew) {
+    return importCatalogItems(dbService, catalog.items, 'insert-only')
+  }
+
+  return { imported: 0, skipped: 0, updated: 0 }
 }

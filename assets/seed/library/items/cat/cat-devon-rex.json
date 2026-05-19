@@ -1,0 +1,34 @@
+{
+  "id": "0952e396-8a8e-48a6-896b-bbaf63d5f954",
+  "slug": "cat-devon-rex",
+  "subCategoryId": "cat-europe",
+  "name": "德文卷毛猫 Devon Rex",
+  "summary": "英国德文突变卷毛、大耳、短被毛，性格顽皮像「小精灵」。",
+  "description": "德文卷毛猫（Devon Rex）1960 年代在英国德文郡发现 rex 突变，被毛卷曲稀疏、触感温暖。大耳、楔形脸、细长四肢，外观独特。\n\n性格极度亲人、爱玩、常停留于肩或膝上。需注意保温与防晒（被毛薄）。与康沃尔卷毛猫为不同基因突变。\n\n**相关**：与斯芬克斯猫同属「特殊被毛」类型但仍有卷毛；在猫展中属 Shorthair 类。",
+  "tags": [
+    "卷毛",
+    "短毛",
+    "欧洲",
+    "英国"
+  ],
+  "specs": {
+    "分类": "欧洲品种",
+    "原产地": "英国德文",
+    "体重": "2.5–4 kg",
+    "寿命": "9–15 年",
+    "被毛": "卷曲稀疏",
+    "性格": "顽皮、亲人、精力充沛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "devon rex cat",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "rex"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

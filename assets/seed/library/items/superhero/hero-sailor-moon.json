@@ -1,0 +1,30 @@
+{
+  "id": "6a087c39-a16a-4fe8-9c09-90562e9eda19",
+  "slug": "hero-sailor-moon",
+  "subCategoryId": "hero-other",
+  "name": "水手月亮 Sailor Moon",
+  "summary": "武内直子魔法少女经典，月野兔变身对抗黑暗王国。",
+  "description": "《美少女战士》（Sailor Moon）1991 年漫画，月野兔获露娜猫指引变身水手月亮，集结水手战士对抗黑暗势力。定义魔法少女战队模板。\n\n**文化**：动画、音乐剧、真人版众多，是 90 年代流行文化符号。\n\n**设定要点**：变身、月光能量、团队羁绊",
+  "tags": [
+    "魔法少女",
+    "武内直子",
+    "日本",
+    "经典"
+  ],
+  "specs": {
+    "作者": "武内直子",
+    "首次登场": "1991",
+    "主角": "月野兔",
+    "类型": "魔法少女",
+    "影响": "战队模板",
+    "文化": "90 年代符号"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "sailor moon cosplay",
+    "matchTags": [
+      "sailor",
+      "moon"
+    ]
+  }
+}

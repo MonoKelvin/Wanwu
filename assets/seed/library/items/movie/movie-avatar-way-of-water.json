@@ -1,0 +1,31 @@
+{
+  "id": "be2f5377-82bc-4137-a12a-3ce0cf7e5c36",
+  "slug": "movie-avatar-way-of-water",
+  "subCategoryId": "movie-fantasy",
+  "name": "阿凡达：水之道",
+  "summary": "潘多拉海洋部落与家庭延续，水下拍摄技术突破。",
+  "description": "阿凡达：水之道构建科幻奇幻叙事宇宙，2022 年间以美术、服装与配乐塑造异世界沉浸感。奇幻电影常借用神话、民间传说与魔法规则探讨善恶、成长与生态。\n\n与科幻不同，奇幻较少依赖科学解释而重象征与寓言。\n\n**世界观**：科幻奇幻\n\n**相关**：与原著小说、游戏联动形成跨媒体宇宙",
+  "tags": [
+    "奇幻",
+    "电影",
+    "科幻奇幻",
+    "史诗"
+  ],
+  "specs": {
+    "分类": "奇幻电影",
+    "年份": "2022",
+    "导演": "卡梅隆",
+    "类型": "科幻奇幻",
+    "改编": "文学 / 原创",
+    "受众": "全年龄至成人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "underwater ocean coral reef",
+    "matchTags": [
+      "ocean",
+      "underwater"
+    ],
+    "minMatchScore": 0
+  }
+}

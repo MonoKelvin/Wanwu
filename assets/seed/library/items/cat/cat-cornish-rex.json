@@ -1,0 +1,34 @@
+{
+  "id": "398c939b-1dc0-4777-a564-2dc4a7ac1d7b",
+  "slug": "cat-cornish-rex",
+  "subCategoryId": "cat-europe",
+  "name": "康沃尔卷毛猫 Cornish Rex",
+  "summary": "英国康沃尔 rex 卷毛品种，体态流线、被毛柔软波浪，运动能力出众。",
+  "description": "康沃尔卷毛猫（Cornish Rex）1950 年在英国康沃尔发现，与德文卷毛为不同基因座。被毛仅底绒层卷曲，触感如羔羊毛。体型修长、腿长尾细。\n\n性格活跃、跳跃力强，适合有互动玩具的家庭。需注意温度与皮肤护理。繁殖史影响现代 rex 系列。\n\n**相关**：与德文卷毛、拉邦卷毛对比可了解 rex 基因多样性；常参加敏捷类表演。",
+  "tags": [
+    "卷毛",
+    "流线型",
+    "欧洲",
+    "英国"
+  ],
+  "specs": {
+    "分类": "欧洲品种",
+    "原产地": "英国康沃尔",
+    "体重": "2.5–4.5 kg",
+    "寿命": "11–15 年",
+    "被毛": "底绒波浪卷",
+    "性格": "活跃、聪明、亲人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cornish rex cat",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "rex"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

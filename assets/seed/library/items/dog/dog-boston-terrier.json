@@ -1,0 +1,34 @@
+{
+  "id": "d2dff1f2-916a-4ab4-9de1-467f2bf2db6b",
+  "slug": "dog-boston-terrier",
+  "subCategoryId": "dog-americas",
+  "name": "波士顿梗",
+  "summary": "美国「美国绅士」小型梗犬，黑白燕尾服毛色，短鼻友善。",
+  "description": "波士顿梗（Boston Terrier）在美国波士顿选育，由斗牛犬与白色英国梗杂交。体型小、头方、被毛短。\n\n性格友善、适合公寓。注意短鼻呼吸与眼部突出保护。是美国少数本土培育品种之一。\n\n**相关**：与法国斗牛犬、英国斗牛犬有血缘；非真正 terrier 狩猎型。",
+  "tags": [
+    "梗犬",
+    "美国",
+    "伴侣犬",
+    "短鼻"
+  ],
+  "specs": {
+    "分类": "美洲犬种",
+    "原产地": "美国波士顿",
+    "体重": "4.5–11 kg",
+    "寿命": "11–13 年",
+    "毛色": "黑白燕尾服",
+    "性格": "友善、活泼"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "boston terrier dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "boston"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

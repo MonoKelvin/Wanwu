@@ -1,0 +1,32 @@
+{
+  "id": "4e2bf6b6-c32e-45a8-a2e0-1d68198f8306",
+  "slug": "industrial-aeropress",
+  "subCategoryId": "id-home",
+  "name": "AeroPress 爱乐压",
+  "summary": "Alan Adler 发明便携压力咖啡器具。",
+  "description": "AeroPress 爱乐压为AeroPress咖啡代表产品，2005 起进入家庭场景。家居工业设计关注日常使用频率、清洁便利与空间融合。\n\n经典单品常成为租屋与样板间标配，二手市场保值反映设计持久魅力。\n\n**使用场景**：咖啡，耐用性，清洁与收纳\n\n**相关**：与北欧家装、厨房开放动线趋势协同",
+  "tags": [
+    "家居",
+    "AeroPress",
+    "咖啡",
+    "设计"
+  ],
+  "specs": {
+    "分类": "家居产品设计",
+    "品牌": "AeroPress",
+    "类型": "咖啡",
+    "时期": "2005",
+    "场景": "家庭",
+    "特点": "功能与美学"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "AeroPress 爱乐压 家居",
+    "matchTags": [
+      "家居",
+      "AeroPress",
+      "咖啡",
+      "aeropress"
+    ]
+  }
+}

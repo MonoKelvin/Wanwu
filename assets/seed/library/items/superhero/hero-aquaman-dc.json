@@ -1,0 +1,30 @@
+{
+  "id": "414ab180-9360-4690-b124-4f255014337d",
+  "slug": "hero-aquaman-dc",
+  "subCategoryId": "hero-dc",
+  "name": "海王 Aquaman",
+  "summary": "亚特兰蒂斯国王亚瑟·库瑞，统治七海，三叉戟与海洋沟通能力的 DC 英雄。",
+  "description": "海王（Aquaman）1941 年《More Fun Comics》#73 登场，亚瑟·库瑞（Arthur Curry）为人类与亚特兰蒂斯混血，可水下呼吸、与海洋生物沟通，持三叉戟统治亚特兰蒂斯。\n\n**影视**：杰森·莫玛 DCEU 版重塑粗犷形象，《海王》票房成功。与温子仁导演合作强化奇幻海底视觉。\n\n**能力要点**：水下生存、超级力量、三叉戟、海兽指挥",
+  "tags": [
+    "DC",
+    "亚特兰蒂斯",
+    "海洋",
+    "三叉戟"
+  ],
+  "specs": {
+    "宇宙": "DC 漫画",
+    "首次登场": "1941",
+    "本名": "亚瑟·库瑞",
+    "王国": "亚特兰蒂斯",
+    "武器": "三叉戟",
+    "饰演": "杰森·莫玛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "aquaman dc cosplay trident",
+    "matchTags": [
+      "aquaman",
+      "dc"
+    ]
+  }
+}

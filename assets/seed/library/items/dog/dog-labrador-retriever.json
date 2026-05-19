@@ -1,0 +1,34 @@
+{
+  "id": "495350b9-9812-4921-b6d8-17bbb3d3ab88",
+  "slug": "dog-labrador-retriever",
+  "subCategoryId": "dog-americas",
+  "name": "拉布拉多寻回犬",
+  "summary": "全球最受欢迎家庭犬之一，短毛黑/黄/巧克力色，温顺聪明。",
+  "description": "拉布拉多寻回犬（Labrador Retriever）源于加拿大纽芬兰拉布拉多地区，后在英国完善标准。被毛短密防水，水獭尾。\n\n广泛用于导盲、搜救、缉毒与家庭伴侣。食欲旺盛易肥胖。性格友善稳定。\n\n**相关**：与金毛、切萨皮克湾寻回犬为寻回犬三角；常年占据注册量榜首。",
+  "tags": [
+    "寻回犬",
+    "加拿大",
+    "导盲",
+    "家庭犬"
+  ],
+  "specs": {
+    "分类": "美洲犬种",
+    "原产地": "加拿大",
+    "体重": "25–36 kg",
+    "寿命": "10–12 年",
+    "毛色": "黑/黄/巧克力",
+    "性格": "友善、聪明、贪吃"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "labrador retriever dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "labrador"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

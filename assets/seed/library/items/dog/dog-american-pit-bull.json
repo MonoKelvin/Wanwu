@@ -1,0 +1,34 @@
+{
+  "id": "95d3f517-8734-4b46-ab47-7a8d0a81cc6a",
+  "slug": "dog-american-pit-bull",
+  "subCategoryId": "dog-americas",
+  "name": "美国比特犬",
+  "summary": "力量型工作犬，肌肉发达，性格因饲养差异大，需负责任训练。",
+  "description": "美国比特犬（American Pit Bull Terrier）由英国斗牛犬与梗犬杂交而来，历史上关联斗狗（现已非法）。现代负责任饲养下可为稳定家庭犬。\n\n需早期社会化、正规训练与运动。部分地区有禁养法规。区分于美国斯塔福等相近品种。\n\n**相关**：与恶霸犬、美国斯塔福梗有外观相似；动保倡导评估个体而非品种标签。",
+  "tags": [
+    "比特",
+    "美国",
+    "力量型",
+    "争议品种"
+  ],
+  "specs": {
+    "分类": "美洲犬种",
+    "原产地": "美国",
+    "体重": "14–27 kg",
+    "寿命": "12–16 年",
+    "注意": "法规与社会化",
+    "性格": "因训练而异"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "pit bull terrier dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "pitbull"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

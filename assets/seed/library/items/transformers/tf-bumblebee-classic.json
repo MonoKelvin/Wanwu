@@ -1,0 +1,31 @@
+{
+  "id": "abdc710b-e90f-456f-a350-19e7f5801192",
+  "slug": "tf-bumblebee-classic",
+  "subCategoryId": "tf-autobot",
+  "name": "大黄蜂 G1",
+  "summary": "大众甲壳虫侦察兵，与人类萨姆/查理情谊深厚。",
+  "description": "大黄蜂 G1隶属汽车人（Autobot）阵营，由 Hasbro 与 Takara Tomy 玩具线及 1984 年动画推出。通常可变形为甲壳虫，在团队中担任侦察兵。\n\n汽车人以保护地球与人类、对抗霸天虎为使命，擎天柱为精神领袖。\n\n**变形形态**：甲壳虫\n\n**相关**：与霸天虎威震天宿敌关系；G1 动画与迈克尔·贝电影造型各异",
+  "tags": [
+    "汽车人",
+    "Hasbro",
+    "变形",
+    "侦察兵"
+  ],
+  "specs": {
+    "分类": "汽车人 Autobot",
+    "阵营": "汽车人",
+    "变形": "甲壳虫",
+    "角色": "侦察兵",
+    "版权": "Hasbro / Takara",
+    "首次": "1984"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "yellow volkswagen beetle car",
+    "matchTags": [
+      "beetle",
+      "yellow"
+    ],
+    "minMatchScore": 0
+  }
+}

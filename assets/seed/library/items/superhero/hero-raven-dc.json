@@ -1,0 +1,30 @@
+{
+  "id": "468f461d-131a-48ef-a05d-8c371d166ccb",
+  "slug": "hero-raven-dc",
+  "subCategoryId": "hero-dc",
+  "name": "渡鸦 Raven",
+  "summary": "阿泽拉特之女，掌控黑暗能量与情感的少年泰坦 mystic。",
+  "description": "渡鸦（Raven）1980 年与钢骨同刊登场，蕾文（Raven）为恶魔三宫（Trigon）之女，抑制情感以控制 soul-self 能量。少年泰坦核心成员。\n\n**相关**：动画《少年泰坦》系列使角色家喻户晓。\n\n**能力要点**：灵魂体投射、传送、情感魔法",
+  "tags": [
+    "DC",
+    "少年泰坦",
+    "魔法",
+    "渡鸦"
+  ],
+  "specs": {
+    "宇宙": "DC 漫画",
+    "首次登场": "1980",
+    "父亲": "三宫 Trigon",
+    "所属": "少年泰坦",
+    "特点": "情感抑制",
+    "能力": "黑暗能量"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "raven teen titans cosplay",
+    "matchTags": [
+      "raven",
+      "titans"
+    ]
+  }
+}

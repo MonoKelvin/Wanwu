@@ -21,10 +21,18 @@ export interface LibrarySearchHit {
   subCategoryName: string | null
 }
 
+export interface FavoriteGroupDto {
+  id: string
+  name: string
+  sortOrder: number
+  items: FavoriteEntryDto[]
+}
+
 export interface FavoriteEntryDto {
   id: string
   itemId: string
   source: 'library' | 'rss'
+  groupId: string
   createdAt: string
   item: {
     id: string
@@ -115,41 +123,61 @@ export class LibraryService {
     return rows.map((r) => this.rowToItem(libDb, r))
   }
 
-  listFavoriteEntries(): FavoriteEntryDto[] {
-    const rows = this.db.listFavorites() as Array<{
-      id: string
-      item_id: string
-      source: string
-      created_at: string
-    }>
+  private mapFavoriteRow(row: {
+    id: string
+    item_id: string
+    source: string
+    group_id: string
+    created_at: string
+  }): FavoriteEntryDto {
+    const source = row.source === 'rss' ? 'rss' : 'library'
+    let item: FavoriteEntryDto['item'] = null
 
-    return rows.map((row) => {
-      const source = row.source === 'rss' ? 'rss' : 'library'
-      let item: FavoriteEntryDto['item'] = null
-
-      if (source === 'library') {
-        const full = this.getItem(row.item_id)
-        if (full) {
-          item = {
-            id: full.id,
-            name: full.name,
-            summary: full.summary,
-            coverPath: full.coverPath,
-            categoryId: full.categoryId,
-            subCategoryName: full.subCategoryName ?? null,
-            source: 'library'
-          }
+    if (source === 'library') {
+      const full = this.getItem(row.item_id)
+      if (full) {
+        item = {
+          id: full.id,
+          name: full.name,
+          summary: full.summary,
+          coverPath: full.coverPath,
+          categoryId: full.categoryId,
+          subCategoryName: full.subCategoryName ?? null,
+          source: 'library'
         }
       }
+    }
 
-      return {
-        id: row.id,
-        itemId: row.item_id,
-        source,
-        createdAt: row.created_at,
-        item
-      }
-    })
+    return {
+      id: row.id,
+      itemId: row.item_id,
+      source,
+      groupId: row.group_id,
+      createdAt: row.created_at,
+      item
+    }
+  }
+
+  listFavoriteEntries(): FavoriteEntryDto[] {
+    return this.db.listFavorites().map((row) => this.mapFavoriteRow(row))
+  }
+
+  listFavoriteGroups(): FavoriteGroupDto[] {
+    const groups = this.db.listFavoriteGroups()
+    const entries = this.listFavoriteEntries()
+    const byGroup = new Map<string, FavoriteEntryDto[]>()
+    for (const g of groups) byGroup.set(g.id, [])
+    for (const entry of entries) {
+      const list = byGroup.get(entry.groupId) ?? []
+      list.push(entry)
+      byGroup.set(entry.groupId, list)
+    }
+    return groups.map((g) => ({
+      id: g.id,
+      name: g.name,
+      sortOrder: g.sort_order,
+      items: byGroup.get(g.id) ?? []
+    }))
   }
 
   getItem(id: string): ItemDto | null {

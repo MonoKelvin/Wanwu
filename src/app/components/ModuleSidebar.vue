@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'
 import { MODULE_NAV_ITEMS } from '@app/config/module-nav'
 import WwIcon from '@shared/components/WwIcon.vue'
+import { APP_LOGO_NAV } from '@shared/assets/app-logo'
 import type { ModuleId } from '@shared/stores/app'
 
 const router = useRouter()
@@ -36,7 +37,13 @@ function isActive(id: ModuleId) {
   >
     <div class="ww-module-nav__inner ww-chrome-safe">
       <div v-if="settings.navAlign === 'start'" class="ww-module-nav__brand" aria-hidden="true">
-        <span class="ww-module-nav__brand-mark">万</span>
+        <img
+          class="ww-module-nav__brand-mark"
+          :src="APP_LOGO_NAV"
+          width="32"
+          height="32"
+          alt=""
+        />
         <span class="ww-module-nav__brand-text">万物</span>
       </div>
 

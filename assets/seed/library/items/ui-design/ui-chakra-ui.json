@@ -1,0 +1,33 @@
+{
+  "id": "0894ce2b-eefb-4b43-bd3f-7714be2a912e",
+  "slug": "ui-chakra-ui",
+  "subCategoryId": "ui-web",
+  "name": "Chakra UI",
+  "summary": "可访问性友好的 React 组件库，主题灵活。",
+  "description": "Chakra UI代表 Web 端组件方向，常用技术栈包括React。现代网页强调性能（Core Web Vitals）、可访问性与设计系统一致性。\n\n从着陆页到复杂 Dashboard，需平衡信息密度与视觉层级。\n\n**实现要点**：React，语义 HTML，响应式\n\n**相关**：与 Tailwind、组件库、设计 Token 工作流紧密相关",
+  "tags": [
+    "Web",
+    "UI",
+    "React",
+    "组件"
+  ],
+  "specs": {
+    "分类": "Web UI",
+    "技术": "React",
+    "重点": "组件",
+    "交付": "设计 + 前端",
+    "趋势": "Server Components",
+    "工具": "Figma / Storybook"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Chakra UI Web",
+    "matchTags": [
+      "Web",
+      "UI",
+      "React",
+      "chakra",
+      "ui"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "ef2aa01b-6b02-450e-bc8b-c0eeef96fde0",
+  "slug": "tf-blackout",
+  "subCategoryId": "tf-decepticon",
+  "name": "眩晕 Blackout",
+  "summary": "直升机变形，电影版首个登场霸天虎。",
+  "description": "眩晕 Blackout为霸天虎（Decepticon）阵营成员，追求征服赛博坦与地球资源。变形形态常为直升机，职能偏向突袭。\n\n与汽车人长期战争，威震天（及惊破天）为领袖；红蜘蛛等角色以背叛与阴谋著称。\n\n**变形形态**：直升机\n\n**相关**：合体金刚、磁带战士为经典子系列；电影与 G1 设定有差异",
+  "tags": [
+    "霸天虎",
+    "反派",
+    "变形",
+    "突袭"
+  ],
+  "specs": {
+    "分类": "霸天虎 Decepticon",
+    "阵营": "霸天虎",
+    "变形": "直升机",
+    "角色": "突袭",
+    "领袖": "威震天 / 惊破天",
+    "特点": "突袭"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "helicopter transformer toy",
+    "matchTags": [
+      "helicopter",
+      "transformer"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "6d5cbf33-060b-4df4-9c99-203bb0890d50",
+  "slug": "anime-attack-on-titan",
+  "subCategoryId": "anime-fantasy",
+  "name": "进击的巨人 Attack on Titan",
+  "summary": "谏山创作品，人类生活在三重城墙内抵御巨人，艾伦·耶格尔追寻自由与真相。",
+  "description": "《进击的巨人》（進撃の巨人）2009–2021 年连载，作者谏山创。人类被三道城墙包围，墙外有食人巨人。艾伦·耶格尔获巨人之力后加入调查兵团，逐步揭开墙内王室、艾尔迪亚与马莱的民族史。\n\n以黑暗叙事、政治隐喻与反转著称。动画由 WIT Studio（前三季）与 MAPPA（最终季）制作。\n\n**相关**：全球现象级作品；结局引发广泛讨论；与《钢之炼金术师》等并列讨论「史诗级长篇」。",
+  "tags": [
+    "巨人",
+    "调查兵团",
+    "谏山创",
+    "黑暗奇幻"
+  ],
+  "specs": {
+    "分类": "奇幻冒险",
+    "作者": "谏山创",
+    "连载": "2009–2021",
+    "动画": "WIT / MAPPA",
+    "主角": "艾伦·耶格尔",
+    "主题": "自由、战争、历史"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "attack on titan cosplay survey corps",
+    "category": "people",
+    "matchTags": [
+      "attack",
+      "titan"
+    ]
+  }
+}

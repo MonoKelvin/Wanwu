@@ -1,0 +1,31 @@
+{
+  "id": "1afa5f76-670d-404d-ac38-33a31eb9c190",
+  "slug": "supercar-lamborghini-revuelto",
+  "subCategoryId": "car-italy",
+  "name": "兰博基尼 Revuelto",
+  "summary": "首款量产混动 V12，三电机配合 LB744 平台，性能与排放平衡。",
+  "description": "兰博基尼 Revuelto代表意大利Lamborghini在超跑领域的工程与美学结晶，2023 年前后发布，搭载6.5L V12 + 三电机，综合输出约 1015 hp。车身空气动力学与碳纤/铝混合结构为赛道与公路兼顾。\n\n意大利超跑以声浪、造型与驾驶参与感著称，Lamborghini在 F1 与民用车技术转化上历史悠久。\n\n**性能要点**：6.5L V12 + 三电机，约 约 1015 hp，中置或前置布局因车型而异\n\n**相关**：接替 Aventador；与同级法拉利、兰博基尼、玛莎拉蒂形成「意式性能三角」",
+  "tags": [
+    "意大利",
+    "Lamborghini",
+    "超跑",
+    "V8/V12"
+  ],
+  "specs": {
+    "分类": "意大利品牌",
+    "厂商": "Lamborghini",
+    "上市": "2023",
+    "发动机": "6.5L V12 + 三电机",
+    "功率": "约 1015 hp",
+    "总部": "意大利",
+    "备注": "接替 Aventador"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "lamborghini hybrid supercar",
+    "matchTags": [
+      "lamborghini",
+      "car"
+    ]
+  }
+}

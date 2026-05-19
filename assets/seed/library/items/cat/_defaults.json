@@ -1,0 +1,9 @@
+{
+  "media": {
+    "provider": "pixabay",
+    "category": "animals",
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

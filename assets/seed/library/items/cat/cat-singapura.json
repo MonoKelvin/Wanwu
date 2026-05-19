@@ -1,0 +1,34 @@
+{
+  "id": "13fdabe9-865f-4ec7-91c0-89a2651eed09",
+  "slug": "cat-singapura",
+  "subCategoryId": "cat-china",
+  "name": "新加坡猫 Singapura",
+  "summary": "世界最小猫品种之一，褐 ticked 短毛、大耳大眼，性格好奇亲人。",
+  "description": "新加坡猫（Singapura）名字源自新加坡，但现代血统在美国确立。体型为家猫最小之一，被毛短、sepia/agouti ticked 纹。耳大、眼大而圆。\n\n性格好奇、亲人、爱高处。适合公寓但需游戏丰富。TICA、CFA 认可。\n\n**相关**：与阿比西尼亚 ticked 毛色有视觉相似；「下水道猫」起源故事流传但存争议。",
+  "tags": [
+    "小型",
+    "短毛",
+    "东南亚",
+    "ticked"
+  ],
+  "specs": {
+    "分类": "中国品种（东亚）",
+    "关联地": "新加坡",
+    "体重": "1.8–3.6 kg",
+    "寿命": "11–15 年",
+    "特点": "体型最小之一",
+    "性格": "好奇、亲人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "singapura cat small",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "singapura"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

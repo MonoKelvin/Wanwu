@@ -1,0 +1,27 @@
+{
+  "id": "dfcda546-af51-4dda-ac1c-0810012d8078",
+  "slug": "hero-scarlet-witch",
+  "subCategoryId": "hero-marvel",
+  "name": "猩红女巫 Scarlet Witch",
+  "summary": "旺达·马克西莫夫，混沌魔法改写现实。",
+  "description": "猩红女巫 1964 年登场，混沌魔法可改写现实。MCU《旺达幻视》《奇异博士2》探索 grief 与威胁。\n\n伊丽莎白·奥尔森主演。\n\n**能力要点**：混沌魔法、现实改写\n\n**相关作品**：《旺达幻视》",
+  "tags": [
+    "漫威",
+    "混沌魔法",
+    "旺达"
+  ],
+  "specs": {
+    "宇宙": "漫威 Marvel",
+    "首次登场": "1964",
+    "本名": "旺达·马克西莫夫",
+    "MCU饰演": "伊丽莎白·奥尔森"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "scarlet witch cosplay marvel",
+    "matchTags": [
+      "witch",
+      "marvel"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "c29f9013-3ab4-4ab3-9d48-df48b2932fe2",
+  "slug": "hero-tmnt-leonardo",
+  "subCategoryId": "hero-other",
+  "name": "忍者神龟 Leonardo",
+  "summary": "四龟之首，双刀忍者，纽约下水道英雄与披萨文化符号。",
+  "description": "忍者神龟（TMNT）1984 年独立漫画，莱昂纳多（Leonardo）为戴蓝眼罩、双刀队长，性格严谨。与拉斐尔、米开朗基罗、多纳泰罗共战施莱德。\n\n**文化**：动画、电影、玩具横跨数十年流行文化。\n\n**设定要点**：忍术、双刀、团队领袖",
+  "tags": [
+    "TMNT",
+    "忍者",
+    "乌龟",
+    "纽约"
+  ],
+  "specs": {
+    "首次登场": "1984",
+    "创作者": "Eastman / Laird",
+    "角色": "莱昂纳多",
+    "武器": "双刀",
+    "宿敌": "施莱德",
+    "文化": "披萨与滑板"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "teenage mutant ninja turtles cosplay",
+    "matchTags": [
+      "tmnt",
+      "turtle"
+    ]
+  }
+}

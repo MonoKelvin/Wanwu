@@ -1,0 +1,34 @@
+{
+  "id": "d2953845-450c-482c-bf5a-8b4b04e1650e",
+  "slug": "dog-miniature-schnauzer",
+  "subCategoryId": "dog-europe",
+  "name": "迷你雪纳瑞",
+  "summary": "德国梗犬小型版，胡须眉造型，不掉毛，警觉亲人，城市流行。",
+  "description": "迷你雪纳瑞（Miniature Schnauzer）为德国雪纳瑞（标准）缩小选育，非古老玩具犬。硬毛需修剪，典型眉须造型。\n\n性格警觉、亲人，适合公寓与看家。注意胰腺炎等品种倾向。与标准、巨型雪纳瑞为同系不同体型。\n\n**相关**：与苏格兰梗、西高地等同为刚毛梗组；全球流行小型犬之一。",
+  "tags": [
+    "雪纳瑞",
+    "德国",
+    "梗犬",
+    "小型"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "德国",
+    "体重": "5–9 kg",
+    "寿命": "12–15 年",
+    "被毛": "硬毛需修剪",
+    "性格": "警觉、聪明、亲人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "miniature schnauzer dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "schnauzer"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

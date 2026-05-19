@@ -1,0 +1,34 @@
+{
+  "id": "9b1dac93-e4d7-4b51-ad68-e5d13a6f91bd",
+  "slug": "cat-selkirk-rex",
+  "subCategoryId": "cat-americas",
+  "name": "塞尔凯克卷毛猫 Selkirk Rex",
+  "summary": "美国蒙大拿卷毛突变，被毛蓬松卷曲，性格悠闲亲人，有长毛短毛型。",
+  "description": "塞尔凯克卷毛猫（Selkirk Rex）1987 年在蒙大拿避难所出生，rex 基因为显性。被毛蓬松「羊毛卷」，胡须亦卷。体型壮实、圆脸。\n\n性格悠闲、容忍度高，适合多猫家庭。与德文、康沃尔卷毛基因不同。\n\n**相关**：是唯一源自美国的 rex 品种；有「羊猫」昵称。",
+  "tags": [
+    "卷毛",
+    "蓬松",
+    "美洲",
+    "悠闲"
+  ],
+  "specs": {
+    "分类": "美洲品种",
+    "原产地": "美国蒙大拿",
+    "体重": "3–7 kg",
+    "寿命": "10–15 年",
+    "被毛": "蓬松卷毛",
+    "性格": "悠闲、亲人、容忍"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "selkirk rex curly cat",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "rex"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

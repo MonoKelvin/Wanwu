@@ -1,0 +1,31 @@
+{
+  "id": "b5fb57b0-2b2c-4692-9c18-782f4ded767e",
+  "slug": "plant-echeveria",
+  "subCategoryId": "plant-succulent",
+  "name": "拟石莲 Echeveria",
+  "summary": "景天科多肉代表属，莲座状叶片、耐旱，品种繁多，易叶插繁殖。",
+  "description": "拟石莲属（Echeveria）含数百园艺品种，原产墨西哥至中美洲干旱区。叶片肉质排列成莲座，花色从绿、粉到紫红。春末可开钟状小花。\n\n**栽培**：全日照至半日照、颗粒土、「干透浇透」、夏季通风遮烈日。叶插繁殖极易成功。常见品种如「黑王子」「白牡丹」「月影」等。\n\n**相关**：与景天、长生草属常混称「肉肉」；是多肉入坑首选属。",
+  "tags": [
+    "多肉",
+    "景天科",
+    "耐旱",
+    "莲座"
+  ],
+  "specs": {
+    "分类": "多肉与仙人掌",
+    "科属": "景天科 · 拟石莲属",
+    "原产地": "墨西哥及中美",
+    "繁殖": "叶插、分株",
+    "浇水": "干透浇透",
+    "光照": "全日照–半日照"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "echeveria succulent",
+    "category": "nature",
+    "matchTags": [
+      "echeveria",
+      "succulent"
+    ]
+  }
+}

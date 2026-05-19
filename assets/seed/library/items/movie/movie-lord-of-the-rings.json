@@ -1,0 +1,30 @@
+{
+  "id": "a1698b03-3721-47b4-976f-f1dfd4676e99",
+  "slug": "movie-lord-of-the-rings",
+  "subCategoryId": "movie-fantasy",
+  "name": "指环王 The Lord of the Rings",
+  "summary": "彼得·杰克逊中土世界三部曲，魔戒远征史诗。",
+  "description": "指环王 The Lord of the Rings构建史诗奇幻叙事宇宙，2001–03 年间以美术、服装与配乐塑造异世界沉浸感。奇幻电影常借用神话、民间传说与魔法规则探讨善恶、成长与生态。\n\n与科幻不同，奇幻较少依赖科学解释而重象征与寓言。\n\n**世界观**：史诗奇幻\n\n**相关**：与原著小说、游戏联动形成跨媒体宇宙",
+  "tags": [
+    "奇幻",
+    "电影",
+    "史诗奇幻",
+    "史诗"
+  ],
+  "specs": {
+    "分类": "奇幻电影",
+    "年份": "2001–03",
+    "导演": "杰克逊",
+    "类型": "史诗奇幻",
+    "改编": "文学 / 原创",
+    "受众": "全年龄至成人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "lord of the rings fantasy landscape",
+    "matchTags": [
+      "fantasy",
+      "mountain"
+    ]
+  }
+}

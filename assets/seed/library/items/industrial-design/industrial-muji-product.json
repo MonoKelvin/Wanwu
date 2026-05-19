@@ -1,0 +1,30 @@
+{
+  "id": "0b359398-098b-4a49-ab2a-a464035b7e45",
+  "slug": "industrial-muji-product",
+  "subCategoryId": "id-product",
+  "name": "无印良品",
+  "summary": "无品牌优质素材哲学，收纳与生活杂货。",
+  "description": "无印良品由MUJI推出，属生活领域工业设计典范，1980 年间影响用户习惯与行业标准。造型、人机工程与材料工艺共同定义产品识别度。\n\n设计史课程常将其与 Dieter Rams、Jony Ive 等人物及方法论关联讨论。\n\n**设计原则**：功能、可用性、美学与成本平衡\n\n**相关**：与包豪斯、现代主义、极简主义设计运动一脉相承",
+  "tags": [
+    "工业设计",
+    "MUJI",
+    "生活",
+    "经典"
+  ],
+  "specs": {
+    "分类": "产品设计",
+    "品牌": "MUJI",
+    "类型": "生活",
+    "时期": "1980",
+    "领域": "消费科技",
+    "影响": "行业标杆"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "muji minimal product design",
+    "matchTags": [
+      "muji",
+      "minimal"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "a7fed22d-3be3-48ae-9a64-2a4cd692b4c0",
+  "slug": "interior-minka",
+  "subCategoryId": "int-zen",
+  "name": "民家",
+  "summary": "茅草屋顶与粗大梁的传统农家建筑室内。",
+  "description": "民家源于日本民家传统，强调人与自然的乡土关系。材料多用竹、木、石与和纸，色调偏大地色系，减少视觉噪音以利冥想。\n\n现代都市住宅常将禅意元素局部化，如枯山水阳台或榻榻米角落。\n\n**营造要点**：民家，自然材质，留白与秩序\n\n**相关**：与北欧极简、中式园林可对话融合",
+  "tags": [
+    "日式",
+    "禅意",
+    "民家",
+    "乡土"
+  ],
+  "specs": {
+    "分类": "日式禅意",
+    "元素": "民家",
+    "空间": "乡土",
+    "材质": "木、竹、石、纸",
+    "原则": "留白、自然",
+    "场景": "茶、宿、庭"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "traditional japanese house interior",
+    "matchTags": [
+      "japanese",
+      "house"
+    ],
+    "minMatchScore": 0
+  }
+}

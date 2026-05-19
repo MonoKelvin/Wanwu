@@ -1,0 +1,30 @@
+{
+  "id": "3d168984-24c1-4afd-9bc1-d7fba9140728",
+  "slug": "hero-kick-ass",
+  "subCategoryId": "hero-other",
+  "name": "海扁王 Kick-Ass",
+  "summary": "无超能力少年穿制服打击犯罪引发模仿者。",
+  "description": "《海扁王》（Kick-Ass）2008 年漫画，戴夫·利泽夫斯基无能力却穿绿色制服，被揍后引发网络效应，超杀女与大老爹加入。\n\n**风格**：写实暴力与 Meta 吐槽超级英雄电影套路。\n\n**设定要点**：无超能力、棍棒格斗、网络成名",
+  "tags": [
+    "马克米勒",
+    "写实",
+    "喜剧",
+    "暴力"
+  ],
+  "specs": {
+    "作者": "Mark Millar",
+    "首次登场": "2008",
+    "主角": "戴夫·利泽夫斯基",
+    "搭档": "超杀女",
+    "电影": "马修·沃恩",
+    "主题": "现实英雄"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "kick ass superhero costume",
+    "matchTags": [
+      "superhero",
+      "costume"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "a0ce7b3a-7ece-48ad-85c9-535d0a965a6b",
+  "slug": "movie-studio-ghibli",
+  "subCategoryId": "movie-fantasy",
+  "name": "吉卜力动画电影",
+  "summary": "宫崎骏与高畑勋手绘奇幻，自然与人类共存。",
+  "description": "吉卜力动画电影构建动画奇幻叙事宇宙，1985– 年间以美术、服装与配乐塑造异世界沉浸感。奇幻电影常借用神话、民间传说与魔法规则探讨善恶、成长与生态。\n\n与科幻不同，奇幻较少依赖科学解释而重象征与寓言。\n\n**世界观**：动画奇幻\n\n**相关**：与原著小说、游戏联动形成跨媒体宇宙",
+  "tags": [
+    "奇幻",
+    "电影",
+    "动画奇幻",
+    "史诗"
+  ],
+  "specs": {
+    "分类": "奇幻电影",
+    "年份": "1985–",
+    "导演": "吉卜力",
+    "类型": "动画奇幻",
+    "改编": "文学 / 原创",
+    "受众": "全年龄至成人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "ghibli anime landscape clouds",
+    "matchTags": [
+      "ghibli",
+      "landscape"
+    ]
+  }
+}

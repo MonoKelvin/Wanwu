@@ -1,0 +1,33 @@
+{
+  "id": "caceb76e-c96d-4570-b3ce-2abb061ad100",
+  "slug": "moto-aprilia-shiver",
+  "subCategoryId": "moto-italy",
+  "name": "阿普利亚 Shiver 900",
+  "summary": "街车 V 双缸，城市运动骑行。",
+  "description": "阿普利亚 Shiver 900代表意大利Aprilia在摩托车工程与造型上的传统：900 V 双缸动力、精细底盘与独特排气声浪。意大利品牌常参与 MotoGP 并将赛事技术转化至民用车。\n\n博洛尼亚、瓦雷泽等产地汇聚杜卡迪、阿普利亚、MV Agusta 等名厂，以设计驱动品牌溢价。\n\n**骑行要点**：900 V 双缸，街车，弯道精准\n\n**相关**：与日系仿赛对比更重风格与电子套件差异",
+  "tags": [
+    "意大利",
+    "Aprilia",
+    "摩托",
+    "仿赛"
+  ],
+  "specs": {
+    "分类": "意大利品牌",
+    "厂商": "Aprilia",
+    "发动机": "900 V 双缸",
+    "功率": "街车",
+    "总部": "意大利",
+    "文化": "MotoGP 血统"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "阿普利亚 Shiver 900 意大利",
+    "matchTags": [
+      "意大利",
+      "Aprilia",
+      "摩托",
+      "aprilia",
+      "shiver"
+    ]
+  }
+}

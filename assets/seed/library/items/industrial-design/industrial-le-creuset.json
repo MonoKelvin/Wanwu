@@ -1,0 +1,30 @@
+{
+  "id": "f109979b-a2a4-466d-8cc7-1a36864d9ece",
+  "slug": "industrial-le-creuset",
+  "subCategoryId": "id-home",
+  "name": "Le Creuset 珐琅锅",
+  "summary": "法式铸铁彩色珐琅锅，厨房色彩点缀。",
+  "description": "Le Creuset 珐琅锅为Le Creuset厨具代表产品，1925 起进入家庭场景。家居工业设计关注日常使用频率、清洁便利与空间融合。\n\n经典单品常成为租屋与样板间标配，二手市场保值反映设计持久魅力。\n\n**使用场景**：厨具，耐用性，清洁与收纳\n\n**相关**：与北欧家装、厨房开放动线趋势协同",
+  "tags": [
+    "家居",
+    "Le Creuset",
+    "厨具",
+    "设计"
+  ],
+  "specs": {
+    "分类": "家居产品设计",
+    "品牌": "Le Creuset",
+    "类型": "厨具",
+    "时期": "1925",
+    "场景": "家庭",
+    "特点": "功能与美学"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cast iron dutch oven kitchen",
+    "matchTags": [
+      "cast iron",
+      "kitchen"
+    ]
+  }
+}

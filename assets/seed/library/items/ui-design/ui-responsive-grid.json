@@ -1,0 +1,33 @@
+{
+  "id": "5bc7fb83-2eec-4809-b80a-da4187d49d11",
+  "slug": "ui-responsive-grid",
+  "subCategoryId": "ui-web",
+  "name": "响应式栅格",
+  "summary": "断点、流式布局与容器查询现代 CSS。",
+  "description": "响应式栅格代表 Web 端布局方向，常用技术栈包括CSS Grid。现代网页强调性能（Core Web Vitals）、可访问性与设计系统一致性。\n\n从着陆页到复杂 Dashboard，需平衡信息密度与视觉层级。\n\n**实现要点**：CSS Grid，语义 HTML，响应式\n\n**相关**：与 Tailwind、组件库、设计 Token 工作流紧密相关",
+  "tags": [
+    "Web",
+    "UI",
+    "CSS Grid",
+    "布局"
+  ],
+  "specs": {
+    "分类": "Web UI",
+    "技术": "CSS Grid",
+    "重点": "布局",
+    "交付": "设计 + 前端",
+    "趋势": "Server Components",
+    "工具": "Figma / Storybook"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "响应式栅格 Web",
+    "matchTags": [
+      "Web",
+      "UI",
+      "CSS Grid",
+      "responsive",
+      "grid"
+    ]
+  }
+}

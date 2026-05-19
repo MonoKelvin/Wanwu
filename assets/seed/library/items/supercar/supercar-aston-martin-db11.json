@@ -1,0 +1,31 @@
+{
+  "id": "efb08cef-8ab3-4d57-bad5-63f61260739e",
+  "slug": "supercar-aston-martin-db11",
+  "subCategoryId": "car-britain",
+  "name": "阿斯顿·马丁 DB11",
+  "summary": "英伦 GT 旗舰，V12 与 V8 传承詹姆斯·邦德气质。",
+  "description": "阿斯顿·马丁 DB11承载英国Aston Martin在轻量化、空气动力学或奢华手工方面的传统，2016 年代表英伦跑车从经典 GT 到现代混动/纯电的演进。\n\n英国超跑品牌常具小规模量产、赛车血统与定制服务特色，在古德伍德、银石等赛车文化中孕育。\n\n**性能要点**：5.2L V12 / 4.0 V8，约 630 hp\n\n**相关**：与迈凯伦、阿斯顿·马丁、宾利等构成英国性能车谱系",
+  "tags": [
+    "英国",
+    "Aston Martin",
+    "超跑",
+    "GT"
+  ],
+  "specs": {
+    "分类": "英国品牌",
+    "厂商": "Aston Martin",
+    "上市": "2016",
+    "发动机": "5.2L V12 / 4.0 V8",
+    "功率": "约 630 hp",
+    "总部": "英国",
+    "传统": "赛车血统"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "aston martin db11",
+    "matchTags": [
+      "aston",
+      "martin"
+    ]
+  }
+}

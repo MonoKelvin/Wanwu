@@ -94,26 +94,23 @@ src/
   features/item/          条目卡片、详情、配图归属展示
   shared/                 公共类型与状态
 assets/
-  seed/library/           全库 catalog.json、media.json（条目与配图策略）
+  seed/library/items/     全库条目源数据（按分类目录，每物品一个 JSON）
+  seed/library/           categories.json；构建产物 catalog.json、media.json
   library/                全库配图文件（按 分类/slug/ 存放）
-scripts/                  种子脚本、Node 版本检查等
+scripts/                  开发检查、全库种子（见 scripts/library/）
 doc/                      需求与设计文档
 ```
 
 主进程在启动时读取 `assets/seed/library/catalog.json`，将全库条目同步到各分类的 `library_*.sqlite`。
 
-### 维护全库配图
+### 维护全库数据与配图
 
-需要更新或扩充全库图片时：
+详见 [assets/seed/library/README.md](assets/seed/library/README.md) 与 [scripts/library/README.md](scripts/library/README.md)。
 
-1. 复制 `.env.example` 为 `.env`，配置 `PIXABAY_API_KEY`（[申请地址](https://pixabay.com/api/docs/)）。
-2. 按需修改 `assets/seed/library/media.json`（条目 slug、搜索词、来源类型等）。
-3. 运行 `npm run seed:library`；若要覆盖已有 JPG，追加参数 `-- --force`。
-4. 重启应用使数据库重新导入；或执行 `npm run seed:library:reimport`。
-
-其他脚本：`seed:library:audit` 检查缺图；`seed:import` 输出种子数据说明。条目正文在 `catalog.json` 中维护。
-
-手动配图：在 `assets/library/{categoryId}/{slug}/` 放置 `cover.jpg` 与 `gallery-01.jpg`～`gallery-03.jpg`，并在 `media.json` 中将该 slug 的 `provider` 设为 `manual`。
+1. 编辑 `assets/seed/library/items/{分类}/{slug}.json`（条目正文、搜索词、`retryQuery` 等）。
+2. `npm run seed:library -- build` 生成 `catalog.json` / `media.json`。
+3. 配置 `.env` 中 `PIXABAY_API_KEY` 后执行 `npm run seed:library -- media`（加 `-- --force` 覆盖配图）。
+4. `npm run seed:library:reimport` 或重启应用写入数据库。
 
 ### 环境变量
 

@@ -1,0 +1,34 @@
+{
+  "id": "c42fb55c-e076-44d9-a829-b1fc73db61d0",
+  "slug": "dog-siberian-husky",
+  "subCategoryId": "dog-asia",
+  "name": "西伯利亚哈士奇",
+  "summary": "西伯利亚雪橇犬，蓝眼或异色眼常见，精力旺盛，中等体型。",
+  "description": "西伯利亚哈士奇（Siberian Husky）由楚科奇人培育用于轻量快 sled。双层毛、常蓝眼或异色眼。性格友善，不适合护卫。\n\n运动需求极高，易拆家若无聊。注意散热。1925 年血清奔跑（Nome）闻名。\n\n**相关**：与阿拉斯加马拉穆特、萨摩耶对比；狼血统外观争议。",
+  "tags": [
+    "雪橇犬",
+    "西伯利亚",
+    "蓝眼",
+    "运动型"
+  ],
+  "specs": {
+    "分类": "亚洲犬种",
+    "原产地": "西伯利亚",
+    "体重": "16–27 kg",
+    "寿命": "12–14 年",
+    "特征": "蓝/异色眼常见",
+    "性格": "友善、精力充沛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "siberian husky dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "husky"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "85310e15-a52c-48bf-9b76-2d11b283991c",
+  "slug": "illustration-picasso-guernica",
+  "subCategoryId": "ill-classic",
+  "name": "格尔尼卡 Guernica",
+  "summary": "毕加索 1937 年反战黑白巨作。",
+  "description": "格尔尼卡 Guernica由毕加索创作，属立体主义重要作品，约1937年。作品在艺术史教材、博物馆常设展与流行文化引用中反复出现。\n\n古典绘画技法、颜料介质与历史语境构成鉴赏基础，数字复制品亦广泛用于艺术教育。\n\n**艺术史**：立体主义，毕加索，1937\n\n**相关**：与同期流派画家并列研究；博物馆巡展常借展",
+  "tags": [
+    "艺术史",
+    "立体主义",
+    "毕加索",
+    "名画"
+  ],
+  "specs": {
+    "分类": "古典绘画",
+    "艺术家": "毕加索",
+    "流派": "立体主义",
+    "年代": "1937",
+    "媒介": "油画 / 版画等",
+    "收藏": "全球主要博物馆"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cubism abstract art painting",
+    "matchTags": [
+      "cubism",
+      "painting"
+    ]
+  }
+}

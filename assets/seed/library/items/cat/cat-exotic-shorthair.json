@@ -1,0 +1,35 @@
+{
+  "id": "1942a67b-2c99-4d35-ae86-3d0a0b84c2ba",
+  "slug": "cat-exotic-shorthair",
+  "subCategoryId": "cat-europe",
+  "name": "异国短毛猫 Exotic Shorthair",
+  "summary": "波斯型扁脸短毛，被毛浓密易打理，性格安静，称「懒人波斯」。",
+  "description": "异国短毛猫（Exotic Shorthair）1960 年代在美国以波斯猫与美国短毛猫等杂交选育，保留波斯扁脸与体型、被毛改为短密。性格通常安静、喜室内。\n\n**面部护理同波斯**：泪痕、呼吸需注意。毛色体系与波斯平行。CFA 中属波斯系分支。\n\n**相关**：与波斯猫为「长毛/短毛」配对；与金吉拉、喜马拉雅有色系交叉。",
+  "tags": [
+    "短毛",
+    "扁脸",
+    "波斯型",
+    "室内猫"
+  ],
+  "specs": {
+    "分类": "欧洲品种",
+    "育成地": "美国",
+    "体重": "3–6 kg",
+    "寿命": "12–15 年",
+    "被毛": "短而密",
+    "性格": "安静、温和",
+    "关联": "波斯猫短毛版"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "exotic shorthair cat flat face",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "persian"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

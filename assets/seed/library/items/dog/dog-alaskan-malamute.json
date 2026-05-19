@@ -1,0 +1,34 @@
+{
+  "id": "dfa2ee0b-d476-4f85-9036-84deaada3eac",
+  "slug": "dog-alaskan-malamute",
+  "subCategoryId": "dog-americas",
+  "name": "阿拉斯加雪橇犬",
+  "summary": "北极拉橇大型犬，厚毛、力量型，与哈士奇相比体型更大更慢。",
+  "description": "阿拉斯加雪橇犬（Alaskan Malamute）由阿拉斯加因纽特人培育用于拉重物雪橇。体型比西伯利亚哈士奇大，性格更沉稳。\n\n需寒冷气候与大量运动，不适合热带。有群吠倾向。注意髋关节与甲状腺。\n\n**相关**：与哈士奇、萨摩耶为「雪橇三兄弟」；电影《南极大冒险》形象。",
+  "tags": [
+    "雪橇犬",
+    "阿拉斯加",
+    "大型",
+    "厚毛"
+  ],
+  "specs": {
+    "分类": "美洲犬种",
+    "原产地": "美国阿拉斯加",
+    "体重": "34–45 kg",
+    "寿命": "10–14 年",
+    "用途": "拉橇重物",
+    "性格": "友善、独立、力量"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "alaskan malamute dog",
+    "category": "animals",
+    "matchTags": [
+      "dog",
+      "malamute"
+    ],
+    "requiredTags": [
+      "dog"
+    ]
+  }
+}

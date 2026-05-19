@@ -1,0 +1,34 @@
+{
+  "id": "9254b2e2-6815-4aba-afaa-381553789099",
+  "slug": "cat-laperm",
+  "subCategoryId": "cat-americas",
+  "name": "拉邦猫 LaPerm",
+  "summary": "俄勒冈卷毛突变，被毛卷曲可变化，性格粘人好奇，掉毛相对较少。",
+  "description": "拉邦猫（LaPerm）1982 年在俄勒冈农场发现，幼猫可秃后长出卷毛。被毛卷曲度随个体与季节变化。体型中等、耳竖。\n\n性格亲人、常跟随主人。有短毛与长毛表现。hypoallergenic 说法无充分证据但掉毛可能较少。\n\n**相关**：与塞尔凯克、德文卷毛同属 rex 家族；名字来自 perm（烫发）。",
+  "tags": [
+    "卷毛",
+    "美洲",
+    "粘人",
+    "农场起源"
+  ],
+  "specs": {
+    "分类": "美洲品种",
+    "原产地": "美国俄勒冈",
+    "体重": "2.5–5.5 kg",
+    "寿命": "10–15 年",
+    "被毛": "卷曲可变",
+    "性格": "粘人、好奇"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "curly cat laperm",
+    "category": "animals",
+    "matchTags": [
+      "cat",
+      "curly"
+    ],
+    "requiredTags": [
+      "cat"
+    ]
+  }
+}

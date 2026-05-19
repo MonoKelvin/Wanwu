@@ -1,0 +1,30 @@
+{
+  "id": "c1a0b0c7-52ec-469d-a046-03dd021e7c9c",
+  "slug": "hero-shazam-dc",
+  "subCategoryId": "hero-dc",
+  "name": "沙赞 Shazam",
+  "summary": "少年比利·巴特森念「沙赞」变身六神之力成年英雄，魔法与童趣并存。",
+  "description": "沙赞（Shazam）原名 Captain Marvel，1939 年 Fawcett 出版，后归 DC。比利·巴特森为孤儿，巫师沙赞赐予咒语召唤宙斯等六神之力变身。\n\n**影视**：2019 电影以家庭喜剧风格呈现，与《黑亚当》共享世界观。\n\n**能力要点**：六神之力、雷电、飞行、魔法抗性",
+  "tags": [
+    "DC",
+    "魔法",
+    "少年",
+    "沙赞"
+  ],
+  "specs": {
+    "宇宙": "DC 漫画",
+    "首次登场": "1939",
+    "咒语": "Shazam",
+    "本名": "比利·巴特森",
+    "特点": "少年变身",
+    "电影": "2019《沙赞！》"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "shazam dc cosplay",
+    "matchTags": [
+      "shazam",
+      "dc"
+    ]
+  }
+}

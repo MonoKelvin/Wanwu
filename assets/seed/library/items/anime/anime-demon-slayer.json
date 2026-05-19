@@ -1,0 +1,31 @@
+{
+  "id": "ba213043-fcdf-4b83-8e6e-c33c3e95c7e1",
+  "slug": "anime-demon-slayer",
+  "subCategoryId": "anime-shonen",
+  "name": "鬼灭之刃 Kimetsu no Yaiba",
+  "summary": "吾峠呼世晴作品，炭治郎为救妹祢豆子加入鬼杀队斩鬼的 Taishō 时代故事。",
+  "description": "《鬼灭之刃》2016–2020 年连载，作者吾峠呼世晴。灶门炭治郎全家遭鬼袭击，妹祢豆子变为鬼但保留人性，炭治郎拜鳞泷左近次为师加入鬼杀队，使用水之呼吸（后觉醒了日之呼吸）。\n\n动画由 ufotable 制作，电影《无限列车篇》创日本影史票房纪录。风格以 Taishō 浪漫与精美战斗分镜著称。\n\n**相关**：呼吸法设定影响同人创作；与《咒术回战》等为 Jump 新一代热门作。",
+  "tags": [
+    "鬼杀队",
+    "Jump",
+    "ufotable",
+    "大正"
+  ],
+  "specs": {
+    "分类": "少年热血",
+    "作者": "吾峠呼世晴",
+    "连载": "2016–2020",
+    "动画": "ufotable",
+    "主角": "灶门炭治郎",
+    "名场面": "无限列车篇"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "demon slayer anime cosplay",
+    "category": "people",
+    "matchTags": [
+      "demon",
+      "slayer"
+    ]
+  }
+}
