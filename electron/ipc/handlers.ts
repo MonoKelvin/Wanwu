@@ -28,6 +28,8 @@ import {
   validateMigrationTarget
 } from '../services/dataPaths'
 import { migrateWanwuData } from '../services/dataMigration'
+import { importProfileImage, removeProfileFile } from '../services/userProfileMedia'
+import { toWanwuMediaUrl } from '../services/wanwuMedia'
 
 export interface AppServices {
   db: DatabaseService | null
@@ -136,7 +138,64 @@ export function registerIpcHandlers(services: AppServices): void {
   })
 
   ipcMain.handle('user:updateProfile', (_e, profile: unknown) => {
-    return services.db?.updateProfile(profile as { nickname: string; bio: string })
+    return services.db?.updateProfile(
+      profile as {
+        nickname: string
+        bio: string
+        avatarPath?: string | null
+        backgroundPath?: string | null
+        backgroundConfig?: Record<string, unknown> | null
+      }
+    )
+  })
+
+  ipcMain.handle(
+    'user:importProfileImage',
+    (_e, params: { kind: 'avatar' | 'background'; filePath: string }) => {
+      if (!services.media || !services.db) throw new Error('服务未就绪')
+      const relativePath = importProfileImage(services.media, params.kind, params.filePath)
+      const profile = services.db.getProfile()
+      if (!profile) throw new Error('用户资料不存在')
+
+      if (params.kind === 'avatar') {
+        if (profile.avatarPath && profile.avatarPath !== relativePath) {
+          removeProfileFile(services.media, profile.avatarPath)
+        }
+        services.db.updateProfile({
+          nickname: profile.nickname,
+          bio: profile.bio,
+          avatarPath: relativePath
+        })
+      } else {
+        services.db.updateProfile({
+          nickname: profile.nickname,
+          bio: profile.bio,
+          backgroundPath: relativePath,
+          backgroundConfig: profile.backgroundConfig ?? {
+            scale: 1,
+            offsetX: 0,
+            offsetY: 0,
+            opacity: 1,
+            crop: null
+          }
+        })
+      }
+
+      return { relativePath, url: toWanwuMediaUrl(relativePath) }
+    }
+  )
+
+  ipcMain.handle('user:clearBackground', () => {
+    if (!services.media || !services.db) return
+    const profile = services.db.getProfile()
+    if (!profile?.backgroundPath) return
+    removeProfileFile(services.media, profile.backgroundPath)
+    services.db.updateProfile({
+      nickname: profile.nickname,
+      bio: profile.bio,
+      backgroundPath: null,
+      backgroundConfig: null
+    })
   })
 
   ipcMain.handle('user:listFavorites', () => {

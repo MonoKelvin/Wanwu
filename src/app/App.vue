@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog'
 import WwIcon from '@shared/components/WwIcon.vue'
+import WwToastMessage from '@shared/components/WwToastMessage.vue'
 import TitleBar from '@app/components/TitleBar.vue'
 import AppShell from '@app/components/AppShell.vue'
 import { useSettingsStore } from '@shared/stores/settings'
@@ -16,7 +17,11 @@ onMounted(() => {
 
 <template>
   <div class="ww-app flex h-full flex-col overflow-hidden bg-ww-canvas">
-    <Toast position="bottom-right" class="ww-toast-stack" />
+    <Toast position="bottom-right" class="ww-toast-stack">
+      <template #message="{ message }">
+        <WwToastMessage :message="message" />
+      </template>
+    </Toast>
     <ConfirmDialog class="ww-confirm-dialog">
       <template #message="slotProps">
         <div class="ww-confirm-dialog__message">

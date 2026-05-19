@@ -42,7 +42,7 @@ const subLabel = computed(() => props.entry.item?.subCategoryName ?? null)
     </button>
     <button
       type="button"
-      class="ww-favorite-row__remove ww-glass-btn ww-glass-btn--icon"
+      class="ww-favorite-row__remove"
       aria-label="取消收藏"
       @click.stop="emit('remove')"
     >

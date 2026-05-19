@@ -118,6 +118,7 @@ export class DatabaseService {
         json TEXT NOT NULL
       );
     `)
+    this.ensureProfileMediaColumns()
     this.ensureFavoriteGroupsSchema()
     const row = this.userDb.prepare('SELECT id FROM profiles LIMIT 1').get()
     if (!row) {
@@ -245,17 +246,84 @@ export class DatabaseService {
     return this.rssDb
   }
 
-  getProfile(): { nickname: string; bio: string } | null {
-    const row = this.userDb.prepare('SELECT nickname, bio FROM profiles LIMIT 1').get() as
-      | { nickname: string; bio: string }
-      | undefined
-    return row ?? null
+  private ensureProfileMediaColumns(): void {
+    const cols = this.userDb.prepare('PRAGMA table_info(profiles)').all() as Array<{ name: string }>
+    const names = new Set(cols.map((c) => c.name))
+    if (!names.has('background_path')) {
+      this.userDb.exec('ALTER TABLE profiles ADD COLUMN background_path TEXT')
+    }
+    if (!names.has('background_config')) {
+      this.userDb.exec('ALTER TABLE profiles ADD COLUMN background_config TEXT')
+    }
   }
 
-  updateProfile(profile: { nickname: string; bio: string }): void {
+  getProfile(): {
+    nickname: string
+    bio: string
+    avatarPath: string | null
+    backgroundPath: string | null
+    backgroundConfig: Record<string, unknown> | null
+  } | null {
+    const row = this.userDb
+      .prepare(
+        'SELECT nickname, bio, avatar_path, background_path, background_config FROM profiles LIMIT 1'
+      )
+      .get() as
+      | {
+          nickname: string
+          bio: string
+          avatar_path: string | null
+          background_path: string | null
+          background_config: string | null
+        }
+      | undefined
+    if (!row) return null
+    let backgroundConfig: Record<string, unknown> | null = null
+    if (row.background_config) {
+      try {
+        backgroundConfig = JSON.parse(row.background_config) as Record<string, unknown>
+      } catch {
+        backgroundConfig = null
+      }
+    }
+    return {
+      nickname: row.nickname,
+      bio: row.bio,
+      avatarPath: row.avatar_path,
+      backgroundPath: row.background_path,
+      backgroundConfig
+    }
+  }
+
+  updateProfile(profile: {
+    nickname: string
+    bio: string
+    avatarPath?: string | null
+    backgroundPath?: string | null
+    backgroundConfig?: Record<string, unknown> | null
+  }): void {
+    const current = this.getProfile()
+    const avatarPath = profile.avatarPath !== undefined ? profile.avatarPath : current?.avatarPath ?? null
+    const backgroundPath =
+      profile.backgroundPath !== undefined ? profile.backgroundPath : current?.backgroundPath ?? null
+    const backgroundConfig =
+      profile.backgroundConfig !== undefined
+        ? profile.backgroundConfig
+        : current?.backgroundConfig ?? null
+
     this.userDb
-      .prepare('UPDATE profiles SET nickname = ?, bio = ?, updated_at = ? WHERE id = (SELECT id FROM profiles LIMIT 1)')
-      .run(profile.nickname, profile.bio, new Date().toISOString())
+      .prepare(
+        `UPDATE profiles SET nickname = ?, bio = ?, avatar_path = ?, background_path = ?, background_config = ?, updated_at = ?
+         WHERE id = (SELECT id FROM profiles LIMIT 1)`
+      )
+      .run(
+        profile.nickname,
+        profile.bio,
+        avatarPath,
+        backgroundPath,
+        backgroundConfig ? JSON.stringify(backgroundConfig) : null,
+        new Date().toISOString()
+      )
   }
 
   private ensureFavoriteGroupsSchema(): void {

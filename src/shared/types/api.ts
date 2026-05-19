@@ -35,8 +35,25 @@ export interface WanwuApi {
     ) => Promise<{ items: RssEntry[]; total: number }>
   }
   user: {
-    getProfile: () => Promise<{ nickname: string; bio: string } | null>
-    updateProfile: (profile: { nickname: string; bio: string }) => Promise<void>
+    getProfile: () => Promise<{
+      nickname: string
+      bio: string
+      avatarPath: string | null
+      backgroundPath: string | null
+      backgroundConfig: Record<string, unknown> | null
+    } | null>
+    updateProfile: (profile: {
+      nickname: string
+      bio: string
+      avatarPath?: string | null
+      backgroundPath?: string | null
+      backgroundConfig?: Record<string, unknown> | null
+    }) => Promise<void>
+    importProfileImage: (params: {
+      kind: 'avatar' | 'background'
+      filePath: string
+    }) => Promise<{ relativePath: string; url: string | null }>
+    clearBackground: () => Promise<void>
     listFavorites: () => Promise<FavoriteEntry[]>
     listFavoriteGroups: () => Promise<FavoriteGroup[]>
     listFavoriteGroupsForPicker: () => Promise<Array<{ id: string; name: string; sortOrder: number }>>

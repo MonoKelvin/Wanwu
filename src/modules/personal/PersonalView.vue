@@ -9,22 +9,73 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import PageHeader from '@app/components/PageHeader.vue'
 import EmptyState from '@app/components/EmptyState.vue'
 import FavoriteCard from '@features/personal/FavoriteCard.vue'
+import PersonalBackgroundEditor from '@features/personal/PersonalBackgroundEditor.vue'
+import { useWanwuToast } from '@shared/composables/useWanwuToast'
+import type { PersonalBackgroundConfig } from '@shared/types/profile'
+import { DEFAULT_BACKGROUND_CONFIG } from '@shared/types/profile'
+import {
+  backgroundLayerStyle,
+  normalizeBackgroundConfig,
+  toWanwuMediaUrl
+} from '@shared/utils/profileMedia'
 import type { FavoriteGroup } from '@shared/types/favorite'
 
 const router = useRouter()
+const toast = useWanwuToast()
 
 const nickname = ref('')
 const bio = ref('')
+const avatarPath = ref<string | null>(null)
+const avatarMediaKey = ref(0)
+const backgroundPath = ref<string | null>(null)
+/** 编辑会话中的预览路径，仅在点击「应用」后写入 backgroundPath */
+const previewBackgroundPath = ref<string | null>(null)
+const backgroundMediaKey = ref(0)
+const backgroundConfig = ref<PersonalBackgroundConfig>({ ...DEFAULT_BACKGROUND_CONFIG })
 const groups = ref<FavoriteGroup[]>([])
 const loading = ref(true)
 const saving = ref(false)
 const saved = ref(false)
+const bgEditorOpen = ref(false)
+const bgEditorAutoFit = ref(false)
+const bgEditDraft = ref<PersonalBackgroundConfig>({ ...DEFAULT_BACKGROUND_CONFIG })
+const personalRoot = ref<HTMLElement | null>(null)
 
 const profileInitial = computed(() => {
   const n = nickname.value.trim()
   if (!n) return '?'
   return n.slice(0, 1).toUpperCase()
 })
+
+const avatarUrl = computed(() =>
+  toWanwuMediaUrl(avatarPath.value, avatarMediaKey.value || undefined)
+)
+
+const effectiveBackgroundPath = computed(() =>
+  bgEditorOpen.value ? previewBackgroundPath.value : backgroundPath.value
+)
+
+const backgroundUrl = computed(() =>
+  toWanwuMediaUrl(effectiveBackgroundPath.value, backgroundMediaKey.value || undefined)
+)
+
+const activeBackgroundConfig = computed(() =>
+  bgEditorOpen.value ? bgEditDraft.value : backgroundConfig.value
+)
+
+const backgroundStyle = computed(() => {
+  if (!backgroundUrl.value) return undefined
+  const layer = backgroundLayerStyle(activeBackgroundConfig.value)
+  if (bgEditorOpen.value) {
+    layer['--ww-personal-bg-clip'] = 'none'
+  }
+  return {
+    ...layer,
+    backgroundImage: `url(${backgroundUrl.value})`
+  }
+})
+
+const hasBackground = computed(() => Boolean(backgroundUrl.value))
 
 const favoriteCount = computed(() =>
   groups.value.reduce((sum, g) => sum + g.items.length, 0)
@@ -40,6 +91,13 @@ async function load() {
     if (profile) {
       nickname.value = profile.nickname
       bio.value = profile.bio
+      avatarPath.value = profile.avatarPath
+      if (profile.avatarPath) avatarMediaKey.value = Date.now()
+      backgroundPath.value = profile.backgroundPath
+      if (profile.backgroundPath) backgroundMediaKey.value = Date.now()
+      backgroundConfig.value = normalizeBackgroundConfig(
+        profile.backgroundConfig as PersonalBackgroundConfig | null
+      )
     }
     groups.value = list
   } finally {
@@ -52,14 +110,106 @@ onMounted(load)
 async function save() {
   saving.value = true
   try {
-    await window.wanwu.user.updateProfile({ nickname: nickname.value, bio: bio.value })
+    await window.wanwu.user.updateProfile({
+      nickname: nickname.value,
+      bio: bio.value,
+      avatarPath: avatarPath.value,
+      backgroundPath: backgroundPath.value,
+      backgroundConfig: backgroundConfig.value
+    })
     saved.value = true
     setTimeout(() => {
       saved.value = false
     }, 2400)
+    toast.success('资料已保存')
   } finally {
     saving.value = false
   }
+}
+
+async function pickAvatar() {
+  const pick = await window.wanwu.shell.pickImageFile()
+  if (!pick.ok || !pick.path) return
+  try {
+    const result = await window.wanwu.user.importProfileImage({ kind: 'avatar', filePath: pick.path })
+    avatarPath.value = result.relativePath
+    avatarMediaKey.value = Date.now()
+    toast.success('头像已更新')
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : '头像更新失败')
+  }
+}
+
+async function startBackgroundSetup() {
+  const pick = await window.wanwu.shell.pickImageFile()
+  if (!pick.ok || !pick.path) return
+  try {
+    const result = await window.wanwu.user.importProfileImage({
+      kind: 'background',
+      filePath: pick.path
+    })
+    previewBackgroundPath.value = result.relativePath
+    backgroundMediaKey.value = Date.now()
+    bgEditDraft.value = normalizeBackgroundConfig({ ...DEFAULT_BACKGROUND_CONFIG })
+    bgEditorAutoFit.value = true
+    bgEditorOpen.value = true
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : '无法导入背景图')
+  }
+}
+
+async function replaceBackground() {
+  const pick = await window.wanwu.shell.pickImageFile()
+  if (!pick.ok || !pick.path) return
+  try {
+    const result = await window.wanwu.user.importProfileImage({
+      kind: 'background',
+      filePath: pick.path
+    })
+    previewBackgroundPath.value = result.relativePath
+    backgroundMediaKey.value = Date.now()
+    const prev = normalizeBackgroundConfig(bgEditDraft.value)
+    bgEditDraft.value = normalizeBackgroundConfig({
+      opacity: prev.opacity,
+      scale: DEFAULT_BACKGROUND_CONFIG.scale,
+      offsetX: 0,
+      offsetY: 0,
+      crop: null
+    })
+    bgEditorAutoFit.value = true
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : '无法更换背景图')
+  }
+}
+
+function editBackground() {
+  if (!backgroundPath.value) return
+  previewBackgroundPath.value = backgroundPath.value
+  bgEditDraft.value = normalizeBackgroundConfig({ ...backgroundConfig.value })
+  bgEditorAutoFit.value = false
+  bgEditorOpen.value = true
+}
+
+function onBackgroundButtonClick() {
+  if (hasBackground.value) editBackground()
+  else void startBackgroundSetup()
+}
+
+async function onBackgroundConfirm(config: PersonalBackgroundConfig) {
+  if (previewBackgroundPath.value) {
+    backgroundPath.value = previewBackgroundPath.value
+    backgroundMediaKey.value = Date.now()
+  }
+  backgroundConfig.value = normalizeBackgroundConfig(config)
+  previewBackgroundPath.value = null
+  bgEditorOpen.value = false
+  await save()
+}
+
+function onBackgroundCancel() {
+  previewBackgroundPath.value = null
+  bgEditorOpen.value = false
+  bgEditDraft.value = normalizeBackgroundConfig({ ...backgroundConfig.value })
 }
 
 function openFavorite(itemId: string, source: string) {
@@ -76,76 +226,107 @@ async function removeFavorite(itemId: string, source: string, groupId: string) {
 </script>
 
 <template>
-  <div class="ww-personal flex h-full flex-col overflow-hidden">
-    <PageHeader title="个人" subtitle="资料与收藏">
-      <template #actions>
-        <Transition name="ww-personal-save-hint">
-          <span v-if="saved" class="ww-personal__saved-hint" role="status">
-            <WwIcon name="check" size="sm" />
-            已保存
-          </span>
-        </Transition>
-        <WwButton label="保存资料" icon="check" size="small" :loading="saving" @click="save" />
-      </template>
-    </PageHeader>
+  <div
+    ref="personalRoot"
+    class="ww-personal flex h-full flex-col overflow-hidden"
+    :class="{ 'has-bg': hasBackground, 'is-editing-bg': bgEditorOpen }"
+  >
+    <div
+      v-if="backgroundUrl && backgroundStyle"
+      class="ww-personal__bg"
+      :style="backgroundStyle"
+      aria-hidden="true"
+    />
+    <div v-if="!hasBackground && !bgEditorOpen" class="ww-personal__ambient" aria-hidden="true">
+      <span class="ww-personal__ambient-glow ww-personal__ambient-glow--warm" />
+      <span class="ww-personal__ambient-glow ww-personal__ambient-glow--cool" />
+    </div>
+
+    <PageHeader title="个人" subtitle="资料与收藏" />
 
     <div class="ww-scroll-main ww-personal__scroll">
       <div class="ww-personal__inner">
-        <section class="ww-personal-hero" aria-labelledby="personal-profile-heading">
-          <div class="ww-personal-hero__glow ww-personal-hero__glow--a" aria-hidden="true" />
-          <div class="ww-personal-hero__glow ww-personal-hero__glow--b" aria-hidden="true" />
-
-          <div v-if="loading" class="ww-personal-hero__skeleton">
-            <Skeleton shape="circle" size="4.5rem" />
-            <Skeleton width="60%" height="1.75rem" class="mt-4" />
-            <Skeleton width="100%" height="4rem" class="mt-3" />
+        <section class="ww-personal-profile" aria-labelledby="personal-profile-heading">
+          <div v-if="loading" class="ww-personal-profile__skeleton">
+            <Skeleton shape="circle" size="4.25rem" />
+            <div class="flex-1">
+              <Skeleton width="40%" height="1rem" class="mb-3" />
+              <Skeleton width="100%" height="2.25rem" class="mb-3" />
+              <Skeleton width="100%" height="4.5rem" />
+            </div>
           </div>
 
-          <template v-else>
-            <div class="ww-personal-hero__profile">
-              <div class="ww-personal-hero__avatar" aria-hidden="true">
-                <span>{{ profileInitial }}</span>
+          <div v-else class="ww-personal-profile__body">
+            <button
+              type="button"
+              class="ww-personal-profile__avatar"
+              aria-label="更换头像"
+              @click="pickAvatar"
+            >
+              <img v-if="avatarUrl" :src="avatarUrl" alt="" class="ww-personal-profile__avatar-img" />
+              <span v-else class="ww-personal-profile__avatar-letter">{{ profileInitial }}</span>
+            </button>
+            <div class="ww-personal-profile__fields">
+              <h2 id="personal-profile-heading" class="ww-personal-profile__heading">个人资料</h2>
+              <div class="ww-personal-field">
+                <label for="nickname" class="ww-personal-field__label">昵称</label>
+                <InputText
+                  id="nickname"
+                  v-model="nickname"
+                  placeholder="万物探索者"
+                  class="ww-personal-field__input w-full"
+                />
               </div>
-              <div class="ww-personal-hero__fields">
-                <h2 id="personal-profile-heading" class="ww-section-label">个人资料</h2>
-                <div class="ww-personal-field">
-                  <label for="nickname" class="ww-personal-field__label">昵称</label>
-                  <InputText
-                    id="nickname"
-                    v-model="nickname"
-                    placeholder="万物探索者"
-                    class="ww-personal-field__input w-full"
-                  />
-                </div>
-                <div class="ww-personal-field">
-                  <label for="bio" class="ww-personal-field__label">简介</label>
-                  <Textarea
-                    id="bio"
-                    v-model="bio"
-                    class="ww-personal-field__input w-full"
-                    rows="3"
-                    auto-resize
-                    placeholder="写一句关于自己的介绍…"
-                  />
-                </div>
+              <div class="ww-personal-field">
+                <label for="bio" class="ww-personal-field__label">简介</label>
+                <Textarea
+                  id="bio"
+                  v-model="bio"
+                  class="ww-personal-field__input w-full"
+                  rows="3"
+                  auto-resize
+                  placeholder="写一句关于自己的介绍…"
+                />
+              </div>
+
+              <div class="ww-personal-profile__toolbar">
+                <WwButton
+                  icon="save"
+                  size="small"
+                  severity="secondary"
+                  outlined
+                  :loading="saving"
+                  aria-label="保存资料"
+                  v-tooltip.bottom="'保存资料'"
+                  @click="save"
+                />
+                <WwButton
+                  icon="image"
+                  size="small"
+                  severity="secondary"
+                  outlined
+                  :class="{ 'is-active': hasBackground }"
+                  :aria-label="hasBackground ? '调整页面背景' : '设置页面背景'"
+                  v-tooltip.bottom="hasBackground ? '调整页面背景' : '设置页面背景'"
+                  @click="onBackgroundButtonClick"
+                />
+                <Transition name="ww-personal-save-hint">
+                  <span v-if="saved" class="ww-personal-profile__saved" role="status" aria-live="polite">
+                    <WwIcon name="check" size="xs" />
+                  </span>
+                </Transition>
               </div>
             </div>
-          </template>
+          </div>
         </section>
 
         <section class="ww-personal-favorites" aria-labelledby="personal-favorites-heading">
           <header class="ww-personal-favorites__head">
-            <div>
-              <h2 id="personal-favorites-heading" class="ww-section-label">收藏</h2>
-              <p class="ww-personal-favorites__hint">
-                按分组浏览，卡片仅显示封面与名称
-                <template v-if="!loading && favoriteCount > 0"> · 共 {{ favoriteCount }} 条</template>
-              </p>
-            </div>
+            <h2 id="personal-favorites-heading" class="ww-section-label">收藏</h2>
           </header>
 
           <div v-if="loading" class="ww-personal-favorites__skeleton">
-            <Skeleton v-for="i in 4" :key="i" height="3.5rem" class="rounded-xl" />
+            <Skeleton v-for="i in 4" :key="i" height="3rem" class="rounded-lg" />
           </div>
 
           <EmptyState
@@ -166,7 +347,7 @@ async function removeFavorite(itemId: string, source: string, groupId: string) {
               <header class="ww-fav-group__head">
                 <WwIcon name="folder-open" size="sm" class="ww-fav-group__icon" />
                 <h3 class="ww-fav-group__title">{{ group.name }}</h3>
-                <span class="ww-fav-group__count">{{ group.items.length }}</span>
+                <span class="ww-fav-group__count">{{ group.items.length }} 条</span>
               </header>
               <ul class="ww-fav-group__list">
                 <li v-for="entry in group.items" :key="entry.id">
@@ -182,5 +363,16 @@ async function removeFavorite(itemId: string, source: string, groupId: string) {
         </section>
       </div>
     </div>
+
+    <PersonalBackgroundEditor
+      v-if="bgEditorOpen && backgroundUrl"
+      v-model="bgEditDraft"
+      :image-url="backgroundUrl"
+      :auto-fit="bgEditorAutoFit"
+      :viewport-el="personalRoot"
+      @confirm="onBackgroundConfirm"
+      @cancel="onBackgroundCancel"
+      @replace="replaceBackground"
+    />
   </div>
 </template>

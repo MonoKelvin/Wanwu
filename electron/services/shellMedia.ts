@@ -3,15 +3,15 @@ import { copyFileSync, existsSync, writeFileSync } from 'fs'
 import { basename } from 'path'
 import { fileURLToPath } from 'url'
 import { getMainWindow } from '../windowState'
-import { resolveLibraryMediaAbsolute } from './libraryMedia'
+import { resolveWanwuMediaAbsolute } from './wanwuMedia'
 
 export function resolveMediaUrlToAbsolute(url: string): string | null {
   const trimmed = url.trim()
   if (!trimmed) return null
 
   if (/^wanwu-media:\/\//i.test(trimmed)) {
-    const raw = decodeURIComponent(trimmed.replace(/^wanwu-media:\/\//i, ''))
-    return resolveLibraryMediaAbsolute(raw)
+    const raw = decodeURIComponent(trimmed.replace(/^wanwu-media:\/\//i, '')).split(/[?#]/)[0]
+    return resolveWanwuMediaAbsolute(raw)
   }
 
   if (trimmed.startsWith('file://')) {

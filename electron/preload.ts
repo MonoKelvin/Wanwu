@@ -33,6 +33,8 @@ const api: WanwuApi = {
   user: {
     getProfile: () => ipcRenderer.invoke('user:getProfile'),
     updateProfile: (profile) => ipcRenderer.invoke('user:updateProfile', profile),
+    importProfileImage: (params) => ipcRenderer.invoke('user:importProfileImage', params),
+    clearBackground: () => ipcRenderer.invoke('user:clearBackground'),
     listFavorites: () => ipcRenderer.invoke('user:listFavorites'),
     listFavoriteGroups: () => ipcRenderer.invoke('user:listFavoriteGroups'),
     listFavoriteGroupsForPicker: () => ipcRenderer.invoke('user:listFavoriteGroupsForPicker'),

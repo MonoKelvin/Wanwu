@@ -35,6 +35,10 @@
   --ww-rail-nav-active-shadow: 0 2px 8px -2px rgb(18 18 22 / 0.1), 0 1px 3px -1px rgb(18 18 22 / 0.06);
   --ww-warn: #8a6b38;
   --ww-warn-soft: #f3efe6;
+  --ww-toast-success: #2d8a5e;
+  --ww-toast-error: #c45c5c;
+  --ww-toast-info: #4a7eb8;
+  --ww-toast-warn: var(--ww-warn);
 
   /* 正文 / Markdown（与 body 字号一致） */
   --ww-prose-size: 0.8125rem;
@@ -49,6 +53,12 @@
   --ww-duration-fast: 0.22s;
   --ww-duration: 0.36s;
   --ww-duration-slow: 0.48s;
+
+  /* 浮层底部操作按钮（取消 / 确定 / 应用等） */
+  --ww-action-btn-h: 1.625rem;
+  --ww-action-btn-gap: 0.375rem;
+  --ww-action-btn-fs: 0.6875rem;
+  --ww-action-btn-px: 0.625rem;
 
   /* 阴影：中性黑，略大略偏下 */
   --ww-shadow-hover: 0 40px 72px -14px rgb(18 18 22 / 0.12), 0 22px 48px -12px rgb(18 18 22 / 0.08);

@@ -77,7 +77,7 @@ async function startMigrate() {
     header="迁移数据目录"
     modal
     append-to="body"
-    class="ww-settings-migrate-dialog w-[min(26rem,92vw)]"
+    class="ww-settings-migrate-dialog ww-rss-dialog w-[min(26rem,92vw)]"
     :closable="step !== 'migrating'"
     @update:visible="emit('update:visible', $event)"
   >

@@ -2,7 +2,7 @@ import { app, BrowserWindow, nativeImage, protocol, shell } from 'electron'
 import { existsSync } from 'fs'
 import { readFile } from 'fs/promises'
 import { extname, join } from 'path'
-import { resolveLibraryMediaAbsolute } from './services/libraryMedia'
+import { resolveWanwuMediaAbsolute } from './services/wanwuMedia'
 import { resolveAppLogoPath } from './services/appAssets'
 import { registerIpcHandlers } from './ipc/handlers'
 import { setMainWindow, broadcastMaximizedState } from './windowState'
@@ -86,10 +86,10 @@ function createWindow(): void {
   const appIcon = resolveAppLogoPath(256)
 
   mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 800,
-    minWidth: 1024,
-    minHeight: 640,
+    width: 1080,
+    height: 720,
+    minWidth: 800,
+    minHeight: 600,
     show: false,
     frame: false,
     title: '万物',
@@ -166,8 +166,8 @@ async function initServices(): Promise<void> {
 
 app.whenReady().then(async () => {
   protocol.handle('wanwu-media', async (request) => {
-    const raw = decodeURIComponent(request.url.replace(/^wanwu-media:\/\//i, ''))
-    const abs = resolveLibraryMediaAbsolute(raw)
+    const raw = decodeURIComponent(request.url.replace(/^wanwu-media:\/\//i, '')).split(/[?#]/)[0]
+    const abs = resolveWanwuMediaAbsolute(raw)
     if (!abs) {
       return new Response('Not Found', { status: 404 })
     }
