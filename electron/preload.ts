@@ -10,11 +10,6 @@ const api: WanwuApi = {
     updateItem: (item) => ipcRenderer.invoke('library:updateItem', item),
     createItem: (item) => ipcRenderer.invoke('library:createItem', item)
   },
-  custom: {
-    checkDuplicate: (name) => ipcRenderer.invoke('custom:checkDuplicate', { name }),
-    listCategories: () => ipcRenderer.invoke('custom:listCategories'),
-    listItems: (params) => ipcRenderer.invoke('custom:listItems', params)
-  },
   rss: {
     listGroups: () => ipcRenderer.invoke('rss:listGroups'),
     createGroup: (name) => ipcRenderer.invoke('rss:createGroup', { name }),

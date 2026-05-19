@@ -42,18 +42,6 @@ export function registerIpcHandlers(services: AppServices): void {
     return services.library?.createItem(item as Parameters<NonNullable<typeof services.library>['createItem']>[0])
   })
 
-  ipcMain.handle('custom:checkDuplicate', (_e, { name }: { name: string }) => {
-    return services.library?.checkCategoryDuplicate(name) ?? { duplicate: false }
-  })
-
-  ipcMain.handle('custom:listCategories', () => {
-    return services.db?.listCustomCategories() ?? []
-  })
-
-  ipcMain.handle('custom:listItems', (_e, params: { categoryId: string }) => {
-    return services.db?.listCustomItems(params.categoryId) ?? []
-  })
-
   ipcMain.handle('rss:listGroups', () => services.rss?.listGroups() ?? [])
 
   ipcMain.handle('rss:createGroup', (_e, payload: { name?: string } | string) => {
@@ -128,7 +116,7 @@ export function registerIpcHandlers(services: AppServices): void {
   })
 
   ipcMain.handle('user:listFavorites', () => {
-    return services.db?.listFavorites() ?? []
+    return services.library?.listFavoriteEntries() ?? []
   })
 
   ipcMain.handle('user:toggleFavorite', (_e, params: { itemId: string; source: string }) => {

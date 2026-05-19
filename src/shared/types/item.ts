@@ -1,6 +1,6 @@
 import type { ItemMediaAsset, MediaAttribution, UnsplashAttribution } from './unsplash'
 
-export type ItemSource = 'library' | 'custom' | 'rss'
+export type ItemSource = 'library' | 'rss'
 
 export interface LibrarySearchHit {
   id: string
@@ -31,7 +31,6 @@ export interface Item {
   gallery?: string[]
   galleryAssets?: ItemMediaAsset[]
   mediaIds?: string[]
-  customFields?: Record<string, unknown>
   createdAt: string
   updatedAt: string
 }

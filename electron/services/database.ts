@@ -20,7 +20,6 @@ const LIBRARY_CATEGORIES = loadLibraryCategoriesMeta()
 
 export class DatabaseService {
   private userDb: Database.Database
-  private customDb: Database.Database
   private rssDb: Database.Database
   private libraryDbs = new Map<string, Database.Database>()
 
@@ -30,13 +29,11 @@ export class DatabaseService {
     mkdirSync(join(basePath, 'cache'), { recursive: true })
 
     this.userDb = new Database(join(basePath, 'db', 'user.sqlite'))
-    this.customDb = new Database(join(basePath, 'db', 'custom.sqlite'))
     this.rssDb = new Database(join(basePath, 'db', 'rss.sqlite'))
   }
 
   async init(): Promise<void> {
     this.initUserSchema()
-    this.initCustomSchema()
     this.initRssSchema()
     for (const cat of LIBRARY_CATEGORIES) {
       this.initLibraryDb(cat.id, cat.name)
@@ -111,43 +108,6 @@ export class DatabaseService {
          ON CONFLICT(id) DO UPDATE SET json = excluded.json`
       )
       .run(JSON.stringify(settings))
-  }
-
-  private initCustomSchema(): void {
-    this.customDb.exec(`
-      CREATE TABLE IF NOT EXISTS categories (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL UNIQUE,
-        parent_id TEXT,
-        sort_order INTEGER DEFAULT 0
-      );
-      CREATE TABLE IF NOT EXISTS items (
-        id TEXT PRIMARY KEY,
-        category_id TEXT NOT NULL,
-        sub_category_id TEXT,
-        name TEXT NOT NULL,
-        summary TEXT,
-        description TEXT,
-        tags TEXT,
-        cover_path TEXT,
-        created_at TEXT,
-        updated_at TEXT
-      );
-      CREATE TABLE IF NOT EXISTS custom_field_defs (
-        id TEXT PRIMARY KEY,
-        category_id TEXT NOT NULL,
-        type TEXT NOT NULL,
-        label TEXT NOT NULL,
-        sort_order INTEGER DEFAULT 0,
-        config TEXT
-      );
-      CREATE TABLE IF NOT EXISTS custom_field_values (
-        id TEXT PRIMARY KEY,
-        item_id TEXT NOT NULL,
-        field_id TEXT NOT NULL,
-        value_text TEXT
-      );
-    `)
   }
 
   private initRssSchema(): void {
@@ -233,27 +193,6 @@ export class DatabaseService {
     return this.rssDb
   }
 
-  getCustomDb(): Database.Database {
-    return this.customDb
-  }
-
-  listCustomCategories(): Array<{ id: string; name: string; parentId: string | null }> {
-    return this.customDb
-      .prepare('SELECT id, name, parent_id as parentId FROM categories ORDER BY sort_order')
-      .all() as Array<{ id: string; name: string; parentId: string | null }>
-  }
-
-  listCustomItems(categoryId: string): unknown[] {
-    return this.customDb
-      .prepare(
-        `SELECT id, category_id as categoryId, sub_category_id as subCategoryId,
-                name, summary, description, tags, cover_path as coverPath,
-                created_at as createdAt, updated_at as updatedAt
-         FROM items WHERE category_id = ? ORDER BY updated_at DESC`
-      )
-      .all(categoryId)
-  }
-
   getProfile(): { nickname: string; bio: string } | null {
     const row = this.userDb.prepare('SELECT nickname, bio FROM profiles LIMIT 1').get() as
       | { nickname: string; bio: string }
@@ -287,7 +226,6 @@ export class DatabaseService {
 
   close(): void {
     this.userDb.close()
-    this.customDb.close()
     this.rssDb.close()
     this.libraryDbs.forEach((db) => db.close())
   }

@@ -21,13 +21,29 @@ export interface LibrarySearchHit {
   subCategoryName: string | null
 }
 
+export interface FavoriteEntryDto {
+  id: string
+  itemId: string
+  source: 'library' | 'rss'
+  createdAt: string
+  item: {
+    id: string
+    name: string
+    summary: string | null
+    coverPath: string | null
+    categoryId: string
+    subCategoryName: string | null
+    source: 'library' | 'rss'
+  } | null
+}
+
 export interface ItemDto {
   id: string
   categoryId: string
   subCategoryId: string | null
   subCategoryName?: string | null
   slug?: string | null
-  source: 'library' | 'custom' | 'rss'
+  source: 'library' | 'rss'
   name: string
   summary: string | null
   description: string | null
@@ -97,6 +113,43 @@ export class LibraryService {
     }
 
     return rows.map((r) => this.rowToItem(libDb, r))
+  }
+
+  listFavoriteEntries(): FavoriteEntryDto[] {
+    const rows = this.db.listFavorites() as Array<{
+      id: string
+      item_id: string
+      source: string
+      created_at: string
+    }>
+
+    return rows.map((row) => {
+      const source = row.source === 'rss' ? 'rss' : 'library'
+      let item: FavoriteEntryDto['item'] = null
+
+      if (source === 'library') {
+        const full = this.getItem(row.item_id)
+        if (full) {
+          item = {
+            id: full.id,
+            name: full.name,
+            summary: full.summary,
+            coverPath: full.coverPath,
+            categoryId: full.categoryId,
+            subCategoryName: full.subCategoryName ?? null,
+            source: 'library'
+          }
+        }
+      }
+
+      return {
+        id: row.id,
+        itemId: row.item_id,
+        source,
+        createdAt: row.created_at,
+        item
+      }
+    })
   }
 
   getItem(id: string): ItemDto | null {
@@ -217,14 +270,6 @@ export class LibraryService {
       }
     }
     return hits.slice(0, limit)
-  }
-
-  checkCategoryDuplicate(name: string): { duplicate: boolean; suggestModule?: string; categoryId?: string } {
-    const match = LIBRARY_CATEGORIES.find((c) => c.name === name.trim())
-    if (match) {
-      return { duplicate: true, suggestModule: 'library', categoryId: match.id }
-    }
-    return { duplicate: false }
   }
 
   private rowToItem(libDb: import('better-sqlite3').Database, r: Record<string, unknown>): ItemDto {

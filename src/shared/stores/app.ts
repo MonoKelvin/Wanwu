@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export type ModuleId = 'library' | 'rss' | 'custom' | 'personal' | 'settings'
+export type ModuleId = 'library' | 'rss' | 'personal' | 'settings'
 
 export const useAppStore = defineStore('app', () => {
   const activeModule = ref<ModuleId>('library')

@@ -4,17 +4,14 @@ import { useRoute, useRouter } from 'vue-router'
 import Tree from 'primevue/tree'
 import type { TreeNode } from 'primevue/treenode'
 import IconField from 'primevue/iconfield'
-import WwIcon from '@shared/components/WwIcon.vue'
 import WwInputIcon from '@shared/components/WwInputIcon.vue'
 import InputText from 'primevue/inputtext'
 import { useLibraryStore } from '@shared/stores/library'
-import { useCustomStore } from '@shared/stores/custom'
 import RssSidebar from '@features/rss/RssSidebar.vue'
 
 const route = useRoute()
 const router = useRouter()
 const libraryStore = useLibraryStore()
-const customStore = useCustomStore()
 
 const module = computed(() => route.meta.module as string)
 const expandedKeys = ref<Record<string, boolean>>({})
@@ -77,8 +74,6 @@ async function loadModuleData() {
   if (module.value === 'library') {
     await libraryStore.loadCategories()
     syncLibrarySelection()
-  } else if (module.value === 'custom') {
-    await customStore.loadCategories()
   }
 }
 
@@ -96,15 +91,6 @@ watch(
   { immediate: true }
 )
 
-watch(
-  () => route.params.catId,
-  async (catId) => {
-    if (module.value !== 'custom' || typeof catId !== 'string') return
-    await customStore.loadItems(catId)
-  },
-  { immediate: true }
-)
-
 function onLibrarySelect(node: TreeNode) {
   const key = String(node.key)
   if (key.includes('::')) {
@@ -113,10 +99,6 @@ function onLibrarySelect(node: TreeNode) {
   } else {
     router.push({ name: 'library', params: { catId: key } })
   }
-}
-
-function selectCustomCategory(catId: string) {
-  router.push({ name: 'custom', params: { catId } })
 }
 </script>
 
@@ -157,22 +139,5 @@ function selectCustomCategory(catId: string) {
     </template>
 
     <RssSidebar v-else-if="module === 'rss'" class="min-h-0 flex-1" />
-
-    <nav v-else-if="module === 'custom'" class="min-h-0 flex-1 overflow-y-auto px-1.5 pb-3">
-      <button
-        v-for="cat in customStore.categories"
-        :key="cat.id"
-        type="button"
-        class="ww-nav-item"
-        :class="{ 'is-active': route.params.catId === cat.id }"
-        @click="selectCustomCategory(cat.id)"
-      >
-        <WwIcon name="folder" size="sm" />
-        <span class="min-w-0 flex-1 truncate">{{ cat.name }}</span>
-      </button>
-      <p v-if="customStore.categories.length === 0" class="px-2 py-8 text-center text-xs text-ww-ink-muted">
-        无分类
-      </p>
-    </nav>
   </aside>
 </template>

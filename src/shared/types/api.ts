@@ -1,3 +1,4 @@
+import type { FavoriteEntry } from './favorite'
 import type { Category, Item, LibrarySearchHit } from './item'
 import type { AppSettings } from './settings'
 import type { RssEntry, RssFeed, RssFeedInput, RssFeedUpdate, RssGroup } from './rss'
@@ -10,11 +11,6 @@ export interface WanwuApi {
     getItem: (id: string) => Promise<Item | null>
     updateItem: (item: Item) => Promise<Item>
     createItem: (item: Partial<Item>) => Promise<Item>
-  }
-  custom: {
-    checkDuplicate: (name: string) => Promise<{ duplicate: boolean; suggestModule?: string; categoryId?: string }>
-    listCategories: () => Promise<Category[]>
-    listItems: (params: { categoryId: string }) => Promise<Item[]>
   }
   rss: {
     listGroups: () => Promise<RssGroup[]>
@@ -40,7 +36,7 @@ export interface WanwuApi {
   user: {
     getProfile: () => Promise<{ nickname: string; bio: string } | null>
     updateProfile: (profile: { nickname: string; bio: string }) => Promise<void>
-    listFavorites: () => Promise<unknown[]>
+    listFavorites: () => Promise<FavoriteEntry[]>
     toggleFavorite: (params: { itemId: string; source: string }) => Promise<boolean>
   }
   app: {

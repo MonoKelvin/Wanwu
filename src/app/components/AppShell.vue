@@ -10,7 +10,7 @@ const appStore = useAppStore()
 
 const isItemDetail = computed(() => route.name === 'item-detail')
 const showSubPanel = computed(
-  () => !isItemDetail.value && ['library', 'rss', 'custom'].includes(route.meta.module as string)
+  () => !isItemDetail.value && ['library', 'rss'].includes(route.meta.module as string)
 )
 
 watch(

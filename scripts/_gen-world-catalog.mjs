@@ -43,10 +43,10 @@ function extractItemBlock(src, slug) {
 }
 
 const buildSrc = readFileSync(join(dir, 'build-library-catalog.mjs'), 'utf-8')
-const extraSrc = readFileSync(join(dir, 'library-catalog-extra-items.mjs'), 'utf-8')
+const worldSrc = readFileSync(join(dir, 'library-catalog-world-items.mjs'), 'utf-8')
 const existingBlocks = []
 for (const slug of EXISTING_SLUGS) {
-  const block = extractItemBlock(buildSrc, slug) ?? extractItemBlock(extraSrc, slug)
+  const block = extractItemBlock(buildSrc, slug) ?? extractItemBlock(worldSrc, slug)
   if (!block) throw new Error(`Missing existing item: ${slug}`)
   existingBlocks.push(block.replace(/^item\(/, 'mk('))
 }

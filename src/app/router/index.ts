@@ -17,12 +17,6 @@ const router = createRouter({
       meta: { module: 'rss', title: 'RSS' }
     },
     {
-      path: '/custom/:catId?',
-      name: 'custom',
-      component: () => import('@modules/custom/CustomView.vue'),
-      meta: { module: 'custom', title: '自建' }
-    },
-    {
       path: '/personal',
       name: 'personal',
       component: () => import('@modules/personal/PersonalView.vue'),
