@@ -21,13 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "机械姬 Ex Machina 科幻",
+    "query": "机械姬 Ex Machina film cinema scene",
     "matchTags": [
-      "科幻",
-      "电影",
-      "人工智能",
-      "ex",
-      "machina"
-    ]
+      "人工智能"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "pit bull terrier dog",
+    "query": "美国比特犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "pitbull"
+      "力量型",
+      "争议品种",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

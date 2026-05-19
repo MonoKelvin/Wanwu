@@ -22,12 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "合果芋 Syngonium 观叶",
+    "query": "合果芋 Syngonium houseplant",
     "matchTags": [
-      "观叶",
       "天南星科",
-      "室内",
       "syngonium"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -21,13 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "游戏启动图 数字绘画",
+    "query": "游戏启动图 digital illustration artwork",
     "matchTags": [
-      "数字绘画",
-      "商业",
-      "手游",
-      "game",
-      "ui"
-    ]
+      "数字绘画"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

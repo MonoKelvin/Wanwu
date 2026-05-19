@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "pixie bob cat wild",
+    "query": "Pixiebob cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "bobtail"
+      "pixiebob",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

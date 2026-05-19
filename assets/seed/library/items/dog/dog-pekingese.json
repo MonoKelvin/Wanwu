@@ -21,14 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "pekingese dog",
+    "query": "北京犬 / 京巴 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "pekingese"
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

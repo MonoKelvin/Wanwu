@@ -22,14 +22,18 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "kurilian bobtail cat",
+    "query": "Kurilian Bobtail cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "bobtail"
+      "俄罗斯",
+      "半长毛",
+      "kurilian",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

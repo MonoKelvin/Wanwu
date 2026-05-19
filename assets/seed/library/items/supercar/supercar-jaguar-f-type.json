@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "jaguar f type sports car",
+    "query": "F-Type supercar",
     "matchTags": [
       "jaguar",
-      "car"
-    ]
+      "type"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

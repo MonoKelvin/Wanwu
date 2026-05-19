@@ -21,11 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "bumblebee transformer yellow car",
+    "query": "Bumblebee transformers toy robot",
     "category": "transportation",
     "matchTags": [
-      "bumblebee",
-      "transformer"
-    ]
+      "汽车人",
+      "大黄蜂",
+      "甲壳虫",
+      "侦察兵",
+      "bumblebee"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

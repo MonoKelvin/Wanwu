@@ -44,7 +44,7 @@ export function pipelineBuild(root, opts = {}) {
   const catalog = {
     schema: 3,
     mediaProvider: 'pixabay',
-    mediaConfigVersion: 2,
+    mediaConfigVersion: 3,
     items
   }
 

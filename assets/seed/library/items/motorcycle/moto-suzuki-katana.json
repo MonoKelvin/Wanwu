@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "铃木 Katana 日本",
+    "query": "Katana motorcycle",
     "matchTags": [
-      "日本",
-      "Suzuki",
-      "摩托",
       "suzuki",
       "katana"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

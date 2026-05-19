@@ -21,11 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "optimus prime transformer truck toy",
+    "query": "Optimus Prime transformers toy robot",
     "category": "transportation",
     "matchTags": [
-      "optimus",
-      "transformer"
-    ]
+      "汽车人",
+      "hasbro",
+      "optimus"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

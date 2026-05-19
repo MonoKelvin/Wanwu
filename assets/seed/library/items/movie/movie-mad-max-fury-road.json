@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "mad max desert chase wasteland",
+    "query": "疯狂的麦克斯：狂暴之路 film cinema scene",
     "matchTags": [
-      "desert",
-      "wasteland"
-    ]
+      "废土动作"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

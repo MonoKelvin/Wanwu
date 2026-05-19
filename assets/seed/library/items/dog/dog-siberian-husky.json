@@ -21,14 +21,18 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "siberian husky dog",
+    "query": "西伯利亚哈士奇 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "husky"
+      "雪橇犬",
+      "西伯利亚",
+      "运动型",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

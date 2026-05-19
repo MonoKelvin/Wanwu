@@ -21,11 +21,9 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "fantasy medieval castle landscape",
-    "matchTags": [
-      "castle",
-      "fantasy"
-    ],
-    "minMatchScore": 0
+    "query": "rezero anime screenshot fan art",
+    "matchTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

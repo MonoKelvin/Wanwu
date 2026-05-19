@@ -21,11 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "dinosaur robot toy",
+    "query": "Grimlock transformers toy robot",
     "matchTags": [
-      "dinosaur",
-      "toy"
+      "汽车人",
+      "hasbro",
+      "恐龙派",
+      "grimlock"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

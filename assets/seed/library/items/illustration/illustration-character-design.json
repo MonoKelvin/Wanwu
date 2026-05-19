@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "character design sketch digital",
+    "query": "角色设计 digital illustration artwork",
     "matchTags": [
-      "character",
-      "sketch"
-    ]
+      "数字绘画",
+      "ip 开发",
+      "三视图"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -1,9 +1,14 @@
 import Database from 'better-sqlite3'
-import { mkdirSync } from 'fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
 import { seedDefaultRssFeeds } from './rssFeeds'
-import { importLibraryCatalog, loadLibraryCategories } from './librarySeed'
+import {
+  importLibraryCatalog,
+  loadLibraryCatalog,
+  loadLibraryCategories,
+  syncLibraryMediaFromCatalog
+} from './librarySeed'
 
 function loadLibraryCategoriesMeta(): Array<{ id: string; name: string; icon: string }> {
   const file = loadLibraryCategories()
@@ -51,6 +56,31 @@ export class DatabaseService {
           `[librarySeed] 增量入库 ${seedResult.imported} 条（跳过 ${seedResult.skipped}）`
         )
       }
+      this.syncLibraryMediaFromCatalogIfNeeded()
+    }
+  }
+
+  /** catalog 配图路径变更时，将 cover / gallery 同步到各分类库 */
+  private syncLibraryMediaFromCatalogIfNeeded(): void {
+    const catalog = loadLibraryCatalog()
+    if (!catalog?.items?.length) return
+
+    const marker = join(this.basePath, 'db', '.library-media-sync')
+    const token = `v${catalog.schema ?? 0}-${catalog.mediaConfigVersion ?? 0}`
+    let last = ''
+    if (existsSync(marker)) {
+      try {
+        last = readFileSync(marker, 'utf-8').trim()
+      } catch {
+        last = ''
+      }
+    }
+    if (last === token) return
+
+    const result = syncLibraryMediaFromCatalog(this)
+    writeFileSync(marker, token, 'utf-8')
+    if (result.updated > 0) {
+      console.log(`[librarySeed] 同步配图路径 ${result.updated} 条`)
     }
   }
 
@@ -70,6 +100,13 @@ export class DatabaseService {
         created_at TEXT NOT NULL
       );
       CREATE UNIQUE INDEX IF NOT EXISTS idx_favorites_item ON favorites(item_id, source);
+      CREATE TABLE IF NOT EXISTS likes (
+        id TEXT PRIMARY KEY,
+        item_id TEXT NOT NULL,
+        source TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_likes_item ON likes(item_id, source);
       CREATE TABLE IF NOT EXISTS history (
         id TEXT PRIMARY KEY,
         item_id TEXT NOT NULL,
@@ -330,6 +367,30 @@ export class DatabaseService {
   toggleFavorite(itemId: string, source: string): boolean {
     if (this.isFavorite(itemId, source)) return !this.removeFavorite(itemId, source)
     return this.addFavorite(itemId, source, DEFAULT_FAVORITE_GROUP_ID)
+  }
+
+  isLiked(itemId: string, source: string): boolean {
+    const row = this.userDb
+      .prepare('SELECT 1 FROM likes WHERE item_id = ? AND source = ?')
+      .get(itemId, source)
+    return Boolean(row)
+  }
+
+  addLike(itemId: string, source: string): boolean {
+    if (this.isLiked(itemId, source)) return true
+    this.userDb
+      .prepare('INSERT INTO likes (id, item_id, source, created_at) VALUES (?, ?, ?, ?)')
+      .run(randomUUID(), itemId, source, new Date().toISOString())
+    return true
+  }
+
+  removeLike(itemId: string, source: string): boolean {
+    const existing = this.userDb
+      .prepare('SELECT id FROM likes WHERE item_id = ? AND source = ?')
+      .get(itemId, source) as { id: string } | undefined
+    if (!existing) return false
+    this.userDb.prepare('DELETE FROM likes WHERE id = ?').run(existing.id)
+    return true
   }
 
   close(): void {

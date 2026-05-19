@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "muji minimal product design",
+    "query": "无印良品 product design",
     "matchTags": [
-      "muji",
-      "minimal"
-    ]
+      "工业设计",
+      "muji"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

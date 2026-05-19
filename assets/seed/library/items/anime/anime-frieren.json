@@ -21,10 +21,9 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "anime elf fantasy meadow",
-    "matchTags": [
-      "anime",
-      "fantasy"
-    ]
+    "query": "frieren anime screenshot fan art",
+    "matchTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

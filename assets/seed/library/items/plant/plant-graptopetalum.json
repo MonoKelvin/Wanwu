@@ -22,12 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "风车草 Graptopetalum 多肉",
+    "query": "风车草 Graptopetalum houseplant",
     "matchTags": [
-      "多肉",
-      "耐旱",
-      "盆栽",
       "graptopetalum"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

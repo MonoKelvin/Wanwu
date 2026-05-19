@@ -21,14 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "tibetan mastiff dog",
+    "query": "藏獒 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "mastiff"
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

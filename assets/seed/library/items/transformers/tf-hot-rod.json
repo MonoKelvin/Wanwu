@@ -21,13 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "热破 Hot Rod 汽车人",
+    "query": "Hot Rod transformers toy robot",
     "matchTags": [
       "汽车人",
-      "Hasbro",
-      "变形",
-      "hot",
-      "rod"
-    ]
+      "hasbro",
+      "领袖继承",
+      "hot"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -22,10 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "porsche taycan electric",
+    "query": "Taycan supercar",
     "matchTags": [
       "porsche",
-      "electric"
-    ]
+      "精密工程",
+      "taycan"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

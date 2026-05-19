@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "哈雷 Low Rider 美式",
+    "query": "Low Rider ST motorcycle",
     "matchTags": [
-      "美式",
-      "Harley-Davidson",
-      "巡航",
-      "harley",
+      "harley-davidson",
+      "运动旅行",
       "low"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "audi r8 sports car",
+    "query": "R8 supercar",
     "matchTags": [
       "audi",
-      "r8"
-    ]
+      "精密工程"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

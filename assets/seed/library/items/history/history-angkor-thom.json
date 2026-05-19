@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "angkor thom bayon temple cambodia",
+    "query": "吴哥通王城 landmark architecture",
     "matchTags": [
-      "angkor",
-      "temple"
+      "世界遗产",
+      "柬埔寨",
+      "12 世纪"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

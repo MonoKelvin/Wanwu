@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "wabi sabi interior clay",
+    "query": "侘寂 Wabi-Sabi interior design room",
     "matchTags": [
-      "wabi",
-      "interior"
-    ]
+      "wabi"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

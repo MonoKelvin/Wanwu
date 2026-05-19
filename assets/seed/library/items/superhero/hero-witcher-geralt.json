@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "geralt witcher cosplay",
+    "query": "Geralt action figure toy collectible",
     "matchTags": [
-      "witcher",
+      "猎魔人",
+      "netflix",
       "geralt"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

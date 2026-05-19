@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "australian shepherd dog",
+    "query": "澳洲牧羊犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "australian"
+      "牧羊犬",
+      "陨石色",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "川崎 Versys 650 日本",
+    "query": "Versys 650 motorcycle",
     "matchTags": [
-      "日本",
-      "Kawasaki",
-      "摩托",
       "kawasaki",
       "versys"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

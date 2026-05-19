@@ -22,13 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "奥迪 R8 GT 德国",
+    "query": "R8 GT supercar",
     "matchTags": [
-      "德国",
-      "Audi",
-      "超跑",
       "audi",
-      "r8"
-    ]
+      "精密工程"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

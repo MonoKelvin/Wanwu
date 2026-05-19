@@ -21,14 +21,18 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "labrador retriever dog",
+    "query": "拉布拉多寻回犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "labrador"
+      "寻回犬",
+      "加拿大",
+      "家庭犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

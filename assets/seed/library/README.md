@@ -4,38 +4,39 @@
 library/
   items/              # 源数据：按大类分子目录，每物品一个 JSON
   categories.json     # 分类与细分类定义
-  catalog.json        # 构建产物（npm run seed:library -- build）
-  media.json          # 配图检索配置（build 生成，media 步骤使用）
+  catalog.json        # 构建产物
+  media.json          # 配图检索配置
 ```
 
-## items/ 结构
+每个物品资源目录（运行时）：
 
 ```
-items/
-  cat/
-    _defaults.json              # 可选：该分类配图默认参数
-    cat-british-shorthair.json  # 文件名建议与 slug 一致
-  dog/
-  ...
-  _schema.example.json          # 字段示例
+assets/library/{categoryId}/{mediaDir}/
+  cover.jpg           # 封面（必须有效，≥约 2.5KB）
+  gallery-01.jpg …    # 画廊（有几张用几张，可少于上限）
+  content.md          # 详情正文（界面优先加载此文件）
 ```
+
+## items/ 字段
 
 | 字段 | 说明 |
 |------|------|
-| `id` | 全库唯一稳定 UUID |
-| `slug` | 如 `cat-british-shorthair` |
-| `subCategoryId` | 细分类 id（见 `categories.json`） |
-| `name` / `summary` / `description` | 展示文案 |
-| `media` | Pixabay 等搜索参数（可继承 `_defaults.json`） |
+| `id` | 稳定 UUID |
+| `slug` / `subCategoryId` | 标识与细分类 |
+| `name` / `summary` | 列表展示 |
+| `description` | 种子摘要；有 `content.md` 时界面以 Markdown 为准 |
+| `media` | Pixabay 参数；`imageCount` 为尝试上限（默认 8，最多 12） |
 
 ## 维护流程
 
 ```bash
+npm run seed:library -- cleanup          # 删除占位小图
+npm run seed:library -- improve-queries
 npm run seed:library -- build
-npm run seed:library -- media
-npm run seed:library:reimport
+npm run seed:library -- media --force --concurrency=12
+npm run seed:library -- fetch-content --concurrency=4
+npm run seed:library -- dedupe-local
+npm run seed:library:reimport -- --full
 ```
-
-修改已有条目入库：`npm run seed:library -- update --id=<uuid>`
 
 脚本说明见 [scripts/library/README.md](../../../scripts/library/README.md)。

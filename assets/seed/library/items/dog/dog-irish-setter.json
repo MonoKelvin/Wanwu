@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "irish setter dog red",
+    "query": "爱尔兰雪达犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "setter"
+      "猎鸟犬",
+      "爱尔兰",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

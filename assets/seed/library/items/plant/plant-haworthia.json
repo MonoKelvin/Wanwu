@@ -22,10 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "haworthia succulent",
+    "query": "十二卷 Haworthia houseplant",
     "matchTags": [
-      "haworthia",
-      "succulent"
-    ]
+      "haworthia"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

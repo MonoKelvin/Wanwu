@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "yamaha r1 sportbike",
+    "query": "YZF-R1 motorcycle",
     "matchTags": [
       "yamaha",
-      "motorcycle"
-    ]
+      "约 200 hp",
+      "yzf"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

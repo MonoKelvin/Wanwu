@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "chinese crested dog",
+    "query": "中国冠毛犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "crested"
+      "无毛犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

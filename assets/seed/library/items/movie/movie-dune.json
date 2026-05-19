@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "dune desert sci fi landscape",
+    "query": "沙丘 Dune film cinema scene",
     "matchTags": [
-      "desert",
-      "sci fi"
-    ]
+      "太空歌剧",
+      "维伦纽瓦",
+      "dune"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

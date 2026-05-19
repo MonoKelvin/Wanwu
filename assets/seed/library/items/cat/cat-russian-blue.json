@@ -1,7 +1,7 @@
 {
   "id": "6a1f2569-0ed0-4c5a-ab7e-8de2e67600db",
   "slug": "cat-russian-blue",
-  "subCategoryId": "cat-europe",
+  "subCategoryId": "cat-short-hair",
   "name": "俄罗斯蓝猫 Russian Blue",
   "summary": "银蓝短毛、翠绿双眼，性格矜持优雅，低过敏性被毛著称。",
   "description": "俄罗斯蓝猫（Russian Blue）起源有俄罗斯阿尔汉格尔斯克港等说法，20 世纪初进入欧美猫展。被毛为双层银蓝短毛，触感丝绒般，绿色眼睛为标志。\n\n性格通常害羞但忠诚，适应室内，较少掉毛，常被推荐给轻度过敏饲主（个体差异仍存在）。需互动与垂直空间，不宜长期孤独。\n\n**相关**：与科拉特猫、暹罗猫在体型上属东方系近缘讨论；「阿奇博尔德」为历史名猫之一。",
@@ -22,15 +22,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "russian blue cat",
+    "query": "Russian Blue cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
       "russian",
-      "blue"
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

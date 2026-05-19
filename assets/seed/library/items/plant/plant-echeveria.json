@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "echeveria succulent",
+    "query": "拟石莲 Echeveria houseplant",
     "category": "nature",
     "matchTags": [
-      "echeveria",
-      "succulent"
-    ]
+      "景天科",
+      "echeveria"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -22,10 +22,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "material design mobile ui",
+    "query": "Material Design 3 mobile app ui screenshot",
     "matchTags": [
-      "material",
-      "ui"
-    ]
+      "google",
+      "android",
+      "设计系统",
+      "material you",
+      "material"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

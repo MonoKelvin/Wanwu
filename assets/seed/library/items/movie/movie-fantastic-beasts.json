@@ -21,11 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "vintage suitcase magic fantasy",
+    "query": "神奇动物在哪里 film cinema scene",
     "matchTags": [
-      "vintage",
-      "fantasy"
+      "魔法世界"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -21,11 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "fighter jet aircraft sky",
+    "query": "壮志凌云 2：独行侠 film cinema scene",
     "matchTags": [
-      "jet",
-      "aircraft"
+      "约瑟夫·科辛斯基"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

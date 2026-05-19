@@ -22,14 +22,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "pembroke welsh corgi dog",
+    "query": "Pembroke dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "corgi"
+      "牧牛犬",
+      "pembroke",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

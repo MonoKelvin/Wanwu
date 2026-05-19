@@ -22,10 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "maserati mc20 sports car",
+    "query": "MC20 supercar",
     "matchTags": [
+      "意大利",
       "maserati",
-      "car"
-    ]
+      "v8/v12",
+      "mc20"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

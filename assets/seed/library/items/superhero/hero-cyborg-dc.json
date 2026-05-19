@@ -1,7 +1,7 @@
 {
   "id": "d06c7021-477f-4007-952a-753744803a11",
   "slug": "hero-cyborg-dc",
-  "subCategoryId": "hero-dc",
+  "subCategoryId": "hero-dc-film",
   "name": "钢骨 Cyborg",
   "summary": "维克多·斯通半人半机械，母盒科技赋予联网与能量炮能力。",
   "description": "钢骨（Cyborg）1980 年登场，维克多·斯通（Victor Stone）经母盒（Mother Box）改造，身体机械融合，可 Boom Tube 传送、黑客联网。\n\n**影视**：DCEU《正义联盟》中由雷·费舍饰演，原为少年泰坦成员。\n\n**能力要点**：机械臂炮、飞行、黑客、母盒科技",
@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "cyborg dc cosplay",
+    "query": "Cyborg action figure toy collectible",
     "matchTags": [
-      "cyborg",
-      "dc"
-    ]
+      "正义联盟",
+      "维克多",
+      "cyborg"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

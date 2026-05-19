@@ -22,12 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "龙舌兰 Agave 多肉",
+    "query": "龙舌兰 Agave houseplant",
     "matchTags": [
-      "多肉",
-      "耐旱",
-      "盆栽",
       "agave"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

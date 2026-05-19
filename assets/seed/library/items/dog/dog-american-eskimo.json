@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "american eskimo dog white",
+    "query": "美国爱斯基摩犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "eskimo"
+      "斯皮茨",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

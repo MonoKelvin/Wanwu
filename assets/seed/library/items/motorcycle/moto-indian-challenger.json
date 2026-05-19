@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "印第安 Challenger 美式",
+    "query": "Challenger motorcycle",
     "matchTags": [
-      "美式",
-      "Indian",
-      "巡航",
       "indian",
+      "豪华旅行",
       "challenger"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

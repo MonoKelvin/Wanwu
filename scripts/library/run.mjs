@@ -14,6 +14,13 @@ import { pipelineBuild } from './lib/pipeline-build.mjs'
 import { pipelineMedia } from './lib/pipeline-media.mjs'
 import { pipelineAudit } from './lib/pipeline-audit.mjs'
 import { fixMediaSlugs } from './lib/fix-media-slugs.mjs'
+import { assignSubcategories } from './lib/assign-subcategories.mjs'
+import { improveMediaQueries } from './lib/improve-media-queries.mjs'
+import { pipelineMediaQuality } from './lib/pipeline-media-quality.mjs'
+import { pipelineCurate } from './lib/pipeline-curate.mjs'
+import { dedupeLocalMedia } from './lib/dedupe-local-media.mjs'
+import { cleanupPlaceholders } from './lib/cleanup-placeholders.mjs'
+import { pipelineContent } from './lib/pipeline-content.mjs'
 import { listItemCategories, itemsRoot } from './lib/items.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
@@ -23,16 +30,23 @@ function printHelp() {
 全库种子流水线
 
   build       items/ → catalog.json + media.json
-  media       下载配图到 assets/library/
+  media       并行下载配图（--concurrency=10）
+  fetch-content  抓取百度百科写入 content.md
+  cleanup     删除占位小图与 mediaTodo
   retry       缺图按 retryQuery 重试
   audit       缺图检查
   fix-slugs   修正 slug 与 assets/library 目录不一致
+  assign-subs 按规则细化二级分类
+  improve-queries  优化各条目的 Pixabay 搜索词
+  media-quality    配图质量摘要
+  curate      同 media --force
+  dedupe-local  删除条内 MD5 重复配图
   import      入库（仅新增 id）
   update      按 --id= 强制更新
   all         build → media
   info        统计
 
-选项: --force --slug= --category= --id= --full
+选项: --force --slug= --category= --concurrency= --limit= --id= --full
 
 示例:
   npm run seed:library -- build
@@ -104,6 +118,41 @@ async function main() {
 
   if (step === 'fix-slugs') {
     fixMediaSlugs(root)
+    return
+  }
+
+  if (step === 'assign-subs') {
+    assignSubcategories(root)
+    return
+  }
+
+  if (step === 'improve-queries') {
+    improveMediaQueries(root)
+    return
+  }
+
+  if (step === 'cleanup') {
+    cleanupPlaceholders(root)
+    return
+  }
+
+  if (step === 'fetch-content') {
+    await pipelineContent(root, opts)
+    return
+  }
+
+  if (step === 'media-quality') {
+    pipelineMediaQuality(root)
+    return
+  }
+
+  if (step === 'curate') {
+    await pipelineCurate(root, opts)
+    return
+  }
+
+  if (step === 'dedupe-local') {
+    dedupeLocalMedia(root)
     return
   }
 

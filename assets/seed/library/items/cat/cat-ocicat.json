@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "ocicat spotted cat",
+    "query": "Ocicat cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "ocicat"
+      "ocicat",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

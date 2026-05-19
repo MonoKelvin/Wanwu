@@ -21,12 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "死神 BLEACH 少年漫",
+    "query": "bleach anime screenshot fan art",
     "matchTags": [
       "少年漫",
-      "热血",
-      "日本",
       "bleach"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

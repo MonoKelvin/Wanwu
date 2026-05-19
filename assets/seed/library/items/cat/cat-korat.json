@@ -22,14 +22,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "korat cat silver blue",
+    "query": "Korat cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "korat"
+      "korat",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

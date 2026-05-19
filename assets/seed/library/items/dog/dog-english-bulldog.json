@@ -22,14 +22,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "english bulldog dog",
+    "query": "英国斗牛犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "bulldog"
+      "斗牛犬",
+      "伴侣犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

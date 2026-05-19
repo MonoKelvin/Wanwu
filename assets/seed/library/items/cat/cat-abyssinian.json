@@ -21,14 +21,18 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "abyssinian cat ticked",
+    "query": "Abyssinian cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "abyssinian"
+      "ticked",
+      "古老品种",
+      "abyssinian",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

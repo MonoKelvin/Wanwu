@@ -22,13 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "宾利 Batur 英国",
+    "query": "Batur supercar",
     "matchTags": [
-      "英国",
-      "Bentley",
-      "超跑",
       "bentley",
       "batur"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

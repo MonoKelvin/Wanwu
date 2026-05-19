@@ -21,14 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "calico japanese cat",
+    "query": "三毛猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "calico"
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

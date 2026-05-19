@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "碟中谍 Mission Impossible 动作",
+    "query": "碟中谍 Mission: Impossible film cinema scene",
     "matchTags": [
-      "动作",
-      "电影",
       "特工动作",
-      "mission",
-      "impossible"
-    ]
+      "mission"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

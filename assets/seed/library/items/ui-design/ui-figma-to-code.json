@@ -1,7 +1,7 @@
 {
   "id": "3f21555d-863c-4d5e-b3ab-b774f2e4c892",
   "slug": "ui-figma-to-code",
-  "subCategoryId": "ui-web",
+  "subCategoryId": "ui-design-tool",
   "name": "Figma 转代码",
   "summary": "设计稿到 React/Vue 的自动化与手工还原流程。",
   "description": "Figma 转代码代表 Web 端交付方向，常用技术栈包括DevMode。现代网页强调性能（Core Web Vitals）、可访问性与设计系统一致性。\n\n从着陆页到复杂 Dashboard，需平衡信息密度与视觉层级。\n\n**实现要点**：DevMode，语义 HTML，响应式\n\n**相关**：与 Tailwind、组件库、设计 Token 工作流紧密相关",
@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Figma 转代码 Web",
+    "query": "Figma 转代码 design system ui",
     "matchTags": [
-      "Web",
-      "UI",
-      "DevMode",
-      "figma",
-      "to"
-    ]
+      "web",
+      "devmode",
+      "figma"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

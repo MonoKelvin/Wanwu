@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "mechanical bird sculpture",
+    "query": "Laserbeak transformers toy robot",
     "matchTags": [
-      "bird",
-      "metal"
+      "霸天虎",
+      "磁带战士",
+      "laserbeak"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

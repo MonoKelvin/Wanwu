@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "futuristic cannon weapon sci fi",
+    "query": "Galvatron transformers toy robot",
     "matchTags": [
-      "sci",
-      "fi"
+      "霸天虎",
+      "霸天虎领袖",
+      "galvatron"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "categories": [
     {
       "id": "cat",
@@ -9,7 +9,10 @@
         { "id": "cat-europe", "name": "欧洲品种" },
         { "id": "cat-americas", "name": "美洲品种" },
         { "id": "cat-china", "name": "中国品种" },
-        { "id": "cat-japan", "name": "日本品种" }
+        { "id": "cat-japan", "name": "日本品种" },
+        { "id": "cat-short-hair", "name": "短毛品种" },
+        { "id": "cat-long-hair", "name": "长毛品种" },
+        { "id": "cat-exotic", "name": "稀有无毛/卷毛" }
       ]
     },
     {
@@ -19,7 +22,10 @@
       "subcategories": [
         { "id": "dog-europe", "name": "欧洲犬种" },
         { "id": "dog-americas", "name": "美洲犬种" },
-        { "id": "dog-asia", "name": "亚洲犬种" }
+        { "id": "dog-asia", "name": "亚洲犬种" },
+        { "id": "dog-working", "name": "工作/牧羊犬" },
+        { "id": "dog-toy", "name": "玩具/伴侣犬" },
+        { "id": "dog-hound", "name": "猎犬/嗅猎犬" }
       ]
     },
     {
@@ -29,7 +35,11 @@
       "subcategories": [
         { "id": "hero-marvel", "name": "漫威 Marvel" },
         { "id": "hero-dc", "name": "DC 漫画" },
-        { "id": "hero-other", "name": "其他宇宙" }
+        { "id": "hero-other", "name": "其他宇宙" },
+        { "id": "hero-marvel-mcu", "name": "漫威电影 MCU" },
+        { "id": "hero-dc-film", "name": "DC 影视" },
+        { "id": "hero-anime", "name": "动漫/日漫英雄" },
+        { "id": "hero-indie", "name": "独立漫画" }
       ]
     },
     {
@@ -39,7 +49,9 @@
       "subcategories": [
         { "id": "car-italy", "name": "意大利品牌" },
         { "id": "car-germany", "name": "德国品牌" },
-        { "id": "car-britain", "name": "英国品牌" }
+        { "id": "car-britain", "name": "英国品牌" },
+        { "id": "car-france", "name": "法国品牌" },
+        { "id": "car-hypercar", "name": "限量超跑" }
       ]
     },
     {
@@ -48,7 +60,9 @@
       "icon": "sun",
       "subcategories": [
         { "id": "plant-aroid", "name": "天南星科观叶" },
-        { "id": "plant-succulent", "name": "多肉与仙人掌" }
+        { "id": "plant-succulent", "name": "多肉与仙人掌" },
+        { "id": "plant-flowering", "name": "开花观赏" },
+        { "id": "plant-fern", "name": "蕨类与苔藓" }
       ]
     },
     {
@@ -57,7 +71,11 @@
       "icon": "sparkles",
       "subcategories": [
         { "id": "anime-shonen", "name": "少年热血" },
-        { "id": "anime-fantasy", "name": "奇幻冒险" }
+        { "id": "anime-fantasy", "name": "奇幻冒险" },
+        { "id": "anime-seinen", "name": "青年/剧情" },
+        { "id": "anime-isekai", "name": "异世界" },
+        { "id": "anime-slice", "name": "日常治愈" },
+        { "id": "anime-ghibli", "name": "吉卜力/剧场" }
       ]
     },
     {
@@ -66,7 +84,9 @@
       "icon": "star",
       "subcategories": [
         { "id": "tf-autobot", "name": "汽车人 Autobot" },
-        { "id": "tf-decepticon", "name": "霸天虎 Decepticon" }
+        { "id": "tf-decepticon", "name": "霸天虎 Decepticon" },
+        { "id": "tf-g1", "name": "G1 经典" },
+        { "id": "tf-movie", "name": "真人电影系列" }
       ]
     },
     {
@@ -76,7 +96,10 @@
       "subcategories": [
         { "id": "moto-italy", "name": "意大利品牌" },
         { "id": "moto-america", "name": "美式巡航" },
-        { "id": "moto-japan", "name": "日本品牌" }
+        { "id": "moto-japan", "name": "日本品牌" },
+        { "id": "moto-germany", "name": "德国品牌" },
+        { "id": "moto-sport", "name": "仿赛/运动" },
+        { "id": "moto-adventure", "name": "探险拉力" }
       ]
     },
     {
@@ -86,7 +109,9 @@
       "subcategories": [
         { "id": "movie-scifi", "name": "科幻悬疑" },
         { "id": "movie-fantasy", "name": "奇幻动画" },
-        { "id": "movie-action", "name": "动作犯罪" }
+        { "id": "movie-action", "name": "动作犯罪" },
+        { "id": "movie-classic", "name": "经典剧情" },
+        { "id": "movie-horror", "name": "惊悚恐怖" }
       ]
     },
     {
@@ -95,7 +120,9 @@
       "icon": "palette",
       "subcategories": [
         { "id": "ill-digital", "name": "数字插画" },
-        { "id": "ill-classic", "name": "经典绘画" }
+        { "id": "ill-classic", "name": "经典绘画" },
+        { "id": "ill-portrait", "name": "人物肖像" },
+        { "id": "ill-concept", "name": "概念/场景" }
       ]
     },
     {
@@ -104,7 +131,9 @@
       "icon": "smartphone",
       "subcategories": [
         { "id": "ui-mobile", "name": "移动端规范" },
-        { "id": "ui-web", "name": "Web 与组件" }
+        { "id": "ui-web", "name": "Web 与组件" },
+        { "id": "ui-design-tool", "name": "设计工具" },
+        { "id": "ui-app-screen", "name": "应用界面截图" }
       ]
     },
     {
@@ -113,7 +142,9 @@
       "icon": "home",
       "subcategories": [
         { "id": "int-nordic", "name": "北欧简约" },
-        { "id": "int-zen", "name": "日式禅意" }
+        { "id": "int-zen", "name": "日式禅意" },
+        { "id": "int-modern", "name": "现代轻奢" },
+        { "id": "int-industrial", "name": "工业风" }
       ]
     },
     {
@@ -122,7 +153,9 @@
       "icon": "box",
       "subcategories": [
         { "id": "id-product", "name": "消费电子" },
-        { "id": "id-home", "name": "家居产品" }
+        { "id": "id-home", "name": "家居产品" },
+        { "id": "id-appliance", "name": "厨房家电" },
+        { "id": "id-furniture", "name": "家具灯具" }
       ]
     },
     {
@@ -131,7 +164,9 @@
       "icon": "book-open",
       "subcategories": [
         { "id": "hist-china", "name": "中国" },
-        { "id": "hist-world", "name": "世界其他" }
+        { "id": "hist-world", "name": "世界其他" },
+        { "id": "hist-ancient", "name": "古代文明" },
+        { "id": "hist-medieval", "name": "中世纪/近代" }
       ]
     }
   ]

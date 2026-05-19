@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "lord of the rings fantasy landscape",
+    "query": "指环王 The Lord of the Rings film cinema scene",
     "matchTags": [
-      "fantasy",
-      "mountain"
-    ]
+      "史诗奇幻",
+      "the"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

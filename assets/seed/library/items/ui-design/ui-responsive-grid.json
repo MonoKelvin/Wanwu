@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "响应式栅格 Web",
+    "query": "响应式栅格 web interface ui design",
     "matchTags": [
-      "Web",
-      "UI",
-      "CSS Grid",
-      "responsive",
-      "grid"
-    ]
+      "web",
+      "css grid"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

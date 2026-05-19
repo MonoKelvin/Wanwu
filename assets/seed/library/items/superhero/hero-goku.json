@@ -1,7 +1,7 @@
 {
   "id": "99777b5b-9ece-4d3f-962f-7b851da37f86",
   "slug": "hero-goku",
-  "subCategoryId": "hero-other",
+  "subCategoryId": "hero-anime",
   "name": "孙悟空 Goku",
   "summary": "《龙珠》赛亚人战士守护地球，超级赛亚人变身标志。",
   "description": "孙悟空（Son Goku）1984 年《龙珠》连载，鸟山明创作，改编自《西游记》。赛亚人血统使其在战斗中不断突破，超级赛亚人、自在极意功等形态家喻户晓。\n\n**影响**：全球销量巨大，动画、游戏、周边横跨数十年。\n\n**设定要点**：气功波、变身、舞空术",
@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "goku dragon ball cosplay",
+    "query": "Goku action figure toy collectible",
     "matchTags": [
-      "goku",
-      "dragon"
-    ]
+      "赛亚人",
+      "鸟山明",
+      "goku"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

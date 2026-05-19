@@ -22,10 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "lithops living stones succulent",
+    "query": "生石花 Lithops houseplant",
     "matchTags": [
-      "lithops",
-      "succulent"
-    ]
+      "lithops"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

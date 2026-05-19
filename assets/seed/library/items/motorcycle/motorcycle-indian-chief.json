@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "indian chief motorcycle",
+    "query": "Chief motorcycle",
     "matchTags": [
       "indian",
-      "motorcycle"
-    ]
+      "chief"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

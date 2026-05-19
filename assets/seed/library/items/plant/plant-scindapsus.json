@@ -22,12 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "绿萝藤 Scindapsus 观叶",
+    "query": "绿萝藤 Scindapsus houseplant",
     "matchTags": [
-      "观叶",
       "天南星科",
-      "室内",
       "scindapsus"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

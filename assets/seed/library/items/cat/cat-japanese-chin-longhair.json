@@ -20,14 +20,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "longhair cat oriental",
+    "query": "日本长毛猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "longhair"
+      "展示型",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

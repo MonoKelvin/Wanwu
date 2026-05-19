@@ -3,6 +3,15 @@ import { join } from 'path'
 import { resolveMediaConfig, providerEnvKey, clearMediaManifestCache } from './media-config.mjs'
 import { downloadItemMedia } from './media-providers.mjs'
 import { loadEnvFileSync, removeSvgsInLibrary } from './media-shared.mjs'
+import { runPool } from './parallel-pool.mjs'
+import { scanValidMediaFiles } from './disk-media.mjs'
+import { libraryRelDirFromItem } from './media-path.mjs'
+
+function catalogFromDisk(item, assetsLib) {
+  const { categoryId, mediaDir } = libraryRelDirFromItem(item)
+  const dir = join(assetsLib, categoryId, mediaDir)
+  return scanValidMediaFiles(categoryId, mediaDir, dir)
+}
 
 /**
  * @param {string} root
@@ -28,7 +37,10 @@ export async function pipelineMedia(root, opts, mode = {}) {
   let items = catalog.items ?? []
 
   if (mode.retryMissing) {
-    items = items.filter((item) => !existsSync(join(root, 'assets', item.coverFile)))
+    items = items.filter((item) => {
+      const disk = catalogFromDisk(item, assetsLib)
+      return !disk?.coverFile
+    })
     if (!items.length) {
       console.log('无缺图条目')
       return
@@ -53,10 +65,13 @@ export async function pipelineMedia(root, opts, mode = {}) {
 
   const defaultProvider = opts.provider ?? 'pixabay'
   if (!opts.provider && defaultProvider !== 'manual' && !apiKeys.pixabay && !apiKeys.unsplash) {
-    throw new Error('请配置 .env 中的 PIXABAY_API_KEY（见 assets/seed/library/media.json）')
+    throw new Error('请配置 .env 中的 PIXABAY_API_KEY')
   }
 
-  console.log(`配图下载 · --force=${opts.force}${mode.retryMissing ? ' · retry' : ''}\n`)
+  const concurrency = opts.concurrency || 10
+  console.log(
+    `配图下载 · 并发 ${concurrency} · --force=${opts.force}${mode.retryMissing ? ' · retry' : ''}\n`
+  )
   removeSvgsInLibrary(assetsLib)
 
   const updatedMap = new Map()
@@ -64,39 +79,38 @@ export async function pipelineMedia(root, opts, mode = {}) {
   let skip = 0
   let fail = 0
 
-  for (const item of items) {
+  await runPool(items, concurrency, async (item) => {
     const config = resolveMediaConfig(item.slug, item)
     const provider = opts.provider ?? config.provider
     const envKey = providerEnvKey(provider)
     if (provider !== 'manual' && envKey && !apiKeys[provider === 'pixabay' ? 'pixabay' : 'unsplash']) {
       console.warn(`▸ ${item.name} — 跳过（未配置 ${envKey}）`)
       fail++
-      continue
+      return
     }
 
-    console.log(`▸ ${item.name} [${provider}] — ${config.query}`)
     try {
       const media = await downloadItemMedia({
         assetsLib,
         item,
-        config: { ...config, provider },
+        config: { ...config, provider, imageCount: config.imageCount ?? item.mediaImageCount },
         provider,
         apiKeys,
         force: opts.force
       })
 
-      if (media?.skipped) {
-        skip++
-        updatedMap.set(item.slug, {
-          ...item,
-          ...(media.coverAttribution
-            ? {
-                coverAttribution: media.coverAttribution,
-                galleryAttributions: media.galleryAttributions
-              }
-            : {})
-        })
-        continue
+      if (media?.skipped && media.fromDisk) {
+        const disk = catalogFromDisk(item, assetsLib)
+        if (disk) {
+          skip++
+          updatedMap.set(item.slug, {
+            ...item,
+            coverFile: disk.coverFile,
+            galleryFiles: disk.galleryFiles,
+            contentFile: disk.contentFile
+          })
+        }
+        return
       }
 
       updatedMap.set(item.slug, {
@@ -105,15 +119,27 @@ export async function pipelineMedia(root, opts, mode = {}) {
         galleryFiles: media.galleryFiles,
         coverAttribution: media.coverAttribution,
         galleryAttributions: media.galleryAttributions,
+        mediaImageCount: media.imageCount,
         mediaProvider: provider
       })
+      console.log(`  ✓ ${item.name} (${media.imageCount} 张)`)
       ok++
     } catch (e) {
-      console.warn(`  ✗ ${e.message}`)
-      fail++
-      updatedMap.set(item.slug, item)
+      const disk = catalogFromDisk(item, assetsLib)
+      if (disk) {
+        updatedMap.set(item.slug, {
+          ...item,
+          coverFile: disk.coverFile,
+          galleryFiles: disk.galleryFiles
+        })
+        console.warn(`  ~ ${item.name} — ${e.message}（保留已有 ${disk.galleryFiles.length + 1} 张）`)
+        skip++
+      } else {
+        console.warn(`  ✗ ${item.name} — ${e.message}`)
+        fail++
+      }
     }
-  }
+  })
 
   const touched = new Set(items.map((i) => i.slug))
   catalog.items = catalog.items.map((i) => (touched.has(i.slug) ? (updatedMap.get(i.slug) ?? i) : i))
@@ -123,5 +149,5 @@ export async function pipelineMedia(root, opts, mode = {}) {
 
   writeFileSync(catalogPath, JSON.stringify(catalog, null, 2), 'utf-8')
   console.log(`\n完成: 更新 ${ok} · 跳过 ${skip} · 失败 ${fail}`)
-  console.log('入库: npm run seed:library:reimport 或重启应用')
+  console.log('建议: npm run seed:library -- build && npm run seed:library:reimport -- --full')
 }

@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "naruto anime cosplay",
+    "query": "naruto anime screenshot fan art",
     "matchTags": [
-      "naruto",
-      "anime"
-    ]
+      "少年漫",
+      "naruto"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

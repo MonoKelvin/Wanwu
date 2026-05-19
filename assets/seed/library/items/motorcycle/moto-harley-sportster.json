@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "harley davidson motorcycle black",
+    "query": "Sportster S motorcycle",
     "matchTags": [
-      "harley",
-      "motorcycle"
+      "harley-davidson",
+      "运动巡航",
+      "sportster"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

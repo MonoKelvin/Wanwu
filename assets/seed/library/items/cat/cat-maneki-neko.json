@@ -21,14 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "maneki neko lucky cat",
+    "query": "招猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "lucky"
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

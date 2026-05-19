@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "american curl cat",
+    "query": "American Curl cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "curl"
+      "家庭猫",
+      "american",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

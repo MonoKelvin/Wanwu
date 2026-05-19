@@ -21,13 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Muuto Beam 灯具 家居",
+    "query": "Muuto Beam 灯具 product design",
     "matchTags": [
-      "家居",
-      "Muuto",
-      "灯具",
-      "muuto",
-      "beam"
-    ]
+      "muuto"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

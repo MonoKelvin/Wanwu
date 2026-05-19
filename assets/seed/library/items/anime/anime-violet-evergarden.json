@@ -21,13 +21,9 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "紫罗兰永恒花园 奇幻",
-    "matchTags": [
-      "奇幻",
-      "剧情",
-      "日本",
-      "violet",
-      "evergarden"
-    ]
+    "query": "violet evergarden anime screenshot fan art",
+    "matchTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

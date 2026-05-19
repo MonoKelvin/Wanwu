@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "ghibli anime landscape clouds",
+    "query": "吉卜力动画电影 film cinema scene",
     "matchTags": [
-      "ghibli",
-      "landscape"
-    ]
+      "动画奇幻"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

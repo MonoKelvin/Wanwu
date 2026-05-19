@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "catahoula leopard dog",
+    "query": "卡塔胡拉豹犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "catahoula"
+      "工作犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

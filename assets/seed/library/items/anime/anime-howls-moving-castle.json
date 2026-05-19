@@ -21,10 +21,9 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "howls moving castle anime scenery",
-    "matchTags": [
-      "castle",
-      "anime"
-    ]
+    "query": "howls moving castle anime screenshot fan art",
+    "matchTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

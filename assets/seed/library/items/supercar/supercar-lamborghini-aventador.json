@@ -22,10 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "lamborghini aventador",
+    "query": "Aventador supercar",
     "matchTags": [
+      "意大利",
       "lamborghini",
-      "car"
-    ]
+      "v8/v12",
+      "aventador"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

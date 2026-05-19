@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "retro diner cinematic",
+    "query": "低俗小说 Pulp Fiction film cinema scene",
     "matchTags": [
-      "diner",
-      "retro"
-    ]
+      "犯罪喜剧",
+      "pulp"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

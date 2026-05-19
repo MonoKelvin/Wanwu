@@ -20,14 +20,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "white cat portrait",
+    "query": "中国白猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "white"
+      "田园猫",
+      "异色眼",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

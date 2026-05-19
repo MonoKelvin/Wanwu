@@ -21,13 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "chinese domestic cat",
+    "query": "简州猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
+      "地方品种",
       "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

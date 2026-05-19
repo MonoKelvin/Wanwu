@@ -21,11 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "underwater ocean coral reef",
+    "query": "阿凡达：水之道 film cinema scene",
     "matchTags": [
-      "ocean",
-      "underwater"
+      "科幻奇幻"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

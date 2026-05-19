@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "第九区 District 9 科幻",
+    "query": "第九区 District 9 film cinema scene",
     "matchTags": [
-      "科幻",
-      "电影",
       "社会科幻",
-      "district",
-      "9"
-    ]
+      "布洛姆坎普",
+      "district"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

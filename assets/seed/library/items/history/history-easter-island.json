@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "easter island moai statues",
+    "query": "复活节岛摩艾 landmark architecture",
     "matchTags": [
-      "moai",
-      "statues"
-    ]
+      "世界遗产",
+      "公元 1250–1500"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

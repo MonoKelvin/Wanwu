@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "哈雷 Road Glide 美式",
+    "query": "Road Glide motorcycle",
     "matchTags": [
-      "美式",
-      "Harley-Davidson",
-      "巡航",
-      "harley",
+      "harley-davidson",
       "road"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

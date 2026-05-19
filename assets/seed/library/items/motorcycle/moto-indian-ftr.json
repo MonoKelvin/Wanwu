@@ -21,11 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "flat track motorcycle racing",
+    "query": "FTR 1200 motorcycle",
     "matchTags": [
-      "motorcycle",
-      "racing"
+      "indian",
+      "ftr"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

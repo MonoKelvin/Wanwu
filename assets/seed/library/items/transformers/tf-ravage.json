@@ -21,12 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "机器狗 Ravage 霸天虎",
+    "query": "Ravage transformers toy robot",
     "matchTags": [
       "霸天虎",
-      "反派",
-      "变形",
+      "磁带战士",
       "ravage"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

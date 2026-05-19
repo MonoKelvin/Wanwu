@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "雅马哈 XSR900 日本",
+    "query": "XSR900 motorcycle",
     "matchTags": [
-      "日本",
-      "Yamaha",
-      "摩托",
       "yamaha",
       "xsr900"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

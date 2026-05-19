@@ -20,14 +20,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "staffordshire terrier dog",
+    "query": "美国斯塔福郡梗 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "staffordshire"
+      "力量型",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

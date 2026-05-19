@@ -9,8 +9,8 @@
 import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { homedir } from 'os'
-import { DatabaseService } from '@electron/services/database'
-import { importLibraryCatalog } from '@electron/services/librarySeed'
+import { DatabaseService } from '../../electron/services/database'
+import { importLibraryCatalog } from '../../electron/services/librarySeed'
 
 function resolveUserData(): string {
   if (process.env.WANWU_USER_DATA) return process.env.WANWU_USER_DATA

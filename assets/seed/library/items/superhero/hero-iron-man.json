@@ -1,7 +1,7 @@
 {
   "id": "3c048f36-5a89-4d24-80a6-f49ed37034f6",
   "slug": "hero-iron-man",
-  "subCategoryId": "hero-marvel",
+  "subCategoryId": "hero-marvel-mcu",
   "name": "钢铁侠 Iron Man",
   "summary": "漫威天才发明家托尼·斯塔克，以动力装甲与科技装备成为复仇者联盟核心成员。",
   "description": "钢铁侠（Iron Man）由 Stan Lee、Larry Lieber、Don Heck、Jack Kirby 创作，1963 年《Tales of Suspense》#39 登场。托尼·斯塔克（Tony Stark）为军火商之子，被绑架后制造第一代 Mark 装甲逃生。\n\n无超能力，依赖方舟反应堆、纳米装甲、人工智能 JARVIS/FRIDAY 与尖端武器。漫威电影宇宙（MCU）由小罗伯特·唐尼饰演，开启 MCU 第一阶段《钢铁侠》（2008）。\n\n**相关**：复仇者联盟创始人之一；与蜘蛛侠有师徒关系（MCU）；反派包括满大人、奥巴代亚等。",
@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "iron man armor cosplay",
+    "query": "Iron Man action figure toy collectible",
     "category": "people",
     "matchTags": [
-      "iron",
-      "man",
-      "armor"
-    ]
+      "mcu",
+      "科技英雄",
+      "iron"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -20,13 +20,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "street cat tropical",
+    "query": "冲绳猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
       "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

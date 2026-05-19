@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "川崎 Z900 日本",
+    "query": "Z900 motorcycle",
     "matchTags": [
-      "日本",
-      "Kawasaki",
-      "摩托",
       "kawasaki",
       "z900"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

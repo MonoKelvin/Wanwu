@@ -1,178 +1,160 @@
 import type { Item } from '@shared/types/item'
+import { buildShareCardContent } from '../shareCard/buildShareCardContent'
+import { drawCoverImage, drawPlaceholder, loadImage } from '../shareCard/canvasUtils'
+import { extractPaletteFromCanvas } from '../shareCard/extractImagePalette'
+import { resolveShareCardFilter } from '../shareCard/imageFilters'
+import {
+  DEFAULT_SHARE_CARD_STYLE,
+  type ShareCardStyle
+} from '../shareCard/styleCatalog'
+import { DEFAULT_SHARE_CARD_TEMPLATE } from '../shareCard/templateCatalog'
+import {
+  renderShareCardTemplate,
+  SHARE_CARD_HEIGHT,
+  SHARE_CARD_WIDTH
+} from '../shareCard/templates'
+import type { ShareCardTemplateId } from '../shareCard/types'
 
-function loadImage(url: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    img.crossOrigin = 'anonymous'
-    img.onload = () => resolve(img)
-    img.onerror = () => reject(new Error('image_load_failed'))
-    img.src = url
-  })
+export type { ShareCardTemplateId } from '../shareCard/types'
+export type { ShareCardStyle } from '../shareCard/styleCatalog'
+export {
+  SHARE_CARD_TEMPLATES,
+  DEFAULT_SHARE_CARD_TEMPLATE
+} from '../shareCard/templateCatalog'
+export {
+  DEFAULT_SHARE_CARD_STYLE,
+  DEFAULT_CENTER_STYLE,
+  SHARE_CARD_FONT_OPTIONS,
+  SHARE_CARD_SIZE_OPTIONS,
+  SHARE_CARD_COLOR_OPTIONS,
+  SHARE_CARD_FILTER_OPTIONS,
+  createDefaultStylesByTemplate
+} from '../shareCard/styleCatalog'
+
+export interface RenderShareCardOptions {
+  style?: ShareCardStyle
+  useCustomStyle?: boolean
 }
 
-function roundRect(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  r: number
+function paletteRegionForTemplate(templateId: ShareCardTemplateId, width: number, height: number) {
+  if (templateId === 'center') {
+    return {
+      x: Math.floor(width * 0.12),
+      y: Math.floor(height * 0.32),
+      w: Math.floor(width * 0.76),
+      h: Math.floor(height * 0.38)
+    }
+  }
+  if (templateId === 'split') {
+    return {
+      x: 0,
+      y: Math.floor(height * 0.58),
+      w: width,
+      h: Math.floor(height * 0.42)
+    }
+  }
+  if (templateId === 'minimal') {
+    return {
+      x: 0,
+      y: 0,
+      w: width,
+      h: Math.floor(height * 0.32)
+    }
+  }
+  return {
+    x: 0,
+    y: Math.floor(height * 0.55),
+    w: width,
+    h: Math.floor(height * 0.45)
+  }
+}
+
+function paletteForTemplate(
+  templateId: ShareCardTemplateId,
+  sampled: ReturnType<typeof extractPaletteFromCanvas>
 ) {
-  const radius = Math.min(r, w / 2, h / 2)
-  ctx.beginPath()
-  ctx.moveTo(x + radius, y)
-  ctx.arcTo(x + w, y, x + w, y + h, radius)
-  ctx.arcTo(x + w, y + h, x, y + h, radius)
-  ctx.arcTo(x, y + h, x, y, radius)
-  ctx.arcTo(x, y, x + w, y, radius)
-  ctx.closePath()
+  if (templateId === 'corner' || templateId === 'minimal') {
+    return {
+      ...sampled,
+      textPrimary: '#ffffff',
+      textSecondary: 'rgba(255,255,255,0.84)'
+    }
+  }
+  if (templateId === 'cinema') {
+    return {
+      ...sampled,
+      textPrimary: '#ffffff',
+      textSecondary: 'rgba(255,255,255,0.78)'
+    }
+  }
+  if (templateId === 'split') {
+    return {
+      ...sampled,
+      textPrimary: '#121214',
+      textSecondary: 'rgba(18,18,22,0.68)',
+      isDark: false
+    }
+  }
+  return sampled
 }
 
-/** 生成物品介绍分享图（PNG data URL） */
-export async function renderItemShareCard(item: Item, coverUrl: string | null): Promise<string> {
-  const width = 1080
-  const height = 1440
+/** 生成物品分享卡片（PNG data URL） */
+export async function renderItemShareCard(
+  item: Item,
+  coverUrl: string | null,
+  templateId: ShareCardTemplateId = DEFAULT_SHARE_CARD_TEMPLATE,
+  options: RenderShareCardOptions = {}
+): Promise<string> {
+  const { style = DEFAULT_SHARE_CARD_STYLE, useCustomStyle = false } = options
+  const filterId = resolveShareCardFilter(style.filterId, useCustomStyle)
+  const width = SHARE_CARD_WIDTH
+  const height = SHARE_CARD_HEIGHT
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height
   const ctx = canvas.getContext('2d')
   if (!ctx) throw new Error('canvas_unavailable')
 
-  const bg = ctx.createLinearGradient(0, 0, width, height)
-  bg.addColorStop(0, '#f8f8f9')
-  bg.addColorStop(0.45, '#ffffff')
-  bg.addColorStop(1, '#ececee')
-  ctx.fillStyle = bg
-  ctx.fillRect(0, 0, width, height)
-
-  ctx.fillStyle = 'rgb(18 18 22 / 0.04)'
-  for (let y = 48; y < height; y += 28) {
-    for (let x = 48; x < width; x += 28) {
-      ctx.beginPath()
-      ctx.arc(x, y, 1, 0, Math.PI * 2)
-      ctx.fill()
-    }
-  }
-
-  const pad = 72
-  let y = pad + 24
-
-  ctx.fillStyle = '#121214'
-  ctx.font = '600 28px system-ui, -apple-system, "Segoe UI", sans-serif'
-  ctx.fillText('万物 Wanwu', pad, y)
-
-  y += 56
-  const imageBoxH = 520
-  roundRect(ctx, pad, y, width - pad * 2, imageBoxH, 28)
-  ctx.fillStyle = '#f0f0f2'
-  ctx.fill()
-  ctx.strokeStyle = 'rgb(18 18 22 / 0.08)'
-  ctx.lineWidth = 2
-  ctx.stroke()
-
+  let image: HTMLImageElement | null = null
   if (coverUrl) {
     try {
-      const img = await loadImage(coverUrl)
-      ctx.save()
-      roundRect(ctx, pad + 2, y + 2, width - pad * 2 - 4, imageBoxH - 4, 26)
-      ctx.clip()
-      const scale = Math.max((width - pad * 2) / img.width, imageBoxH / img.height)
-      const dw = img.width * scale
-      const dh = img.height * scale
-      const dx = pad + (width - pad * 2 - dw) / 2
-      const dy = y + (imageBoxH - dh) / 2
-      ctx.drawImage(img, dx, dy, dw, dh)
-      ctx.restore()
+      image = await loadImage(coverUrl)
     } catch {
-      ctx.fillStyle = '#888890'
-      ctx.font = '500 24px system-ui, sans-serif'
-      ctx.textAlign = 'center'
-      ctx.fillText('暂无配图', width / 2, y + imageBoxH / 2)
-      ctx.textAlign = 'left'
+      image = null
     }
   }
 
-  y += imageBoxH + 48
-
-  if (item.subCategoryName) {
-    ctx.fillStyle = '#5a5a62'
-    ctx.font = '600 22px system-ui, sans-serif'
-    ctx.fillText(item.subCategoryName.toUpperCase(), pad, y)
-    y += 40
+  const content = buildShareCardContent(item)
+  const renderInput = {
+    ctx,
+    width,
+    height,
+    content,
+    palette: extractPaletteFromCanvas(canvas),
+    image,
+    cardStyle: style,
+    useCustomStyle,
+    filterId
   }
 
-  ctx.fillStyle = '#121214'
-  ctx.font = '700 52px system-ui, sans-serif'
-  const title = item.name
-  const titleLines = wrapText(ctx, title, width - pad * 2, 2)
-  for (const line of titleLines) {
-    ctx.fillText(line, pad, y)
-    y += 62
+  if (image) {
+    const tmp = document.createElement('canvas')
+    tmp.width = width
+    tmp.height = height
+    const tctx = tmp.getContext('2d')!
+    drawCoverImage(tctx, image, width, height, filterId)
+
+    const region = paletteRegionForTemplate(templateId, width, height)
+    const sampled = extractPaletteFromCanvas(tmp, region)
+    renderInput.palette = paletteForTemplate(templateId, sampled)
+    renderInput.image = image
+  } else {
+    drawPlaceholder(ctx, width, height)
+    const sampled = extractPaletteFromCanvas(canvas)
+    renderInput.palette = paletteForTemplate(templateId, sampled)
   }
 
-  y += 12
-  if (item.summary) {
-    ctx.fillStyle = '#5a5a62'
-    ctx.font = '400 28px system-ui, sans-serif'
-    const summaryLines = wrapText(ctx, item.summary, width - pad * 2, 4)
-    for (const line of summaryLines) {
-      ctx.fillText(line, pad, y)
-      y += 40
-    }
-  }
-
-  if (item.tags?.length) {
-    y += 20
-    let tx = pad
-    ctx.font = '500 22px system-ui, sans-serif'
-    for (const tag of item.tags.slice(0, 5)) {
-      const tw = ctx.measureText(tag).width + 36
-      if (tx + tw > width - pad) break
-      roundRect(ctx, tx, y, tw, 40, 20)
-      ctx.fillStyle = '#ececee'
-      ctx.fill()
-      ctx.fillStyle = '#3a3a42'
-      ctx.fillText(tag, tx + 18, y + 28)
-      tx += tw + 12
-    }
-  }
-
-  ctx.fillStyle = '#888890'
-  ctx.font = '400 20px ui-monospace, monospace'
-  ctx.fillText(item.id, pad, height - pad)
-
-  ctx.textAlign = 'right'
-  ctx.fillStyle = '#5a5a62'
-  ctx.font = '500 22px system-ui, sans-serif'
-  ctx.fillText('wanwu.app', width - pad, height - pad)
-  ctx.textAlign = 'left'
+  renderShareCardTemplate(templateId, renderInput)
 
   return canvas.toDataURL('image/png')
-}
-
-function wrapText(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  maxWidth: number,
-  maxLines: number
-): string[] {
-  const chars = Array.from(text)
-  const lines: string[] = []
-  let line = ''
-  for (const ch of chars) {
-    const test = line + ch
-    if (ctx.measureText(test).width > maxWidth && line) {
-      lines.push(line)
-      line = ch
-      if (lines.length >= maxLines) break
-    } else {
-      line = test
-    }
-  }
-  if (line && lines.length < maxLines) lines.push(line)
-  if (lines.length === maxLines && chars.length > line.length) {
-    const last = lines[maxLines - 1]
-    lines[maxLines - 1] = last.replace(/.$/, '…')
-  }
-  return lines.length ? lines : [text]
 }

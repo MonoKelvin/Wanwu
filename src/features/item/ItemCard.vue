@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import UnsplashAttribution from '@features/item/UnsplashAttribution.vue'
+import WwCoverImage from '@shared/components/WwCoverImage.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import type { Item } from '@shared/types/item'
 
@@ -21,16 +22,13 @@ const staggerStyle = () =>
     @keydown.space.prevent="$emit('click')"
   >
     <div class="ww-product-card__media">
-      <img
-        v-if="item.coverPath"
+      <WwCoverImage
         :src="item.coverPath"
         :alt="item.name"
         class="ww-product-card__img"
-        loading="lazy"
+        icon-size="md"
+        placeholder-text="暂无配图"
       />
-      <div v-else class="ww-product-card__img ww-product-card__img--empty">
-        <WwIcon name="image" size="md" />
-      </div>
       <div class="ww-product-card__overlay" aria-hidden="true" />
       <span class="ww-product-card__peek ww-glass-chip" aria-hidden="true">
         <WwIcon name="chevron-right" :size="8" class="ww-product-card__peek-icon" />

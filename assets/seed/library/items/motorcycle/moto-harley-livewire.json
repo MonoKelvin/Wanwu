@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "哈雷 LiveWire 美式",
+    "query": "LiveWire motorcycle",
     "matchTags": [
-      "美式",
-      "Harley-Davidson",
-      "巡航",
-      "harley",
+      "harley-davidson",
+      "约 105 hp",
       "livewire"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

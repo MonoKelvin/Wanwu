@@ -22,10 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "bentley continental gt",
+    "query": "GT supercar",
     "matchTags": [
-      "bentley",
-      "gt"
-    ]
+      "bentley"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

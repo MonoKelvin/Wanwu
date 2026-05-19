@@ -22,10 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "ferrari sf90 supercar",
+    "query": "SF90 Stradale supercar",
     "matchTags": [
+      "意大利",
       "ferrari",
-      "car"
-    ]
+      "v8/v12",
+      "sf90"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

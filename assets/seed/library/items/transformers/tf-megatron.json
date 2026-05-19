@@ -22,10 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "megatron transformer toy",
+    "query": "Megatron transformers toy robot",
     "matchTags": [
-      "megatron",
-      "transformer"
-    ]
+      "霸天虎",
+      "decepticon",
+      "megatron"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

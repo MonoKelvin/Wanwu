@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "nespresso coffee machine design",
+    "query": "Nespresso 咖啡机 product design",
     "matchTags": [
-      "nespresso",
-      "coffee"
-    ]
+      "nestlé",
+      "nespresso"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

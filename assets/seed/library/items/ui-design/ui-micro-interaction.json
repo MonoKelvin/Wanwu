@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "mobile app animation ui",
+    "query": "微交互 mobile app ui screenshot",
     "matchTags": [
-      "mobile",
-      "animation"
-    ]
+      "移动端",
+      "motion"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "bmw m8 coupe sports car",
+    "query": "M8 Competition supercar",
     "matchTags": [
-      "bmw",
-      "m8"
-    ]
+      "bmw m",
+      "精密工程"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

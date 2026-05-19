@@ -11,6 +11,7 @@ export interface WanwuApi {
     getItem: (id: string) => Promise<Item | null>
     updateItem: (item: Item) => Promise<Item>
     createItem: (item: Partial<Item>) => Promise<Item>
+    uploadItemImage: (params: { itemId: string; filePath: string }) => Promise<Item>
   }
   rss: {
     listGroups: () => Promise<RssGroup[]>
@@ -44,6 +45,9 @@ export interface WanwuApi {
     addFavorite: (params: { itemId: string; source: string; groupId: string }) => Promise<boolean>
     removeFavorite: (params: { itemId: string; source: string }) => Promise<boolean>
     toggleFavorite: (params: { itemId: string; source: string }) => Promise<boolean>
+    isLiked: (params: { itemId: string; source: string }) => Promise<boolean>
+    addLike: (params: { itemId: string; source: string }) => Promise<boolean>
+    removeLike: (params: { itemId: string; source: string }) => Promise<boolean>
   }
   app: {
     getPaths: () => Promise<{ userData: string; wanwu: string }>
@@ -66,9 +70,38 @@ export interface WanwuApi {
     }) => Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }>
     showItemInFolder: (url: string) => Promise<{ ok: boolean }>
     copyText: (text: string) => Promise<void>
+    pickImageFile: () => Promise<{ ok: boolean; path?: string; canceled?: boolean }>
     savePngDataUrl: (params: {
       dataUrl: string
       defaultName?: string
     }) => Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }>
+    saveImageDataUrl: (params: {
+      dataUrl: string
+      defaultName?: string
+    }) => Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }>
+    saveTextFile: (params: {
+      content: string
+      defaultName?: string
+      extension?: string
+    }) => Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }>
+  }
+  share: {
+    canNativeShare: () => Promise<boolean>
+    nativeShare: (params: {
+      title?: string
+      text?: string
+      dataUrl?: string
+      textContent?: string
+      fileName: string
+    }) => Promise<{ ok: boolean; canceled?: boolean; error?: string }>
+    uploadTemp: (params: {
+      dataUrl?: string
+      textContent?: string
+      fileName: string
+      expire?: '1h' | '12h' | '24h' | '72h'
+    }) => Promise<
+      | { ok: true; url: string; expire: string; expiresInHours: number }
+      | { ok: false; error: string }
+    >
   }
 }

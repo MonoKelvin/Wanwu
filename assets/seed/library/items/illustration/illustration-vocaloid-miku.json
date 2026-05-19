@@ -22,10 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "vocaloid miku cosplay",
+    "query": "Hatsune Miku digital illustration artwork",
     "matchTags": [
       "vocaloid",
-      "miku"
-    ]
+      "虚拟歌手",
+      "crypton",
+      "hatsune"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

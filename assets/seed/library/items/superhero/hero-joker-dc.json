@@ -1,7 +1,7 @@
 {
   "id": "bf87133e-f66a-4b87-90b7-c7cacae83cf6",
   "slug": "hero-joker-dc",
-  "subCategoryId": "hero-dc",
+  "subCategoryId": "hero-dc-film",
   "name": "小丑 Joker",
   "summary": "哥谭犯罪王子，蝙蝠侠宿敌，无固定起源的混乱象征。",
   "description": "小丑（Joker）1940 年《蝙蝠侠》#1 登场，真实身份成谜。以化学药剂或创伤版本多样，代表无政府式混乱与蝙蝠侠秩序对立。\n\n**影视**：希斯·莱杰、华金·菲尼克斯等奥斯卡级演绎。\n\n**能力要点**：高智商、化学武器、心理战；无超人体能",
@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "joker dc cosplay",
+    "query": "Joker action figure toy collectible",
     "matchTags": [
-      "joker",
-      "dc"
-    ]
+      "joker"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

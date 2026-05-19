@@ -21,10 +21,9 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "death note anime cosplay",
-    "matchTags": [
-      "death",
-      "note"
-    ]
+    "query": "death note anime screenshot fan art",
+    "matchTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

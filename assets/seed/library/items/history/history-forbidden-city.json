@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "forbidden city beijing palace",
+    "query": "故宫紫禁城 landmark architecture",
     "matchTags": [
-      "forbidden",
-      "palace"
-    ]
+      "世界遗产"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

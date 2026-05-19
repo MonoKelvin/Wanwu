@@ -21,11 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "parthenon athens greece ruins",
+    "query": "帕特农神庙 landmark architecture",
     "matchTags": [
-      "parthenon",
-      "athens"
+      "世界遗产",
+      "公元前 447"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

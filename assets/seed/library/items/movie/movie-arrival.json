@@ -21,12 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "降临 Arrival 科幻",
+    "query": "降临 Arrival film cinema scene",
     "matchTags": [
-      "科幻",
-      "电影",
       "外星接触",
+      "维伦纽瓦",
       "arrival"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

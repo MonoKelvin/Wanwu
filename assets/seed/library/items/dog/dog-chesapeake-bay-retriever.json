@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "chesapeake bay retriever dog",
+    "query": "切萨皮克湾寻回犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "retriever"
+      "寻回犬",
+      "防水毛",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

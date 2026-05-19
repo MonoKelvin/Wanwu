@@ -22,14 +22,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "great dane dog",
+    "query": "大丹犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "dane"
+      "巨型犬",
+      "伴侣犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

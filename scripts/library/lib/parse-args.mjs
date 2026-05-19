@@ -14,6 +14,10 @@ export function parseArgs(argv = process.argv.slice(2)) {
     pack: get('--pack'),
     version: get('--version'),
     provider: get('--provider'),
-    ids: argv.filter((a) => a.startsWith('--id=')).map((a) => a.slice(5))
+    ids: argv.filter((a) => a.startsWith('--id=')).map((a) => a.slice(5)),
+    concurrency: (() => {
+      const n = Number(get('--concurrency'))
+      return n > 0 ? n : undefined
+    })()
   }
 }

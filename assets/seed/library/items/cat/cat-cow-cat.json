@@ -21,15 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "black and white cat",
+    "query": "奶牛猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "black",
-      "white"
+      "田园猫",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

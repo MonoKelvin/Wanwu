@@ -1,7 +1,7 @@
 {
   "id": "06c926ea-d8c0-4282-b353-913804b8441e",
   "slug": "cat-sphynx",
-  "subCategoryId": "cat-europe",
+  "subCategoryId": "cat-exotic",
   "name": "斯芬克斯猫 Sphynx",
   "summary": "加拿大选育无毛猫，皮肤皱褶、需保暖与皮肤护理，性格极度粘人。",
   "description": "斯芬克斯猫（Sphynx）现代血统主要源于 1960–70 年代加拿大安大略无毛突变选育，并非古埃及猫直接延续。体表少毛、皮肤温热有皱褶，需定期洗澡去油脂。\n\n性格亲人、爱体温接触，冬季需穿衣或暖气。注意防晒与皮肤炎。有「精灵耳」外观。\n\n**相关**：与彼得秃猫、顿斯科伊猫等为其他无毛系；与「猫过敏」无必然等价，过敏原主要来自唾液与皮屑。",
@@ -21,14 +21,18 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "sphynx hairless cat",
+    "query": "Sphynx cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "sphynx"
+      "特殊被毛",
+      "室内猫",
+      "sphynx",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

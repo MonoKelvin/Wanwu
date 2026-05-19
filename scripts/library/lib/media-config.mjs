@@ -21,6 +21,7 @@ const mediaPath = join(root, 'assets', 'seed', 'library', 'media.json')
  * @property {string} imageType
  * @property {string} orientation
  * @property {number} perPage
+ * @property {number} imageCount
  * @property {boolean} manualOnly
  */
 
@@ -79,15 +80,20 @@ export function resolveMediaConfig(slug, catalogItem = {}) {
     minMatchScore: entry.minMatchScore ?? defaults.minMatchScore ?? 1,
     imageType: entry.imageType ?? defaults.imageType ?? 'photo',
     orientation: entry.orientation ?? defaults.orientation ?? 'all',
-    perPage: entry.perPage ?? defaults.perPage ?? 24,
+    perPage: entry.perPage ?? defaults.perPage ?? 40,
+    imageCount: Math.min(
+      12,
+      Math.max(1, entry.imageCount ?? defaults.imageCount ?? 4)
+    ),
     manualOnly: provider === 'manual'
   }
 }
 
 function fallbackQueryFromSlug(slug, catalogItem) {
+  const name = catalogItem.name?.trim() ?? ''
   const tail = slug.replace(/^[^-]+-/, '').replace(/-/g, ' ')
   const tag = catalogItem.tags?.[0] ?? ''
-  return `${tail} ${tag}`.trim()
+  return name || `${tail} ${tag}`.trim()
 }
 
 export function providerEnvKey(providerId) {

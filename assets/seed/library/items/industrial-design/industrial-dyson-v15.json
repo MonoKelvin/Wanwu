@@ -22,10 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "dyson vacuum cleaner product",
+    "query": "戴森 V15 Detect product design",
     "matchTags": [
-      "dyson",
-      "vacuum"
-    ]
+      "吸尘器",
+      "激光显尘",
+      "v15"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

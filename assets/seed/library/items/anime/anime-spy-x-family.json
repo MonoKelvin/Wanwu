@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "spy family anime cosplay",
+    "query": "spy x family anime screenshot fan art",
     "matchTags": [
-      "spy",
-      "anime"
-    ]
+      "少年漫"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

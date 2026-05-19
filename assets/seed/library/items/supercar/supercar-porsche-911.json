@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "porsche 911 sports car",
+    "query": "保时捷 911 supercar",
     "category": "transportation",
     "matchTags": [
-      "porsche",
-      "car"
-    ]
+      "保时捷",
+      "911"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

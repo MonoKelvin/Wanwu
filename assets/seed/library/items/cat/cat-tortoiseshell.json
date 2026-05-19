@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "tortoiseshell cat",
+    "query": "玳瑁猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "tortoiseshell"
+      "田园猫",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

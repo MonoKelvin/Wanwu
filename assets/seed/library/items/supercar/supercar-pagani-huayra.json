@@ -1,7 +1,7 @@
 {
   "id": "26038427-b182-4c88-8d96-509819fabf90",
   "slug": "supercar-pagani-huayra",
-  "subCategoryId": "car-italy",
+  "subCategoryId": "car-hypercar",
   "name": "帕加尼 Huayra",
   "summary": "手工艺术级超跑，AMG V12 与航空材料美学，限量收藏属性极强。",
   "description": "帕加尼 Huayra代表意大利Pagani在超跑领域的工程与美学结晶，2011 年前后发布，搭载6.0L V12 双涡轮 AMG，综合输出约 730 hp。车身空气动力学与碳纤/铝混合结构为赛道与公路兼顾。\n\n意大利超跑以声浪、造型与驾驶参与感著称，Pagani在 F1 与民用车技术转化上历史悠久。\n\n**性能要点**：6.0L V12 双涡轮 AMG，约 约 730 hp，中置或前置布局因车型而异\n\n**相关**：Horacio Pagani 匠心之作；与同级法拉利、兰博基尼、玛莎拉蒂形成「意式性能三角」",
@@ -22,10 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "pagani huayra hypercar",
+    "query": "Huayra supercar",
     "matchTags": [
+      "意大利",
       "pagani",
-      "car"
-    ]
+      "v8/v12",
+      "huayra"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

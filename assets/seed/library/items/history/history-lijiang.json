@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "lijiang old town china",
+    "query": "丽江古城 landmark architecture",
     "matchTags": [
-      "lijiang",
-      "old town"
-    ]
+      "世界遗产",
+      "宋至清"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

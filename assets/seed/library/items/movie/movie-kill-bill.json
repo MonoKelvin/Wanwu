@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "杀死比尔 Kill Bill 动作",
+    "query": "杀死比尔 Kill Bill film cinema scene",
     "matchTags": [
-      "动作",
-      "电影",
       "武术复仇",
-      "kill",
-      "bill"
-    ]
+      "kill"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

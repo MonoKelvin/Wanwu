@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "soundwave transformer cassette",
+    "query": "Soundwave transformers toy robot",
     "matchTags": [
-      "soundwave",
-      "transformer"
-    ]
+      "霸天虎",
+      "情报官",
+      "soundwave"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "ragdoll longhair cat",
+    "query": "Ragamuffin cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "ragdoll"
+      "ragamuffin",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

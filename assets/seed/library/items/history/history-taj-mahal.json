@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "taj mahal india",
+    "query": "泰姬陵 landmark architecture",
     "matchTags": [
-      "taj",
-      "mahal"
-    ]
+      "世界遗产",
+      "17 世纪"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

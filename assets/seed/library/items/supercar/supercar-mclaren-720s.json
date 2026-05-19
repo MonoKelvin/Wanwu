@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "mclaren 720s supercar",
+    "query": "迈凯伦 720S supercar",
     "matchTags": [
-      "mclaren",
-      "car"
-    ]
+      "迈凯伦",
+      "碳纤维"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

@@ -22,14 +22,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "dalmatian dog spots",
+    "query": "大麦町犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "dalmatian"
+      "运动型",
+      "马车犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

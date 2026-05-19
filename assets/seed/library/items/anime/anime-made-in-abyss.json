@@ -21,10 +21,9 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "anime fantasy adventure landscape",
-    "matchTags": [
-      "anime",
-      "fantasy"
-    ]
+    "query": "made in abyss anime screenshot fan art",
+    "matchTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

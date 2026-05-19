@@ -21,11 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "modern speaker audio design",
+    "query": "B&O 音响 product design",
     "matchTags": [
-      "speaker",
-      "audio"
+      "工业设计",
+      "bang & olufsen"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

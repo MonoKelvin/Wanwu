@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "transformer tank toy robot",
+    "query": "Brawl transformers toy robot",
     "matchTags": [
-      "transformer",
-      "tank"
-    ]
+      "霸天虎",
+      "战车队",
+      "brawl"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

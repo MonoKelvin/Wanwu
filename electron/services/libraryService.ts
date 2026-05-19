@@ -1,7 +1,9 @@
 import { randomUUID } from 'crypto'
 import type { DatabaseService } from './database'
 import { LIBRARY_CATEGORIES } from './database'
-import { toLibraryMediaUrl } from './libraryMedia'
+import { resolveItemCoverRelative, resolveMediaRelative, toLibraryMediaUrl } from './libraryMedia'
+import { readItemMarkdown, writeItemMarkdown } from './libraryContent'
+import { copyUserImageToLibrary } from './libraryItemUpload'
 import type { MediaAttribution, ItemMediaAsset } from '../../src/shared/types/unsplash'
 
 export interface CategoryDto {
@@ -212,7 +214,65 @@ export class LibraryService {
         now,
         item.id
       )
-    return { ...item, updatedAt: now }
+
+    const row = libDb.prepare('SELECT slug, cover_path FROM items WHERE id = ?').get(item.id) as
+      | { slug: string | null; cover_path: string | null }
+      | undefined
+    const coverRel = resolveItemCoverRelative({
+      coverPath: row?.cover_path ?? null,
+      categoryId: item.categoryId,
+      slug: row?.slug ?? item.slug ?? null
+    })
+    if (item.description != null) {
+      writeItemMarkdown(coverRel, item.description)
+    }
+
+    return this.getItem(item.id) ?? { ...item, updatedAt: now }
+  }
+
+  uploadItemImage(itemId: string, sourceFilePath: string): ItemDto {
+    const existing = this.getItem(itemId)
+    if (!existing) throw new Error('物品不存在')
+
+    const libDb = this.db.getLibraryDb(existing.categoryId)
+    if (!libDb) throw new Error('分类不存在')
+
+    const row = libDb.prepare('SELECT slug, cover_path FROM items WHERE id = ?').get(itemId) as {
+      slug: string | null
+      cover_path: string | null
+    }
+
+    const { relativePath, isCover } = copyUserImageToLibrary({
+      itemId,
+      categoryId: existing.categoryId,
+      slug: row.slug,
+      coverPathDb: row.cover_path,
+      sourceFilePath
+    })
+
+    const now = new Date().toISOString()
+
+    if (isCover) {
+      libDb
+        .prepare(
+          'UPDATE items SET cover_path = ?, cover_attribution = NULL, updated_at = ? WHERE id = ?'
+        )
+        .run(relativePath, now, itemId)
+    } else {
+      const count = libDb
+        .prepare('SELECT COUNT(*) AS c FROM item_media WHERE item_id = ?')
+        .get(itemId) as { c: number }
+      libDb
+        .prepare(
+          'INSERT INTO item_media (id, item_id, path, sort_order, attribution) VALUES (?, ?, ?, ?, ?)'
+        )
+        .run(randomUUID(), itemId, relativePath, count.c, null)
+      libDb.prepare('UPDATE items SET updated_at = ? WHERE id = ?').run(now, itemId)
+    }
+
+    const updated = this.getItem(itemId)
+    if (!updated) throw new Error('上传后读取失败')
+    return updated
   }
 
   createItem(
@@ -328,13 +388,19 @@ export class LibraryService {
       .prepare('SELECT path, attribution FROM item_media WHERE item_id = ? ORDER BY sort_order')
       .all(itemId) as Array<{ path: string; attribution: string | null }>
 
-    const coverRel = (r.cover_path as string) ?? null
+    const coverRel = resolveItemCoverRelative({
+      coverPath: (r.cover_path as string) ?? null,
+      categoryId: r.category_id as string,
+      slug: (r.slug as string) ?? null
+    })
     const coverAttribution = parseAttribution(r.cover_attribution as string | null)
+    const description = readItemMarkdown(coverRel, (r.description as string) ?? null)
 
     const galleryAssets: ItemMediaAsset[] = []
     const gallery: string[] = []
     for (const row of galleryRows) {
-      const url = toLibraryMediaUrl(row.path)
+      const mediaRel = resolveMediaRelative(row.path) ?? row.path
+      const url = toLibraryMediaUrl(mediaRel)
       if (!url) continue
       gallery.push(url)
       galleryAssets.push({
@@ -352,7 +418,7 @@ export class LibraryService {
       source: 'library',
       name: r.name as string,
       summary: (r.summary as string) ?? null,
-      description: (r.description as string) ?? null,
+      description,
       tags,
       specs,
       coverPath: toLibraryMediaUrl(coverRel),

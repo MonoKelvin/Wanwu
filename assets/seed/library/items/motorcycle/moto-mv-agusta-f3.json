@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "MV Agusta F3 意大利",
+    "query": "MV Agusta F3 motorcycle",
     "matchTags": [
       "意大利",
-      "MV Agusta",
-      "摩托",
-      "mv",
-      "agusta"
-    ]
+      "mv agusta"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Material You 小组件 移动端",
+    "query": "Material You 小组件 mobile app ui screenshot",
     "matchTags": [
       "移动端",
-      "UI",
-      "Material 3",
-      "material",
-      "you"
-    ]
+      "material 3",
+      "material"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -22,15 +22,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "golden retriever dog",
+    "query": "金毛寻回犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "golden",
-      "retriever"
+      "寻回犬",
+      "家庭犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

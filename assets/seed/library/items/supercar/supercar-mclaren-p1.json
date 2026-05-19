@@ -22,13 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "迈凯伦 P1 英国",
+    "query": "P1 supercar",
     "matchTags": [
-      "英国",
-      "McLaren",
-      "超跑",
-      "mclaren",
-      "p1"
-    ]
+      "mclaren"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "kawasaki ninja sportbike",
+    "query": "Ninja ZX-10R motorcycle",
     "matchTags": [
       "kawasaki",
-      "motorcycle"
-    ]
+      "约 203 hp",
+      "ninja"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

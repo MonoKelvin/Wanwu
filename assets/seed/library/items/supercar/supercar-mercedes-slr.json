@@ -22,13 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "奔驰 SLR McLaren 德国",
+    "query": "SLR McLaren supercar",
     "matchTags": [
-      "德国",
-      "Mercedes-Benz",
-      "超跑",
-      "mercedes",
+      "mercedes-benz",
+      "精密工程",
       "slr"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

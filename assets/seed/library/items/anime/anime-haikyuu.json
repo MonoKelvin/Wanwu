@@ -21,11 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "volleyball sport action",
+    "query": "haikyuu anime screenshot fan art",
     "matchTags": [
-      "volleyball",
-      "sport"
+      "少年漫"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

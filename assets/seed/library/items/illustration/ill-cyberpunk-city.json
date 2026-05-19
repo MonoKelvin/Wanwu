@@ -21,13 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "赛博朋克城市 数字绘画",
+    "query": "赛博朋克城市 digital illustration artwork",
     "matchTags": [
-      "数字绘画",
-      "科幻",
-      "霓虹",
-      "cyberpunk",
-      "city"
-    ]
+      "数字绘画"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

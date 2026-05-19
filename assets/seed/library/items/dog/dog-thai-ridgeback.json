@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "thai ridgeback dog",
+    "query": "泰国脊背犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "ridgeback"
+      "脊背线",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

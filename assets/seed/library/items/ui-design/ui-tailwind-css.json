@@ -1,7 +1,7 @@
 {
   "id": "413543a5-301e-45ab-bd9a-d1b12273c2d0",
   "slug": "ui-tailwind-css",
-  "subCategoryId": "ui-web",
+  "subCategoryId": "ui-design-tool",
   "name": "Tailwind CSS",
   "summary": "原子化 utility-first CSS 框架，快速迭代界面。",
   "description": "Tailwind CSS代表 Web 端框架方向，常用技术栈包括Tailwind。现代网页强调性能（Core Web Vitals）、可访问性与设计系统一致性。\n\n从着陆页到复杂 Dashboard，需平衡信息密度与视觉层级。\n\n**实现要点**：Tailwind，语义 HTML，响应式\n\n**相关**：与 Tailwind、组件库、设计 Token 工作流紧密相关",
@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "tailwind css web dashboard",
+    "query": "Tailwind CSS design system ui",
     "matchTags": [
-      "dashboard",
-      "web"
-    ]
+      "web",
+      "tailwind"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

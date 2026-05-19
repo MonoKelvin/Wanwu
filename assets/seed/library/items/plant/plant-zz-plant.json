@@ -22,10 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "zz plant zamioculcas",
+    "query": "金钱树 ZZ Plant houseplant",
     "matchTags": [
-      "zz",
-      "plant"
-    ]
+      "天南星科"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

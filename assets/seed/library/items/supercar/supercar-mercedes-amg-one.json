@@ -22,13 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "奔驰 AMG ONE 德国",
+    "query": "AMG ONE supercar",
     "matchTags": [
-      "德国",
-      "Mercedes-AMG",
-      "超跑",
-      "mercedes",
+      "mercedes-amg",
+      "精密工程",
       "amg"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "alocasia elephant ear plant",
+    "query": "海芋 Alocasia houseplant",
     "matchTags": [
-      "alocasia",
-      "plant"
-    ]
+      "天南星科",
+      "alocasia"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "leather coat vigilante cosplay",
+    "query": "Billy Butcher action figure toy collectible",
     "matchTags": [
-      "vigilante",
-      "coat"
-    ]
+      "黑袍纠察队",
+      "billy"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -21,13 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "水形物语 奇幻",
+    "query": "水形物语 film cinema scene",
     "matchTags": [
-      "奇幻",
-      "电影",
-      "浪漫奇幻",
-      "guillermo",
-      "shape"
-    ]
+      "浪漫奇幻"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

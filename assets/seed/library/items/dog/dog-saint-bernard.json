@@ -20,14 +20,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "saint bernard dog",
+    "query": "圣伯纳犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "bernard"
+      "救援犬",
+      "阿尔卑斯",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

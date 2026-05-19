@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "yellow volkswagen beetle car",
+    "query": "G1 transformers toy robot",
     "matchTags": [
-      "beetle",
-      "yellow"
+      "汽车人",
+      "hasbro",
+      "侦察兵"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -1,7 +1,7 @@
 {
   "id": "47e918f3-12da-45bb-807e-cc5377849aca",
   "slug": "cat-siamese",
-  "subCategoryId": "cat-china",
+  "subCategoryId": "cat-short-hair",
   "name": "暹罗猫 Siamese",
   "summary": "泰国古老重点色品种，蓝眼、大耳、叫声独特，现代分传统与现代型。",
   "description": "暹罗猫（Siamese）源自泰国（古称暹罗），为世界上最古老的家猫品种之一。重点色（面部、耳、四肢深色）与蓝眼为标志。现代型更修长，传统型（Thai）较圆润。\n\n性格外向、爱叫、需陪伴。被毛短密易护理。历史上为欧洲贵族宠物，推动重点色基因研究。\n\n**相关**：与东方短毛、巴厘猫（长毛暹罗）同源；布偶、伯曼等重点色品种有血统关联讨论。",
@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "siamese cat seal point",
+    "query": "Siamese cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "siamese"
+      "重点色",
+      "siamese",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

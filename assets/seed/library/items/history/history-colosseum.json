@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "colosseum rome italy",
+    "query": "罗马斗兽场 landmark architecture",
     "matchTags": [
-      "colosseum",
-      "rome"
-    ]
+      "世界遗产",
+      "意大利",
+      "公元 72–80"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

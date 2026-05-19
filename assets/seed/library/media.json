@@ -5619,12 +5619,14 @@
       "provider": "pixabay",
       "imageType": "photo",
       "orientation": "all",
-      "minMatchScore": 0,
-      "perPage": 24,
-      "query": "smartwatch apple watch screen",
+      "minMatchScore": 1,
+      "perPage": 50,
+      "imageCount": 5,
+      "query": "watchOS 界面 mobile app ui screenshot",
       "matchTags": [
-        "watch",
-        "smartwatch"
+        "移动端",
+        "watchos",
+        "可穿戴"
       ]
     }
   }

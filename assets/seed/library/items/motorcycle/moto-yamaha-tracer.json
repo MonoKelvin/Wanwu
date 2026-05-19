@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "雅马哈 Tracer 9 日本",
+    "query": "Tracer 9 motorcycle",
     "matchTags": [
-      "日本",
-      "Yamaha",
-      "摩托",
       "yamaha",
+      "运动旅行",
       "tracer"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

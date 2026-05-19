@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "sports car transformer toy",
+    "query": "Sideswipe transformers toy robot",
     "matchTags": [
-      "car",
-      "toy"
+      "汽车人",
+      "hasbro",
+      "sideswipe"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

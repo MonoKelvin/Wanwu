@@ -21,11 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "demon slayer anime cosplay",
+    "query": "demon slayer anime screenshot fan art",
     "category": "people",
     "matchTags": [
-      "demon",
-      "slayer"
-    ]
+      "鬼杀队",
+      "jump",
+      "ufotable",
+      "kimetsu"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

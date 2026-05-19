@@ -1,7 +1,7 @@
 {
   "id": "f9a5ddd0-f4b4-481a-aaeb-5327b8247089",
   "slug": "hero-guardians-star-lord",
-  "subCategoryId": "hero-marvel",
+  "subCategoryId": "hero-marvel-mcu",
   "name": "星爵 Star-Lord",
   "summary": "彼得·奎尔率银河护卫队，半神血统与复古音乐。",
   "description": "星爵 1976 年漫画登场，MCU 克里斯·帕拉特主演。收藏 80 年代 Walkman，领导护卫队对抗宇宙威胁。\n\n《银河护卫队》三部曲口碑佳。\n\n**能力要点**：飞行靴、元素枪\n\n**相关作品**：《银河护卫队》",
@@ -17,10 +17,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "space galaxy stars night sky",
+    "query": "Star-Lord action figure toy collectible",
     "matchTags": [
-      "space",
-      "stars"
-    ]
+      "银河护卫队",
+      "star"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -21,10 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "iphone smartphone product design",
+    "query": "iPhone 设计 product design",
     "matchTags": [
-      "iphone",
-      "smartphone"
-    ]
+      "工业设计",
+      "apple",
+      "智能手机",
+      "iphone"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

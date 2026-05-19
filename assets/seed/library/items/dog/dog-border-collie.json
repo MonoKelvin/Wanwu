@@ -22,15 +22,18 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "border collie dog",
+    "query": "边境牧羊犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "border",
-      "collie"
+      "牧羊犬",
+      "高智商",
+      "运动型",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

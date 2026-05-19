@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "三星 One UI 移动端",
+    "query": "三星 One UI mobile app ui screenshot",
     "matchTags": [
       "移动端",
-      "UI",
-      "One UI",
-      "samsung",
+      "one ui",
       "one"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

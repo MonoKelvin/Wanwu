@@ -22,12 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "青锁龙 Crassula 多肉",
+    "query": "青锁龙 Crassula houseplant",
     "matchTags": [
-      "多肉",
-      "耐旱",
-      "盆栽",
       "crassula"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

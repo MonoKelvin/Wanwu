@@ -22,14 +22,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "shar pei dog",
+    "query": "中国沙皮犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "shar"
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

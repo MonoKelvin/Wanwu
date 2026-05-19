@@ -21,14 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "chow chow dog",
+    "query": "松狮犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "chow"
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

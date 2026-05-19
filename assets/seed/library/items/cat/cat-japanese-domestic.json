@@ -20,14 +20,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "japanese cat street",
+    "query": "日本家猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "japan"
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

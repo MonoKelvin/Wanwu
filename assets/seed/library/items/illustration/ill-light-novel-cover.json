@@ -21,13 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "轻小说封面 数字绘画",
+    "query": "轻小说封面 digital illustration artwork",
     "matchTags": [
-      "数字绘画",
-      "出版",
-      "文库",
-      "light",
-      "novel"
-    ]
+      "数字绘画"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

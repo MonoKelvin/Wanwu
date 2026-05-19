@@ -20,14 +20,18 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "australian cattle dog",
+    "query": "澳洲牧牛犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "cattle"
+      "牧牛犬",
+      "澳大利亚",
+      "工作犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

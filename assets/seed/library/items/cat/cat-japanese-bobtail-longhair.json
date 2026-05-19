@@ -21,14 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "japanese bobtail longhair cat",
+    "query": "日本短尾猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "bobtail"
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

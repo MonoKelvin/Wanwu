@@ -22,14 +22,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "russian blue longhair cat",
+    "query": "Nebelung cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "blue"
+      "nebelung",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

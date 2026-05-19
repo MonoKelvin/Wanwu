@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "本田 Africa Twin 日本",
+    "query": "Africa Twin motorcycle",
     "matchTags": [
-      "日本",
-      "Honda",
-      "摩托",
       "honda",
+      "adv",
       "africa"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

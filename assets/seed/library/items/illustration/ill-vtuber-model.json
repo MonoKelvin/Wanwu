@@ -1,7 +1,7 @@
 {
   "id": "2c39466e-b722-4a96-86c7-230ee48a497a",
   "slug": "ill-vtuber-model",
-  "subCategoryId": "ill-digital",
+  "subCategoryId": "ill-portrait",
   "name": "Vtuber 立绘",
   "summary": "Live2D 分层与虚拟主播形象设计。",
   "description": "Vtuber 立绘依托Live2D等数字工具完成创作，属于虚拟领域视觉产出。数字绘画可无损修改图层、色彩与构图，广泛用于娱乐产业流水线。\n\n艺术家常通过社交媒体发布过程视频，形成教程与约稿经济生态。\n\n**创作要点**：Live2D，构图与光影，行业规范交付\n\n**相关**：与概念艺术、动画制作、游戏原画岗位技能树重叠",
@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "anime girl portrait digital art",
+    "query": "Vtuber digital illustration artwork",
     "matchTags": [
-      "anime",
-      "portrait"
+      "数字绘画",
+      "live2d",
+      "vtuber"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

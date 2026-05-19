@@ -22,10 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "honda cb650r motorcycle",
+    "query": "CB650R motorcycle",
     "matchTags": [
-      "honda",
-      "motorcycle"
-    ]
+      "cb650r"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

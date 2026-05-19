@@ -22,14 +22,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "manx cat tailless",
+    "query": "Manx cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "manx"
+      "马恩岛",
+      "manx",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

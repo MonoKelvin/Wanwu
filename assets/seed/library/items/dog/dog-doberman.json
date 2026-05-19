@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "doberman pinscher dog",
+    "query": "杜宾犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "doberman"
+      "护卫犬",
+      "流线型",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

@@ -1,7 +1,7 @@
 {
   "id": "1ec4f093-172a-4449-bb6e-3ec0d6fdc62c",
   "slug": "illustration-starry-night",
-  "subCategoryId": "ill-classic",
+  "subCategoryId": "ill-digital",
   "name": "星夜 The Starry Night",
   "summary": "梵高 1889 年圣雷米夜空旋涡笔触。",
   "description": "星夜 The Starry Night由梵高创作，属后印象派重要作品，约1889年。作品在艺术史教材、博物馆常设展与流行文化引用中反复出现。\n\n古典绘画技法、颜料介质与历史语境构成鉴赏基础，数字复制品亦广泛用于艺术教育。\n\n**艺术史**：后印象派，梵高，1889\n\n**相关**：与同期流派画家并列研究；博物馆巡展常借展",
@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "starry night van gogh style",
+    "query": "The Starry Night digital illustration artwork",
     "matchTags": [
-      "starry",
-      "painting"
-    ]
+      "艺术史",
+      "后印象派",
+      "the"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

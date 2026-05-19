@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "lotus emira sports car",
+    "query": "Emira supercar",
     "matchTags": [
       "lotus",
-      "car"
-    ]
+      "emira"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

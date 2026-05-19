@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "burmese cat golden eyes",
+    "query": "Burmese cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "burmese"
+      "东南亚",
+      "burmese",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

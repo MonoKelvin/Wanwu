@@ -22,14 +22,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "shiba inu dog",
+    "query": "柴犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "shiba"
+      "天然纪念",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

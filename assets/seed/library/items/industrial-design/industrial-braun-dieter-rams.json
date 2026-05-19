@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "braun minimal radio design",
+    "query": "博朗 × 迪特·拉姆斯 product design",
     "matchTags": [
-      "braun",
-      "minimal"
-    ]
+      "工业设计",
+      "braun"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

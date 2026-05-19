@@ -21,11 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "harley davidson motorcycle cruiser",
+    "query": "Street 750 motorcycle",
     "category": "transportation",
     "matchTags": [
-      "harley",
-      "motorcycle"
-    ]
+      "street"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -1,7 +1,7 @@
 {
   "id": "c51a4bc5-79ed-4f11-9eaf-a21993f250f9",
   "slug": "tf-barricade",
-  "subCategoryId": "tf-decepticon",
+  "subCategoryId": "tf-movie",
   "name": "路障 Barricade",
   "summary": "警车变形，迈克尔·贝电影人类对立面。",
   "description": "路障 Barricade为霸天虎（Decepticon）阵营成员，追求征服赛博坦与地球资源。变形形态常为警车，职能偏向猎手。\n\n与汽车人长期战争，威震天（及惊破天）为领袖；红蜘蛛等角色以背叛与阴谋著称。\n\n**变形形态**：警车\n\n**相关**：合体金刚、磁带战士为经典子系列；电影与 G1 设定有差异",
@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "police car transformer toy",
+    "query": "Barricade transformers toy robot",
     "matchTags": [
-      "police",
-      "transformer"
-    ]
+      "霸天虎",
+      "barricade"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

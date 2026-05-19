@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "pyramids giza egypt",
+    "query": "吉萨金字塔 landmark architecture",
     "matchTags": [
-      "pyramids",
-      "egypt"
-    ]
+      "世界遗产",
+      "公元前 26 世纪"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -21,10 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "playstation 5 console white",
+    "query": "PlayStation 5 product design",
     "matchTags": [
-      "playstation",
-      "console"
-    ]
+      "工业设计",
+      "sony",
+      "游戏主机",
+      "playstation"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

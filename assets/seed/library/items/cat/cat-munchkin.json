@@ -22,14 +22,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "munchkin cat short legs",
+    "query": "Munchkin cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "munchkin"
+      "争议品种",
+      "munchkin",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

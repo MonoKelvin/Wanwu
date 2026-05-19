@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "caladium colorful leaves",
+    "query": "彩叶芋 Caladium houseplant",
     "matchTags": [
-      "caladium",
-      "plant"
-    ]
+      "天南星科",
+      "caladium"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

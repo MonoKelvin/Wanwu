@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "本田 Rebel 1100 日本",
+    "query": "Rebel 1100 motorcycle",
     "matchTags": [
-      "日本",
-      "Honda",
-      "摩托",
       "honda",
       "rebel"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

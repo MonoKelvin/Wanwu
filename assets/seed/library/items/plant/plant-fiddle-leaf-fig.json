@@ -20,11 +20,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "fiddle leaf fig plant indoor",
+    "query": "琴叶榕 Ficus lyrata houseplant",
     "category": "nature",
     "matchTags": [
-      "fiddle",
-      "plant"
-    ]
+      "琴叶榕",
+      "ficus"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "interstellar space black hole",
+    "query": "星际穿越 Interstellar film cinema scene",
     "matchTags": [
-      "space",
-      "cosmos"
-    ]
+      "硬科幻",
+      "interstellar"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

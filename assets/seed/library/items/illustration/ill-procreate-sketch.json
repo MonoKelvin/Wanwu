@@ -1,7 +1,7 @@
 {
   "id": "bb8f6b61-a742-4f21-8808-836034ebe1ae",
   "slug": "ill-procreate-sketch",
-  "subCategoryId": "ill-digital",
+  "subCategoryId": "ill-concept",
   "name": "Procreate 速写",
   "summary": "iPad 手绘草稿与色块探索。",
   "description": "Procreate 速写依托Procreate等数字工具完成创作，属于速写领域视觉产出。数字绘画可无损修改图层、色彩与构图，广泛用于娱乐产业流水线。\n\n艺术家常通过社交媒体发布过程视频，形成教程与约稿经济生态。\n\n**创作要点**：Procreate，构图与光影，行业规范交付\n\n**相关**：与概念艺术、动画制作、游戏原画岗位技能树重叠",
@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Procreate 速写 数字绘画",
+    "query": "Procreate digital illustration artwork",
     "matchTags": [
       "数字绘画",
-      "速写",
-      "Procreate",
-      "procreate",
-      "sketch"
-    ]
+      "procreate"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

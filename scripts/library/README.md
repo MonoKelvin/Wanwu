@@ -8,14 +8,21 @@
 | 步骤 | 命令 | 说明 |
 |------|------|------|
 | build | `npm run seed:library -- build` | 扫描 `items/` → `catalog.json` + `media.json` |
-| media | `npm run seed:library -- media` | 按 `media.json` 下载配图到 `assets/library/` |
+| media | `npm run seed:library -- media` | 并行下载配图（`--concurrency=10`） |
 | retry | `npm run seed:library -- retry` | 缺图按 `retryQuery` 重试 |
 | audit | `npm run seed:library -- audit` | 检查缺图 |
+| cleanup | `npm run seed:library -- cleanup` | 删除占位小图与 mediaTodo |
+| fetch-content | `npm run seed:library -- fetch-content` | 百度百科 → `content.md` |
+| assign-subs | `npm run seed:library -- assign-subs` | 按规则细化二级分类 |
+| improve-queries | `npm run seed:library -- improve-queries` | 优化 Pixabay 搜索词 |
+| media-quality | `npm run seed:library -- media-quality` | 配图质量摘要 |
+| curate | `npm run seed:library -- curate --force` | 同 `media --force` |
+| dedupe-local | `npm run seed:library -- dedupe-local` | 删除条内 MD5 重复文件 |
 | import | `npm run seed:library:reimport` | 仅新增未入库的 `id` |
 | update | `npm run seed:library -- update --id=<uuid>` | 强制更新指定条目 |
 | info | `npm run seed:library -- info` | 统计 |
 
-选项：`--force`、`--slug=`、`--category=`、`--full`（import 全量同步）
+选项：`--force`、`--slug=`、`--category=`、`--concurrency=`、`--limit=`、`--full`
 
 ## lib/
 

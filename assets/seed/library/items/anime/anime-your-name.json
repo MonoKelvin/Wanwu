@@ -22,10 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "anime sky comet scenery",
+    "query": "your name anime screenshot fan art",
     "matchTags": [
-      "anime",
-      "sky"
-    ]
+      "新海诚"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

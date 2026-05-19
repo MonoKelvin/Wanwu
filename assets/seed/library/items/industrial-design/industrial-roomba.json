@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "robot vacuum cleaner floor",
+    "query": "iRobot Roomba product design",
     "matchTags": [
-      "vacuum",
-      "robot"
+      "工业设计",
+      "irobot",
+      "机器人"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

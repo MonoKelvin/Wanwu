@@ -40,6 +40,8 @@ export interface ImportLibraryOptions {
   updateIds?: string[]
   /** 全量同步 catalog（开发恢复用，会删除 catalog 外条目） */
   full?: boolean
+  /** 按 catalog 更新全部已入库条目的配图路径（cover + gallery） */
+  syncAllMedia?: boolean
 }
 
 export interface ImportLibraryResult {
@@ -131,7 +133,30 @@ function upsertItem(
     return mode === 'insert-only' ? 'skip' : 'update'
   }
 
-  if (existingBySlug && existingBySlug.id !== item.id && mode !== 'update') return 'skip'
+  if (existingBySlug) {
+    if (mode === 'insert-only') return 'skip'
+    db.prepare(
+      `UPDATE items SET category_id = ?, sub_category_id = ?, slug = ?, name = ?, summary = ?, description = ?,
+       tags = ?, cover_path = ?, cover_attribution = ?, specs = ?, updated_at = ? WHERE id = ?`
+    ).run(
+      item.categoryId,
+      item.subCategoryId,
+      item.slug,
+      item.name,
+      item.summary,
+      item.description,
+      JSON.stringify(item.tags),
+      cover,
+      coverAttributionJson,
+      specsJson,
+      now,
+      existingBySlug.id
+    )
+    syncMedia(db, existingBySlug.id, item)
+    return 'update'
+  }
+
+  if (mode === 'update') return 'skip'
 
   db.prepare(
     `INSERT INTO items (id, category_id, sub_category_id, slug, name, summary, description, tags, cover_path, cover_attribution, specs, created_at, updated_at)
@@ -153,6 +178,29 @@ function upsertItem(
   )
   syncMedia(db, item.id, item)
   return 'insert'
+}
+
+/** 仅同步已入库条目的 cover / gallery（按 id 或 slug 匹配，避免 slug 唯一约束冲突） */
+function syncItemMediaFromCatalog(
+  db: Database.Database,
+  item: LibraryCatalogItem
+): 'update' | 'skip' {
+  const row = db
+    .prepare('SELECT id FROM items WHERE id = ? OR slug = ? LIMIT 1')
+    .get(item.id, item.slug) as { id: string } | undefined
+  if (!row) return 'skip'
+
+  const cover = item.coverFile?.replace(/\\/g, '/') ?? null
+  const coverAttributionJson = item.coverAttribution
+    ? JSON.stringify(item.coverAttribution)
+    : null
+  const now = new Date().toISOString()
+
+  db.prepare(
+    `UPDATE items SET cover_path = ?, cover_attribution = ?, updated_at = ? WHERE id = ?`
+  ).run(cover, coverAttributionJson, now, row.id)
+  syncMedia(db, row.id, item)
+  return 'update'
 }
 
 function syncMedia(db: Database.Database, itemId: string, item: LibraryCatalogItem): void {
@@ -268,6 +316,22 @@ function importCatalogItems(
   return importItems(dbService, items, mode, loadLibraryCategories())
 }
 
+export function syncLibraryMediaFromCatalog(dbService: DatabaseService): ImportLibraryResult {
+  const catalog = loadLibraryCatalog()
+  if (!catalog?.items?.length) return { imported: 0, skipped: 0, updated: 0 }
+
+  let updated = 0
+  let skipped = 0
+  for (const item of catalog.items) {
+    const libDb = dbService.getLibraryDb(item.categoryId)
+    if (!libDb) continue
+    ensureItemColumns(libDb)
+    if (syncItemMediaFromCatalog(libDb, item) === 'update') updated++
+    else skipped++
+  }
+  return { imported: 0, skipped, updated }
+}
+
 export function importLibraryCatalog(
   dbService: DatabaseService,
   options: ImportLibraryOptions = {}
@@ -277,6 +341,10 @@ export function importLibraryCatalog(
 
   if (options.full) {
     return importCatalogItems(dbService, catalog.items, 'upsert')
+  }
+
+  if (options.syncAllMedia) {
+    return syncLibraryMediaFromCatalog(dbService)
   }
 
   if (options.updateIds?.length) {

@@ -21,13 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "特斯拉 Model S 工业设计",
+    "query": "特斯拉 Model S product design",
     "matchTags": [
       "工业设计",
-      "Tesla",
-      "电动车",
       "tesla",
+      "电动车",
       "model"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

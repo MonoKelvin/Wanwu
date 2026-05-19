@@ -21,14 +21,18 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "singapura cat small",
+    "query": "Singapura cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "singapura"
+      "东南亚",
+      "ticked",
+      "singapura",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

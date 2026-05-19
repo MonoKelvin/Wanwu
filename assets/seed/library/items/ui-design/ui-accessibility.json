@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "accessibility web inclusive design",
+    "query": "无障碍设计 mobile app ui screenshot",
     "matchTags": [
-      "accessibility",
-      "web"
-    ]
+      "移动端",
+      "wcag"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

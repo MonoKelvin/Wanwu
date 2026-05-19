@@ -1,7 +1,7 @@
 {
   "id": "9b0eb268-dd4d-4c29-8cc0-8c19dc92c154",
   "slug": "illustration-hokusai-wave",
-  "subCategoryId": "ill-classic",
+  "subCategoryId": "ill-digital",
   "name": "神奈川冲浪里",
   "summary": "葛饰北斋浮世绘巨浪与富士山。",
   "description": "神奈川冲浪里由北斋创作，属浮世绘重要作品，约1831年。作品在艺术史教材、博物馆常设展与流行文化引用中反复出现。\n\n古典绘画技法、颜料介质与历史语境构成鉴赏基础，数字复制品亦广泛用于艺术教育。\n\n**艺术史**：浮世绘，北斋，1831\n\n**相关**：与同期流派画家并列研究；博物馆巡展常借展",
@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "great wave japanese woodblock",
+    "query": "神奈川冲浪里 digital illustration artwork",
     "matchTags": [
-      "wave",
-      "japanese"
-    ]
+      "艺术史",
+      "浮世绘"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

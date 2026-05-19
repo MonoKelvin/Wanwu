@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "jujutsu kaisen anime cosplay",
+    "query": "jujutsu kaisen anime screenshot fan art",
     "matchTags": [
-      "jujutsu",
-      "anime"
-    ]
+      "少年漫"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

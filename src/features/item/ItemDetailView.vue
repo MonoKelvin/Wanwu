@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import Tag from 'primevue/tag'
+import Textarea from 'primevue/textarea'
 import Skeleton from 'primevue/skeleton'
 import EmptyState from '@app/components/EmptyState.vue'
 import ItemDetailHeroActions from '@features/item/ItemDetailHeroActions.vue'
 import ItemMarkdown from '@features/item/ItemMarkdown.vue'
 import FavoriteGroupPickerDialog from '@features/item/FavoriteGroupPickerDialog.vue'
 import ItemShareCardDialog from '@features/item/ItemShareCardDialog.vue'
+import ItemShareImageDialog from '@features/item/ItemShareImageDialog.vue'
+import { buildItemCopyText } from '@features/item/utils/buildItemCopyText'
 import ImageViewer from '@shared/components/ImageViewer.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import UnsplashAttribution from '@features/item/UnsplashAttribution.vue'
@@ -15,8 +17,23 @@ import type { ImageViewerSlide } from '@shared/types/image-viewer'
 import type { Item } from '@shared/types/item'
 import type { MediaAttribution } from '@shared/types/unsplash'
 
+const U = {
+  toastUnfav: '\u5df2\u53d6\u6d88\u6536\u85cf',
+  toastFav: '\u5df2\u52a0\u5165\u6536\u85cf',
+  toastUnlike: '\u5df2\u53d6\u6d88\u70b9\u8d5e',
+  toastLike: '\u5df2\u70b9\u8d5e',
+  toastUploaded: '\u56fe\u7247\u5df2\u4e0a\u4f20',
+  toastUploadFail: '\u4e0a\u4f20\u5931\u8d25',
+  toastSaved: '\u5df2\u4fdd\u5b58\u8be6\u60c5',
+  toastSaveFail: '\u4fdd\u5b58\u5931\u8d25',
+  toastCopied: '\u5df2\u590d\u5236\u8be6\u60c5',
+  toastCopiedId: '\u5df2\u590d\u5236 ID',
+  loading: '\u52a0\u8f7d\u4e2d\u2026',
+} as const
+
 const route = useRoute()
 const router = useRouter()
+
 const item = ref<Item | null>(null)
 const loading = ref(true)
 const activeImage = ref<string | null>(null)
@@ -26,16 +43,20 @@ const heroActionsVisible = computed(() => heroHover.value || heroMenuOpen.value)
 const lightboxOpen = ref(false)
 const lightboxIndex = ref(0)
 const isFavorited = ref(false)
+const isLiked = ref(false)
 const groupPickerOpen = ref(false)
 const shareCardOpen = ref(false)
+const shareImageOpen = ref(false)
+const shareCaptureRef = ref<HTMLElement | null>(null)
 const toast = ref('')
+const uploading = ref(false)
+const descEditing = ref(false)
+const descDraft = ref('')
+const descSaving = ref(false)
+
+const isLibrary = computed(() => (route.params.source as string) === 'library')
 
 const specEntries = computed(() => Object.entries(item.value?.specs ?? {}))
-const shortId = computed(() => {
-  const id = item.value?.id ?? ''
-  if (id.length <= 12) return id
-  return `${id.slice(0, 8)}…`
-})
 
 const gallerySlides = computed(() => {
   if (!item.value) return []
@@ -87,22 +108,41 @@ function showToast(message: string) {
   }, 2400)
 }
 
+function formatDateTime(iso: string) {
+  try {
+    return new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium', timeStyle: 'short' }).format(
+      new Date(iso)
+    )
+  } catch {
+    return iso
+  }
+}
+
+function pickActiveImage(it: Item): string | null {
+  if (it.coverPath) return it.coverPath
+  const assets = it.galleryAssets?.length
+    ? it.galleryAssets
+    : (it.gallery ?? []).map((url) => ({ url, attribution: null }))
+  return assets[0]?.url ?? null
+}
+
 async function loadItem() {
   loading.value = true
   isFavorited.value = false
+  isLiked.value = false
   item.value = null
   activeImage.value = null
+  descEditing.value = false
 
   const id = route.params.id as string
   const source = route.params.source as string
   if (source === 'library') {
     item.value = await window.wanwu.library.getItem(id)
-    activeImage.value = item.value?.coverPath ?? null
+    activeImage.value = item.value ? pickActiveImage(item.value) : null
     if (item.value) {
-      isFavorited.value = await window.wanwu.user.isFavorite({
-        itemId: item.value.id,
-        source: item.value.source
-      })
+      const ref = { itemId: item.value.id, source: item.value.source }
+      isFavorited.value = await window.wanwu.user.isFavorite(ref)
+      isLiked.value = await window.wanwu.user.isLiked(ref)
     }
   }
   loading.value = false
@@ -128,7 +168,7 @@ async function onFavoriteClick() {
       source: item.value.source
     })
     isFavorited.value = false
-    showToast('?????')
+    showToast(U.toastUnfav)
     return
   }
   groupPickerOpen.value = true
@@ -142,30 +182,43 @@ async function onFavoriteGroupPicked(groupId: string) {
     groupId
   })
   isFavorited.value = true
-  showToast('?????')
+  showToast(U.toastFav)
 }
 
-function buildShareText(): string {
-  if (!item.value) return ''
-  const lines = [item.value.name]
-  if (item.value.summary) lines.push(item.value.summary)
-  if (item.value.subCategoryName) lines.push(item.value.subCategoryName)
-  lines.push(`ID: ${item.value.id}`)
-  lines.push('? ?? Wanwu')
-  return lines.join('\n')
+async function onLikeClick() {
+  if (!item.value) return
+  if (isLiked.value) {
+    await window.wanwu.user.removeLike({
+      itemId: item.value.id,
+      source: item.value.source
+    })
+    isLiked.value = false
+    showToast(U.toastUnlike)
+  } else {
+    await window.wanwu.user.addLike({
+      itemId: item.value.id,
+      source: item.value.source
+    })
+    isLiked.value = true
+    showToast(U.toastLike)
+  }
 }
 
-async function shareItem() {
-  const text = buildShareText()
-  if (!text) return
-  await window.wanwu.shell.copyText(text)
-  showToast('???????')
+function openShareImageDialog() {
+  if (!item.value || !shareCaptureRef.value) return
+  shareImageOpen.value = true
+}
+
+async function copyItemDetails() {
+  if (!item.value) return
+  await window.wanwu.shell.copyText(buildItemCopyText(item.value))
+  showToast(U.toastCopied)
 }
 
 async function copyItemId() {
   if (!item.value) return
   await window.wanwu.shell.copyText(item.value.id)
-  showToast('??? ID')
+  showToast(U.toastCopiedId)
 }
 
 function selectImage(url: string) {
@@ -181,6 +234,55 @@ function onHeroOpenClick(e: MouseEvent) {
   if (!activeImage.value) return
   if ((e.target as HTMLElement).closest('.ww-product-detail__hero-actions')) return
   openLightbox()
+}
+
+async function uploadImage() {
+  if (!item.value || !isLibrary.value) return
+  const pick = await window.wanwu.shell.pickImageFile()
+  if (!pick.ok || !pick.path) return
+  const filePath = pick.path
+  uploading.value = true
+  try {
+    const updated = await window.wanwu.library.uploadItemImage({
+      itemId: item.value.id,
+      filePath
+    })
+    item.value = updated
+    activeImage.value = pickActiveImage(updated)
+    showToast(U.toastUploaded)
+  } catch {
+    showToast(U.toastUploadFail)
+  } finally {
+    uploading.value = false
+  }
+}
+
+function startDescEdit() {
+  descDraft.value = item.value?.description ?? ''
+  descEditing.value = true
+}
+
+function cancelDescEdit() {
+  descEditing.value = false
+  descDraft.value = ''
+}
+
+async function saveDescEdit() {
+  if (!item.value) return
+  descSaving.value = true
+  try {
+    const updated = await window.wanwu.library.updateItem({
+      ...item.value,
+      description: descDraft.value.trim() || null
+    })
+    item.value = updated
+    descEditing.value = false
+    showToast(U.toastSaved)
+  } catch {
+    showToast(U.toastSaveFail)
+  } finally {
+    descSaving.value = false
+  }
 }
 
 async function downloadActiveImage() {
@@ -206,10 +308,10 @@ async function revealInFolder() {
 
 <template>
   <div class="ww-product-detail">
-    <header class="ww-product-detail__bar ww-chrome-safe">
+    <header class="ww-product-detail__bar ww-chrome-safe ww-glass-surface--bar">
       <button
         type="button"
-        class="ww-product-detail__back ww-glass-btn ww-glass-btn--icon"
+        class="ww-product-detail__back ww-glass-btn ww-glass-btn--icon ww-glass-btn--on-light"
         aria-label="返回"
         @click="goBack"
       >
@@ -218,8 +320,16 @@ async function revealInFolder() {
       <nav class="ww-product-detail__crumb" aria-label="breadcrumb">
         <span v-if="item?.subCategoryName" class="ww-product-detail__crumb-muted">{{ item.subCategoryName }}</span>
         <span v-if="item?.subCategoryName" class="ww-product-detail__crumb-sep" aria-hidden="true">/</span>
-        <span class="ww-product-detail__crumb-current">{{ item?.name ?? '??' }}</span>
+        <span class="ww-product-detail__crumb-current">{{ item?.name ?? U.loading }}</span>
       </nav>
+      <div v-if="item" class="ww-product-detail__page-meta" aria-label="时间信息">
+        <span v-if="item.createdAt" class="ww-product-detail__page-meta-item">
+          创建时间: {{ formatDateTime(item.createdAt) }}
+        </span>
+        <span v-if="item.updatedAt" class="ww-product-detail__page-meta-item">
+          更新时间: {{ formatDateTime(item.updatedAt) }}
+        </span>
+      </div>
     </header>
 
     <Transition name="ww-toast">
@@ -238,14 +348,22 @@ async function revealInFolder() {
       v-else-if="!item"
       variant="not-found"
       code="404"
-      title="未找到物�?
-      description="该条目可能已被移除�?
+      title="未找到物品"
+      description="该条目可能已被删除或 ID 不正确。"
     />
 
     <div v-else class="ww-product-detail__scroll">
-      <article class="ww-product-detail__inner">
+      <article ref="shareCaptureRef" class="ww-product-detail__inner" data-share-capture>
         <div class="ww-product-detail__main">
           <section class="ww-product-detail__gallery" aria-label="图片">
+            <button
+              type="button"
+              class="ww-product-detail__id-outside ww-product-detail__id-link"
+              :title="'点击复制 ID：' + item.id"
+              @click="copyItemId"
+            >
+              ID: {{ item.id }}
+            </button>
             <div
               class="ww-product-detail__hero-stage ww-surface-grid"
               @mouseenter="heroHover = true"
@@ -266,14 +384,16 @@ async function revealInFolder() {
               </div>
 
               <ItemDetailHeroActions
-                v-if="activeImage"
+                v-if="isLibrary || activeImage"
                 v-model:menu-open="heroMenuOpen"
                 :visible="heroActionsVisible"
+                :has-active-image="Boolean(activeImage)"
                 :has-source-link="Boolean(sourceUrl)"
                 @open-lightbox="openLightbox"
                 @download="downloadActiveImage"
                 @reveal-in-folder="revealInFolder"
                 @open-source="openSourceLink"
+                @upload-image="uploadImage"
               />
             </div>
 
@@ -283,7 +403,12 @@ async function revealInFolder() {
               :attribution="activeAttribution"
             />
 
-            <div v-if="gallerySlides.length > 1" class="ww-product-detail__thumbs" role="tablist" aria-label="图集">
+            <div
+              v-if="gallerySlides.length > 1 || isLibrary"
+              class="ww-product-detail__thumbs"
+              role="tablist"
+              aria-label="图集"
+            >
               <button
                 v-for="(slide, i) in gallerySlides"
                 :key="slide.url"
@@ -292,30 +417,34 @@ async function revealInFolder() {
                 class="ww-product-detail__thumb"
                 :class="{ 'ww-product-detail__thumb--active': activeImage === slide.url }"
                 :aria-selected="activeImage === slide.url"
-                :aria-label="`�?${i + 1}`"
+                :aria-label="`图 ${i + 1}`"
                 @click="selectImage(slide.url)"
               >
                 <img :src="slide.url" alt="" />
+              </button>
+              <button
+                v-if="isLibrary"
+                type="button"
+                class="ww-product-detail__thumb ww-product-detail__thumb--add"
+                :disabled="uploading"
+                aria-label="上传图片"
+                @click="uploadImage"
+              >
+                <WwIcon name="plus" size="sm" />
               </button>
             </div>
           </section>
 
           <section class="ww-product-detail__info">
             <header class="ww-product-detail__intro">
-              <p v-if="item.subCategoryName" class="ww-product-detail__eyebrow">{{ item.subCategoryName }}</p>
               <h1 class="ww-product-detail__title">{{ item.name }}</h1>
               <p v-if="item.summary" class="ww-product-detail__lead">{{ item.summary }}</p>
             </header>
 
             <div v-if="item.tags?.length" class="ww-product-detail__tags">
-              <Tag
-                v-for="tag in item.tags"
-                :key="tag"
-                :value="tag"
-                rounded
-                severity="secondary"
-                class="ww-product-detail__tag"
-              />
+              <span v-for="tag in item.tags" :key="tag" class="ww-product-detail__pill-tag">
+                {{ tag }}
+              </span>
             </div>
 
             <div v-if="specEntries.length" class="ww-product-detail__spec-block">
@@ -327,65 +456,136 @@ async function revealInFolder() {
                 </div>
               </dl>
             </div>
-
-            <footer class="ww-product-detail__footer">
-              <button
-                type="button"
-                class="ww-product-detail__id-tag"
-                :title="item.id"
-                @click="copyItemId"
-              >
-                ID {{ shortId }}
-              </button>
-
-              <div class="ww-product-detail__dock" role="toolbar" aria-label="物品操作">
-                <button
-                  type="button"
-                  class="ww-product-detail__dock-btn"
-                  :class="{ 'ww-product-detail__dock-btn--active': isFavorited }"
-                  :aria-pressed="isFavorited"
-                  :aria-label="isFavorited ? '取消收藏' : '加入收藏'"
-                  @click="onFavoriteClick"
-                >
-                  <WwIcon name="heart" size="sm" :filled="isFavorited" />
-                </button>
-                <button
-                  type="button"
-                  class="ww-product-detail__dock-btn"
-                  aria-label="分享"
-                  @click="shareItem"
-                >
-                  <WwIcon name="share" size="sm" />
-                </button>
-                <button
-                  type="button"
-                  class="ww-product-detail__dock-btn"
-                  aria-label="生成分享卡片"
-                  @click="shareCardOpen = true"
-                >
-                  <WwIcon name="sparkles" size="sm" />
-                </button>
-                <button
-                  type="button"
-                  class="ww-product-detail__dock-btn"
-                  aria-label="复制 ID"
-                  @click="copyItemId"
-                >
-                  <WwIcon name="copy" size="sm" />
-                </button>
-              </div>
-            </footer>
           </section>
         </div>
 
-        <section v-if="item.description" class="ww-product-detail__desc">
+        <section v-if="isLibrary" class="ww-product-detail__desc">
+          <div class="ww-product-detail__desc-head">
+            <h2 class="ww-section-label">详细介绍</h2>
+            <div v-if="!descEditing" class="ww-product-detail__desc-actions">
+              <button
+                type="button"
+                class="ww-product-detail__desc-btn"
+                aria-label="编辑详情"
+                @click="startDescEdit"
+              >
+                <WwIcon name="pencil" size="sm" />
+              </button>
+            </div>
+            <div v-else class="ww-product-detail__desc-actions">
+              <button
+                type="button"
+                class="ww-product-detail__desc-btn ww-product-detail__desc-btn--primary"
+                :disabled="descSaving"
+                aria-label="完成"
+                @click="saveDescEdit"
+              >
+                <WwIcon name="check" size="sm" />
+              </button>
+              <button
+                type="button"
+                class="ww-product-detail__desc-btn"
+                :disabled="descSaving"
+                aria-label="取消"
+                @click="cancelDescEdit"
+              >
+                <WwIcon name="x" size="sm" />
+              </button>
+            </div>
+          </div>
+
+          <div v-if="descEditing" class="ww-product-detail__desc-editor">
+            <Textarea
+              v-model="descDraft"
+              class="w-full"
+              rows="12"
+              auto-resize
+              placeholder="Markdown 正文"
+            />
+          </div>
+          <ItemMarkdown
+            v-else-if="item.description"
+            :content="item.description"
+            class="ww-product-detail__prose"
+          />
+          <p v-else class="ww-product-detail__desc-empty">暂无详细介绍，点击上方编辑按钮添加。</p>
+        </section>
+
+        <section v-else-if="item.description" class="ww-product-detail__desc">
           <h2 class="ww-section-label">详细介绍</h2>
           <ItemMarkdown :content="item.description" class="ww-product-detail__prose" />
         </section>
       </article>
     </div>
 
+    <div
+      v-if="item && !loading"
+      class="ww-product-detail__float-dock ww-product-detail__dock ww-glass-blur"
+      role="toolbar"
+      aria-label="物品操作"
+    >
+      <button
+        v-tooltip.bottom="isLiked ? '取消点赞' : '点赞'"
+        type="button"
+        class="ww-product-detail__dock-btn"
+        :class="{ 'ww-product-detail__dock-btn--liked': isLiked }"
+        :aria-pressed="isLiked"
+        :aria-label="isLiked ? '取消点赞' : '点赞'"
+        @click="onLikeClick"
+      >
+        <WwIcon name="thumbs-up" size="sm" :filled="isLiked" />
+      </button>
+      <button
+        v-tooltip.bottom="isFavorited ? '取消收藏' : '收藏'"
+        type="button"
+        class="ww-product-detail__dock-btn"
+        :class="{ 'ww-product-detail__dock-btn--active': isFavorited }"
+        :aria-pressed="isFavorited"
+        :aria-label="isFavorited ? '取消收藏' : '收藏'"
+        @click="onFavoriteClick"
+      >
+        <WwIcon name="heart" size="sm" :filled="isFavorited" />
+      </button>
+      <button
+        v-tooltip.bottom="'分享长图'"
+        type="button"
+        class="ww-product-detail__dock-btn"
+        aria-label="分享长图"
+        @click="openShareImageDialog"
+      >
+        <WwIcon name="share" size="sm" />
+      </button>
+      <button
+        v-tooltip.bottom="'定制卡片'"
+        type="button"
+        class="ww-product-detail__dock-btn"
+        aria-label="定制卡片"
+        @click="shareCardOpen = true"
+      >
+        <WwIcon name="sparkles" size="sm" />
+      </button>
+      <button
+        v-tooltip.bottom="'复制详情'"
+        type="button"
+        class="ww-product-detail__dock-btn"
+        aria-label="复制详情"
+        @click="copyItemDetails"
+      >
+        <WwIcon name="copy" size="sm" />
+      </button>
+    </div>
+
     <ImageViewer v-model:open="lightboxOpen" v-model:index="lightboxIndex" :slides="lightboxSlides" />
+
+    <ItemShareImageDialog
+      v-model:visible="shareImageOpen"
+      :item="item"
+      :capture-el="shareCaptureRef"
+      :gallery-slides="gallerySlides"
+      :hero-url="activeImage"
+      :hero-attribution="activeAttribution"
+      @toast="showToast"
+    />
 
     <FavoriteGroupPickerDialog
       v-model:visible="groupPickerOpen"
@@ -393,6 +593,6 @@ async function revealInFolder() {
       @confirm="onFavoriteGroupPicked"
     />
 
-    <ItemShareCardDialog v-model:visible="shareCardOpen" :item="item" />
+    <ItemShareCardDialog v-model:visible="shareCardOpen" :item="item" :cover-url="activeImage" />
   </div>
 </template>

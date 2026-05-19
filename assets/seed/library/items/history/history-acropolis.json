@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "acropolis athens greece",
+    "query": "雅典卫城 landmark architecture",
     "matchTags": [
-      "acropolis",
-      "athens"
-    ]
+      "世界遗产",
+      "公元前 5 世纪"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

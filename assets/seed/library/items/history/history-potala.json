@@ -21,12 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "布达拉宫 历史词条 中国",
+    "query": "布达拉宫 landmark architecture",
     "matchTags": [
-      "中国",
       "世界遗产",
-      "拉萨",
-      "potala"
-    ]
+      "7 世纪起"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

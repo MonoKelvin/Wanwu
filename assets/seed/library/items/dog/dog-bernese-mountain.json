@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "bernese mountain dog",
+    "query": "伯恩山犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "bernese"
+      "山地犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

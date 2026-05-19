@@ -21,12 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "鬼妈妈 Coraline 奇幻",
+    "query": "鬼妈妈 Coraline film cinema scene",
     "matchTags": [
-      "奇幻",
-      "电影",
       "定格奇幻",
       "coraline"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

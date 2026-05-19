@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "2001 太空漫游 科幻",
+    "query": "2001 太空漫游 film cinema scene",
     "matchTags": [
-      "科幻",
-      "电影",
       "经典科幻",
-      "2001",
-      "space"
-    ]
+      "库布里克"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

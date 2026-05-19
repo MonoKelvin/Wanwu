@@ -1,7 +1,7 @@
 {
   "id": "164a58b1-eba4-40cc-8d89-b45199c76e4f",
   "slug": "hero-spiderman",
-  "subCategoryId": "hero-marvel",
+  "subCategoryId": "hero-marvel-mcu",
   "name": "蜘蛛侠 Spider-Man",
   "summary": "漫威最具代表性的街头英雄，彼得·帕克被放射性蜘蛛咬后获得爬墙与蜘蛛感应。",
   "description": "蜘蛛侠（Spider-Man）由 Stan Lee 与 Steve Ditko 于 1962 年在《Amazing Fantasy》#15 首次登场，隶属漫威漫画（Marvel Comics）。本名彼得·帕克，纽约皇后区高中生/摄影师，因放射性蜘蛛获得超能力。\n\n**核心能力**：爬墙、超人力量与敏捷、蜘蛛感应预警、自制蛛网发射器。经典反派包括绿魔、章鱼博士、毒液等。口号「能力越大，责任越大」。\n\n**影视**：索尼《蜘蛛侠》三部曲、MCU《蜘蛛侠：英雄无归》等；动画包括《蜘蛛侠：纵横宇宙》。\n\n**相关作品**：漫威主宇宙（Earth-616）及多个平行宇宙版本。",
@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "spiderman superhero cosplay",
+    "query": "Spider-Man action figure toy collectible",
     "category": "people",
     "matchTags": [
-      "spiderman",
-      "superhero"
+      "marvel",
+      "街头英雄",
+      "spider"
     ],
     "requiredTags": [
       "spiderman"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

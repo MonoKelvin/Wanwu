@@ -1,7 +1,7 @@
 {
   "id": "ef50c6f9-061f-401c-a67b-a4660deece9f",
   "slug": "ui-stripe-dashboard",
-  "subCategoryId": "ui-web",
+  "subCategoryId": "ui-app-screen",
   "name": "Stripe Dashboard",
   "summary": "金融科技数据可视化与清晰层级范例。",
   "description": "Stripe Dashboard代表 Web 端B2B方向，常用技术栈包括Stripe。现代网页强调性能（Core Web Vitals）、可访问性与设计系统一致性。\n\n从着陆页到复杂 Dashboard，需平衡信息密度与视觉层级。\n\n**实现要点**：Stripe，语义 HTML，响应式\n\n**相关**：与 Tailwind、组件库、设计 Token 工作流紧密相关",
@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Stripe Dashboard Web",
+    "query": "Stripe Dashboard web interface ui design",
     "matchTags": [
-      "Web",
-      "UI",
-      "Stripe",
+      "web",
       "stripe",
-      "dashboard"
-    ]
+      "b2b"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

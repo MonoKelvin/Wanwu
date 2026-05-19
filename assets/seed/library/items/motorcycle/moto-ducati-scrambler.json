@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "杜卡迪 Scrambler 意大利",
+    "query": "Scrambler motorcycle",
     "matchTags": [
       "意大利",
-      "Ducati",
-      "摩托",
       "ducati",
       "scrambler"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

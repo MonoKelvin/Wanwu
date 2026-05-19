@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "alaskan malamute dog",
+    "query": "阿拉斯加雪橇犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "malamute"
+      "雪橇犬",
+      "阿拉斯加",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

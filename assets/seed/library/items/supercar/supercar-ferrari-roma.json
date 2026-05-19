@@ -22,10 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "ferrari roma coupe",
+    "query": "Roma supercar",
     "matchTags": [
+      "意大利",
       "ferrari",
-      "car"
-    ]
+      "v8/v12",
+      "roma"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

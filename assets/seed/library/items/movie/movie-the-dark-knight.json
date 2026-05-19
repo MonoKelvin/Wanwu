@@ -22,10 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "dark knight batman city night",
+    "query": "蝙蝠侠：黑暗骑士 film cinema scene",
     "matchTags": [
-      "batman",
-      "night"
-    ]
+      "蝙蝠侠"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

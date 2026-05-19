@@ -20,14 +20,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "boxer dog portrait",
+    "query": "拳师犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "boxer"
+      "工作犬",
+      "家庭犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

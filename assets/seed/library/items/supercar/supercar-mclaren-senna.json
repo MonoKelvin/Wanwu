@@ -22,13 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "迈凯伦 Senna 英国",
+    "query": "Senna supercar",
     "matchTags": [
-      "英国",
-      "McLaren",
-      "超跑",
       "mclaren",
       "senna"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

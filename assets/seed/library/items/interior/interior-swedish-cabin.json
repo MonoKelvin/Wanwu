@@ -1,7 +1,7 @@
 {
   "id": "d9a62439-6db7-42c6-9d67-fe5c8e5627ff",
   "slug": "interior-swedish-cabin",
-  "subCategoryId": "int-nordic",
+  "subCategoryId": "int-modern",
   "name": "瑞典木屋",
   "summary": "红色漆木外观与室内浅色松木。",
   "description": "瑞典木屋体现北欧瑞典设计语言：功能优先、自然光最大化与木屋场景的人体工学。浅色系放大空间感，木材平衡冷调气候。\n\n可持续材料、节能窗与简化线脚是常见做法，IKEA 与 Hay 等品牌推动全球普及。\n\n**搭配要点**：瑞典色调，天然材质，简洁家具\n\n**相关**：与日式侘寂、现代极简有交叉借鉴",
@@ -21,13 +21,9 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "瑞典木屋 北欧",
-    "matchTags": [
-      "北欧",
-      "家装",
-      "瑞典",
-      "swedish",
-      "cabin"
-    ]
+    "query": "瑞典木屋 interior design room",
+    "matchTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

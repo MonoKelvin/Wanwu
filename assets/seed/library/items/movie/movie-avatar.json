@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "avatar pandora fantasy forest",
+    "query": "阿凡达 Avatar film cinema scene",
     "matchTags": [
-      "fantasy",
-      "forest"
-    ]
+      "太空殖民",
+      "卡梅隆",
+      "avatar"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

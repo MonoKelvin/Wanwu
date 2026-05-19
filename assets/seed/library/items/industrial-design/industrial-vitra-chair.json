@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "modern designer chair interior",
+    "query": "Vitra 家具 product design",
     "matchTags": [
-      "chair",
-      "design"
-    ]
+      "vitra"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

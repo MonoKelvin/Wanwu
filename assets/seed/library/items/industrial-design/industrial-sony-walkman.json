@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "索尼 Walkman 工业设计",
+    "query": "索尼 Walkman product design",
     "matchTags": [
       "工业设计",
-      "Sony",
-      "音频",
       "sony",
       "walkman"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

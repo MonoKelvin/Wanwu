@@ -1,7 +1,7 @@
 {
   "id": "b9b7e4ea-d047-4be6-9361-11421048c980",
   "slug": "interior-scandinavian-living",
-  "subCategoryId": "int-nordic",
+  "subCategoryId": "int-modern",
   "name": "北欧风客厅",
   "summary": "以浅木色、白色墙面与功能性家具为特征，强调自然光与「hygge」舒适感。",
   "description": "北欧风格（Scandinavian）源于丹麦、挪威、瑞典等国的室内传统，20 世纪中期在现代主义影响下形成国际审美。典型元素：浅色橡木/白蜡木、白色或浅灰墙面、简约沙发、几何地毯、大面积窗户与绿植。\n\n色彩克制，点缀莫兰迪色或黑色金属灯具。品牌如 Hay、Muuto、IKEA 推动普及。注重可持续木材与节能照明。\n\n**相关**：与日式侘寂、现代极简有交集；2010 年代 Pinterest/Instagram 推动全球流行。",
@@ -22,10 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "scandinavian living room interior",
+    "query": "北欧风客厅 interior design room",
     "matchTags": [
-      "scandinavian",
-      "living"
-    ]
+      "hygge"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "great wall of china",
+    "query": "万里长城 landmark architecture",
     "category": "places",
     "matchTags": [
-      "great wall",
-      "china"
-    ]
+      "世界遗产",
+      "防御工程"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Fluent iOS 风格 移动端",
+    "query": "Fluent / iOS 风格 mobile app ui screenshot",
     "matchTags": [
       "移动端",
-      "UI",
       "平台规范",
-      "fluent",
-      "ios"
-    ]
+      "fluent"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

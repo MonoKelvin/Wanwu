@@ -22,13 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "法拉利 F8 Tributo 意大利",
+    "query": "F8 Tributo supercar",
     "matchTags": [
       "意大利",
-      "Ferrari",
-      "超跑",
       "ferrari",
-      "f8"
-    ]
+      "v8/v12"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

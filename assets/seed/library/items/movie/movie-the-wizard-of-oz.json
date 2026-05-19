@@ -21,13 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "绿野仙踪 奇幻",
+    "query": "绿野仙踪 film cinema scene",
     "matchTags": [
-      "奇幻",
-      "电影",
-      "经典童话",
-      "the",
-      "wizard"
-    ]
+      "经典童话"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

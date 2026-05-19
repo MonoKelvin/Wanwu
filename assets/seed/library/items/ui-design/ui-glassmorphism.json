@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "glassmorphism ui card blur",
+    "query": "玻璃拟态 web interface ui design",
     "matchTags": [
-      "glass",
-      "ui"
-    ]
+      "web",
+      "css"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

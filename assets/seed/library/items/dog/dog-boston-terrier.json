@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "boston terrier dog",
+    "query": "波士顿梗 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "boston"
+      "伴侣犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

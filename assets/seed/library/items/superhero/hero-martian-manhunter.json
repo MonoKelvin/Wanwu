@@ -1,7 +1,7 @@
 {
   "id": "15386480-ba48-4178-8ad2-60c9846e463f",
   "slug": "hero-martian-manhunter",
-  "subCategoryId": "hero-dc",
+  "subCategoryId": "hero-dc-film",
   "name": "火星猎人 Martian Manhunter",
   "summary": "荣恩·哈扎特，火星最后幸存者，变形、心灵感应与相位穿墙。",
   "description": "火星猎人（Martian Manhunter）1955 年《侦探漫画》#225 登场，荣恩·哈扎特（J’onn J’onzz）为火星绿种人，火焰为心理弱点。能力含变形、飞行、心灵感应、相位化。\n\n**相关**：正义联盟长期成员，动画《正义联盟》配音经典。\n\n**能力要点**：变形、心灵感应、飞行、相位",
@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "martian manhunter cosplay",
+    "query": "Martian Manhunter action figure toy collectible",
     "matchTags": [
-      "martian",
-      "dc"
-    ]
+      "心灵感应",
+      "martian"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

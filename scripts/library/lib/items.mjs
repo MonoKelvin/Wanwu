@@ -4,7 +4,9 @@
 import { readFileSync, readdirSync, existsSync } from 'fs'
 import { join } from 'path'
 import { ensureItemId } from './stable-id.mjs'
-import { formatDescription } from './seed-utils.mjs'
+import { formatDescription, normalizeMarkdownLabels } from './seed-utils.mjs'
+import { mediaFileNames, MAX_IMAGES_PER_ITEM, DEFAULT_IMAGES_PER_ITEM } from './media-shared.mjs'
+import { scanValidMediaFiles } from './disk-media.mjs'
 
 const SEED_ROOT = 'assets/seed/library'
 const ITEMS_DIR = 'items'
@@ -108,6 +110,11 @@ export function buildItemsFromSeed(root, filter = {}) {
 
       const base = `library/${categoryId}/${mediaDir}`
       const media = { ...packDefaults, ...(raw.media ?? {}) }
+      const imageCount = Math.min(
+        MAX_IMAGES_PER_ITEM,
+        Math.max(1, media.imageCount ?? DEFAULT_IMAGES_PER_ITEM)
+      )
+      const mediaNames = mediaFileNames(imageCount)
 
       const entry = {
         id,
@@ -116,16 +123,23 @@ export function buildItemsFromSeed(root, filter = {}) {
         subCategoryId,
         name: raw.name,
         summary: raw.summary ?? '',
-        description: formatDescription(raw.description ?? ''),
+        description: formatDescription(normalizeMarkdownLabels(raw.description ?? '')),
         tags: raw.tags ?? [],
         specs: raw.specs ?? {},
-        coverFile: `${base}/cover.jpg`,
-        galleryFiles: [
-          `${base}/gallery-01.jpg`,
-          `${base}/gallery-02.jpg`,
-          `${base}/gallery-03.jpg`
-        ],
-        mediaProvider: media.provider ?? packDefaults.provider ?? 'pixabay'
+        coverFile: `${base}/${mediaNames[0]}`,
+        galleryFiles: mediaNames.slice(1).map((f) => `${base}/${f}`),
+        contentFile: `${base}/content.md`,
+        mediaProvider: media.provider ?? packDefaults.provider ?? 'pixabay',
+        mediaImageCount: imageCount
+      }
+
+      const dirAbs = join(root, 'assets', 'library', categoryId, mediaDir)
+      const disk = scanValidMediaFiles(categoryId, mediaDir, dirAbs)
+      if (disk) {
+        entry.coverFile = disk.coverFile
+        entry.galleryFiles = disk.galleryFiles
+        entry.contentFile = disk.contentFile
+        entry.mediaImageCount = 1 + disk.galleryFiles.length
       }
 
       byId.set(id, { entry, media: { slug, media } })

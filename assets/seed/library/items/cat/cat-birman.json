@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "birman cat blue eyes",
+    "query": "Birman cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "birman"
+      "重点色",
+      "birman",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

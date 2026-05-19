@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "black cat copper eyes",
+    "query": "Bombay cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "black"
+      "bombay",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

@@ -21,15 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "orange tabby cat",
+    "query": "橘猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "orange",
-      "tabby"
+      "田园猫",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

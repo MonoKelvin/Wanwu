@@ -22,12 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "长寿花 Kalanchoe 多肉",
+    "query": "长寿花 Kalanchoe houseplant",
     "matchTags": [
-      "多肉",
-      "耐旱",
-      "盆栽",
       "kalanchoe"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

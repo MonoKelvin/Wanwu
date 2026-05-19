@@ -21,11 +21,9 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "fantasy landscape meadow river",
-    "matchTags": [
-      "fantasy",
-      "landscape"
-    ],
-    "minMatchScore": 0
+    "query": "mushoku tensei anime screenshot fan art",
+    "matchTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

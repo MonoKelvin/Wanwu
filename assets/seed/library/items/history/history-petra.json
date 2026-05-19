@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "petra jordan ancient ruins",
+    "query": "佩特拉古城 landmark architecture",
     "matchTags": [
-      "petra",
-      "jordan"
-    ]
+      "世界遗产",
+      "公元前"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

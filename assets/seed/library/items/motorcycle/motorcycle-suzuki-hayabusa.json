@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "suzuki hayabusa motorcycle",
+    "query": "Hayabusa motorcycle",
     "matchTags": [
       "suzuki",
-      "motorcycle"
-    ]
+      "极速传说",
+      "hayabusa"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "哈雷 Pan America 美式",
+    "query": "Pan America motorcycle",
     "matchTags": [
-      "美式",
-      "Harley-Davidson",
-      "巡航",
-      "harley",
+      "harley-davidson",
+      "adv",
       "pan"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

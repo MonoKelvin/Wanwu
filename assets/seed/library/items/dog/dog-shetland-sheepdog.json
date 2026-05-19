@@ -20,14 +20,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "shetland sheepdog dog",
+    "query": "喜乐蒂牧羊犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "sheltie"
+      "牧羊犬",
+      "苏格兰",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

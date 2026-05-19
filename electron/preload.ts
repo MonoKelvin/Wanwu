@@ -8,7 +8,8 @@ const api: WanwuApi = {
     searchItems: (params) => ipcRenderer.invoke('library:searchItems', params),
     getItem: (id) => ipcRenderer.invoke('library:getItem', id),
     updateItem: (item) => ipcRenderer.invoke('library:updateItem', item),
-    createItem: (item) => ipcRenderer.invoke('library:createItem', item)
+    createItem: (item) => ipcRenderer.invoke('library:createItem', item),
+    uploadItemImage: (params) => ipcRenderer.invoke('library:uploadItemImage', params)
   },
   rss: {
     listGroups: () => ipcRenderer.invoke('rss:listGroups'),
@@ -39,7 +40,10 @@ const api: WanwuApi = {
     isFavorite: (params) => ipcRenderer.invoke('user:isFavorite', params),
     addFavorite: (params) => ipcRenderer.invoke('user:addFavorite', params),
     removeFavorite: (params) => ipcRenderer.invoke('user:removeFavorite', params),
-    toggleFavorite: (params) => ipcRenderer.invoke('user:toggleFavorite', params)
+    toggleFavorite: (params) => ipcRenderer.invoke('user:toggleFavorite', params),
+    isLiked: (params) => ipcRenderer.invoke('user:isLiked', params),
+    addLike: (params) => ipcRenderer.invoke('user:addLike', params),
+    removeLike: (params) => ipcRenderer.invoke('user:removeLike', params)
   },
   app: {
     getPaths: () => ipcRenderer.invoke('app:getPaths'),
@@ -63,7 +67,15 @@ const api: WanwuApi = {
     downloadFile: (params) => ipcRenderer.invoke('shell:downloadFile', params),
     showItemInFolder: (url) => ipcRenderer.invoke('shell:showItemInFolder', url),
     copyText: (text) => ipcRenderer.invoke('shell:copyText', text),
-    savePngDataUrl: (params) => ipcRenderer.invoke('shell:savePngDataUrl', params)
+    pickImageFile: () => ipcRenderer.invoke('shell:pickImageFile'),
+    savePngDataUrl: (params) => ipcRenderer.invoke('shell:savePngDataUrl', params),
+    saveImageDataUrl: (params) => ipcRenderer.invoke('shell:saveImageDataUrl', params),
+    saveTextFile: (params) => ipcRenderer.invoke('shell:saveTextFile', params)
+  },
+  share: {
+    canNativeShare: () => ipcRenderer.invoke('share:canNativeShare'),
+    nativeShare: (params) => ipcRenderer.invoke('share:nativeShare', params),
+    uploadTemp: (params) => ipcRenderer.invoke('share:uploadTemp', params)
   }
 }
 

@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "mclaren artura hybrid",
+    "query": "Artura supercar",
     "matchTags": [
       "mclaren",
-      "hybrid"
-    ]
+      "artura"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

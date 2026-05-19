@@ -20,14 +20,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "hokkaido dog japan",
+    "query": "北海道犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "japan"
+      "天然纪念",
+      "北海道",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

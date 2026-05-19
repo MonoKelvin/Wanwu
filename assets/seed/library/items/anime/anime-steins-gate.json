@@ -21,11 +21,9 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "tokyo city night urban",
-    "matchTags": [
-      "tokyo",
-      "city"
-    ],
-    "minMatchScore": 0
+    "query": "steins gate anime screenshot fan art",
+    "matchTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

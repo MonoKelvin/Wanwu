@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "watchmen rorschach mask",
+    "query": "Rorschach action figure toy collectible",
     "matchTags": [
-      "watchmen",
-      "mask"
-    ]
+      "守望者",
+      "反英雄",
+      "rorschach"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

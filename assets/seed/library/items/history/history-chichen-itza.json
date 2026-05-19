@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "chichen itza mayan pyramid",
+    "query": "奇琴伊察 landmark architecture",
     "matchTags": [
-      "chichen",
-      "maya"
-    ]
+      "世界遗产",
+      "墨西哥",
+      "公元 600–1200"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

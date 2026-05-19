@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "anthurium flower houseplant",
+    "query": "红掌 Anthurium houseplant",
     "matchTags": [
-      "anthurium",
-      "plant"
-    ]
+      "天南星科",
+      "anthurium"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

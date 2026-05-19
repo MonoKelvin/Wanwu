@@ -21,13 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "全职猎人 少年漫",
+    "query": "hunter x hunter anime screenshot fan art",
     "matchTags": [
-      "少年漫",
-      "热血",
-      "日本",
-      "hunter",
-      "x"
-    ]
+      "少年漫"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

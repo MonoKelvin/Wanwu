@@ -22,14 +22,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "tabby cat portrait",
+    "query": "中华狸花猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "tabby"
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

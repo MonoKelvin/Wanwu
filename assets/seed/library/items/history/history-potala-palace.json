@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "potala palace tibet",
+    "query": "布达拉宫 landmark architecture",
     "matchTags": [
-      "potala",
-      "tibet"
-    ]
+      "世界遗产",
+      "吐蕃至清"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

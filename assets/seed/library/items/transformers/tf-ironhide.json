@@ -21,10 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "transformer truck robot toy",
+    "query": "Ironhide transformers toy robot",
     "matchTags": [
-      "transformer",
-      "truck"
-    ]
+      "汽车人",
+      "hasbro",
+      "武器专家",
+      "ironhide"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

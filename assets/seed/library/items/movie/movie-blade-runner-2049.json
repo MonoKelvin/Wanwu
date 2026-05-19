@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "blade runner cyberpunk city rain",
+    "query": "银翼杀手 2049 film cinema scene",
     "matchTags": [
-      "cyberpunk",
-      "city"
-    ]
+      "赛博朋克",
+      "维伦纽瓦"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

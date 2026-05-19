@@ -21,10 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "e reader product design",
+    "query": "Kindle 电子书 product design",
     "matchTags": [
-      "ereader",
-      "product"
-    ]
+      "工业设计",
+      "amazon",
+      "阅读器",
+      "kindle"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

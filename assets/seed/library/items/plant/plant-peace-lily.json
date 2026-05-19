@@ -22,13 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "白掌 Spathiphyllum 观叶",
+    "query": "白掌 Spathiphyllum houseplant",
     "matchTags": [
-      "观叶",
       "天南星科",
-      "室内",
-      "peace",
-      "lily"
-    ]
+      "spathiphyllum"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -1,7 +1,7 @@
 {
   "id": "8a2c6932-55fb-476a-b8ac-259698322894",
   "slug": "illustration-klimt-kiss",
-  "subCategoryId": "ill-classic",
+  "subCategoryId": "ill-digital",
   "name": "吻 The Kiss",
   "summary": "克里姆特金箔装饰与新艺术风格。",
   "description": "吻 The Kiss由克里姆特创作，属新艺术重要作品，约1908年。作品在艺术史教材、博物馆常设展与流行文化引用中反复出现。\n\n古典绘画技法、颜料介质与历史语境构成鉴赏基础，数字复制品亦广泛用于艺术教育。\n\n**艺术史**：新艺术，克里姆特，1908\n\n**相关**：与同期流派画家并列研究；博物馆巡展常借展",
@@ -21,10 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "klimt gold art nouveau",
+    "query": "The Kiss digital illustration artwork",
     "matchTags": [
-      "gold",
-      "art"
-    ]
+      "艺术史",
+      "新艺术",
+      "克里姆特",
+      "the"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

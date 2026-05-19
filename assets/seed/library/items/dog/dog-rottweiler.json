@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "rottweiler dog",
+    "query": "罗威纳犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "rottweiler"
+      "护卫犬",
+      "工作犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

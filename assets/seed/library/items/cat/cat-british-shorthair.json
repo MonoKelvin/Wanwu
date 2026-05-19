@@ -22,15 +22,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "british shorthair cat portrait",
+    "query": "英国短毛猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "british",
-      "shorthair"
+      "室内猫",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

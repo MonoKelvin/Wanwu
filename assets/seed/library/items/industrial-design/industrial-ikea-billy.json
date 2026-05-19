@@ -21,13 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "IKEA Billy 书柜 家居",
+    "query": "IKEA Billy 书柜 product design",
     "matchTags": [
-      "家居",
-      "IKEA",
-      "家具",
-      "ikea",
-      "billy"
-    ]
+      "ikea"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

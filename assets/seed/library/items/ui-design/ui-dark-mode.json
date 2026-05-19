@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "dark mode app ui",
+    "query": "深色模式 mobile app ui screenshot",
     "matchTags": [
-      "dark",
-      "ui"
-    ]
+      "移动端",
+      "ios / android"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

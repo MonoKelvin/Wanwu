@@ -21,14 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "taiwan dog mountain",
+    "query": "台湾高山犬 / 福尔摩沙犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "taiwan"
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

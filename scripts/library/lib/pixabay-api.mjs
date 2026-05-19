@@ -84,7 +84,7 @@ export function rankPixabayHits(
     .sort((a, b) => b.score - a.score)
 
   const strong = scored.filter((s) => s.score >= minMatchScore).map((s) => s.hit)
-  if (strong.length >= 4) return strong
+  if (strong.length >= 1) return strong
 
   return scored.filter((s) => s.score > 0).map((s) => s.hit)
 }

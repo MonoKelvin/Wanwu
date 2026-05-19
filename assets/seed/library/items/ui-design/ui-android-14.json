@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Android 14 界面 移动端",
+    "query": "Android 14 界面 mobile app ui screenshot",
     "matchTags": [
       "移动端",
-      "UI",
-      "Android 14",
-      "android",
-      "14"
-    ]
+      "android 14",
+      "android"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

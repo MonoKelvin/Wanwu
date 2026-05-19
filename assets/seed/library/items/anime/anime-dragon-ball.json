@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "dragon ball goku cosplay",
+    "query": "dragon ball anime screenshot fan art",
     "matchTags": [
-      "dragon",
-      "ball"
-    ]
+      "少年漫",
+      "dragon"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

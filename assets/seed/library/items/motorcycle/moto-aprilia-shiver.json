@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "阿普利亚 Shiver 900 意大利",
+    "query": "Shiver 900 motorcycle",
     "matchTags": [
       "意大利",
-      "Aprilia",
-      "摩托",
       "aprilia",
       "shiver"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

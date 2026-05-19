@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "stonehenge england stones",
+    "query": "巨石阵 landmark architecture",
     "matchTags": [
-      "stonehenge",
-      "england"
-    ]
+      "世界遗产"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

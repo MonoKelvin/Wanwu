@@ -6,6 +6,7 @@ const menuOpen = defineModel<boolean>('menuOpen', { default: false })
 
 defineProps<{
   visible: boolean
+  hasActiveImage: boolean
   hasSourceLink: boolean
 }>()
 
@@ -14,6 +15,7 @@ const emit = defineEmits<{
   download: []
   revealInFolder: []
   openSource: []
+  uploadImage: []
 }>()
 
 function closeMenu() {
@@ -38,7 +40,7 @@ function run(action: () => void) {
   <div class="ww-product-detail__hero-actions" :class="{ 'is-visible': visible }" @click.stop>
     <button
       type="button"
-      class="ww-glass-btn ww-glass-btn--icon"
+      class="ww-glass-btn ww-glass-btn--icon ww-glass-blur ww-glass-blur--dark"
       aria-label="图片操作"
       aria-haspopup="true"
       :aria-expanded="menuOpen"
@@ -46,16 +48,38 @@ function run(action: () => void) {
     >
       <WwIcon name="ellipsis-vertical" size="sm" />
     </button>
-    <div v-if="menuOpen" class="ww-hero-menu" role="menu" @click.stop>
-      <button type="button" role="menuitem" class="ww-hero-menu__item" @click="run(() => emit('openLightbox'))">
+    <div v-if="menuOpen" class="ww-hero-menu ww-glass-blur" role="menu" @click.stop>
+      <button type="button" role="menuitem" class="ww-hero-menu__item" @click="run(() => emit('uploadImage'))">
+        <WwIcon name="plus" size="sm" />
+        上传图片
+      </button>
+      <button
+        v-if="hasActiveImage"
+        type="button"
+        role="menuitem"
+        class="ww-hero-menu__item"
+        @click="run(() => emit('openLightbox'))"
+      >
         <WwIcon name="maximize" size="sm" />
         查看大图
       </button>
-      <button type="button" role="menuitem" class="ww-hero-menu__item" @click="run(() => emit('download'))">
+      <button
+        v-if="hasActiveImage"
+        type="button"
+        role="menuitem"
+        class="ww-hero-menu__item"
+        @click="run(() => emit('download'))"
+      >
         <WwIcon name="download" size="sm" />
-        下载到本地
+        另存为
       </button>
-      <button type="button" role="menuitem" class="ww-hero-menu__item" @click="run(() => emit('revealInFolder'))">
+      <button
+        v-if="hasActiveImage"
+        type="button"
+        role="menuitem"
+        class="ww-hero-menu__item"
+        @click="run(() => emit('revealInFolder'))"
+      >
         <WwIcon name="folder-open" size="sm" />
         在文件夹中显示
       </button>

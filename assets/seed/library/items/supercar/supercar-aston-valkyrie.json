@@ -22,13 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "阿斯顿 马丁 Valkyrie 英国",
+    "query": "Valkyrie supercar",
     "matchTags": [
-      "英国",
-      "Aston Martin",
-      "超跑",
-      "aston",
+      "aston martin",
       "valkyrie"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

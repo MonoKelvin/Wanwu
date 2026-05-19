@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "alessi kettle design",
+    "query": "阿莱西 9093 鸟鸣水壶 product design",
     "matchTags": [
       "alessi",
-      "kettle"
-    ]
+      "后现代"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

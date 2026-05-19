@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "starscream transformer jet toy",
+    "query": "Starscream transformers toy robot",
     "matchTags": [
-      "starscream",
-      "transformer"
-    ]
+      "霸天虎",
+      "空军司令",
+      "starscream"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

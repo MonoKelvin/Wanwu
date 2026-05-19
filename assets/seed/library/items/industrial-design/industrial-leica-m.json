@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "徕卡 M 相机 工业设计",
+    "query": "徕卡 M 相机 product design",
     "matchTags": [
       "工业设计",
-      "Leica",
-      "相机",
-      "leica",
-      "m"
-    ]
+      "leica"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

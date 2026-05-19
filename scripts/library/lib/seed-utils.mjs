@@ -3,21 +3,31 @@
  */
 import { readFileSync, existsSync } from 'fs'
 
-/** 段首「标签：」在第二段起加粗为 Markdown */
+/** 段首「标签：」在第二段起加粗为 Markdown（跳过已加粗段落，避免 ****） */
 export function formatDescription(text) {
   if (!text?.trim()) return ''
   return text
     .split('\n\n')
     .map((block, index) => {
       const trimmed = block.trim()
-      const m = trimmed.match(/^([^：\n]{2,16})：([\s\S]*)$/)
-      if (m && index > 0) return `**${m[1]}**：${m[2]}`
+      if (index === 0) return trimmed
+      if (/^\*\*[^*]+\*\*[：:]/.test(trimmed)) return trimmed
+      const m = trimmed.match(/^(?:\*\*)?([^*：\n]{2,16})(?:\*\*)?[：:]([\s\S]*)$/)
+      if (m) return `**${m[1].trim()}**：${m[2]}`
       return trimmed
     })
     .join('\n\n')
 }
 
-/** 合并已有 catalog 中的 attribution 字段 */
+/** 修复历史 catalog / content 中重复的 **** 加粗 */
+export function normalizeMarkdownLabels(text) {
+  if (!text?.trim()) return ''
+  return text
+    .replace(/\*{4,}([^*]+?)\*{4,}/g, '**$1**')
+    .replace(/\*{3}([^*]+?)\*{3}/g, '**$1**')
+}
+
+/** 合并已有 catalog 中的 attribution 字段（不覆盖磁盘扫描得到的 coverFile / galleryFiles） */
 export function mergeExistingAttributions(nextItems, catalogPath) {
   if (!existsSync(catalogPath)) return nextItems
   try {
@@ -26,17 +36,13 @@ export function mergeExistingAttributions(nextItems, catalogPath) {
     return nextItems.map((entry) => {
       const old = bySlug.get(entry.slug)
       if (!old) return entry
-      return {
-        ...entry,
-        ...(old.coverAttribution ? { coverAttribution: old.coverAttribution } : {}),
-        ...(old.galleryAttributions?.length
-          ? { galleryAttributions: old.galleryAttributions }
-          : {}),
-        ...(old.coverFile && old.coverAttribution ? { coverFile: old.coverFile } : {}),
-        ...(old.galleryFiles?.length && old.galleryAttributions
-          ? { galleryFiles: old.galleryFiles }
-          : {})
+      const merged = { ...entry }
+      if (old.coverAttribution) merged.coverAttribution = old.coverAttribution
+      const galleryCount = entry.galleryFiles?.length ?? 0
+      if (old.galleryAttributions?.length && galleryCount > 0) {
+        merged.galleryAttributions = old.galleryAttributions.slice(0, galleryCount)
       }
+      return merged
     })
   } catch {
     return nextItems

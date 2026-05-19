@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "calico cat tricolor",
+    "query": "三花猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "calico"
+      "田园猫",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

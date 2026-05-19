@@ -22,13 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "宝马 M4 CSL 德国",
+    "query": "M4 CSL supercar",
     "matchTags": [
-      "德国",
-      "BMW M",
-      "超跑",
-      "bmw",
-      "m4"
-    ]
+      "bmw m",
+      "精密工程"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

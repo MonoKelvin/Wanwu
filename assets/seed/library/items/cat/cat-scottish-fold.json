@@ -22,14 +22,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "scottish fold cat",
+    "query": "Scottish Fold cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "fold"
+      "苏格兰",
+      "scottish",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

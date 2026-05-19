@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "mogao caves dunhuang",
+    "query": "莫高窟 landmark architecture",
     "matchTags": [
-      "dunhuang",
-      "caves"
-    ]
+      "世界遗产",
+      "十六国至元"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

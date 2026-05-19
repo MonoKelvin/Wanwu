@@ -1,7 +1,7 @@
 {
   "id": "9ae9fc39-1a77-4d84-b2de-19e901cfe717",
   "slug": "hero-conan",
-  "subCategoryId": "hero-other",
+  "subCategoryId": "hero-anime",
   "name": "野蛮人柯南 Conan",
   "summary": "罗伯特·霍华德剑与魔法经典，西伯莱流浪战士走向王位传奇。",
   "description": "柯南（Conan the Barbarian）1932 年 Pulp 杂志登场，Robert E. Howard 创造。蛮王柯南来自西伯莱，以剑、肌肉与狡诈冒险。\n\n**影视**：施瓦辛格 1982 电影定义视觉形象。\n\n**设定要点**：剑术、力量、盗贼技能",
@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "conan barbarian warrior cosplay",
+    "query": "Conan action figure toy collectible",
     "matchTags": [
-      "conan",
-      "warrior"
-    ]
+      "剑与魔法",
+      "野蛮人",
+      "conan"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

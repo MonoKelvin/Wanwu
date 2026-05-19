@@ -21,11 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "retro refrigerator kitchen pastel",
+    "query": "Smeg 冰箱 product design",
     "matchTags": [
-      "refrigerator",
-      "kitchen"
+      "smeg"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

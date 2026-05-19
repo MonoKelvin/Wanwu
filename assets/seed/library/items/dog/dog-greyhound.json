@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "greyhound dog running",
+    "query": "灵缇 / 格力犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "greyhound"
+      "视觉猎犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

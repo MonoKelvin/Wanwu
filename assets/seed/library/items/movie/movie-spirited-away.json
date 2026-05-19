@@ -22,10 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "spirited away bathhouse anime",
+    "query": "千与千寻 千と千尋の神隠し film cinema scene",
     "matchTags": [
-      "spirited",
-      "bathhouse"
-    ]
+      "吉卜力",
+      "宫崎骏",
+      "奥斯卡"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -21,14 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "pug dog portrait",
+    "query": "巴哥犬 / 哈巴狗 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "pug"
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

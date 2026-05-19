@@ -21,11 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "pink sports car",
+    "query": "Arcee transformers toy robot",
     "matchTags": [
-      "car",
-      "sports"
+      "汽车人",
+      "hasbro",
+      "女战士",
+      "arcee"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

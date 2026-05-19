@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "beagle dog",
+    "query": "比格犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "beagle"
+      "嗅猎犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

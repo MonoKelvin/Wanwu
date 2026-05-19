@@ -21,10 +21,9 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "sword art online anime",
-    "matchTags": [
-      "sword",
-      "anime"
-    ]
+    "query": "sword art online anime screenshot fan art",
+    "matchTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

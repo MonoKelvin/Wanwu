@@ -21,14 +21,18 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "xoloitzcuintli hairless dog",
+    "query": "墨西哥无毛犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "xolo"
+      "无毛犬",
+      "墨西哥",
+      "古老品种",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

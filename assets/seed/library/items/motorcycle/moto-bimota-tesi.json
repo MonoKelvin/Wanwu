@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "比摩塔 Tesi 意大利",
+    "query": "Tesi motorcycle",
     "matchTags": [
       "意大利",
-      "Bimota",
-      "摩托",
       "bimota",
       "tesi"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

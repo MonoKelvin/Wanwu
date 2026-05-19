@@ -22,10 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "mercedes amg gt sports car",
+    "query": "AMG GT supercar",
     "matchTags": [
-      "mercedes",
+      "mercedes-amg",
+      "精密工程",
       "amg"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

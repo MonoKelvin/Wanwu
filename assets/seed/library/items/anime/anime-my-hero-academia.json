@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "my hero academia cosplay",
+    "query": "my hero academia anime screenshot fan art",
     "matchTags": [
-      "hero",
-      "academia"
-    ]
+      "少年漫"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

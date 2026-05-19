@@ -21,11 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "soccer football player stadium",
+    "query": "blue lock anime screenshot fan art",
     "matchTags": [
-      "soccer",
-      "football"
+      "少年漫"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

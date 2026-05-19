@@ -22,10 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "porsche 918 spyder",
+    "query": "Spyder supercar",
     "matchTags": [
       "porsche",
+      "精密工程",
       "spyder"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

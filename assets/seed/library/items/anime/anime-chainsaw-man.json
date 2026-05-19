@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "chainsaw man anime cosplay",
+    "query": "chainsaw man anime screenshot fan art",
     "matchTags": [
-      "chainsaw",
-      "anime"
-    ]
+      "少年漫"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

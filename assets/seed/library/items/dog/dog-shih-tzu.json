@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "shih tzu dog",
+    "query": "西施犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "shih"
+      "伴侣犬",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

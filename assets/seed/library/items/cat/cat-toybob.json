@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "small cat portrait",
+    "query": "Toybob cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "kitten"
+      "日本关联",
+      "toybob",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

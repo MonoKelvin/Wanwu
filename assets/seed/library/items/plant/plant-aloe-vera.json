@@ -22,10 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "aloe vera succulent",
+    "query": "芦荟 Aloe vera houseplant",
     "matchTags": [
-      "aloe",
-      "succulent"
-    ]
+      "aloe"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

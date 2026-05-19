@@ -22,13 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "兰博基尼 Countach LPI 意大利",
+    "query": "Countach LPI 800-4 supercar",
     "matchTags": [
       "意大利",
-      "Lamborghini",
-      "超跑",
       "lamborghini",
+      "v8/v12",
       "countach"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

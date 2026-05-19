@@ -1,7 +1,7 @@
 {
   "id": "c9b1e579-abb9-4106-beab-7977e418314d",
   "slug": "hero-hellboy",
-  "subCategoryId": "hero-other",
+  "subCategoryId": "hero-indie",
   "name": "地狱男爵 Hellboy",
   "summary": "恶魔之子为 BPRD 调查超自然现象的 Right Hand of Doom。",
   "description": "地狱男爵（Hellboy）1993 年 Dark Horse 漫画，由纳粹仪式召唤的恶魔之子被盟军收养，右手为毁灭之石，隶属超自然调查局 BPRD。\n\n**影视**：哥特美术与民间传说融合。吉尔莫·德尔·托罗电影两部曲口碑极高。\n\n**设定要点**：超级力量、神秘学调查、断角",
@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "hellboy comic cosplay",
+    "query": "Hellboy action figure toy collectible",
     "matchTags": [
-      "hellboy",
-      "comic"
-    ]
+      "dark horse",
+      "bprd",
+      "hellboy"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

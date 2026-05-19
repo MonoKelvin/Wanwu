@@ -22,13 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "玛莎拉蒂 GranCabrio 意大利",
+    "query": "GranCabrio supercar",
     "matchTags": [
       "意大利",
-      "Maserati",
-      "超跑",
       "maserati",
+      "v8/v12",
       "grancabrio"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

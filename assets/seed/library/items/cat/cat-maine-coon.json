@@ -21,15 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "maine coon cat",
+    "query": "缅因猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "maine",
-      "coon"
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

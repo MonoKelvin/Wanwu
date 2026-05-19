@@ -1,7 +1,7 @@
 {
   "id": "25ef6dc8-b471-444a-b590-50efafa6db2c",
   "slug": "ui-storybook",
-  "subCategoryId": "ui-web",
+  "subCategoryId": "ui-design-tool",
   "name": "Storybook",
   "summary": "组件隔离开发与视觉回归文档。",
   "description": "Storybook代表 Web 端文档方向，常用技术栈包括Storybook。现代网页强调性能（Core Web Vitals）、可访问性与设计系统一致性。\n\n从着陆页到复杂 Dashboard，需平衡信息密度与视觉层级。\n\n**实现要点**：Storybook，语义 HTML，响应式\n\n**相关**：与 Tailwind、组件库、设计 Token 工作流紧密相关",
@@ -21,12 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Storybook Web",
+    "query": "Storybook design system ui",
     "matchTags": [
-      "Web",
-      "UI",
-      "Storybook",
+      "web",
       "storybook"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

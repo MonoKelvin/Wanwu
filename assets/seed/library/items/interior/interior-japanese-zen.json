@@ -1,7 +1,7 @@
 {
   "id": "7b0231e4-f419-4d3a-863e-36f0969ae24e",
   "slug": "interior-japanese-zen",
-  "subCategoryId": "int-zen",
+  "subCategoryId": "int-modern",
   "name": "日式禅意和室",
   "summary": "榻榻米、障子门与枯山水庭院意象，追求留白与季节感的东方居住美学。",
   "description": "和室（わしつ）为日本传统房间，地面铺榻榻米，以障子（纸拉门）采光分隔空间。茶室、坐禅角落常结合「侘寂」（wabi-sabi）审美：接受不完美与自然老化。\n\n**元素**：矮桌（座卓）、蒲团、壁龛（床の間）插花、挂轴。对外连接枯山水庭院（枯山Water）延伸室内意境。现代公寓常做「和洋折衷」简化版。\n\n**相关**：与北欧极简同属「少即是多」；京都町家为完整传统范例。",
@@ -22,10 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "japanese zen room tatami",
+    "query": "日式禅意和室 interior design room",
     "matchTags": [
-      "japanese",
-      "tatami"
-    ]
+      "榻榻米"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

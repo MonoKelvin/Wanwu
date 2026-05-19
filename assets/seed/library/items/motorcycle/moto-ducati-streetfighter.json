@@ -21,13 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "杜卡迪 Streetfighter V4 意大利",
+    "query": "Streetfighter V4 motorcycle",
     "matchTags": [
       "意大利",
-      "Ducati",
-      "摩托",
       "ducati",
       "streetfighter"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

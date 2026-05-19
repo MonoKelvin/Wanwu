@@ -21,10 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "transformer sports car toy",
+    "query": "Wheeljack transformers toy robot",
     "matchTags": [
-      "transformer",
-      "sports"
-    ]
+      "汽车人",
+      "hasbro",
+      "科学家",
+      "wheeljack"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

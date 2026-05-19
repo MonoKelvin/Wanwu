@@ -21,10 +21,9 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "fullmetal alchemist cosplay",
-    "matchTags": [
-      "alchemist",
-      "anime"
-    ]
+    "query": "fullmetal alchemist anime screenshot fan art",
+    "matchTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

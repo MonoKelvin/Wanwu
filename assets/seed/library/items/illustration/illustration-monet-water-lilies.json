@@ -1,7 +1,7 @@
 {
   "id": "f3ce0ea0-b002-4b7f-b635-b558d212ef71",
   "slug": "illustration-monet-water-lilies",
-  "subCategoryId": "ill-classic",
+  "subCategoryId": "ill-digital",
   "name": "睡莲 Water Lilies",
   "summary": "莫奈吉维尼花园光影与印象派色彩。",
   "description": "睡莲 Water Lilies由莫奈创作，属印象派重要作品，约1910s年。作品在艺术史教材、博物馆常设展与流行文化引用中反复出现。\n\n古典绘画技法、颜料介质与历史语境构成鉴赏基础，数字复制品亦广泛用于艺术教育。\n\n**艺术史**：印象派，莫奈，1910s\n\n**相关**：与同期流派画家并列研究；博物馆巡展常借展",
@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "water lilies monet impressionist",
+    "query": "Water Lilies digital illustration artwork",
     "matchTags": [
-      "water",
-      "lilies"
-    ]
+      "艺术史",
+      "印象派",
+      "water"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

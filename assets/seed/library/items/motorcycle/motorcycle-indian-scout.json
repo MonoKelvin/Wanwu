@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "indian scout cruiser motorcycle",
+    "query": "Scout motorcycle",
     "matchTags": [
       "indian",
-      "motorcycle"
-    ]
+      "scout"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

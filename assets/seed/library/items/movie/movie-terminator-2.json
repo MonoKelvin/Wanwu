@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "终结者 2 科幻",
+    "query": "终结者 2 film cinema scene",
     "matchTags": [
-      "科幻",
-      "电影",
       "时空旅行",
-      "terminator",
-      "2"
-    ]
+      "卡梅隆"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

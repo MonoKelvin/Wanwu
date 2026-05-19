@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "cardigan welsh corgi dog",
+    "query": "卡迪根威尔士柯基 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "corgi"
+      "威尔士",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

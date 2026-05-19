@@ -1,7 +1,7 @@
 {
   "id": "daa48ea8-74c6-4871-99b4-ea34bad2873f",
   "slug": "cat-american-shorthair",
-  "subCategoryId": "cat-americas",
+  "subCategoryId": "cat-short-hair",
   "name": "美国短毛猫 American Shorthair",
   "summary": "美国本土工作猫选育，体格壮实、虎斑经典，性格稳定适应力强。",
   "description": "美国短毛猫（American Shorthair）由早期移民带入北美的工作猫选育，与「家猫」区分，强调体格与毛质标准。经典银虎斑（银色虎斑）最知名，亦有纯色、双色等。\n\n性格稳定、少病、适合家庭。运动需求中等。与英国短毛猫无直接血缘但角色类似。\n\n**相关**：与「美国混种短毛」在猫展标准上不同；是北美历史最悠久的认可品种之一。",
@@ -21,14 +21,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "american shorthair tabby cat",
+    "query": "American Shorthair cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "tabby"
+      "工作猫",
+      "american",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

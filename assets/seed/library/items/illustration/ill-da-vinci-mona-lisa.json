@@ -21,13 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "蒙娜丽莎 Mona Lisa 艺术史",
+    "query": "mona lisa painting museum artwork",
     "matchTags": [
       "艺术史",
       "文艺复兴",
       "达芬奇",
-      "da",
-      "vinci"
-    ]
+      "mona"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

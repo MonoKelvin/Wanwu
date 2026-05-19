@@ -21,13 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "通天晓 Ultra Magnus 汽车人",
+    "query": "Ultra Magnus transformers toy robot",
     "matchTags": [
       "汽车人",
-      "Hasbro",
-      "变形",
-      "ultra",
-      "magnus"
-    ]
+      "hasbro",
+      "指挥官",
+      "ultra"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

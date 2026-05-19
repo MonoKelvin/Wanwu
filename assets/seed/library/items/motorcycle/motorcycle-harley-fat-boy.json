@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "harley davidson fat boy",
+    "query": "Fat Boy motorcycle",
     "matchTags": [
-      "harley",
-      "cruiser"
-    ]
+      "harley-davidson",
+      "约 93 hp",
+      "fat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

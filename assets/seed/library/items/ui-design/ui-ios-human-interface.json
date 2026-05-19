@@ -22,10 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "ios app interface design",
+    "query": "Apple Human Interface Guidelines mobile app ui screenshot",
     "matchTags": [
+      "apple",
       "ios",
-      "interface"
-    ]
+      "hig",
+      "swiftui"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

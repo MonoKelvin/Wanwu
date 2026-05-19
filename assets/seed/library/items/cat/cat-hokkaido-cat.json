@@ -20,14 +20,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "fluffy cat winter",
+    "query": "北海道猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "fluffy"
+      "地方型",
+      "北海道",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

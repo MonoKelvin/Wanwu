@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "poodle dog",
+    "query": "标准贵宾犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "poodle"
+      "高智商",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

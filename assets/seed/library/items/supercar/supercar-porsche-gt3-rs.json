@@ -22,13 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "保时捷 911 GT3 德国",
+    "query": "GT3 RS supercar",
     "matchTags": [
-      "德国",
-      "Porsche",
-      "超跑",
       "porsche",
+      "精密工程",
       "gt3"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

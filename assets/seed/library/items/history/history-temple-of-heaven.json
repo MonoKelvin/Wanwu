@@ -21,13 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "天坛 中国",
+    "query": "天坛 landmark architecture",
     "matchTags": [
-      "中国",
-      "世界遗产",
-      "北京",
-      "temple",
-      "of"
-    ]
+      "世界遗产"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

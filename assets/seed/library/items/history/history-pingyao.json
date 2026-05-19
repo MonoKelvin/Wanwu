@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "pingyao ancient city china",
+    "query": "平遥古城 landmark architecture",
     "matchTags": [
-      "pingyao",
-      "ancient"
-    ]
+      "世界遗产"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

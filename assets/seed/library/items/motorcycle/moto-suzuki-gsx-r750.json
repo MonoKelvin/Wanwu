@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "铃木 GSX R750 日本",
+    "query": "GSX-R750 motorcycle",
     "matchTags": [
-      "日本",
-      "Suzuki",
-      "摩托",
       "suzuki",
       "gsx"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

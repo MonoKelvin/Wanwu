@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "summer palace beijing",
+    "query": "颐和园 landmark architecture",
     "matchTags": [
-      "summer",
-      "palace"
-    ]
+      "世界遗产"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

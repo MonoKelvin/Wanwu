@@ -1,7 +1,7 @@
 {
   "id": "50906177-c195-4e2f-ab0d-2f6ad47cfc22",
   "slug": "cat-norwegian-forest",
-  "subCategoryId": "cat-europe",
+  "subCategoryId": "cat-long-hair",
   "name": "挪威森林猫 Norwegian Forest",
   "summary": "北欧大型长毛猫，双层被毛御寒，性格独立又亲人，维京传说常与之关联。",
   "description": "挪威森林猫（Norwegian Forest Cat）在北欧自然选择形成，1970 年代挪威正式选育。体型大、肌肉结实，被毛浓密、尾毛蓬松，适应寒冷气候。公猫常带围脖状鬃毛。\n\n需定期梳毛防打结，换毛季加强护理。性格独立、喜攀爬，适合有猫树的家庭。常参加 FIFe、CFA 等赛事。\n\n**相关**：与缅因猫、西伯利亚猫在外观上常被比较；北欧神话中「猫拉女神战车」与此品种文化联想相关。",
@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "norwegian forest cat",
+    "query": "Norwegian Forest cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "norwegian"
+      "norwegian",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

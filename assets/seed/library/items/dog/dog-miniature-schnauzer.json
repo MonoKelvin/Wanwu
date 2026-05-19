@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "miniature schnauzer dog",
+    "query": "迷你雪纳瑞 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "schnauzer"
+      "雪纳瑞",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

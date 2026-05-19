@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "snake plant sansevieria",
+    "query": "虎尾兰 Sansevieria houseplant",
     "matchTags": [
-      "snake",
-      "plant"
-    ]
+      "空气净化",
+      "sansevieria"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "pothos ivy houseplant",
+    "query": "绿萝 Epipremnum houseplant",
     "matchTags": [
-      "pothos",
-      "plant"
-    ]
+      "天南星科",
+      "epipremnum"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

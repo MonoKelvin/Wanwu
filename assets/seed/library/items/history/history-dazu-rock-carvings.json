@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "大足石刻 中国",
+    "query": "大足石刻 landmark architecture",
     "matchTags": [
-      "中国",
       "世界遗产",
-      "重庆",
-      "dazu",
-      "rock"
-    ]
+      "唐至宋"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

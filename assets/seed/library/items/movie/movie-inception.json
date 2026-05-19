@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "inception dream city architecture",
+    "query": "盗梦空间 Inception film cinema scene",
     "matchTags": [
-      "city",
-      "architecture"
-    ]
+      "2010",
+      "inception"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

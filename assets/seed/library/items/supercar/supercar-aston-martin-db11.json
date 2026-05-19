@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "aston martin db11",
+    "query": "DB11 supercar",
     "matchTags": [
-      "aston",
-      "martin"
-    ]
+      "aston martin",
+      "db11"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

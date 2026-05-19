@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "苏州古典园林 中国",
+    "query": "苏州古典园林 landmark architecture",
     "matchTags": [
-      "中国",
       "世界遗产",
-      "江苏",
-      "suzhou",
-      "garden"
-    ]
+      "明至清"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

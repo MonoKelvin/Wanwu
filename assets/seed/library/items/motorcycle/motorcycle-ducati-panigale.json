@@ -21,11 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "ducati panigale motorcycle",
+    "query": "Panigale V4 motorcycle",
     "category": "transportation",
     "matchTags": [
-      "ducati",
-      "motorcycle"
-    ]
+      "杜卡迪",
+      "意大利",
+      "panigale"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

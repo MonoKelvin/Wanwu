@@ -21,11 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "lamborghini huracan",
+    "query": "Hurac supercar",
     "category": "transportation",
     "matchTags": [
-      "lamborghini",
-      "car"
-    ]
+      "兰博基尼",
+      "意大利",
+      "v10",
+      "hurac"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

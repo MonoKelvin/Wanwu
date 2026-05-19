@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "game concept art fantasy",
+    "query": "游戏美术 digital illustration artwork",
     "matchTags": [
-      "game",
-      "fantasy"
-    ]
+      "数字绘画",
+      "unity / unreal"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

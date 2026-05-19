@@ -22,13 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "捷豹 XJ220 英国",
+    "query": "XJ220 supercar",
     "matchTags": [
-      "英国",
-      "Jaguar",
-      "超跑",
       "jaguar",
       "xj220"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

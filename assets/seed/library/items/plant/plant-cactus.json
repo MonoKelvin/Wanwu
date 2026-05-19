@@ -22,10 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "cactus succulent pot",
+    "query": "仙人掌 Cactus houseplant",
     "matchTags": [
-      "cactus",
-      "succulent"
-    ]
+      "cactus"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

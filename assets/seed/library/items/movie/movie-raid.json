@@ -21,12 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "突袭 The Raid 动作",
+    "query": "突袭 The Raid film cinema scene",
     "matchTags": [
-      "动作",
-      "电影",
-      "格斗",
-      "raid"
-    ]
+      "加雷斯·埃文斯",
+      "the"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

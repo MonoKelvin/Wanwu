@@ -22,10 +22,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "string of pearls succulent",
+    "query": "佛珠 String of Pearls houseplant",
     "matchTags": [
-      "succulent",
-      "pearls"
-    ]
+      "string"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

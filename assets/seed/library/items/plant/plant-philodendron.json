@@ -22,10 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "philodendron houseplant",
+    "query": "蔓绿绒 Philodendron houseplant",
     "matchTags": [
-      "philodendron",
-      "plant"
-    ]
+      "天南星科",
+      "philodendron"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

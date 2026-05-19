@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { resolveMediaConfig } from './media-config.mjs'
-
-const FILES = ['cover.jpg', 'gallery-01.jpg', 'gallery-02.jpg', 'gallery-03.jpg']
+import { libraryRelDirFromItem } from './media-path.mjs'
+import { mediaFileNames } from './media-shared.mjs'
 
 /** @param {string} root */
 export function pipelineAudit(root) {
@@ -16,9 +16,13 @@ export function pipelineAudit(root) {
   console.log('全库配图审计\n')
 
   for (const item of catalog.items) {
-    const dir = join(assetsLib, item.categoryId, item.slug)
+    const { categoryId, mediaDir } = libraryRelDirFromItem(item)
+    const dir = join(assetsLib, categoryId, mediaDir)
+    const imageCount = item.mediaImageCount ?? item.galleryFiles?.length + 1 ?? 4
+    const files = mediaFileNames(imageCount)
     const config = resolveMediaConfig(item.slug, item)
-    const absent = FILES.filter((f) => !existsSync(join(dir, f)))
+    const absent = files.filter((f) => !existsSync(join(dir, f)))
+
     const catalogProvider = item.mediaProvider ?? catalog.mediaProvider ?? '(未标注)'
 
     if (absent.length) {
@@ -36,5 +40,6 @@ export function pipelineAudit(root) {
   if (missing > 0) {
     console.log('\n修复: npm run seed:library -- media --force')
     console.log('或: npm run seed:library -- retry')
+    console.log('质量: npm run seed:library -- media-quality')
   }
 }

@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "construction excavator yellow",
+    "query": "Devastator transformers toy robot",
     "matchTags": [
-      "excavator",
-      "construction"
+      "霸天虎",
+      "合体金刚",
+      "devastator"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

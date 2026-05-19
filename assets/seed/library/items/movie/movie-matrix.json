@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "matrix green code cyberpunk",
+    "query": "黑客帝国 The Matrix film cinema scene",
     "matchTags": [
-      "matrix",
-      "cyberpunk"
-    ]
+      "赛博朋克",
+      "沃卓斯基",
+      "the"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

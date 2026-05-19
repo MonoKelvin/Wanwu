@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "mv agusta sportbike italy",
+    "query": "MV Agusta motorcycle",
     "matchTags": [
-      "agusta",
-      "motorcycle"
-    ]
+      "意大利",
+      "mv agusta"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

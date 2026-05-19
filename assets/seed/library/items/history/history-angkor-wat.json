@@ -1,7 +1,7 @@
 {
   "id": "a902a7d7-3313-429e-92ca-447a58dcffb2",
   "slug": "history-angkor-wat",
-  "subCategoryId": "hist-world",
+  "subCategoryId": "hist-ancient",
   "name": "吴哥窟 Angkor Wat",
   "summary": "柬埔寨高棉帝国苏耶跋摩二世庙宇，世界最大宗教建筑群之一，印度教后转佛教。",
   "description": "吴哥窟（Angkor Wat）位于柬埔寨暹粒省，约 12 世纪上半叶始建，原供奉毗湿奴，后随高棉国教转向佛教。建筑群占地约 162.6 公顷，中央塔尖象征须弥山，外墙浮雕讲述《罗摩衍那》《摩诃婆罗多》等。\n\n1992 年列入世界文化遗产。日出倒影为旅游标志景观。吴哥古城还含巴戎寺（吴哥微笑）、塔普伦寺（树根缠绕）等遗址。\n\n**相关**：与婆罗浮屠、缅甸蒲甘佛塔同为东南亚佛教建筑代表；法国殖民时期「发现」推动考古研究。",
@@ -22,10 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "angkor wat cambodia temple",
+    "query": "吴哥窟 Angkor Wat landmark architecture",
     "matchTags": [
-      "angkor",
-      "temple"
-    ]
+      "柬埔寨",
+      "世界遗产",
+      "angkor"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

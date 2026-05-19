@@ -21,11 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "ferrari 488 sports car",
+    "query": "GTB supercar",
     "category": "transportation",
     "matchTags": [
-      "ferrari",
-      "car"
-    ]
+      "法拉利",
+      "意大利",
+      "gtb"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

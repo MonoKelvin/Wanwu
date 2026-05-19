@@ -22,12 +22,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "球兰 Hoya 观叶",
+    "query": "球兰 Hoya houseplant",
     "matchTags": [
-      "观叶",
       "天南星科",
-      "室内",
       "hoya"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

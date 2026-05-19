@@ -21,11 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "dark forest fairy tale",
+    "query": "潘神的迷宫 film cinema scene",
     "matchTags": [
-      "forest",
-      "dark"
+      "黑暗童话"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "eames lounge chair design",
+    "query": "伊姆斯躺椅 product design",
     "matchTags": [
-      "eames",
-      "chair"
-    ]
+      "herman miller"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

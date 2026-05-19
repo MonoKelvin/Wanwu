@@ -21,11 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "japanese forest spirit nature",
+    "query": "幽灵公主 film cinema scene",
     "matchTags": [
-      "forest",
-      "nature"
+      "生态奇幻"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

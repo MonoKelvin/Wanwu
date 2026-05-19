@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "smartwatch apple watch screen",
+    "query": "watchOS 界面 mobile app ui screenshot",
     "matchTags": [
-      "watch",
-      "smartwatch"
+      "移动端",
+      "watchos",
+      "可穿戴"
     ],
-    "minMatchScore": 0
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

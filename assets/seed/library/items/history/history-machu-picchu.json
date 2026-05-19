@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "machu picchu peru ruins",
+    "query": "马丘比丘 landmark architecture",
     "matchTags": [
-      "machu",
-      "picchu"
-    ]
+      "世界遗产",
+      "15 世纪"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

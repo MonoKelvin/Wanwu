@@ -3,9 +3,18 @@ import {
   copyTextToClipboard,
   downloadMediaFile,
   openExternalUrl,
+  pickImageFile,
+  saveImageDataUrl,
+  saveTextFile,
   savePngDataUrl,
   showMediaInFolder
 } from '../services/shellMedia'
+import {
+  canNativeShare,
+  openNativeShare,
+  uploadTempShareFile,
+  writeShareTempFile
+} from '../services/shareMedia'
 import { getMainWindow, broadcastMaximizedState } from '../windowState'
 import type { DatabaseService } from '../services/database'
 import type { LibraryService } from '../services/libraryService'
@@ -42,6 +51,11 @@ export function registerIpcHandlers(services: AppServices): void {
 
   ipcMain.handle('library:createItem', (_e, item: unknown) => {
     return services.library?.createItem(item as Parameters<NonNullable<typeof services.library>['createItem']>[0])
+  })
+
+  ipcMain.handle('library:uploadItemImage', (_e, params: { itemId: string; filePath: string }) => {
+    if (!services.library) throw new Error('库服务未就绪')
+    return services.library.uploadItemImage(params.itemId, params.filePath)
   })
 
   ipcMain.handle('rss:listGroups', () => services.rss?.listGroups() ?? [])
@@ -157,6 +171,19 @@ export function registerIpcHandlers(services: AppServices): void {
     return services.db?.toggleFavorite(params.itemId, params.source) ?? false
   })
 
+  ipcMain.handle('user:isLiked', (_e, params: { itemId: string; source: string }) => {
+    return services.db?.isLiked(params.itemId, params.source) ?? false
+  })
+
+  ipcMain.handle('user:addLike', (_e, params: { itemId: string; source: string }) => {
+    services.db?.addLike(params.itemId, params.source)
+    return true
+  })
+
+  ipcMain.handle('user:removeLike', (_e, params: { itemId: string; source: string }) => {
+    return services.db?.removeLike(params.itemId, params.source) ?? false
+  })
+
   ipcMain.handle('app:getPaths', () => ({
     userData: app.getPath('userData'),
     wanwu: `${app.getPath('userData')}/wanwu`
@@ -211,9 +238,72 @@ export function registerIpcHandlers(services: AppServices): void {
     copyTextToClipboard(text)
   })
 
+  ipcMain.handle('shell:pickImageFile', () => pickImageFile())
+
   ipcMain.handle(
     'shell:savePngDataUrl',
     (_e, params: { dataUrl: string; defaultName?: string }) =>
       savePngDataUrl(params.dataUrl, params.defaultName)
+  )
+
+  ipcMain.handle(
+    'shell:saveImageDataUrl',
+    (_e, params: { dataUrl: string; defaultName?: string }) =>
+      saveImageDataUrl(params.dataUrl, params.defaultName)
+  )
+
+  ipcMain.handle(
+    'shell:saveTextFile',
+    (_e, params: { content: string; defaultName?: string; extension?: string }) =>
+      saveTextFile(params.content, params.defaultName, params.extension)
+  )
+
+  ipcMain.handle('share:canNativeShare', () => canNativeShare())
+
+  ipcMain.handle(
+    'share:nativeShare',
+    (
+      _e,
+      params: {
+        title?: string
+        text?: string
+        dataUrl?: string
+        textContent?: string
+        fileName: string
+      }
+    ) => {
+      const file = writeShareTempFile({
+        dataUrl: params.dataUrl,
+        textContent: params.textContent,
+        fileName: params.fileName
+      })
+      if (!file.ok) return file
+      return openNativeShare({
+        title: params.title,
+        text: params.text,
+        filePath: file.path
+      }).finally(() => file.cleanup())
+    }
+  )
+
+  ipcMain.handle(
+    'share:uploadTemp',
+    (
+      _e,
+      params: {
+        dataUrl?: string
+        textContent?: string
+        fileName: string
+        expire?: '1h' | '12h' | '24h' | '72h'
+      }
+    ) => {
+      const file = writeShareTempFile({
+        dataUrl: params.dataUrl,
+        textContent: params.textContent,
+        fileName: params.fileName
+      })
+      if (!file.ok) return file
+      return uploadTempShareFile(file.path, params.expire ?? '24h').finally(() => file.cleanup())
+    }
   )
 }

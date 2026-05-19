@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "阿普利亚 RS 660 意大利",
+    "query": "RS 660 motorcycle",
     "matchTags": [
       "意大利",
-      "Aprilia",
-      "摩托",
-      "aprilia",
-      "rs660"
-    ]
+      "aprilia"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

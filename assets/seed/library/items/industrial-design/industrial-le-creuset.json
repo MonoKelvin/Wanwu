@@ -21,10 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "cast iron dutch oven kitchen",
+    "query": "Le Creuset 珐琅锅 product design",
     "matchTags": [
-      "cast iron",
-      "kitchen"
-    ]
+      "le creuset"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

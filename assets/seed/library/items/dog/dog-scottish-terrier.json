@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "scottish terrier dog",
+    "query": "苏格兰梗 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "terrier"
+      "苏格兰",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

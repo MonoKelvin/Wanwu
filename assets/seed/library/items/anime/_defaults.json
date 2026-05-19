@@ -1,5 +1,8 @@
 {
   "media": {
-    "provider": "pixabay"
+    "provider": "pixabay",
+    "minMatchScore": 1,
+    "perPage": 60,
+    "imageCount": 6
   }
 }

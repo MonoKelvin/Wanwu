@@ -21,13 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "摩托古兹 V7 意大利",
+    "query": "V7 motorcycle",
     "matchTags": [
       "意大利",
-      "Moto Guzzi",
-      "摩托",
-      "guzzi",
-      "v7"
-    ]
+      "moto guzzi"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "honda gold wing touring motorcycle",
+    "query": "Gold Wing motorcycle",
     "matchTags": [
       "honda",
-      "touring"
-    ]
+      "旅行旗舰",
+      "gold"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6
   }
 }

@@ -21,10 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "modern house architecture cinematic",
+    "query": "寄生虫 Parasite film cinema scene",
     "matchTags": [
-      "house",
-      "architecture"
-    ]
+      "社会惊悚",
+      "奉俊昊",
+      "parasite"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

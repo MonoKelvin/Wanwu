@@ -21,11 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "terracotta warriors xian china",
+    "query": "秦始皇兵马俑 landmark architecture",
     "category": "places",
     "matchTags": [
-      "terracotta",
-      "china"
-    ]
+      "世界遗产"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

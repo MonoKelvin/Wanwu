@@ -21,10 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "ergonomic office chair design",
+    "query": "Herman Miller Aeron product design",
     "matchTags": [
-      "ergonomic",
-      "chair"
-    ]
+      "herman miller",
+      "herman"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

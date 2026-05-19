@@ -22,14 +22,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "ragdoll cat blue eyes",
+    "query": "布偶猫 cat breed portrait",
     "category": "animals",
     "matchTags": [
-      "cat",
-      "ragdoll"
+      "重点色",
+      "cat"
     ],
     "requiredTags": [
       "cat"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

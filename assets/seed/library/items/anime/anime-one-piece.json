@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "one piece anime figure luffy",
+    "query": "one piece anime screenshot fan art",
     "category": "people",
     "matchTags": [
-      "anime",
-      "one piece"
-    ]
+      "少年jump",
+      "one"
+    ],
+    "minMatchScore": 1,
+    "imageCount": 6
   }
 }

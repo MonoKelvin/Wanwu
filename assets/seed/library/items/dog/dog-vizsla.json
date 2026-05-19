@@ -20,14 +20,17 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "vizsla dog",
+    "query": "维兹拉犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "vizsla"
+      "指针犬",
+      "匈牙利",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }

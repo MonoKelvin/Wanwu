@@ -21,12 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "AeroPress 爱乐压 家居",
+    "query": "AeroPress 爱乐压 product design",
     "matchTags": [
-      "家居",
-      "AeroPress",
-      "咖啡",
       "aeropress"
-    ]
+    ],
+    "minMatchScore": 1,
+    "imageCount": 5
   }
 }

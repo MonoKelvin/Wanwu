@@ -13,16 +13,14 @@ import { MediaService } from './services/mediaService'
 
 const isDev = !app.isPackaged
 
-/** Windows：缓解 Chromium 网络/GPU 子进程崩溃导致无法启动 */
+/** Windows：缓解 Chromium 网络子进程异常；保留 GPU 以支持 backdrop-filter 毛玻璃 */
 if (process.platform === 'win32') {
-  app.disableHardwareAcceleration()
   app.commandLine.appendSwitch('enable-features', 'NetworkServiceInProcess')
   app.commandLine.appendSwitch(
     'disable-features',
     'NetworkServiceSandbox,SpareRendererForSitePerProcess'
   )
   app.commandLine.appendSwitch('disable-gpu-sandbox')
-  app.commandLine.appendSwitch('no-sandbox')
 }
 
 const MEDIA_MIME: Record<string, string> = {
@@ -31,7 +29,8 @@ const MEDIA_MIME: Record<string, string> = {
   '.png': 'image/png',
   '.webp': 'image/webp',
   '.gif': 'image/gif',
-  '.svg': 'image/svg+xml'
+  '.svg': 'image/svg+xml',
+  '.md': 'text/markdown; charset=utf-8'
 }
 
 function mediaMimeType(filePath: string): string {
@@ -131,22 +130,13 @@ function createWindow(): void {
   })
 
   if (isDev && process.env['ELECTRON_RENDERER_URL']) {
-    const builtRenderer = join(__dirname, '../renderer/index.html')
-    // Windows：网络子进程异常时无法访问 Vite，改加载 out/renderer
-    if (process.platform === 'win32' && existsSync(builtRenderer)) {
-      console.log('[wanwu] Windows dev: loading built renderer at', builtRenderer)
-      void mainWindow.loadFile(builtRenderer).catch((err) => {
-        console.error('[wanwu] load built renderer failed', err)
-        mainWindow?.show()
-      })
-    } else {
-      const devBase = process.env['ELECTRON_RENDERER_URL'].replace(/\/$/, '')
-      const devUrls = [`${devBase}/`, devBase.replace('localhost', '127.0.0.1')]
-      void loadDevRenderer(mainWindow, devUrls).catch((err) => {
-        console.error('[wanwu] load dev renderer failed', err)
-        mainWindow?.show()
-      })
-    }
+    const devBase = process.env['ELECTRON_RENDERER_URL'].replace(/\/$/, '')
+    const devUrls = [`${devBase}/`, devBase.replace('localhost', '127.0.0.1')]
+    // 优先 Vite 热更新；仅当 HTTP 重试失败时回退到 out/renderer（见 loadDevRenderer）
+    void loadDevRenderer(mainWindow, devUrls).catch((err) => {
+      console.error('[wanwu] load dev renderer failed', err)
+      mainWindow?.show()
+    })
   } else {
     void mainWindow.loadFile(join(__dirname, '../renderer/index.html')).catch((err) => {
       console.error('[wanwu] load renderer failed', err)

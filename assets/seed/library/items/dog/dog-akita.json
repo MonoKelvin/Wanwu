@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "akita inu dog",
+    "query": "秋田犬 dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "dog",
-      "akita"
+      "天然纪念",
+      "dog"
     ],
     "requiredTags": [
       "dog"
-    ]
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
   }
 }
