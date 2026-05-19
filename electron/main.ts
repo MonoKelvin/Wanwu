@@ -10,6 +10,7 @@ import { DatabaseService } from './services/database'
 import { LibraryService } from './services/libraryService'
 import { RssService } from './services/rssService'
 import { MediaService } from './services/mediaService'
+import { resolveWanwuPath } from './services/dataPaths'
 
 const isDev = !app.isPackaged
 
@@ -154,7 +155,7 @@ function createWindow(): void {
 }
 
 async function initServices(): Promise<void> {
-  const userData = join(app.getPath('userData'), 'wanwu')
+  const userData = resolveWanwuPath()
   services.db = new DatabaseService(userData)
   await services.db.init()
   services.library = new LibraryService(services.db)

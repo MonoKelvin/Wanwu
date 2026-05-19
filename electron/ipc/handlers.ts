@@ -1,4 +1,4 @@
-import { ipcMain, app } from 'electron'
+import { ipcMain, app, dialog, shell } from 'electron'
 import {
   copyTextToClipboard,
   downloadMediaFile,
@@ -20,6 +20,14 @@ import type { DatabaseService } from '../services/database'
 import type { LibraryService } from '../services/libraryService'
 import type { RssService } from '../services/rssService'
 import type { MediaService } from '../services/mediaService'
+import {
+  getDefaultWanwuPath,
+  isCustomWanwuPath,
+  resolveWanwuPath,
+  resolveWanwuPathUnderParent,
+  validateMigrationTarget
+} from '../services/dataPaths'
+import { migrateWanwuData } from '../services/dataMigration'
 
 export interface AppServices {
   db: DatabaseService | null
@@ -186,8 +194,66 @@ export function registerIpcHandlers(services: AppServices): void {
 
   ipcMain.handle('app:getPaths', () => ({
     userData: app.getPath('userData'),
-    wanwu: `${app.getPath('userData')}/wanwu`
+    wanwu: resolveWanwuPath(),
+    defaultWanwu: getDefaultWanwuPath(),
+    isCustom: isCustomWanwuPath()
   }))
+
+  ipcMain.handle('app:openDataDirectory', () => {
+    const dir = resolveWanwuPath()
+    if (!dir) return { ok: false }
+    void shell.openPath(dir)
+    return { ok: true }
+  })
+
+  ipcMain.handle('app:pickDataDirectoryParent', async () => {
+    const win = getMainWindow()
+    const options = {
+      title: '选择新的数据存放位置',
+      properties: ['openDirectory', 'createDirectory'] as ('openDirectory' | 'createDirectory')[]
+    }
+    const result = win
+      ? await dialog.showOpenDialog(win, options)
+      : await dialog.showOpenDialog(options)
+
+    if (result.canceled || !result.filePaths?.length) {
+      return { ok: false, canceled: true as const }
+    }
+
+    const parentDir = result.filePaths[0]!
+    const current = services.db?.getBasePath() ?? resolveWanwuPath()
+    const validation = validateMigrationTarget(current, parentDir)
+    if (!validation.ok) {
+      return { ok: false, error: validation.error }
+    }
+
+    return {
+      ok: true,
+      parentDir,
+      targetPath: resolveWanwuPathUnderParent(parentDir)
+    }
+  })
+
+  ipcMain.handle(
+    'app:migrateDataDirectory',
+    (_e, params: { parentDir: string; overwriteExisting?: boolean }) => {
+      const current = services.db?.getBasePath() ?? resolveWanwuPath()
+      const result = migrateWanwuData(current, params.parentDir, {
+        overwriteExisting: params.overwriteExisting
+      })
+      if (!result.ok) return result
+
+      services.db?.close()
+      services.db = null
+      services.library = null
+      services.rss = null
+      services.media = null
+
+      app.relaunch()
+      app.exit(0)
+      return result
+    }
+  )
 
   ipcMain.handle('app:getSettings', () => {
     return services.db?.getAppSettings() ?? { navAlign: 'start', navDisplay: 'icon', rssFetchLimit: 20 }

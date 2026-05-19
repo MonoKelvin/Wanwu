@@ -50,7 +50,24 @@ export interface WanwuApi {
     removeLike: (params: { itemId: string; source: string }) => Promise<boolean>
   }
   app: {
-    getPaths: () => Promise<{ userData: string; wanwu: string }>
+    getPaths: () => Promise<{
+      userData: string
+      wanwu: string
+      defaultWanwu: string
+      isCustom: boolean
+    }>
+    openDataDirectory: () => Promise<{ ok: boolean }>
+    pickDataDirectoryParent: () => Promise<
+      | { ok: true; parentDir: string; targetPath: string }
+      | { ok: false; canceled?: boolean; error?: string }
+    >
+    migrateDataDirectory: (params: {
+      parentDir: string
+      overwriteExisting?: boolean
+    }) => Promise<
+      | { ok: true; targetPath: string }
+      | { ok: false; error: string; code?: string }
+    >
     getSettings: () => Promise<AppSettings>
     updateSettings: (settings: AppSettings) => Promise<void>
   }
