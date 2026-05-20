@@ -1,0 +1,78 @@
+/* 原生滚动条：须挂在可滚动元素上（Chromium 对裸 ::-webkit-scrollbar 偶发不生效） */
+
+.ww-scroll-main,
+.ww-scrollbar,
+.ww-settings-panel__body,
+.overflow-y-auto,
+.overflow-x-auto,
+.overflow-auto {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ww-scrollbar-thumb) transparent;
+}
+
+.ww-scroll-main::-webkit-scrollbar,
+.ww-scrollbar::-webkit-scrollbar,
+.ww-settings-panel__body::-webkit-scrollbar,
+.overflow-y-auto::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar,
+.overflow-auto::-webkit-scrollbar {
+  width: var(--ww-scrollbar-size);
+  height: var(--ww-scrollbar-size);
+  background: transparent;
+}
+
+.ww-scroll-main::-webkit-scrollbar-track,
+.ww-scrollbar::-webkit-scrollbar-track,
+.ww-settings-panel__body::-webkit-scrollbar-track,
+.overflow-y-auto::-webkit-scrollbar-track,
+.overflow-x-auto::-webkit-scrollbar-track,
+.overflow-auto::-webkit-scrollbar-track,
+.ww-scroll-main::-webkit-scrollbar-corner,
+.ww-scrollbar::-webkit-scrollbar-corner,
+.overflow-y-auto::-webkit-scrollbar-corner,
+.overflow-auto::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.ww-scroll-main::-webkit-scrollbar-button,
+.ww-scrollbar::-webkit-scrollbar-button,
+.overflow-y-auto::-webkit-scrollbar-button,
+.overflow-auto::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.ww-scroll-main::-webkit-scrollbar-thumb,
+.ww-scrollbar::-webkit-scrollbar-thumb,
+.ww-settings-panel__body::-webkit-scrollbar-thumb,
+.overflow-y-auto::-webkit-scrollbar-thumb,
+.overflow-x-auto::-webkit-scrollbar-thumb,
+.overflow-auto::-webkit-scrollbar-thumb {
+  min-height: 2.5rem;
+  min-width: 2.5rem;
+  border: calc((var(--ww-scrollbar-size) - var(--ww-scrollbar-thumb-w)) / 2) solid transparent;
+  border-radius: 999px;
+  background-color: var(--ww-scrollbar-thumb);
+  background-clip: padding-box;
+  cursor: pointer;
+  transition:
+    background-color var(--ww-scrollbar-transition),
+    border-width var(--ww-scrollbar-transition);
+}
+
+.ww-scroll-main::-webkit-scrollbar-thumb:hover,
+.ww-scrollbar::-webkit-scrollbar-thumb:hover,
+.ww-settings-panel__body::-webkit-scrollbar-thumb:hover,
+.overflow-y-auto::-webkit-scrollbar-thumb:hover,
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+  border-width: calc((var(--ww-scrollbar-size) - var(--ww-scrollbar-thumb-w-hover)) / 2);
+  background-color: var(--ww-scrollbar-thumb-hover);
+}
+
+.ww-scroll-main::-webkit-scrollbar-thumb:active,
+.ww-scrollbar::-webkit-scrollbar-thumb:active,
+.overflow-y-auto::-webkit-scrollbar-thumb:active,
+.overflow-auto::-webkit-scrollbar-thumb:active {
+  background-color: var(--ww-scrollbar-thumb-active);
+}

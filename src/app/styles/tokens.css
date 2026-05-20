@@ -85,12 +85,18 @@
   /* Lucide 图标描边（与 WwIcon 默认一致） */
   --ww-icon-stroke: 1.5;
 
-  /* WinUI3 风格滚动条 */
-  --ww-scrollbar-size: 8px;
-  --ww-scrollbar-thumb: rgb(18 18 22 / 0.24);
-  --ww-scrollbar-thumb-hover: rgb(18 18 22 / 0.38);
-  --ww-scrollbar-thumb-active: rgb(18 18 22 / 0.48);
-  --ww-scrollbar-glass: rgb(255 255 255 / 0.72);
+  /* 全局滚动条（极简胶囊滑块 + 平滑显隐） */
+  --ww-scrollbar-size: 14px;
+  --ww-scrollbar-thumb-w: 6px;
+  --ww-scrollbar-thumb-w-hover: 8px;
+  --ww-scrollbar-thumb: rgb(18 18 22 / 0.32);
+  --ww-scrollbar-thumb-hover: rgb(18 18 22 / 0.48);
+  --ww-scrollbar-thumb-active: rgb(18 18 22 / 0.62);
+  --ww-scrollbar-transition: 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  --ww-help-popover-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.7) inset,
+    0 18px 48px -12px rgb(18 18 22 / 0.06),
+    0 6px 18px -8px rgb(18 18 22 / 0.04);
 
   /* RSS 侧栏订阅源站点 favicon */
   --ww-rss-feed-icon-size: 0.875rem;

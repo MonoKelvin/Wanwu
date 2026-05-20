@@ -19,7 +19,7 @@ if (process.platform === 'win32') {
   app.commandLine.appendSwitch('enable-features', 'NetworkServiceInProcess')
   app.commandLine.appendSwitch(
     'disable-features',
-    'NetworkServiceSandbox,SpareRendererForSitePerProcess'
+    'NetworkServiceSandbox,SpareRendererForSitePerProcess,Win11OverlayScrollbars'
   )
   app.commandLine.appendSwitch('disable-gpu-sandbox')
 }

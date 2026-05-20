@@ -39,6 +39,8 @@ const saving = ref(false)
 const saved = ref(false)
 const bgEditorOpen = ref(false)
 const bgEditorAutoFit = ref(false)
+/** 恢复默认后点击「应用」时清除已保存的背景图 */
+const bgDraftClearsImage = ref(false)
 const bgEditDraft = ref<PersonalBackgroundConfig>({ ...DEFAULT_BACKGROUND_CONFIG })
 const personalRoot = ref<HTMLElement | null>(null)
 const backgroundImageSize = ref({ width: 0, height: 0 })
@@ -201,6 +203,7 @@ async function startBackgroundSetup() {
     backgroundMediaKey.value = Date.now()
     bgEditDraft.value = normalizeBackgroundConfig({ ...DEFAULT_BACKGROUND_CONFIG })
     bgEditorAutoFit.value = true
+    bgDraftClearsImage.value = false
     bgEditorOpen.value = true
   } catch (err) {
     toast.error(err instanceof Error ? err.message : '无法导入背景图')
@@ -226,6 +229,7 @@ async function replaceBackground() {
       crop: null
     })
     bgEditorAutoFit.value = true
+    bgDraftClearsImage.value = false
   } catch (err) {
     toast.error(err instanceof Error ? err.message : '无法更换背景图')
   }
@@ -236,6 +240,7 @@ function editBackground() {
   previewBackgroundPath.value = backgroundPath.value
   bgEditDraft.value = normalizeBackgroundConfig({ ...backgroundConfig.value })
   bgEditorAutoFit.value = false
+  bgDraftClearsImage.value = false
   bgEditorOpen.value = true
 }
 
@@ -245,20 +250,43 @@ function onBackgroundButtonClick() {
 }
 
 async function onBackgroundConfirm(config: PersonalBackgroundConfig) {
-  if (previewBackgroundPath.value) {
-    backgroundPath.value = previewBackgroundPath.value
+  if (bgDraftClearsImage.value) {
+    try {
+      await window.wanwu.user.clearBackground()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '无法清除背景图')
+      return
+    }
+    backgroundPath.value = null
+    backgroundConfig.value = { ...DEFAULT_BACKGROUND_CONFIG }
+    backgroundImageSize.value = { width: 0, height: 0 }
     backgroundMediaKey.value = Date.now()
+  } else {
+    if (previewBackgroundPath.value) {
+      backgroundPath.value = previewBackgroundPath.value
+      backgroundMediaKey.value = Date.now()
+    }
+    backgroundConfig.value = normalizeBackgroundConfig(config)
   }
-  backgroundConfig.value = normalizeBackgroundConfig(config)
   previewBackgroundPath.value = null
+  bgDraftClearsImage.value = false
   bgEditorOpen.value = false
   await save()
 }
 
 function onBackgroundCancel() {
   previewBackgroundPath.value = null
+  bgDraftClearsImage.value = false
   bgEditorOpen.value = false
   bgEditDraft.value = normalizeBackgroundConfig({ ...backgroundConfig.value })
+}
+
+function onBackgroundReset() {
+  previewBackgroundPath.value = null
+  bgEditDraft.value = normalizeBackgroundConfig({ ...DEFAULT_BACKGROUND_CONFIG })
+  bgDraftClearsImage.value = true
+  bgEditorAutoFit.value = false
+  backgroundMediaKey.value = Date.now()
 }
 
 function openFavorite(itemId: string, source: string) {
@@ -414,14 +442,15 @@ async function removeFavorite(itemId: string, source: string, groupId: string) {
     </div>
 
     <PersonalBackgroundEditor
-      v-if="bgEditorOpen && backgroundUrl"
+      v-if="bgEditorOpen"
       v-model="bgEditDraft"
-      :image-url="backgroundUrl"
+      :image-url="backgroundUrl ?? ''"
       :auto-fit="bgEditorAutoFit"
       :viewport-el="personalRoot"
       @confirm="onBackgroundConfirm"
       @cancel="onBackgroundCancel"
       @replace="replaceBackground"
+      @reset="onBackgroundReset"
     />
   </div>
 </template>

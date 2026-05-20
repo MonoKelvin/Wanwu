@@ -6,8 +6,6 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
 }
 
 html,
@@ -25,63 +23,33 @@ body {
   background: var(--ww-canvas);
   color: var(--ww-ink);
   overflow: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
 }
 
-/* WinUI3 风格：透明轨道、圆角滑块、悬停显现 */
-*::-webkit-scrollbar {
-  width: var(--ww-scrollbar-size);
-  height: var(--ww-scrollbar-size);
-  background: transparent;
-}
-
-*::-webkit-scrollbar-track,
-*::-webkit-scrollbar-track-piece,
-*::-webkit-scrollbar-corner {
-  background: transparent;
-}
-
-*::-webkit-scrollbar-button {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-*::-webkit-scrollbar-thumb {
-  border: 2px solid transparent;
-  border-radius: 100px;
-  background: transparent;
-  background-clip: padding-box;
-  min-height: 2.5rem;
-  box-shadow: none;
+/* PrimeVue ScrollPanel：与原生滚动条同风格（详见 scrollbars.css） */
+.p-scrollpanel .p-scrollpanel-bar {
+  width: var(--ww-scrollbar-thumb-w) !important;
+  border: none !important;
+  border-radius: 999px !important;
+  background-color: var(--ww-scrollbar-thumb) !important;
+  cursor: pointer;
+  opacity: 0;
   transition:
-    background var(--ww-duration-fast) var(--ww-ease-out),
-    box-shadow var(--ww-duration-fast) var(--ww-ease-out);
+    opacity var(--ww-scrollbar-transition),
+    width var(--ww-scrollbar-transition),
+    background-color var(--ww-scrollbar-transition) !important;
 }
 
-*:hover::-webkit-scrollbar-thumb {
-  background: var(--ww-scrollbar-glass);
-  background-clip: padding-box;
-  box-shadow:
-    inset 0 0 0 1px rgb(255 255 255 / 0.45),
-    0 1px 6px rgb(18 18 22 / 0.1);
-  backdrop-filter: blur(10px) saturate(1.25);
-  -webkit-backdrop-filter: blur(10px) saturate(1.25);
+.p-scrollpanel:hover .p-scrollpanel-bar {
+  opacity: 1 !important;
 }
 
-*::-webkit-scrollbar-thumb:hover {
-  background: var(--ww-scrollbar-thumb-hover);
-  background-clip: padding-box;
+.p-scrollpanel .p-scrollpanel-bar:hover {
+  width: var(--ww-scrollbar-thumb-w-hover) !important;
+  background-color: var(--ww-scrollbar-thumb-hover) !important;
 }
 
-*::-webkit-scrollbar-thumb:active {
-  background: var(--ww-scrollbar-thumb-active);
-  background-clip: padding-box;
-}
-
-*:hover {
-  scrollbar-color: var(--ww-scrollbar-thumb) transparent;
+.p-scrollpanel .p-scrollpanel-bar:active {
+  background-color: var(--ww-scrollbar-thumb-active) !important;
 }
 
 /* Lucide（WwIcon） */

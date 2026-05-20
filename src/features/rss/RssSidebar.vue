@@ -407,7 +407,7 @@ async function removeGroup(groupId: string) {
       />
     </div>
 
-    <div class="min-h-0 flex-1 overflow-y-auto px-1 pb-3">
+    <div class="ww-scrollbar min-h-0 flex-1 overflow-y-auto px-1 pb-3">
       <Tree
         :key="treeVersion"
         v-model:expanded-keys="expandedKeys"

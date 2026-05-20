@@ -268,6 +268,7 @@
   position: absolute;
   inset: 0;
   z-index: 1;
+  overflow: hidden;
   touch-action: none;
   cursor: grab;
   pointer-events: auto;
@@ -279,6 +280,14 @@
 
 .ww-bg-editor__surface.is-cropping {
   cursor: default;
+}
+
+.ww-bg-editor__surface.is-cropping.is-pan-modifier {
+  cursor: grab;
+}
+
+.ww-bg-editor__surface.is-cropping.is-pan-modifier:active {
+  cursor: grabbing;
 }
 
 .ww-bg-editor__hint {
@@ -353,7 +362,7 @@
   display: flex;
   width: min(22rem, calc(100% - 2 * var(--ww-page-padding)));
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--ww-border-subtle);
   border-radius: 0.75rem;
   background: rgb(255 255 255 / 0.72);
@@ -364,12 +373,16 @@
 }
 
 .ww-bg-editor__panel-head {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.5rem;
   padding: 0.875rem 1rem 0.625rem;
+  overflow: visible;
   border-bottom: 1px solid var(--ww-border-faint);
+  border-radius: 0.75rem 0.75rem 0 0;
 }
 
 .ww-bg-editor__panel-head-text {
@@ -390,6 +403,11 @@
   font-size: 0.6875rem;
   line-height: 1.45;
   color: var(--ww-ink-faint);
+}
+
+.ww-bg-editor__panel-body {
+  overflow: hidden;
+  border-radius: 0 0 0.75rem 0.75rem;
 }
 
 .ww-bg-editor__panel-body .ww-settings-row {
@@ -481,6 +499,12 @@
   outline: none;
 }
 
+.ww-bg-editor__icon-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .ww-bg-editor__panel-actions {
   display: flex;
   align-items: center;
@@ -494,6 +518,7 @@
 
 .ww-bg-editor .p-slider .p-slider-range {
   background: var(--ww-ink) !important;
+  transition: width var(--ww-duration-fast) var(--ww-ease-out);
 }
 
 .ww-bg-editor .p-slider .p-slider-handle {
@@ -504,6 +529,13 @@
   border: 2px solid var(--ww-content) !important;
   background: var(--ww-ink) !important;
   box-shadow: 0 1px 4px rgb(18 18 22 / 0.18) !important;
+  transition:
+    left var(--ww-duration-fast) var(--ww-ease-out),
+    transform var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-bg-editor .p-slider .p-slider-handle:hover {
+  transform: scale(1.06);
 }
 
 .ww-bg-editor .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
@@ -539,37 +571,35 @@
   outline: none;
 }
 
+/* Teleport 到 body 后用 fixed 定位；脱离 panel 的 backdrop root，模糊才生效 */
 .ww-bg-editor__help-popover {
-  position: absolute;
-  top: calc(100% + 0.375rem);
-  right: 0;
-  z-index: 20;
+  position: fixed;
+  z-index: 1500;
   width: max-content;
   min-width: 11.75rem;
   max-width: 15.5rem;
   padding: 0.625rem 0.75rem;
-  border: 1px solid var(--ww-border-subtle);
-  border-radius: 0.625rem;
-  background: rgb(255 255 255 / 0.72);
-  backdrop-filter: blur(var(--ww-menu-blur));
-  -webkit-backdrop-filter: blur(var(--ww-menu-blur));
-  box-shadow: var(--ww-shadow-card);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-4px) scale(0.98);
+  border: 1px solid rgb(18 18 22 / 0.06);
+  border-radius: 0.75rem;
+  background: rgb(255 255 255 / 0.6);
+  backdrop-filter: blur(22px) saturate(1.6);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  box-shadow: var(--ww-help-popover-shadow);
   transform-origin: top right;
-  transition:
-    opacity var(--ww-duration) var(--ww-ease-out),
-    transform var(--ww-duration) var(--ww-ease-out),
-    visibility var(--ww-duration) var(--ww-ease-out);
-  pointer-events: none;
+  pointer-events: auto;
 }
 
-.ww-bg-editor__help:hover .ww-bg-editor__help-popover,
-.ww-bg-editor__help:focus-within .ww-bg-editor__help-popover {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0) scale(1);
+.ww-bg-editor-help-enter-active,
+.ww-bg-editor-help-leave-active {
+  transition:
+    opacity 0.18s var(--ww-ease-out),
+    transform 0.22s var(--ww-ease-out);
+}
+
+.ww-bg-editor-help-enter-from,
+.ww-bg-editor-help-leave-to {
+  opacity: 0;
+  transform: translateY(-6px) scale(0.98);
 }
 
 .ww-bg-editor__help-title {

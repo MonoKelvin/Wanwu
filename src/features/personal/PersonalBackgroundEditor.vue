@@ -9,10 +9,14 @@ import type { PersonalBackgroundConfig, PersonalBackgroundCrop } from '@shared/t
 import { DEFAULT_BACKGROUND_CONFIG } from '@shared/types/profile'
 import type { CropResizeHandle } from '@shared/utils/profileMedia'
 import {
+  BACKGROUND_SCALE_MAX,
+  BACKGROUND_SCALE_MIN,
+  BACKGROUND_SNAP_OUTSIDE_RATIO,
   clampCropToBounds,
   computeBackgroundFitScale,
   computeCropDragRegion,
   computeDefaultCrop,
+  fitCropToCropDragRegion,
   imageCropToViewportStyle,
   loadImageDimensions,
   migrateConfigCropToImageSpace,
@@ -21,7 +25,10 @@ import {
   opacityToUi,
   panOffsetDeltaFromPixels,
   resizeCropByCorner,
+  backgroundOffsetNeedsSnap,
   resolveBackgroundOffset,
+  scaleBackgroundAboutViewportPoint,
+  scaleImageCropAboutViewportPoint,
   viewportNormDeltaToImageCrop
 } from '@shared/utils/profileMedia'
 
@@ -37,12 +44,13 @@ const emit = defineEmits<{
   confirm: [config: PersonalBackgroundConfig]
   cancel: []
   replace: []
+  reset: []
 }>()
 
 const WHEEL_ZOOM_SENS = 0.0022
 const WHEEL_CROP_SENS = 0.0022
 const SMOOTH_TIME = 0.16
-const SNAP_RATIO = 0.9
+const SNAP_RATIO = BACKGROUND_SNAP_OUTSIDE_RATIO
 
 const cropMode = computed({
   get: () => draft.value.crop != null,
@@ -60,6 +68,31 @@ const cropMode = computed({
 })
 const surfaceRef = ref<HTMLElement | null>(null)
 const imageSize = ref({ width: 0, height: 0 })
+const spaceHeld = ref(false)
+
+/** 操作说明浮层：用 Teleport 跳出面板（避免父级 backdrop-filter 屏蔽子层模糊） */
+const helpTriggerRef = ref<HTMLElement | null>(null)
+const helpOpen = ref(false)
+const helpPos = ref({ top: 0, right: 0 })
+
+function updateHelpPos() {
+  const el = helpTriggerRef.value
+  if (!el) return
+  const r = el.getBoundingClientRect()
+  helpPos.value = {
+    top: r.bottom + 6,
+    right: Math.max(8, window.innerWidth - r.right)
+  }
+}
+
+function openHelp() {
+  updateHelpPos()
+  helpOpen.value = true
+}
+
+function closeHelp() {
+  helpOpen.value = false
+}
 
 const dragging = ref<'pan' | 'crop-move' | 'crop-resize' | null>(null)
 const cropResizeCorner = ref<CropResizeHandle>('se')
@@ -86,13 +119,17 @@ const targets = {
 let smoothRafId: number | null = null
 let smoothLastTs = 0
 let smoothAnimateCrop = false
+let wheelIdleTimer: ReturnType<typeof setTimeout> | null = null
+const WHEEL_IDLE_MS = 180
 
 const helpShortcuts = [
-  { keys: ['滚轮'], label: '缩放背景' },
+  { keys: ['滚轮'], label: '以指针为中心缩放背景' },
+  { keys: ['Shift', '滚轮'], label: '以指针为中心缩放裁剪框', whenCrop: true },
   { keys: ['拖拽'], label: '移动背景位置' },
+  { keys: ['Alt', '拖拽'], label: '裁剪模式下移动背景', whenCrop: true },
+  { keys: ['空格', '拖拽'], label: '裁剪模式下移动背景', whenCrop: true },
   { keys: ['中键'], label: '还原缩放与位置' },
   { keys: ['Ctrl', '滚轮'], label: '调整透明度' },
-  { keys: ['Shift', '滚轮'], label: '缩放裁剪框', whenCrop: true },
   { keys: ['Shift', '中键'], label: '裁剪框铺满图片', whenCrop: true },
   { keys: ['Esc'], label: '取消' }
 ]
@@ -103,6 +140,30 @@ const visibleHelpShortcuts = computed(() =>
 
 const scalePercent = computed(() => Math.round(draft.value.scale * 100))
 
+/** 滑块本地值；watch 隔离，避免 draft → slider → draft 的回流卡顿 */
+const scaleSliderValue = ref(draft.value.scale)
+let scaleSliderDragging = false
+let scaleSliderSyncFromDraft = false
+
+watch(
+  () => draft.value.scale,
+  (v) => {
+    if (scaleSliderDragging) return
+    if (Math.abs(scaleSliderValue.value - v) < 1e-6) return
+    scaleSliderSyncFromDraft = true
+    scaleSliderValue.value = v
+  }
+)
+
+watch(scaleSliderValue, (v, oldV) => {
+  if (scaleSliderSyncFromDraft) {
+    scaleSliderSyncFromDraft = false
+    return
+  }
+  if (oldV == null || Math.abs(v - oldV) < 1e-6) return
+  applyScaleFromSlider(v)
+})
+
 const opacityUi = computed({
   get: () => opacityToUi(draft.value.opacity),
   set: (ui: number) => {
@@ -111,9 +172,11 @@ const opacityUi = computed({
   }
 })
 
-const stageHint = computed(() =>
-  cropMode.value ? '拖拽框移动 · 四角缩放' : '拖拽页面调整背景位置'
-)
+const stageHint = computed(() => {
+  if (!cropMode.value) return '拖拽页面调整背景位置'
+  if (spaceHeld.value) return '拖拽移动背景 · 滚轮缩放'
+  return '滚轮缩放背景 · Alt/空格+拖拽移动 · 拖拽框调整裁剪'
+})
 
 const cropFrameStyle = computed(() => {
   const crop = draft.value.crop
@@ -159,6 +222,50 @@ function stopSmoothAnimation() {
   smoothAnimateCrop = false
 }
 
+function bumpWheelGesture() {
+  const isNewGesture = wheelIdleTimer === null
+  if (wheelIdleTimer !== null) clearTimeout(wheelIdleTimer)
+  wheelIdleTimer = setTimeout(onWheelGestureIdle, WHEEL_IDLE_MS)
+  // 动画进行中 draft 滞后于 targets，勿把 targets 拉回 draft，否则会破坏以指针为中心的缩放
+  if (isNewGesture && smoothRafId === null) syncTargetsFromDraft()
+}
+
+function onWheelGestureIdle() {
+  wheelIdleTimer = null
+  const vp = getViewportRect()
+  if (
+    vp?.width &&
+    imageSize.value.width &&
+    backgroundOffsetNeedsSnap(
+      targets.offsetX,
+      targets.offsetY,
+      targets.scale,
+      vp.width,
+      vp.height,
+      imageSize.value.width,
+      imageSize.value.height,
+      SNAP_RATIO
+    )
+  ) {
+    snapBackgroundToTargets(true)
+  } else {
+    applyTargetsToDraft()
+  }
+  if (draft.value.crop) clampDraftCrop()
+}
+
+function cropAnimDone(): boolean {
+  if (!targets.crop || !draft.value.crop) return true
+  const t = targets.crop
+  const d = draft.value.crop
+  return (
+    Math.abs(t.x - d.x) < 0.0008 &&
+    Math.abs(t.y - d.y) < 0.0008 &&
+    Math.abs(t.width - d.width) < 0.0008 &&
+    Math.abs(t.height - d.height) < 0.0008
+  )
+}
+
 function tickSmoothAnimation(ts: number) {
   if (!smoothLastTs) smoothLastTs = ts
   const dt = Math.min((ts - smoothLastTs) / 1000, 0.032)
@@ -180,8 +287,8 @@ function tickSmoothAnimation(ts: number) {
       width: crop.width + (targets.crop.width - crop.width) * alpha,
       height: crop.height + (targets.crop.height - crop.height) * alpha
     }
-  } else if (targets.crop) {
-    crop = { ...targets.crop }
+  } else if (targets.crop && draft.value.crop) {
+    crop = draft.value.crop
   }
 
   draft.value = normalizeBackgroundConfig({ ...draft.value, ...next, crop })
@@ -191,14 +298,10 @@ function tickSmoothAnimation(ts: number) {
     Math.abs(targets.offsetX - draft.value.offsetX) < 0.08 &&
     Math.abs(targets.offsetY - draft.value.offsetY) < 0.08 &&
     Math.abs(targets.opacity - draft.value.opacity) < 0.002 &&
-    (!targets.crop ||
-      !draft.value.crop ||
-      (Math.abs(targets.crop.width - draft.value.crop.width) < 0.0008 &&
-        Math.abs(targets.crop.height - draft.value.crop.height) < 0.0008))
+    (!targets.crop || !draft.value.crop || cropAnimDone())
 
   if (done) {
     applyTargetsToDraft()
-    if (draft.value.crop) clampDraftCrop()
     stopSmoothAnimation()
     return
   }
@@ -207,8 +310,8 @@ function tickSmoothAnimation(ts: number) {
 }
 
 function startSmoothAnimation(animateCrop = false) {
-  if (!animateCrop) smoothAnimateCrop = false
-  else smoothAnimateCrop = true
+  if (animateCrop) smoothAnimateCrop = true
+  else if (smoothRafId === null) smoothAnimateCrop = false
   if (smoothRafId === null) {
     smoothLastTs = 0
     smoothRafId = requestAnimationFrame(tickSmoothAnimation)
@@ -234,7 +337,11 @@ function syncCropImageSpace() {
   syncTargetsFromDraft()
 }
 
-function getCropRegion(): PersonalBackgroundCrop {
+function getCropRegion(
+  scale = draft.value.scale,
+  offsetX = draft.value.offsetX,
+  offsetY = draft.value.offsetY
+): PersonalBackgroundCrop {
   const vp = getViewportRect()
   if (!vp?.width || !imageSize.value.width) {
     return { x: 0, y: 0, width: 1, height: 1 }
@@ -242,12 +349,25 @@ function getCropRegion(): PersonalBackgroundCrop {
   return computeCropDragRegion(
     vp.width,
     vp.height,
-    draft.value.scale,
-    draft.value.offsetX,
-    draft.value.offsetY,
+    scale,
+    offsetX,
+    offsetY,
     imageSize.value.width,
     imageSize.value.height
   )
+}
+
+function wheelFocalPx(e: WheelEvent) {
+  const vp = getViewportRect()
+  if (!vp?.width) return { x: vp?.width ? vp.width / 2 : 0, y: vp?.height ? vp.height / 2 : 0 }
+  return {
+    x: e.clientX - vp.left,
+    y: e.clientY - vp.top
+  }
+}
+
+function beginSmoothTransform(animateCrop = false) {
+  startSmoothAnimation(animateCrop)
 }
 
 function getDefaultCrop(): PersonalBackgroundCrop {
@@ -278,9 +398,9 @@ function clampDraftCrop() {
   if (targets.crop) targets.crop = { ...next }
 }
 
-function resolvePanTargets(allowSnap: boolean) {
+function snapBackgroundToTargets(animate = true) {
   const vp = getViewportRect()
-  if (!vp?.width || !imageSize.value.width) return
+  if (!vp?.width || !imageSize.value.width) return false
   const resolved = resolveBackgroundOffset(
     targets.offsetX,
     targets.offsetY,
@@ -289,18 +409,81 @@ function resolvePanTargets(allowSnap: boolean) {
     vp.height,
     imageSize.value.width,
     imageSize.value.height,
-    { allowSnap, snapRatio: SNAP_RATIO }
+    { allowSnap: true, snapRatio: SNAP_RATIO }
   )
+  if (
+    Math.abs(resolved.offsetX - targets.offsetX) < 0.02 &&
+    Math.abs(resolved.offsetY - targets.offsetY) < 0.02
+  ) {
+    return false
+  }
   targets.offsetX = resolved.offsetX
   targets.offsetY = resolved.offsetY
-  if (!dragging.value) {
+  if (animate) beginSmoothTransform(false)
+  else {
     draft.value = { ...draft.value, offsetX: targets.offsetX, offsetY: targets.offsetY }
   }
+  return true
+}
+
+function onScaleSliderStart() {
+  scaleSliderDragging = true
+  if (wheelIdleTimer !== null) {
+    clearTimeout(wheelIdleTimer)
+    wheelIdleTimer = null
+  }
+  stopSmoothAnimation()
+  syncTargetsFromDraft()
+}
+
+function applyScaleFromSlider(v: number) {
+  const newScale = clamp(v, BACKGROUND_SCALE_MIN, BACKGROUND_SCALE_MAX)
+  const vp = getViewportRect()
+  if (!vp?.width || !imageSize.value.width) {
+    targets.scale = newScale
+    draft.value = { ...draft.value, scale: newScale }
+    return
+  }
+  const oldScale = targets.scale
+  if (Math.abs(oldScale - newScale) < 1e-6) return
+  applyScaleAboutPoint(oldScale, newScale, vp.width / 2, vp.height / 2, { scaleCrop: false })
+  applyTargetsToDraft()
 }
 
 function onScaleSlideEnd() {
-  syncTargetsFromDraft()
-  if (draft.value.crop) clampDraftCrop()
+  scaleSliderDragging = false
+  const vp = getViewportRect()
+  if (
+    vp?.width &&
+    imageSize.value.width &&
+    backgroundOffsetNeedsSnap(
+      targets.offsetX,
+      targets.offsetY,
+      targets.scale,
+      vp.width,
+      vp.height,
+      imageSize.value.width,
+      imageSize.value.height,
+      SNAP_RATIO
+    )
+  ) {
+    snapBackgroundToTargets(false)
+  }
+  applyTargetsToDraft()
+  if (draft.value.crop && vp?.width && imageSize.value.width) {
+    const crop = fitCropToCropDragRegion(
+      draft.value.crop,
+      vp.width,
+      vp.height,
+      draft.value.scale,
+      draft.value.offsetX,
+      draft.value.offsetY,
+      imageSize.value.width,
+      imageSize.value.height
+    )
+    draft.value = { ...draft.value, crop }
+    targets.crop = { ...crop }
+  }
 }
 
 async function loadImageSize() {
@@ -312,13 +495,95 @@ async function loadImageSize() {
 }
 
 function pointerPos(e: PointerEvent) {
-  const el = surfaceRef.value
+  const el = props.viewportEl ?? surfaceRef.value
   if (!el) return { x: 0, y: 0 }
   const r = el.getBoundingClientRect()
+  if (r.width <= 0 || r.height <= 0) return { x: 0, y: 0 }
   return {
     x: (e.clientX - r.left) / r.width,
     y: (e.clientY - r.top) / r.height
   }
+}
+
+function applyScaleAboutPoint(
+  oldScale: number,
+  newScale: number,
+  focalX: number,
+  focalY: number,
+  opts?: { scaleCrop?: boolean }
+) {
+  const newScaleClamped = clamp(newScale, BACKGROUND_SCALE_MIN, BACKGROUND_SCALE_MAX)
+  if (oldScale === newScaleClamped) return
+  newScale = newScaleClamped
+  const vp = getViewportRect()
+  if (!vp?.width || !imageSize.value.width || oldScale === newScale) return
+
+  const next = scaleBackgroundAboutViewportPoint(
+    oldScale,
+    newScale,
+    targets.offsetX,
+    targets.offsetY,
+    focalX,
+    focalY,
+    vp.width,
+    vp.height,
+    imageSize.value.width,
+    imageSize.value.height
+  )
+  targets.scale = next.scale
+  targets.offsetX = next.offsetX
+  targets.offsetY = next.offsetY
+
+  if (opts?.scaleCrop !== false && cropMode.value && targets.crop) {
+    const factor = newScale / oldScale
+    const bounds = computeCropDragRegion(
+      vp.width,
+      vp.height,
+      targets.scale,
+      targets.offsetX,
+      targets.offsetY,
+      imageSize.value.width,
+      imageSize.value.height
+    )
+    targets.crop = scaleImageCropAboutViewportPoint(
+      targets.crop,
+      factor,
+      focalX,
+      focalY,
+      vp.width,
+      vp.height,
+      targets.scale,
+      targets.offsetX,
+      targets.offsetY,
+      imageSize.value.width,
+      imageSize.value.height,
+      bounds
+    )
+  }
+}
+
+function canPanBackground(e?: PointerEvent) {
+  return !cropMode.value || spaceHeld.value || e?.altKey === true
+}
+
+function startPanGesture(e: PointerEvent) {
+  e.preventDefault()
+  stopSmoothAnimation()
+  syncTargetsFromDraft()
+  dragging.value = 'pan'
+  dragStart.value = {
+    px: e.clientX,
+    py: e.clientY,
+    ox: targets.offsetX,
+    oy: targets.offsetY,
+    ow: 0,
+    oh: 0,
+    normX: 0,
+    normY: 0,
+    crop: null
+  }
+  surfaceRef.value?.setPointerCapture(e.pointerId)
+  bindWindowPointer()
 }
 
 function bindWindowPointer() {
@@ -347,25 +612,8 @@ function onSurfacePointerDown(e: PointerEvent) {
     return
   }
 
-  if (e.button !== 0 || cropMode.value) return
-
-  e.preventDefault()
-  stopSmoothAnimation()
-  syncTargetsFromDraft()
-  dragging.value = 'pan'
-  dragStart.value = {
-    px: e.clientX,
-    py: e.clientY,
-    ox: targets.offsetX,
-    oy: targets.offsetY,
-    ow: 0,
-    oh: 0,
-    normX: 0,
-    normY: 0,
-    crop: null
-  }
-  surfaceRef.value?.setPointerCapture(e.pointerId)
-  bindWindowPointer()
+  if (e.button !== 0 || !canPanBackground(e)) return
+  startPanGesture(e)
 }
 
 function onCropPointerDown(
@@ -373,6 +621,12 @@ function onCropPointerDown(
   mode: 'crop-move' | 'crop-resize',
   corner: CropResizeHandle = 'se'
 ) {
+  if (canPanBackground(e)) {
+    e.preventDefault()
+    e.stopPropagation()
+    startPanGesture(e)
+    return
+  }
   e.preventDefault()
   e.stopPropagation()
   stopSmoothAnimation()
@@ -430,13 +684,13 @@ function onPointerMove(e: PointerEvent) {
     pos.y - dragStart.value.normY,
     vp.width,
     vp.height,
-    draft.value.scale,
-    draft.value.offsetX,
-    draft.value.offsetY,
+    targets.scale,
+    targets.offsetX,
+    targets.offsetY,
     imageSize.value.width,
     imageSize.value.height
   )
-  const bounds = getCropRegion()
+  const bounds = getCropRegion(targets.scale, targets.offsetX, targets.offsetY)
   const start = dragStart.value.crop ?? ensureCrop()
 
   if (dragging.value === 'crop-move') {
@@ -462,8 +716,7 @@ function onPointerMove(e: PointerEvent) {
 function onPointerUp(e: PointerEvent) {
   if (dragging.value === 'pan') {
     syncTargetsFromDraft()
-    resolvePanTargets(true)
-    applyTargetsToDraft()
+    if (!snapBackgroundToTargets(true)) applyTargetsToDraft()
     if (draft.value.crop) clampDraftCrop()
   } else if (dragging.value) {
     syncTargetsFromDraft()
@@ -481,38 +734,46 @@ function onPointerUp(e: PointerEvent) {
 function onSurfaceWheel(e: WheelEvent) {
   if ((e.target as HTMLElement).closest('.ww-bg-editor__panel')) return
   e.preventDefault()
-  syncTargetsFromDraft()
 
   if (e.ctrlKey) {
     targets.opacity = clamp(targets.opacity - e.deltaY * 0.002, 0, 1)
-    startSmoothAnimation(false)
+    beginSmoothTransform(false)
     return
   }
+
+  const vp = getViewportRect()
+  if (!vp?.width || !imageSize.value.width) return
+  const focal = wheelFocalPx(e)
+  stopSmoothAnimation()
+  bumpWheelGesture()
 
   if (e.shiftKey && cropMode.value && targets.crop) {
-    resizeCropByWheel(e.deltaY)
-    startSmoothAnimation(true)
+    const factor = Math.exp(-e.deltaY * WHEEL_CROP_SENS)
+    const bounds = getCropRegion(targets.scale, targets.offsetX, targets.offsetY)
+    targets.crop = scaleImageCropAboutViewportPoint(
+      targets.crop,
+      factor,
+      focal.x,
+      focal.y,
+      vp.width,
+      vp.height,
+      targets.scale,
+      targets.offsetX,
+      targets.offsetY,
+      imageSize.value.width,
+      imageSize.value.height,
+      bounds
+    )
+    applyTargetsToDraft()
     return
   }
 
+  const prevScale = targets.scale
   const factor = Math.exp(-e.deltaY * WHEEL_ZOOM_SENS)
-  targets.scale = clamp(targets.scale * factor, 0.25, 3)
-  startSmoothAnimation(false)
-}
-
-function resizeCropByWheel(deltaY: number) {
-  if (!targets.crop) return
-  const bounds = getCropRegion()
-  const crop = targets.crop
-  const factor = Math.exp(-deltaY * WHEEL_CROP_SENS)
-  const cx = crop.x + crop.width / 2
-  const cy = crop.y + crop.height / 2
-  const width = clamp(crop.width * factor, 0.05, bounds.width)
-  const height = clamp(crop.height * factor, 0.05, bounds.height)
-  targets.crop = clampCropToBounds(
-    { x: cx - width / 2, y: cy - height / 2, width, height },
-    bounds
-  )
+  const newScale = clamp(targets.scale * factor, BACKGROUND_SCALE_MIN, BACKGROUND_SCALE_MAX)
+  applyScaleAboutPoint(prevScale, newScale, focal.x, focal.y, { scaleCrop: false })
+  // 立即写入 draft：scale/offset 必须同步变化才能保持指针下像素不动，不能做独立插值
+  applyTargetsToDraft()
 }
 
 function resetCropToImage() {
@@ -540,6 +801,9 @@ async function resetView(opts?: { animate?: boolean }) {
     targets.offsetX = 0
     targets.offsetY = 0
   }
+  if (cropMode.value && targets.crop) {
+    targets.crop = { ...getDefaultCrop() }
+  }
   if (opts?.animate) startSmoothAnimation(false)
   else {
     stopSmoothAnimation()
@@ -550,6 +814,14 @@ async function resetView(opts?: { animate?: boolean }) {
 
 function onKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') emit('cancel')
+  if (e.code === 'Space' && !e.repeat) {
+    e.preventDefault()
+    spaceHeld.value = true
+  }
+}
+
+function onKeyup(e: KeyboardEvent) {
+  if (e.code === 'Space') spaceHeld.value = false
 }
 
 async function applyFitScale() {
@@ -561,6 +833,9 @@ let resizeClampRaf: number | null = null
 
 onMounted(async () => {
   window.addEventListener('keydown', onKeydown)
+  window.addEventListener('keyup', onKeyup)
+  window.addEventListener('scroll', updateHelpPos, true)
+  window.addEventListener('resize', updateHelpPos)
   syncTargetsFromDraft()
   await loadImageSize()
   syncCropImageSpace()
@@ -568,7 +843,7 @@ onMounted(async () => {
 
   if (props.viewportEl) {
     resizeObserver = new ResizeObserver(() => {
-      if (!draft.value.crop) return
+      if (!draft.value.crop || smoothRafId !== null || dragging.value) return
       if (resizeClampRaf !== null) cancelAnimationFrame(resizeClampRaf)
       resizeClampRaf = requestAnimationFrame(() => {
         resizeClampRaf = null
@@ -581,7 +856,11 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener('keydown', onKeydown)
+  window.removeEventListener('keyup', onKeyup)
+  window.removeEventListener('scroll', updateHelpPos, true)
+  window.removeEventListener('resize', updateHelpPos)
   unbindWindowPointer()
+  if (wheelIdleTimer !== null) clearTimeout(wheelIdleTimer)
   stopSmoothAnimation()
   resizeObserver?.disconnect()
   if (resizeClampRaf !== null) cancelAnimationFrame(resizeClampRaf)
@@ -605,20 +884,16 @@ watch(
   }
 )
 
-watch(
-  () => draft.value.scale,
-  (v) => {
-    if (dragging.value || smoothRafId !== null) return
-    if (Math.abs(v - targets.scale) > 0.001) targets.scale = v
-  }
-)
-
 function resetDraft() {
   stopSmoothAnimation()
-  draft.value = normalizeBackgroundConfig({ ...DEFAULT_BACKGROUND_CONFIG })
-  cropMode.value = false
-  syncTargetsFromDraft()
-  if (props.autoFit) void applyFitScale()
+  const defaults = normalizeBackgroundConfig({ ...DEFAULT_BACKGROUND_CONFIG })
+  targets.scale = defaults.scale
+  targets.offsetX = defaults.offsetX
+  targets.offsetY = defaults.offsetY
+  targets.opacity = defaults.opacity
+  targets.crop = null
+  draft.value = defaults
+  emit('reset')
 }
 
 function confirm() {
@@ -648,7 +923,7 @@ const cropHandles: { corner: CropResizeHandle; class: string }[] = [
     <div
       ref="surfaceRef"
       class="ww-bg-editor__surface"
-      :class="{ 'is-cropping': cropMode }"
+      :class="{ 'is-cropping': cropMode, 'is-pan-modifier': cropMode && spaceHeld }"
       @pointerdown="onSurfacePointerDown"
       @wheel.prevent="onSurfaceWheel"
       @contextmenu.prevent
@@ -660,6 +935,7 @@ const cropHandles: { corner: CropResizeHandle; class: string }[] = [
           class="ww-bg-editor__crop"
           :style="cropFrameStyle"
           @pointerdown="onCropPointerDown($event, 'crop-move')"
+          @wheel.prevent="onSurfaceWheel"
         >
           <span
             v-for="h in cropHandles"
@@ -679,10 +955,31 @@ const cropHandles: { corner: CropResizeHandle; class: string }[] = [
           <p class="ww-bg-editor__panel-desc">对照页面内容调整位置与可见范围</p>
         </div>
         <div class="ww-bg-editor__help">
-          <span class="ww-bg-editor__help-trigger" tabindex="0" aria-label="操作说明">
+          <span
+            ref="helpTriggerRef"
+            class="ww-bg-editor__help-trigger"
+            tabindex="0"
+            aria-label="操作说明"
+            @mouseenter="openHelp"
+            @mouseleave="closeHelp"
+            @focus="openHelp"
+            @blur="closeHelp"
+          >
             <WwIcon name="circle-help" size="sm" />
           </span>
-          <div class="ww-bg-editor__help-popover" role="tooltip">
+        </div>
+      </header>
+
+      <Teleport to="body">
+        <Transition name="ww-bg-editor-help">
+          <div
+            v-if="helpOpen"
+            class="ww-bg-editor__help-popover"
+            role="tooltip"
+            :style="{ top: `${helpPos.top}px`, right: `${helpPos.right}px` }"
+            @mouseenter="openHelp"
+            @mouseleave="closeHelp"
+          >
             <p class="ww-bg-editor__help-title">操作说明</p>
             <ul class="ww-bg-editor__help-list">
               <li
@@ -701,19 +998,21 @@ const cropHandles: { corner: CropResizeHandle; class: string }[] = [
               </li>
             </ul>
           </div>
-        </div>
-      </header>
+        </Transition>
+      </Teleport>
 
       <div class="ww-bg-editor__panel-body">
         <SettingsRow label="缩放">
           <div class="ww-bg-editor__slider-field">
             <Slider
-              v-model="draft.scale"
+              v-model="scaleSliderValue"
               class="ww-bg-editor__slider"
-              :min="0.25"
-              :max="3"
+              :min="BACKGROUND_SCALE_MIN"
+              :max="BACKGROUND_SCALE_MAX"
               :step="0.01"
+              @pointerdown.passive="onScaleSliderStart"
               @slideend="onScaleSlideEnd"
+              @change="onScaleSlideEnd"
             />
             <span class="ww-bg-editor__value">{{ scalePercent }}%</span>
           </div>
@@ -742,6 +1041,7 @@ const cropHandles: { corner: CropResizeHandle; class: string }[] = [
             class="ww-bg-editor__icon-btn"
             aria-label="更换图片"
             v-tooltip.bottom="'更换图片'"
+            :disabled="!imageUrl"
             @click="emit('replace')"
           >
             <WwIcon name="image" size="sm" />

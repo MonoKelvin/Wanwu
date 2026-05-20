@@ -120,7 +120,7 @@ function onLibrarySelect(node: TreeNode) {
           />
         </IconField>
       </div>
-      <div class="min-h-0 flex-1 overflow-y-auto px-1.5 pb-3">
+      <div class="ww-scrollbar min-h-0 flex-1 overflow-y-auto px-1.5 pb-3">
         <Tree
           v-model:expanded-keys="expandedKeys"
           v-model:selection-keys="selectionKeys"
