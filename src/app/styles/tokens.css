@@ -88,6 +88,19 @@
   --ww-dialog-panel-blur: 48px;
   --ww-share-dialog-mask-blur: 44px;
   --ww-share-dialog-panel-blur: 60px;
+  /* 定制卡片：右侧参数 / 自定义样式按钮（与 ww-settings-segment 选中一致） */
+  --ww-share-card-choice-idle-bg: var(--ww-list-hover-bg);
+  --ww-share-card-choice-idle-fg: var(--ww-ink);
+  --ww-share-card-choice-active-bg: #fff;
+  --ww-share-card-choice-active-fg: #121214;
+  --ww-share-card-choice-active-ring: rgb(18 18 22 / 0.12);
+  --ww-share-card-choice-shadow: 0 1px 4px rgb(18 18 22 / 0.1);
+  /* 预览区刷新遮罩与右下角加载角标 */
+  --ww-share-card-preview-veil: rgb(var(--ww-scroll-veil-rgb) / 0.72);
+  --ww-share-card-preview-badge-bg: var(--ww-surface-float);
+  --ww-share-card-preview-badge-fg: var(--ww-ink);
+  --ww-share-card-preview-badge-border: var(--ww-border-subtle);
+  --ww-share-card-preview-badge-shadow: 0 2px 8px rgb(18 18 22 / 0.1);
   --ww-glass-bg: rgb(255 255 255 / 0.68);
   --ww-glass-bg-soft: rgb(255 255 255 / 0.78);
   --ww-glass-border: rgb(18 18 22 / 0.08);

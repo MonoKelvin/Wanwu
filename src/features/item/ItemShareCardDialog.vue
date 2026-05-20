@@ -284,8 +284,9 @@ async function save() {
               v-for="f in SHARE_CARD_FONT_OPTIONS"
               :key="f.id"
               type="button"
-              class="ww-share-card-dialog__chip"
+              class="ww-share-card-dialog__chip ww-share-card-dialog__chip--font"
               :class="{ 'ww-share-card-dialog__chip--active': currentStyle.fontId === f.id }"
+              :style="{ fontFamily: f.stack, fontWeight: f.weight ?? 500 }"
               @click="setFont(f.id)"
             >
               {{ f.label }}

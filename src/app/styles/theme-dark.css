@@ -58,6 +58,16 @@
   --ww-menu-item-hover-bg: rgb(255 255 255 / 0.075);
   --ww-menu-item-active-bg: rgb(255 255 255 / 0.1);
 
+  --ww-share-card-choice-active-bg: #fff;
+  --ww-share-card-choice-active-fg: #121214;
+  --ww-share-card-choice-active-ring: rgb(18 18 22 / 0.14);
+  --ww-share-card-choice-shadow: 0 1px 4px rgb(0 0 0 / 0.22);
+  --ww-share-card-preview-veil: rgb(var(--ww-scroll-veil-rgb) / 0.78);
+  --ww-share-card-preview-badge-bg: var(--ww-surface-float);
+  --ww-share-card-preview-badge-fg: var(--ww-ink);
+  --ww-share-card-preview-badge-border: var(--ww-border-subtle);
+  --ww-share-card-preview-badge-shadow: 0 2px 10px rgb(0 0 0 / 0.38);
+
   --ww-grid-dot: rgb(255 255 255 / 0.04);
   --ww-focus-ring: 0 0 0 2px var(--ww-content), 0 0 0 4px rgb(255 255 255 / 0.14);
 
@@ -219,17 +229,23 @@
   box-shadow: 0 0 0 1px var(--ww-border-subtle);
 }
 
-/* 标题栏窗口控制 */
+/* 标题栏窗口控制：默认透明，仅 hover 显底 */
 [data-theme='dark'] .ww-titlebar-controls {
-  background: var(--ww-rail);
+  background: transparent;
 }
 
 [data-theme='dark'] .ww-win-btn {
+  background: transparent;
   color: var(--ww-ink-muted);
 }
 
+[data-theme='dark'] .ww-win-btn:hover:not(.ww-win-btn--close) {
+  background: var(--ww-list-hover-bg);
+  color: var(--ww-ink);
+}
+
 [data-theme='dark'] .ww-win-btn--close {
-  background: var(--ww-inset);
+  background: transparent;
 }
 
 [data-theme='dark'] .ww-win-btn--close:hover {

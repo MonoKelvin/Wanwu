@@ -2834,9 +2834,13 @@ body {
     color var(--ww-duration-fast) var(--ww-ease-out);
 }
 
-.ww-win-btn:hover {
+.ww-win-btn:hover:not(.ww-win-btn--close) {
   background: var(--ww-list-hover-bg);
   color: var(--ww-ink);
+}
+
+.ww-win-btn--close {
+  background: transparent;
 }
 
 .ww-win-btn--close:hover {
@@ -3587,7 +3591,7 @@ body {
   border-radius: inherit;
   font-size: 0.8125rem;
   color: var(--ww-ink-muted);
-  background: rgb(245 245 246 / 0.72);
+  background: var(--ww-share-card-preview-veil);
   backdrop-filter: blur(8px) saturate(1.15);
   -webkit-backdrop-filter: blur(8px) saturate(1.15);
 }
@@ -3603,10 +3607,12 @@ body {
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 999px;
-  color: var(--ww-ink-muted);
-  background: rgb(245 245 246 / 0.88);
-  border: 1px solid rgb(0 0 0 / 0.06);
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
+  color: var(--ww-share-card-preview-badge-fg);
+  background: var(--ww-share-card-preview-badge-bg);
+  border: 1px solid var(--ww-share-card-preview-badge-border);
+  box-shadow: var(--ww-share-card-preview-badge-shadow);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
   pointer-events: none;
 }
 
@@ -3656,6 +3662,12 @@ body {
   width: 100%;
 }
 
+.ww-share-card-dialog__chip--font {
+  min-width: 4.25rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
 .ww-share-card-dialog__chip {
   flex: 1 1 auto;
   min-width: 3.5rem;
@@ -3663,21 +3675,29 @@ body {
   font-size: 0.8125rem;
   line-height: 1.25;
   border-radius: 0.4375rem;
-  border: none;
-  background: var(--ww-list-hover-bg);
-  color: var(--ww-ink);
+  border: 1px solid transparent;
+  background: var(--ww-share-card-choice-idle-bg);
+  color: var(--ww-share-card-choice-idle-fg);
   cursor: pointer;
   text-align: center;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    color var(--ww-duration-fast) var(--ww-ease-out),
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    box-shadow var(--ww-duration-fast) var(--ww-ease-out);
 }
 
-.ww-share-card-dialog__chip:hover {
-  background: rgb(18 18 22 / 0.1);
+.ww-share-card-dialog__chip:hover:not(.ww-share-card-dialog__chip--active) {
+  background: var(--ww-list-hover-bg);
+  color: var(--ww-ink);
 }
 
-.ww-share-card-dialog__chip--active {
-  background: var(--ww-ink);
-  color: #fff;
+.ww-share-card-dialog__chip--active,
+.ww-share-card-dialog__chip--active:hover {
+  background: var(--ww-share-card-choice-active-bg);
+  color: var(--ww-share-card-choice-active-fg);
+  border-color: var(--ww-share-card-choice-active-ring);
+  box-shadow: var(--ww-share-card-choice-shadow);
 }
 
 .ww-share-card-dialog__color-grid {
@@ -3719,9 +3739,10 @@ body {
 }
 
 .ww-share-card-dialog__color-swatch--active::after {
-  border-color: var(--ww-ink);
+  border-color: var(--ww-share-card-choice-active-ring);
   opacity: 1;
   transform: scale(1);
+  box-shadow: var(--ww-share-card-choice-shadow);
 }
 
 .ww-share-card-dialog__toolbar {
@@ -3758,20 +3779,32 @@ body {
   height: var(--ww-share-card-toolbar-h);
   border-radius: 0.4375rem;
   border: 1px solid var(--ww-border-faint);
-  background: var(--ww-surface);
+  background: var(--ww-glass-bg);
   color: var(--ww-ink);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  transition:
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    color var(--ww-duration-fast) var(--ww-ease-out),
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    box-shadow var(--ww-duration-fast) var(--ww-ease-out),
+    opacity var(--ww-duration-fast) var(--ww-ease-out);
 }
 
-.ww-share-card-dialog__icon-btn:hover:not(:disabled) {
+.ww-share-card-dialog__icon-btn:hover:not(:disabled):not(.ww-share-card-dialog__icon-btn--active) {
   background: var(--ww-inset);
 }
 
-.ww-share-card-dialog__icon-btn--active {
-  background: var(--ww-ink);
-  border-color: var(--ww-ink);
-  color: #fff;
+.ww-share-card-dialog__icon-btn--active,
+.ww-share-card-dialog__icon-btn--active:hover:not(:disabled) {
+  background: var(--ww-share-card-choice-active-bg) !important;
+  border-color: var(--ww-share-card-choice-active-ring) !important;
+  color: var(--ww-share-card-choice-active-fg) !important;
+  box-shadow: var(--ww-share-card-choice-shadow) !important;
+}
+
+.ww-share-card-dialog__icon-btn--active .ww-icon,
+.ww-share-card-dialog__icon-btn--active:hover:not(:disabled) .ww-icon {
+  color: var(--ww-share-card-choice-active-fg);
 }
 
 .ww-share-card-dialog__icon-btn:disabled {

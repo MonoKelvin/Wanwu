@@ -46,7 +46,12 @@ export const DEFAULT_SHARE_CARD_STYLE: ShareCardStyle = {
   filterId: DEFAULT_SHARE_CARD_FILTER
 }
 
-export const SHARE_CARD_FONT_OPTIONS: { id: ShareCardFontId; label: string; stack: string }[] = [
+export const SHARE_CARD_FONT_OPTIONS: {
+  id: ShareCardFontId
+  label: string
+  stack: string
+  weight?: number
+}[] = [
   {
     id: 'sans',
     label: '现代黑体',
@@ -70,7 +75,8 @@ export const SHARE_CARD_FONT_OPTIONS: { id: ShareCardFontId; label: string; stac
   {
     id: 'light',
     label: '纤细雅黑',
-    stack: '"Segoe UI Light", "PingFang SC", "Source Han Sans SC", sans-serif'
+    stack: '"Segoe UI Light", "PingFang SC", "Source Han Sans SC", sans-serif',
+    weight: 300
   },
   {
     id: 'rounded',

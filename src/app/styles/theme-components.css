@@ -130,6 +130,7 @@
   border-color: var(--ww-border-subtle);
 }
 
-.ww-share-card-dialog__icon-btn {
-  background: var(--ww-surface);
+.ww-share-card-dialog__icon-btn:not(.ww-share-card-dialog__icon-btn--active) {
+  background: var(--ww-glass-bg);
+  color: var(--ww-share-card-choice-idle-fg);
 }
