@@ -1,12 +1,20 @@
-/* 个人模块 — 简约、轻边框、柔和背景光晕 */
+/* 个人模块 — 简约、轻边框、与全站灰阶一致 */
 .ww-personal {
   position: relative;
   background: var(--ww-content);
 }
 
+.ww-personal .ww-page-header {
+  border-bottom-color: var(--ww-border-faint);
+}
+
+.ww-personal.has-bg .ww-page-header {
+  background: rgb(255 255 255 / 0.92);
+}
+
 .ww-personal.has-bg .ww-personal__scroll {
   background: rgb(
-    255 255 255 / calc((1 - var(--ww-personal-bg-opacity, 1)) * 0.52)
+    255 255 255 / calc((1 - var(--ww-personal-bg-opacity, 1)) * 0.48)
   );
 }
 
@@ -44,29 +52,28 @@
   overflow: hidden;
 }
 
+.ww-personal__pattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--ww-grid-dot) 1px, transparent 1px);
+  background-size: var(--ww-grid-size) var(--ww-grid-size);
+  mask-image: radial-gradient(ellipse 88% 72% at 50% 0%, black 8%, transparent 76%);
+  opacity: 0.7;
+}
+
 .ww-personal__ambient-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(72px);
-  opacity: 0.55;
-  mix-blend-mode: multiply;
+  filter: blur(64px);
+  pointer-events: none;
 }
 
 .ww-personal__ambient-glow--warm {
-  top: -8%;
-  left: 12%;
-  width: min(28rem, 70vw);
-  height: min(18rem, 40vh);
-  background: radial-gradient(circle at center, rgb(255 248 230 / 0.9) 0%, transparent 70%);
-}
-
-.ww-personal__ambient-glow--cool {
-  top: 32%;
-  right: -5%;
-  width: min(22rem, 55vw);
-  height: min(16rem, 35vh);
-  background: radial-gradient(circle at center, rgb(18 18 22 / 0.04) 0%, transparent 72%);
-  mix-blend-mode: normal;
+  top: -12%;
+  left: 8%;
+  width: min(26rem, 68vw);
+  height: min(16rem, 38vh);
+  background: radial-gradient(circle at center, rgb(18 18 22 / 0.035) 0%, transparent 72%);
   opacity: 1;
 }
 
@@ -76,58 +83,115 @@
   background: transparent;
 }
 
-.ww-personal__inner {
-  max-width: 40rem;
-  margin: 0 auto;
-  padding: 0 var(--ww-page-padding) 2.75rem;
+.ww-personal__scroll .ww-module-layout__body {
+  background: transparent;
 }
 
-.ww-personal-save-hint-enter-active,
-.ww-personal-save-hint-leave-active {
+.ww-personal.has-bg .ww-personal__pattern {
+  opacity: 0.35;
+}
+
+.ww-personal__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  box-sizing: border-box;
+  width: 50%;
+  margin-inline: auto;
+  padding: 1.125rem 0 2.75rem;
+}
+
+.ww-personal-profile__surface > .ww-personal__bg-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--ww-border-faint);
+  border-radius: 0.625rem;
+  color: var(--ww-ink-muted);
+  background: var(--ww-content);
+  cursor: pointer;
+  box-shadow: none;
   transition:
-    opacity var(--ww-duration-fast) var(--ww-ease-out),
+    color var(--ww-duration-fast) var(--ww-ease-out),
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
     transform var(--ww-duration-fast) var(--ww-ease-out);
 }
 
-.ww-personal-save-hint-enter-from,
-.ww-personal-save-hint-leave-to {
-  opacity: 0;
-  transform: translateY(4px);
+.ww-personal__bg-btn:hover,
+.ww-personal__bg-btn:focus-visible {
+  color: var(--ww-ink);
+  border-color: var(--ww-border-subtle);
+  background: var(--ww-inset);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.ww-personal__bg-btn.is-active {
+  color: var(--ww-ink);
+  border-color: var(--ww-border-subtle);
+  background: var(--ww-list-hover-bg);
+}
+
+.ww-personal.has-bg .ww-personal__bg-btn {
+  background: rgb(255 255 255 / 0.9);
 }
 
 /* —— 资料区 —— */
 .ww-personal-profile {
   position: relative;
-  margin-bottom: 1.5rem;
-  padding: 0.5rem 0 1.25rem;
-}
-
-.ww-personal-profile::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--ww-border-faint) 12%,
-    var(--ww-border-faint) 88%,
-    transparent 100%
-  );
 }
 
 .ww-personal-profile__skeleton {
   display: flex;
-  gap: 1.25rem;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 3rem 1.125rem 1.25rem;
+  border: 1px solid var(--ww-border-faint);
+  border-radius: 0.75rem;
+  background: var(--ww-content);
 }
 
-.ww-personal-profile__body {
+.ww-personal-profile__surface {
+  position: relative;
+  border: 1px solid var(--ww-border-faint);
+  border-radius: 0.75rem;
+  background: var(--ww-content);
+  animation: ww-personal-enter 0.42s var(--ww-ease-out) both;
+}
+
+@keyframes ww-personal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.ww-personal.has-bg .ww-personal-profile__surface {
+  border-color: var(--ww-border-subtle);
+  background: rgb(255 255 255 / 0.9);
+}
+
+.ww-personal-profile__hero {
   display: flex;
-  gap: 1.25rem;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 2.75rem 1.125rem 1.125rem;
+  text-align: center;
 }
 
 .ww-personal-profile__avatar {
@@ -136,124 +200,439 @@
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 5rem;
+  height: 5rem;
+  font-size: 1.375rem;
   padding: 0;
-  border: 2px solid rgb(255 255 255 / 0.9);
+  border: none;
   border-radius: 50%;
-  font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--ww-ink);
-  background: rgb(255 255 255 / 0.85);
-  box-shadow: 0 0 0 1px rgb(18 18 22 / 0.08);
-  cursor: pointer;
-  overflow: hidden;
+  background: var(--ww-inset);
+  box-shadow: none;
+  cursor: default;
+  overflow: visible;
+  transition: transform 0.32s var(--ww-ease-out);
+}
+
+.ww-personal-profile__avatar-ring {
+  position: absolute;
+  inset: -4px;
+  border: 1px solid var(--ww-border-subtle);
+  border-radius: 50%;
+  opacity: 0.85;
   transition:
-    transform var(--ww-duration-fast) var(--ww-ease-out),
-    box-shadow var(--ww-duration-fast) var(--ww-ease-out);
+    opacity var(--ww-duration-fast) var(--ww-ease-out),
+    transform 0.45s var(--ww-ease-out),
+    border-color var(--ww-duration-fast) var(--ww-ease-out);
 }
 
 .ww-personal-profile__avatar:hover {
-  transform: scale(1.02);
-  box-shadow: 0 0 0 1px rgb(18 18 22 / 0.12), 0 6px 16px -6px rgb(18 18 22 / 0.12);
+  transform: scale(1.04);
+}
+
+.ww-personal-profile__avatar:hover .ww-personal-profile__avatar-ring {
+  border-color: rgb(18 18 22 / 0.14);
+  transform: scale(1.06);
+  opacity: 1;
+}
+
+.ww-personal-profile__avatar:focus-visible {
+  outline: none;
+}
+
+.ww-personal-profile__avatar:focus-visible .ww-personal-profile__avatar-ring {
+  box-shadow: var(--ww-focus-ring);
+}
+
+.ww-personal-profile__avatar-media {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
 }
 
 .ww-personal-profile__avatar-img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transform: scale(1.06);
+  transition:
+    opacity 0.45s var(--ww-ease-out),
+    transform 0.45s var(--ww-ease-out);
+}
+
+.ww-personal-profile__avatar-img.is-visible {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .ww-personal-profile__avatar-letter {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.ww-personal-profile__avatar-letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
 }
 
-.ww-personal-profile__fields {
-  flex: 1;
-  min-width: 0;
+.ww-personal-profile__avatar-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border-radius: 50%;
+  color: #fff;
+  background: rgb(18 18 22 / 0.42);
+  opacity: 0;
+  transition: opacity var(--ww-duration-fast) var(--ww-ease-out);
 }
 
-.ww-personal-profile__heading {
-  margin: 0 0 1.125rem;
-  font-size: 0.875rem;
+.ww-personal-profile__avatar:hover .ww-personal-profile__avatar-overlay {
+  opacity: 1;
+}
+
+.ww-personal-profile__avatar-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border: none;
+  border-radius: 0.25rem;
+  color: rgb(255 255 255 / 0.88);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    color var(--ww-duration-fast) var(--ww-ease-out),
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-personal-profile__avatar-action:hover {
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.ww-personal-profile__avatar-action:focus-visible {
+  outline: none;
+  color: #fff;
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.35);
+}
+
+.ww-personal-profile__avatar-action:active {
+  transform: scale(0.94);
+}
+
+.ww-personal-profile__avatar-action .ww-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* —— 昵称 —— */
+.ww-personal-nickname {
+  width: 100%;
+  max-width: 20rem;
+  margin-top: 0.875rem;
+}
+
+.ww-personal-nickname__slot {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-height: 2.125rem;
+}
+
+.ww-personal-nickname__display {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 0.25rem 0.375rem;
+  border-radius: 0.375rem;
+  cursor: text;
+  transition: color var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-personal-nickname__display.is-inert {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.ww-personal-nickname__edit-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ww-nickname-edit-enter-active,
+.ww-nickname-edit-leave-active {
+  transition: opacity 0.22s var(--ww-ease-out);
+}
+
+.ww-nickname-edit-enter-active .ww-personal-nickname__field,
+.ww-nickname-edit-leave-active .ww-personal-nickname__field {
+  transition:
+    opacity 0.22s var(--ww-ease-out),
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-nickname-edit-enter-active .ww-personal-field__actions--inline,
+.ww-nickname-edit-leave-active .ww-personal-field__actions--inline {
+  transition:
+    opacity 0.2s var(--ww-ease-out),
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-nickname-edit-enter-active .ww-personal-field__actions--inline {
+  transition-delay: 0.05s;
+}
+
+.ww-nickname-edit-enter-from,
+.ww-nickname-edit-leave-to {
+  opacity: 0;
+}
+
+.ww-nickname-edit-enter-from .ww-personal-nickname__field,
+.ww-nickname-edit-leave-to .ww-personal-nickname__field {
+  opacity: 0;
+  transform: scale(0.97);
+}
+
+.ww-nickname-edit-enter-from .ww-personal-field__actions--inline,
+.ww-nickname-edit-leave-to .ww-personal-field__actions--inline {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.ww-personal-nickname__display:hover .ww-personal-nickname__text {
+  color: var(--ww-ink);
+}
+
+.ww-personal-nickname__display:focus-visible {
+  outline: none;
+}
+
+.ww-personal-nickname__display:focus-visible .ww-personal-nickname__text {
+  text-decoration: underline;
+  text-decoration-color: var(--ww-border-subtle);
+  text-underline-offset: 0.2em;
+}
+
+.ww-personal-nickname__text {
+  font-size: 1.0625rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  color: var(--ww-ink);
+  word-break: break-word;
+}
+
+.ww-personal-nickname__text.is-placeholder {
+  color: var(--ww-ink-muted);
+  font-weight: 500;
+}
+
+.ww-personal-nickname__measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  visibility: hidden;
+  max-width: none;
+  padding: 0;
+  border: 0;
+  white-space: pre;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  pointer-events: none;
+}
+
+.ww-personal-nickname__field {
+  position: relative;
+  display: inline-flex;
+  width: auto;
+  max-width: 100%;
+  align-items: center;
+  transition: width 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-personal-nickname__input {
+  width: 100%;
+  min-width: 0;
+  font-size: 1rem !important;
+  font-weight: 600;
+  text-align: center;
+}
+
+.ww-personal-nickname__input.p-inputtext {
+  height: 2.125rem !important;
+  min-height: 0 !important;
+  padding-top: 0.25rem !important;
+  padding-right: 2.75rem !important;
+  padding-bottom: 0.25rem !important;
+  padding-left: 0.625rem !important;
+  border: 1px solid var(--ww-border-subtle) !important;
+  border-radius: 0.4375rem !important;
+  background: var(--ww-content) !important;
+  box-shadow: none !important;
+  line-height: 1.35 !important;
+  box-sizing: border-box !important;
+}
+
+.ww-personal-field__actions--inline {
+  position: absolute;
+  top: 50%;
+  right: 0.3125rem;
+  gap: 0.125rem;
+  transform: translateY(-50%);
+}
+
+.ww-personal-nickname__input.p-inputtext:enabled:focus {
+  border-color: rgb(18 18 22 / 0.14) !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* —— 简介 —— */
+.ww-personal-bio-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  width: 100%;
+  max-width: 26rem;
+  margin-top: 1.125rem;
+}
+
+.ww-personal-bio__label {
+  flex-shrink: 0;
+  padding-top: 0.5625rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--ww-ink-faint);
 }
 
-.ww-personal-field + .ww-personal-field {
-  margin-top: 1rem;
+.ww-personal-bio {
+  position: relative;
+  flex: 1;
+  min-width: 0;
 }
 
-.ww-personal-field__label {
-  display: block;
-  margin-bottom: 0.3125rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--ww-ink-muted);
-}
-
-.ww-personal-field__input {
-  font-size: 0.875rem;
-}
-
-.ww-personal-field__input.p-inputtext,
-.ww-personal-field__input.p-textarea {
-  border: none !important;
+.ww-personal-bio__input.p-textarea {
+  width: 100% !important;
+  min-height: 3.25rem;
+  padding: 0.5rem 0.625rem 1.75rem !important;
+  border: 1px solid var(--ww-border-faint) !important;
   border-radius: 0.5rem !important;
-  background: rgb(18 18 22 / 0.04) !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.5 !important;
+  color: var(--ww-ink) !important;
+  background: var(--ww-content) !important;
   box-shadow: none !important;
+  resize: none;
+  transition:
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    background var(--ww-duration-fast) var(--ww-ease-out);
 }
 
-.ww-personal-field__input.p-inputtext:enabled:focus,
-.ww-personal-field__input.p-textarea:enabled:focus {
-  background: rgb(18 18 22 / 0.06) !important;
+.ww-personal-bio.is-dirty .ww-personal-bio__input.p-textarea,
+.ww-personal-bio.is-focused .ww-personal-bio__input.p-textarea,
+.ww-personal-bio__input.p-textarea:enabled:focus {
+  border-color: var(--ww-border-subtle) !important;
+  background: var(--ww-content) !important;
   outline: none !important;
-  box-shadow: 0 0 0 2px rgb(18 18 22 / 0.08) !important;
 }
 
-.ww-personal-profile__toolbar {
+.ww-personal-bio__footer {
+  position: absolute;
+  right: 0.375rem;
+  bottom: 0.3125rem;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   gap: 0.375rem;
-  margin-top: 1rem;
 }
 
-.ww-personal-profile__toolbar .p-button {
-  width: var(--ww-action-btn-h, 1.625rem);
-  min-width: var(--ww-action-btn-h, 1.625rem);
-  height: var(--ww-action-btn-h, 1.625rem);
-  padding: 0 !important;
-  border: none !important;
-  border-radius: 0.375rem !important;
-  color: var(--ww-ink-muted) !important;
-  background: rgb(255 255 255 / 0.78) !important;
-  backdrop-filter: blur(var(--ww-menu-blur));
-  -webkit-backdrop-filter: blur(var(--ww-menu-blur));
-  box-shadow: none !important;
+.ww-personal-bio__counter {
+  font-size: 0.625rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--ww-ink-faint);
+  pointer-events: none;
 }
 
-.ww-personal-profile__toolbar .p-button:hover,
-.ww-personal-profile__toolbar .p-button:focus-visible {
-  color: var(--ww-ink) !important;
-  background: rgb(255 255 255 / 0.92) !important;
-  outline: none;
+/* —— 字段操作（对勾 / 叉） —— */
+.ww-personal-field__actions {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.ww-personal-profile__toolbar .p-button.is-active {
-  color: var(--ww-ink) !important;
-  background: rgb(255 255 255 / 0.95) !important;
-  box-shadow: 0 0 0 1px rgb(18 18 22 / 0.1) !important;
+.ww-personal-field__actions--bio {
+  position: static;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--ww-duration-fast) var(--ww-ease-out);
 }
 
-.ww-personal-profile__saved {
+.ww-personal-field__actions--bio.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ww-personal-field__action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--ww-ink-muted);
+  width: 1.375rem;
+  height: 1.375rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.25rem;
+  color: var(--ww-ink-faint);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    color var(--ww-duration-fast) var(--ww-ease-out),
+    opacity var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-personal-field__action:hover:not(:disabled),
+.ww-personal-field__action:focus-visible:not(:disabled) {
+  color: var(--ww-ink);
+  outline: none;
+}
+
+.ww-personal-field__action--apply:hover:not(:disabled) {
+  color: var(--ww-toast-success);
+}
+
+.ww-personal-field__action:disabled {
+  opacity: 0.28;
+  cursor: default;
 }
 
 /* —— 背景编辑器（叠加在个人页上，实时预览） —— */
@@ -658,41 +1037,50 @@
 
 /* —— 收藏 —— */
 .ww-personal-favorites__head {
-  margin-bottom: 1rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
+  padding-bottom: 0.625rem;
+  border-bottom: 1px solid var(--ww-border-faint);
 }
 
 .ww-personal-favorites__head .ww-section-label {
   margin: 0;
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+}
+
+.ww-personal-favorites__count {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
   color: var(--ww-ink-faint);
 }
 
 .ww-personal-favorites__skeleton {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.375rem;
 }
 
 .ww-fav-groups {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .ww-fav-group__head {
   display: flex;
   align-items: center;
-  gap: 0.4375rem;
-  margin-bottom: 0.5rem;
+  gap: 0.375rem;
+  margin-bottom: 0.375rem;
   padding: 0 0.125rem;
 }
 
 .ww-fav-group__icon {
   color: var(--ww-ink-faint);
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
 .ww-fav-group__title {
@@ -708,27 +1096,39 @@
 .ww-fav-group__count {
   flex-shrink: 0;
   margin-left: auto;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--ww-ink-muted);
+  color: var(--ww-ink-faint);
 }
 
 .ww-fav-group__list {
   display: flex;
   flex-direction: column;
-  gap: 0.125rem;
+  gap: 0;
   margin: 0;
   padding: 0;
   list-style: none;
+  border: 1px solid var(--ww-border-faint);
+  border-radius: 0.625rem;
+  background: var(--ww-content);
+  overflow: hidden;
+}
+
+.ww-personal.has-bg .ww-fav-group__list {
+  background: rgb(255 255 255 / 0.88);
+}
+
+.ww-fav-group__list > li + li {
+  border-top: 1px solid var(--ww-border-faint);
 }
 
 /* —— 收藏行 —— */
 .ww-favorite-row {
   display: flex;
   align-items: stretch;
-  gap: 0.125rem;
-  border-radius: 0.625rem;
+  gap: 0;
+  border-radius: 0;
   background: transparent;
   transition: background var(--ww-duration-fast) var(--ww-ease-out);
 }
@@ -747,9 +1147,9 @@
   min-width: 0;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 0.375rem 0.5rem 0.5rem;
+  padding: 0.5625rem 0.375rem 0.5625rem 0.625rem;
   border: none;
-  border-radius: 0.625rem;
+  border-radius: 0;
   text-align: left;
   background: transparent;
   cursor: pointer;
@@ -766,11 +1166,12 @@
 
 .ww-favorite-row__thumb {
   flex-shrink: 0;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.5rem;
+  height: 2.5rem;
   overflow: hidden;
-  border-radius: 0.4375rem;
-  background: rgb(18 18 22 / 0.05);
+  border: 1px solid var(--ww-border-faint);
+  border-radius: 0.375rem;
+  background: var(--ww-inset);
 }
 
 .ww-favorite-row__thumb .ww-cover-image__img,
@@ -869,8 +1270,15 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ww-personal__ambient-glow--warm,
-  .ww-personal__ambient-glow--cool {
+  .ww-personal-profile__surface,
+  .ww-personal-profile__avatar,
+  .ww-personal-profile__avatar-ring {
     animation: none;
+    transition: none;
+  }
+
+  .ww-personal-profile__avatar:hover {
+    transform: none;
   }
 
   .ww-favorite-list-enter-active,

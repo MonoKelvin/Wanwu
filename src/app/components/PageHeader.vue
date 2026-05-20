@@ -7,7 +7,7 @@ defineProps<{
 
 <template>
   <header class="ww-page-header">
-    <div class="flex items-center justify-between gap-4">
+    <div class="ww-page-header__inner flex items-center justify-between gap-4">
       <div>
         <h1>{{ title }}</h1>
         <p v-if="subtitle" class="ww-subtitle">{{ subtitle }}</p>

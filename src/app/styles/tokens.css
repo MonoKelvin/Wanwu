@@ -7,6 +7,10 @@
   --ww-subpanel-width: 15.5rem;
   --ww-content-max: 68rem;
   --ww-page-padding: 1.125rem;
+  /** 右下角 Toast 与视口右、下的留白（保持一致） */
+  --ww-toast-inset: 1.5rem;
+  --ww-toast-min-width: 18rem;
+  --ww-toast-max-width: 25rem;
 
   /* 层次背景：中性灰阶，无彩色倾向 */
   --ww-canvas: #eaeaec;

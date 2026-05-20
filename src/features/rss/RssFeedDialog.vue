@@ -4,7 +4,7 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
-import Select from 'primevue/select'
+import WwSelect from '@shared/components/WwSelect'
 import Message from 'primevue/message'
 import type { RssFeed, RssFeedInput, RssGroup } from '@shared/types/rss'
 import { DEFAULT_RSS_DISPLAY, RSS_DEFAULT_GROUP_ID } from '@shared/types/rss'
@@ -142,12 +142,12 @@ function submit() {
 
       <div>
         <label class="ww-form-label">分组</label>
-        <Select
+        <WwSelect
           v-model="groupId"
+          size="block"
           :options="groupOptions"
           option-label="label"
           option-value="value"
-          class="w-full"
         />
       </div>
 

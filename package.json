@@ -1,6 +1,6 @@
 {
   "name": "wanwu",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "description": "万物 - 事物收集与浏览桌面应用",
   "main": "out/main/index.js",
@@ -33,8 +33,10 @@
   "dependencies": {
     "@primeuix/themes": "^2.0.3",
     "@vueuse/core": "^14.3.0",
+    "archiver": "^8.0.0",
     "better-sqlite3": "^12.10.0",
     "electron-native-share": "^0.1.1",
+    "extract-zip": "^2.0.1",
     "html2canvas": "^1.4.1",
     "lucide-vue-next": "^1.0.0",
     "marked": "^18.0.3",
@@ -47,6 +49,7 @@
   },
   "devDependencies": {
     "@electron/rebuild": "^3.7.2",
+    "@types/archiver": "^7.0.0",
     "@types/better-sqlite3": "^7.6.13",
     "@vitejs/plugin-vue": "^6.0.7",
     "autoprefixer": "^10.5.0",

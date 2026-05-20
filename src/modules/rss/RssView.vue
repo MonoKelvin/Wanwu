@@ -7,6 +7,7 @@ import { useRssStore } from '@shared/stores/rss'
 import { useSettingsStore } from '@shared/stores/settings'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { DEFAULT_RSS_DISPLAY } from '@shared/types/rss'
+import ModulePageLayout from '@app/components/ModulePageLayout.vue'
 import PageHeader from '@app/components/PageHeader.vue'
 import EmptyState from '@app/components/EmptyState.vue'
 import RssEntryCard from '@features/rss/RssEntryCard.vue'
@@ -58,26 +59,29 @@ watch(
 </script>
 
 <template>
-  <div class="flex h-full flex-col overflow-hidden">
-    <PageHeader
-      :title="currentFeed?.title ?? 'RSS'"
-      :subtitle="currentFeed?.accessWarning ? '境内可能无法稳定访问' : '资讯订阅'"
-    >
-      <template #actions>
-        <WwButton
-          v-if="feedId"
-          icon="refresh-cw"
-          :loading="isRefreshing"
-          size="small"
-          variant="outlined"
-          v-tooltip.bottom="'重新拉取'"
-          aria-label="重新拉取"
-          @click="refreshCurrentFeed(feedId, true)"
-        />
+  <div class="flex h-full min-h-0 flex-col overflow-hidden">
+    <ModulePageLayout class="min-h-0 flex-1">
+      <template #header>
+        <PageHeader
+          :title="currentFeed?.title ?? 'RSS'"
+          :subtitle="currentFeed?.accessWarning ? '境内可能无法稳定访问' : '资讯订阅'"
+        >
+          <template #actions>
+            <WwButton
+              v-if="feedId"
+              icon="refresh-cw"
+              :loading="isRefreshing"
+              size="small"
+              variant="outlined"
+              v-tooltip.bottom="'重新拉取'"
+              aria-label="重新拉取"
+              @click="refreshCurrentFeed(feedId, true)"
+            />
+          </template>
+        </PageHeader>
       </template>
-    </PageHeader>
 
-    <EmptyState
+      <EmptyState
       v-if="!feedId"
       variant="rss"
       title="选择订阅源"
@@ -86,7 +90,7 @@ watch(
 
     <div
       v-else-if="isRefreshing && rssStore.entries.length === 0"
-      class="ww-scroll-main ww-rss-list space-y-2.5"
+      class="ww-rss-list space-y-2.5"
     >
       <Skeleton v-for="i in 4" :key="i" height="6rem" class="!rounded-lg !bg-ww-panel" />
     </div>
@@ -99,7 +103,7 @@ watch(
       description="该源暂无内容，或拉取失败。可点击右上角重试。"
     />
 
-    <div v-else class="ww-scroll-main flex flex-col">
+    <div v-else class="flex flex-col">
       <div class="ww-rss-list flex-1">
         <RssEntryCard
           v-for="entry in rssStore.entries"
@@ -126,5 +130,6 @@ watch(
         </p>
       </div>
     </div>
+    </ModulePageLayout>
   </div>
 </template>

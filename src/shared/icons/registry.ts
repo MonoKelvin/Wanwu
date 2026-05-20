@@ -1,5 +1,6 @@
 import type { Component } from 'vue'
 import {
+  AppWindow,
   ArrowDownAZ,
   ArrowLeft,
   ArrowRight,
@@ -18,6 +19,7 @@ import {
   Database,
   Download,
   EllipsisVertical,
+  Eye,
   ExternalLink,
   Folder,
   FolderOpen,
@@ -28,6 +30,7 @@ import {
   Home,
   Image,
   Inbox,
+  Layers,
   LayoutGrid,
   List,
   Loader2,
@@ -42,6 +45,7 @@ import {
   Search,
   Share2,
   Settings,
+  SlidersHorizontal,
   Smartphone,
   Sparkles,
   Square,
@@ -60,6 +64,7 @@ import {
 export const WW_ICON_STROKE = 1.5
 
 export const wwIcons = {
+  'app-window': AppWindow,
   'arrow-down-a-z': ArrowDownAZ,
   'arrow-left': ArrowLeft,
   'arrow-right': ArrowRight,
@@ -78,6 +83,7 @@ export const wwIcons = {
   database: Database,
   download: Download,
   'ellipsis-vertical': EllipsisVertical,
+  eye: Eye,
   'external-link': ExternalLink,
   folder: Folder,
   'folder-open': FolderOpen,
@@ -88,6 +94,7 @@ export const wwIcons = {
   home: Home,
   image: Image,
   inbox: Inbox,
+  layers: Layers,
   'layout-grid': LayoutGrid,
   list: List,
   loader: Loader2,
@@ -102,6 +109,7 @@ export const wwIcons = {
   search: Search,
   share: Share2,
   settings: Settings,
+  'sliders-horizontal': SlidersHorizontal,
   smartphone: Smartphone,
   sparkles: Sparkles,
   square: Square,

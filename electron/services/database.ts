@@ -130,31 +130,25 @@ export class DatabaseService {
     if (!settingsRow) {
       this.userDb
         .prepare('INSERT INTO app_settings (id, json) VALUES (1, ?)')
-        .run(
-          JSON.stringify({
-            navAlign: 'start',
-            navDisplay: 'icon',
-            rssFetchLimit: 20
-          })
-        )
+        .run(JSON.stringify({ navAlign: 'start', navDisplay: 'icon', rssFetchLimit: 20, startupModule: 'last', lastActiveModule: 'library', rssAutoRefreshMinutes: 0 }))
     }
   }
 
-  getAppSettings(): { navAlign: string; navDisplay: string } {
+  getAppSettings(): Record<string, unknown> {
     const row = this.userDb.prepare('SELECT json FROM app_settings WHERE id = 1').get() as
       | { json: string }
       | undefined
     if (!row) {
-      return { navAlign: 'start', navDisplay: 'icon' }
+      return {}
     }
     try {
-      return JSON.parse(row.json) as { navAlign: string; navDisplay: string }
+      return JSON.parse(row.json) as Record<string, unknown>
     } catch {
-      return { navAlign: 'start', navDisplay: 'icon' }
+      return {}
     }
   }
 
-  updateAppSettings(settings: { navAlign: string; navDisplay: string }): void {
+  updateAppSettings(settings: Record<string, unknown>): void {
     this.userDb
       .prepare(
         `INSERT INTO app_settings (id, json) VALUES (1, ?)

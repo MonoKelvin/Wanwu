@@ -17,6 +17,7 @@
     "electron/**/*",
     "electron.vite.config.ts",
     "scripts/**/*",
-    "src/shared/types/**/*"
+    "src/shared/types/**/*",
+    "src/shared/constants/**/*"
   ]
 }

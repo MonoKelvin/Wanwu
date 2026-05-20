@@ -30,6 +30,17 @@ import {
 import { migrateWanwuData } from '../services/dataMigration'
 import { importProfileImage, removeProfileFile } from '../services/userProfileMedia'
 import { toWanwuMediaUrl } from '../services/wanwuMedia'
+import { normalizeAppSettings, mergeAppSettings } from '../services/appSettingsNormalize'
+import { applyRssAutoRefreshSchedule } from '../services/rssScheduler'
+import {
+  buildDiagnosticsReport,
+  clearCacheDirectory,
+  createDataBackup,
+  exportDiagnosticsToFile,
+  resetAppSettingsInDb,
+  restoreDataBackup
+} from '../services/dataMaintenance'
+import { DEFAULT_APP_SETTINGS } from '../../src/shared/types/settings'
 
 export interface AppServices {
   db: DatabaseService | null
@@ -315,13 +326,65 @@ export function registerIpcHandlers(services: AppServices): void {
   )
 
   ipcMain.handle('app:getSettings', () => {
-    return services.db?.getAppSettings() ?? { navAlign: 'start', navDisplay: 'icon', rssFetchLimit: 20 }
+    return normalizeAppSettings(services.db?.getAppSettings() ?? {})
   })
 
   ipcMain.handle('app:updateSettings', (_e, settings: unknown) => {
-    services.db?.updateAppSettings(
-      settings as { navAlign: string; navDisplay: string }
-    )
+    const current = normalizeAppSettings(services.db?.getAppSettings() ?? {})
+    const next = mergeAppSettings(settings as Record<string, unknown>, current)
+    services.db?.updateAppSettings(next)
+    applyRssAutoRefreshSchedule(services)
+    return next
+  })
+
+  ipcMain.handle('app:patchSettings', (_e, patch: unknown) => {
+    const current = normalizeAppSettings(services.db?.getAppSettings() ?? {})
+    const next = mergeAppSettings(patch as Record<string, unknown>, current)
+    services.db?.updateAppSettings(next)
+    applyRssAutoRefreshSchedule(services)
+    return next
+  })
+
+  ipcMain.handle('app:createBackup', async () => {
+    const wanwuPath = services.db?.getBasePath() ?? resolveWanwuPath()
+    return createDataBackup(wanwuPath)
+  })
+
+  ipcMain.handle('app:restoreBackup', async () => {
+    const wanwuPath = services.db?.getBasePath() ?? resolveWanwuPath()
+    const result = await restoreDataBackup(wanwuPath, () => {
+      services.db?.close()
+      services.db = null
+      services.library = null
+      services.rss = null
+      services.media = null
+    })
+    if (result.ok) {
+      app.relaunch()
+      app.exit(0)
+    }
+    return result
+  })
+
+  ipcMain.handle('app:clearCache', () => {
+    const wanwuPath = services.db?.getBasePath() ?? resolveWanwuPath()
+    return clearCacheDirectory(wanwuPath)
+  })
+
+  ipcMain.handle('app:resetSettings', () => {
+    if (services.db) resetAppSettingsInDb(services.db)
+    applyRssAutoRefreshSchedule(services)
+    return normalizeAppSettings(DEFAULT_APP_SETTINGS)
+  })
+
+  ipcMain.handle('app:exportDiagnostics', async () => {
+    const wanwuPath = services.db?.getBasePath() ?? resolveWanwuPath()
+    const content = await buildDiagnosticsReport({
+      wanwuPath,
+      db: services.db,
+      rss: services.rss
+    })
+    return exportDiagnosticsToFile(content)
   })
 
   ipcMain.handle('window:getPlatform', () => process.platform)

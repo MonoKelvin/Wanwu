@@ -3,10 +3,13 @@ import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import ModuleSidebar from '@app/components/ModuleSidebar.vue'
 import SubItemPanel from '@app/components/SubItemPanel.vue'
+import { isModuleId } from '@app/config/modules'
 import { useAppStore, type ModuleId } from '@shared/stores/app'
+import { useSettingsStore } from '@shared/stores/settings'
 
 const route = useRoute()
 const appStore = useAppStore()
+const settingsStore = useSettingsStore()
 
 const isItemDetail = computed(() => route.name === 'item-detail')
 const showSubPanel = computed(
@@ -14,9 +17,12 @@ const showSubPanel = computed(
 )
 
 watch(
-  () => route.meta.module as ModuleId | undefined,
+  () => route.meta.module as string | undefined,
   (m) => {
-    if (m) appStore.setModule(m)
+    if (m && isModuleId(m)) {
+      appStore.setModule(m)
+      if (settingsStore.loaded) void settingsStore.patchLastActiveModule(m)
+    }
   },
   { immediate: true }
 )

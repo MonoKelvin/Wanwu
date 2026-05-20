@@ -53,7 +53,13 @@ const api: WanwuApi = {
     pickDataDirectoryParent: () => ipcRenderer.invoke('app:pickDataDirectoryParent'),
     migrateDataDirectory: (params) => ipcRenderer.invoke('app:migrateDataDirectory', params),
     getSettings: () => ipcRenderer.invoke('app:getSettings'),
-    updateSettings: (settings: unknown) => ipcRenderer.invoke('app:updateSettings', settings)
+    updateSettings: (settings: unknown) => ipcRenderer.invoke('app:updateSettings', settings),
+    patchSettings: (patch: unknown) => ipcRenderer.invoke('app:patchSettings', patch),
+    createBackup: () => ipcRenderer.invoke('app:createBackup'),
+    restoreBackup: () => ipcRenderer.invoke('app:restoreBackup'),
+    clearCache: () => ipcRenderer.invoke('app:clearCache'),
+    resetSettings: () => ipcRenderer.invoke('app:resetSettings'),
+    exportDiagnostics: () => ipcRenderer.invoke('app:exportDiagnostics')
   },
   window: {
     getPlatform: () => ipcRenderer.invoke('window:getPlatform'),

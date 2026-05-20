@@ -1,0 +1,116 @@
+/* WwSelect — 触发器与下拉面板（面板挂到 body，须全局类名） */
+
+.ww-select.p-select {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  min-width: var(--ww-select-min-w, 12.5rem);
+  max-width: 100%;
+  min-height: var(--ww-select-height, 2.3125rem);
+  border: 1px solid var(--ww-border-faint) !important;
+  border-radius: var(--ww-select-radius, 0.4375rem) !important;
+  background: var(--ww-inset) !important;
+  box-shadow: none !important;
+  transition:
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-select--narrow.p-select {
+  min-width: var(--ww-select-min-w, 10rem);
+}
+
+.ww-select--block.p-select {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none;
+}
+
+.ww-select.p-select:not(.p-disabled):hover {
+  border-color: rgb(18 18 22 / 0.1) !important;
+  background: var(--ww-list-hover-bg) !important;
+}
+
+.ww-select.p-select.p-focus,
+.ww-select.p-select.p-select-open {
+  border-color: rgb(18 18 22 / 0.12) !important;
+  background: var(--ww-content) !important;
+}
+
+.ww-select .p-select-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: var(--ww-select-label-py, 0.5rem) var(--ww-select-label-pr, 0.25rem)
+    var(--ww-select-label-py, 0.5rem) var(--ww-select-label-pl, 0.625rem) !important;
+  font-size: var(--ww-select-font-size, 0.8125rem) !important;
+  line-height: 1.35 !important;
+  text-align: left !important;
+  color: var(--ww-ink) !important;
+}
+
+.ww-select .p-select-dropdown {
+  width: var(--ww-select-chevron-w, 1.25rem) !important;
+  flex-shrink: 0;
+  padding-inline: 0.125rem 0.3125rem !important;
+  color: var(--ww-ink-faint) !important;
+}
+
+.ww-select .p-select-dropdown-icon {
+  width: 0.75rem !important;
+  height: 0.75rem !important;
+}
+
+.ww-select-overlay.p-select-overlay {
+  width: max-content !important;
+  min-width: var(--ww-select-min-w, 12.5rem) !important;
+  margin-top: 0.25rem !important;
+  padding: 0.25rem !important;
+  border: none !important;
+  border-radius: 0.625rem !important;
+  background: var(--ww-select-overlay-bg, rgb(255 255 255 / 0.55)) !important;
+  backdrop-filter: blur(var(--ww-select-overlay-blur, var(--ww-menu-blur))) saturate(1.45);
+  -webkit-backdrop-filter: blur(var(--ww-select-overlay-blur, var(--ww-menu-blur))) saturate(1.45);
+  box-shadow: var(--ww-menu-shadow) !important;
+}
+
+.ww-select-overlay .p-select-list {
+  padding: 0 !important;
+  gap: 0.125rem;
+  background: transparent !important;
+}
+
+.ww-select-overlay .p-select-option {
+  white-space: nowrap;
+  justify-content: flex-start !important;
+  padding: 0.375rem 0.5rem !important;
+  font-size: var(--ww-select-font-size, 0.8125rem) !important;
+  text-align: left !important;
+  color: var(--ww-ink-muted) !important;
+  background: transparent !important;
+  border-radius: 0.375rem !important;
+  transition: background var(--ww-duration-fast) var(--ww-ease-out),
+    color var(--ww-duration-fast) var(--ww-ease-out) !important;
+}
+
+/* PrimeVue 鼠标移入选项时用 p-focus，不仅 :hover */
+.ww-select-overlay .p-select-option:not(.p-disabled):hover,
+.ww-select-overlay .p-select-option.p-focus:not(.p-disabled),
+.ww-select-overlay .p-select-option[data-p-focused='true']:not(.p-disabled) {
+  background: var(--ww-list-hover-bg) !important;
+  color: var(--ww-ink) !important;
+}
+
+.ww-select-overlay .p-select-option.p-select-option-selected:not(.p-disabled) {
+  background: var(--ww-list-selected-bg) !important;
+  color: var(--ww-ink) !important;
+  font-weight: 500;
+}
+
+.ww-select-overlay .p-select-option.p-select-option-selected.p-focus:not(.p-disabled),
+.ww-select-overlay .p-select-option.p-select-option-selected:not(.p-disabled):hover,
+.ww-select-overlay .p-select-option.p-select-option-selected[data-p-focused='true']:not(.p-disabled) {
+  background: var(--ww-list-selected-bg) !important;
+  color: var(--ww-ink) !important;
+}

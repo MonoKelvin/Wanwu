@@ -6,11 +6,19 @@ import { resolveWanwuMediaAbsolute } from './services/wanwuMedia'
 import { resolveAppLogoPath } from './services/appAssets'
 import { registerIpcHandlers } from './ipc/handlers'
 import { setMainWindow, broadcastMaximizedState } from './windowState'
+import {
+  attachWindowStatePersistence,
+  applyStartupWindowState,
+  DEFAULT_WINDOW_SIZE,
+  getInitialWindowBounds,
+  readWindowStateModeFromSettings
+} from './services/windowPersistence'
 import { DatabaseService } from './services/database'
 import { LibraryService } from './services/libraryService'
 import { RssService } from './services/rssService'
 import { MediaService } from './services/mediaService'
 import { resolveWanwuPath } from './services/dataPaths'
+import { applyRssAutoRefreshSchedule } from './services/rssScheduler'
 
 const isDev = !app.isPackaged
 
@@ -84,12 +92,17 @@ async function loadDevRenderer(win: BrowserWindow, urls: string[]): Promise<void
 
 function createWindow(): void {
   const appIcon = resolveAppLogoPath(256)
+  const basePath = services.db?.getBasePath() ?? resolveWanwuPath()
+  const windowStateMode = readWindowStateModeFromSettings(() => services.db?.getAppSettings())
+  const initialBounds = getInitialWindowBounds(windowStateMode, basePath)
 
   mainWindow = new BrowserWindow({
-    width: 1080,
-    height: 720,
-    minWidth: 800,
-    minHeight: 600,
+    width: initialBounds.width,
+    height: initialBounds.height,
+    x: initialBounds.x,
+    y: initialBounds.y,
+    minWidth: DEFAULT_WINDOW_SIZE.minWidth,
+    minHeight: DEFAULT_WINDOW_SIZE.minHeight,
     show: false,
     frame: false,
     title: '万物',
@@ -112,7 +125,14 @@ function createWindow(): void {
 
   setMainWindow(mainWindow)
 
+  attachWindowStatePersistence(mainWindow, {
+    getBasePath: () => services.db?.getBasePath() ?? resolveWanwuPath(),
+    getMode: () =>
+      readWindowStateModeFromSettings(() => services.db?.getAppSettings())
+  })
+
   mainWindow.on('ready-to-show', () => {
+    if (mainWindow) applyStartupWindowState(mainWindow, windowStateMode, basePath)
     mainWindow?.show()
     broadcastMaximizedState()
   })
@@ -162,6 +182,7 @@ async function initServices(): Promise<void> {
   services.rss = new RssService(services.db)
   services.media = new MediaService(userData)
   registerIpcHandlers(services)
+  applyRssAutoRefreshSchedule(services)
 }
 
 app.whenReady().then(async () => {

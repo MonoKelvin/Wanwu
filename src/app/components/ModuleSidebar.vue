@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'
-import { MODULE_NAV_ITEMS } from '@app/config/module-nav'
+import { MODULE_NAV_ITEMS } from '@app/config/modules'
 import WwIcon from '@shared/components/WwIcon.vue'
 import { APP_LOGO_NAV } from '@shared/assets/app-logo'
 import type { ModuleId } from '@shared/stores/app'
@@ -36,7 +36,7 @@ function isActive(id: ModuleId) {
     aria-label="模块"
   >
     <div class="ww-module-nav__inner ww-chrome-safe">
-      <div v-if="settings.navAlign === 'start'" class="ww-module-nav__brand" aria-hidden="true">
+      <div class="ww-module-nav__brand" aria-hidden="true">
         <img
           class="ww-module-nav__brand-mark"
           :src="APP_LOGO_NAV"

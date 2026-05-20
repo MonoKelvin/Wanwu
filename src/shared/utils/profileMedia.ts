@@ -44,6 +44,14 @@ export function normalizeBackgroundConfig(
   }
 }
 
+/** IPC 需可 structured clone 的纯对象，避免 Vue 响应式代理导致克隆失败 */
+export function profileConfigForIpc(
+  config: PersonalBackgroundConfig | null | undefined
+): Record<string, unknown> | null {
+  if (!config) return null
+  return JSON.parse(JSON.stringify(normalizeBackgroundConfig(config))) as Record<string, unknown>
+}
+
 /** 渲染后背景图在视口中的像素矩形（与 CSS background-size/position 一致） */
 export function backgroundImageRect(
   viewportWidth: number,

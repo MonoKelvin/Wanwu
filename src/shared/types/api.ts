@@ -86,7 +86,19 @@ export interface WanwuApi {
       | { ok: false; error: string; code?: string }
     >
     getSettings: () => Promise<AppSettings>
-    updateSettings: (settings: AppSettings) => Promise<void>
+    updateSettings: (settings: AppSettings) => Promise<AppSettings>
+    patchSettings: (patch: Partial<AppSettings>) => Promise<AppSettings>
+    createBackup: () => Promise<
+      | { ok: true; path: string; bytes: number }
+      | { ok: false; canceled?: boolean; error?: string }
+    >
+    restoreBackup: () => Promise<{ ok: true } | { ok: false; canceled?: boolean; error?: string }>
+    clearCache: () => Promise<{ ok: true; bytesFreed: number }>
+    resetSettings: () => Promise<AppSettings>
+    exportDiagnostics: () => Promise<
+      | { ok: true; path: string }
+      | { ok: false; canceled?: boolean; error?: string }
+    >
   }
   window: {
     getPlatform: () => Promise<'win32' | 'darwin' | 'linux'>
@@ -102,7 +114,7 @@ export interface WanwuApi {
       url: string
       defaultName?: string
     }) => Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }>
-    showItemInFolder: (url: string) => Promise<{ ok: boolean }>
+    showItemInFolder: (pathOrUrl: string) => Promise<{ ok: boolean; error?: string }>
     copyText: (text: string) => Promise<void>
     pickImageFile: () => Promise<{ ok: boolean; path?: string; canceled?: boolean }>
     savePngDataUrl: (params: {

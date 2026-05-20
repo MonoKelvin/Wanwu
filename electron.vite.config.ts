@@ -2,9 +2,16 @@ import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
 
+const sharedAlias = {
+  '@shared': resolve(__dirname, 'src/shared')
+}
+
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
+    resolve: {
+      alias: sharedAlias
+    },
     build: {
       rollupOptions: {
         input: {
@@ -42,7 +49,7 @@ export default defineConfig({
         '@app': resolve(__dirname, 'src/app'),
         '@modules': resolve(__dirname, 'src/modules'),
         '@features': resolve(__dirname, 'src/features'),
-        '@shared': resolve(__dirname, 'src/shared'),
+        ...sharedAlias,
         '@assets': resolve(__dirname, 'assets')
       }
     },

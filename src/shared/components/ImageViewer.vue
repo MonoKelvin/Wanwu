@@ -407,10 +407,10 @@ function onKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') {
     e.preventDefault()
     close()
-  } else if (e.key === 'ArrowLeft') {
+  } else if (e.key === 'ArrowLeft' && hasMany.value) {
     e.preventDefault()
     go(-1)
-  } else if (e.key === 'ArrowRight') {
+  } else if (e.key === 'ArrowRight' && hasMany.value) {
     e.preventDefault()
     go(1)
   } else if (e.key === '+' || e.key === '=') {
