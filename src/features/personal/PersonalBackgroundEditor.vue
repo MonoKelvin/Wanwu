@@ -13,13 +13,16 @@ import {
   computeBackgroundFitScale,
   computeCropDragRegion,
   computeDefaultCrop,
+  imageCropToViewportStyle,
   loadImageDimensions,
+  migrateConfigCropToImageSpace,
   normalizeBackgroundConfig,
   opacityFromUi,
   opacityToUi,
   panOffsetDeltaFromPixels,
   resizeCropByCorner,
-  resolveBackgroundOffset
+  resolveBackgroundOffset,
+  viewportNormDeltaToImageCrop
 } from '@shared/utils/profileMedia'
 
 const props = defineProps<{
@@ -114,13 +117,18 @@ const stageHint = computed(() =>
 
 const cropFrameStyle = computed(() => {
   const crop = draft.value.crop
-  if (!crop) return {}
-  return {
-    left: `${crop.x * 100}%`,
-    top: `${crop.y * 100}%`,
-    width: `${crop.width * 100}%`,
-    height: `${crop.height * 100}%`
-  }
+  const vp = getViewportRect()
+  if (!crop || !vp?.width || !imageSize.value.width) return {}
+  return imageCropToViewportStyle(
+    crop,
+    vp.width,
+    vp.height,
+    draft.value.scale,
+    draft.value.offsetX,
+    draft.value.offsetY,
+    imageSize.value.width,
+    imageSize.value.height
+  )
 })
 
 function syncTargetsFromDraft() {
@@ -211,6 +219,19 @@ function getViewportRect() {
   const el = props.viewportEl ?? surfaceRef.value
   if (!el) return null
   return el.getBoundingClientRect()
+}
+
+function syncCropImageSpace() {
+  const vp = getViewportRect()
+  if (!vp?.width || !imageSize.value.width) return
+  draft.value = migrateConfigCropToImageSpace(
+    draft.value,
+    vp.width,
+    vp.height,
+    imageSize.value.width,
+    imageSize.value.height
+  )
+  syncTargetsFromDraft()
 }
 
 function getCropRegion(): PersonalBackgroundCrop {
@@ -402,8 +423,19 @@ function onPointerMove(e: PointerEvent) {
   }
 
   const pos = pointerPos(e)
-  const dx = pos.x - dragStart.value.normX
-  const dy = pos.y - dragStart.value.normY
+  const vp = getViewportRect()
+  if (!vp?.width || !imageSize.value.width) return
+  const { dx, dy } = viewportNormDeltaToImageCrop(
+    pos.x - dragStart.value.normX,
+    pos.y - dragStart.value.normY,
+    vp.width,
+    vp.height,
+    draft.value.scale,
+    draft.value.offsetX,
+    draft.value.offsetY,
+    imageSize.value.width,
+    imageSize.value.height
+  )
   const bounds = getCropRegion()
   const start = dragStart.value.crop ?? ensureCrop()
 
@@ -531,6 +563,7 @@ onMounted(async () => {
   window.addEventListener('keydown', onKeydown)
   syncTargetsFromDraft()
   await loadImageSize()
+  syncCropImageSpace()
   if (props.autoFit) await applyFitScale()
 
   if (props.viewportEl) {
@@ -558,6 +591,7 @@ watch(
   () => props.imageUrl,
   async () => {
     await loadImageSize()
+    syncCropImageSpace()
     if (props.autoFit) await applyFitScale()
     else if (draft.value.crop) clampDraftCrop()
   }
@@ -590,7 +624,11 @@ function resetDraft() {
 function confirm() {
   stopSmoothAnimation()
   applyTargetsToDraft()
-  emit('confirm', normalizeBackgroundConfig(draft.value))
+  const next = normalizeBackgroundConfig(draft.value)
+  emit('confirm', {
+    ...next,
+    cropSpace: next.crop ? 'image' : next.cropSpace
+  })
 }
 
 function clamp(n: number, min: number, max: number) {

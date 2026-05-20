@@ -5,15 +5,19 @@ export interface PersonalBackgroundConfig {
   offsetY: number
   opacity: number
   crop: PersonalBackgroundCrop | null
+  cropSpace?: PersonalBackgroundCropSpace
 }
 
 export interface PersonalBackgroundCrop {
-  /** 0–1 可见区域左上角 */
+  /** 0–1，相对当前渲染后背景图矩形（随 scale/offset 变化） */
   x: number
   y: number
   width: number
   height: number
 }
+
+/** crop 坐标系：image=相对图片；viewport=旧版相对视口（仅兼容读取） */
+export type PersonalBackgroundCropSpace = 'image' | 'viewport'
 
 export interface UserProfile {
   nickname: string

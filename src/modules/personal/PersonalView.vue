@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
@@ -15,6 +15,7 @@ import type { PersonalBackgroundConfig } from '@shared/types/profile'
 import { DEFAULT_BACKGROUND_CONFIG } from '@shared/types/profile'
 import {
   backgroundLayerStyle,
+  loadImageDimensions,
   normalizeBackgroundConfig,
   toWanwuMediaUrl
 } from '@shared/utils/profileMedia'
@@ -40,6 +41,8 @@ const bgEditorOpen = ref(false)
 const bgEditorAutoFit = ref(false)
 const bgEditDraft = ref<PersonalBackgroundConfig>({ ...DEFAULT_BACKGROUND_CONFIG })
 const personalRoot = ref<HTMLElement | null>(null)
+const backgroundImageSize = ref({ width: 0, height: 0 })
+const viewportSize = ref({ width: 0, height: 0 })
 
 const profileInitial = computed(() => {
   const n = nickname.value.trim()
@@ -65,7 +68,15 @@ const activeBackgroundConfig = computed(() =>
 
 const backgroundStyle = computed(() => {
   if (!backgroundUrl.value) return undefined
-  const layer = backgroundLayerStyle(activeBackgroundConfig.value)
+  const vw = viewportSize.value.width || personalRoot.value?.clientWidth || 0
+  const vh = viewportSize.value.height || personalRoot.value?.clientHeight || 0
+  const layer = backgroundLayerStyle(
+    activeBackgroundConfig.value,
+    vw || undefined,
+    vh || undefined,
+    backgroundImageSize.value.width || undefined,
+    backgroundImageSize.value.height || undefined
+  )
   if (bgEditorOpen.value) {
     layer['--ww-personal-bg-clip'] = 'none'
   }
@@ -73,6 +84,28 @@ const backgroundStyle = computed(() => {
     ...layer,
     backgroundImage: `url(${backgroundUrl.value})`
   }
+})
+
+async function refreshBackgroundImageSize() {
+  if (!backgroundUrl.value) {
+    backgroundImageSize.value = { width: 0, height: 0 }
+    return
+  }
+  try {
+    backgroundImageSize.value = await loadImageDimensions(backgroundUrl.value)
+  } catch {
+    backgroundImageSize.value = { width: 0, height: 0 }
+  }
+}
+
+function refreshViewportSize() {
+  const el = personalRoot.value
+  if (!el) return
+  viewportSize.value = { width: el.clientWidth, height: el.clientHeight }
+}
+
+watch(backgroundUrl, () => {
+  void refreshBackgroundImageSize()
 })
 
 const hasBackground = computed(() => Boolean(backgroundUrl.value))
@@ -100,12 +133,28 @@ async function load() {
       )
     }
     groups.value = list
+    await refreshBackgroundImageSize()
   } finally {
     loading.value = false
   }
 }
 
-onMounted(load)
+let viewportResizeObserver: ResizeObserver | null = null
+
+onMounted(async () => {
+  await load()
+  await refreshBackgroundImageSize()
+  await nextTick()
+  refreshViewportSize()
+  if (personalRoot.value) {
+    viewportResizeObserver = new ResizeObserver(() => refreshViewportSize())
+    viewportResizeObserver.observe(personalRoot.value)
+  }
+})
+
+onUnmounted(() => {
+  viewportResizeObserver?.disconnect()
+})
 
 async function save() {
   saving.value = true
