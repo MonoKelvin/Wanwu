@@ -2,7 +2,6 @@
 import { storeToRefs } from 'pinia'
 import SelectButton from 'primevue/selectbutton'
 import { useSettingsStore } from '@shared/stores/settings'
-import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import SettingsRow from '@features/settings/SettingsRow.vue'
 import WwSelect from '@shared/components/WwSelect'
 import {
@@ -14,7 +13,6 @@ import {
 
 const settingsStore = useSettingsStore()
 const { settings } = storeToRefs(settingsStore)
-const toast = useWanwuToast()
 
 const rssFetchOptions = RSS_FETCH_LIMIT_OPTIONS.map((n) => ({
   label: `${n} 条`,
@@ -22,16 +20,12 @@ const rssFetchOptions = RSS_FETCH_LIMIT_OPTIONS.map((n) => ({
 }))
 
 async function onRssFetchLimitChange(v: RssFetchLimit) {
-  if (v && v !== settings.value.rssFetchLimit) {
-    await settingsStore.setRssFetchLimit(v)
-    toast.success('RSS 拉取条数已更新')
-  }
+  if (v && v !== settings.value.rssFetchLimit) await settingsStore.setRssFetchLimit(v)
 }
 
 async function onRssAutoRefreshChange(v: RssAutoRefreshMinutes | null) {
   if (v === null || v === undefined || v === settings.value.rssAutoRefreshMinutes) return
   await settingsStore.setRssAutoRefreshMinutes(v)
-  toast.success(v === 0 ? '已关闭后台刷新' : '后台刷新间隔已更新')
 }
 </script>
 

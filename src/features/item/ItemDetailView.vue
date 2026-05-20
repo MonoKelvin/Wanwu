@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Textarea from 'primevue/textarea'
 import Skeleton from 'primevue/skeleton'
@@ -53,6 +53,39 @@ const uploading = ref(false)
 const descEditing = ref(false)
 const descDraft = ref('')
 const descSaving = ref(false)
+
+const thumbsStripRef = ref<HTMLElement | null>(null)
+const thumbsCanScrollLeft = ref(false)
+const thumbsCanScrollRight = ref(false)
+let thumbsResizeObserver: ResizeObserver | null = null
+
+function updateThumbsScrollState() {
+  const el = thumbsStripRef.value
+  if (!el) {
+    thumbsCanScrollLeft.value = false
+    thumbsCanScrollRight.value = false
+    return
+  }
+  const maxScroll = el.scrollWidth - el.clientWidth
+  thumbsCanScrollLeft.value = el.scrollLeft > 1
+  thumbsCanScrollRight.value = maxScroll > 1 && el.scrollLeft < maxScroll - 1
+}
+
+function scrollThumbs(direction: -1 | 1) {
+  const el = thumbsStripRef.value
+  if (!el) return
+  const amount = direction * Math.max(el.clientWidth * 0.72, 140)
+  el.scrollBy({ left: amount, behavior: 'smooth' })
+}
+
+function bindThumbsStrip() {
+  thumbsResizeObserver?.disconnect()
+  const el = thumbsStripRef.value
+  if (!el) return
+  updateThumbsScrollState()
+  thumbsResizeObserver = new ResizeObserver(() => updateThumbsScrollState())
+  thumbsResizeObserver.observe(el)
+}
 
 const isLibrary = computed(() => (route.params.source as string) === 'library')
 
@@ -148,8 +181,28 @@ async function loadItem() {
   loading.value = false
 }
 
-onMounted(loadItem)
+onMounted(() => {
+  loadItem()
+  nextTick(bindThumbsStrip)
+})
+
+onUnmounted(() => {
+  thumbsResizeObserver?.disconnect()
+})
+
 watch(() => `${route.params.source}:${route.params.id}`, loadItem)
+
+watch(loading, (isLoading) => {
+  if (!isLoading) nextTick(bindThumbsStrip)
+})
+
+watch(
+  () => gallerySlides.value.length,
+  () => nextTick(() => {
+    bindThumbsStrip()
+    updateThumbsScrollState()
+  })
+)
 
 watch(lightboxIndex, (i) => {
   const slide = gallerySlides.value[i]
@@ -405,32 +458,56 @@ async function revealInFolder() {
 
             <div
               v-if="gallerySlides.length > 1 || isLibrary"
-              class="ww-product-detail__thumbs"
-              role="tablist"
-              aria-label="图集"
+              class="ww-product-detail__thumbs-wrap"
             >
               <button
-                v-for="(slide, i) in gallerySlides"
-                :key="slide.url"
+                v-show="thumbsCanScrollLeft"
                 type="button"
-                role="tab"
-                class="ww-product-detail__thumb"
-                :class="{ 'ww-product-detail__thumb--active': activeImage === slide.url }"
-                :aria-selected="activeImage === slide.url"
-                :aria-label="`图 ${i + 1}`"
-                @click="selectImage(slide.url)"
+                class="ww-product-detail__thumbs-nav ww-product-detail__thumbs-nav--prev"
+                aria-label="上一组图片"
+                @click="scrollThumbs(-1)"
               >
-                <img :src="slide.url" alt="" />
+                <WwIcon name="chevron-left" size="sm" />
               </button>
-              <button
-                v-if="isLibrary"
-                type="button"
-                class="ww-product-detail__thumb ww-product-detail__thumb--add"
-                :disabled="uploading"
-                aria-label="上传图片"
-                @click="uploadImage"
+              <div
+                ref="thumbsStripRef"
+                class="ww-product-detail__thumbs"
+                role="tablist"
+                aria-label="图集"
+                @scroll.passive="updateThumbsScrollState"
               >
-                <WwIcon name="plus" size="sm" />
+                <button
+                  v-for="(slide, i) in gallerySlides"
+                  :key="slide.url"
+                  type="button"
+                  role="tab"
+                  class="ww-product-detail__thumb"
+                  :class="{ 'ww-product-detail__thumb--active': activeImage === slide.url }"
+                  :aria-selected="activeImage === slide.url"
+                  :aria-label="`图 ${i + 1}`"
+                  @click="selectImage(slide.url)"
+                >
+                  <img :src="slide.url" alt="" />
+                </button>
+                <button
+                  v-if="isLibrary"
+                  type="button"
+                  class="ww-product-detail__thumb ww-product-detail__thumb--add"
+                  :disabled="uploading"
+                  aria-label="上传图片"
+                  @click="uploadImage"
+                >
+                  <WwIcon name="plus" size="sm" />
+                </button>
+              </div>
+              <button
+                v-show="thumbsCanScrollRight"
+                type="button"
+                class="ww-product-detail__thumbs-nav ww-product-detail__thumbs-nav--next"
+                aria-label="下一组图片"
+                @click="scrollThumbs(1)"
+              >
+                <WwIcon name="chevron-right" size="sm" />
               </button>
             </div>
           </section>

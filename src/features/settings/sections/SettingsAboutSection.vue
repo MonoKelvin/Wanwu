@@ -4,6 +4,11 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import WwRollingText from '@shared/components/WwRollingText.vue'
 import { APP_LOGO } from '@shared/assets/app-logo'
 import { formatAppVersionLabel } from '@shared/constants/appVersion'
+import SettingsAboutHeroFx from '@features/settings/SettingsAboutHeroFx.vue'
+
+const props = defineProps<{
+  visible?: boolean
+}>()
 
 const appVersion = formatAppVersionLabel()
 const heroHover = ref(false)
@@ -26,14 +31,7 @@ const developers = [
       @mouseenter="heroHover = true"
       @mouseleave="heroHover = false"
     >
-      <div class="ww-settings-about-hero__fx" aria-hidden="true">
-        <span class="ww-settings-about-hero__orb ww-settings-about-hero__orb--warm" />
-        <span class="ww-settings-about-hero__orb ww-settings-about-hero__orb--cool" />
-        <span class="ww-settings-about-hero__orb ww-settings-about-hero__orb--accent" />
-        <span class="ww-settings-about-hero__spark ww-settings-about-hero__spark--1" />
-        <span class="ww-settings-about-hero__spark ww-settings-about-hero__spark--2" />
-        <span class="ww-settings-about-hero__spark ww-settings-about-hero__spark--3" />
-      </div>
+      <SettingsAboutHeroFx :active="heroHover" :visible="props.visible ?? false" />
       <div class="ww-settings-about-hero__content">
         <img :src="APP_LOGO[128]" width="56" height="56" alt="" class="ww-settings-about-hero__logo" />
         <div class="ww-settings-about-hero__main">

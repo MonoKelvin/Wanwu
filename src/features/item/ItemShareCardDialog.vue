@@ -332,7 +332,7 @@ async function save() {
       <div class="ww-share-card-dialog__toolbar-row">
         <SelectButton
           :model-value="template"
-          class="ww-share-card-dialog__modes"
+          class="ww-settings-segment"
           :options="templateOptions"
           option-label="label"
           option-value="value"

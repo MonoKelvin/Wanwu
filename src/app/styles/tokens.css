@@ -9,8 +9,8 @@
   --ww-page-padding: 1.125rem;
   /** 右下角 Toast 与视口右、下的留白（保持一致） */
   --ww-toast-inset: 1.5rem;
-  --ww-toast-min-width: 18rem;
-  --ww-toast-max-width: 25rem;
+  --ww-toast-min-width: 14rem;
+  --ww-toast-max-width: 20rem;
 
   /* 层次背景：中性灰阶，无彩色倾向 */
   --ww-canvas: #eaeaec;
@@ -33,6 +33,12 @@
   --ww-list-selected-ring: rgb(18 18 22 / 0.14);
   --ww-list-hover-ring: rgb(18 18 22 / 0.08);
   --ww-list-selected-accent: #3a3a42;
+  /* 标签：相对亮的中灰底（非 inset 深底） */
+  --ww-tag-bg: #e4e4e8;
+  --ww-tag-fg: var(--ww-ink-muted);
+  --ww-tag-border: rgb(18 18 22 / 0.08);
+  /* 添加图片缩略图虚线框 */
+  --ww-thumb-add-dash: rgb(18 18 22 / 0.24);
   /* 主模块侧栏（轨道上的浮起选中块） */
   --ww-rail-nav-hover: rgb(255 255 255 / 0.42);
   --ww-rail-nav-active-bg: var(--ww-content);
@@ -59,10 +65,17 @@
   --ww-duration-slow: 0.48s;
 
   /* 浮层底部操作按钮（取消 / 确定 / 应用等） */
-  --ww-action-btn-h: 1.625rem;
+  --ww-action-btn-h: 1.5625rem;
   --ww-action-btn-gap: 0.375rem;
-  --ww-action-btn-fs: 0.6875rem;
+  --ww-action-btn-fs: 0.75rem;
   --ww-action-btn-px: 0.625rem;
+  /* 对话框右上角关闭 */
+  --ww-dialog-close-size: 1.5rem;
+  --ww-dialog-close-icon: 0.6875rem;
+  /* 弹出菜单：面板与项背景（半透明，叠在毛玻璃上） */
+  --ww-menu-panel-bg: rgb(255 255 255 / 0.64);
+  --ww-menu-item-hover-bg: rgb(18 18 22 / 0.055);
+  --ww-menu-item-active-bg: rgb(18 18 22 / 0.085);
 
   /* 阴影：中性黑，略大略偏下 */
   --ww-shadow-hover: 0 40px 72px -14px rgb(18 18 22 / 0.12), 0 22px 48px -12px rgb(18 18 22 / 0.08);
@@ -104,4 +117,18 @@
 
   /* RSS 侧栏订阅源站点 favicon */
   --ww-rss-feed-icon-size: 0.875rem;
+
+  /* 有背景图时的半透明衬层（深浅色各自覆盖） */
+  --ww-header-veil: rgb(255 255 255 / 0.92);
+  --ww-scroll-veil-rgb: 255 255 255;
+  --ww-field-bg: rgb(18 18 22 / 0.04);
+  --ww-field-bg-focus: rgb(18 18 22 / 0.06);
+  --ww-overlay-scrim: rgb(18 18 22 / 0.38);
+  --ww-settings-nav-bg: rgb(238 238 240 / 0.72);
+  --ww-surface: #ffffff;
+  --ww-surface-float: rgb(255 255 255 / 0.9);
+  --ww-panel-edge-highlight: 1px 0 0 rgb(255 255 255 / 0.4);
+  --ww-on-media-fg: rgb(255 255 255 / 0.95);
+  --ww-on-media-fg-muted: rgb(255 255 255 / 0.72);
+  --ww-danger-text: #b91c1c;
 }

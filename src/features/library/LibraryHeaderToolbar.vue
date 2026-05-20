@@ -126,7 +126,7 @@ function clearSearch() {
         data-key="value"
         :allow-empty="false"
         aria-label="展示方式"
-        class="ww-page-toolbar__segmented"
+        class="ww-settings-segment ww-settings-segment--icon"
       >
         <template #option="{ option }">
           <WwIcon

@@ -1,4 +1,8 @@
-import { DEFAULT_MODULE_ID, isModuleId } from '../../src/app/config/modules'
+import {
+  DEFAULT_MODULE_ID,
+  isModuleId,
+  type ModuleId
+} from '../../src/shared/constants/modules'
 import {
   DEFAULT_APP_SETTINGS,
   type AppSettings,
@@ -7,6 +11,7 @@ import {
   type RssAutoRefreshMinutes,
   type RssFetchLimit,
   type StartupModule,
+  type ColorScheme,
   type WindowStateMode
 } from '../../src/shared/types/settings'
 
@@ -20,27 +25,33 @@ function normalizeRssAutoRefreshMinutes(v: unknown): RssAutoRefreshMinutes {
 
 function normalizeStartupModule(v: unknown): StartupModule {
   if (v === 'last') return 'last'
-  return isModuleId(String(v)) ? (v as StartupModule) : 'last'
+  if (typeof v === 'string' && isModuleId(v)) return v
+  return 'last'
+}
+
+function normalizeLastActiveModule(v: unknown): ModuleId {
+  return typeof v === 'string' && isModuleId(v) ? v : DEFAULT_MODULE_ID
 }
 
 function normalizeWindowStateMode(v: unknown): WindowStateMode {
   return v === 'maximize' || v === 'default' ? v : 'remember'
 }
 
+function normalizeColorScheme(v: unknown): ColorScheme {
+  return v === 'dark' ? 'dark' : 'light'
+}
+
 export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppSettings {
   const raw = (data && typeof data === 'object' ? data : {}) as Partial<AppSettings>
-  const lastActiveModule = isModuleId(String(raw.lastActiveModule))
-    ? raw.lastActiveModule
-    : DEFAULT_MODULE_ID
-
   return {
     navAlign: raw.navAlign === 'center' ? 'center' : 'start',
     navDisplay: raw.navDisplay === 'both' ? 'both' : 'icon',
     rssFetchLimit: normalizeRssFetchLimit(raw.rssFetchLimit),
     startupModule: normalizeStartupModule(raw.startupModule),
-    lastActiveModule,
+    lastActiveModule: normalizeLastActiveModule(raw.lastActiveModule),
     rssAutoRefreshMinutes: normalizeRssAutoRefreshMinutes(raw.rssAutoRefreshMinutes),
-    windowStateMode: normalizeWindowStateMode(raw.windowStateMode)
+    windowStateMode: normalizeWindowStateMode(raw.windowStateMode),
+    colorScheme: normalizeColorScheme(raw.colorScheme)
   }
 }
 

@@ -65,8 +65,7 @@ export function useSettingsMaintenance() {
     if (!ok || busy.value) return
     busy.value = true
     try {
-      const result = await window.wanwu.app.clearCache()
-      toast.success(`已清除缓存（约 ${formatBytes(result.bytesFreed)}）`)
+      await window.wanwu.app.clearCache()
     } finally {
       busy.value = false
     }
@@ -98,11 +97,7 @@ export function useSettingsMaintenance() {
       if (!result.ok) {
         if ('canceled' in result && result.canceled) return
         toast.error(result.error ?? '导出失败')
-        return
       }
-      toast.success('诊断日志已导出', '导出完成', {
-        action: toast.revealInFolderAction(result.path)
-      })
     } finally {
       busy.value = false
     }

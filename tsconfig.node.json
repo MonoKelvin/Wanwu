@@ -10,7 +10,8 @@
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@electron/*": ["electron/*"]
+      "@electron/*": ["electron/*"],
+      "@shared/*": ["src/shared/*"]
     }
   },
   "include": [

@@ -446,6 +446,7 @@ async function removeGroup(groupId: string) {
               <Badge
                 :value="groupFeedCount(groupFromNode(node)!.groupId)"
                 severity="secondary"
+                size="small"
                 class="ww-rss-tree-badge"
               />
               <WwButton

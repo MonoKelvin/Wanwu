@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" fill="none" aria-hidden="true" class="ww-empty-ill">
+  <ellipse cx="160" cy="218" rx="76" ry="6" fill="var(--ww-ink)" opacity="0.07"/>
+  <!-- *~0 / à9M>'\ + XLucide search-x íI	 -->
+  <g transform="translate(108 68) scale(3.2)" stroke="var(--ww-ink-muted)" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <circle cx="11" cy="11" r="8"/>
+    <path d="m21 21-4.3-4.3"/>
+    <path d="m13.5 8.5-5 5"/>
+    <path d="m8.5 8.5 5 5"/>
+  </g>
+  <rect x="108" y="168" width="104" height="6" rx="2" fill="var(--ww-ink-faint)" opacity="0.14"/>
+  <rect x="124" y="180" width="72" height="5" rx="2" fill="var(--ww-ink-faint)" opacity="0.1"/>
+</svg>

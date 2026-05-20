@@ -1,4 +1,4 @@
-import type { ModuleId } from '@app/config/modules'
+import type { ModuleId } from '@shared/constants/modules'
 
 export type NavAlign = 'center' | 'start'
 export type NavDisplay = 'icon' | 'both'
@@ -13,6 +13,9 @@ export type RssAutoRefreshMinutes = 0 | 30 | 60 | 120
 /** 启动时窗口行为 */
 export type WindowStateMode = 'remember' | 'maximize' | 'default'
 
+/** 界面配色 */
+export type ColorScheme = 'light' | 'dark'
+
 export interface AppSettings {
   navAlign: NavAlign
   navDisplay: NavDisplay
@@ -21,6 +24,7 @@ export interface AppSettings {
   lastActiveModule: ModuleId
   rssAutoRefreshMinutes: RssAutoRefreshMinutes
   windowStateMode: WindowStateMode
+  colorScheme: ColorScheme
 }
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -30,8 +34,14 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   startupModule: 'last',
   lastActiveModule: 'library',
   rssAutoRefreshMinutes: 0,
-  windowStateMode: 'remember'
+  windowStateMode: 'remember',
+  colorScheme: 'light'
 }
+
+export const COLOR_SCHEME_OPTIONS: Array<{ label: string; value: ColorScheme }> = [
+  { label: '浅色', value: 'light' },
+  { label: '深色', value: 'dark' }
+]
 
 export const WINDOW_STATE_MODE_OPTIONS: Array<{ label: string; value: WindowStateMode }> = [
   { label: '记忆上次状态', value: 'remember' },

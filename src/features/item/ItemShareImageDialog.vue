@@ -289,6 +289,7 @@ async function onTargetClick(target: ShareTarget) {
     <div class="ww-share-image-dialog__format-row">
       <SelectButton
         v-model="format"
+        class="ww-settings-segment"
         :options="formatOptions"
         option-label="label"
         option-value="value"

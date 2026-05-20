@@ -1,116 +1,503 @@
-/* WwSelect — 触发器与下拉面板（面板挂到 body，须全局类名） */
+/* WwSelect — 触发器 + 下拉面板 */
+
+
+
+/* ── 触发器 ── */
 
 .ww-select.p-select {
+
   display: inline-flex;
+
   align-items: center;
+
   width: max-content;
+
   min-width: var(--ww-select-min-w, 12.5rem);
+
   max-width: 100%;
+
   min-height: var(--ww-select-height, 2.3125rem);
+
   border: 1px solid var(--ww-border-faint) !important;
+
   border-radius: var(--ww-select-radius, 0.4375rem) !important;
+
   background: var(--ww-inset) !important;
+
   box-shadow: none !important;
+
   transition:
+
     border-color var(--ww-duration-fast) var(--ww-ease-out),
-    background var(--ww-duration-fast) var(--ww-ease-out);
+
+    background var(--ww-duration-fast) var(--ww-ease-out),
+
+    box-shadow var(--ww-duration-fast) var(--ww-ease-out);
+
 }
+
+
 
 .ww-select--narrow.p-select {
+
   min-width: var(--ww-select-min-w, 10rem);
+
 }
+
+
 
 .ww-select--block.p-select {
+
   width: 100% !important;
+
   min-width: 0 !important;
+
   max-width: none;
+
 }
+
+
 
 .ww-select.p-select:not(.p-disabled):hover {
-  border-color: rgb(18 18 22 / 0.1) !important;
+
+  border-color: var(--ww-border-subtle) !important;
+
   background: var(--ww-list-hover-bg) !important;
+
 }
+
+
 
 .ww-select.p-select.p-focus,
+
 .ww-select.p-select.p-select-open {
-  border-color: rgb(18 18 22 / 0.12) !important;
+
+  border-color: var(--ww-list-hover-ring) !important;
+
   background: var(--ww-content) !important;
+
+  box-shadow: 0 0 0 1px var(--ww-list-hover-ring) !important;
+
 }
+
+
 
 .ww-select .p-select-label {
+
   flex: 1 1 auto;
+
   min-width: 0;
+
   display: flex;
+
   align-items: center;
+
   padding: var(--ww-select-label-py, 0.5rem) var(--ww-select-label-pr, 0.25rem)
+
     var(--ww-select-label-py, 0.5rem) var(--ww-select-label-pl, 0.625rem) !important;
+
   font-size: var(--ww-select-font-size, 0.8125rem) !important;
+
   line-height: 1.35 !important;
+
   text-align: left !important;
+
   color: var(--ww-ink) !important;
+
 }
+
+
 
 .ww-select .p-select-dropdown {
-  width: var(--ww-select-chevron-w, 1.25rem) !important;
+
+  display: inline-flex !important;
+
+  align-items: center !important;
+
+  justify-content: center !important;
+
+  width: var(--ww-select-chevron-w, 1.5rem) !important;
+
   flex-shrink: 0;
-  padding-inline: 0.125rem 0.3125rem !important;
+
+  margin-inline-end: 0.125rem;
+
+  padding: 0 !important;
+
   color: var(--ww-ink-faint) !important;
+
 }
+
+
+
+.ww-select.p-select-open .p-select-dropdown {
+
+  color: var(--ww-ink-muted) !important;
+
+}
+
+
 
 .ww-select .p-select-dropdown-icon {
+
+  display: flex !important;
+
+  align-items: center;
+
+  justify-content: center;
+
   width: 0.75rem !important;
+
   height: 0.75rem !important;
+
+  transform-origin: center center;
+
+  transition: transform 0.32s var(--ww-ease-out);
+
 }
 
+
+
+.ww-select .p-select-dropdown-icon svg {
+
+  display: block;
+
+}
+
+
+
+.ww-select.p-select-open .p-select-dropdown-icon {
+
+  transform: rotate(180deg);
+
+}
+
+
+
+/* ── 下拉面板 ── */
+
 .ww-select-overlay.p-select-overlay {
+
+  --ww-select-panel-shadow: 0 22px 46px -8px rgb(18 18 22 / 0.1), 0 12px 26px -6px rgb(18 18 22 / 0.06);
+
+  --ww-select-panel-inset: 0.3125rem;
+  --ww-select-option-inset: 0.4375rem;
+  --ww-select-option-min-h: 2rem;
+  --ww-select-option-gap: 0.0625rem;
+  --ww-select-option-active-bg: color-mix(in srgb, var(--ww-list-hover-bg) 76%, var(--ww-ink) 10%);
+  --ww-select-option-selected-active-bg: color-mix(in srgb, var(--ww-list-selected-bg) 76%, var(--ww-ink) 10%);
+
   width: max-content !important;
   min-width: var(--ww-select-min-w, 12.5rem) !important;
   margin-top: 0.25rem !important;
-  padding: 0.25rem !important;
+  padding: var(--ww-select-panel-inset) !important;
+
   border: none !important;
+
   border-radius: 0.625rem !important;
-  background: var(--ww-select-overlay-bg, rgb(255 255 255 / 0.55)) !important;
-  backdrop-filter: blur(var(--ww-select-overlay-blur, var(--ww-menu-blur))) saturate(1.45);
-  -webkit-backdrop-filter: blur(var(--ww-select-overlay-blur, var(--ww-menu-blur))) saturate(1.45);
-  box-shadow: var(--ww-menu-shadow) !important;
+
+  overflow: hidden;
+
+  background: var(--ww-select-overlay-bg, color-mix(in srgb, var(--ww-glass-bg-soft) 72%, transparent)) !important;
+
+  backdrop-filter: blur(var(--ww-select-overlay-blur, 40px)) saturate(1.5);
+
+  -webkit-backdrop-filter: blur(var(--ww-select-overlay-blur, 40px)) saturate(1.5);
+
+  box-shadow: var(--ww-select-panel-shadow) !important;
+
 }
+
+
+
+[data-theme='dark'] .ww-select-overlay.p-select-overlay {
+
+  --ww-select-panel-shadow: 0 22px 46px -8px rgb(0 0 0 / 0.36), 0 12px 26px -6px rgb(0 0 0 / 0.24);
+
+}
+
+
+
+.ww-select-overlay.ww-select-panel-enter-active,
+
+.ww-select-overlay.ww-select-panel-leave-active {
+
+  transition:
+
+    opacity var(--ww-duration-fast) var(--ww-ease-out),
+
+    transform var(--ww-duration-fast) var(--ww-ease-out) !important;
+
+  transform-origin: top left;
+
+}
+
+
+
+.ww-select-overlay.ww-select-panel-leave-active {
+
+  transform-origin: 100% 100%;
+
+}
+
+
+
+.ww-select-overlay.ww-select-panel-enter-from,
+
+.ww-select-overlay.ww-select-panel-leave-to {
+
+  opacity: 0;
+
+  transform: scale(0.94);
+
+}
+
+
+
+.ww-select-overlay.ww-select-panel-enter-to,
+
+.ww-select-overlay.ww-select-panel-leave-from {
+
+  opacity: 1;
+
+  transform: scale(1);
+
+}
+
+
+
+.ww-select-overlay .p-hidden-accessible,
+
+.ww-select-overlay .p-hidden-focusable {
+
+  position: absolute !important;
+
+  width: 1px !important;
+
+  height: 1px !important;
+
+  padding: 0 !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+
+  clip: rect(0, 0, 0, 0) !important;
+
+  white-space: nowrap !important;
+
+  border: 0 !important;
+
+  pointer-events: none !important;
+
+}
+
+
+
+.ww-select-overlay.ww-select-panel-enter-active .p-select-list-container,
+
+.ww-select-overlay.ww-select-panel-leave-active .p-select-list-container {
+
+  overflow: hidden !important;
+
+}
+
+
+
+.ww-select-overlay .p-select-list-container {
+
+  padding: 0 !important;
+
+  overflow-x: hidden;
+
+  overflow-y: auto;
+
+  scrollbar-width: none;
+
+  -ms-overflow-style: none;
+
+}
+
+
+
+.ww-select-overlay .p-select-list-container::-webkit-scrollbar {
+
+  width: 0;
+
+  height: 0;
+
+}
+
+
+
+.ww-select-overlay .p-select-list-container.ww-select-list--scrollable {
+
+  scrollbar-width: thin;
+
+  scrollbar-color: var(--ww-border-subtle) transparent;
+
+}
+
+
+
+.ww-select-overlay .p-select-list-container.ww-select-list--scrollable::-webkit-scrollbar {
+
+  width: 6px;
+
+}
+
+
+
+.ww-select-overlay .p-select-list-container.ww-select-list--scrollable::-webkit-scrollbar-thumb {
+
+  border-radius: 999px;
+
+  background: var(--ww-border-subtle);
+
+}
+
+
 
 .ww-select-overlay .p-select-list {
+
   padding: 0 !important;
-  gap: 0.125rem;
+
+  margin: 0 !important;
+
+  gap: var(--ww-select-option-gap) !important;
+
   background: transparent !important;
+
 }
 
+
+
+/* 选项：::before 层做背景色渐显（避免 background 简写冲突、transparent 无法过渡） */
 .ww-select-overlay .p-select-option {
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
   white-space: nowrap;
   justify-content: flex-start !important;
-  padding: 0.375rem 0.5rem !important;
+  min-height: var(--ww-select-option-min-h) !important;
+  padding: var(--ww-select-option-inset) !important;
   font-size: var(--ww-select-font-size, 0.8125rem) !important;
-  text-align: left !important;
+  line-height: 1.4 !important;
   color: var(--ww-ink-muted) !important;
   background: transparent !important;
-  border-radius: 0.375rem !important;
-  transition: background var(--ww-duration-fast) var(--ww-ease-out),
-    color var(--ww-duration-fast) var(--ww-ease-out) !important;
+  border-radius: 0.4375rem !important;
+  transition: color var(--ww-duration-fast) var(--ww-ease-out) !important;
 }
 
-/* PrimeVue 鼠标移入选项时用 p-focus，不仅 :hover */
+.ww-select-overlay .p-select-option::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: var(--ww-list-hover-bg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-select-overlay .p-select-option > * {
+  position: relative;
+  z-index: 1;
+}
+
 .ww-select-overlay .p-select-option:not(.p-disabled):hover,
 .ww-select-overlay .p-select-option.p-focus:not(.p-disabled),
 .ww-select-overlay .p-select-option[data-p-focused='true']:not(.p-disabled) {
-  background: var(--ww-list-hover-bg) !important;
   color: var(--ww-ink) !important;
+  background: transparent !important;
+}
+
+.ww-select-overlay .p-select-option:not(.p-disabled):hover::before,
+.ww-select-overlay .p-select-option.p-focus:not(.p-disabled)::before,
+.ww-select-overlay .p-select-option[data-p-focused='true']:not(.p-disabled)::before {
+  opacity: 1;
+}
+
+.ww-select-overlay .p-select-option:not(.p-disabled):active {
+  color: var(--ww-ink) !important;
+  background: transparent !important;
+}
+
+.ww-select-overlay .p-select-option:not(.p-disabled):active::before {
+  background: var(--ww-select-option-active-bg);
+  opacity: 1;
+  transition-duration: 0.12s;
 }
 
 .ww-select-overlay .p-select-option.p-select-option-selected:not(.p-disabled) {
-  background: var(--ww-list-selected-bg) !important;
   color: var(--ww-ink) !important;
   font-weight: 500;
+  background: transparent !important;
 }
 
-.ww-select-overlay .p-select-option.p-select-option-selected.p-focus:not(.p-disabled),
-.ww-select-overlay .p-select-option.p-select-option-selected:not(.p-disabled):hover,
-.ww-select-overlay .p-select-option.p-select-option-selected[data-p-focused='true']:not(.p-disabled) {
-  background: var(--ww-list-selected-bg) !important;
-  color: var(--ww-ink) !important;
+.ww-select-overlay .p-select-option.p-select-option-selected:not(.p-disabled)::before {
+  background: var(--ww-list-selected-bg);
+  opacity: 1;
 }
+
+.ww-select-overlay .p-select-option.p-select-option-selected:not(.p-disabled):hover,
+.ww-select-overlay .p-select-option.p-select-option-selected.p-focus:not(.p-disabled),
+.ww-select-overlay .p-select-option.p-select-option-selected[data-p-focused='true']:not(.p-disabled) {
+  color: var(--ww-ink) !important;
+  background: transparent !important;
+}
+
+.ww-select-overlay .p-select-option.p-select-option-selected:not(.p-disabled):active::before {
+  background: var(--ww-select-option-selected-active-bg);
+  opacity: 1;
+  transition-duration: 0.12s;
+}
+
+
+
+@media (prefers-reduced-motion: reduce) {
+
+  .ww-select .p-select-dropdown-icon {
+
+    transition-duration: 0.01ms !important;
+
+  }
+
+
+
+  .ww-select.p-select-open .p-select-dropdown-icon {
+
+    transform: none;
+
+  }
+
+
+
+  .ww-select-overlay.ww-select-panel-enter-active,
+
+  .ww-select-overlay.ww-select-panel-leave-active {
+
+    transition-duration: 0.01ms !important;
+
+  }
+
+
+
+  .ww-select-overlay.ww-select-panel-enter-from,
+
+  .ww-select-overlay.ww-select-panel-leave-to {
+
+    transform: none;
+
+  }
+
+
+
+  .ww-select-overlay .p-select-option,
+  .ww-select-overlay .p-select-option::before {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+

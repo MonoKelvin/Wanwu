@@ -1,0 +1,319 @@
+/**
+ * 深色主题：仅覆盖语义 token，业务样式继续用 var(--ww-*)
+ */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --ww-canvas: #09090b;
+  --ww-rail: #0f0f12;
+  --ww-panel: #131316;
+  --ww-content: #18181b;
+  --ww-elevated: #1f1f23;
+  --ww-inset: #101012;
+
+  --ww-ink: #f4f4f5;
+  --ww-ink-muted: #a1a1aa;
+  --ww-ink-faint: #71717a;
+  --ww-accent: #e4e4e7;
+  --ww-accent-hover: #fafafa;
+  --ww-accent-soft: #27272a;
+
+  --ww-list-hover-bg: #252528;
+  --ww-list-selected-bg: #2e2e32;
+  --ww-list-selected-ring: rgb(255 255 255 / 0.12);
+  --ww-list-hover-ring: rgb(255 255 255 / 0.06);
+  --ww-list-selected-accent: #e4e4e7;
+
+  --ww-tag-bg: #2c2c30;
+  --ww-tag-fg: var(--ww-ink-muted);
+  --ww-tag-border: rgb(255 255 255 / 0.1);
+  --ww-thumb-add-dash: rgb(255 255 255 / 0.26);
+
+  --ww-rail-nav-hover: rgb(255 255 255 / 0.06);
+  --ww-rail-nav-active-bg: var(--ww-elevated);
+  --ww-rail-nav-active-shadow:
+    0 2px 12px -2px rgb(0 0 0 / 0.55),
+    0 0 0 1px rgb(255 255 255 / 0.06);
+
+  --ww-warn: #c9a227;
+  --ww-warn-soft: rgb(201 162 39 / 0.14);
+
+  --ww-toast-success: #3d9a6a;
+  --ww-toast-error: #d07070;
+  --ww-toast-info: #5a8fc4;
+
+  --ww-border-subtle: rgb(255 255 255 / 0.08);
+  --ww-border-faint: rgb(255 255 255 / 0.05);
+
+  --ww-shadow-hover: 0 40px 72px -14px rgb(0 0 0 / 0.55), 0 22px 48px -12px rgb(0 0 0 / 0.4);
+  --ww-shadow-soft: 0 14px 36px -8px rgb(0 0 0 / 0.45), 0 6px 16px -6px rgb(0 0 0 / 0.35);
+  --ww-shadow-card: 0 8px 24px -6px rgb(0 0 0 / 0.4), 0 0 0 1px rgb(255 255 255 / 0.04);
+
+  --ww-glass-bg: rgb(30 30 34 / 0.78);
+  --ww-glass-bg-soft: rgb(36 36 40 / 0.88);
+  --ww-glass-border: rgb(255 255 255 / 0.1);
+  --ww-glass-border-dark: rgb(255 255 255 / 0.22);
+  --ww-menu-shadow: 0 18px 44px -6px rgb(0 0 0 / 0.55), 0 8px 20px -4px rgb(0 0 0 / 0.4);
+  --ww-menu-panel-bg: rgb(36 36 40 / 0.72);
+  --ww-menu-item-hover-bg: rgb(255 255 255 / 0.075);
+  --ww-menu-item-active-bg: rgb(255 255 255 / 0.1);
+
+  --ww-grid-dot: rgb(255 255 255 / 0.04);
+  --ww-focus-ring: 0 0 0 2px var(--ww-content), 0 0 0 4px rgb(255 255 255 / 0.14);
+
+  --ww-scrollbar-thumb: rgb(255 255 255 / 0.22);
+  --ww-scrollbar-thumb-hover: rgb(255 255 255 / 0.34);
+  --ww-scrollbar-thumb-active: rgb(255 255 255 / 0.48);
+
+  --ww-help-popover-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.08) inset,
+    0 18px 48px -12px rgb(0 0 0 / 0.45),
+    0 6px 18px -8px rgb(0 0 0 / 0.35);
+
+  --ww-header-veil: rgb(24 24 27 / 0.88);
+  --ww-scroll-veil-rgb: 24 24 27;
+  --ww-field-bg: rgb(255 255 255 / 0.06);
+  --ww-field-bg-focus: rgb(255 255 255 / 0.09);
+  --ww-overlay-scrim: rgb(0 0 0 / 0.52);
+  --ww-settings-nav-bg: rgb(24 24 27 / 0.86);
+  --ww-surface: #18181b;
+  --ww-surface-float: rgb(30 30 34 / 0.92);
+  --ww-panel-edge-highlight: none;
+  --ww-danger-text: #f87171;
+}
+
+/* PrimeVue：暗色下与 --ww-* 对齐（避免 Aura 变量未落到自定义区域） */
+[data-theme='dark'] .p-inputtext,
+[data-theme='dark'] .p-textarea,
+[data-theme='dark'] .p-select,
+[data-theme='dark'] .p-autocomplete-input {
+  background: var(--ww-inset) !important;
+  color: var(--ww-ink) !important;
+  border-color: var(--ww-border-subtle) !important;
+}
+
+[data-theme='dark'] .p-inputtext:enabled:hover,
+[data-theme='dark'] .p-textarea:enabled:hover {
+  border-color: var(--ww-border-subtle) !important;
+  background: var(--ww-list-hover-bg) !important;
+}
+
+[data-theme='dark'] .p-inputtext:enabled:focus,
+[data-theme='dark'] .p-textarea:enabled:focus {
+  border-color: var(--ww-list-hover-ring) !important;
+  background: var(--ww-content) !important;
+}
+
+[data-theme='dark'] .p-skeleton {
+  background: var(--ww-inset) !important;
+}
+
+[data-theme='dark'] .p-dialog,
+[data-theme='dark'] .p-confirmdialog {
+  border-color: var(--ww-glass-border) !important;
+  background: var(--ww-elevated) !important;
+  color: var(--ww-ink) !important;
+}
+
+[data-theme='dark'] .p-dialog .p-dialog-header,
+[data-theme='dark'] .p-dialog .p-dialog-content,
+[data-theme='dark'] .p-dialog .p-dialog-footer {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+[data-theme='dark'] .ww-settings-layout__ambient-glow--warm {
+  opacity: 0.18;
+  mix-blend-mode: screen;
+  background: radial-gradient(circle at center, rgb(120 100 60 / 0.35) 0%, transparent 70%);
+}
+
+[data-theme='dark'] .ww-settings-layout__ambient-glow--cool {
+  opacity: 0.4;
+  background: radial-gradient(circle at center, rgb(255 255 255 / 0.04) 0%, transparent 72%);
+}
+
+[data-theme='dark'] .ww-personal__ambient-glow--warm {
+  opacity: 0.2;
+}
+
+[data-theme='dark'] .ww-settings-layout .p-button-outlined {
+  border-color: var(--ww-border-subtle) !important;
+  color: var(--ww-ink-muted) !important;
+  background: transparent !important;
+}
+
+[data-theme='dark'] .ww-settings-layout .p-button-outlined:not(:disabled):hover {
+  border-color: rgb(255 255 255 / 0.14) !important;
+  color: var(--ww-ink) !important;
+  background: var(--ww-list-hover-bg) !important;
+}
+
+[data-theme='dark'] .ww-settings-layout .p-button-outlined:not(:disabled):active {
+  background: var(--ww-inset) !important;
+}
+
+[data-theme='dark'] .ww-settings-about-hero {
+  --ww-about-hero-hover-border: rgb(255 255 255 / 0.1);
+  --ww-about-hero-hover-shadow: 0 12px 36px -10px rgb(0 0 0 / 0.45);
+  --ww-about-hero-hover-inset: 0 0 0 1px rgb(255 255 255 / 0.08) inset;
+  --ww-about-hero-logo-border-hover: rgb(255 255 255 / 0.14);
+  --ww-about-hero-logo-shadow: 0 10px 28px -8px rgb(0 0 0 / 0.45);
+  --ww-about-hero-logo-inset: 0 0 0 1px rgb(255 255 255 / 0.1) inset;
+}
+
+[data-theme='dark'] .ww-glass-blur--dark {
+  border-color: var(--ww-glass-border-dark);
+}
+
+/* Tooltip：深色浮层，与全局 token 对齐 */
+[data-theme='dark'] .p-tooltip .p-tooltip-text {
+  background: var(--ww-elevated) !important;
+  color: var(--ww-ink) !important;
+  border: 1px solid var(--ww-border-subtle) !important;
+  box-shadow: 0 10px 28px -8px rgb(0 0 0 / 0.55), 0 0 0 1px rgb(255 255 255 / 0.04) inset !important;
+}
+
+[data-theme='dark'] .p-tooltip.p-tooltip-right .p-tooltip-arrow {
+  border-right-color: var(--ww-elevated) !important;
+}
+
+[data-theme='dark'] .p-tooltip.p-tooltip-left .p-tooltip-arrow {
+  border-left-color: var(--ww-elevated) !important;
+}
+
+[data-theme='dark'] .p-tooltip.p-tooltip-top .p-tooltip-arrow {
+  border-top-color: var(--ww-elevated) !important;
+}
+
+[data-theme='dark'] .p-tooltip.p-tooltip-bottom .p-tooltip-arrow {
+  border-bottom-color: var(--ww-elevated) !important;
+}
+
+/* 全库工具栏：排序按钮 */
+[data-theme='dark'] .ww-page-toolbar .p-button-outlined {
+  border-color: var(--ww-border-subtle) !important;
+  color: var(--ww-ink-muted) !important;
+  background: var(--ww-inset) !important;
+}
+
+[data-theme='dark'] .ww-page-toolbar .p-button-outlined:not(:disabled):hover {
+  border-color: rgb(255 255 255 / 0.12) !important;
+  color: var(--ww-ink) !important;
+  background: var(--ww-list-hover-bg) !important;
+}
+
+[data-theme='dark'] .ww-page-toolbar .p-button-outlined:not(:disabled):active {
+  background: var(--ww-elevated) !important;
+}
+
+/* 全库侧栏分类树：选中标签 */
+[data-theme='dark'] .ww-library-tree .p-tree-node-content {
+  color: var(--ww-ink-muted);
+}
+
+[data-theme='dark'] .ww-library-tree .p-tree-node-selected .p-tree-node-content,
+[data-theme='dark'] .ww-library-tree .p-tree-node-content.p-tree-node-selected {
+  background: var(--ww-elevated) !important;
+  color: var(--ww-ink) !important;
+  box-shadow: 0 0 0 1px var(--ww-border-subtle);
+}
+
+/* 标题栏窗口控制 */
+[data-theme='dark'] .ww-titlebar-controls {
+  background: var(--ww-rail);
+}
+
+[data-theme='dark'] .ww-win-btn {
+  color: var(--ww-ink-muted);
+}
+
+[data-theme='dark'] .ww-win-btn--close {
+  background: var(--ww-inset);
+}
+
+[data-theme='dark'] .ww-win-btn--close:hover {
+  background: #c42b1c;
+  color: #fff;
+}
+
+/* 个人收藏：深色层次 */
+[data-theme='dark'] .ww-personal-favorites__head {
+  border-bottom-color: var(--ww-border-subtle);
+}
+
+[data-theme='dark'] .ww-fav-group__list {
+  background: var(--ww-elevated);
+  border-color: var(--ww-border-subtle);
+}
+
+[data-theme='dark'] .ww-personal.has-bg .ww-fav-group__list {
+  background: var(--ww-surface-float);
+  border-color: var(--ww-glass-border);
+}
+
+[data-theme='dark'] .ww-favorite-row__thumb {
+  border-color: var(--ww-border-subtle);
+  background: var(--ww-inset);
+}
+
+[data-theme='dark'] .ww-fav-group__list > li + li {
+  border-top-color: var(--ww-border-subtle);
+}
+
+[data-theme='dark'] .p-tree .p-tree-node-toggle-button {
+  color: var(--ww-ink-faint) !important;
+}
+
+[data-theme='dark'] .p-tree .p-tree-node-toggle-button:hover:not(:disabled) {
+  color: var(--ww-ink) !important;
+  background: var(--ww-list-hover-bg) !important;
+}
+
+[data-theme='dark'] .p-tree-node-selected .p-tree-node-content .p-tree-node-toggle-button {
+  color: var(--ww-ink-muted) !important;
+}
+
+/* 弹出菜单：深色下内高光与点击态 */
+[data-theme='dark'] .p-menu.p-menu-overlay,
+[data-theme='dark'] .p-contextmenu {
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.06) inset,
+    var(--ww-menu-shadow) !important;
+}
+
+[data-theme='dark'] .p-menu-item:not(.p-disabled):hover > .p-menu-item-content,
+[data-theme='dark'] .p-contextmenu-item:not(.p-disabled):hover > .p-contextmenu-item-content {
+  background: var(--ww-menu-item-hover-bg) !important;
+  color: var(--ww-ink) !important;
+}
+
+[data-theme='dark'] .p-menu-item.p-focus > .p-menu-item-content,
+[data-theme='dark'] .p-contextmenu-item.p-focus > .p-contextmenu-item-content,
+[data-theme='dark'] .p-contextmenu-item.p-contextmenu-item-active > .p-contextmenu-item-content,
+[data-theme='dark'] .p-menu-item:not(.p-disabled):active > .p-menu-item-content,
+[data-theme='dark'] .p-contextmenu-item:not(.p-disabled):active > .p-contextmenu-item-content {
+  background: var(--ww-menu-item-active-bg) !important;
+  color: var(--ww-ink) !important;
+}
+
+/* 物品详情悬浮操作栏：深色下点赞/收藏态 */
+[data-theme='dark'] .ww-product-detail__dock-btn--active {
+  color: #fca5a5;
+  background: rgb(248 113 113 / 0.14);
+}
+
+[data-theme='dark'] .ww-product-detail__dock-btn--active:hover {
+  color: #fecaca;
+  background: rgb(248 113 113 / 0.22);
+}
+
+[data-theme='dark'] .ww-product-detail__dock-btn--liked {
+  color: #93c5fd;
+  background: rgb(96 165 250 / 0.14);
+}
+
+[data-theme='dark'] .ww-product-detail__dock-btn--liked:hover {
+  color: #bfdbfe;
+  background: rgb(96 165 250 / 0.22);
+}

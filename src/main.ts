@@ -6,14 +6,19 @@ import ConfirmationService from 'primevue/confirmationservice'
 import Tooltip from 'primevue/tooltip'
 import { WanwuPreset } from '@app/theme/preset'
 import { primeVueZhCn } from '@app/locale/primevue-zh-cn'
+import { applyColorScheme, readStoredColorScheme } from '@app/theme/applyTheme'
 import '@app/styles/tokens.css'
+import '@app/styles/theme-dark.css'
 import '@app/styles/main.css'
 import '@app/styles/scrollbars.css'
 import '@app/styles/settings.css'
 import '@app/styles/personal.css'
 import '@app/styles/toast.css'
+import '@app/styles/theme-components.css'
 import App from '@app/App.vue'
 import router from '@app/router'
+
+applyColorScheme(readStoredColorScheme() ?? 'light')
 
 const app = createApp(App)
 app.use(createPinia())

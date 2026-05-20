@@ -5,6 +5,7 @@ import {
   APP_LOCAL_STORAGE_KEYS,
   DEFAULT_APP_SETTINGS,
   type AppSettings,
+  type ColorScheme,
   type NavAlign,
   type NavDisplay,
   type RssAutoRefreshMinutes,
@@ -13,6 +14,7 @@ import {
   type WindowStateMode
 } from '@shared/types/settings'
 import { isModuleId } from '@app/config/modules'
+import { applyColorScheme, readStoredColorScheme } from '@app/theme/applyTheme'
 
 function normalizeSettings(data: Partial<AppSettings>): AppSettings {
   const limit = data.rssFetchLimit
@@ -37,6 +39,8 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
       ? data.windowStateMode
       : 'remember'
 
+  const colorScheme: ColorScheme = data.colorScheme === 'dark' ? 'dark' : 'light'
+
   return {
     navAlign: data.navAlign === 'center' ? 'center' : 'start',
     navDisplay: data.navDisplay === 'both' ? 'both' : 'icon',
@@ -44,7 +48,8 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
     startupModule,
     lastActiveModule,
     rssAutoRefreshMinutes,
-    windowStateMode
+    windowStateMode,
+    colorScheme
   }
 }
 
@@ -52,6 +57,7 @@ function applySettingsToDocument(settings: AppSettings) {
   const root = document.documentElement
   root.dataset.navAlign = settings.navAlign
   root.dataset.navDisplay = settings.navDisplay
+  applyColorScheme(settings.colorScheme)
 }
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -60,23 +66,38 @@ export const useSettingsStore = defineStore('settings', () => {
 
   async function load() {
     const data = await window.wanwu.app.getSettings()
-    settings.value = normalizeSettings({ ...DEFAULT_APP_SETTINGS, ...data })
+    let merged = normalizeSettings({ ...DEFAULT_APP_SETTINGS, ...data })
+    const storedScheme = readStoredColorScheme()
+    if (storedScheme && storedScheme !== merged.colorScheme) {
+      merged = { ...merged, colorScheme: storedScheme }
+    }
+    settings.value = merged
     loaded.value = true
     applySettingsToDocument(settings.value)
+    if (storedScheme && storedScheme !== data.colorScheme) {
+      void window.wanwu.app.patchSettings({ colorScheme: storedScheme })
+    }
   }
 
   async function save(patch: Partial<AppSettings>) {
-    settings.value = normalizeSettings({ ...settings.value, ...patch })
-    const saved = await window.wanwu.app.updateSettings(settings.value)
-    settings.value = normalizeSettings(saved)
+    const optimistic = normalizeSettings({ ...settings.value, ...patch })
+    settings.value = optimistic
+    applySettingsToDocument(optimistic)
+    const saved = await window.wanwu.app.updateSettings(optimistic)
+    settings.value = normalizeSettings({ ...saved, ...optimistic })
     applySettingsToDocument(settings.value)
   }
 
   async function patchLastActiveModule(moduleId: ModuleId) {
     if (settings.value.lastActiveModule === moduleId) return
-    settings.value = normalizeSettings({ ...settings.value, lastActiveModule: moduleId })
+    const snapshot = settings.value
+    settings.value = normalizeSettings({ ...snapshot, lastActiveModule: moduleId })
     const saved = await window.wanwu.app.patchSettings({ lastActiveModule: moduleId })
-    settings.value = normalizeSettings(saved)
+    settings.value = normalizeSettings({
+      ...saved,
+      colorScheme: snapshot.colorScheme
+    })
+    applySettingsToDocument(settings.value)
   }
 
   function clearLocalPreferences() {
@@ -109,6 +130,10 @@ export const useSettingsStore = defineStore('settings', () => {
     await save({ windowStateMode })
   }
 
+  async function setColorScheme(colorScheme: ColorScheme) {
+    await save({ colorScheme })
+  }
+
   async function resetAll() {
     const defaults = await window.wanwu.app.resetSettings()
     settings.value = normalizeSettings(defaults)
@@ -137,6 +162,7 @@ export const useSettingsStore = defineStore('settings', () => {
     setStartupModule,
     setRssAutoRefreshMinutes,
     setWindowStateMode,
+    setColorScheme,
     resetAll
   }
 })

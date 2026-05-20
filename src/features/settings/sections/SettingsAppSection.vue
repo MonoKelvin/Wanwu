@@ -4,12 +4,13 @@ import { storeToRefs } from 'pinia'
 import SelectButton from 'primevue/selectbutton'
 import { MODULE_NAV_ITEMS } from '@app/config/modules'
 import { useSettingsStore } from '@shared/stores/settings'
-import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import SettingsRow from '@features/settings/SettingsRow.vue'
 import WwSelect from '@shared/components/WwSelect'
 import { buildStartupModuleOptions } from '@shared/utils/startupModule'
 import {
+  COLOR_SCHEME_OPTIONS,
   WINDOW_STATE_MODE_OPTIONS,
+  type ColorScheme,
   type NavAlign,
   type NavDisplay,
   type StartupModule,
@@ -18,7 +19,6 @@ import {
 
 const settingsStore = useSettingsStore()
 const { settings } = storeToRefs(settingsStore)
-const toast = useWanwuToast()
 
 const startupModuleOptions = computed(() => buildStartupModuleOptions(MODULE_NAV_ITEMS))
 
@@ -33,35 +33,43 @@ const navDisplayOptions = [
 ]
 
 async function onNavAlignChange(v: NavAlign) {
-  if (v && v !== settings.value.navAlign) {
-    await settingsStore.setNavAlign(v)
-    toast.success('导航对齐已更新')
-  }
+  if (v && v !== settings.value.navAlign) await settingsStore.setNavAlign(v)
 }
 
 async function onNavDisplayChange(v: NavDisplay) {
-  if (v && v !== settings.value.navDisplay) {
-    await settingsStore.setNavDisplay(v)
-    toast.success('导航显示已更新')
-  }
+  if (v && v !== settings.value.navDisplay) await settingsStore.setNavDisplay(v)
 }
 
 async function onStartupModuleChange(v: StartupModule | null) {
   if (!v || v === settings.value.startupModule) return
   await settingsStore.setStartupModule(v)
-  toast.success('默认启动模块已更新')
 }
 
 async function onWindowStateModeChange(v: WindowStateMode | null) {
   if (!v || v === settings.value.windowStateMode) return
   await settingsStore.setWindowStateMode(v)
-  toast.success('窗口状态设置已更新')
+}
+
+async function onColorSchemeChange(v: ColorScheme) {
+  if (!v || v === settings.value.colorScheme) return
+  await settingsStore.setColorScheme(v)
 }
 </script>
 
 <template>
   <div class="ww-settings-section">
     <div class="ww-settings-group">
+      <SettingsRow label="外观主题" subtitle="浅色 / 深色一键切换，立即生效">
+        <SelectButton
+          class="ww-settings-segment"
+          :model-value="settings.colorScheme"
+          :options="COLOR_SCHEME_OPTIONS"
+          option-label="label"
+          option-value="value"
+          :allow-empty="false"
+          @update:model-value="onColorSchemeChange"
+        />
+      </SettingsRow>
       <SettingsRow label="导航图标对齐" subtitle="模块侧栏图标的垂直对齐方式">
         <SelectButton
           class="ww-settings-segment"
@@ -75,7 +83,7 @@ async function onWindowStateModeChange(v: WindowStateMode | null) {
       </SettingsRow>
       <SettingsRow label="导航显示模式" subtitle="仅图标，或图标加文字">
         <SelectButton
-          class="ww-settings-segment"
+          class="ww-settings-segment ww-settings-segment--wide"
           :model-value="settings.navDisplay"
           :options="navDisplayOptions"
           option-label="label"

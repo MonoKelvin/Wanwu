@@ -51,6 +51,40 @@ export const WanwuPreset = definePreset(Aura, {
           hoverColor: '#121214',
           hoverMutedColor: '#3a3a42'
         }
+      },
+      dark: {
+        primary: {
+          color: '#f4f4f5',
+          contrastColor: '#18181b',
+          hoverColor: '#e4e4e7',
+          activeColor: '#fafafa'
+        },
+        highlight: {
+          background: '#252528',
+          focusBackground: '#2e2e32',
+          color: '#f4f4f5',
+          focusColor: '#fafafa'
+        },
+        surface: {
+          0: '#18181b',
+          50: '#1f1f23',
+          100: '#27272a',
+          200: '#2e2e32',
+          300: '#3f3f46',
+          400: '#52525b',
+          500: '#71717a',
+          600: '#a1a1aa',
+          700: '#d4d4d8',
+          800: '#e4e4e7',
+          900: '#f4f4f5',
+          950: '#fafafa'
+        },
+        text: {
+          color: '#f4f4f5',
+          mutedColor: '#a1a1aa',
+          hoverColor: '#fafafa',
+          hoverMutedColor: '#e4e4e7'
+        }
       }
     }
   }

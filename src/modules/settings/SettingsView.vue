@@ -69,7 +69,7 @@ async function refreshPaths() {
           :paths="paths"
           @open-migrate="migrateDialogVisible = true"
         />
-        <SettingsAboutSection v-show="activeSection === 'about'" />
+        <SettingsAboutSection v-show="activeSection === 'about'" :visible="activeSection === 'about'" />
       </div>
     </div>
 
