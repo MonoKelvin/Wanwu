@@ -2010,10 +2010,18 @@ body {
   line-height: 0;
 }
 
-.ww-empty-state__img :is(svg, .ww-empty-ill) {
+.ww-empty-state__icon {
   display: block;
-  width: 100%;
-  height: auto;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: 0 auto;
+  color: var(--ww-ink-faint);
+  opacity: 0.42;
+}
+
+.ww-empty-state--compact .ww-empty-state__icon {
+  width: 2.75rem;
+  height: 2.75rem;
 }
 
 .ww-empty-state__title {

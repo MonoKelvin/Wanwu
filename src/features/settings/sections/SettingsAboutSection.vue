@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwRollingText from '@shared/components/WwRollingText.vue'
-import { APP_LOGO } from '@shared/assets/app-logo'
+import { useAppLogo } from '@shared/composables/useAppLogo'
 import { formatAppVersionLabel } from '@shared/constants/appVersion'
 import SettingsAboutHeroFx from '@features/settings/SettingsAboutHeroFx.vue'
 
@@ -10,6 +10,7 @@ const props = defineProps<{
   visible?: boolean
 }>()
 
+const { about: appLogoAbout } = useAppLogo()
 const appVersion = formatAppVersionLabel()
 const heroHover = ref(false)
 const copyrightYear = new Date().getFullYear()
@@ -33,7 +34,7 @@ const developers = [
     >
       <SettingsAboutHeroFx :active="heroHover" :visible="props.visible ?? false" />
       <div class="ww-settings-about-hero__content">
-        <img :src="APP_LOGO[128]" width="56" height="56" alt="" class="ww-settings-about-hero__logo" />
+        <img :src="appLogoAbout" width="56" height="56" alt="" class="ww-settings-about-hero__logo" />
         <div class="ww-settings-about-hero__main">
           <h2 class="ww-settings-about-hero__name">万物（Wanwu）</h2>
           <p class="ww-settings-about-hero__subtitle">

@@ -6,9 +6,10 @@ import { MODULE_NAV_ITEMS } from '@app/config/modules'
 import { useModuleNavigation } from '@app/composables/useModuleNavigation'
 import { useRouteModule } from '@app/composables/useRouteModule'
 import WwIcon from '@shared/components/WwIcon.vue'
-import { APP_LOGO_NAV } from '@shared/assets/app-logo'
+import { useAppLogo } from '@shared/composables/useAppLogo'
 import type { ModuleId } from '@shared/stores/app'
 
+const { nav: appLogoNav } = useAppLogo()
 const routeModule = useRouteModule()
 const { navigateToModule } = useModuleNavigation()
 const { settings } = storeToRefs(useSettingsStore())
@@ -40,7 +41,7 @@ function isActive(id: ModuleId) {
       <div class="ww-module-nav__brand" aria-hidden="true">
         <img
           class="ww-module-nav__brand-mark"
-          :src="APP_LOGO_NAV"
+          :src="appLogoNav"
           width="32"
           height="32"
           alt=""

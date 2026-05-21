@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import emptyCollectionRaw from '@assets/icons/empty-collection.svg?raw'
-import emptyGuideRaw from '@assets/icons/empty-guide.svg?raw'
-import emptyNotFoundRaw from '@assets/icons/empty-not-found.svg?raw'
-import emptyRssRaw from '@assets/icons/empty-rss.svg?raw'
+import WwIcon from '@shared/components/WwIcon.vue'
+import type { WwIconName } from '@shared/icons/registry'
 
 const props = withDefaults(
   defineProps<{
@@ -16,16 +14,16 @@ const props = withDefaults(
   { variant: 'empty', compact: false }
 )
 
-const illustrationRaw = computed(() => {
+const iconName = computed((): WwIconName => {
   switch (props.variant) {
     case 'guide':
-      return emptyGuideRaw
+      return 'compass'
     case 'rss':
-      return emptyRssRaw
+      return 'globe'
     case 'not-found':
-      return emptyNotFoundRaw
+      return 'search'
     default:
-      return emptyCollectionRaw
+      return 'inbox'
   }
 })
 </script>
@@ -37,7 +35,9 @@ const illustrationRaw = computed(() => {
 
     <div class="ww-empty-state__card">
       <p v-if="code" class="ww-empty-state__code">{{ code }}</p>
-      <div class="ww-empty-state__img" v-html="illustrationRaw" />
+      <div class="ww-empty-state__img" aria-hidden="true">
+        <WwIcon :name="iconName" class="ww-empty-state__icon" />
+      </div>
       <h3 class="ww-empty-state__title">{{ title }}</h3>
       <p v-if="description" class="ww-empty-state__desc">{{ description }}</p>
       <div v-if="$slots.default" class="ww-empty-state__actions">

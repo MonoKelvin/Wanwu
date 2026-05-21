@@ -533,7 +533,7 @@
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 0.875rem;
-  border: 1px solid var(--ww-border-faint);
+  border: 1px solid var(--ww-about-hero-logo-border, var(--ww-border-faint));
   transition:
     transform var(--ww-duration-slow) var(--ww-ease-out-slow),
     box-shadow var(--ww-duration-slow) var(--ww-ease-out-slow),
