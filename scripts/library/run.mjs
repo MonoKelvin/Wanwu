@@ -19,6 +19,9 @@ import { improveMediaQueries } from './lib/improve-media-queries.mjs'
 import { pipelineMediaQuality } from './lib/pipeline-media-quality.mjs'
 import { pipelineCurate } from './lib/pipeline-curate.mjs'
 import { dedupeLocalMedia } from './lib/dedupe-local-media.mjs'
+import { dedupeCrossMedia } from './lib/dedupe-cross-media.mjs'
+import { enrichDescriptions } from './lib/enrich-descriptions.mjs'
+import { fixMissingCovers } from './lib/fix-missing-covers.mjs'
 import { cleanupPlaceholders } from './lib/cleanup-placeholders.mjs'
 import { pipelineContent } from './lib/pipeline-content.mjs'
 import { applyExpansion } from './lib/apply-expansion.mjs'
@@ -42,6 +45,9 @@ function printHelp() {
   media-quality    配图质量摘要
   curate      同 media --force
   dedupe-local  删除条内 MD5 重复配图
+  dedupe-cross  跨条目重复配图去重（非封面）
+  enrich-desc   补全条目 description 结构化长文
+  fix-covers    用 gallery-01 补缺失的 cover.jpg
   import      入库（仅新增 id）
   update      按 --id= 强制更新
   all         build → media
@@ -159,6 +165,22 @@ async function main() {
 
   if (step === 'dedupe-local') {
     dedupeLocalMedia(root)
+    return
+  }
+
+  if (step === 'dedupe-cross') {
+    dedupeCrossMedia(root, { dryRun: opts.argv?.includes('--dry-run') })
+    return
+  }
+
+  if (step === 'enrich-desc') {
+    const n = enrichDescriptions(root, { category: opts.category, slug: opts.slug, limit: opts.limit })
+    console.log(`已 enrich ${n} 条 description`)
+    return
+  }
+
+  if (step === 'fix-covers') {
+    fixMissingCovers(root)
     return
   }
 

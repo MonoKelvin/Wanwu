@@ -1,0 +1,21 @@
+{
+  "id": "77a38907-0f0f-41c8-bef9-426ec05611dd",
+  "slug": "food-dim-sum",
+  "subCategoryId": "food-cuisine",
+  "name": "广式点心",
+  "summary": "蒸笼与虾饺烧卖文化。",
+  "description": "广式点心：蒸笼与虾饺烧卖文化。\n\n**概述**：广式点心在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：蒸笼与虾饺烧卖文化。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：广式",
+  "tags": [
+    "广式"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "food dish plate",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

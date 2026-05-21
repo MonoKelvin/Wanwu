@@ -1,0 +1,23 @@
+{
+  "id": "2088c787-3248-405f-9f66-ec30af00d849",
+  "slug": "coin-us-100",
+  "subCategoryId": "coin-banknote",
+  "name": "美元百元钞",
+  "summary": "绿色版联邦储备券。",
+  "description": "美元百元钞：绿色版联邦储备券。\n\n**概述**：美元百元钞在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：绿色版联邦储备券。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：美元\n\n**规格参数**\n\n**面额**：100 USD",
+  "tags": [
+    "美元"
+  ],
+  "specs": {
+    "面额": "100 USD"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "banknote money currency",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

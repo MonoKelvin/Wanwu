@@ -792,6 +792,98 @@
           "name": "现代陶艺"
         }
       ]
+    },
+    {
+      "id": "wine",
+      "name": "葡萄酒",
+      "icon": "wine",
+      "subcategories": [
+        {
+          "id": "wine-red",
+          "name": "红葡萄酒"
+        },
+        {
+          "id": "wine-white",
+          "name": "白葡萄酒"
+        },
+        {
+          "id": "wine-sparkling",
+          "name": "起泡酒"
+        },
+        {
+          "id": "wine-region",
+          "name": "产区风土"
+        }
+      ]
+    },
+    {
+      "id": "aerospace",
+      "name": "航空器",
+      "icon": "plane",
+      "subcategories": [
+        {
+          "id": "aero-commercial",
+          "name": "民航客机"
+        },
+        {
+          "id": "aero-fighter",
+          "name": "军用战机"
+        },
+        {
+          "id": "aero-helicopter",
+          "name": "直升机"
+        },
+        {
+          "id": "aero-space",
+          "name": "航天器"
+        }
+      ]
+    },
+    {
+      "id": "chess",
+      "name": "棋类",
+      "icon": "grid-3x3",
+      "subcategories": [
+        {
+          "id": "chess-intl",
+          "name": "国际象棋"
+        },
+        {
+          "id": "chess-go",
+          "name": "围棋"
+        },
+        {
+          "id": "chess-chinese",
+          "name": "中国象棋"
+        },
+        {
+          "id": "chess-shogi",
+          "name": "将棋"
+        }
+      ]
+    },
+    {
+      "id": "coin",
+      "name": "钱币",
+      "icon": "circle-dollar-sign",
+      "subcategories": [
+        {
+          "id": "coin-ancient",
+          "name": "古代钱币"
+        },
+        {
+          "id": "coin-modern",
+          "name": "现代纪念币"
+        },
+        {
+          "id": "coin-gold",
+          "name": "贵金属币"
+        },
+        {
+          "id": "coin-banknote",
+          "name": "纸币"
+        }
+      ]
     }
   ]
 }

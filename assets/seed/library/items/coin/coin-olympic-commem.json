@@ -1,0 +1,21 @@
+{
+  "id": "91b7fe47-d690-4fea-b950-bf1e9ff002dd",
+  "slug": "coin-olympic-commem",
+  "subCategoryId": "coin-modern",
+  "name": "奥运纪念币",
+  "summary": "赛事主题限量币。",
+  "description": "奥运纪念币：赛事主题限量币。\n\n**概述**：奥运纪念币在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：赛事主题限量币。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：奥运",
+  "tags": [
+    "奥运"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "coins currency collection macro",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

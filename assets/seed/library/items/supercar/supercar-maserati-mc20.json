@@ -22,7 +22,8 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "MC20 supercar",
+    "query": "maserati sports car luxury",
+    "minMatchScore": 0,
     "matchTags": [
       "意大利",
       "maserati",

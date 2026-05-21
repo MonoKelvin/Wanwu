@@ -1,0 +1,23 @@
+{
+  "id": "ee3af840-9df3-4447-a659-d300cbc32390",
+  "slug": "wine-champagne",
+  "subCategoryId": "wine-sparkling",
+  "name": "香槟",
+  "summary": "传统法起泡酒王冠。",
+  "description": "香槟：传统法起泡酒王冠。\n\n**概述**：香槟在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：传统法起泡酒王冠。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：香槟\n\n**规格参数**\n\n**产区**：法国香槟区",
+  "tags": [
+    "香槟"
+  ],
+  "specs": {
+    "产区": "法国香槟区"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "wine bottle glass vineyard",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

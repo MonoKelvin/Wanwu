@@ -1,0 +1,23 @@
+{
+  "id": "6d2af6b0-4553-4d47-94bc-adbdd360af4c",
+  "slug": "coin-panda-gold",
+  "subCategoryId": "coin-gold",
+  "name": "熊猫金币",
+  "summary": "中国贵金属纪念币。",
+  "description": "熊猫金币：中国贵金属纪念币。\n\n**概述**：熊猫金币在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：中国贵金属纪念币。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：熊猫\n\n**规格参数**\n\n**发行**：中国金币总公司",
+  "tags": [
+    "熊猫"
+  ],
+  "specs": {
+    "发行": "中国金币总公司"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "coins currency collection macro",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

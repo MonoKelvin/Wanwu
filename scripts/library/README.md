@@ -19,6 +19,8 @@
 | media-quality | `npm run seed:library -- media-quality` | 配图质量摘要 |
 | curate | `npm run seed:library -- curate --force` | 同 `media --force` |
 | dedupe-local | `npm run seed:library -- dedupe-local` | 删除条内 MD5 重复文件 |
+| dedupe-cross | `npm run seed:library -- dedupe-cross` | 跨条目重复图去重（保留首条封面） |
+| enrich-desc | `npm run seed:library -- enrich-desc` | 补全过短/模板化 description |
 | import | `npm run seed:library:reimport` | 仅新增未入库的 `id` |
 | update | `npm run seed:library -- update --id=<uuid>` | 强制更新指定条目 |
 | info | `npm run seed:library -- info` | 统计 |

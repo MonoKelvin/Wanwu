@@ -1,0 +1,23 @@
+{
+  "id": "71924134-162c-452f-b7d3-46e82e851db7",
+  "slug": "wine-riesling",
+  "subCategoryId": "wine-white",
+  "name": "雷司令",
+  "summary": "德奥白葡萄代表。",
+  "description": "雷司令：德奥白葡萄代表。\n\n**概述**：雷司令在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：德奥白葡萄代表。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：雷司\n\n**规格参数**\n\n**品种**：Riesling",
+  "tags": [
+    "雷司"
+  ],
+  "specs": {
+    "品种": "Riesling"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "wine bottle glass vineyard",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

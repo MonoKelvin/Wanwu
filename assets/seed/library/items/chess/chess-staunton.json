@@ -1,0 +1,21 @@
+{
+  "id": "776a38b2-d450-4ff0-b2cb-185983ec0125",
+  "slug": "chess-staunton",
+  "subCategoryId": "chess-intl",
+  "name": "斯汤顿国际象棋",
+  "summary": "现代标准棋具样式。",
+  "description": "斯汤顿国际象棋：现代标准棋具样式。\n\n**概述**：斯汤顿国际象棋在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：现代标准棋具样式。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：斯汤",
+  "tags": [
+    "斯汤"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "chess board pieces game",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

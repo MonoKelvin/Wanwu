@@ -21,12 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Figma design system ui",
+    "query": "ui design software screen mockup",
     "matchTags": [
-      "移动端",
-      "figma"
+      "ui",
+      "design"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 0,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

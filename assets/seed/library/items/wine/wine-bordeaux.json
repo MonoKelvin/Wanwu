@@ -1,0 +1,24 @@
+{
+  "id": "0609e849-832b-4303-846a-832f311a9b11",
+  "slug": "wine-bordeaux",
+  "subCategoryId": "wine-red",
+  "name": "波尔多红酒",
+  "summary": "法国左岸/右岸混酿标杆。",
+  "description": "波尔多红酒：法国左岸/右岸混酿标杆。\n\n**概述**：波尔多红酒在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：法国左岸/右岸混酿标杆。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：波尔\n\n**规格参数**\n\n**产区**：法国波尔多\n**风格**：干红",
+  "tags": [
+    "波尔"
+  ],
+  "specs": {
+    "产区": "法国波尔多",
+    "风格": "干红"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "wine bottle glass vineyard",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "eb8a4a0e-2a68-48b0-85d3-0eb58e0c8843",
+  "slug": "aero-f22",
+  "subCategoryId": "aero-fighter",
+  "name": "F-22 猛禽",
+  "summary": "第五代隐身空优战机。",
+  "description": "F-22 猛禽：第五代隐身空优战机。\n\n**概述**：F-22 猛禽（F-22 ）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：第五代隐身空优战机。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：F-\n\n**规格参数**\n\n**国家**：美国",
+  "tags": [
+    "F-"
+  ],
+  "specs": {
+    "国家": "美国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "fighter jet aircraft military",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "5f4680c0-63ec-4944-aa91-c4571e8972f5",
+  "slug": "aero-apollo-csm",
+  "subCategoryId": "aero-space",
+  "name": "阿波罗指令/服务舱",
+  "summary": "登月任务指令舱组合。",
+  "description": "阿波罗指令/服务舱：登月任务指令舱组合。\n\n**概述**：阿波罗指令/服务舱在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：登月任务指令舱组合。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：阿波\n\n**规格参数**\n\n**任务**：Apollo",
+  "tags": [
+    "阿波"
+  ],
+  "specs": {
+    "任务": "Apollo"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "spacecraft rocket launch nasa",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

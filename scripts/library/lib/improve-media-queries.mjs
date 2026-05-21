@@ -50,8 +50,20 @@ export function suggestMediaQuery(raw, categoryId) {
       return `${primaryName} interior design room`
     case 'industrial-design':
       return `${primaryName} product design`
-    case 'history':
-      return `${primaryName} landmark architecture`
+    case 'history': {
+      const slug = (raw.slug ?? '').replace(/^history-/, '')
+      const map = {
+        potala: 'potala palace tibet lhasa',
+        'potala-palace': 'potala palace tibet',
+        'suzhou-garden': 'suzhou classical garden china',
+        'great-wall': 'great wall of china',
+        'angkor-wat': 'angkor wat cambodia temple',
+        colosseum: 'colosseum rome',
+        'machu-picchu': 'machu picchu peru',
+        'notre-dame': 'notre dame cathedral paris'
+      }
+      return map[slug] ?? `${en || primaryName} historic landmark architecture`
+    }
     case 'bird': {
       const slug = (raw.slug ?? '').replace(/^bird-/, '').replace(/-/g, ' ')
       return `${slug || en || 'eagle'} bird wildlife photo`
@@ -110,6 +122,21 @@ export function suggestMediaQuery(raw, categoryId) {
       return `${en || primaryName} shoes footwear`
     case 'pottery':
       return `${en || primaryName} ceramic pottery`
+    case 'wine':
+      return `${en || primaryName} wine bottle glass vineyard`
+    case 'aerospace':
+      if (raw.subCategoryId === 'aero-space') return 'spacecraft rocket launch nasa'
+      if (raw.subCategoryId === 'aero-helicopter') return 'helicopter aircraft flying'
+      if (raw.subCategoryId === 'aero-fighter') return 'fighter jet aircraft military'
+      return 'airplane aircraft commercial aviation'
+    case 'chess':
+      if (raw.subCategoryId === 'chess-go') return 'go board game stones'
+      if (raw.subCategoryId === 'chess-chinese') return 'chinese chess xiangqi board'
+      if (raw.subCategoryId === 'chess-shogi') return 'shogi japanese chess board'
+      return 'chess board pieces game'
+    case 'coin':
+      if (raw.subCategoryId === 'coin-banknote') return 'banknote money currency'
+      return 'coins currency collection macro'
     default:
       return `${primaryName} ${raw.tags?.[0] ?? ''}`.trim()
   }
@@ -143,7 +170,7 @@ export function improveMediaQueries(root) {
       const query = suggestMediaQuery(raw, categoryId)
       const matchTags = suggestMatchTags(raw, categoryId)
       const noRequired =
-        ['anime', 'game', 'movie', 'book', 'architecture', 'food', 'watch', 'ui-design', 'industrial-design', 'interior', 'history', 'illustration', 'transformers', 'superhero', 'coffee-tea', 'sport', 'jewelry', 'train', 'ship', 'footwear', 'pottery', 'bird', 'insect', 'fish', 'reptile'].includes(
+        ['anime', 'game', 'movie', 'book', 'architecture', 'food', 'watch', 'ui-design', 'industrial-design', 'interior', 'history', 'illustration', 'transformers', 'superhero', 'coffee-tea', 'sport', 'jewelry', 'train', 'ship', 'footwear', 'pottery', 'bird', 'insect', 'fish', 'reptile', 'wine', 'aerospace', 'chess', 'coin'].includes(
           categoryId
         )
       const enQuery = query.replace(/[\u4e00-\u9fff]/g, '').replace(/\s+/g, ' ').trim()

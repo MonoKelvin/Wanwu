@@ -4,7 +4,7 @@
   "subCategoryId": "moto-japan",
   "name": "川崎 Z900",
   "summary": "四缸街车性价比，Z 系列街头暴力美学。",
-  "description": "川崎 Z900为日本Kawasaki代表作，948 四缸，定位街车。日系厂商以可靠性与高转四缸技术统治全球仿赛与街车市场，常称霸 WSBK 与 MotoGP。\n\n保养经济、配件丰富，适合赛道日与日常通勤的多场景需求。\n\n**骑行要点**：948 四缸，高转性能或扭力特性因车系而异\n\n**相关**：与欧系意系对比更重性价比与电子辅助普及",
+  "description": "川崎 Z900：四缸街车性价比，Z 系列街头暴力美学。\n\n**概述**：川崎 Z900（Z900）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：四缸街车性价比，Z 系列街头暴力美学。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：日本、Kawasaki、摩托、街车\n\n**规格参数**\n\n**分类**：日本品牌\n**厂商**：Kawasaki\n**发动机**：948 四缸\n**定位**：街车\n**总部**：日本\n**赛事**：MotoGP / WSBK",
   "tags": [
     "日本",
     "Kawasaki",
@@ -21,12 +21,12 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Z900 motorcycle",
+    "query": "kawasaki z900 street motorcycle",
     "matchTags": [
-      "kawasaki",
-      "z900"
+      "motorcycle",
+      "kawasaki"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 0,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

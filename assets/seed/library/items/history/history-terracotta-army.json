@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "landmark architecture",
+    "query": "historic landmark architecture",
     "category": "places",
     "matchTags": [
       "世界遗产"

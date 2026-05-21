@@ -1,0 +1,21 @@
+{
+  "id": "3f6d4ded-a5bb-49ff-aeea-86737aa4ffa6",
+  "slug": "chess-xiangqi-set",
+  "subCategoryId": "chess-chinese",
+  "name": "中国象棋",
+  "summary": "楚河汉界对弈。",
+  "description": "中国象棋：楚河汉界对弈。\n\n**概述**：中国象棋在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：楚河汉界对弈。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：中国",
+  "tags": [
+    "中国"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "chinese chess xiangqi board",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

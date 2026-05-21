@@ -1,0 +1,23 @@
+{
+  "id": "5733bb45-7206-4f70-ade0-fc8ac61887a9",
+  "slug": "wine-napa-cab",
+  "subCategoryId": "wine-region",
+  "name": "纳帕谷赤霞珠",
+  "summary": "新世界赤霞珠典范。",
+  "description": "纳帕谷赤霞珠：新世界赤霞珠典范。\n\n**概述**：纳帕谷赤霞珠在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：新世界赤霞珠典范。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：纳帕\n\n**规格参数**\n\n**产区**：美国纳帕",
+  "tags": [
+    "纳帕"
+  ],
+  "specs": {
+    "产区": "美国纳帕"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "wine bottle glass vineyard",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

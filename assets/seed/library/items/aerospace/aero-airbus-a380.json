@@ -1,0 +1,25 @@
+{
+  "id": "d5b2123c-954a-44a7-9d4d-c9000b7f7f44",
+  "slug": "aero-airbus-a380",
+  "subCategoryId": "aero-commercial",
+  "name": "空客 A380",
+  "summary": "双层巨型客机。",
+  "description": "空客 A380：双层巨型客机。\n\n**概述**：空客 A380（A380）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：双层巨型客机。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：空客\n\n**规格参数**\n\n**座位**：500+",
+  "tags": [
+    "空客"
+  ],
+  "specs": {
+    "座位": "500+"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "airplane aircraft commercial aviation",
+    "category": "all",
+    "matchTags": [
+      "a380"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

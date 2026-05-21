@@ -1,0 +1,23 @@
+{
+  "id": "25236bbc-1bca-4710-b435-46bc24f99d59",
+  "slug": "game-ff7",
+  "subCategoryId": "game-rpg",
+  "name": "最终幻想 VII",
+  "summary": "JRPG 叙事与 ATB 战斗里程碑。",
+  "description": "最终幻想 VII：JRPG 叙事与 ATB 战斗里程碑。\n\n**概述**：最终幻想 VII（VII）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：JRPG 叙事与 ATB 战斗里程碑。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：最终",
+  "tags": [
+    "最终"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "fantasy video game landscape screenshot",
+    "category": "all",
+    "matchTags": [
+      "vii"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 6
+  }
+}
