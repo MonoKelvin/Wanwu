@@ -117,16 +117,41 @@ function syncSelection() {
   selectionKeys.value = feedId ? { [feedId]: true } : {}
 }
 
-onMounted(async () => {
+let rssLoaded = false
+
+async function ensureRssLoaded() {
+  if (rssLoaded) return
   await rssStore.loadAll()
+  rssLoaded = true
   syncExpanded()
-  syncSelection()
-  void rssStore.startAccessibilityProbe()
+}
+
+onMounted(async () => {
+  if (route.meta.module === 'rss') {
+    await ensureRssLoaded()
+    syncExpanded()
+    syncSelection()
+    void rssStore.startAccessibilityProbe()
+  }
 })
 
 onUnmounted(() => {
   rssStore.stopAccessibilityProbe()
 })
+
+watch(
+  () => route.meta.module,
+  async (m) => {
+    if (m === 'rss') {
+      await ensureRssLoaded()
+      syncExpanded()
+      syncSelection()
+      void rssStore.startAccessibilityProbe()
+    } else {
+      rssStore.stopAccessibilityProbe()
+    }
+  }
+)
 
 watch(() => rssStore.groups.length, syncExpanded)
 watch(() => route.params.feedId, syncSelection)

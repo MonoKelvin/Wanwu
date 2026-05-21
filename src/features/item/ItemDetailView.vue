@@ -1,6 +1,9 @@
 <script setup lang="ts">
+defineOptions({ name: 'ItemDetailView' })
+
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useItemDetailNavigation } from '@app/composables/useItemDetailNavigation'
 import Textarea from 'primevue/textarea'
 import Skeleton from 'primevue/skeleton'
 import EmptyState from '@app/components/EmptyState.vue'
@@ -33,6 +36,7 @@ const U = {
 
 const route = useRoute()
 const router = useRouter()
+const { backFromItemDetail } = useItemDetailNavigation()
 
 const item = ref<Item | null>(null)
 const loading = ref(true)
@@ -210,7 +214,7 @@ watch(lightboxIndex, (i) => {
 })
 
 function goBack() {
-  router.back()
+  void backFromItemDetail()
 }
 
 async function onFavoriteClick() {

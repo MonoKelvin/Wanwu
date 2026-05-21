@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'fs'
+import { existsSync, readFileSync, statSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
 import type Database from 'better-sqlite3'
@@ -64,6 +64,103 @@ export interface LibraryCategoriesFile {
 
 function seedRoot(): string {
   return join(process.cwd(), 'assets', 'seed', 'library')
+}
+
+const CATALOG_IMPORT_MARKER = '.library-catalog-import'
+
+/** 与 catalog 内容/规模绑定的指纹；变更后才会重新扫描入库 */
+export function getCatalogSeedToken(catalog: LibraryCatalog): string {
+  return `schema:${catalog.schema ?? 0}:media:${catalog.mediaConfigVersion ?? 0}:n:${catalog.items.length}`
+}
+
+function catalogImportMarkerPath(basePath: string): string {
+  return join(basePath, 'db', CATALOG_IMPORT_MARKER)
+}
+
+interface CatalogImportMarker {
+  token: string
+  mtimeMs: number
+  size: number
+  itemCount: number
+}
+
+function catalogJsonPath(): string {
+  return join(seedRoot(), 'catalog.json')
+}
+
+function itemCountFromToken(token: string): number {
+  const m = /:n:(\d+)$/.exec(token)
+  return m ? Number(m[1]) : 0
+}
+
+function readCatalogImportMarker(basePath: string): CatalogImportMarker | null {
+  const path = catalogImportMarkerPath(basePath)
+  if (!existsSync(path)) return null
+  try {
+    const lines = readFileSync(path, 'utf-8').trim().split('\n')
+    const token = lines[0]?.trim()
+    if (!token) return null
+    const mtimeMs = Number(lines[1])
+    const size = Number(lines[2])
+    if (!Number.isFinite(mtimeMs) || !Number.isFinite(size)) return null
+    return { token, mtimeMs, size, itemCount: itemCountFromToken(token) }
+  } catch {
+    return null
+  }
+}
+
+export function writeCatalogImportMarker(basePath: string, catalog: LibraryCatalog): void {
+  const catalogPath = catalogJsonPath()
+  const stat = existsSync(catalogPath) ? statSync(catalogPath) : { mtimeMs: 0, size: 0 }
+  const body = [
+    getCatalogSeedToken(catalog),
+    String(stat.mtimeMs),
+    String(stat.size)
+  ].join('\n')
+  writeFileSync(catalogImportMarkerPath(basePath), body, 'utf-8')
+}
+
+/** catalog 未变更且曾完整入库时，无需再读 1.6MB JSON */
+function tryFastSkipImportNew(dbService: DatabaseService): ImportLibraryResult | null {
+  const catalogPath = catalogJsonPath()
+  if (!existsSync(catalogPath)) return null
+  const stat = statSync(catalogPath)
+  const marker = readCatalogImportMarker(dbService.getBasePath())
+  if (!marker) return null
+  if (marker.mtimeMs !== stat.mtimeMs || marker.size !== stat.size) return null
+  return { imported: 0, skipped: marker.itemCount, updated: 0 }
+}
+
+/** 各分类库已入库 id（每库一次 SELECT） */
+export function collectExistingItemIds(dbService: DatabaseService): Map<string, Set<string>> {
+  const map = new Map<string, Set<string>>()
+  for (const catId of dbService.listLibraryCategoryIds()) {
+    const libDb = dbService.getLibraryDb(catId)
+    if (!libDb) continue
+    ensureItemColumns(libDb)
+    const rows = libDb.prepare('SELECT id FROM items').all() as Array<{ id: string }>
+    map.set(catId, new Set(rows.map((r) => r.id)))
+  }
+  return map
+}
+
+function prepareLibraryDbsForImport(
+  dbService: DatabaseService,
+  items: LibraryCatalogItem[],
+  categoriesFile: LibraryCategoriesFile | null
+): void {
+  const categoryDefs = categoriesFile?.categories ?? []
+  const synced = new Set<string>()
+  for (const item of items) {
+    const catId = item.categoryId
+    if (synced.has(catId)) continue
+    const libDb = dbService.getLibraryDb(catId)
+    if (!libDb) continue
+    ensureItemColumns(libDb)
+    const catDef = categoryDefs.find((c) => c.id === catId)
+    if (catDef) syncLibraryCategories(libDb, catDef)
+    synced.add(catId)
+  }
 }
 
 function ensureItemColumns(db: Database.Database): void {
@@ -222,19 +319,18 @@ function importItems(
   mode: UpsertMode,
   categoriesFile: LibraryCategoriesFile | null
 ): ImportLibraryResult {
-  const categoryDefs = categoriesFile?.categories ?? []
   let imported = 0
   let skipped = 0
   let updated = 0
   const cleaned = new Set<string>()
 
+  if (items.length > 0) {
+    prepareLibraryDbsForImport(dbService, items, categoriesFile)
+  }
+
   for (const item of items) {
     const libDb = dbService.getLibraryDb(item.categoryId)
     if (!libDb) continue
-    ensureItemColumns(libDb)
-
-    const catDef = categoryDefs.find((c) => c.id === item.categoryId)
-    if (catDef) syncLibraryCategories(libDb, catDef)
 
     if (mode === 'upsert' && !cleaned.has(item.categoryId)) {
       const validIds = new Set(
@@ -303,7 +399,7 @@ export function syncLibraryCategories(
 }
 
 export function loadLibraryCatalog(): LibraryCatalog | null {
-  const path = join(seedRoot(), 'catalog.json')
+  const path = catalogJsonPath()
   if (!existsSync(path)) return null
   return JSON.parse(readFileSync(path, 'utf-8')) as LibraryCatalog
 }
@@ -320,12 +416,13 @@ export function syncLibraryMediaFromCatalog(dbService: DatabaseService): ImportL
   const catalog = loadLibraryCatalog()
   if (!catalog?.items?.length) return { imported: 0, skipped: 0, updated: 0 }
 
+  prepareLibraryDbsForImport(dbService, catalog.items, loadLibraryCategories())
+
   let updated = 0
   let skipped = 0
   for (const item of catalog.items) {
     const libDb = dbService.getLibraryDb(item.categoryId)
     if (!libDb) continue
-    ensureItemColumns(libDb)
     if (syncItemMediaFromCatalog(libDb, item) === 'update') updated++
     else skipped++
   }
@@ -336,11 +433,18 @@ export function importLibraryCatalog(
   dbService: DatabaseService,
   options: ImportLibraryOptions = {}
 ): ImportLibraryResult {
+  if (options.importNew) {
+    const fast = tryFastSkipImportNew(dbService)
+    if (fast) return fast
+  }
+
   const catalog = loadLibraryCatalog()
   if (!catalog?.items?.length) return { imported: 0, skipped: 0, updated: 0 }
 
   if (options.full) {
-    return importCatalogItems(dbService, catalog.items, 'upsert')
+    const result = importCatalogItems(dbService, catalog.items, 'upsert')
+    writeCatalogImportMarker(dbService.getBasePath(), catalog)
+    return result
   }
 
   if (options.syncAllMedia) {
@@ -360,8 +464,65 @@ export function importLibraryCatalog(
   }
 
   if (options.importNew) {
-    return importCatalogItems(dbService, catalog.items, 'insert-only')
+    const basePath = dbService.getBasePath()
+    const existing = collectExistingItemIds(dbService)
+    const toImport = catalog.items.filter((item) => !existing.get(item.categoryId)?.has(item.id))
+
+    if (toImport.length === 0) {
+      writeCatalogImportMarker(basePath, catalog)
+      return { imported: 0, skipped: catalog.items.length, updated: 0 }
+    }
+
+    const result = importCatalogItems(dbService, toImport, 'insert-only')
+    const skipped = catalog.items.length - result.imported
+    if (result.imported === toImport.length) {
+      writeCatalogImportMarker(basePath, catalog)
+    }
+    return { imported: result.imported, skipped, updated: result.updated }
   }
 
   return { imported: 0, skipped: 0, updated: 0 }
+}
+
+/** 应用启动：后台增量入库 + 配图同步（不阻塞窗口） */
+export function runStartupLibrarySeed(dbService: DatabaseService): void {
+  const t0 = Date.now()
+  try {
+    const seedResult = importLibraryCatalog(dbService, { importNew: true })
+    if (seedResult.imported > 0) {
+      console.log(
+        `[librarySeed] imported ${seedResult.imported} items (skipped ${seedResult.skipped}) in ${Date.now() - t0}ms`
+      )
+    }
+    syncLibraryMediaFromCatalogIfNeeded(dbService)
+  } catch (err) {
+    console.error('[librarySeed] background seed failed', err)
+  }
+}
+
+function syncLibraryMediaFromCatalogIfNeeded(dbService: DatabaseService): void {
+  const catalog = loadLibraryCatalog()
+  if (!catalog?.items?.length) return
+
+  const basePath = dbService.getBasePath()
+  const marker = join(basePath, 'db', '.library-media-sync')
+  const token = `v${catalog.schema ?? 0}-${catalog.mediaConfigVersion ?? 0}`
+  let last = ''
+  if (existsSync(marker)) {
+    try {
+      last = readFileSync(marker, 'utf-8').trim()
+    } catch {
+      last = ''
+    }
+  }
+  if (last === token) return
+
+  const t0 = Date.now()
+  const result = syncLibraryMediaFromCatalog(dbService)
+  writeFileSync(marker, token, 'utf-8')
+  if (result.updated > 0) {
+    console.log(
+      `[librarySeed] synced media paths for ${result.updated} items in ${Date.now() - t0}ms`
+    )
+  }
 }

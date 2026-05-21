@@ -1,6 +1,8 @@
 <script setup lang="ts">
+defineOptions({ name: 'PersonalView' })
+
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useItemDetailNavigation } from '@app/composables/useItemDetailNavigation'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Skeleton from 'primevue/skeleton'
@@ -24,7 +26,7 @@ import {
 } from '@shared/utils/profileMedia'
 import type { FavoriteGroup } from '@shared/types/favorite'
 
-const router = useRouter()
+const { openItemDetail } = useItemDetailNavigation()
 const toast = useWanwuToast()
 
 const NICKNAME_MAX = 12
@@ -523,7 +525,7 @@ function onBackgroundReset() {
 }
 
 function openFavorite(itemId: string, source: string) {
-  router.push({ name: 'item-detail', params: { source, id: itemId } })
+  void openItemDetail({ source, id: itemId })
 }
 
 async function removeFavorite(itemId: string, source: string, groupId: string) {

@@ -19,6 +19,7 @@ import { RssService } from './services/rssService'
 import { MediaService } from './services/mediaService'
 import { resolveWanwuPath } from './services/dataPaths'
 import { applyRssAutoRefreshSchedule } from './services/rssScheduler'
+import { runStartupLibrarySeed } from './services/librarySeed'
 
 const isDev = !app.isPackaged
 
@@ -171,13 +172,13 @@ function createWindow(): void {
       console.warn('[wanwu] forcing window show after timeout')
       mainWindow.show()
     }
-  }, 8000)
+  }, 12000)
 }
 
 async function initServices(): Promise<void> {
   const userData = resolveWanwuPath()
   services.db = new DatabaseService(userData)
-  await services.db.init()
+  await services.db.init({ skipLibrarySeed: true })
   services.library = new LibraryService(services.db)
   services.rss = new RssService(services.db)
   services.media = new MediaService(userData)
@@ -219,6 +220,11 @@ app.whenReady().then(async () => {
   }
 
   createWindow()
+
+  if (services.db) {
+    setImmediate(() => runStartupLibrarySeed(services.db!))
+  }
+
   void services.rss?.pruneUnhealthyDefaultFeeds().catch(() => {})
 
   app.on('activate', () => {

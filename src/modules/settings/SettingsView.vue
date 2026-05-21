@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineOptions({ name: 'SettingsView' })
+
 import { computed, onMounted, ref } from 'vue'
 import { useSettingsStore } from '@shared/stores/settings'
 import DataMigrateDialog from '@features/settings/DataMigrateDialog.vue'
@@ -36,6 +38,8 @@ async function refreshPaths() {
 </script>
 
 <template>
+  <!-- 外层承接 AppShell 的 flex-col；内层保持设置页左右分栏 -->
+  <div class="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
   <div class="ww-settings-layout">
     <div class="ww-settings-layout__ambient" aria-hidden="true">
       <span class="ww-settings-layout__ambient-glow ww-settings-layout__ambient-glow--warm" />
@@ -79,5 +83,6 @@ async function refreshPaths() {
       :current-path="paths.wanwu"
       @done="refreshPaths"
     />
+  </div>
   </div>
 </template>

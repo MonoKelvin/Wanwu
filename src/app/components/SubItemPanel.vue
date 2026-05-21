@@ -108,7 +108,7 @@ function onLibrarySelect(node: TreeNode) {
       <h2 class="ww-section-label">{{ route.meta.title }}</h2>
     </header>
 
-    <template v-if="module === 'library'">
+    <div v-show="module === 'library'" class="flex min-h-0 flex-1 flex-col overflow-hidden">
       <div class="shrink-0 px-2 pb-2">
         <IconField class="ww-field-search w-full">
           <WwInputIcon name="search" />
@@ -136,8 +136,10 @@ function onLibrarySelect(node: TreeNode) {
           无匹配分类
         </p>
       </div>
-    </template>
+    </div>
 
-    <RssSidebar v-else-if="module === 'rss'" class="min-h-0 flex-1" />
+    <div v-show="module === 'rss'" class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+      <RssSidebar class="min-h-0 flex-1" />
+    </div>
   </aside>
 </template>

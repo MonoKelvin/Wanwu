@@ -1,6 +1,8 @@
 ﻿/* 璁剧疆椤?*/
-.ww-settings-layout {  position: relative;
+.ww-settings-layout {
+  position: relative;
   display: flex;
+  flex-direction: row;
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -50,7 +52,7 @@
   flex-shrink: 0;
   flex-direction: column;
   gap: 0.125rem;
-  padding: 0.875rem 0.5rem;
+  padding: calc(var(--ww-titlebar-height) + 0.875rem) 0.5rem 0.875rem;
   border-right: 1px solid var(--ww-border-subtle);
   background: var(--ww-settings-nav-bg);
   backdrop-filter: blur(10px);
@@ -120,7 +122,7 @@
   display: flex;
   flex-shrink: 0;
   justify-content: center;
-  padding: 1rem 1.25rem 0.75rem;
+  padding: calc(var(--ww-titlebar-height) + 2rem) 1.25rem 0.75rem;
   border-bottom: 1px solid var(--ww-border-subtle);
 }
 

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineOptions({ name: 'RssView' })
+
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import WwButton from '@shared/components/WwButton.vue'

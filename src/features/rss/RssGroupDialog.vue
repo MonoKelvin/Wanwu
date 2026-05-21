@@ -3,6 +3,7 @@ import { nextTick, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import { useFormFieldHighlight } from '@shared/composables/useFormFieldHighlight'
 
 const props = defineProps<{
   visible: boolean
@@ -17,15 +18,15 @@ const emit = defineEmits<{
 }>()
 
 const name = ref('')
-const error = ref('')
 const inputRef = ref<{ $el?: HTMLElement } | null>(null)
+const fields = useFormFieldHighlight()
 
 watch(
   () => props.visible,
   async (open) => {
     if (!open) return
     name.value = props.initialName ?? ''
-    error.value = ''
+    fields.clearAll()
     await nextTick()
     inputRef.value?.$el?.querySelector('input')?.focus()
   }
@@ -35,13 +36,15 @@ function close() {
   emit('update:visible', false)
 }
 
-function submit() {
-  const trimmed = name.value.trim()
-  if (!trimmed) {
-    error.value = '请填写分组名称'
-    return
-  }
-  emit('save', trimmed)
+async function submit() {
+  const ok = await fields.validate(
+    [{ key: 'name', valid: () => Boolean(name.value.trim()) }],
+    {
+      focusFirst: () => inputRef.value?.$el?.querySelector('input')?.focus()
+    }
+  )
+  if (!ok) return
+  emit('save', name.value.trim())
 }
 </script>
 
@@ -54,15 +57,19 @@ function submit() {
     class="ww-rss-dialog w-[min(20rem,90vw)]"
     @update:visible="emit('update:visible', $event)"
   >
-    <label class="ww-form-label" for="rss-group-name">分组名称</label>
-    <InputText
-      id="rss-group-name"
-      ref="inputRef"
-      v-model="name"
-      class="w-full"
-      @keydown.enter="submit"
-    />
-    <p v-if="error" class="mt-2 text-xs text-red-600">{{ error }}</p>
+    <div :key="`name-${fields.shakeKey('name')}`" :class="fields.fieldWrapClass('name')">
+      <label class="ww-form-label" for="rss-group-name">
+        分组名称 <span class="text-ww-warn">*</span>
+      </label>
+      <InputText
+        id="rss-group-name"
+        ref="inputRef"
+        v-model="name"
+        class="w-full"
+        @update:model-value="fields.clearField('name')"
+        @keydown.enter="submit"
+      />
+    </div>
     <template #footer>
       <Button label="取消" severity="secondary" text @click="close" />
       <Button :label="confirmLabel ?? '确定'" @click="submit" />

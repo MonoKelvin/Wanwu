@@ -19,3 +19,11 @@ export function isModuleId(value: string): value is ModuleId {
 export function modulePathById(id: ModuleId): string {
   return MODULE_PATH_BY_ID[id]
 }
+
+/** 与各模块根视图 defineOptions({ name }) 一致，供 AppShell KeepAlive */
+export const MODULE_KEEP_ALIVE = [
+  'LibraryView',
+  'RssView',
+  'PersonalView',
+  'SettingsView'
+] as const

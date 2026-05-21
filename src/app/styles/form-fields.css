@@ -1,0 +1,46 @@
+/* 表单字段校验：高亮 + 抖动（配合 useFormFieldHighlight） */
+
+@keyframes ww-form-field-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  18% {
+    transform: translateX(-5px);
+  }
+  36% {
+    transform: translateX(5px);
+  }
+  54% {
+    transform: translateX(-4px);
+  }
+  72% {
+    transform: translateX(4px);
+  }
+}
+
+.ww-form-field--shake {
+  animation: ww-form-field-shake 0.42s var(--ww-ease-out);
+}
+
+.ww-form-field--invalid > .ww-form-label {
+  color: var(--ww-warn);
+}
+
+.ww-form-field--invalid .p-inputtext,
+.ww-form-field--invalid .p-inputtext:enabled:focus {
+  border-color: var(--ww-warn) !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ww-warn) 40%, transparent) !important;
+}
+
+.ww-form-field--invalid .ww-select-root .p-select,
+.ww-form-field--invalid .ww-select-root .p-select.p-focus {
+  border-color: var(--ww-warn) !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ww-warn) 40%, transparent) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-form-field--shake {
+    animation: none;
+  }
+}

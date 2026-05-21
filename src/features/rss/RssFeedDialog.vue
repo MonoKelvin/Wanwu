@@ -5,8 +5,8 @@ import InputText from 'primevue/inputtext'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import WwSelect from '@shared/components/WwSelect'
-import Message from 'primevue/message'
-import type { RssFeed, RssFeedInput, RssGroup } from '@shared/types/rss'
+import { useFormFieldHighlight } from '@shared/composables/useFormFieldHighlight'
+import type { RssFeed, RssGroup } from '@shared/types/rss'
 import { DEFAULT_RSS_DISPLAY, RSS_DEFAULT_GROUP_ID } from '@shared/types/rss'
 
 const props = defineProps<{
@@ -33,7 +33,12 @@ const title = ref('')
 const url = ref('')
 const groupId = ref('')
 const display = ref({ ...DEFAULT_RSS_DISPLAY })
-const formError = ref('')
+
+const titleInputRef = ref<{ $el?: HTMLElement } | null>(null)
+const urlInputRef = ref<{ $el?: HTMLElement } | null>(null)
+const groupFieldRef = ref<HTMLElement | null>(null)
+
+const fields = useFormFieldHighlight()
 
 const isSystemEdit = computed(() => Boolean(props.feed?.isDefault))
 const isCreate = computed(() => !props.feed)
@@ -48,7 +53,7 @@ watch(
   () => props.visible,
   (open) => {
     if (!open) return
-    formError.value = ''
+    fields.clearAll()
     groupOptions.value = props.groups
       .filter((g) => !g.isRecycleBin && g.id !== RSS_DEFAULT_GROUP_ID)
       .map((g) => ({ label: g.name, value: g.id }))
@@ -66,17 +71,31 @@ watch(
   }
 )
 
+function focusField(key: string) {
+  if (key === 'title') {
+    titleInputRef.value?.$el?.querySelector('input')?.focus()
+    return
+  }
+  if (key === 'url') {
+    urlInputRef.value?.$el?.querySelector('input')?.focus()
+    return
+  }
+  if (key === 'groupId') {
+    groupFieldRef.value?.querySelector<HTMLElement>('.p-select')?.focus()
+  }
+}
+
 function close() {
   emit('update:visible', false)
 }
 
-function submit() {
-  formError.value = ''
+async function submit() {
   if (isSystemEdit.value && props.feed) {
-    if (!groupId.value) {
-      formError.value = '请选择分组'
-      return
-    }
+    const ok = await fields.validate(
+      [{ key: 'groupId', valid: () => Boolean(groupId.value) }],
+      { focusFirst: focusField }
+    )
+    if (!ok) return
     emit('save', {
       id: props.feed.id,
       groupId: groupId.value,
@@ -86,23 +105,23 @@ function submit() {
     return
   }
 
-  if (!title.value.trim()) {
-    formError.value = '请填写订阅名称'
-    return
-  }
-  if (!url.value.trim()) {
-    formError.value = '请填写 Feed 地址'
-    return
-  }
-  if (!/^https?:\/\/.+/i.test(url.value.trim())) {
-    formError.value = '请输入以 http:// 或 https:// 开头的地址'
-    return
-  }
+  const trimmedUrl = url.value.trim()
+  const ok = await fields.validate(
+    [
+      { key: 'title', valid: () => Boolean(title.value.trim()) },
+      {
+        key: 'url',
+        valid: () => trimmedUrl.length > 0 && /^https?:\/\/.+/i.test(trimmedUrl)
+      }
+    ],
+    { focusFirst: focusField }
+  )
+  if (!ok) return
 
   emit('save', {
     ...(props.feed ? { id: props.feed.id } : {}),
     title: title.value.trim(),
-    url: url.value.trim(),
+    url: trimmedUrl,
     groupId: groupId.value,
     display: { ...display.value }
   })
@@ -118,10 +137,6 @@ function submit() {
     class="ww-rss-dialog w-[min(24rem,92vw)]"
     @update:visible="emit('update:visible', $event)"
   >
-    <Message v-if="formError" severity="error" :closable="false" class="mb-3 text-sm">
-      {{ formError }}
-    </Message>
-
     <div v-if="isSystemEdit && feed" class="mb-3 rounded-md bg-ww-inset px-3 py-2 text-xs text-ww-ink-muted">
       <p class="m-0 font-medium text-ww-ink">{{ feed.title }}</p>
       <p class="m-0 mt-1 break-all font-mono text-[0.6875rem] opacity-80">{{ feed.url }}</p>
@@ -130,24 +145,50 @@ function submit() {
 
     <div class="space-y-3">
       <template v-if="!isSystemEdit">
-        <div>
+        <div
+          :key="`title-${fields.shakeKey('title')}`"
+          :class="fields.fieldWrapClass('title')"
+        >
           <label class="ww-form-label">标题 <span class="text-ww-warn">*</span></label>
-          <InputText v-model="title" class="w-full" placeholder="订阅名称（必填）" />
+          <InputText
+            ref="titleInputRef"
+            v-model="title"
+            class="w-full"
+            placeholder="订阅名称"
+            @update:model-value="fields.clearField('title')"
+          />
         </div>
-        <div>
+        <div
+          :key="`url-${fields.shakeKey('url')}`"
+          :class="fields.fieldWrapClass('url')"
+        >
           <label class="ww-form-label">Feed 地址 <span class="text-ww-warn">*</span></label>
-          <InputText v-model="url" class="w-full font-mono text-xs" placeholder="https://example.com/feed.xml" />
+          <InputText
+            ref="urlInputRef"
+            v-model="url"
+            class="w-full font-mono text-xs"
+            placeholder="https://example.com/feed.xml"
+            @update:model-value="fields.clearField('url')"
+          />
         </div>
       </template>
 
-      <div>
-        <label class="ww-form-label">分组</label>
+      <div
+        ref="groupFieldRef"
+        :key="`groupId-${fields.shakeKey('groupId')}`"
+        :class="fields.fieldWrapClass('groupId')"
+      >
+        <label class="ww-form-label">
+          分组
+          <span v-if="isSystemEdit" class="text-ww-warn">*</span>
+        </label>
         <WwSelect
           v-model="groupId"
           size="block"
           :options="groupOptions"
           option-label="label"
           option-value="value"
+          @update:model-value="fields.clearField('groupId')"
         />
       </div>
 

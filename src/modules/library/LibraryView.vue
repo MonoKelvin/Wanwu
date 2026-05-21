@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+defineOptions({ name: 'LibraryView' })
+
+import { computed, nextTick, onActivated, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useItemDetailNavigation } from '@app/composables/useItemDetailNavigation'
+import { useLibraryRouteContext } from '@features/library/useLibraryRouteContext'
 import Skeleton from 'primevue/skeleton'
 import { useLibraryStore } from '@shared/stores/library'
 import ModulePageLayout from '@app/components/ModulePageLayout.vue'
@@ -11,16 +15,25 @@ import LibraryItemList from '@features/library/LibraryItemList.vue'
 import LibraryHeaderToolbar from '@features/library/LibraryHeaderToolbar.vue'
 import type { LibrarySortField, LibraryViewMode } from '@features/library/LibraryHeaderToolbar.vue'
 import type { Item } from '@shared/types/item'
+import { useLibraryListScroll } from '@features/library/useLibraryListScroll'
+import { libraryCategoryKey } from '@features/library/useLibraryRouteContext'
 
 const VIEW_KEY = 'wanwu.library.viewMode'
 const SORT_KEY = 'wanwu.library.sortField'
 
 const route = useRoute()
-const router = useRouter()
 const store = useLibraryStore()
+const routeCtx = useLibraryRouteContext()
+const { openItemDetail } = useItemDetailNavigation()
+
+const pageRoot = ref<HTMLElement | null>(null)
+const { save: saveListScroll, restore: restoreListScroll } = useLibraryListScroll(pageRoot, routeCtx)
 
 const listSearch = ref('')
 const listSuggestions = ref<Item[]>([])
+
+const catId = routeCtx.catId
+const subId = routeCtx.subId
 
 function readViewMode(): LibraryViewMode {
   try {
@@ -61,27 +74,57 @@ watch(sortField, (field) => {
 
 onMounted(async () => {
   await store.loadCategories()
-  const catId = route.params.catId as string | undefined
-  if (catId) {
-    await store.loadItems(catId, route.params.subId as string | undefined)
+  if (catId.value) {
+    playListStagger.value = true
+    await store.loadItems(catId.value, subId.value)
   }
 })
 
 watch(
-  () => [route.params.catId, route.params.subId],
-  async ([catId, subId]) => {
-    listSearch.value = ''
-    listSuggestions.value = []
-    if (typeof catId === 'string') {
-      await store.loadItems(catId, subId as string | undefined)
+  [catId, subId, routeCtx.isLibraryRoute],
+  async ([nextCat, nextSub, onLibrary], prev) => {
+    if (!onLibrary) return
+    const prevCat = prev?.[0]
+    const prevSub = prev?.[1]
+    const nextKey = routeCtx.categoryKey.value
+    const prevKey = libraryCategoryKey(prevCat, prevSub)
+    if (prevKey != null && nextKey != null && nextKey !== prevKey) {
+      listSearch.value = ''
+      listSuggestions.value = []
+      playListStagger.value = true
+    }
+    if (typeof nextCat === 'string') {
+      await store.loadItems(nextCat, nextSub as string | undefined)
     } else {
       store.items = []
+      playListStagger.value = false
     }
   }
 )
 
+watch(
+  () => route.name,
+  (name, prev) => {
+    if (prev === 'item-detail' && name !== 'item-detail') {
+      saveListScroll()
+    }
+    if (prev === 'item-detail' && name === 'library') {
+      playListStagger.value = false
+      restoreListScroll()
+    }
+  }
+)
+
+onActivated(async () => {
+  if (!routeCtx.isLibraryRoute.value) return
+  playListStagger.value = false
+  await nextTick()
+  restoreListScroll()
+})
+
 function openItem(id: string) {
-  router.push({ name: 'item-detail', params: { source: 'library', id } })
+  saveListScroll()
+  void openItemDetail({ source: 'library', id })
 }
 
 function itemMatchesQuery(item: Item, q: string) {
@@ -115,13 +158,13 @@ function compareItems(a: Item, b: Item): number {
 }
 
 const headerSubtitle = computed(() => {
-  const catId = route.params.catId as string | undefined
-  if (!catId) return '选择左侧分类'
-  const cat = store.categories.find((c) => c.id === catId)
-  const subId = route.params.subId as string | undefined
-  if (subId && cat?.children) {
-    const sub = cat.children.find((s) => s.id === subId)
-    return sub ? `${cat.name} · ${sub.name}` : cat?.name
+  const id = catId.value
+  if (!id) return '选择左侧分类'
+  const cat = store.categories.find((c) => c.id === id)
+  const sub = subId.value
+  if (sub && cat?.children) {
+    const child = cat.children.find((s) => s.id === sub)
+    return child ? `${cat.name} · ${child.name}` : cat?.name
   }
   return cat?.name
 })
@@ -142,11 +185,13 @@ const listCountLabel = computed(() => {
 })
 
 const isCardView = computed(() => viewMode.value === 'card')
-const hasCategory = computed(() => Boolean(route.params.catId))
+const hasCategory = computed(() => Boolean(catId.value))
+/** 仅切换分类首次展示列表时播放卡片入场，从详情返回不播 */
+const playListStagger = ref(false)
 </script>
 
 <template>
-  <div class="flex h-full min-h-0 flex-col overflow-hidden">
+  <div ref="pageRoot" class="flex h-full min-h-0 flex-col overflow-hidden">
     <ModulePageLayout>
       <template #header>
         <PageHeader title="全库" :subtitle="headerSubtitle">
@@ -201,7 +246,11 @@ const hasCategory = computed(() => Boolean(route.params.catId))
       <div v-else class="ww-library-grid-wrap">
         <p class="ww-library-list-meta">{{ listCountLabel }}</p>
 
-        <div v-if="isCardView" class="ww-library-grid ww-stagger-children">
+        <div
+          v-if="isCardView"
+          class="ww-library-grid"
+          :class="{ 'ww-stagger-children': playListStagger }"
+        >
           <ItemCard
             v-for="(item, index) in displayedItems"
             :key="item.id"

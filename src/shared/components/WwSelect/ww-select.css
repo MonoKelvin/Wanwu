@@ -88,6 +88,12 @@
 
   min-width: 0;
 
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
   display: flex;
 
   align-items: center;
@@ -187,8 +193,10 @@
   --ww-select-option-active-bg: color-mix(in srgb, var(--ww-list-hover-bg) 76%, var(--ww-ink) 10%);
   --ww-select-option-selected-active-bg: color-mix(in srgb, var(--ww-list-selected-bg) 76%, var(--ww-ink) 10%);
 
-  width: max-content !important;
-  min-width: var(--ww-select-min-w, 12.5rem) !important;
+  box-sizing: border-box;
+  width: var(--ww-select-panel-w, 12.5rem) !important;
+  min-width: var(--ww-select-panel-w, 12.5rem) !important;
+  max-width: var(--ww-select-panel-max-w, calc(100vw - 2rem)) !important;
   margin-top: 0.25rem !important;
   padding: var(--ww-select-panel-inset) !important;
 
@@ -218,50 +226,39 @@
 
 
 
-.ww-select-overlay.ww-select-panel-enter-active,
-
-.ww-select-overlay.ww-select-panel-leave-active {
-
+/* 对角弹出：左上锚点，先快后慢 */
+.ww-select-overlay.ww-select-panel-enter-active {
   transition:
-
-    opacity var(--ww-duration-fast) var(--ww-ease-out),
-
-    transform var(--ww-duration-fast) var(--ww-ease-out) !important;
-
+    opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.26s cubic-bezier(0.16, 1, 0.3, 1) !important;
   transform-origin: top left;
-
 }
-
-
 
 .ww-select-overlay.ww-select-panel-leave-active {
-
-  transform-origin: 100% 100%;
-
+  transition:
+    opacity 0.14s cubic-bezier(0.4, 0, 0.85, 1),
+    transform 0.16s cubic-bezier(0.4, 0, 0.85, 1) !important;
+  transform-origin: bottom right;
 }
 
-
-
-.ww-select-overlay.ww-select-panel-enter-from,
-
-.ww-select-overlay.ww-select-panel-leave-to {
-
+.ww-select-overlay.ww-select-panel-enter-from {
   opacity: 0;
-
-  transform: scale(0.94);
-
+  transform: translate(-5px, -7px) scale(0.9);
 }
 
-
-
-.ww-select-overlay.ww-select-panel-enter-to,
+.ww-select-overlay.ww-select-panel-enter-to {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
 
 .ww-select-overlay.ww-select-panel-leave-from {
-
   opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
 
-  transform: scale(1);
-
+.ww-select-overlay.ww-select-panel-leave-to {
+  opacity: 0;
+  transform: translate(4px, 6px) scale(0.94);
 }
 
 
@@ -373,11 +370,21 @@
 
 
 /* 选项：::before 层做背景色渐显（避免 background 简写冲突、transparent 无法过渡） */
+.ww-select-overlay .ww-select-option-label {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .ww-select-overlay .p-select-option {
   position: relative;
   isolation: isolate;
   box-sizing: border-box;
-  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
   justify-content: flex-start !important;
   min-height: var(--ww-select-option-min-h) !important;
   padding: var(--ww-select-option-inset) !important;
@@ -486,7 +493,11 @@
 
   .ww-select-overlay.ww-select-panel-enter-from,
 
-  .ww-select-overlay.ww-select-panel-leave-to {
+  .ww-select-overlay.ww-select-panel-leave-to,
+
+  .ww-select-overlay.ww-select-panel-leave-from,
+
+  .ww-select-overlay.ww-select-panel-enter-to {
 
     transform: none;
 

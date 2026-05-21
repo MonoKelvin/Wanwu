@@ -2,6 +2,7 @@ import type { WwIconName } from '@shared/icons/registry'
 export {
   DEFAULT_MODULE_ID,
   isModuleId,
+  MODULE_KEEP_ALIVE,
   modulePathById,
   type ModuleId
 } from '@shared/constants/modules'

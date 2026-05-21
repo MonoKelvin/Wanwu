@@ -4,6 +4,7 @@ import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import WwGlassDialog from '@shared/components/WwGlassDialog.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
+import { useFormFieldHighlight } from '@shared/composables/useFormFieldHighlight'
 
 const props = defineProps<{
   visible: boolean
@@ -21,6 +22,7 @@ const creating = ref(false)
 const newName = ref('')
 const loading = ref(false)
 const newInputRef = ref<{ $el?: HTMLElement } | null>(null)
+const fields = useFormFieldHighlight()
 
 watch(
   () => props.visible,
@@ -29,6 +31,7 @@ watch(
     loading.value = true
     creating.value = false
     newName.value = ''
+    fields.clearAll()
     try {
       groups.value = await window.wanwu.user.listFavoriteGroupsForPicker()
       selectedId.value = groups.value[0]?.id ?? ''
@@ -50,8 +53,14 @@ async function startCreate() {
 }
 
 async function submitCreate() {
+  const ok = await fields.validate(
+    [{ key: 'newName', valid: () => Boolean(newName.value.trim()) }],
+    {
+      focusFirst: () => newInputRef.value?.$el?.querySelector('input')?.focus()
+    }
+  )
+  if (!ok) return
   const name = newName.value.trim()
-  if (!name) return
   const created = await window.wanwu.user.createFavoriteGroup(name)
   groups.value = [...groups.value, created].sort((a, b) => a.sortOrder - b.sortOrder)
   selectedId.value = created.id
@@ -95,14 +104,21 @@ function confirm() {
       </li>
     </ul>
 
-    <div v-if="creating" class="ww-fav-picker__create">
-      <label class="ww-form-label" for="new-fav-group">新分组名称</label>
+    <div
+      v-if="creating"
+      :key="`newName-${fields.shakeKey('newName')}`"
+      :class="fields.fieldWrapClass('newName', 'ww-fav-picker__create')"
+    >
+      <label class="ww-form-label" for="new-fav-group">
+        新分组名称 <span class="text-ww-warn">*</span>
+      </label>
       <InputText
         id="new-fav-group"
         ref="newInputRef"
         v-model="newName"
         class="w-full"
         placeholder="例如：想买的、灵感"
+        @update:model-value="fields.clearField('newName')"
         @keydown.enter="submitCreate"
       />
       <div class="ww-fav-picker__create-actions">

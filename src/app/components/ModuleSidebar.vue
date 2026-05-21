@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'
 import { MODULE_NAV_ITEMS } from '@app/config/modules'
+import { useModuleNavigation } from '@app/composables/useModuleNavigation'
+import { useRouteModule } from '@app/composables/useRouteModule'
 import WwIcon from '@shared/components/WwIcon.vue'
 import { APP_LOGO_NAV } from '@shared/assets/app-logo'
 import type { ModuleId } from '@shared/stores/app'
 
-const router = useRouter()
-const route = useRoute()
+const routeModule = useRouteModule()
+const { navigateToModule } = useModuleNavigation()
 const { settings } = storeToRefs(useSettingsStore())
 
 const modules = MODULE_NAV_ITEMS
@@ -20,12 +21,12 @@ const navAlignClass = computed(() =>
   settings.value.navAlign === 'center' ? 'ww-module-nav--center' : 'ww-module-nav--start'
 )
 
-function navigate(path: string) {
-  router.push(path)
+function navigate(id: ModuleId) {
+  navigateToModule(id)
 }
 
 function isActive(id: ModuleId) {
-  return route.meta.module === id
+  return routeModule.value === id
 }
 </script>
 
@@ -60,7 +61,7 @@ function isActive(id: ModuleId) {
           }"
           :aria-label="m.label"
           :aria-current="isActive(m.id) ? 'page' : undefined"
-          @click="navigate(m.path)"
+          @click="navigate(m.id as ModuleId)"
         >
           <WwIcon :name="m.icon" size="md" class="ww-module-btn__icon" />
           <span v-if="showLabel" class="ww-module-btn__label">{{ m.label }}</span>

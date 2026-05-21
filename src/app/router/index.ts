@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { setupModulePathMemory } from '@app/router/moduleMemory'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -36,5 +37,7 @@ const router = createRouter({
     }
   ]
 })
+
+setupModulePathMemory(router)
 
 export default router

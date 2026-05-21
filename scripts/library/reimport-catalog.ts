@@ -10,7 +10,7 @@ import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { homedir } from 'os'
 import { DatabaseService } from '../../electron/services/database'
-import { importLibraryCatalog } from '../../electron/services/librarySeed'
+import { importLibraryCatalog, writeCatalogImportMarker, loadLibraryCatalog } from '../../electron/services/librarySeed'
 
 function resolveUserData(): string {
   if (process.env.WANWU_USER_DATA) return process.env.WANWU_USER_DATA
@@ -50,6 +50,11 @@ async function main() {
     updateIds: opts.ids.length ? opts.ids : undefined,
     full: opts.full
   })
+
+  const catalog = loadLibraryCatalog()
+  if (catalog?.items?.length && (opts.full || result.imported > 0 || result.skipped === catalog.items.length)) {
+    writeCatalogImportMarker(userData, catalog)
+  }
 
   console.log(
     `入库完成 → ${userData}\n  新增 ${result.imported} · 跳过 ${result.skipped} · 更新 ${result.updated}`

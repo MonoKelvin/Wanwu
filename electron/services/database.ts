@@ -1,14 +1,9 @@
 import Database from 'better-sqlite3'
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
 import { seedDefaultRssFeeds } from './rssFeeds'
-import {
-  importLibraryCatalog,
-  loadLibraryCatalog,
-  loadLibraryCategories,
-  syncLibraryMediaFromCatalog
-} from './librarySeed'
+import { loadLibraryCategories } from './librarySeed'
 
 function loadLibraryCategoriesMeta(): Array<{ id: string; name: string; icon: string }> {
   const file = loadLibraryCategories()
@@ -49,39 +44,12 @@ export class DatabaseService {
     for (const cat of LIBRARY_CATEGORIES) {
       this.initLibraryDb(cat.id, cat.name)
     }
-    if (!options?.skipLibrarySeed) {
-      const seedResult = importLibraryCatalog(this, { importNew: true })
-      if (seedResult.imported > 0) {
-        console.log(
-          `[librarySeed] 增量入库 ${seedResult.imported} 条（跳过 ${seedResult.skipped}）`
-        )
-      }
-      this.syncLibraryMediaFromCatalogIfNeeded()
-    }
+    // 图鉴种子在 main 中后台执行，避免阻塞首屏
   }
 
-  /** catalog 配图路径变更时，将 cover / gallery 同步到各分类库 */
-  private syncLibraryMediaFromCatalogIfNeeded(): void {
-    const catalog = loadLibraryCatalog()
-    if (!catalog?.items?.length) return
-
-    const marker = join(this.basePath, 'db', '.library-media-sync')
-    const token = `v${catalog.schema ?? 0}-${catalog.mediaConfigVersion ?? 0}`
-    let last = ''
-    if (existsSync(marker)) {
-      try {
-        last = readFileSync(marker, 'utf-8').trim()
-      } catch {
-        last = ''
-      }
-    }
-    if (last === token) return
-
-    const result = syncLibraryMediaFromCatalog(this)
-    writeFileSync(marker, token, 'utf-8')
-    if (result.updated > 0) {
-      console.log(`[librarySeed] 同步配图路径 ${result.updated} 条`)
-    }
+  /** 各分类图鉴库 id */
+  listLibraryCategoryIds(): string[] {
+    return [...this.libraryDbs.keys()]
   }
 
   private initUserSchema(): void {
