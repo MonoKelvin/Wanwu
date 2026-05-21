@@ -4,7 +4,7 @@ import { wwIcons, WW_ICON_STROKE, type WwIconName } from '@shared/icons/registry
 
 const props = withDefaults(
   defineProps<{
-    name: WwIconName
+    name: WwIconName | string
     size?: 'xs' | 'sm' | 'md' | 'lg' | number
     strokeWidth?: number
     spin?: boolean
@@ -26,18 +26,32 @@ const sizePx = computed(() => {
   return map[props.size]
 })
 
-const icon = computed(() => wwIcons[props.name])
+const icon = computed(() => wwIcons[props.name as WwIconName])
+const isCustomSvg = computed(() => !icon.value)
+const svgPath = computed(() => `/icons/${props.name}.svg`)
 </script>
 
 <template>
-  <component
-    :is="icon"
-    class="ww-icon"
-    :class="{ 'ww-icon--spin': spin }"
-    :size="sizePx"
-    :stroke-width="strokeWidth"
-    :fill="fillValue"
-    :absolute-stroke-width="true"
-    aria-hidden="true"
-  />
+  <template v-if="icon">
+    <component
+      :is="icon"
+      class="ww-icon"
+      :class="{ 'ww-icon--spin': spin }"
+      :size="sizePx"
+      :stroke-width="strokeWidth"
+      :fill="fillValue"
+      :absolute-stroke-width="true"
+      aria-hidden="true"
+    />
+  </template>
+  <template v-else>
+    <img
+      :src="svgPath"
+      :width="sizePx"
+      :height="sizePx"
+      class="ww-icon"
+      :class="{ 'ww-icon--spin': spin }"
+      aria-hidden="true"
+    />
+  </template>
 </template>
