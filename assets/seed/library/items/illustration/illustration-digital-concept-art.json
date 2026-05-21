@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "数字概念艺术 digital illustration artwork",
+    "query": "digital illustration artwork",
     "matchTags": [
       "数字绘画",
       "概念设计",
       "photoshop / blender"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -1,7 +1,7 @@
 {
   "id": "fdc3764a-f8c9-4563-a46c-680dbabfcfe5",
   "slug": "anime-made-in-abyss",
-  "subCategoryId": "anime-fantasy",
+  "subCategoryId": "anime-ghibli",
   "name": "来自深渊",
   "summary": "土笔章人黑暗奇幻，深渊诅咒与探险残酷美学。",
   "description": "来自深渊以探险黑暗为叙事支点，在世界观构建、角色心理与视觉风格上偏向奇幻或文艺向。2017 动画 在口碑与奖项上常获高度评价，适合追求剧情深度的观众。\n\n与纯粹热血少年漫不同，本类更强调设定逻辑、情感细腻度或哲学命题。\n\n**观赏要点**：探险黑暗\n\n**相关**：常与异世界、时间线、吉卜力系或黑暗奇幻标签联动推荐",
@@ -21,9 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "made in abyss anime screenshot fan art",
+    "query": "anime forest spirit girl illustration",
     "matchTags": [],
-    "minMatchScore": 1,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -22,7 +22,9 @@
       "银河护卫队",
       "star"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "异形 Alien film cinema scene",
+    "query": "Alien cinema film still",
     "matchTags": [
       "太空恐怖",
       "斯科特",
       "alien"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

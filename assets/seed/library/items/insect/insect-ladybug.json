@@ -1,0 +1,22 @@
+{
+  "id": "da82a813-1081-4191-884e-99939214e7fc",
+  "slug": "insect-ladybug",
+  "subCategoryId": "insect-beetle",
+  "name": "七星瓢虫",
+  "summary": "蚜虫天敌甲虫。",
+  "description": "七星瓢虫（Ladybug）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "insect macro",
+    "category": "animals",
+    "matchTags": [
+      "insect",
+      "macro"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

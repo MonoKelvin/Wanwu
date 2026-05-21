@@ -1,7 +1,7 @@
 {
   "id": "274fba69-9d8d-4d7e-ada6-3b2528aea147",
   "slug": "ill-rembrandt-night-watch",
-  "subCategoryId": "ill-digital",
+  "subCategoryId": "ill-classic",
   "name": "夜巡 The Night Watch",
   "summary": "伦勃朗光影与荷兰黄金时代群像。",
   "description": "夜巡 The Night Watch由伦勃朗创作，属巴洛克重要作品，约1642年。作品在艺术史教材、博物馆常设展与流行文化引用中反复出现。\n\n古典绘画技法、颜料介质与历史语境构成鉴赏基础，数字复制品亦广泛用于艺术教育。\n\n**艺术史**：巴洛克，伦勃朗，1642\n\n**相关**：与同期流派画家并列研究；博物馆巡展常借展",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "The Night Watch digital illustration artwork",
+    "query": "The Night Watch museum artwork",
     "matchTags": [
       "艺术史",
       "巴洛克",
@@ -29,6 +29,8 @@
       "the"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

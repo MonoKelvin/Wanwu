@@ -1,0 +1,23 @@
+{
+  "id": "affc485c-ecbc-4b47-9f29-596994197fff",
+  "slug": "industrial-design-industrial-kitchenaid",
+  "subCategoryId": "id-appliance",
+  "name": "KitchenAid 厨师机",
+  "summary": "美式搅拌 iconic。",
+  "description": "KitchenAid 厨师机（KitchenAid Mixer）1919 经典。\n\n**特征：行星搅拌。**\n\n**相关：烘焙。**",
+  "tags": [
+    "厨房"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "KitchenAid product design",
+    "category": "all",
+    "matchTags": [
+      "kitchenaid"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

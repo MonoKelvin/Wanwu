@@ -14,6 +14,7 @@
 | cleanup | `npm run seed:library -- cleanup` | 删除占位小图与 mediaTodo |
 | fetch-content | `npm run seed:library -- fetch-content` | 百度百科 → `content.md` |
 | assign-subs | `npm run seed:library -- assign-subs` | 按规则细化二级分类 |
+| expand | `npm run seed:library -- expand` | 写入 `data/expansion-payload` 中的新分类与条目 |
 | improve-queries | `npm run seed:library -- improve-queries` | 优化 Pixabay 搜索词 |
 | media-quality | `npm run seed:library -- media-quality` | 配图质量摘要 |
 | curate | `npm run seed:library -- curate --force` | 同 `media --force` |

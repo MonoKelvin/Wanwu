@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "中国冠毛犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "无毛犬",

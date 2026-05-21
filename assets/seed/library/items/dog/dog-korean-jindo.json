@@ -1,7 +1,7 @@
 {
   "id": "14edf6de-f48b-4922-8011-8093d90f0012",
   "slug": "dog-korean-jindo",
-  "subCategoryId": "dog-asia",
+  "subCategoryId": "dog-working",
   "name": "韩国珍岛犬",
   "summary": "韩国珍岛郡天然纪念犬，竖耳卷尾，忠诚、归巢本能强。",
   "description": "珍岛犬（Jindo）为韩国珍岛郡本土犬，韩国天然纪念物第 53 号。体型中等、耳竖、尾卷。以忠诚与寻回走失主人闻名。\n\n需运动与训练。出口与血统管理严格。在韩国广泛作为伴侣与护卫。\n\n**相关**：与柴犬、纪州犬等东亚犬有比较研究；归巢案例在媒体常见。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "韩国珍岛犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "天然纪念",

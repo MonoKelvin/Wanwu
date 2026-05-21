@@ -1,0 +1,23 @@
+{
+  "id": "37d38415-4e64-4d9e-904b-35ac6758ccb5",
+  "slug": "anime-mononoke",
+  "subCategoryId": "anime-ghibli",
+  "name": "幽灵公主",
+  "summary": "宫崎骏生态史诗。",
+  "description": "幽灵公主（Princess Mononoke）1997 吉卜力剧场版。\n\n**特征：珊、麒麟兽、森林战争。**\n\n**相关：环保主题。**",
+  "tags": [
+    "吉卜力"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "anime forest spirit girl illustration",
+    "category": "all",
+    "matchTags": [
+      "吉卜力"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 6
+  }
+}

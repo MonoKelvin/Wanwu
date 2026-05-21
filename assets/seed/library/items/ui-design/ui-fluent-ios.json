@@ -1,7 +1,7 @@
 {
   "id": "7fe3ae27-fb3b-4ff8-8bbb-83f7267c9480",
   "slug": "ui-fluent-ios",
-  "subCategoryId": "ui-mobile",
+  "subCategoryId": "ui-design-tool",
   "name": "Fluent / iOS 风格",
   "summary": "微软 Fluent 与苹果 HIG 平台规范对比。",
   "description": "Fluent / iOS 风格聚焦移动端原生实践，基于平台规范等规范或工具构建一致体验。移动 UI 需考虑触控目标尺寸、单手区域与安全区（刘海、圆角）。\n\n设计与开发通过 Figma Dev Mode、SwiftUI / Compose 交付协作。\n\n**设计要点**：平台规范，栅格 4/8pt，可达性\n\n**相关**：与响应式 Web、可穿戴界面共享设计系统 Token",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Fluent / iOS 风格 mobile app ui screenshot",
+    "query": "Fluent / iOS design system ui",
     "matchTags": [
       "移动端",
       "平台规范",
       "fluent"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

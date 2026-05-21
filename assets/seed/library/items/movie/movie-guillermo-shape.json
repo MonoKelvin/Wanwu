@@ -1,7 +1,7 @@
 {
   "id": "454348ed-f511-4df1-8892-46533cad1ecc",
   "slug": "movie-guillermo-shape",
-  "subCategoryId": "movie-fantasy",
+  "subCategoryId": "movie-action",
   "name": "水形物语",
   "summary": "德尔·托罗冷战背景人鱼恋，奥斯卡最佳影片。",
   "description": "水形物语构建浪漫奇幻叙事宇宙，2017 年间以美术、服装与配乐塑造异世界沉浸感。奇幻电影常借用神话、民间传说与魔法规则探讨善恶、成长与生态。\n\n与科幻不同，奇幻较少依赖科学解释而重象征与寓言。\n\n**世界观**：浪漫奇幻\n\n**相关**：与原著小说、游戏联动形成跨媒体宇宙",
@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "水形物语 film cinema scene",
+    "query": "cinema film still",
     "matchTags": [
       "浪漫奇幻"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -1,0 +1,19 @@
+{
+  "id": "e27734e0-eb8f-4a72-880b-b92befada2d2",
+  "slug": "transformers-tf-bumblebee-g1",
+  "subCategoryId": "tf-g1",
+  "name": "大黄蜂 G1",
+  "summary": "黄色甲壳虫侦察兵。",
+  "description": "大黄蜂 G1（Bumblebee G1）第三批扩充：分类深度与跨域科普。\n\n**特征：行业或物种代表性。**\n\n**相关：设计、自然、文化史。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 6
+  }
+}

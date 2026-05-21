@@ -30,6 +30,9 @@ assets/library/{categoryId}/{mediaDir}/
 ## 维护流程
 
 ```bash
+node scripts/library/data/generate-expansion-payload.mjs  # 可选：重新生成扩充清单
+npm run seed:library -- expand           # 写入新 items/*.json
+npm run seed:library -- assign-subs
 npm run seed:library -- cleanup          # 删除占位小图
 npm run seed:library -- improve-queries
 npm run seed:library -- build

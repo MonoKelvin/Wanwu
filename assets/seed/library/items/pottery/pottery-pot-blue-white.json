@@ -1,0 +1,19 @@
+{
+  "id": "320d112b-b7fe-4838-97f3-923858dfd01c",
+  "slug": "pottery-pot-blue-white",
+  "subCategoryId": "pot-china",
+  "name": "青花瓷",
+  "summary": "钴料釉下彩。",
+  "description": "青花瓷（Blue and white porcelain）第三批扩充：分类深度与跨域科普。\n\n**特征：行业或物种代表性。**\n\n**相关：设计、自然、文化史。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "ceramic pottery",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

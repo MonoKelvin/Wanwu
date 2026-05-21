@@ -22,13 +22,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "吴哥窟 Angkor Wat landmark architecture",
+    "query": "Angkor Wat landmark architecture",
     "matchTags": [
       "柬埔寨",
       "世界遗产",
       "angkor"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -1,0 +1,21 @@
+{
+  "id": "e4fe7b8c-e4de-4b91-8a2f-56417040e824",
+  "slug": "interior-scandi-living",
+  "subCategoryId": "int-nordic",
+  "name": "北欧风客厅",
+  "summary": "浅木白墙 Hygge。",
+  "description": "北欧风客厅（Scandinavian living room）自然光棉麻。\n\n**特征：模块化沙发。**\n\n**相关：北欧设计。**",
+  "tags": [
+    "北欧"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

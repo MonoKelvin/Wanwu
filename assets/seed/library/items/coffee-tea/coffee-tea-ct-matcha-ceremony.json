@@ -1,0 +1,19 @@
+{
+  "id": "ab760f63-452e-48c6-924c-7e80a4e20b73",
+  "slug": "coffee-tea-ct-matcha-ceremony",
+  "subCategoryId": "ct-tea",
+  "name": "抹茶茶道",
+  "summary": "日本茶碗打茶。",
+  "description": "抹茶茶道（Matcha ceremony）第三批扩充：分类深度与跨域科普。\n\n**特征：行业或物种代表性。**\n\n**相关：设计、自然、文化史。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "tea cup teapot ceremony",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

@@ -1,7 +1,7 @@
 {
   "id": "c6c8800b-92dc-4278-aeb0-fafa239bdb1a",
   "slug": "movie-coraline",
-  "subCategoryId": "movie-fantasy",
+  "subCategoryId": "movie-action",
   "name": "鬼妈妈 Coraline",
   "summary": "莱卡定格动画，平行世界纽扣眼妈妈。",
   "description": "鬼妈妈 Coraline构建定格奇幻叙事宇宙，2009 年间以美术、服装与配乐塑造异世界沉浸感。奇幻电影常借用神话、民间传说与魔法规则探讨善恶、成长与生态。\n\n与科幻不同，奇幻较少依赖科学解释而重象征与寓言。\n\n**世界观**：定格奇幻\n\n**相关**：与原著小说、游戏联动形成跨媒体宇宙",
@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "鬼妈妈 Coraline film cinema scene",
+    "query": "Coraline cinema film still",
     "matchTags": [
       "定格奇幻",
       "coraline"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -1,7 +1,7 @@
 {
   "id": "e7aa0c35-f4dc-4f7a-a8db-f1a50c4bba01",
   "slug": "illustration-character-design",
-  "subCategoryId": "ill-digital",
+  "subCategoryId": "ill-concept",
   "name": "角色设计",
   "summary": "造型、服装与性格可视化的创作流程。",
   "description": "角色设计依托三视图等数字工具完成创作，属于IP 开发领域视觉产出。数字绘画可无损修改图层、色彩与构图，广泛用于娱乐产业流水线。\n\n艺术家常通过社交媒体发布过程视频，形成教程与约稿经济生态。\n\n**创作要点**：三视图，构图与光影，行业规范交付\n\n**相关**：与概念艺术、动画制作、游戏原画岗位技能树重叠",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "角色设计 digital illustration artwork",
+    "query": "digital illustration artwork",
     "matchTags": [
       "数字绘画",
       "ip 开发",
       "三视图"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

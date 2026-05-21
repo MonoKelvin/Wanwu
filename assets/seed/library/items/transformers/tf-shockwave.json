@@ -1,7 +1,7 @@
 {
   "id": "694a66ef-5198-451b-af93-cd89b0f1046d",
   "slug": "tf-shockwave",
-  "subCategoryId": "tf-decepticon",
+  "subCategoryId": "tf-g1",
   "name": "震荡波 Shockwave",
   "summary": "赛博坦留守科学家，激光炮手臂，逻辑冷酷。",
   "description": "震荡波 Shockwave为霸天虎（Decepticon）阵营成员，追求征服赛博坦与地球资源。变形形态常为手枪 / 飞船，职能偏向科学家。\n\n与汽车人长期战争，威震天（及惊破天）为领袖；红蜘蛛等角色以背叛与阴谋著称。\n\n**变形形态**：手枪 / 飞船\n\n**相关**：合体金刚、磁带战士为经典子系列；电影与 G1 设定有差异",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Shockwave transformers toy robot",
+    "query": "transformers robot toy action figure",
     "matchTags": [
       "霸天虎",
       "科学家",
       "shockwave"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -27,7 +27,9 @@
       "极速传说",
       "hayabusa"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 1,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

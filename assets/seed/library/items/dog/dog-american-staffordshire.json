@@ -1,7 +1,7 @@
 {
   "id": "d819a1a0-966d-4c04-832a-52ff20a3c9fa",
   "slug": "dog-american-staffordshire",
-  "subCategoryId": "dog-americas",
+  "subCategoryId": "dog-toy",
   "name": "美国斯塔福郡梗",
   "summary": "美国培育的梗犬力量型，肌肉结实，家庭饲养需社会化与法规了解。",
   "description": "美国斯塔福郡梗（American Staffordshire Terrier）由英国斯塔福斗牛梗发展而来，体型较比特更壮、头更宽。AKC 认可为展示与伴侣。\n\n性格可稳定亲人，需训练。与比特犬、恶霸犬区分标准。了解当地法规。\n\n**相关**：与英国斯塔福梗、比特犬有近缘；简称 AmStaff。",
@@ -20,7 +20,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "美国斯塔福郡梗 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "力量型",

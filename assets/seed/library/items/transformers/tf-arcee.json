@@ -1,7 +1,7 @@
 {
   "id": "bf5696d0-04d0-4d25-8016-5ad243d28311",
   "slug": "tf-arcee",
-  "subCategoryId": "tf-autobot",
+  "subCategoryId": "tf-g1",
   "name": "阿尔茜 Arcee",
   "summary": "女性汽车人战士，粉色流线车体，敏捷射手。",
   "description": "阿尔茜 Arcee隶属汽车人（Autobot）阵营，由 Hasbro 与 Takara Tomy 玩具线及 1984 年动画推出。通常可变形为流线跑车，在团队中担任女战士。\n\n汽车人以保护地球与人类、对抗霸天虎为使命，擎天柱为精神领袖。\n\n**变形形态**：流线跑车\n\n**相关**：与霸天虎威震天宿敌关系；G1 动画与迈克尔·贝电影造型各异",
@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Arcee transformers toy robot",
+    "query": "transformers robot toy action figure",
     "matchTags": [
       "汽车人",
       "hasbro",
       "女战士",
       "arcee"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

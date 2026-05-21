@@ -6,13 +6,34 @@
       "name": "猫",
       "icon": "heart",
       "subcategories": [
-        { "id": "cat-europe", "name": "欧洲品种" },
-        { "id": "cat-americas", "name": "美洲品种" },
-        { "id": "cat-china", "name": "中国品种" },
-        { "id": "cat-japan", "name": "日本品种" },
-        { "id": "cat-short-hair", "name": "短毛品种" },
-        { "id": "cat-long-hair", "name": "长毛品种" },
-        { "id": "cat-exotic", "name": "稀有无毛/卷毛" }
+        {
+          "id": "cat-europe",
+          "name": "欧洲品种"
+        },
+        {
+          "id": "cat-americas",
+          "name": "美洲品种"
+        },
+        {
+          "id": "cat-china",
+          "name": "中国品种"
+        },
+        {
+          "id": "cat-japan",
+          "name": "日本品种"
+        },
+        {
+          "id": "cat-short-hair",
+          "name": "短毛品种"
+        },
+        {
+          "id": "cat-long-hair",
+          "name": "长毛品种"
+        },
+        {
+          "id": "cat-exotic",
+          "name": "稀有无毛/卷毛"
+        }
       ]
     },
     {
@@ -20,12 +41,30 @@
       "name": "狗",
       "icon": "heart",
       "subcategories": [
-        { "id": "dog-europe", "name": "欧洲犬种" },
-        { "id": "dog-americas", "name": "美洲犬种" },
-        { "id": "dog-asia", "name": "亚洲犬种" },
-        { "id": "dog-working", "name": "工作/牧羊犬" },
-        { "id": "dog-toy", "name": "玩具/伴侣犬" },
-        { "id": "dog-hound", "name": "猎犬/嗅猎犬" }
+        {
+          "id": "dog-europe",
+          "name": "欧洲犬种"
+        },
+        {
+          "id": "dog-americas",
+          "name": "美洲犬种"
+        },
+        {
+          "id": "dog-asia",
+          "name": "亚洲犬种"
+        },
+        {
+          "id": "dog-working",
+          "name": "工作/牧羊犬"
+        },
+        {
+          "id": "dog-toy",
+          "name": "玩具/伴侣犬"
+        },
+        {
+          "id": "dog-hound",
+          "name": "猎犬/嗅猎犬"
+        }
       ]
     },
     {
@@ -33,13 +72,34 @@
       "name": "超级英雄",
       "icon": "zap",
       "subcategories": [
-        { "id": "hero-marvel", "name": "漫威 Marvel" },
-        { "id": "hero-dc", "name": "DC 漫画" },
-        { "id": "hero-other", "name": "其他宇宙" },
-        { "id": "hero-marvel-mcu", "name": "漫威电影 MCU" },
-        { "id": "hero-dc-film", "name": "DC 影视" },
-        { "id": "hero-anime", "name": "动漫/日漫英雄" },
-        { "id": "hero-indie", "name": "独立漫画" }
+        {
+          "id": "hero-marvel",
+          "name": "漫威 Marvel"
+        },
+        {
+          "id": "hero-dc",
+          "name": "DC 漫画"
+        },
+        {
+          "id": "hero-other",
+          "name": "其他宇宙"
+        },
+        {
+          "id": "hero-marvel-mcu",
+          "name": "漫威电影 MCU"
+        },
+        {
+          "id": "hero-dc-film",
+          "name": "DC 影视"
+        },
+        {
+          "id": "hero-anime",
+          "name": "动漫/日漫英雄"
+        },
+        {
+          "id": "hero-indie",
+          "name": "独立漫画"
+        }
       ]
     },
     {
@@ -47,11 +107,26 @@
       "name": "超跑",
       "icon": "car",
       "subcategories": [
-        { "id": "car-italy", "name": "意大利品牌" },
-        { "id": "car-germany", "name": "德国品牌" },
-        { "id": "car-britain", "name": "英国品牌" },
-        { "id": "car-france", "name": "法国品牌" },
-        { "id": "car-hypercar", "name": "限量超跑" }
+        {
+          "id": "car-italy",
+          "name": "意大利品牌"
+        },
+        {
+          "id": "car-germany",
+          "name": "德国品牌"
+        },
+        {
+          "id": "car-britain",
+          "name": "英国品牌"
+        },
+        {
+          "id": "car-france",
+          "name": "法国品牌"
+        },
+        {
+          "id": "car-hypercar",
+          "name": "限量超跑"
+        }
       ]
     },
     {
@@ -59,10 +134,22 @@
       "name": "植物",
       "icon": "sun",
       "subcategories": [
-        { "id": "plant-aroid", "name": "天南星科观叶" },
-        { "id": "plant-succulent", "name": "多肉与仙人掌" },
-        { "id": "plant-flowering", "name": "开花观赏" },
-        { "id": "plant-fern", "name": "蕨类与苔藓" }
+        {
+          "id": "plant-aroid",
+          "name": "天南星科观叶"
+        },
+        {
+          "id": "plant-succulent",
+          "name": "多肉与仙人掌"
+        },
+        {
+          "id": "plant-flowering",
+          "name": "开花观赏"
+        },
+        {
+          "id": "plant-fern",
+          "name": "蕨类与苔藓"
+        }
       ]
     },
     {
@@ -70,12 +157,30 @@
       "name": "动漫作品",
       "icon": "sparkles",
       "subcategories": [
-        { "id": "anime-shonen", "name": "少年热血" },
-        { "id": "anime-fantasy", "name": "奇幻冒险" },
-        { "id": "anime-seinen", "name": "青年/剧情" },
-        { "id": "anime-isekai", "name": "异世界" },
-        { "id": "anime-slice", "name": "日常治愈" },
-        { "id": "anime-ghibli", "name": "吉卜力/剧场" }
+        {
+          "id": "anime-shonen",
+          "name": "少年热血"
+        },
+        {
+          "id": "anime-fantasy",
+          "name": "奇幻冒险"
+        },
+        {
+          "id": "anime-seinen",
+          "name": "青年/剧情"
+        },
+        {
+          "id": "anime-isekai",
+          "name": "异世界"
+        },
+        {
+          "id": "anime-slice",
+          "name": "日常治愈"
+        },
+        {
+          "id": "anime-ghibli",
+          "name": "吉卜力/剧场"
+        }
       ]
     },
     {
@@ -83,10 +188,22 @@
       "name": "变形金刚",
       "icon": "star",
       "subcategories": [
-        { "id": "tf-autobot", "name": "汽车人 Autobot" },
-        { "id": "tf-decepticon", "name": "霸天虎 Decepticon" },
-        { "id": "tf-g1", "name": "G1 经典" },
-        { "id": "tf-movie", "name": "真人电影系列" }
+        {
+          "id": "tf-autobot",
+          "name": "汽车人 Autobot"
+        },
+        {
+          "id": "tf-decepticon",
+          "name": "霸天虎 Decepticon"
+        },
+        {
+          "id": "tf-g1",
+          "name": "G1 经典"
+        },
+        {
+          "id": "tf-movie",
+          "name": "真人电影系列"
+        }
       ]
     },
     {
@@ -94,12 +211,30 @@
       "name": "摩托车",
       "icon": "compass",
       "subcategories": [
-        { "id": "moto-italy", "name": "意大利品牌" },
-        { "id": "moto-america", "name": "美式巡航" },
-        { "id": "moto-japan", "name": "日本品牌" },
-        { "id": "moto-germany", "name": "德国品牌" },
-        { "id": "moto-sport", "name": "仿赛/运动" },
-        { "id": "moto-adventure", "name": "探险拉力" }
+        {
+          "id": "moto-italy",
+          "name": "意大利品牌"
+        },
+        {
+          "id": "moto-america",
+          "name": "美式巡航"
+        },
+        {
+          "id": "moto-japan",
+          "name": "日本品牌"
+        },
+        {
+          "id": "moto-germany",
+          "name": "德国品牌"
+        },
+        {
+          "id": "moto-sport",
+          "name": "仿赛/运动"
+        },
+        {
+          "id": "moto-adventure",
+          "name": "探险拉力"
+        }
       ]
     },
     {
@@ -107,11 +242,26 @@
       "name": "电影",
       "icon": "video",
       "subcategories": [
-        { "id": "movie-scifi", "name": "科幻悬疑" },
-        { "id": "movie-fantasy", "name": "奇幻动画" },
-        { "id": "movie-action", "name": "动作犯罪" },
-        { "id": "movie-classic", "name": "经典剧情" },
-        { "id": "movie-horror", "name": "惊悚恐怖" }
+        {
+          "id": "movie-scifi",
+          "name": "科幻悬疑"
+        },
+        {
+          "id": "movie-fantasy",
+          "name": "奇幻动画"
+        },
+        {
+          "id": "movie-action",
+          "name": "动作犯罪"
+        },
+        {
+          "id": "movie-classic",
+          "name": "经典剧情"
+        },
+        {
+          "id": "movie-horror",
+          "name": "惊悚恐怖"
+        }
       ]
     },
     {
@@ -119,10 +269,22 @@
       "name": "立绘",
       "icon": "palette",
       "subcategories": [
-        { "id": "ill-digital", "name": "数字插画" },
-        { "id": "ill-classic", "name": "经典绘画" },
-        { "id": "ill-portrait", "name": "人物肖像" },
-        { "id": "ill-concept", "name": "概念/场景" }
+        {
+          "id": "ill-digital",
+          "name": "数字插画"
+        },
+        {
+          "id": "ill-classic",
+          "name": "经典绘画"
+        },
+        {
+          "id": "ill-portrait",
+          "name": "人物肖像"
+        },
+        {
+          "id": "ill-concept",
+          "name": "概念/场景"
+        }
       ]
     },
     {
@@ -130,10 +292,22 @@
       "name": "UI 设计",
       "icon": "smartphone",
       "subcategories": [
-        { "id": "ui-mobile", "name": "移动端规范" },
-        { "id": "ui-web", "name": "Web 与组件" },
-        { "id": "ui-design-tool", "name": "设计工具" },
-        { "id": "ui-app-screen", "name": "应用界面截图" }
+        {
+          "id": "ui-mobile",
+          "name": "移动端规范"
+        },
+        {
+          "id": "ui-web",
+          "name": "Web 与组件"
+        },
+        {
+          "id": "ui-design-tool",
+          "name": "设计工具"
+        },
+        {
+          "id": "ui-app-screen",
+          "name": "应用界面截图"
+        }
       ]
     },
     {
@@ -141,10 +315,22 @@
       "name": "家装设计",
       "icon": "home",
       "subcategories": [
-        { "id": "int-nordic", "name": "北欧简约" },
-        { "id": "int-zen", "name": "日式禅意" },
-        { "id": "int-modern", "name": "现代轻奢" },
-        { "id": "int-industrial", "name": "工业风" }
+        {
+          "id": "int-nordic",
+          "name": "北欧简约"
+        },
+        {
+          "id": "int-zen",
+          "name": "日式禅意"
+        },
+        {
+          "id": "int-modern",
+          "name": "现代轻奢"
+        },
+        {
+          "id": "int-industrial",
+          "name": "工业风"
+        }
       ]
     },
     {
@@ -152,10 +338,22 @@
       "name": "工业设计",
       "icon": "box",
       "subcategories": [
-        { "id": "id-product", "name": "消费电子" },
-        { "id": "id-home", "name": "家居产品" },
-        { "id": "id-appliance", "name": "厨房家电" },
-        { "id": "id-furniture", "name": "家具灯具" }
+        {
+          "id": "id-product",
+          "name": "消费电子"
+        },
+        {
+          "id": "id-home",
+          "name": "家居产品"
+        },
+        {
+          "id": "id-appliance",
+          "name": "厨房家电"
+        },
+        {
+          "id": "id-furniture",
+          "name": "家具灯具"
+        }
       ]
     },
     {
@@ -163,10 +361,436 @@
       "name": "历史遗迹",
       "icon": "book-open",
       "subcategories": [
-        { "id": "hist-china", "name": "中国" },
-        { "id": "hist-world", "name": "世界其他" },
-        { "id": "hist-ancient", "name": "古代文明" },
-        { "id": "hist-medieval", "name": "中世纪/近代" }
+        {
+          "id": "hist-china",
+          "name": "中国"
+        },
+        {
+          "id": "hist-world",
+          "name": "世界其他"
+        },
+        {
+          "id": "hist-ancient",
+          "name": "古代文明"
+        },
+        {
+          "id": "hist-medieval",
+          "name": "中世纪/近代"
+        }
+      ]
+    },
+    {
+      "id": "bird",
+      "name": "鸟类",
+      "icon": "feather",
+      "subcategories": [
+        {
+          "id": "bird-raptor",
+          "name": "猛禽"
+        },
+        {
+          "id": "bird-songbird",
+          "name": "鸣禽"
+        },
+        {
+          "id": "bird-water",
+          "name": "水鸟"
+        },
+        {
+          "id": "bird-tropical",
+          "name": "热带鸟类"
+        }
+      ]
+    },
+    {
+      "id": "watch",
+      "name": "腕表",
+      "icon": "clock",
+      "subcategories": [
+        {
+          "id": "watch-luxury",
+          "name": "奢华机械"
+        },
+        {
+          "id": "watch-sport",
+          "name": "运动潜水"
+        },
+        {
+          "id": "watch-dress",
+          "name": "正装薄型"
+        },
+        {
+          "id": "watch-smart",
+          "name": "智能腕表"
+        }
+      ]
+    },
+    {
+      "id": "game",
+      "name": "电子游戏",
+      "icon": "gamepad-2",
+      "subcategories": [
+        {
+          "id": "game-rpg",
+          "name": "角色扮演"
+        },
+        {
+          "id": "game-action",
+          "name": "动作冒险"
+        },
+        {
+          "id": "game-strategy",
+          "name": "策略模拟"
+        },
+        {
+          "id": "game-indie",
+          "name": "独立游戏"
+        }
+      ]
+    },
+    {
+      "id": "food",
+      "name": "美食",
+      "icon": "utensils",
+      "subcategories": [
+        {
+          "id": "food-cuisine",
+          "name": "菜系料理"
+        },
+        {
+          "id": "food-dessert",
+          "name": "甜点饮品"
+        },
+        {
+          "id": "food-street",
+          "name": "街头小吃"
+        },
+        {
+          "id": "food-ingredient",
+          "name": "食材香料"
+        }
+      ]
+    },
+    {
+      "id": "architecture",
+      "name": "建筑",
+      "icon": "landmark",
+      "subcategories": [
+        {
+          "id": "arch-modern",
+          "name": "现代地标"
+        },
+        {
+          "id": "arch-classical",
+          "name": "古典纪念"
+        },
+        {
+          "id": "arch-religious",
+          "name": "宗教建筑"
+        },
+        {
+          "id": "arch-bridge",
+          "name": "桥梁构筑"
+        }
+      ]
+    },
+    {
+      "id": "music-inst",
+      "name": "乐器",
+      "icon": "music",
+      "subcategories": [
+        {
+          "id": "music-string",
+          "name": "弦乐器"
+        },
+        {
+          "id": "music-keyboard",
+          "name": "键盘乐器"
+        },
+        {
+          "id": "music-wind",
+          "name": "管乐器"
+        },
+        {
+          "id": "music-percussion",
+          "name": "打击乐"
+        }
+      ]
+    },
+    {
+      "id": "insect",
+      "name": "昆虫",
+      "icon": "bug",
+      "subcategories": [
+        {
+          "id": "insect-butterfly",
+          "name": "蝴蝶蛾类"
+        },
+        {
+          "id": "insect-beetle",
+          "name": "甲虫"
+        },
+        {
+          "id": "insect-bee",
+          "name": "蜜蜂蚂蚁"
+        },
+        {
+          "id": "insect-dragonfly",
+          "name": "蜻蜓蜉蝣"
+        }
+      ]
+    },
+    {
+      "id": "book",
+      "name": "图书",
+      "icon": "book",
+      "subcategories": [
+        {
+          "id": "book-fiction",
+          "name": "小说文学"
+        },
+        {
+          "id": "book-science",
+          "name": "科普技术"
+        },
+        {
+          "id": "book-art",
+          "name": "艺术设计"
+        },
+        {
+          "id": "book-children",
+          "name": "童书绘本"
+        }
+      ]
+    },
+    {
+      "id": "camera",
+      "name": "摄影器材",
+      "icon": "camera",
+      "subcategories": [
+        {
+          "id": "cam-body",
+          "name": "机身"
+        },
+        {
+          "id": "cam-lens",
+          "name": "镜头"
+        },
+        {
+          "id": "cam-film",
+          "name": "胶片机"
+        },
+        {
+          "id": "cam-accessory",
+          "name": "附件"
+        }
+      ]
+    },
+    {
+      "id": "fish",
+      "name": "鱼类",
+      "icon": "fish",
+      "subcategories": [
+        {
+          "id": "fish-fresh",
+          "name": "淡水观赏"
+        },
+        {
+          "id": "fish-salt",
+          "name": "海水珊瑚"
+        },
+        {
+          "id": "fish-food",
+          "name": "食用鱼类"
+        },
+        {
+          "id": "fish-deep",
+          "name": "深海奇特"
+        }
+      ]
+    },
+    {
+      "id": "reptile",
+      "name": "爬行两栖",
+      "icon": "turtle",
+      "subcategories": [
+        {
+          "id": "reptile-lizard",
+          "name": "蜥蜴"
+        },
+        {
+          "id": "reptile-snake",
+          "name": "蛇类"
+        },
+        {
+          "id": "reptile-turtle",
+          "name": "龟鳖"
+        },
+        {
+          "id": "reptile-amphibian",
+          "name": "两栖"
+        }
+      ]
+    },
+    {
+      "id": "coffee-tea",
+      "name": "咖啡茶饮",
+      "icon": "coffee",
+      "subcategories": [
+        {
+          "id": "ct-coffee",
+          "name": "咖啡"
+        },
+        {
+          "id": "ct-tea",
+          "name": "茶"
+        },
+        {
+          "id": "ct-equipment",
+          "name": "器具"
+        },
+        {
+          "id": "ct-culture",
+          "name": "文化空间"
+        }
+      ]
+    },
+    {
+      "id": "sport",
+      "name": "运动",
+      "icon": "dumbbell",
+      "subcategories": [
+        {
+          "id": "sport-ball",
+          "name": "球类"
+        },
+        {
+          "id": "sport-racket",
+          "name": "球拍类"
+        },
+        {
+          "id": "sport-fitness",
+          "name": "健身"
+        },
+        {
+          "id": "sport-outdoor",
+          "name": "户外"
+        }
+      ]
+    },
+    {
+      "id": "jewelry",
+      "name": "珠宝首饰",
+      "icon": "gem",
+      "subcategories": [
+        {
+          "id": "jewel-ring",
+          "name": "戒指"
+        },
+        {
+          "id": "jewel-necklace",
+          "name": "项链"
+        },
+        {
+          "id": "jewel-watch-jewel",
+          "name": "高级珠宝表"
+        },
+        {
+          "id": "jewel-cultural",
+          "name": "文化饰品"
+        }
+      ]
+    },
+    {
+      "id": "train",
+      "name": "铁路",
+      "icon": "train-front",
+      "subcategories": [
+        {
+          "id": "train-highspeed",
+          "name": "高速动车"
+        },
+        {
+          "id": "train-steam",
+          "name": "蒸汽机车"
+        },
+        {
+          "id": "train-metro",
+          "name": "地铁城轨"
+        },
+        {
+          "id": "train-scenic",
+          "name": "观光列车"
+        }
+      ]
+    },
+    {
+      "id": "ship",
+      "name": "船舶",
+      "icon": "ship",
+      "subcategories": [
+        {
+          "id": "ship-sail",
+          "name": "帆船"
+        },
+        {
+          "id": "ship-cargo",
+          "name": "货轮"
+        },
+        {
+          "id": "ship-cruise",
+          "name": "邮轮"
+        },
+        {
+          "id": "ship-navy",
+          "name": "军舰"
+        }
+      ]
+    },
+    {
+      "id": "footwear",
+      "name": "鞋靴",
+      "icon": "footprints",
+      "subcategories": [
+        {
+          "id": "shoe-sneaker",
+          "name": "运动鞋"
+        },
+        {
+          "id": "shoe-dress",
+          "name": "正装皮鞋"
+        },
+        {
+          "id": "shoe-boot",
+          "name": "靴类"
+        },
+        {
+          "id": "shoe-sandal",
+          "name": "凉鞋拖鞋"
+        }
+      ]
+    },
+    {
+      "id": "pottery",
+      "name": "陶瓷",
+      "icon": "cup-soda",
+      "subcategories": [
+        {
+          "id": "pot-china",
+          "name": "中国瓷器"
+        },
+        {
+          "id": "pot-japan",
+          "name": "日本陶艺"
+        },
+        {
+          "id": "pot-europe",
+          "name": "欧洲陶瓷"
+        },
+        {
+          "id": "pot-modern",
+          "name": "现代陶艺"
+        }
       ]
     }
   ]

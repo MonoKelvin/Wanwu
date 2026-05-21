@@ -1,7 +1,7 @@
 {
   "id": "9b346ee4-3417-461f-a6a5-68236eb124b4",
   "slug": "anime-steins-gate",
-  "subCategoryId": "anime-fantasy",
+  "subCategoryId": "anime-ghibli",
   "name": "命运石之门",
   "summary": "科学 ADV 时间线跳跃，冈部伦太郎拯救牧濑红莉栖。",
   "description": "命运石之门以时间旅行为叙事支点，在世界观构建、角色心理与视觉风格上偏向奇幻或文艺向。2011 动画 在口碑与奖项上常获高度评价，适合追求剧情深度的观众。\n\n与纯粹热血少年漫不同，本类更强调设定逻辑、情感细腻度或哲学命题。\n\n**观赏要点**：时间旅行\n\n**相关**：常与异世界、时间线、吉卜力系或黑暗奇幻标签联动推荐",
@@ -21,9 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "steins gate anime screenshot fan art",
+    "query": "anime forest spirit girl illustration",
     "matchTags": [],
-    "minMatchScore": 1,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

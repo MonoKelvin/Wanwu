@@ -22,11 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "龙舌兰 Agave houseplant",
+    "query": "Agave houseplant",
     "matchTags": [
       "agave"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

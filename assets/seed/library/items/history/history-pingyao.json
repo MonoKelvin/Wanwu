@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "平遥古城 landmark architecture",
+    "query": "landmark architecture",
     "matchTags": [
       "世界遗产"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

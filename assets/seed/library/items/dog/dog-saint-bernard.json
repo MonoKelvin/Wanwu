@@ -20,7 +20,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "圣伯纳犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "救援犬",

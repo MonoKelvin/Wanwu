@@ -1,7 +1,7 @@
 {
   "id": "dc29302a-a898-4a9d-963d-5aef7e977a53",
   "slug": "movie-labyrinth",
-  "subCategoryId": "movie-fantasy",
+  "subCategoryId": "movie-action",
   "name": "魔幻迷宫 Labyrinth",
   "summary": "大卫·鲍伊摇滚妖精王与少女迷宫冒险。",
   "description": "魔幻迷宫 Labyrinth构建童话叙事宇宙，1986 年间以美术、服装与配乐塑造异世界沉浸感。奇幻电影常借用神话、民间传说与魔法规则探讨善恶、成长与生态。\n\n与科幻不同，奇幻较少依赖科学解释而重象征与寓言。\n\n**世界观**：童话\n\n**相关**：与原著小说、游戏联动形成跨媒体宇宙",
@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "魔幻迷宫 Labyrinth film cinema scene",
+    "query": "Labyrinth cinema film still",
     "matchTags": [
       "labyrinth"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

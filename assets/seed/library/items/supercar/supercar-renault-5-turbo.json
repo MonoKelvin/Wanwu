@@ -1,0 +1,24 @@
+{
+  "id": "37b33bc5-1244-4958-8975-3073dd045a58",
+  "slug": "supercar-renault-5-turbo",
+  "subCategoryId": "car-france",
+  "name": "雷诺 5 Turbo",
+  "summary": "宽体后置拉力热掀背。",
+  "description": "雷诺 5 Turbo（Renault 5 Turbo）80 年代欧洲 hot hatch 图腾。\n\n**特征：宽轮拱、短轴距。**\n\n**相关：Group B 精神。**",
+  "tags": [
+    "拉力",
+    "法国"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "Turbo supercar",
+    "category": "all",
+    "matchTags": [
+      "turbo"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

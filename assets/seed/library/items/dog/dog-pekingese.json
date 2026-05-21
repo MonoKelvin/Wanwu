@@ -1,7 +1,7 @@
 {
   "id": "5aa68a7b-a0a5-48e4-a4b5-6e29d5c41369",
   "slug": "dog-pekingese",
-  "subCategoryId": "dog-asia",
+  "subCategoryId": "dog-toy",
   "name": "北京犬 / 京巴",
   "summary": "中国宫廷犬，扁平脸、长毛，历史上皇室饲养，现为伴侣犬。",
   "description": "北京犬（Pekingese）源自中国宫廷，扁平面部、长毛、体型小。历史上仅限皇室，破坏偷盗可处死（传说）。\n\n需注意短鼻呼吸与眼部护理。性格勇敢、有时固执。圆明园流失犬只影响欧美育种。\n\n**相关**：与西施犬、日本狆为东方伴侣犬组；八国联军与犬只流散史。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "北京犬 / 京巴 dog breed portrait",
+    "query": "/ dog breed portrait",
     "category": "animals",
     "matchTags": [
       "dog"

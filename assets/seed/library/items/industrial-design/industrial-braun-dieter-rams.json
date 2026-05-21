@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "博朗 × 迪特·拉姆斯 product design",
+    "query": "× · product design",
     "matchTags": [
       "工业设计",
       "braun"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

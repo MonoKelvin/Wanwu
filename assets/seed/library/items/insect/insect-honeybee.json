@@ -1,0 +1,22 @@
+{
+  "id": "753200af-aa3d-4f8b-a081-465e7692b407",
+  "slug": "insect-honeybee",
+  "subCategoryId": "insect-bee",
+  "name": "西方蜜蜂",
+  "summary": "授粉与蜂巢社会。",
+  "description": "西方蜜蜂（Honey Bee）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "insect macro",
+    "category": "animals",
+    "matchTags": [
+      "insect",
+      "macro"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

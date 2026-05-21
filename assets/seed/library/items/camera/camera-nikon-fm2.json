@@ -1,0 +1,19 @@
+{
+  "id": "67b85282-7bd7-4812-aa70-6c5df1df3553",
+  "slug": "camera-nikon-fm2",
+  "subCategoryId": "cam-film",
+  "name": "尼康 FM2",
+  "summary": "机械胶片单反。",
+  "description": "尼康 FM2（Nikon FM2）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "analog camera vintage photo",
+    "category": "all",
+    "matchTags": ["camera"],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

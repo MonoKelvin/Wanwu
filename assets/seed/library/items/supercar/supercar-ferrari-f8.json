@@ -28,7 +28,9 @@
       "ferrari",
       "v8/v12"
     ],
-    "minMatchScore": 2,
-    "imageCount": 5
+    "minMatchScore": 1,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

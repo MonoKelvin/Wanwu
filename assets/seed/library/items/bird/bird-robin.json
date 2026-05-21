@@ -1,0 +1,24 @@
+{
+  "id": "d9e502fc-be62-4344-9caf-030c9a2d23a6",
+  "slug": "bird-robin",
+  "subCategoryId": "bird-songbird",
+  "name": "欧亚鸲",
+  "summary": "橙胸鸣禽。",
+  "description": "欧亚鸲（European Robin）常见科普条目。\n\n**特征：生态与分布广泛。**\n\n**相关：观鸟与自然保护。**",
+  "tags": [
+    "欧亚"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "robin bird wildlife photo",
+    "category": "animals",
+    "matchTags": [
+      "bird",
+      "wildlife"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

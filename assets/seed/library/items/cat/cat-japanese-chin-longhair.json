@@ -1,7 +1,7 @@
 {
   "id": "1ef2b011-3c7c-4217-89aa-e2e213e15d46",
   "slug": "cat-japanese-chin-longhair",
-  "subCategoryId": "cat-japan",
+  "subCategoryId": "cat-long-hair",
   "name": "日本长毛猫（展示型）",
   "summary": "日本猫展中偶见的长毛本土选育类型，强调丝质被毛与东方脸型。",
   "description": "日本长毛猫在部分国内猫展作为本土长毛组展示，标准因地而异，一般强调丝质被毛、修长体型、东方眼型。与安哥拉、波斯引进猫区分，侧重「和猫」外观。\n\n保种群体较小，选购需核实猫舍资质。性格多活泼亲人。\n\n**相关**：与临清狮猫、日本短尾长毛型有交叉欣赏群体；国际协会常归入家猫或非认可组。",
@@ -20,7 +20,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "日本长毛猫 cat breed portrait",
+    "query": "cat breed portrait",
     "category": "animals",
     "matchTags": [
       "展示型",

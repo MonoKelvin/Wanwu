@@ -21,13 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "保时捷 911 supercar",
+    "query": "911 supercar",
     "category": "transportation",
     "matchTags": [
       "保时捷",
       "911"
     ],
-    "minMatchScore": 2,
-    "imageCount": 5
+    "minMatchScore": 1,
+    "imageCount": 5,
+    "requiredTags": []
   }
 }

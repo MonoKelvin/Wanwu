@@ -1,7 +1,7 @@
 {
   "id": "5efac06c-39d1-4ea5-b75d-9767730f286b",
   "slug": "dog-chow-chow",
-  "subCategoryId": "dog-asia",
+  "subCategoryId": "dog-working",
   "name": "松狮犬",
   "summary": "中国古老犬种，蓝黑舌、狮鬃毛、卷尾，独立威严。",
   "description": "松狮犬（Chow Chow）为中国古老品种，舌头蓝紫色为特征。被毛厚、颈鬃明显。性格独立，不像典型「粘人」犬。\n\n需梳理与散热。注意眼睑内翻等眼科问题。在中国历史久，出口欧美后定标准。\n\n**相关**：与藏獒、沙皮犬有亚洲古老犬讨论；英文名 Chow 源自cargo标记。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "松狮犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "dog"

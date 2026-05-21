@@ -1,0 +1,19 @@
+{
+  "id": "41d2773f-a9ac-40bc-9770-ef306bfca26d",
+  "slug": "camera-tripod",
+  "subCategoryId": "cam-accessory",
+  "name": "碳纤维三脚架",
+  "summary": "风光长曝光支撑。",
+  "description": "碳纤维三脚架（Carbon tripod）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "camera photography",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

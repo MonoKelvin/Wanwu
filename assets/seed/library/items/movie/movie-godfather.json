@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "教父 The Godfather film cinema scene",
+    "query": "The Godfather cinema film still",
     "matchTags": [
       "犯罪剧情",
       "科波拉",
       "the"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

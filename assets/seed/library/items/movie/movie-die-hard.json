@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "虎胆龙威 Die Hard film cinema scene",
+    "query": "Die Hard cinema film still",
     "matchTags": [
       "麦克蒂尔南",
       "die"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

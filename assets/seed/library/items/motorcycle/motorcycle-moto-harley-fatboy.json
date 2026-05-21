@@ -1,0 +1,21 @@
+{
+  "id": "044cd730-b36f-4edf-9ffb-03ae9da28d7e",
+  "slug": "motorcycle-moto-harley-fatboy",
+  "subCategoryId": "moto-america",
+  "name": "哈雷 Fat Boy",
+  "summary": "美式巡航重金属。",
+  "description": "哈雷 Fat Boy（Harley Fat Boy）第三批扩充：分类深度与跨域科普。\n\n**特征：行业或物种代表性。**\n\n**相关：设计、自然、文化史。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "Fat Boy motorcycle",
+    "category": "all",
+    "matchTags": [
+      "fat"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
+  }
+}

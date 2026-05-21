@@ -1,7 +1,7 @@
 {
   "id": "009fc37f-67a0-4106-afa9-eda9b592dabe",
   "slug": "tf-ravage",
-  "subCategoryId": "tf-decepticon",
+  "subCategoryId": "tf-g1",
   "name": "机器狗 Ravage",
   "summary": "声波磁带战士，黑豹形态侦察。",
   "description": "机器狗 Ravage为霸天虎（Decepticon）阵营成员，追求征服赛博坦与地球资源。变形形态常为黑豹，职能偏向磁带战士。\n\n与汽车人长期战争，威震天（及惊破天）为领袖；红蜘蛛等角色以背叛与阴谋著称。\n\n**变形形态**：黑豹\n\n**相关**：合体金刚、磁带战士为经典子系列；电影与 G1 设定有差异",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Ravage transformers toy robot",
+    "query": "transformers robot toy action figure",
     "matchTags": [
       "霸天虎",
       "磁带战士",
       "ravage"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -1,0 +1,19 @@
+{
+  "id": "dc02fd23-d552-4dd6-bec5-bde052ff0820",
+  "slug": "pottery-pot-raku",
+  "subCategoryId": "pot-japan",
+  "name": "乐烧茶碗",
+  "summary": "日本禅茶陶。",
+  "description": "乐烧茶碗（Raku tea bowl）第三批扩充：分类深度与跨域科普。\n\n**特征：行业或物种代表性。**\n\n**相关：设计、自然、文化史。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "ceramic pottery",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

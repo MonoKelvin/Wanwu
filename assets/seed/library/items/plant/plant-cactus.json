@@ -22,11 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "仙人掌 Cactus houseplant",
+    "query": "Cactus houseplant",
     "matchTags": [
       "cactus"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -1,0 +1,19 @@
+{
+  "id": "a6fdb27d-d2f7-40ae-8106-2492a1c11ab3",
+  "slug": "movie-blade-runner",
+  "subCategoryId": "movie-scifi",
+  "name": "银翼杀手",
+  "summary": "赛博朋克雨夜侦探。",
+  "description": "银翼杀手（Blade Runner）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "cyberpunk city night rain cinematic",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

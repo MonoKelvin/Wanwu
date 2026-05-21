@@ -22,11 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "十二卷 Haworthia houseplant",
+    "query": "Haworthia houseplant",
     "matchTags": [
       "haworthia"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

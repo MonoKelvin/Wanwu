@@ -1,7 +1,7 @@
 {
   "id": "78ac073b-4418-444c-9a44-9918a011ccc6",
   "slug": "ui-vercel-design",
-  "subCategoryId": "ui-app-screen",
+  "subCategoryId": "ui-design-tool",
   "name": "Vercel 设计",
   "summary": "黑白极简、渐变与开发者产品着陆页美学。",
   "description": "Vercel 设计代表 Web 端开发者方向，常用技术栈包括Vercel。现代网页强调性能（Core Web Vitals）、可访问性与设计系统一致性。\n\n从着陆页到复杂 Dashboard，需平衡信息密度与视觉层级。\n\n**实现要点**：Vercel，语义 HTML，响应式\n\n**相关**：与 Tailwind、组件库、设计 Token 工作流紧密相关",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Vercel 设计 web interface ui design",
+    "query": "Vercel design system ui",
     "matchTags": [
       "web",
       "vercel",
       "开发者"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

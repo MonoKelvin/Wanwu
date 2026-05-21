@@ -1,7 +1,7 @@
 {
   "id": "9637960f-d5e6-467d-94c4-4a8f4a27a10f",
   "slug": "plant-hoya",
-  "subCategoryId": "plant-aroid",
+  "subCategoryId": "plant-succulent",
   "name": "球兰 Hoya",
   "summary": "蜡质叶与伞形花序，花香浓郁需充足光开花。",
   "description": "球兰 Hoya属天南星科观叶或开花类，在热带雨林底层或附生环境中演化，现代温室与室内栽培需模拟高湿与排水良好介质。\n\n叶片形态与斑纹为选育重点，气生根可引导攀附水苔柱以增大叶面积。\n\n**养护要点**：温度 多肉状叶；光照 明亮光；浇水 控水促花\n\n**相关**：与龟背竹、春羽等同科；网红「热植」社群常交流配土与湿度",
@@ -22,12 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "球兰 Hoya houseplant",
+    "query": "Hoya houseplant",
     "matchTags": [
       "天南星科",
       "hoya"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

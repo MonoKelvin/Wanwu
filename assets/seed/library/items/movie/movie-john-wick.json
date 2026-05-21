@@ -1,7 +1,7 @@
 {
   "id": "6459cbaa-ae8c-4816-8b92-680a37433d5a",
   "slug": "movie-john-wick",
-  "subCategoryId": "movie-action",
+  "subCategoryId": "movie-horror",
   "name": "疾速追杀 John Wick",
   "summary": "基努·里维斯枪斗美学，大陆酒店刺客宇宙。",
   "description": "疾速追杀 John Wick以动作惊悚见长，2014 上映后影响动作片剪辑、特技与类型公式。导演斯塔赫尔斯基在场面调度、节奏与角色张力上树立标杆。\n\n动作片融合犯罪、特工、武术或战争元素，全球票房与流媒体反复验证系列 IP 价值。\n\n**动作设计**：动作惊悚\n\n**相关**：与同类系列构成马拉松观影；配乐与剪辑节奏是分析重点",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "疾速追杀 John Wick film cinema scene",
+    "query": "John Wick cinema film still",
     "matchTags": [
       "动作惊悚",
       "斯塔赫尔斯基",
       "john"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -1,0 +1,23 @@
+{
+  "id": "3632e14f-af5a-4c28-8272-a5921f5854a6",
+  "slug": "motorcycle-moto-bmw-r1250gs",
+  "subCategoryId": "moto-germany",
+  "name": "BMW R 1250 GS",
+  "summary": "拳击手探险旗舰。",
+  "description": "BMW R 1250 GS（BMW R 1250 GS）ADV 王者。\n\n**特征：轴传动。**\n\n**相关：环球摩旅。**",
+  "tags": [
+    "宝马"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "BMW R 1250 GS motorcycle",
+    "category": "all",
+    "matchTags": [
+      "bmw"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
+  }
+}

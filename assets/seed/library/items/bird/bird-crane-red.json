@@ -1,0 +1,24 @@
+{
+  "id": "4ee57e73-7523-4968-8562-947e6f05e5a6",
+  "slug": "bird-crane-red",
+  "subCategoryId": "bird-water",
+  "name": "丹顶鹤",
+  "summary": "东亚祥瑞鹤。",
+  "description": "丹顶鹤（Red-crowned Crane）常见科普条目。\n\n**特征：生态与分布广泛。**\n\n**相关：观鸟与自然保护。**",
+  "tags": [
+    "丹顶"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "crane red bird wildlife photo",
+    "category": "animals",
+    "matchTags": [
+      "bird",
+      "wildlife"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

@@ -1,7 +1,7 @@
 {
   "id": "2022852c-a82b-46c2-ab14-c5b4a68d2dae",
   "slug": "hero-harley-quinn",
-  "subCategoryId": "hero-dc-film",
+  "subCategoryId": "hero-dc",
   "name": "哈莉·奎茵 Harley Quinn",
   "summary": "前精神病医生爱上小丑后成为反英雄，棒球棍与幽默暴力风格。",
   "description": "哈莉·奎茵（Harley Quinn）1992 年《蝙蝠侠：动画系列》原创，后进入漫画主线。哈琳·奎泽尔（Harleen Quinzel）为阿卡姆心理医生，爱上小丑后成为同伙。\n\n**影视**：玛格特·罗比 DCEU 塑造独立女性反英雄形象，《猛禽小队》《自杀小队》受欢迎。\n\n**能力要点**：体操、钝器、战术不可预测性",
@@ -26,7 +26,9 @@
       "反英雄",
       "harley"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

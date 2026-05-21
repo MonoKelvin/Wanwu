@@ -27,7 +27,9 @@
       "运动巡航",
       "sportster"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 1,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

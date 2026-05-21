@@ -1,0 +1,19 @@
+{
+  "id": "e8633956-7c2f-4404-ae87-85ff069f6b02",
+  "slug": "architecture-arch-sagrada-familia",
+  "subCategoryId": "arch-religious",
+  "name": "圣家堂",
+  "summary": "高迪未竟教堂。",
+  "description": "圣家堂（Sagrada Familia）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "landmark architecture",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

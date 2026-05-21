@@ -1,0 +1,19 @@
+{
+  "id": "ff2ce0b6-b692-41a6-9fe2-2b11ddac6c43",
+  "slug": "interior-modern-penthouse",
+  "subCategoryId": "int-modern",
+  "name": "现代轻奢公寓",
+  "summary": "大理石与金属线条。",
+  "description": "现代轻奢公寓（Modern penthouse interior）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

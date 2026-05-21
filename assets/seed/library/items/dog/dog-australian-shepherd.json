@@ -1,7 +1,7 @@
 {
   "id": "c557bdbb-cae5-453a-b8f8-d7d789a3ca33",
   "slug": "dog-australian-shepherd",
-  "subCategoryId": "dog-americas",
+  "subCategoryId": "dog-working",
   "name": "澳洲牧羊犬",
   "summary": "美国育成的牧羊犬（非澳大利亚原产），陨石色、高能量，敏捷赛常见。",
   "description": "澳洲牧羊犬（Australian Shepherd）在美国西部牧场选育，名字来源存疑。被毛中长、常见陨石色与蓝眼（与基因相关）。\n\n运动与脑力需求极高，适合敏捷、飞盘。需早期训练。注意 MDR1 与眼部异常筛查。\n\n**相关**：与边境牧羊犬在工作能力上常被比较；简称 Aussie。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "澳洲牧羊犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "牧羊犬",

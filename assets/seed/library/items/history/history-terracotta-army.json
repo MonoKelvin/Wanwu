@@ -21,12 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "秦始皇兵马俑 landmark architecture",
+    "query": "landmark architecture",
     "category": "places",
     "matchTags": [
       "世界遗产"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "requiredTags": []
   }
 }

@@ -22,12 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "彩叶芋 Caladium houseplant",
+    "query": "Caladium houseplant",
     "matchTags": [
       "天南星科",
       "caladium"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

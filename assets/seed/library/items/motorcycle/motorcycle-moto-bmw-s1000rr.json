@@ -1,0 +1,23 @@
+{
+  "id": "5260a79c-897a-4ba9-8118-c4becbc9c378",
+  "slug": "motorcycle-moto-bmw-s1000rr",
+  "subCategoryId": "moto-sport",
+  "name": "BMW S 1000 RR",
+  "summary": "德系仿赛。",
+  "description": "BMW S 1000 RR（BMW S 1000 RR）M 技术下放。\n\n**特征：直四高转。**\n\n**相关：WSBK。**",
+  "tags": [
+    "仿赛"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "BMW S 1000 RR motorcycle",
+    "category": "all",
+    "matchTags": [
+      "bmw"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
+  }
+}

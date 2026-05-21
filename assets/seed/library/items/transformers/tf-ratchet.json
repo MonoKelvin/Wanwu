@@ -1,7 +1,7 @@
 {
   "id": "30041be0-1222-4b87-9154-4297fb0c5244",
   "slug": "tf-ratchet",
-  "subCategoryId": "tf-autobot",
+  "subCategoryId": "tf-g1",
   "name": "救护车 Ratchet",
   "summary": "汽车人军医，救护车变形，救治同伴。",
   "description": "救护车 Ratchet隶属汽车人（Autobot）阵营，由 Hasbro 与 Takara Tomy 玩具线及 1984 年动画推出。通常可变形为救护车，在团队中担任军医。\n\n汽车人以保护地球与人类、对抗霸天虎为使命，擎天柱为精神领袖。\n\n**变形形态**：救护车\n\n**相关**：与霸天虎威震天宿敌关系；G1 动画与迈克尔·贝电影造型各异",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Ratchet transformers toy robot",
+    "query": "transformers robot toy action figure",
     "matchTags": [
       "汽车人",
       "hasbro",
       "ratchet"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

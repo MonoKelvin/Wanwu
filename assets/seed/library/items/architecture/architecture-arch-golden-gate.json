@@ -1,0 +1,19 @@
+{
+  "id": "89538f03-941c-4c54-b9ce-2abe52cb8d85",
+  "slug": "architecture-arch-golden-gate",
+  "subCategoryId": "arch-bridge",
+  "name": "金门大桥",
+  "summary": "旧金山红色悬索桥。",
+  "description": "金门大桥（Golden Gate Bridge）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "landmark architecture",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

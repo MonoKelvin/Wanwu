@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Figma 转代码 design system ui",
+    "query": "Figma design system ui",
     "matchTags": [
       "web",
       "devmode",
       "figma"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

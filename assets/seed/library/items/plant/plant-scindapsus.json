@@ -22,12 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "绿萝藤 Scindapsus houseplant",
+    "query": "Scindapsus houseplant",
     "matchTags": [
       "天南星科",
       "scindapsus"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

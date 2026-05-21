@@ -1,7 +1,7 @@
 {
   "id": "4822c639-bde9-4584-8f78-5c089335de84",
   "slug": "dog-border-collie",
-  "subCategoryId": "dog-europe",
+  "subCategoryId": "dog-working",
   "name": "边境牧羊犬",
   "summary": "源自英苏边境的牧羊犬，智商极高、工作驱动强，飞盘与敏捷赛常见冠军。",
   "description": "边境牧羊犬（Border Collie）在苏格兰–英格兰边境地区培育，以「眼神控制」牲畜闻名。被多数犬类智商排名列为第一，需要大量运动与脑力刺激。\n\n不适合长期关笼或无聊居家；适合敏捷、服从、飞盘等活动。被毛有中长型，需定期梳理。常见黑白双色，也有陨石色等。\n\n**相关**：与澳洲牧牛犬、喜乐蒂有工作犬血缘关联；电影《灵犬莱西》提升其知名度。",
@@ -22,7 +22,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "边境牧羊犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "牧羊犬",

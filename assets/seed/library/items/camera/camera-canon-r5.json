@@ -1,0 +1,21 @@
+{
+  "id": "d4243de9-810f-4432-95f1-c9fe4d25a5c2",
+  "slug": "camera-canon-r5",
+  "subCategoryId": "cam-body",
+  "name": "佳能 EOS R5",
+  "summary": "全画幅无反视频强。",
+  "description": "佳能 EOS R5（Canon EOS R5）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "EOS R5 camera photography",
+    "category": "all",
+    "matchTags": [
+      "eos"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

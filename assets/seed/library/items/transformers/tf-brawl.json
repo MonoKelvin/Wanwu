@@ -1,7 +1,7 @@
 {
   "id": "d2ff8d1b-1c4b-430d-9277-9b081634a518",
   "slug": "tf-brawl",
-  "subCategoryId": "tf-decepticon",
+  "subCategoryId": "tf-g1",
   "name": "吵闹 Brawl",
   "summary": "战车队坦克，组合金刚混天豹腿部，火力凶猛。",
   "description": "吵闹 Brawl为霸天虎（Decepticon）阵营成员，追求征服赛博坦与地球资源。变形形态常为M1 坦克，职能偏向战车队。\n\n与汽车人长期战争，威震天（及惊破天）为领袖；红蜘蛛等角色以背叛与阴谋著称。\n\n**变形形态**：M1 坦克\n\n**相关**：合体金刚、磁带战士为经典子系列；电影与 G1 设定有差异",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Brawl transformers toy robot",
+    "query": "transformers robot toy action figure",
     "matchTags": [
       "霸天虎",
       "战车队",
       "brawl"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

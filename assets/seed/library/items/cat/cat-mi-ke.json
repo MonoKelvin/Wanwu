@@ -1,7 +1,7 @@
 {
   "id": "c02df2f5-c4e7-4c6c-8909-f8a0c390a7ed",
   "slug": "cat-mi-ke",
-  "subCategoryId": "cat-japan",
+  "subCategoryId": "cat-china",
   "name": "三毛猫（日本文化）",
   "summary": "白橘黑三色短尾猫在日本文化中象征幸运，与招猫、短尾猫形象紧密相连。",
   "description": "三毛猫（Mi-ke）在日本指白、橘、黑三色毛发的猫，多为日本短尾。传统认为船上的三毛猫可招财纳福。与中华三花猫毛色基因相同，文化语境在招猫（Maneki-neko）与浮世绘中极常见。\n\n饲养需注意几乎均为母猫（公猫三毛极罕见）。性格个体差异大。日本多地有「三毛猫祭」等活动。\n\n**相关**：与三花猫、日本短尾猫、招猫雕塑同源；短尾三毛为经典形象。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "三毛猫 cat breed portrait",
+    "query": "cat breed portrait",
     "category": "animals",
     "matchTags": [
       "cat"

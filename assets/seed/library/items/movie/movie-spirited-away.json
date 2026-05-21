@@ -1,7 +1,7 @@
 {
   "id": "33a3099f-551f-428f-b503-457270b7b9ef",
   "slug": "movie-spirited-away",
-  "subCategoryId": "movie-fantasy",
+  "subCategoryId": "movie-classic",
   "name": "千与千寻 千と千尋の神隠し",
   "summary": "宫崎骏 2001 年吉卜力动画，少女千寻在神灵浴场成长的奇幻寓言。",
   "description": "《千与千寻》由宫崎骏执导、吉卜力工作室制作，2001 年日本上映，获第 75 届奥斯卡最佳动画长片。少女荻野千寻随父母误入神灵世界，父母因贪吃变猪，千寻在汤婆婆的汤屋工作以寻回父母并回到人间。\n\n**角色**：白龙、无脸男、锅炉爷爷、钱婆婆等成为经典形象。主题涉及消费主义、环境、成长与记忆。配乐由久石让担任，《Always with Me》广为流传。\n\n**相关**：与《龙猫》《哈尔的移动城堡》同为吉卜力代表作；影响全球动画与主题乐园设计。",
@@ -22,13 +22,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "千与千寻 千と千尋の神隠し film cinema scene",
+    "query": "とのし cinema film still",
     "matchTags": [
       "吉卜力",
       "宫崎骏",
       "奥斯卡"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

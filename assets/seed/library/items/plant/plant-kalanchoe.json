@@ -22,11 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "长寿花 Kalanchoe houseplant",
+    "query": "Kalanchoe houseplant",
     "matchTags": [
       "kalanchoe"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -1,0 +1,24 @@
+{
+  "id": "66c03226-2aa8-440a-b90f-c2e3388ad628",
+  "slug": "bird-flamingo",
+  "subCategoryId": "bird-water",
+  "name": "火烈鸟",
+  "summary": "粉红滤食水鸟。",
+  "description": "火烈鸟（Flamingo）常见科普条目。\n\n**特征：生态与分布广泛。**\n\n**相关：观鸟与自然保护。**",
+  "tags": [
+    "火烈"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "flamingo bird wildlife photo",
+    "category": "animals",
+    "matchTags": [
+      "bird",
+      "wildlife"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

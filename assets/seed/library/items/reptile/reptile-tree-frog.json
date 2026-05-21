@@ -1,0 +1,21 @@
+{
+  "id": "9e8fcabc-a03a-4c25-a070-c1f55ed50f8d",
+  "slug": "reptile-tree-frog",
+  "subCategoryId": "reptile-amphibian",
+  "name": "红眼树蛙",
+  "summary": "雨林两栖 icon。",
+  "description": "红眼树蛙（Red-eyed Tree Frog）第三批扩充：分类深度与跨域科普。\n\n**特征：行业或物种代表性。**\n\n**相关：设计、自然、文化史。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "reptile animal",
+    "category": "animals",
+    "matchTags": [
+      "reptile"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

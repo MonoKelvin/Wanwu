@@ -1,0 +1,21 @@
+{
+  "id": "1409669d-4595-49b7-9669-a4664737fbf0",
+  "slug": "anime-overlord",
+  "subCategoryId": "anime-isekai",
+  "name": "OVERLORD",
+  "summary": "骨王异世界。",
+  "description": "OVERLORD（Overlord anime）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "fantasy anime landscape illustration",
+    "category": "all",
+    "matchTags": [
+      "overlord"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 6
+  }
+}

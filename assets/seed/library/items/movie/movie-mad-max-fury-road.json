@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "疯狂的麦克斯：狂暴之路 film cinema scene",
+    "query": "： cinema film still",
     "matchTags": [
       "废土动作"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

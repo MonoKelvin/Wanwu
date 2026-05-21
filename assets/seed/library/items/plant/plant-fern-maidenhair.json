@@ -1,0 +1,19 @@
+{
+  "id": "38ff7a25-0c99-47f1-986a-a00bab7536e1",
+  "slug": "plant-fern-maidenhair",
+  "subCategoryId": "plant-fern",
+  "name": "铁线蕨",
+  "summary": "高湿蕨类。",
+  "description": "铁线蕨（Maidenhair fern）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "houseplant",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

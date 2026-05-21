@@ -1,0 +1,22 @@
+{
+  "id": "07cb3a88-d7d9-4300-adf0-c8354552abba",
+  "slug": "insect-monarch",
+  "subCategoryId": "insect-butterfly",
+  "name": "帝王蝶",
+  "summary": "北美迁徙蝴蝶。",
+  "description": "帝王蝶（Monarch Butterfly）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "insect macro",
+    "category": "animals",
+    "matchTags": [
+      "insect",
+      "macro"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

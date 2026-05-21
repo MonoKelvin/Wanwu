@@ -1,7 +1,7 @@
 {
   "id": "e88c2445-81ae-4378-83ba-dd60b10aa3ad",
   "slug": "ui-notion-style",
-  "subCategoryId": "ui-app-screen",
+  "subCategoryId": "ui-design-tool",
   "name": "Notion 风格",
   "summary": "块编辑器、留白与中性色生产力界面。",
   "description": "Notion 风格代表 Web 端生产力方向，常用技术栈包括SaaS。现代网页强调性能（Core Web Vitals）、可访问性与设计系统一致性。\n\n从着陆页到复杂 Dashboard，需平衡信息密度与视觉层级。\n\n**实现要点**：SaaS，语义 HTML，响应式\n\n**相关**：与 Tailwind、组件库、设计 Token 工作流紧密相关",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Notion 风格 web interface ui design",
+    "query": "Notion design system ui",
     "matchTags": [
       "web",
       "saas",
@@ -29,6 +29,8 @@
       "notion"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

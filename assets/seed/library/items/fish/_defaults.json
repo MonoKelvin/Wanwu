@@ -1,0 +1,13 @@
+{
+  "media": {
+    "provider": "pixabay",
+    "imageType": "photo",
+    "orientation": "horizontal",
+    "minMatchScore": 1,
+    "imageCount": 5,
+    "category": "animals",
+    "requiredTags": [
+      "fish"
+    ]
+  }
+}

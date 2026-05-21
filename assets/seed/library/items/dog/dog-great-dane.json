@@ -22,7 +22,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "大丹犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "巨型犬",

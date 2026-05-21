@@ -1,0 +1,23 @@
+{
+  "id": "f41db0a3-5208-4343-8508-5063f3ea2c9e",
+  "slug": "watch-rolex-sub",
+  "subCategoryId": "watch-luxury",
+  "name": "劳力士潜航者",
+  "summary": "潜水表标杆。",
+  "description": "劳力士潜航者（Rolex Submariner）制表工业经典。\n\n**特征：机芯与防水 heritage。**\n\n**相关：收藏与日常佩戴。**",
+  "tags": [
+    "腕表"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "luxury wristwatch macro dial leather strap",
+    "category": "all",
+    "matchTags": [
+      "watch"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

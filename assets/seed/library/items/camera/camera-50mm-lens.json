@@ -1,0 +1,19 @@
+{
+  "id": "2b261ea6-b024-4705-af44-58070a07d63c",
+  "slug": "camera-50mm-lens",
+  "subCategoryId": "cam-lens",
+  "name": "50mm 定焦镜头",
+  "summary": "标准镜人文焦段。",
+  "description": "50mm 定焦镜头（50mm Lens）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "mm camera photography",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

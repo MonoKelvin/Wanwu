@@ -1,7 +1,7 @@
 {
   "id": "facbbe7a-9df4-4c8c-b03e-95624dc439d2",
   "slug": "history-machu-picchu",
-  "subCategoryId": "hist-world",
+  "subCategoryId": "hist-ancient",
   "name": "马丘比丘",
   "summary": "印加高原空中古城，安第斯云雾中的石砌奇迹。",
   "description": "马丘比丘坐落于秘鲁，兴盛于15 世纪，为世界遗产。见证古代文明的政治、宗教、建筑或天文成就，是环球旅行与考古学热点。\n\n气候变化、游客压力与战争曾威胁遗产安全，国际社会通过 UNESCO 框架推动保护。\n\n**旅行提示**：尊重当地文化，遵守摄影与攀爬禁令\n\n**相关**：与庞贝、吴哥窟、金字塔等同属必访史迹",
@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "马丘比丘 landmark architecture",
+    "query": "landmark architecture",
     "matchTags": [
       "世界遗产",
       "15 世纪"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

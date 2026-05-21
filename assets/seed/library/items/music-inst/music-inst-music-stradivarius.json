@@ -1,0 +1,19 @@
+{
+  "id": "b75fb8c3-b35c-456e-ab0c-d37ffe45354f",
+  "slug": "music-inst-music-stradivarius",
+  "subCategoryId": "music-string",
+  "name": "斯特拉迪瓦里小提琴",
+  "summary": "古典名琴传奇。",
+  "description": "斯特拉迪瓦里小提琴（Stradivarius Violin）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "musical instrument",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

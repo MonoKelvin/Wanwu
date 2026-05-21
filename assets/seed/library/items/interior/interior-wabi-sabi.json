@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "侘寂 Wabi-Sabi interior design room",
+    "query": "Wabi-Sabi interior design room",
     "matchTags": [
       "wabi"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

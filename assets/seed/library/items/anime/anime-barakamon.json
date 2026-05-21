@@ -1,0 +1,19 @@
+{
+  "id": "af6c165a-7d6b-4703-bc03-30bb6175204f",
+  "slug": "anime-barakamon",
+  "subCategoryId": "anime-slice",
+  "name": "元气囝仔",
+  "summary": "孤岛书法日常。",
+  "description": "元气囝仔（Barakamon）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "cozy anime countryside illustration",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 6
+  }
+}

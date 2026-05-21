@@ -1,0 +1,19 @@
+{
+  "id": "43541cbf-eabd-458f-ab8b-52ac32cf2aa6",
+  "slug": "food-croissant",
+  "subCategoryId": "food-dessert",
+  "name": "可颂",
+  "summary": "法式黄油层酥。",
+  "description": "可颂（Croissant）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "food dish plate",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

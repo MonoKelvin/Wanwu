@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "卡拉瓦乔光影 digital illustration artwork",
+    "query": "digital illustration artwork",
     "matchTags": [
       "艺术史",
       "巴洛克",
       "卡拉瓦乔"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "英国可卡犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "spaniel",

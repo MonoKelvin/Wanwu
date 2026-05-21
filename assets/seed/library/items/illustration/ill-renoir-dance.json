@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "煎饼磨坊的舞会 digital illustration artwork",
+    "query": "digital illustration artwork",
     "matchTags": [
       "艺术史",
       "印象派",
       "雷诺阿"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

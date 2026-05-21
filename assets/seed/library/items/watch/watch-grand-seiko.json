@@ -1,0 +1,22 @@
+{
+  "id": "4a1d2151-9971-43cb-ac6f-1165e84977f0",
+  "slug": "watch-grand-seiko",
+  "subCategoryId": "watch-dress",
+  "name": "冠蓝狮 Spring Drive",
+  "summary": "日本精密正装表。",
+  "description": "冠蓝狮 Spring Drive（Grand Seiko）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "luxury wristwatch macro dial leather strap",
+    "category": "all",
+    "matchTags": [
+      "spring",
+      "watch"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

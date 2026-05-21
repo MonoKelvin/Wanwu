@@ -1,7 +1,7 @@
 {
   "id": "d21baec6-2d0c-49e9-a337-b0edc03eae92",
   "slug": "dog-hokkaido",
-  "subCategoryId": "dog-asia",
+  "subCategoryId": "dog-working",
   "name": "北海道犬",
   "summary": "日本北海道天然纪念犬，中型、三角耳、卷尾，猎熊历史。",
   "description": "北海道犬（Hokkaido Inu）原名爱努犬，与柴犬、秋田等同为日本天然纪念犬。被毛双层、常见赤色。历史上猎熊。\n\n性格勇敢、忠诚，对主人服从度高。需运动与社会化。\n\n**相关**：与纪州犬、四国犬等为「日本六犬」；北海道气候适应力强。",
@@ -20,7 +20,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "北海道犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "天然纪念",

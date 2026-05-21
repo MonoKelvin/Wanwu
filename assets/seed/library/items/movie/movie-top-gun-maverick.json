@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "壮志凌云 2：独行侠 film cinema scene",
+    "query": "2： cinema film still",
     "matchTags": [
       "约瑟夫·科辛斯基"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

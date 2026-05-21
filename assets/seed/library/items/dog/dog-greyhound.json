@@ -1,7 +1,7 @@
 {
   "id": "744ff561-b7cf-4c26-bf90-3bd3b70e74d1",
   "slug": "dog-greyhound",
-  "subCategoryId": "dog-europe",
+  "subCategoryId": "dog-hound",
   "name": "灵缇 / 格力犬",
   "summary": "世界上奔跑速度最快的犬种，流线体型，退役赛狗领养文化盛行。",
   "description": "灵缇（Greyhound）细长三角头、深胸窄腰，专为短距离高速奔跑。赛道竞速在多国存在，领养退役犬成为重要动保渠道。\n\n居家常「沙发土豆」，室内安静。短毛易护理。注意牙齿护理与保暖。\n\n**相关**：与惠比特、萨路基等为视觉猎犬；中国「格力」名来自音译。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "灵缇 / 格力犬 dog breed portrait",
+    "query": "/ dog breed portrait",
     "category": "animals",
     "matchTags": [
       "视觉猎犬",

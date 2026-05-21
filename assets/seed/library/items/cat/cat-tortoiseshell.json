@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "玳瑁猫 cat breed portrait",
+    "query": "cat breed portrait",
     "category": "animals",
     "matchTags": [
       "田园猫",

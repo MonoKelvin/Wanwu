@@ -1,0 +1,19 @@
+{
+  "id": "79ec9c29-4c87-4e78-8d26-5dd354e16fdb",
+  "slug": "music-inst-music-saxophone",
+  "subCategoryId": "music-wind",
+  "name": "萨克斯风",
+  "summary": "爵士铜管木管融合。",
+  "description": "萨克斯风（Saxophone）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "musical instrument",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "7d392f6d-7e1f-4f49-9499-943c4379fa52",
+  "slug": "interior-loft-industrial",
+  "subCategoryId": "int-industrial",
+  "name": "工业风 Loft",
+  "summary": "裸露砖墙开放厨房。",
+  "description": "工业风 Loft（Industrial loft interior）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "Loft interior design room",
+    "category": "all",
+    "matchTags": [
+      "loft"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

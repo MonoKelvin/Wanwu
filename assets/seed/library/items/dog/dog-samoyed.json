@@ -1,7 +1,7 @@
 {
   "id": "f3f42a39-3409-4fb2-9c30-c20ac9198886",
   "slug": "dog-samoyed",
-  "subCategoryId": "dog-americas",
+  "subCategoryId": "dog-working",
   "name": "萨摩耶犬",
   "summary": "西伯利亚白色微笑犬，厚毛、嘴角上扬，曾拉橇与放牧驯鹿。",
   "description": "萨摩耶犬（Samoyed）由西伯利亚萨摩耶德人培育，白色厚毛、表情似微笑。性格友善，不适合护卫。\n\n掉毛量大，需频繁梳理。怕热。历史上极地探险常用。\n\n**相关**：与哈士奇、阿拉斯加为北极犬组；「萨摩耶微笑」为品牌标志。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "萨摩耶犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "雪橇犬",

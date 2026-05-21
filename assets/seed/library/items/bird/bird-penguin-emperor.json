@@ -1,0 +1,24 @@
+{
+  "id": "c9bc3a11-8768-4f20-8242-099b1a07f323",
+  "slug": "bird-penguin-emperor",
+  "subCategoryId": "bird-water",
+  "name": "帝企鹅",
+  "summary": "南极群居企鹅。",
+  "description": "帝企鹅（Emperor Penguin）常见科普条目。\n\n**特征：生态与分布广泛。**\n\n**相关：观鸟与自然保护。**",
+  "tags": [
+    "帝企"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "penguin emperor bird wildlife photo",
+    "category": "animals",
+    "matchTags": [
+      "bird",
+      "wildlife"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "设计系统 design system ui",
+    "query": "design system ui",
     "matchTags": [
       "移动端",
       "storybook"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

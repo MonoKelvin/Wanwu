@@ -1,0 +1,19 @@
+{
+  "id": "f88015fa-82a4-4a31-b236-9b101a77e552",
+  "slug": "architecture-arch-taj-mahal",
+  "subCategoryId": "arch-religious",
+  "name": "泰姬陵",
+  "summary": "莫卧儿白色陵墓。",
+  "description": "泰姬陵（Taj Mahal）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "landmark architecture",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

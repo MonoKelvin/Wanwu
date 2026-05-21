@@ -1,7 +1,7 @@
 {
   "id": "ee6e24c8-504b-4322-8279-d99aacc1c989",
   "slug": "illustration-the-scream",
-  "subCategoryId": "ill-digital",
+  "subCategoryId": "ill-classic",
   "name": "呐喊 The Scream",
   "summary": "蒙克 1893 年存在焦虑标志性形象。",
   "description": "呐喊 The Scream由蒙克创作，属表现主义重要作品，约1893年。作品在艺术史教材、博物馆常设展与流行文化引用中反复出现。\n\n古典绘画技法、颜料介质与历史语境构成鉴赏基础，数字复制品亦广泛用于艺术教育。\n\n**艺术史**：表现主义，蒙克，1893\n\n**相关**：与同期流派画家并列研究；博物馆巡展常借展",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "The Scream digital illustration artwork",
+    "query": "The Scream museum artwork",
     "matchTags": [
       "艺术史",
       "表现主义",
       "the"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

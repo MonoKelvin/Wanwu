@@ -1,0 +1,19 @@
+{
+  "id": "3b7ea9e0-7860-4ac5-8bd9-dd8be6bc420f",
+  "slug": "game-witcher3",
+  "subCategoryId": "game-rpg",
+  "name": "巫师 3",
+  "summary": "猎魔人 RPG。",
+  "description": "巫师 3（The Witcher 3）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "fantasy video game landscape screenshot",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 6
+  }
+}

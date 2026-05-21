@@ -1,0 +1,19 @@
+{
+  "id": "b6a51566-3b65-4255-923e-339900742a37",
+  "slug": "movie-spirited-away-film",
+  "subCategoryId": "movie-action",
+  "name": "千与千寻 电影",
+  "summary": "宫崎骏奥斯卡动画。",
+  "description": "千与千寻 电影（Spirited Away film）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "cinema film still",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

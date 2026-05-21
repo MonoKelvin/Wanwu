@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Kindle 电子书 product design",
+    "query": "Kindle product design",
     "matchTags": [
       "工业设计",
       "amazon",
@@ -29,6 +29,8 @@
       "kindle"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

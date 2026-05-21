@@ -1,0 +1,19 @@
+{
+  "id": "0aa4f379-3f37-42ba-9d04-a35232db1e88",
+  "slug": "book-design-everyday",
+  "subCategoryId": "book-art",
+  "name": "设计中的设计",
+  "summary": "原研哉设计哲学。",
+  "description": "设计中的设计（Design of Everyday Things）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "design book stack desk",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

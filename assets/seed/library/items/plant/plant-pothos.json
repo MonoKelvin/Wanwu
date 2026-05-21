@@ -22,12 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "绿萝 Epipremnum houseplant",
+    "query": "Epipremnum houseplant",
     "matchTags": [
       "天南星科",
       "epipremnum"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

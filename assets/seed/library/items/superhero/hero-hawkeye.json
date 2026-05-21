@@ -1,7 +1,7 @@
 {
   "id": "9938982c-3ca1-4019-bfae-104e819b162e",
   "slug": "hero-hawkeye",
-  "subCategoryId": "hero-marvel-mcu",
+  "subCategoryId": "hero-marvel",
   "name": "鹰眼 Hawkeye",
   "summary": "克林特·巴顿顶尖射手，复仇者远程火力。",
   "description": "鹰眼 1964 年登场，无超能力神射。Disney+《鹰眼》引入凯特·毕肖普。\n\n与黑寡妇挚友搭档。\n\n**能力要点**：神射、多功能箭\n\n**相关作品**：《鹰眼》剧集",
@@ -22,7 +22,9 @@
       "复仇者",
       "hawkeye"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

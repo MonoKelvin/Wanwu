@@ -1,7 +1,7 @@
 {
   "id": "609305d1-8845-477a-b165-4d23b279248a",
   "slug": "tf-lockdown",
-  "subCategoryId": "tf-movie",
+  "subCategoryId": "tf-g1",
   "name": "禁闭 Lockdown",
   "summary": "赏金猎人，多种载具，跨阵营狩猎变形金刚。",
   "description": "禁闭 Lockdown为霸天虎（Decepticon）阵营成员，追求征服赛博坦与地球资源。变形形态常为肌肉车，职能偏向赏金猎人。\n\n与汽车人长期战争，威震天（及惊破天）为领袖；红蜘蛛等角色以背叛与阴谋著称。\n\n**变形形态**：肌肉车\n\n**相关**：合体金刚、磁带战士为经典子系列；电影与 G1 设定有差异",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Lockdown transformers toy robot",
+    "query": "transformers robot toy action figure",
     "matchTags": [
       "霸天虎",
       "赏金猎人",
       "lockdown"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

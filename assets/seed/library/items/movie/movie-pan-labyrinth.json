@@ -1,7 +1,7 @@
 {
   "id": "0756e5e4-b494-443f-ae65-c440c42f76ff",
   "slug": "movie-pan-labyrinth",
-  "subCategoryId": "movie-fantasy",
+  "subCategoryId": "movie-action",
   "name": "潘神的迷宫",
   "summary": "佛朗哥时期西班牙童话与战争残酷对照。",
   "description": "潘神的迷宫构建黑暗童话叙事宇宙，2006 年间以美术、服装与配乐塑造异世界沉浸感。奇幻电影常借用神话、民间传说与魔法规则探讨善恶、成长与生态。\n\n与科幻不同，奇幻较少依赖科学解释而重象征与寓言。\n\n**世界观**：黑暗童话\n\n**相关**：与原著小说、游戏联动形成跨媒体宇宙",
@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "潘神的迷宫 film cinema scene",
+    "query": "cinema film still",
     "matchTags": [
       "黑暗童话"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -1,0 +1,19 @@
+{
+  "id": "d401b860-1de6-4d7f-aa6c-0f8d334f4330",
+  "slug": "food-matcha",
+  "subCategoryId": "food-dessert",
+  "name": "抹茶",
+  "summary": "研磨绿茶文化。",
+  "description": "抹茶（Matcha tea）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "food dish plate",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

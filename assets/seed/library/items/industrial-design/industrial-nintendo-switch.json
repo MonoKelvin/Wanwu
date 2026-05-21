@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "任天堂 Switch product design",
+    "query": "Switch product design",
     "matchTags": [
       "工业设计",
       "nintendo",
       "switch"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

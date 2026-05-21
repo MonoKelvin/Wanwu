@@ -1,0 +1,24 @@
+{
+  "id": "88e978ac-f8cd-447b-99f8-f56d338b7109",
+  "slug": "bird-owl-barn",
+  "subCategoryId": "bird-raptor",
+  "name": "仓鸮",
+  "summary": "心形面盘夜行。",
+  "description": "仓鸮（Barn Owl）常见科普条目。\n\n**特征：生态与分布广泛。**\n\n**相关：观鸟与自然保护。**",
+  "tags": [
+    "仓鸮"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "owl barn bird wildlife photo",
+    "category": "animals",
+    "matchTags": [
+      "bird",
+      "wildlife"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

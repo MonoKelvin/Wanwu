@@ -1,7 +1,7 @@
 {
   "id": "7eb9fd49-0c9a-4c87-9e8e-4646e647642c",
   "slug": "ill-munch-scream",
-  "subCategoryId": "ill-digital",
+  "subCategoryId": "ill-classic",
   "name": "呐喊（版画版）",
   "summary": "蒙克多重媒介呐喊形象传播。",
   "description": "呐喊（版画版）由蒙克创作，属表现主义重要作品，约1895年。作品在艺术史教材、博物馆常设展与流行文化引用中反复出现。\n\n古典绘画技法、颜料介质与历史语境构成鉴赏基础，数字复制品亦广泛用于艺术教育。\n\n**艺术史**：表现主义，蒙克，1895\n\n**相关**：与同期流派画家并列研究；博物馆巡展常借展",
@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "呐喊 digital illustration artwork",
+    "query": "museum artwork",
     "matchTags": [
       "艺术史",
       "表现主义"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

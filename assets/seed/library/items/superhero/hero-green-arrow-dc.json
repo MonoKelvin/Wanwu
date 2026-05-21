@@ -1,7 +1,7 @@
 {
   "id": "c0f6d781-3b89-4ede-9009-5aa575819603",
   "slug": "hero-green-arrow-dc",
-  "subCategoryId": "hero-dc-film",
+  "subCategoryId": "hero-dc",
   "name": "绿箭侠 Green Arrow",
   "summary": "奥利弗·奎因亿万富翁弓箭手，星城义警与社会正义议题结合。",
   "description": "绿箭侠（Green Arrow）1941 年登场，奥利弗·奎因（Oliver Queen）流落荒岛练弓，回归星城打击犯罪。箭技与蝙蝠侠战术头脑相当。\n\n**影视**：CW《绿箭侠》开启 Arrowverse，探讨阶级与政治。\n\n**能力要点**：神射、战术箭、格斗、财富资源",
@@ -26,7 +26,9 @@
       "奥利弗",
       "green"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

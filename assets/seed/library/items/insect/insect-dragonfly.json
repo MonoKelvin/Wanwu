@@ -1,0 +1,22 @@
+{
+  "id": "e52f4d01-b32d-4477-a2e1-8aeb0db74421",
+  "slug": "insect-dragonfly",
+  "subCategoryId": "insect-dragonfly",
+  "name": "蜻蜓",
+  "summary": "四翅飞行捕食者。",
+  "description": "蜻蜓（Dragonfly）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "insect macro",
+    "category": "animals",
+    "matchTags": [
+      "insect",
+      "macro"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

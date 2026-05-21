@@ -22,11 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "佛珠 String of Pearls houseplant",
+    "query": "String of Pearls houseplant",
     "matchTags": [
       "string"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

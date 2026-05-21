@@ -1,7 +1,7 @@
 {
   "id": "8dea94a5-a45c-4a4c-8822-29eef6e82d43",
   "slug": "movie-dune",
-  "subCategoryId": "movie-scifi",
+  "subCategoryId": "movie-classic",
   "name": "沙丘 Dune",
   "summary": "厄拉科斯香料政治，巨物美学与宗教预言。",
   "description": "沙丘 Dune（2021）由维伦纽瓦执导，属太空歌剧类型里程碑。影片在视觉特效、世界观设定或科学概念上影响后续工业与流行文化。\n\n科幻片通过未来技术反思当下社会、人性与宇宙位置，常与哲学、政治议题交织。\n\n**影像风格**：太空歌剧\n\n**相关**：与同导演或同类型经典常组成观影清单；配乐与美术是学术分析热点",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "沙丘 Dune film cinema scene",
+    "query": "Dune cinema film still",
     "matchTags": [
       "太空歌剧",
       "维伦纽瓦",
       "dune"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

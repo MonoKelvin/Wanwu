@@ -1,7 +1,7 @@
 {
   "id": "9777a81e-6d8c-4ae3-a0f5-d8c0b2f592c6",
   "slug": "tf-starscream",
-  "subCategoryId": "tf-decepticon",
+  "subCategoryId": "tf-g1",
   "name": "红蜘蛛 Starscream",
   "summary": "霸天虎空军司令，F-15 变形，野心勃勃总想取代威震天。",
   "description": "红蜘蛛 Starscream为霸天虎（Decepticon）阵营成员，追求征服赛博坦与地球资源。变形形态常为F-15 战斗机，职能偏向空军司令。\n\n与汽车人长期战争，威震天（及惊破天）为领袖；红蜘蛛等角色以背叛与阴谋著称。\n\n**变形形态**：F-15 战斗机\n\n**相关**：合体金刚、磁带战士为经典子系列；电影与 G1 设定有差异",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Starscream transformers toy robot",
+    "query": "transformers robot toy action figure",
     "matchTags": [
       "霸天虎",
       "空军司令",
       "starscream"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

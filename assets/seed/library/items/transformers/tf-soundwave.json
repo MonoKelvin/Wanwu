@@ -1,7 +1,7 @@
 {
   "id": "f5660934-dfa9-4534-bc17-7e32c35f8cc8",
   "slug": "tf-soundwave",
-  "subCategoryId": "tf-decepticon",
+  "subCategoryId": "tf-g1",
   "name": "声波 Soundwave",
   "summary": "情报官，卡带战士与录音机变形，忠诚威震天。",
   "description": "声波 Soundwave为霸天虎（Decepticon）阵营成员，追求征服赛博坦与地球资源。变形形态常为录音机，职能偏向情报官。\n\n与汽车人长期战争，威震天（及惊破天）为领袖；红蜘蛛等角色以背叛与阴谋著称。\n\n**变形形态**：录音机\n\n**相关**：合体金刚、磁带战士为经典子系列；电影与 G1 设定有差异",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Soundwave transformers toy robot",
+    "query": "transformers robot toy action figure",
     "matchTags": [
       "霸天虎",
       "情报官",
       "soundwave"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

@@ -28,7 +28,9 @@
       "精密工程",
       "tron"
     ],
-    "minMatchScore": 2,
-    "imageCount": 5
+    "minMatchScore": 1,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

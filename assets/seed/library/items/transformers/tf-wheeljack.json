@@ -1,7 +1,7 @@
 {
   "id": "adaadb86-117a-4d84-923d-c484e1c08f55",
   "slug": "tf-wheeljack",
-  "subCategoryId": "tf-autobot",
+  "subCategoryId": "tf-g1",
   "name": "千斤顶 Wheeljack",
   "summary": "科学家， Lancia 变形，发明火花塞与太空桥。",
   "description": "千斤顶 Wheeljack隶属汽车人（Autobot）阵营，由 Hasbro 与 Takara Tomy 玩具线及 1984 年动画推出。通常可变形为Lancia Stratos，在团队中担任科学家。\n\n汽车人以保护地球与人类、对抗霸天虎为使命，擎天柱为精神领袖。\n\n**变形形态**：Lancia Stratos\n\n**相关**：与霸天虎威震天宿敌关系；G1 动画与迈克尔·贝电影造型各异",
@@ -21,14 +21,16 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Wheeljack transformers toy robot",
+    "query": "transformers robot toy action figure",
     "matchTags": [
       "汽车人",
       "hasbro",
       "科学家",
       "wheeljack"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

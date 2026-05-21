@@ -1,0 +1,24 @@
+{
+  "id": "d150cb90-ca30-448a-aad8-14b811053102",
+  "slug": "watch-apple-ultra",
+  "subCategoryId": "watch-smart",
+  "name": "Apple Watch Ultra",
+  "summary": "户外智能表。",
+  "description": "Apple Watch Ultra（Apple Watch Ultra）制表工业经典。\n\n**特征：机芯与防水 heritage。**\n\n**相关：收藏与日常佩戴。**",
+  "tags": [
+    "腕表"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "luxury wristwatch macro dial leather strap",
+    "category": "all",
+    "matchTags": [
+      "apple",
+      "watch"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

@@ -22,11 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "风车草 Graptopetalum houseplant",
+    "query": "Graptopetalum houseplant",
     "matchTags": [
       "graptopetalum"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

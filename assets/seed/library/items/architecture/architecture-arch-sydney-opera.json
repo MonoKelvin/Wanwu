@@ -1,0 +1,19 @@
+{
+  "id": "0ec828dc-f11a-437a-808a-fd1e2a767ded",
+  "slug": "architecture-arch-sydney-opera",
+  "subCategoryId": "arch-modern",
+  "name": "悉尼歌剧院",
+  "summary": "贝壳形现代地标。",
+  "description": "悉尼歌剧院（Sydney Opera House）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "landmark architecture",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

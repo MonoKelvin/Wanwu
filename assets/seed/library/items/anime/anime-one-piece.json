@@ -21,13 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "one piece anime screenshot fan art",
+    "query": "japanese anime character illustration",
     "category": "people",
     "matchTags": [
       "少年jump",
       "one"
     ],
-    "minMatchScore": 1,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "requiredTags": []
   }
 }

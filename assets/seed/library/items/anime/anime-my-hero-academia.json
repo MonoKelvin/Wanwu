@@ -1,7 +1,7 @@
 {
   "id": "f49821dd-a9a1-4598-9d47-cfed64730058",
   "slug": "anime-my-hero-academia",
-  "subCategoryId": "anime-shonen",
+  "subCategoryId": "anime-fantasy",
   "name": "我的英雄学院",
   "summary": "堀越耕平超能力学院英雄培育，绿谷出久继承 OFA。",
   "description": "我的英雄学院为少年Jump系少年向代表作，以热血战斗、团队羁绊与成长叙事为核心。2016 动画 播出后推动全球二次文化扩散，角色招式与台词成为梗文化来源。\n\n作品在分镜、配乐与作画上常由顶级工作室操刀，引发 cosplay、同人志与手游联动产业链。\n\n**作品要点**：个性、英雄社会\n\n**相关**：与同期 少年Jump 王道漫并列讨论；续作与剧场版常拓展世界观",
@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "my hero academia anime screenshot fan art",
+    "query": "japanese anime character illustration",
     "matchTags": [
       "少年漫"
     ],
-    "minMatchScore": 1,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

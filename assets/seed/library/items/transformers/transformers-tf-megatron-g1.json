@@ -1,0 +1,21 @@
+{
+  "id": "9f1590fd-c0ad-427b-baed-32644a3f4326",
+  "slug": "transformers-tf-megatron-g1",
+  "subCategoryId": "tf-g1",
+  "name": "威震天 G1",
+  "summary": "霸天虎首领。",
+  "description": "威震天 G1（Megatron G1）手枪/战机变形。\n\n**特征：冷酷战略。**\n\n**相关：G1 动画。**",
+  "tags": [
+    "G1"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 6
+  }
+}

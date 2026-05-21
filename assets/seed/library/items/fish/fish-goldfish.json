@@ -1,0 +1,21 @@
+{
+  "id": "04dc0e2b-4b26-4df6-9f31-06760f082eb1",
+  "slug": "fish-goldfish",
+  "subCategoryId": "fish-fresh",
+  "name": "金鱼",
+  "summary": "观赏鱼入门种。",
+  "description": "金鱼（Goldfish）第三批扩充：分类深度与跨域科普。\n\n**特征：行业或物种代表性。**\n\n**相关：设计、自然、文化史。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "fish aquarium",
+    "category": "animals",
+    "matchTags": [
+      "fish"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

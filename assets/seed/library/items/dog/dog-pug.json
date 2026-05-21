@@ -1,7 +1,7 @@
 {
   "id": "6490c0dc-3f7f-47a7-807e-9262912905c1",
   "slug": "dog-pug",
-  "subCategoryId": "dog-asia",
+  "subCategoryId": "dog-toy",
   "name": "巴哥犬 / 哈巴狗",
   "summary": "中国古老短鼻小型犬，面部皱褶，性格讨喜，需注意呼吸。",
   "description": "巴哥犬（Pug）可能源于中国，16 世纪经荷兰东印度公司传欧洲。体型小、短鼻皱面、卷尾。\n\n性格讨喜、喜陪伴。注意 BOAS、肥胖与眼部。不适合高温运动。\n\n**相关**：与北京犬、法国斗牛犬同为短鼻流行犬；荷兰皇室历史关联。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "巴哥犬 / 哈巴狗 dog breed portrait",
+    "query": "/ dog breed portrait",
     "category": "animals",
     "matchTags": [
       "dog"

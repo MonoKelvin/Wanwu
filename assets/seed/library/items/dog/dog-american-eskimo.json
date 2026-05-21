@@ -1,7 +1,7 @@
 {
   "id": "42adef74-2223-4589-9ed5-333f55ed5e3c",
   "slug": "dog-american-eskimo",
-  "subCategoryId": "dog-americas",
+  "subCategoryId": "dog-working",
   "name": "美国爱斯基摩犬",
   "summary": "德国白色尖耳斯皮茨在美国定名，非爱斯基摩血统，三尺寸。",
   "description": "美国爱斯基摩犬（American Eskimo Dog）实为欧洲斯皮茨型，因一战反德情绪改名。白色卷毛、耳竖三角。有玩具、迷你、标准型。\n\n性格警觉、亲人，易吠叫。需梳理。适合敏捷与技巧表演。\n\n**相关**：与德国狐狸犬、日本银狐为斯皮茨家族；与哈士奇无关。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "美国爱斯基摩犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "斯皮茨",

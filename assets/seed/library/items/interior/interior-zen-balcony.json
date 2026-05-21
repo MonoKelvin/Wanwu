@@ -1,7 +1,7 @@
 {
   "id": "dc46d394-7029-411d-b499-464f506236af",
   "slug": "interior-zen-balcony",
-  "subCategoryId": "int-modern",
+  "subCategoryId": "int-zen",
   "name": "禅意阳台",
   "summary": "盆栽、竹篱与石灯的小型都市冥想角。",
   "description": "禅意阳台源于日本都市传统，强调人与自然的阳台关系。材料多用竹、木、石与和纸，色调偏大地色系，减少视觉噪音以利冥想。\n\n现代都市住宅常将禅意元素局部化，如枯山水阳台或榻榻米角落。\n\n**营造要点**：都市，自然材质，留白与秩序\n\n**相关**：与北欧极简、中式园林可对话融合",
@@ -21,9 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "禅意阳台 interior design room",
+    "query": "interior design room",
     "matchTags": [],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

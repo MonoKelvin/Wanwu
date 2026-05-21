@@ -1,7 +1,7 @@
 {
   "id": "009ef037-92e5-4a50-b96f-381934921665",
   "slug": "interior-norwegian-fjord-house",
-  "subCategoryId": "int-modern",
+  "subCategoryId": "int-zen",
   "name": "挪威峡湾屋",
   "summary": "大窗框景与极简应对长冬光线。",
   "description": "挪威峡湾屋体现北欧挪威设计语言：功能优先、自然光最大化与景观场景的人体工学。浅色系放大空间感，木材平衡冷调气候。\n\n可持续材料、节能窗与简化线脚是常见做法，IKEA 与 Hay 等品牌推动全球普及。\n\n**搭配要点**：挪威色调，天然材质，简洁家具\n\n**相关**：与日式侘寂、现代极简有交叉借鉴",
@@ -21,9 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "挪威峡湾屋 interior design room",
+    "query": "interior design room",
     "matchTags": [],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

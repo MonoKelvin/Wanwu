@@ -1,7 +1,7 @@
 {
   "id": "ba922628-e9a7-4d04-b17f-e95629045cf0",
   "slug": "dog-german-shepherd",
-  "subCategoryId": "dog-europe",
+  "subCategoryId": "dog-working",
   "name": "德国牧羊犬",
   "summary": "德国选育的工作犬标杆，警犬、军犬、导盲犬广泛应用，忠诚勇敢。",
   "description": "德国牧羊犬（German Shepherd）1899 年由 Max von Stephanitz 在德国标准化，原为牧羊犬，后成为全能工作犬。体态匀称、立耳、被毛中长。\n\n广泛用于警察、军队、搜救与护卫。需训练与社会化，不适合长期独处无聊。注意髋关节与脊柱健康筛查。\n\n**相关**：与比利时马林诺斯、荷兰牧羊犬等工作犬常并列比较。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "德国牧羊犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "工作犬",

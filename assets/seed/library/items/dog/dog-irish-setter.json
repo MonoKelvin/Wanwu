@@ -1,7 +1,7 @@
 {
   "id": "14eaccc6-82cd-47f2-94b2-b7023022b6fe",
   "slug": "dog-irish-setter",
-  "subCategoryId": "dog-europe",
+  "subCategoryId": "dog-hound",
   "name": "爱尔兰雪达犬",
   "summary": "爱尔兰红色长毛猎鸟犬，体态优雅、精力充沛，家庭需足够运动。",
   "description": "爱尔兰雪达犬（Irish Setter）被毛栗红色长而丝滑，用于猎鸟指示与寻回。体型大、动作优雅。\n\n性格外向活泼，需大量运动与训练。幼犬训练需耐心。注意髋关节与甲状腺。\n\n**相关**：与戈登雪达、英国雪达为不同毛色型；是爱尔兰国犬候选。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "爱尔兰雪达犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "猎鸟犬",

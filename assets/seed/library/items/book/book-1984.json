@@ -1,0 +1,19 @@
+{
+  "id": "6f7b4971-0b9c-49cd-82d9-778eb0256c78",
+  "slug": "book-1984",
+  "subCategoryId": "book-fiction",
+  "name": "一九八四",
+  "summary": "奥威尔反乌托邦。",
+  "description": "一九八四（Nineteen Eighty-Four）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "open books reading library desk",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

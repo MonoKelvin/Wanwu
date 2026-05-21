@@ -1,7 +1,7 @@
 {
   "id": "4baaba70-92ea-429d-9a46-e660192de375",
   "slug": "anime-rezero",
-  "subCategoryId": "anime-fantasy",
+  "subCategoryId": "anime-ghibli",
   "name": "Re:从零开始的异世界生活",
   "summary": "长月达平轮回异世界，菜月昴死亡回归。",
   "description": "Re:从零开始的异世界生活以异世界轮回为叙事支点，在世界观构建、角色心理与视觉风格上偏向奇幻或文艺向。2016 动画 在口碑与奖项上常获高度评价，适合追求剧情深度的观众。\n\n与纯粹热血少年漫不同，本类更强调设定逻辑、情感细腻度或哲学命题。\n\n**观赏要点**：异世界轮回\n\n**相关**：常与异世界、时间线、吉卜力系或黑暗奇幻标签联动推荐",
@@ -21,9 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "rezero anime screenshot fan art",
+    "query": "anime forest spirit girl illustration",
     "matchTags": [],
-    "minMatchScore": 1,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

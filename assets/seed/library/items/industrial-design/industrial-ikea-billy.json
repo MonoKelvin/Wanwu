@@ -1,7 +1,7 @@
 {
   "id": "935f911a-c1c4-4b70-95fc-dc70d7d7264d",
   "slug": "industrial-ikea-billy",
-  "subCategoryId": "id-home",
+  "subCategoryId": "id-furniture",
   "name": "IKEA Billy 书柜",
   "summary": "全球最畅销书柜之一，平价模块化。",
   "description": "IKEA Billy 书柜为IKEA家具代表产品，1979 起进入家庭场景。家居工业设计关注日常使用频率、清洁便利与空间融合。\n\n经典单品常成为租屋与样板间标配，二手市场保值反映设计持久魅力。\n\n**使用场景**：家具，耐用性，清洁与收纳\n\n**相关**：与北欧家装、厨房开放动线趋势协同",
@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "IKEA Billy 书柜 product design",
+    "query": "IKEA Billy product design",
     "matchTags": [
       "ikea"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

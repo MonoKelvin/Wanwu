@@ -1,0 +1,22 @@
+{
+  "id": "1d84f252-cb82-4114-a830-02d72a01d30e",
+  "slug": "watch-cartier-tank",
+  "subCategoryId": "watch-dress",
+  "name": "卡地亚 Tank",
+  "summary": "矩形正装腕表 icon。",
+  "description": "卡地亚 Tank（Cartier Tank）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "luxury wristwatch macro dial leather strap",
+    "category": "all",
+    "matchTags": [
+      "tank",
+      "watch"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

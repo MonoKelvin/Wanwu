@@ -1,7 +1,7 @@
 {
   "id": "5ae04350-5b4f-476d-92f7-5fa0b84d8c4a",
   "slug": "movie-inception",
-  "subCategoryId": "movie-scifi",
+  "subCategoryId": "movie-classic",
   "name": "盗梦空间 Inception",
   "summary": "2010 年克里斯托弗·诺兰科幻悬疑片，多层梦境植入与折叠城市视觉经典。",
   "description": "《盗梦空间》（Inception）由 Christopher Nolan 编剧执导，Leonardo DiCaprio 饰演造梦师柯布。影片构建「梦中梦」多层意识结构，团队需在目标脑中植入想法而不被察觉。\n\n**视觉**：巴黎街道折叠、无重力酒店走廊等场景成为影史标志。汉斯·季默配乐以《Non, je ne regrette rien》节奏驱动梦境倒计时。获奥斯卡最佳摄影、最佳音效等。\n\n**相关**：与《记忆碎片》《星际穿越》同属诺兰时间/认知主题作品；「陀螺是否停转」为经典开放式结局讨论。",
@@ -22,12 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "盗梦空间 Inception film cinema scene",
+    "query": "Inception cinema film still",
     "matchTags": [
       "2010",
       "inception"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

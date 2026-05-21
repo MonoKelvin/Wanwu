@@ -1,0 +1,19 @@
+{
+  "id": "6d2b6316-e57b-432f-8ec5-f7f9a44c0f5b",
+  "slug": "book-wild-things",
+  "subCategoryId": "book-children",
+  "name": "野兽国",
+  "summary": "经典绘本。",
+  "description": "野兽国（Where the Wild Things Are）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "children picture book illustration",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

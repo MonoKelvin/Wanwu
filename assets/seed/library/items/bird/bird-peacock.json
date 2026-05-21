@@ -1,0 +1,22 @@
+{
+  "id": "95ec71c6-90aa-4972-a015-beb0b1728748",
+  "slug": "bird-peacock",
+  "subCategoryId": "bird-tropical",
+  "name": "蓝孔雀",
+  "summary": "开屏求偶展示。",
+  "description": "蓝孔雀（Peacock）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "peacock bird wildlife photo",
+    "category": "animals",
+    "matchTags": [
+      "bird",
+      "wildlife"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

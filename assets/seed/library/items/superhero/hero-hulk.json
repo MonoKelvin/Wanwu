@@ -1,7 +1,7 @@
 {
   "id": "0311fe48-3fe9-41d6-a502-150aac1a24af",
   "slug": "hero-hulk",
-  "subCategoryId": "hero-marvel-mcu",
+  "subCategoryId": "hero-marvel",
   "name": "绿巨人 Hulk",
   "summary": "布鲁斯·班纳受伽马辐射后愤怒化身绿巨人，力量随情绪增强。",
   "description": "绿巨人 1962 年登场，布鲁斯·班纳为物理学家，伽马事故使其愤怒时变身为绿色巨兽，愈怒愈强。\n\nMCU 与黑寡妇、钢铁侠有深刻互动；动画与漫画有多重人格版本。\n\n**能力要点**：超级力量、跳跃、近乎刀枪不入\n\n**相关作品**：《无敌浩克》《复仇者联盟》",
@@ -24,7 +24,9 @@
       "力量型",
       "hulk"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

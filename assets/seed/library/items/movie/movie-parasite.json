@@ -1,7 +1,7 @@
 {
   "id": "d9d841e2-53f6-4fa9-99af-a73b0f4333c6",
   "slug": "movie-parasite",
-  "subCategoryId": "movie-action",
+  "subCategoryId": "movie-horror",
   "name": "寄生虫 Parasite",
   "summary": "奉俊昊阶级隐喻豪宅，奥斯卡最佳影片亚洲首获。",
   "description": "寄生虫 Parasite以社会惊悚见长，2019 上映后影响动作片剪辑、特技与类型公式。导演奉俊昊在场面调度、节奏与角色张力上树立标杆。\n\n动作片融合犯罪、特工、武术或战争元素，全球票房与流媒体反复验证系列 IP 价值。\n\n**动作设计**：社会惊悚\n\n**相关**：与同类系列构成马拉松观影；配乐与剪辑节奏是分析重点",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "寄生虫 Parasite film cinema scene",
+    "query": "Parasite cinema film still",
     "matchTags": [
       "社会惊悚",
       "奉俊昊",
       "parasite"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

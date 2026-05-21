@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "苏州古典园林 landmark architecture",
+    "query": "landmark architecture",
     "matchTags": [
       "世界遗产",
       "明至清"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

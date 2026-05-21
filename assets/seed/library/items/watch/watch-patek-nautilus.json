@@ -1,0 +1,24 @@
+{
+  "id": "dfd7877a-e3d3-4671-9e3b-fdd340457d60",
+  "slug": "watch-patek-nautilus",
+  "subCategoryId": "watch-luxury",
+  "name": "百达翡丽 Nautilus",
+  "summary": "运动奢华钢表。",
+  "description": "百达翡丽 Nautilus（Patek Philippe Nautilus）制表工业经典。\n\n**特征：机芯与防水 heritage。**\n\n**相关：收藏与日常佩戴。**",
+  "tags": [
+    "腕表"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "luxury wristwatch macro dial leather strap",
+    "category": "all",
+    "matchTags": [
+      "nautilus",
+      "watch"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

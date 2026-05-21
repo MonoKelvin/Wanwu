@@ -22,11 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "青锁龙 Crassula houseplant",
+    "query": "Crassula houseplant",
     "matchTags": [
       "crassula"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

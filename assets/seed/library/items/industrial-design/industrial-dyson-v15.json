@@ -22,13 +22,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "戴森 V15 Detect product design",
+    "query": "V15 Detect product design",
     "matchTags": [
       "吸尘器",
       "激光显尘",
       "v15"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

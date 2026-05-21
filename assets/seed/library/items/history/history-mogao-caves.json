@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "莫高窟 landmark architecture",
+    "query": "landmark architecture",
     "matchTags": [
       "世界遗产",
       "十六国至元"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

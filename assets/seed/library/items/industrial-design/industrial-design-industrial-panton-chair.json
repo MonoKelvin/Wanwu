@@ -1,0 +1,23 @@
+{
+  "id": "be8aa51c-709d-4425-a4d6-33b885250c44",
+  "slug": "industrial-design-industrial-panton-chair",
+  "subCategoryId": "id-furniture",
+  "name": "Panton 椅",
+  "summary": "一体塑料悬臂椅。",
+  "description": "Panton 椅（Panton Chair）1960 波普。\n\n**特征：S 曲线。**\n\n**相关：丹麦设计。**",
+  "tags": [
+    "家具"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "Panton product design",
+    "category": "all",
+    "matchTags": [
+      "panton"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

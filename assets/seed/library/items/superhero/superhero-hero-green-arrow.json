@@ -1,0 +1,21 @@
+{
+  "id": "8ab6d352-dab6-469d-a5a5-975b122c8718",
+  "slug": "superhero-hero-green-arrow",
+  "subCategoryId": "hero-other",
+  "name": "绿箭侠",
+  "summary": "星城弓箭义警。",
+  "description": "绿箭侠（Green Arrow）Oliver Queen。\n\n**特征：氪石箭。**\n\n**相关：DC。**",
+  "tags": [
+    "DC"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "action figure toy collectible",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 6
+  }
+}

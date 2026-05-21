@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "demon slayer anime screenshot fan art",
+    "query": "japanese anime character illustration",
     "category": "people",
     "matchTags": [
       "鬼杀队",
@@ -29,7 +29,8 @@
       "ufotable",
       "kimetsu"
     ],
-    "minMatchScore": 1,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "requiredTags": []
   }
 }

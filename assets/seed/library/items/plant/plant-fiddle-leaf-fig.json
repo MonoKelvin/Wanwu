@@ -20,13 +20,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "琴叶榕 Ficus lyrata houseplant",
+    "query": "Ficus lyrata houseplant",
     "category": "nature",
     "matchTags": [
       "琴叶榕",
       "ficus"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "requiredTags": []
   }
 }

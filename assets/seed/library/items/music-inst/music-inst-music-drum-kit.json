@@ -1,0 +1,19 @@
+{
+  "id": "0cf022c5-b57c-426b-8eae-c25056d85e70",
+  "slug": "music-inst-music-drum-kit",
+  "subCategoryId": "music-percussion",
+  "name": "爵士鼓组",
+  "summary": "流行摇滚节奏核心。",
+  "description": "爵士鼓组（Drum Kit）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "musical instrument",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

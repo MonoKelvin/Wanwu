@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "布达拉宫 landmark architecture",
+    "query": "landmark architecture",
     "matchTags": [
       "世界遗产",
       "吐蕃至清"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

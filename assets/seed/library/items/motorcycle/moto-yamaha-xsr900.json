@@ -26,7 +26,9 @@
       "yamaha",
       "xsr900"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 1,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

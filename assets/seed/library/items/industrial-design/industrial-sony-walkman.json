@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "索尼 Walkman product design",
+    "query": "Walkman product design",
     "matchTags": [
       "工业设计",
       "sony",
       "walkman"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

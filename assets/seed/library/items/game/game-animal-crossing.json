@@ -1,0 +1,19 @@
+{
+  "id": "6d1168b8-6769-4811-aa38-faeba5ced002",
+  "slug": "game-animal-crossing",
+  "subCategoryId": "game-indie",
+  "name": "集合啦！动物森友会",
+  "summary": "岛屿生活模拟。",
+  "description": "集合啦！动物森友会（Animal Crossing）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "pixel art indie game screenshot",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 6
+  }
+}

@@ -1,7 +1,7 @@
 {
   "id": "c5e260ae-2b83-423f-a133-5b662af1dafe",
   "slug": "cat-japanese-bobtail-longhair",
-  "subCategoryId": "cat-japan",
+  "subCategoryId": "cat-long-hair",
   "name": "日本短尾猫（长毛型）",
   "summary": "日本短尾的长毛表现，丝质被毛、短尾，常参与传统猫绘与招猫形象。",
   "description": "日本短尾猫长毛型（Japanese Bobtail Longhair）与短毛型共享短尾基因，被毛更长、尾羽状更明显。标准与短毛型除被毛外一致：后高前低、耳大、眼椭圆。\n\n性格活泼、爱交流。需定期梳毛。在欧美协会常列为单独品种或长毛分支。\n\n**相关**：与短毛日本短尾、千岛短尾并列；三花长毛型在日本文化中尤受喜爱。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "日本短尾猫 cat breed portrait",
+    "query": "cat breed portrait",
     "category": "animals",
     "matchTags": [
       "cat"

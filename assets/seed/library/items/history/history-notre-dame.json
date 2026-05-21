@@ -1,0 +1,21 @@
+{
+  "id": "ef5e1294-ae92-4b3d-ae3c-93ced7f4f910",
+  "slug": "history-notre-dame",
+  "subCategoryId": "hist-medieval",
+  "name": "巴黎圣母院",
+  "summary": "哥特教堂地标。",
+  "description": "巴黎圣母院（Notre-Dame de Paris）玫瑰花窗。\n\n**特征：双塔立面。**\n\n**相关：巴黎。**",
+  "tags": [
+    "哥特"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "landmark architecture",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

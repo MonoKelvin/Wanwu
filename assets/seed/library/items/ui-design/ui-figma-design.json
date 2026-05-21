@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Figma 设计 design system ui",
+    "query": "Figma design system ui",
     "matchTags": [
       "移动端",
       "figma"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

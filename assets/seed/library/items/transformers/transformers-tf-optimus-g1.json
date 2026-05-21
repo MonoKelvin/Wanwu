@@ -1,0 +1,21 @@
+{
+  "id": "e7812048-404e-4a01-bea4-964f0ac9bdb2",
+  "slug": "transformers-tf-optimus-g1",
+  "subCategoryId": "tf-g1",
+  "name": "擎天柱 G1",
+  "summary": "卡车形态汽车人领袖。",
+  "description": "擎天柱 G1（Optimus Prime G1）1984 变形金刚起源。\n\n**特征：红蓝车厢。**\n\n**相关：孩之宝。**",
+  "tags": [
+    "G1"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 6
+  }
+}

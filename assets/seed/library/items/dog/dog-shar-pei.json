@@ -22,7 +22,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "中国沙皮犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "dog"

@@ -27,7 +27,9 @@
       "运动旅行",
       "low"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 1,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

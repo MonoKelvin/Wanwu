@@ -22,11 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "芦荟 Aloe vera houseplant",
+    "query": "Aloe vera houseplant",
     "matchTags": [
       "aloe"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

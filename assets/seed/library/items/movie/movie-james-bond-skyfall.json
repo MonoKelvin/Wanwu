@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "007：大破天幕杀机 Skyfall film cinema scene",
+    "query": "Skyfall cinema film still",
     "matchTags": [
       "萨姆·门德斯",
       "skyfall"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

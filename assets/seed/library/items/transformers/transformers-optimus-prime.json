@@ -1,7 +1,7 @@
 {
   "id": "99903f9c-5434-48f1-97c8-d413bea8d5dd",
   "slug": "transformers-optimus-prime",
-  "subCategoryId": "tf-autobot",
+  "subCategoryId": "tf-g1",
   "name": "擎天柱 Optimus Prime",
   "summary": "汽车人领袖，可变形为重型卡车，象征正义与牺牲精神的变形金刚标志角色。",
   "description": "擎天柱（Optimus Prime）是变形金刚（Transformers）系列中汽车人（Autobot）领袖，通常变形为蓝色红色火焰涂装的 Freightliner 卡车头。1984 年美版动画《Transformers》与玩具线同步推出，由 Hasbro 与 Takara Tomy 合作。\n\n性格正直、富有同情心，多次为保护地球与人类牺牲。经典配音 Peter Cullen。迈克尔·贝真人电影系列由真人 CGI 重塑形象。\n\n**相关**：宿敌威震天；副官铁皮、爵士等；与《高达》《超时空要塞》等同为机器人题材标杆。",
@@ -21,14 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Optimus Prime transformers toy robot",
+    "query": "transformers robot toy action figure",
     "category": "transportation",
     "matchTags": [
       "汽车人",
       "hasbro",
       "optimus"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "requiredTags": []
   }
 }

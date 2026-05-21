@@ -1,7 +1,7 @@
 {
   "id": "1fced4c2-3f5b-451b-9506-d914d9cea050",
   "slug": "dog-shih-tzu",
-  "subCategoryId": "dog-asia",
+  "subCategoryId": "dog-toy",
   "name": "西施犬",
   "summary": "西藏起源、中国定型的长毛伴侣犬，名称与西施无关，「狮子犬」。",
   "description": "西施犬（Shih Tzu）可能源于西藏拉萨犬等与北京犬杂交，在清朝宫廷流行。被毛长需每日梳理。\n\n性格友善亲人，适合公寓。注意短鼻与泪痕。是现代流行玩具伴侣犬。\n\n**相关**：与拉萨犬、北京犬为西藏–中国伴侣犬系；名字意为狮子犬。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "西施犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "伴侣犬",

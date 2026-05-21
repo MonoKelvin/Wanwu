@@ -1,7 +1,7 @@
 {
   "id": "1ab51497-8195-4593-8e64-3b36c55617c2",
   "slug": "cat-japanese-bobtail",
-  "subCategoryId": "cat-japan",
+  "subCategoryId": "cat-long-hair",
   "name": "日本短尾猫",
   "summary": "日本象征性家猫，短尾、后高前低体态，常出现在招猫等传统文化形象中。",
   "description": "日本短尾猫（Japanese Bobtail）在日本有千年以上饲养史，短尾为自然突变所致，并非人工断尾。三花色「三毛猫」在日本文化中象征好运。\n\n被毛可为短毛或长毛，体态轻盈、跳跃力强。性格外向、爱交流。日本多个地区对本土猫有保护倡议。\n\n**相关**：招猫（Maneki-neko）形象多基于此品种；与美国短尾猫为不同基因突变类型。",
@@ -22,7 +22,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "日本短尾猫 cat breed portrait",
+    "query": "cat breed portrait",
     "category": "animals",
     "matchTags": [
       "cat"

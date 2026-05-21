@@ -1,7 +1,7 @@
 {
   "id": "b8bd2f1c-4a6c-4f27-bb7f-c62cfa0c6096",
   "slug": "dog-akita",
-  "subCategoryId": "dog-asia",
+  "subCategoryId": "dog-working",
   "name": "秋田犬",
   "summary": "日本大型天然纪念犬，忠犬八公闻名，单层性格沉稳威严。",
   "description": "秋田犬（Akita Inu）来自秋田县，日本天然纪念物。体型大、厚毛、卷尾。公犬常比柴犬大许多。\n\n性格对家人忠诚、对陌生犬可能攻击性强，需社会化。电影《忠犬八公》基于真实秋田犬 Hachikō。\n\n**相关**：与美国秋田犬（AKITA 美国型）有标准分歧；与柴犬同为日本代表犬种。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "秋田犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "天然纪念",

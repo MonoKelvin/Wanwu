@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "B&O 音响 product design",
+    "query": "B&O product design",
     "matchTags": [
       "工业设计",
       "bang & olufsen"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

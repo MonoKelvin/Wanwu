@@ -22,11 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "金钱树 ZZ Plant houseplant",
+    "query": "ZZ Plant houseplant",
     "matchTags": [
       "天南星科"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

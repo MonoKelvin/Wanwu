@@ -21,6 +21,7 @@ import { pipelineCurate } from './lib/pipeline-curate.mjs'
 import { dedupeLocalMedia } from './lib/dedupe-local-media.mjs'
 import { cleanupPlaceholders } from './lib/cleanup-placeholders.mjs'
 import { pipelineContent } from './lib/pipeline-content.mjs'
+import { applyExpansion } from './lib/apply-expansion.mjs'
 import { listItemCategories, itemsRoot } from './lib/items.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
@@ -123,6 +124,11 @@ async function main() {
 
   if (step === 'assign-subs') {
     assignSubcategories(root)
+    return
+  }
+
+  if (step === 'expand') {
+    applyExpansion(root)
     return
   }
 

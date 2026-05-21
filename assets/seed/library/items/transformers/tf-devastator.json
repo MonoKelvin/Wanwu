@@ -1,7 +1,7 @@
 {
   "id": "7edb7fd4-927d-48bb-b76d-4319b38442ab",
   "slug": "tf-devastator",
-  "subCategoryId": "tf-decepticon",
+  "subCategoryId": "tf-g1",
   "name": "大力神 Devastator",
   "summary": "工程车合体金刚，六合一破坏力。",
   "description": "大力神 Devastator为霸天虎（Decepticon）阵营成员，追求征服赛博坦与地球资源。变形形态常为工程车合体，职能偏向合体金刚。\n\n与汽车人长期战争，威震天（及惊破天）为领袖；红蜘蛛等角色以背叛与阴谋著称。\n\n**变形形态**：工程车合体\n\n**相关**：合体金刚、磁带战士为经典子系列；电影与 G1 设定有差异",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Devastator transformers toy robot",
+    "query": "transformers robot toy action figure",
     "matchTags": [
       "霸天虎",
       "合体金刚",
       "devastator"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

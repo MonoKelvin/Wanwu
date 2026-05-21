@@ -1,0 +1,22 @@
+{
+  "id": "badb288e-2e79-4421-aa51-086b4899b0ad",
+  "slug": "insect-firefly",
+  "subCategoryId": "insect-beetle",
+  "name": "萤火虫",
+  "summary": "夏夜生物发光。",
+  "description": "萤火虫（Firefly）第三批扩充：分类深度与跨域科普。\n\n**特征：行业或物种代表性。**\n\n**相关：设计、自然、文化史。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "insect macro",
+    "category": "animals",
+    "matchTags": [
+      "insect",
+      "macro"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

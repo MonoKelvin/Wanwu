@@ -1,7 +1,7 @@
 {
   "id": "958d22f2-8281-45ea-ac02-d1b88a5124d0",
   "slug": "cat-japanese-domestic",
-  "subCategoryId": "cat-japan",
+  "subCategoryId": "cat-long-hair",
   "name": "日本家猫（日本猫）",
   "summary": "日本本土混血家猫总称，含短尾与非短尾，适应力强，地方保护倡议增多。",
   "description": "日本家猫（日本猫 / Nihon-neko）泛指日本国内饲养的本土混血猫，不限定单一标准。包括短尾、长毛、普通尾等。京都、冲绳等地有地域猫保护（如「京都猫」宣传）。\n\n性格与护理因个体而异。推广 TNR（诱捕绝育放归）与领养代替购买为现代动保方向。\n\n**相关**：与品种猫「日本短尾」不同；猫岛（如青岛、田代岛）为旅游与文化现象。",
@@ -20,7 +20,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "日本家猫 cat breed portrait",
+    "query": "cat breed portrait",
     "category": "animals",
     "matchTags": [
       "cat"

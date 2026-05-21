@@ -1,7 +1,7 @@
 {
   "id": "50762974-02dc-4c50-991a-c0e1d1c97aba",
   "slug": "history-parthenon",
-  "subCategoryId": "hist-world",
+  "subCategoryId": "hist-ancient",
   "name": "帕特农神庙",
   "summary": "卫城核心神庙，多立克柱式典范。",
   "description": "帕特农神庙坐落于希腊，兴盛于公元前 447，为世界遗产。见证古代文明的政治、宗教、建筑或天文成就，是环球旅行与考古学热点。\n\n气候变化、游客压力与战争曾威胁遗产安全，国际社会通过 UNESCO 框架推动保护。\n\n**旅行提示**：尊重当地文化，遵守摄影与攀爬禁令\n\n**相关**：与庞贝、吴哥窟、金字塔等同属必访史迹",
@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "帕特农神庙 landmark architecture",
+    "query": "landmark architecture",
     "matchTags": [
       "世界遗产",
       "公元前 447"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

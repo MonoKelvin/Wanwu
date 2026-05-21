@@ -1,0 +1,23 @@
+{
+  "id": "18949aa4-5a1e-4400-bef9-73999899cb54",
+  "slug": "anime-kiki",
+  "subCategoryId": "anime-ghibli",
+  "name": "魔女宅急便",
+  "summary": "飞行快递少女成长。",
+  "description": "魔女宅急便（Kiki's Delivery Service）1989 吉卜力。\n\n**特征：琪琪、吉吉、海滨小镇。**\n\n**相关：成长治愈。**",
+  "tags": [
+    "吉卜力"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "anime forest spirit girl illustration",
+    "category": "all",
+    "matchTags": [
+      "吉卜力"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 6
+  }
+}

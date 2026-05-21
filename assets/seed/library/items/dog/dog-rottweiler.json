@@ -1,7 +1,7 @@
 {
   "id": "4f0869f2-7930-45f6-a737-0322eb69a1e7",
   "slug": "dog-rottweiler",
-  "subCategoryId": "dog-europe",
+  "subCategoryId": "dog-working",
   "name": "罗威纳犬",
   "summary": "德国古老护卫犬，黑褐配色、体格强壮，需早期训练与社会化。",
   "description": "罗威纳犬（Rottweiler）源于德国罗特韦尔镇，历史上拉车与护卫牲畜。现代为优秀护卫与家庭犬，肌肉发达、咬合力强。\n\n需负责任饲养、正规训练与社会化。适合有经验饲主。注意髋关节筛查。\n\n**相关**：与杜宾、德国牧羊犬同属工作护卫系；误解常来自不当饲养。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "罗威纳犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "护卫犬",

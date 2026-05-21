@@ -1,7 +1,7 @@
 {
   "id": "ff24bb57-b814-4c60-be8a-47ab604181b0",
   "slug": "cat-okinawa-cat",
-  "subCategoryId": "cat-japan",
+  "subCategoryId": "cat-short-hair",
   "name": "冲绳猫（琉球猫）",
   "summary": "琉球群岛地方家猫，热带气候适应，短毛为主，冲绳「岛猫」文化鲜明。",
   "description": "冲绳猫指南冲（琉球）地区家猫，非单独国际品种。热带气候下多为短毛、耳竖、体型中等。冲绳有岛猫照护团体与旅游猫文化，强调 TNR 与喂食规范。\n\n饲养注意防暑、饮水与寄生虫防治。与日本本土猫在血统上交流有限。\n\n**相关**：与台湾家猫、东南亚短毛猫在地理上同属东亚岛屿带；「岛猫」摄影文化流行。",
@@ -20,7 +20,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "冲绳猫 cat breed portrait",
+    "query": "cat breed portrait",
     "category": "animals",
     "matchTags": [
       "cat"

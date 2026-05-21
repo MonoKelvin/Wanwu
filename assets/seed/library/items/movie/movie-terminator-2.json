@@ -1,7 +1,7 @@
 {
   "id": "2d787f82-9b02-4bab-834f-66e9f8d42cd3",
   "slug": "movie-terminator-2",
-  "subCategoryId": "movie-scifi",
+  "subCategoryId": "movie-classic",
   "name": "终结者 2",
   "summary": "T-1000 液态金属与施瓦辛格保护约翰·康纳。",
   "description": "终结者 2（1991）由卡梅隆执导，属时空旅行类型里程碑。影片在视觉特效、世界观设定或科学概念上影响后续工业与流行文化。\n\n科幻片通过未来技术反思当下社会、人性与宇宙位置，常与哲学、政治议题交织。\n\n**影像风格**：时空旅行\n\n**相关**：与同导演或同类型经典常组成观影清单；配乐与美术是学术分析热点",
@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "终结者 2 film cinema scene",
+    "query": "2 cinema film still",
     "matchTags": [
       "时空旅行",
       "卡梅隆"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

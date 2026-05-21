@@ -149,8 +149,9 @@ export function buildItemsFromSeed(root, filter = {}) {
 
   const catalogItems = [...byId.values()].map((v) => v.entry)
   const mediaItems = {}
-  for (const { slug, media } of byId.values()) {
-    const { retryQuery, urls, ...manifest } = media.media
+  for (const { media: bundle } of byId.values()) {
+    const { slug, media } = bundle
+    const { retryQuery, urls, ...manifest } = media
     const entry = { ...manifest }
     if (retryQuery) entry.retryQuery = retryQuery
     if (urls?.length) entry.urls = urls

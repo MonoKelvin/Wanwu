@@ -1,0 +1,21 @@
+{
+  "id": "a59ae239-67d9-44db-9a71-3bac04fa1f0b",
+  "slug": "plant-phalaenopsis",
+  "subCategoryId": "plant-flowering",
+  "name": "蝴蝶兰",
+  "summary": "兰花观赏王者。",
+  "description": "蝴蝶兰（Phalaenopsis）花期长。\n\n**特征：蝶形花。**\n\n**相关：年宵花。**",
+  "tags": [
+    "兰花"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "houseplant",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

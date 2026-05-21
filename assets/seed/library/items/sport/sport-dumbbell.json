@@ -1,0 +1,19 @@
+{
+  "id": "39e97a89-031d-432d-846c-4f705113bfaa",
+  "slug": "sport-dumbbell",
+  "subCategoryId": "sport-fitness",
+  "name": "哑铃",
+  "summary": "力量训练器械。",
+  "description": "哑铃（Dumbbell）第三批扩充：分类深度与跨域科普。\n\n**特征：行业或物种代表性。**\n\n**相关：设计、自然、文化史。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "sport equipment",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "dragon ball anime screenshot fan art",
+    "query": "japanese anime character illustration",
     "matchTags": [
       "少年漫",
       "dragon"
     ],
-    "minMatchScore": 1,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

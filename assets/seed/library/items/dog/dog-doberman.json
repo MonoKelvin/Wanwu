@@ -1,7 +1,7 @@
 {
   "id": "fd1e4b20-a4f6-476b-bbcc-ad9e463a8127",
   "slug": "dog-doberman",
-  "subCategoryId": "dog-europe",
+  "subCategoryId": "dog-working",
   "name": "杜宾犬",
   "summary": "德国护卫犬，流线体型、立耳断尾传统已多地禁止，聪明忠诚。",
   "description": "杜宾犬（Dobermann）由 Karl Friedrich Louis Dobermann 在德国选育，用于护卫。体型修长、肌肉线条明显，被毛短易护理。\n\n智商高、可训练性强，常用作警犬与家庭护卫。现代多数地区禁止无痛断尾立耳。需运动与陪伴。\n\n**相关**：与罗威纳、德国牧羊犬为经典护卫组合；电影常作警犬形象。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "杜宾犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "护卫犬",

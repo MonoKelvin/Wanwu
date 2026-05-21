@@ -1,7 +1,7 @@
 {
   "id": "87bd9a69-88e5-452d-ba2e-ff8773665c37",
   "slug": "dog-bernese-mountain",
-  "subCategoryId": "dog-europe",
+  "subCategoryId": "dog-working",
   "name": "伯恩山犬",
   "summary": "瑞士大型三色工作犬，黑褐白被毛，性格温和，寿命相对较短。",
   "description": "伯恩山犬（Bernese Mountain Dog）来自瑞士伯恩州，历史上拉车与护卫农场。体型大、被毛长、三色（黑褐白）。\n\n性格温和亲人，适合寒冷气候。注意癌症与关节问题，平均寿命短于小型犬。需空间与梳理。\n\n**相关**：与瑞士山地犬组（大瑞士山地犬等）为近缘；瑞士四类山地犬之一。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "伯恩山犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "山地犬",

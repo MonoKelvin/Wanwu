@@ -22,11 +22,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "景天 Sedum houseplant",
+    "query": "Sedum houseplant",
     "matchTags": [
       "sedum"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

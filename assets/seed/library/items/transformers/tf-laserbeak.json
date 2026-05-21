@@ -1,7 +1,7 @@
 {
   "id": "21c4e1a3-18cf-462e-93e5-d7cc621eb690",
   "slug": "tf-laserbeak",
-  "subCategoryId": "tf-decepticon",
+  "subCategoryId": "tf-g1",
   "name": "激光鸟 Laserbeak",
   "summary": "声波磁带，鸟形侦察与暗杀。",
   "description": "激光鸟 Laserbeak为霸天虎（Decepticon）阵营成员，追求征服赛博坦与地球资源。变形形态常为机械鸟，职能偏向磁带战士。\n\n与汽车人长期战争，威震天（及惊破天）为领袖；红蜘蛛等角色以背叛与阴谋著称。\n\n**变形形态**：机械鸟\n\n**相关**：合体金刚、磁带战士为经典子系列；电影与 G1 设定有差异",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "Laserbeak transformers toy robot",
+    "query": "transformers robot toy action figure",
     "matchTags": [
       "霸天虎",
       "磁带战士",
       "laserbeak"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

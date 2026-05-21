@@ -1,0 +1,19 @@
+{
+  "id": "5fcd8709-fe7a-4641-884e-52aa10c5ad17",
+  "slug": "food-saffron",
+  "subCategoryId": "food-ingredient",
+  "name": "藏红花",
+  "summary": "珍贵香料。",
+  "description": "藏红花（Saffron）条目简介与延伸。\n\n**特征：行业代表性。**\n\n**相关：科普与收藏。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "food dish plate",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

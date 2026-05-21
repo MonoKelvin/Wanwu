@@ -1,0 +1,23 @@
+{
+  "id": "f40929f7-ad1d-4eb5-b237-d3976b8f4345",
+  "slug": "watch-omega-speedmaster",
+  "subCategoryId": "watch-sport",
+  "name": "欧米茄超霸",
+  "summary": "月球表。",
+  "description": "欧米茄超霸（Omega Speedmaster）制表工业经典。\n\n**特征：机芯与防水 heritage。**\n\n**相关：收藏与日常佩戴。**",
+  "tags": [
+    "腕表"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "luxury wristwatch macro dial leather strap",
+    "category": "all",
+    "matchTags": [
+      "watch"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

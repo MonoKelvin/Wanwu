@@ -21,13 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "万里长城 landmark architecture",
+    "query": "landmark architecture",
     "category": "places",
     "matchTags": [
       "世界遗产",
       "防御工程"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "requiredTags": []
   }
 }

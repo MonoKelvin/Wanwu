@@ -1,7 +1,7 @@
 {
   "id": "255befc7-4636-42c8-9e50-6d7159034d06",
   "slug": "interior-scandi-kitchen",
-  "subCategoryId": "int-modern",
+  "subCategoryId": "int-zen",
   "name": "北欧厨房",
   "summary": "白色橱柜、木质台面与功能收纳。",
   "description": "北欧厨房体现北欧厨房设计语言：功能优先、自然光最大化与收纳场景的人体工学。浅色系放大空间感，木材平衡冷调气候。\n\n可持续材料、节能窗与简化线脚是常见做法，IKEA 与 Hay 等品牌推动全球普及。\n\n**搭配要点**：厨房色调，天然材质，简洁家具\n\n**相关**：与日式侘寂、现代极简有交叉借鉴",
@@ -21,9 +21,11 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "北欧厨房 interior design room",
+    "query": "interior design room",
     "matchTags": [],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

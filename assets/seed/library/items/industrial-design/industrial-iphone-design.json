@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "iPhone 设计 product design",
+    "query": "iPhone product design",
     "matchTags": [
       "工业设计",
       "apple",
@@ -29,6 +29,8 @@
       "iphone"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

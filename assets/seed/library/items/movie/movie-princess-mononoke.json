@@ -1,7 +1,7 @@
 {
   "id": "964c5fa0-6713-4c62-887a-5e410e31d024",
   "slug": "movie-princess-mononoke",
-  "subCategoryId": "movie-fantasy",
+  "subCategoryId": "movie-action",
   "name": "幽灵公主",
   "summary": "宫崎骏森林神灵与人类炼铁冲突。",
   "description": "幽灵公主构建生态奇幻叙事宇宙，1997 年间以美术、服装与配乐塑造异世界沉浸感。奇幻电影常借用神话、民间传说与魔法规则探讨善恶、成长与生态。\n\n与科幻不同，奇幻较少依赖科学解释而重象征与寓言。\n\n**世界观**：生态奇幻\n\n**相关**：与原著小说、游戏联动形成跨媒体宇宙",
@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "幽灵公主 film cinema scene",
+    "query": "cinema film still",
     "matchTags": [
       "生态奇幻"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

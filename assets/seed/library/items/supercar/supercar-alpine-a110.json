@@ -1,0 +1,24 @@
+{
+  "id": "93da36d8-c253-4c72-888e-bacc5f29c96e",
+  "slug": "supercar-alpine-a110",
+  "subCategoryId": "car-france",
+  "name": "Alpine A110",
+  "summary": "法产中置后驱轻量化跑车。",
+  "description": "Alpine A110（Alpine A110）雷诺旗下 Alpine 复刻传奇。\n\n**特征：蓝色车身、紧凑轴距。**\n\n**相关：WRC 文化。**",
+  "tags": [
+    "法国",
+    "跑车"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "Alpine A110 supercar",
+    "category": "all",
+    "matchTags": [
+      "alpine"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 5
+  }
+}

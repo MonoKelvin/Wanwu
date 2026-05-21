@@ -1,7 +1,7 @@
 {
   "id": "f9384694-9675-44bc-abce-a888a0489240",
   "slug": "hero-green-lantern",
-  "subCategoryId": "hero-dc-film",
+  "subCategoryId": "hero-dc",
   "name": "绿灯侠 Green Lantern",
   "summary": "情感光谱之绿光军团成员，意志驱动戒指具现化万物。",
   "description": "绿灯侠（Green Lantern）1940 年 Alan Scott 版，1959 年 Hal Jordan 重启为宇宙警察。绿灯戒指由守护者授予，以意志能量战斗，需定期充电。\n\n**相关**：成员含 John Stewart、Kyle Rayner 等。宿敌黄灯恐惧、光谱战争等宏大叙事。\n\n**能力要点**：意志能量构型、飞行、宇宙巡逻",
@@ -26,7 +26,9 @@
       "绿灯军团",
       "green"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

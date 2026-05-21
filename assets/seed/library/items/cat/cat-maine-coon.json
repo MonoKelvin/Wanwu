@@ -1,7 +1,7 @@
 {
   "id": "47229c76-9325-4b1a-a71b-f2797409c378",
   "slug": "cat-maine-coon",
-  "subCategoryId": "cat-americas",
+  "subCategoryId": "cat-long-hair",
   "name": "缅因猫",
   "summary": "来自美国东北部的大型长毛猫，耳簇、长尾、性格友善，有「温柔的巨人」之称。",
   "description": "缅因猫（Maine Coon）是美国缅因州代表性家猫品种，可能由当地长毛猫与自然选择形成。体型为家猫中最大之一，双层被毛适应寒冷气候，耳尖簇毛与蓬松尾为标志。\n\n性格聪明、爱玩、常跟随主人，对水兴趣较高。需定期梳毛防打结，幼猫成长期需优质高蛋白饮食。\n\n**相关**：常与美国本土长毛猫、挪威森林猫在外观上被比较；是北美最早参加猫展的品种之一。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "缅因猫 cat breed portrait",
+    "query": "cat breed portrait",
     "category": "animals",
     "matchTags": [
       "cat"

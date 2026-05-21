@@ -1,7 +1,7 @@
 {
   "id": "b8f0bb77-473e-42c2-ae17-cb9ab4710cf2",
   "slug": "dog-nova-scotia-tolling",
-  "subCategoryId": "dog-americas",
+  "subCategoryId": "dog-europe",
   "name": "新斯科舍诱鸭寻回犬",
   "summary": "加拿大中型寻回犬，赤红色被毛，以嬉戏诱鸭入猎射程闻名。",
   "description": "新斯科舍诱鸭寻回犬（Nova Scotia Duck Tolling Retriever）为加拿大省犬，通过岸边玩耍吸引水鸭靠近。体型中等、毛色多为橙红。\n\n性格活泼、智商高，需运动与游戏。是较少见的寻回品种。\n\n**相关**：与金毛、可卡有猎禽关联；Tollers 简称。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "新斯科舍诱鸭寻回犬 dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "寻回犬",

@@ -1,7 +1,7 @@
 {
   "id": "f4c542bc-6fad-496b-8513-1dfadaea3d32",
   "slug": "cat-jianzhou",
-  "subCategoryId": "cat-china",
+  "subCategoryId": "cat-short-hair",
   "name": "简州猫（四川四耳猫）",
   "summary": "四川简州地方猫种，耳部特征明显，体型结实，地方标准已有记载。",
   "description": "简州猫（Jianzhou Cat）产于四川简阳（古简州），传统描述为「四耳」——耳廓旁有耳屏状附耳表现。体型健壮、被毛短密，适应力强。\n\n2000 年代起地方重新整理标准与保种。国际主流协会尚未广泛认可，属中国地方遗传资源。\n\n**相关**：与中华狸花猫、临清狮猫并列地方名猫；耳特征为重要识别点。",
@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "简州猫 cat breed portrait",
+    "query": "cat breed portrait",
     "category": "animals",
     "matchTags": [
       "地方品种",

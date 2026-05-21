@@ -21,12 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "突袭 The Raid film cinema scene",
+    "query": "The Raid cinema film still",
     "matchTags": [
       "加雷斯·埃文斯",
       "the"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

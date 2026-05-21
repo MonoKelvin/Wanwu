@@ -21,13 +21,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "拟石莲 Echeveria houseplant",
+    "query": "Echeveria houseplant",
     "category": "nature",
     "matchTags": [
       "景天科",
       "echeveria"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "requiredTags": []
   }
 }

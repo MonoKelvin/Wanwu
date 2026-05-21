@@ -1,7 +1,7 @@
 {
   "id": "fa249cc3-987e-4973-bdfc-8a93a9b55181",
   "slug": "cat-british-shorthair",
-  "subCategoryId": "cat-europe",
+  "subCategoryId": "cat-short-hair",
   "name": "英国短毛猫",
   "summary": "源自英国的短毛品种，圆脸厚毛、性格沉稳，是最经典的室内伴侣猫之一。",
   "description": "英国短毛猫（British Shorthair）在 19 世纪由英国选育定型，被 CFA、TICA、FIFe 等协会认可。典型外观为圆头、圆眼、致密短毛与「泰迪熊」体态。性格通常安静、适应力强，适合公寓饲养。\n\n**饲养要点**：控制体重（易发胖）、每周梳毛 1–2 次、定期洁牙与疫苗。常见毛色包括蓝色（最知名）、蓝乳、银渐层等。\n\n**相关**：与法国 Chartreux、美国本土短毛猫在体型上有相似之处，但头型与毛质不同。",
@@ -22,7 +22,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "英国短毛猫 cat breed portrait",
+    "query": "cat breed portrait",
     "category": "animals",
     "matchTags": [
       "室内猫",

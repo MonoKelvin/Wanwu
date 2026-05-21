@@ -1,7 +1,7 @@
 {
   "id": "2f47b26b-2997-4bda-b64f-459aa1ea8cd1",
   "slug": "history-colosseum",
-  "subCategoryId": "hist-world",
+  "subCategoryId": "hist-ancient",
   "name": "罗马斗兽场",
   "summary": "弗拉维王朝圆形竞技场，古罗马工程象征。",
   "description": "罗马斗兽场坐落于意大利，兴盛于公元 72–80，为世界遗产。见证古代文明的政治、宗教、建筑或天文成就，是环球旅行与考古学热点。\n\n气候变化、游客压力与战争曾威胁遗产安全，国际社会通过 UNESCO 框架推动保护。\n\n**旅行提示**：尊重当地文化，遵守摄影与攀爬禁令\n\n**相关**：与庞贝、吴哥窟、金字塔等同属必访史迹",
@@ -21,13 +21,15 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "罗马斗兽场 landmark architecture",
+    "query": "landmark architecture",
     "matchTags": [
       "世界遗产",
       "意大利",
       "公元 72–80"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

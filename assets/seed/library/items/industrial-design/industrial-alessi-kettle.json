@@ -1,7 +1,7 @@
 {
   "id": "215b361a-2059-47df-9604-fdd1575886c0",
   "slug": "industrial-alessi-kettle",
-  "subCategoryId": "id-home",
+  "subCategoryId": "id-product",
   "name": "阿莱西 9093 鸟鸣水壶",
   "summary": "理查德·萨帕 1980 年代经典设计，壶嘴蒸汽驱动鸟哨鸣叫。",
   "description": "9093 水壶由意大利 Alessi 生产，设计师 Richard Sapper（1983）。不锈钢壶身，壶嘴集成塑料鸟形哨，水沸时蒸汽通过鸟哨发出鸟鸣，兼具趣味与功能反馈。\n\n被誉为后现代设计象征之一，纽约现代艺术博物馆（MoMA）收藏。体现意大利「设计工厂」将日常器物艺术化的传统。\n\n**相关**：与 Philippe Starck 为 Alessi 设计的作品并列；影响后续趣味家电设计。",
@@ -22,12 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "阿莱西 9093 鸟鸣水壶 product design",
+    "query": "9093 product design",
     "matchTags": [
       "alessi",
       "后现代"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

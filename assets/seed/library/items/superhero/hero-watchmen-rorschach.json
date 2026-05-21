@@ -1,7 +1,7 @@
 {
   "id": "6de13505-e24b-49bb-87be-d3adb97f7f80",
   "slug": "hero-watchmen-rorschach",
-  "subCategoryId": "hero-other",
+  "subCategoryId": "hero-indie",
   "name": "罗夏 Rorschach",
   "summary": "《守望者》道德绝对主义蒙面侦探，面具墨渍可变。",
   "description": "罗夏（Rorschach）1986 年《守望者》#1 登场，沃尔特·科瓦克斯戴墨迹面具，信奉绝对正义，拒绝妥协导致悲剧结局。\n\n**相关**：作品解构超级英雄神话，获雨果奖。\n\n**设定要点**：侦探、格斗、格洛克手枪；无超能力",
@@ -27,7 +27,9 @@
       "反英雄",
       "rorschach"
     ],
-    "minMatchScore": 2,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
   }
 }

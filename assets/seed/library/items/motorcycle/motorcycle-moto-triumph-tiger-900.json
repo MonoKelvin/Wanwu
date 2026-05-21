@@ -1,0 +1,23 @@
+{
+  "id": "c6b3b910-0f8d-49c1-99e4-c497f3447423",
+  "slug": "motorcycle-moto-triumph-tiger-900",
+  "subCategoryId": "moto-adventure",
+  "name": "Triumph Tiger 900",
+  "summary": "英式三缸 ADV。",
+  "description": "Triumph Tiger 900（Triumph Tiger 900）公路越野兼顾。\n\n**特征：三缸声浪。**\n\n**相关：凯旋。**",
+  "tags": [
+    "探险"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "Triumph Tiger 900 motorcycle",
+    "category": "all",
+    "matchTags": [
+      "triumph"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 1,
+    "imageCount": 6
+  }
+}

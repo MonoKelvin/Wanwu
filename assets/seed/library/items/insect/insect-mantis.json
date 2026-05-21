@@ -1,0 +1,22 @@
+{
+  "id": "d61dccd1-505a-4a2c-aefc-574e3b42ab8b",
+  "slug": "insect-mantis",
+  "subCategoryId": "insect-dragonfly",
+  "name": "螳螂",
+  "summary": "捕食前足。",
+  "description": "螳螂（Praying mantis）扩展批次条目。\n\n**特征：领域代表。**\n\n**相关：全库分类补全。**",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "insect macro",
+    "category": "animals",
+    "matchTags": [
+      "insect",
+      "macro"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 0,
+    "imageCount": 5
+  }
+}

@@ -1,7 +1,7 @@
 {
   "id": "ae2565b0-ffd3-4e38-9794-1452f54f7f68",
   "slug": "movie-the-wizard-of-oz",
-  "subCategoryId": "movie-fantasy",
+  "subCategoryId": "movie-classic",
   "name": "绿野仙踪",
   "summary": "1939 经典彩色歌舞，桃乐茜黄砖路之旅。",
   "description": "绿野仙踪构建经典童话叙事宇宙，1939 年间以美术、服装与配乐塑造异世界沉浸感。奇幻电影常借用神话、民间传说与魔法规则探讨善恶、成长与生态。\n\n与科幻不同，奇幻较少依赖科学解释而重象征与寓言。\n\n**世界观**：经典童话\n\n**相关**：与原著小说、游戏联动形成跨媒体宇宙",
@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "绿野仙踪 film cinema scene",
+    "query": "cinema film still",
     "matchTags": [
       "经典童话"
     ],
-    "minMatchScore": 1,
-    "imageCount": 5
+    "minMatchScore": 0,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

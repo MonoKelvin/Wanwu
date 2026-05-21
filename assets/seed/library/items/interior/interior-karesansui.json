@@ -1,7 +1,7 @@
 {
   "id": "693c82bc-6618-4686-83d3-1ea5a838ec28",
   "slug": "interior-karesansui",
-  "subCategoryId": "int-modern",
+  "subCategoryId": "int-zen",
   "name": "枯山水",
   "summary": "白沙耙纹象征水流，石组为山岛的禅庭。",
   "description": "枯山水源于日本枯山水传统，强调人与自然的庭院关系。材料多用竹、木、石与和纸，色调偏大地色系，减少视觉噪音以利冥想。\n\n现代都市住宅常将禅意元素局部化，如枯山水阳台或榻榻米角落。\n\n**营造要点**：枯山水，自然材质，留白与秩序\n\n**相关**：与北欧极简、中式园林可对话融合",
@@ -21,11 +21,13 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "枯山水 interior design room",
+    "query": "interior design room",
     "matchTags": [
       "枯山水"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }

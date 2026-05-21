@@ -21,7 +21,7 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "attack on titan anime screenshot fan art",
+    "query": "japanese anime character illustration",
     "category": "people",
     "matchTags": [
       "调查兵团",
@@ -29,7 +29,8 @@
       "黑暗奇幻",
       "attack"
     ],
-    "minMatchScore": 1,
-    "imageCount": 6
+    "minMatchScore": 0,
+    "imageCount": 6,
+    "requiredTags": []
   }
 }

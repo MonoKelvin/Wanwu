@@ -22,12 +22,14 @@
   },
   "media": {
     "provider": "pixabay",
-    "query": "海芋 Alocasia houseplant",
+    "query": "Alocasia houseplant",
     "matchTags": [
       "天南星科",
       "alocasia"
     ],
     "minMatchScore": 1,
-    "imageCount": 5
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
   }
 }
