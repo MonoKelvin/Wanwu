@@ -3,10 +3,19 @@
   "slug": "footwear-shoe-chelsea-boot",
   "subCategoryId": "shoe-boot",
   "name": "切尔西靴",
-  "summary": "弹性侧片短靴。",
-  "description": "切尔西靴：弹性侧片短靴。\n\n**概述**：切尔西靴在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：弹性侧片短靴。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "切尔西靴是起源于英国维多利亚时代的踝靴，由维多利亚女王御用制鞋师J.Sparkes-Hall于19世纪发明。其采用硫化橡胶松紧带设计取代传统鞋带，具有低跟、圆头、无鞋带等特征，流畅的线条与便捷的侧边设计便利穿脱，最初用于马术活动并逐渐普及为日常鞋款 [1-2] 。 20世纪50年代，切尔西靴经伦敦切尔西区青年群体Che",
+  "tags": [
+    "切尔西靴",
+    "chelsea boots",
+    "马术活动的靴子"
+  ],
+  "specs": {
+    "中文名": "切尔西靴",
+    "外文名": "chelsea boots",
+    "起 源": "马术活动的靴子",
+    "地 区": "英国",
+    "摘要": "# 切尔西靴 切尔西靴是起源于英国维多利亚时代的踝靴，由维多利亚女王御用制鞋师J.Sparkes-Hall于19世纪发明。其采用硫化橡胶松紧带设计取代传统鞋带，具有低跟、圆头、无鞋带等特征，流畅的线条与便捷的侧边设计便利穿脱，最初用于马术活"
+  },
   "media": {
     "provider": "pixabay",
     "query": "shoes footwear",
@@ -15,5 +24,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/footwear/footwear-shoe-chelsea-boot/content.md"
 }

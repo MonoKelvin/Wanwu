@@ -4,7 +4,6 @@
   "subCategoryId": "id-product",
   "name": "iRobot Roomba",
   "summary": "家用扫地机器人普及者，传感器导航。",
-  "description": "iRobot Roomba：家用扫地机器人普及者，传感器导航。\n\n**概述**：iRobot Roomba（iRobot Roomba）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：家用扫地机器人普及者，传感器导航。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：工业设计、iRobot、机器人、经典\n\n**规格参数**\n\n**分类**：产品设计\n**品牌**：iRobot\n**类型**：机器人\n**时期**：2002\n**领域**：消费科技\n**影响**：行业标杆",
   "tags": [
     "工业设计",
     "iRobot",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/industrial-design/industrial-roomba/content.md"
 }

@@ -4,7 +4,6 @@
   "subCategoryId": "ui-design-tool",
   "name": "无障碍设计",
   "summary": "WCAG 对比度、屏幕阅读器与包容性交互。",
-  "description": "无障碍设计：WCAG 对比度、屏幕阅读器与包容性交互。\n\n**概述**：无障碍设计在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：WCAG 对比度、屏幕阅读器与包容性交互。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：移动端、UI、WCAG、包容\n\n**规格参数**\n\n**分类**：移动 UI\n**平台**：WCAG\n**重点**：包容\n**工具**：Figma 等\n**规范**：HIG / Material\n**趋势**：动态色与折叠屏",
   "tags": [
     "移动端",
     "UI",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/ui-design/ui-accessibility/content.md"
 }

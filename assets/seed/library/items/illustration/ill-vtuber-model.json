@@ -4,7 +4,6 @@
   "subCategoryId": "ill-portrait",
   "name": "Vtuber 立绘",
   "summary": "Live2D 分层与虚拟主播形象设计。",
-  "description": "Vtuber 立绘：Live2D 分层与虚拟主播形象设计。\n\n**概述**：Vtuber 立绘（Vtuber ）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：Live2D 分层与虚拟主播形象设计。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：数字绘画、虚拟、Live2D、插画\n\n**规格参数**\n\n**分类**：数字插画\n**工具**：Live2D\n**领域**：虚拟\n**输出**：商业 / 同人\n**平台**：Pixiv / ArtStation\n**技能**：构图、色彩、人体",
   "tags": [
     "数字绘画",
     "虚拟",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/illustration/ill-vtuber-model/content.md"
 }

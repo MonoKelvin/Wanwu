@@ -8,5 +8,9 @@ marked.setOptions({
 export function renderMarkdown(source: string): string {
   const text = source?.trim()
   if (!text) return ''
-  return marked.parse(text, { async: false }) as string
+  const html = marked.parse(text, { async: false }) as string
+  return html.replace(
+    /<a href="(https?:\/\/[^"]+)"/g,
+    '<a class="ww-md-external-link" href="$1" rel="noopener noreferrer"'
+  )
 }

@@ -4,7 +4,6 @@
   "subCategoryId": "id-appliance",
   "name": "Nespresso 咖啡机",
   "summary": "胶囊系统与 George Clooney 广告塑造轻奢咖啡仪式。",
-  "description": "Nespresso 咖啡机：胶囊系统与 George Clooney 广告塑造轻奢咖啡仪式。\n\n**概述**：Nespresso 咖啡机（Nespresso ）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：胶囊系统与 George Clooney 广告塑造轻奢咖啡仪式。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：家居、Nestlé、厨电、设计\n\n**规格参数**\n\n**分类**：家居产品设计\n**品牌**：Nestlé\n**类型**：厨电\n**时期**：1986\n**场景**：家庭\n**特点**：功能与美学",
   "tags": [
     "家居",
     "Nestlé",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/industrial-design/industrial-nespresso/content.md"
 }

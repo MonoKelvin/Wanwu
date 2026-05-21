@@ -4,7 +4,6 @@
   "subCategoryId": "moto-japan",
   "name": "川崎 Versys 650",
   "summary": "多用途街旅，舒适坐姿。",
-  "description": "川崎 Versys 650：多用途街旅，舒适坐姿。\n\n**概述**：川崎 Versys 650（Versys 650）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：多用途街旅，舒适坐姿。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：日本、Kawasaki、摩托、街旅\n\n**规格参数**\n\n**分类**：日本品牌\n**厂商**：Kawasaki\n**发动机**：650 双缸\n**定位**：街旅\n**总部**：日本\n**赛事**：MotoGP / WSBK",
   "tags": [
     "日本",
     "Kawasaki",
@@ -30,5 +29,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/motorcycle/moto-kawasaki-versys/content.md"
 }

@@ -4,7 +4,6 @@
   "subCategoryId": "id-product",
   "name": "Kindle 电子书",
   "summary": "电子墨水阅读器，护眼与长续航。",
-  "description": "Kindle 电子书：电子墨水阅读器，护眼与长续航。\n\n**概述**：Kindle 电子书（Kindle ）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：电子墨水阅读器，护眼与长续航。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：工业设计、Amazon、阅读器、经典\n\n**规格参数**\n\n**分类**：产品设计\n**品牌**：Amazon\n**类型**：阅读器\n**时期**：2007\n**领域**：消费科技\n**影响**：行业标杆",
   "tags": [
     "工业设计",
     "Amazon",
@@ -32,5 +31,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/industrial-design/industrial-kindle/content.md"
 }

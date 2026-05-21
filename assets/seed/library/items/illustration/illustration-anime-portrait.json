@@ -4,7 +4,6 @@
   "subCategoryId": "ill-portrait",
   "name": "动漫肖像",
   "summary": "赛璐璐或厚涂风格的角色头像插画。",
-  "description": "动漫肖像：赛璐璐或厚涂风格的角色头像插画。\n\n**概述**：动漫肖像在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：赛璐璐或厚涂风格的角色头像插画。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：数字绘画、二次元、Procreate / CSP、插画\n\n**规格参数**\n\n**分类**：数字插画\n**工具**：Procreate / CSP\n**领域**：二次元\n**输出**：商业 / 同人\n**平台**：Pixiv / ArtStation\n**技能**：构图、色彩、人体",
   "tags": [
     "数字绘画",
     "二次元",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/illustration/illustration-anime-portrait/content.md"
 }

@@ -4,7 +4,6 @@
   "subCategoryId": "cat-short-hair",
   "name": "孟加拉猫 Bengal",
   "summary": "亚洲豹猫杂交选育，豹纹玫瑰纹、肌肉发达，性格活跃需大量刺激。",
-  "description": "孟加拉猫（Bengal）1980 年代由 Jean Mill 等将亚洲豹猫（Prionailurus bengalensis）与家猫杂交选育，保留豹点/玫瑰纹与金棕光泽（glitter）。体型运动型、肌肉线条明显。\n\n需攀爬、互动与训练，不适合长期关笼。早期世代（F1–F3）饲养法规在部分地区受限。现代宠物多为 SBT（四代以后）。\n\n**相关**：与萨凡纳猫、埃及猫同属「野性外观」选育；是热门展示型家猫。",
   "tags": [
     "豹纹",
     "杂交",
@@ -33,5 +32,6 @@
     ],
     "minMatchScore": 2,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/cat/cat-bengal/content.md"
 }

@@ -21,30 +21,49 @@ export function normalizeMarkdownLabels(text: string): string {
     .replace(/\*{3}([^*]+?)\*{3}/g, '**$1**')
 }
 
-/** 优先读取资源目录 content.md，否则回退数据库 description */
+/** 优先 contentFile 路径，其次 cover 同目录 content.md，最后回退数据库 description（遗留） */
 export function readItemMarkdown(
   coverRel: string | null | undefined,
-  fallbackDescription: string | null | undefined
+  fallbackDescription: string | null | undefined,
+  contentFileRel?: string | null
 ): string | null {
-  const rel = contentPathFromCover(coverRel)
-  if (rel) {
+  const candidates = [
+    contentFileRel?.trim(),
+    contentPathFromCover(coverRel)
+  ].filter(Boolean) as string[]
+
+  for (const rel of candidates) {
     const abs = resolveLibraryMediaAbsolute(rel)
     if (abs && existsSync(abs)) {
       const text = normalizeMarkdownLabels(readFileSync(abs, 'utf-8').trim())
       if (text.length > 0) return text
     }
   }
+
   const fb = normalizeMarkdownLabels(fallbackDescription?.trim() ?? '')
   return fb || null
 }
 
-/** 将 Markdown 写入条目目录 content.md（与 cover 同目录） */
-export function writeItemMarkdown(coverRel: string | null | undefined, content: string): void {
-  const rel = contentPathFromCover(coverRel)
+/** 写入 contentFile 或 cover 同目录 content.md */
+export function writeItemMarkdownTo(
+  contentFileRel: string | null | undefined,
+  coverRel: string | null | undefined,
+  content: string
+): void {
+  const rel = contentFileRel?.trim() || contentPathFromCover(coverRel)
   if (!rel) return
   const abs = resolveLibraryMediaAbsolute(rel)
   if (!abs) return
   mkdirSync(dirname(abs), { recursive: true })
   const text = content?.trim() ?? ''
   writeFileSync(abs, text ? `${text}\n` : '', 'utf-8')
+}
+
+/** 将 Markdown 写入条目目录 content.md（与 cover 同目录） */
+export function writeItemMarkdown(
+  coverRel: string | null | undefined,
+  content: string,
+  contentFileRel?: string | null
+): void {
+  writeItemMarkdownTo(contentFileRel, coverRel, content)
 }

@@ -4,7 +4,6 @@
   "subCategoryId": "tf-g1",
   "name": "阿尔茜 Arcee",
   "summary": "女性汽车人战士，粉色流线车体，敏捷射手。",
-  "description": "阿尔茜 Arcee：女性汽车人战士，粉色流线车体，敏捷射手。\n\n**概述**：阿尔茜 Arcee（Arcee）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：女性汽车人战士，粉色流线车体，敏捷射手。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：汽车人、Hasbro、变形、女战士\n\n**规格参数**\n\n**分类**：汽车人 Autobot\n**阵营**：汽车人\n**变形**：流线跑车\n**角色**：女战士\n**版权**：Hasbro / Takara\n**首次**：1984",
   "tags": [
     "汽车人",
     "Hasbro",
@@ -32,5 +31,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/transformers/tf-arcee/content.md"
 }

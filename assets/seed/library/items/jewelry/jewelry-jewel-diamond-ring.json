@@ -3,10 +3,21 @@
   "slug": "jewelry-jewel-diamond-ring",
   "subCategoryId": "jewel-ring",
   "name": "钻戒",
-  "summary": "切工与净度分级。",
-  "description": "钻戒：切工与净度分级。\n\n**概述**：钻戒在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：切工与净度分级。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "钻戒是戴在手指上的 钻石 珠宝。钻石是宝石中最坚硬的一种， 古罗马人 认为它代表生命和永恒。15世纪的 欧洲 ，钻戒被认定为坚贞不渝的结婚象征，形成了以钻戒作为结婚信物的传统。",
+  "tags": [
+    "钻戒",
+    "diamond ring",
+    "戴在手指上的钻石珠宝"
+  ],
+  "specs": {
+    "中文名": "钻戒",
+    "外文名": "diamond ring",
+    "含 义": "戴在手指上的钻石珠宝",
+    "寓 意": "爱的语言",
+    "特 性": "透明性，可湿性，导热性",
+    "起 源": "印度",
+    "摘要": "# 钻戒（戴在手指上的钻石珠宝） 钻戒是戴在手指上的 钻石 珠宝。钻石是宝石中最坚硬的一种， 古罗马人 认为它代表生命和永恒。15世纪的 欧洲 ，钻戒被认定为坚贞不渝的结婚象征，形成了以钻戒作为结婚信物的传统。 。古代戒指以玉石制成环状，象"
+  },
   "media": {
     "provider": "pixabay",
     "query": "jewelry luxury",
@@ -15,5 +26,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/jewelry/jewelry-jewel-diamond-ring/content.md"
 }

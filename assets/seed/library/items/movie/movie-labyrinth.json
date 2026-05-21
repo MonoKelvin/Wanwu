@@ -3,13 +3,15 @@
   "slug": "movie-labyrinth",
   "subCategoryId": "movie-action",
   "name": "魔幻迷宫 Labyrinth",
-  "summary": "大卫·鲍伊摇滚妖精王与少女迷宫冒险。",
-  "description": "魔幻迷宫 Labyrinth：大卫·鲍伊摇滚妖精王与少女迷宫冒险。\n\n**概述**：魔幻迷宫 Labyrinth（Labyrinth）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：大卫·鲍伊摇滚妖精王与少女迷宫冒险。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：奇幻、电影、童话、史诗\n\n**规格参数**\n\n**分类**：奇幻电影\n**年份**：1986\n**导演**：霍尔斯特罗姆\n**类型**：童话\n**改编**：文学 / 原创\n**受众**：全年龄至成人",
+  "summary": "LABYRINTH（迷宫）是成立于1991年的意大利史诗/力量重金属乐队 [7-8] ，由主唱Roberto Tiranti、吉他手Andrea Cantarelli、贝司手Cristiano Bertocchi、键盘手Andrea DePaoli、鼓手Mattia Stancioiu等成员组成。其音乐以优美旋律与磅礴",
   "tags": [
     "奇幻",
     "电影",
     "童话",
-    "史诗"
+    "史诗",
+    "奇幻电影",
+    "1986",
+    "霍尔斯特罗姆"
   ],
   "specs": {
     "分类": "奇幻电影",
@@ -17,7 +19,18 @@
     "导演": "霍尔斯特罗姆",
     "类型": "童话",
     "改编": "文学 / 原创",
-    "受众": "全年龄至成人"
+    "受众": "全年龄至成人",
+    "成立时间": "1991年",
+    "乐队名:": "Labyrinth",
+    "音乐风格": "史诗/力量重金属",
+    "所在场牌": "Metal Blade、Century Media Records、King Records",
+    "乐队现状": "活动中",
+    "主唱/贝司": "Roberto Tiranti",
+    "吉 他": "Andrea Cantarelli",
+    "键 盘": "Andrea De Paoli",
+    "鼓 手": "Mattia Stancioiu",
+    "所属国家": "意大利",
+    "摘要": "# labyrinth（意大利摇滚乐队） LABYRINTH（迷宫）是成立于1991年的意大利史诗/力量重金属乐队 ，由主唱Roberto Tiranti、吉他手Andrea Cantarelli、贝司手Cristiano Bertocch"
   },
   "media": {
     "provider": "pixabay",
@@ -29,5 +42,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/movie/movie-labyrinth/content.md"
 }

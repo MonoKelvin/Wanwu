@@ -4,7 +4,6 @@
   "subCategoryId": "int-zen",
   "name": "枯山水",
   "summary": "白沙耙纹象征水流，石组为山岛的禅庭。",
-  "description": "枯山水：白沙耙纹象征水流，石组为山岛的禅庭。\n\n**概述**：枯山水在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：白沙耙纹象征水流，石组为山岛的禅庭。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：日式、禅意、枯山水、庭院\n\n**规格参数**\n\n**分类**：日式禅意\n**元素**：枯山水\n**空间**：庭院\n**材质**：木、竹、石、纸\n**原则**：留白、自然\n**场景**：茶、宿、庭",
   "tags": [
     "日式",
     "禅意",
@@ -29,5 +28,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/interior/interior-karesansui/content.md"
 }

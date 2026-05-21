@@ -4,7 +4,6 @@
   "subCategoryId": "hero-other",
   "name": "猎魔人杰洛特 Geralt",
   "summary": "变异猎魔人行走道德灰色世界，剑术与法印对抗怪物。",
-  "description": "猎魔人杰洛特 Geralt：变异猎魔人行走道德灰色世界，剑术与法印对抗怪物。\n\n**概述**：猎魔人杰洛特 Geralt（Geralt）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：变异猎魔人行走道德灰色世界，剑术与法印对抗怪物。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：猎魔人、奇幻、Netflix、游戏\n\n**规格参数**\n\n**来源**：波兰文学\n**作者**：Andrzej Sapkowski\n**职业**：猎魔人\n**标志**：白发、两剑\n**游戏**：CDPR《巫师》\n**主题**：道德灰色",
   "tags": [
     "猎魔人",
     "奇幻",
@@ -31,5 +30,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-witcher-geralt/content.md"
 }

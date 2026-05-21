@@ -4,7 +4,6 @@
   "subCategoryId": "id-product",
   "name": "任天堂 Switch",
   "summary": "掌机主机二合一，Joy-Con 社交游戏。",
-  "description": "任天堂 Switch：掌机主机二合一，Joy-Con 社交游戏。\n\n**概述**：任天堂 Switch（Switch）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：掌机主机二合一，Joy-Con 社交游戏。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：工业设计、Nintendo、游戏、经典\n\n**规格参数**\n\n**分类**：产品设计\n**品牌**：Nintendo\n**类型**：游戏\n**时期**：2017\n**领域**：消费科技\n**影响**：行业标杆",
   "tags": [
     "工业设计",
     "Nintendo",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/industrial-design/industrial-nintendo-switch/content.md"
 }

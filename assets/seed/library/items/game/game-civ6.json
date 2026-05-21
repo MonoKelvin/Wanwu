@@ -3,10 +3,22 @@
   "slug": "game-civ6",
   "subCategoryId": "game-strategy",
   "name": "文明 VI",
-  "summary": "回合文明策略。",
-  "description": "文明 VI：回合文明策略。\n\n**概述**：文明 VI（VI）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：回合文明策略。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "视觉识别系统（Visual Identity，VI）是通过统一化视觉符号传递组织理念与信息的静态识别体系，属于 企业识别系统 （CIS）的核心组成部分。该系统以标志、标准色、专用字体等基础要素构建品牌标识，通过办公用品、建筑环境、交通工具等应用场景实现形象统一化 [1-2] 。视觉识别系统涵盖名称、标志设计及文化设施建",
+  "tags": [
+    "视觉识别系统",
+    "Visual Identity(英)",
+    "VI"
+  ],
+  "specs": {
+    "中文名": "视觉识别系统",
+    "外文名": "Visual Identity(英)",
+    "别 名": "VI",
+    "性 质": "运用系统的、统一的视觉 符号 系统",
+    "设计特点": "最外在、最直接、最具有 传播力",
+    "主要包括": "企业名称 、 企业标志",
+    "适用领域": "传统企业、品牌服装设计、教育机构、科技领域",
+    "摘要": "# 视觉识别系统 视觉识别系统（Visual Identity，VI）是通过统一化视觉符号传递组织理念与信息的静态识别体系，属于 企业识别系统 （CIS）的核心组成部分。该系统以标志、标准色、专用字体等基础要素构建品牌标识，通过办公用品、建"
+  },
   "media": {
     "provider": "pixabay",
     "query": "strategy game map board digital",
@@ -15,5 +27,6 @@
     "requiredTags": [],
     "minMatchScore": 0,
     "imageCount": 6
-  }
+  },
+  "contentFile": "library/game/game-civ6/content.md"
 }

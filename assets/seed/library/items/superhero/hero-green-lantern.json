@@ -4,7 +4,6 @@
   "subCategoryId": "hero-dc",
   "name": "绿灯侠 Green Lantern",
   "summary": "情感光谱之绿光军团成员，意志驱动戒指具现化万物。",
-  "description": "绿灯侠 Green Lantern：情感光谱之绿光军团成员，意志驱动戒指具现化万物。\n\n**概述**：绿灯侠 Green Lantern（Green Lantern）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：情感光谱之绿光军团成员，意志驱动戒指具现化万物。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：DC、绿灯军团、戒指、意志\n\n**规格参数**\n\n**宇宙**：DC 漫画\n**首次登场**：1940/1959\n**代表**：哈尔·乔丹\n**组织**：绿灯军团\n**弱点**：黄色（早期设定）\n**能源**：中央电池",
   "tags": [
     "DC",
     "绿灯军团",
@@ -30,5 +29,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-green-lantern/content.md"
 }

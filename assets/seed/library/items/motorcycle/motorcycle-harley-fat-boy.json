@@ -4,7 +4,6 @@
   "subCategoryId": "moto-america",
   "name": "哈雷 Fat Boy",
   "summary": "实心盘轮经典巡航，终结者 2 同款意象。",
-  "description": "哈雷 Fat Boy体现美国Harley-Davidson巡航文化：Milwaukee-Eight，风格偏向约 93 hp。哈雷与印第安为美国摩托车双雄，密尔沃基与明尼阿波利斯产地象征自由公路与改装文化。\n\nH.O.G. 车主会与印第安骑手社区组织大型集会，排气声浪与低座高定义美式骑行体验。\n\n**骑行要点**：Milwaukee-Eight，约 93 hp，长途舒适或城市灵活因车型而异\n\n**相关**：与日系、欧系仿赛用户群差异大；改装件市场丰富",
   "tags": [
     "美式",
     "Harley-Davidson",
@@ -31,5 +30,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/motorcycle/motorcycle-harley-fat-boy/content.md"
 }

@@ -11,7 +11,7 @@
     "url": "https://github.com/MonoKelvin/Wanwu.git"
   },
   "scripts": {
-    "dev": "node scripts/check-node.mjs && node scripts/ensure-renderer-fallback.mjs && electron-vite dev",
+    "dev": "node scripts/check-node.mjs && node scripts/ensure-sqlite-electron.mjs && node scripts/ensure-renderer-fallback.mjs && electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
     "start": "electron-vite preview",
@@ -24,7 +24,9 @@
     "seed:library:import": "node scripts/library/run.mjs import",
     "seed:library:retry-media": "node scripts/library/run.mjs retry",
     "seed:library:audit": "node scripts/library/run.mjs audit",
-    "seed:library:reimport": "tsx scripts/library/reimport-catalog.ts",
+    "seed:library:reimport": "node scripts/rebuild-sqlite-host.mjs && tsx scripts/library/reimport-catalog.ts && node scripts/postinstall.mjs --force",
+    "seed:library:enrich-full": "node scripts/library/run.mjs enrich-full",
+    "seed:library:enrich-batch": "node scripts/library/run.mjs enrich-batch",
     "logo": "node scripts/generate-logo.mjs",
     "postinstall": "node scripts/postinstall.mjs",
     "rebuild": "node scripts/postinstall.mjs --force",

@@ -4,7 +4,6 @@
   "subCategoryId": "moto-italy",
   "name": "杜卡迪 Panigale",
   "summary": "意式 V 型双缸仿赛。",
-  "description": "杜卡迪 Panigale：意式 V 型双缸仿赛。\n\n**概述**：杜卡迪 Panigale（Panigale）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：意式 V 型双缸仿赛。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
   "tags": [],
   "specs": {},
   "media": {
@@ -17,5 +16,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 6
-  }
+  },
+  "contentFile": "library/motorcycle/motorcycle-moto-ducati-panigale/content.md"
 }

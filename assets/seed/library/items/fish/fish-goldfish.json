@@ -3,10 +3,30 @@
   "slug": "fish-goldfish",
   "subCategoryId": "fish-fresh",
   "name": "金鱼",
-  "summary": "观赏鱼入门种。",
-  "description": "金鱼：观赏鱼入门种。\n\n**概述**：金鱼在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：观赏鱼入门种。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "金鱼（学名： Carassius auratus ‘ Gold Fish ’ ）是鲤形目、鲤科、鲫属多种人工培育鱼种的通称。 金鱼体形变异甚大。头腹俱大，粗短；尾有单尾和双尾之分。 [7 ] 躯体由头、躯干、尾三部分组成。头部的最前端为口，其后有鼻、眼、鳃盖；躯干及尾柄部有鳞片覆盖，身体两侧各有一条略近弧形的侧线；有胸",
+  "tags": [
+    "金鱼",
+    "Carassius auratus ‘Gold Fish’",
+    "Gold fish"
+  ],
+  "specs": {
+    "中文名": "金鱼",
+    "拉丁学名": "Carassius auratus ‘Gold Fish’",
+    "外文名": "Gold fish",
+    "界": "动物界",
+    "门": "脊索动物门",
+    "纲": "辐鳍鱼纲",
+    "目": "鲤形目",
+    "科": "鲤科",
+    "属": "鲫属",
+    "种": "鲫鱼",
+    "亚 门": "脊椎动物亚门",
+    "亚 纲": "辐鳍亚纲",
+    "分布区域": "亚洲、欧洲、北美洲、非洲",
+    "命名者及年代": "Linnaeus 1758年",
+    "品 种": "金鱼",
+    "摘要": "# 金鱼（鲤形目鲤科鲫属观赏鱼种） 金鱼（学名： Carassius auratus ‘ Gold Fish ’ ）是鲤形目、鲤科、鲫属多种人工培育鱼种的通称。 金鱼体形变异甚大。头腹俱大，粗短；尾有单尾和双尾之分。 躯体由头、躯干、尾三部"
+  },
   "media": {
     "provider": "pixabay",
     "query": "fish aquarium",
@@ -17,5 +37,6 @@
     "requiredTags": [],
     "minMatchScore": 0,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/fish/fish-goldfish/content.md"
 }

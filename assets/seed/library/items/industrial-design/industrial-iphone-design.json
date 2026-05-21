@@ -4,7 +4,6 @@
   "subCategoryId": "id-product",
   "name": "iPhone 设计",
   "summary": "苹果全面屏与钛金属边框迭代，生态系统核心硬件。",
-  "description": "iPhone 设计：苹果全面屏与钛金属边框迭代，生态系统核心硬件。\n\n**概述**：iPhone 设计（iPhone ）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：苹果全面屏与钛金属边框迭代，生态系统核心硬件。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：工业设计、Apple、智能手机、经典\n\n**规格参数**\n\n**分类**：产品设计\n**品牌**：Apple\n**类型**：智能手机\n**时期**：2007–\n**领域**：消费科技\n**影响**：行业标杆",
   "tags": [
     "工业设计",
     "Apple",
@@ -32,5 +31,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/industrial-design/industrial-iphone-design/content.md"
 }

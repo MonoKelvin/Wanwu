@@ -4,7 +4,6 @@
   "subCategoryId": "ui-design-tool",
   "name": "shadcn/ui",
   "summary": "基于 Radix 与 Tailwind 的可复制组件代码模式。",
-  "description": "shadcn/ui：基于 Radix 与 Tailwind 的可复制组件代码模式。\n\n**概述**：shadcn/ui（shadcn）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：基于 Radix 与 Tailwind 的可复制组件代码模式。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：Web、UI、React、组件\n\n**规格参数**\n\n**分类**：Web UI\n**技术**：React\n**重点**：组件\n**交付**：设计 + 前端\n**趋势**：Server Components\n**工具**：Figma / Storybook",
   "tags": [
     "Web",
     "UI",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/ui-design/ui-shadcn/content.md"
 }

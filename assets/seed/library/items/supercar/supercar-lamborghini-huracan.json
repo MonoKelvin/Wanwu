@@ -4,7 +4,6 @@
   "subCategoryId": "car-italy",
   "name": "兰博基尼 Huracán",
   "summary": "意大利圣亚加塔入门级中置 V10 超跑，名称源自西班牙斗牛「飓风」。",
-  "description": "兰博基尼 Huracán（LP 610-4）2014 年发布，接替 Gallardo，搭载 5.2 升自然吸气 V10，约 610 马力，四驱。名称意为「飓风」，延续兰博基尼以斗牛命名的传统。\n\n车身线条锋利，代表兰博基尼设计语言。衍生车型包括 Performante、STO 赛道版、Evo 改款等。\n\n**品牌**：兰博基尼（Lamborghini），1963 年由费鲁乔·兰博基尼创立，现属大众汽车集团旗下，总部意大利圣亚加塔。",
   "tags": [
     "兰博基尼",
     "意大利",
@@ -32,5 +31,6 @@
     "minMatchScore": 1,
     "imageCount": 5,
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/supercar/supercar-lamborghini-huracan/content.md"
 }

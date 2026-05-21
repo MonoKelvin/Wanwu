@@ -4,7 +4,6 @@
   "subCategoryId": "tf-decepticon",
   "name": "路障 Barricade",
   "summary": "警车变形，迈克尔·贝电影人类对立面。",
-  "description": "路障 Barricade：警车变形，迈克尔·贝电影人类对立面。\n\n**概述**：路障 Barricade（Barricade）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：警车变形，迈克尔·贝电影人类对立面。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：霸天虎、反派、变形、猎手\n\n**规格参数**\n\n**分类**：霸天虎 Decepticon\n**阵营**：霸天虎\n**变形**：警车\n**角色**：猎手\n**领袖**：威震天 / 惊破天\n**特点**：猎手",
   "tags": [
     "霸天虎",
     "反派",
@@ -30,5 +29,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/transformers/tf-barricade/content.md"
 }

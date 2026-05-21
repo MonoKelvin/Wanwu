@@ -4,7 +4,6 @@
   "subCategoryId": "car-italy",
   "name": "奥迪 R8",
   "summary": "共享兰博基尼平台的德系中置超跑，日常可用性高。",
-  "description": "奥迪 R8体现德国Audi在精密工程、底盘调校与电子辅助系统上的优势，2006 年世代代表德系性能文化：赛道数据转化为公路驾驶信心。\n\n德国超跑与 GT 强调日常可用性、高速稳定性与制动表现，在纽博格林开发文化影响下诞生众多标杆车型。\n\n**性能要点**：5.2L V10 / V8，约 620 hp，四驱或后驱依型号\n\n**相关**：与保时捷、AMG、奥迪 R8 等同属德国性能图谱；部分车型为限量或纪念版",
   "tags": [
     "德国",
     "Audi",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/supercar/supercar-audi-r8/content.md"
 }

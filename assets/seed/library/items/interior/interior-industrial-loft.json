@@ -4,7 +4,6 @@
   "subCategoryId": "int-nordic",
   "name": "工业风 Loft",
   "summary": "裸露砖墙、钢梁与复古皮革沙发。",
-  "description": "工业风 Loft：裸露砖墙、钢梁与复古皮革沙发。\n\n**概述**：工业风 Loft（Loft）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：裸露砖墙、钢梁与复古皮革沙发。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：北欧、家装、工业、Loft\n\n**规格参数**\n\n**分类**：北欧风格\n**风格**：工业\n**空间**：Loft\n**材质**：木、棉麻、羊毛\n**光线**：重视自然光\n**品牌**：IKEA / Hay 等",
   "tags": [
     "北欧",
     "家装",
@@ -29,5 +28,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/interior/interior-industrial-loft/content.md"
 }

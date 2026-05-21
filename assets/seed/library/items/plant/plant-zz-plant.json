@@ -4,7 +4,6 @@
   "subCategoryId": "plant-aroid",
   "name": "金钱树 ZZ Plant",
   "summary": "厚叶耐旱耐阴，办公室绿植热门。",
-  "description": "金钱树 ZZ Plant：厚叶耐旱耐阴，办公室绿植热门。\n\n**植物学概览**：金钱树 ZZ Plant在园艺与室内绿植场景中常见，需结合光照、湿度与基质管理。\n\n**观赏特征**：叶形、花色、生长速度与株型决定摆放位置与修剪方式。\n\n**养护要点**：浇水周期、施肥浓度、换盆与病虫害（红蜘蛛、介壳虫等）预防。\n\n**标签**：观叶、天南星科、室内、热植\n\n**规格参数**\n\n**分类**：天南星科\n**光照**：低光可活\n**温度**：耐旱\n**浇水**：忌积水烂根\n**湿度**：中至高\n**繁殖**：扦插 / 分株\n**注意**：忌长期积水",
   "tags": [
     "观叶",
     "天南星科",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/plant/plant-zz-plant/content.md"
 }

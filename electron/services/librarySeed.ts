@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto'
 import type Database from 'better-sqlite3'
 import type { DatabaseService } from './database'
 import type { MediaAttribution } from '../../src/shared/types/unsplash'
+import { resolveLibraryMediaAbsolute } from './libraryMedia'
 
 export const LIBRARY_CATALOG_SCHEMA = 3
 
@@ -15,11 +16,13 @@ export interface LibraryCatalogItem {
   subCategoryId: string
   name: string
   summary: string
-  description: string
+  /** 已废弃：正文仅存 content.md，catalog 留空 */
+  description?: string
   tags: string[]
   specs: Record<string, string>
   coverFile?: string
   galleryFiles?: string[]
+  contentFile?: string
   coverAttribution?: MediaAttribution
   galleryAttributions?: MediaAttribution[]
   mediaProvider?: string
@@ -169,6 +172,7 @@ function ensureItemColumns(db: Database.Database): void {
   if (!names.has('slug')) db.exec('ALTER TABLE items ADD COLUMN slug TEXT')
   if (!names.has('specs')) db.exec('ALTER TABLE items ADD COLUMN specs TEXT')
   if (!names.has('cover_attribution')) db.exec('ALTER TABLE items ADD COLUMN cover_attribution TEXT')
+  if (!names.has('content_file')) db.exec('ALTER TABLE items ADD COLUMN content_file TEXT')
   db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_items_slug ON items(slug) WHERE slug IS NOT NULL')
   db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_items_id ON items(id)')
 
@@ -190,6 +194,7 @@ function upsertItem(
   }
 
   const cover = item.coverFile?.replace(/\\/g, '/') ?? null
+  const contentFile = item.contentFile?.replace(/\\/g, '/') ?? null
   const coverAttributionJson = item.coverAttribution
     ? JSON.stringify(item.coverAttribution)
     : null
@@ -211,17 +216,18 @@ function upsertItem(
   if (existingById) {
     db.prepare(
       `UPDATE items SET category_id = ?, sub_category_id = ?, slug = ?, name = ?, summary = ?, description = ?,
-       tags = ?, cover_path = ?, cover_attribution = ?, specs = ?, updated_at = ? WHERE id = ?`
+       tags = ?, cover_path = ?, cover_attribution = ?, content_file = ?, specs = ?, updated_at = ? WHERE id = ?`
     ).run(
       item.categoryId,
       item.subCategoryId,
       item.slug,
       item.name,
       item.summary,
-      item.description,
+      null,
       JSON.stringify(item.tags),
       cover,
       coverAttributionJson,
+      contentFile,
       specsJson,
       now,
       item.id
@@ -234,17 +240,18 @@ function upsertItem(
     if (mode === 'insert-only') return 'skip'
     db.prepare(
       `UPDATE items SET category_id = ?, sub_category_id = ?, slug = ?, name = ?, summary = ?, description = ?,
-       tags = ?, cover_path = ?, cover_attribution = ?, specs = ?, updated_at = ? WHERE id = ?`
+       tags = ?, cover_path = ?, cover_attribution = ?, content_file = ?, specs = ?, updated_at = ? WHERE id = ?`
     ).run(
       item.categoryId,
       item.subCategoryId,
       item.slug,
       item.name,
       item.summary,
-      item.description,
+      null,
       JSON.stringify(item.tags),
       cover,
       coverAttributionJson,
+      contentFile,
       specsJson,
       now,
       existingBySlug.id
@@ -256,8 +263,8 @@ function upsertItem(
   if (mode === 'update') return 'skip'
 
   db.prepare(
-    `INSERT INTO items (id, category_id, sub_category_id, slug, name, summary, description, tags, cover_path, cover_attribution, specs, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO items (id, category_id, sub_category_id, slug, name, summary, description, tags, cover_path, cover_attribution, content_file, specs, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(
     item.id,
     item.categoryId,
@@ -265,10 +272,11 @@ function upsertItem(
     item.slug,
     item.name,
     item.summary,
-    item.description,
+    null,
     JSON.stringify(item.tags),
     cover,
     coverAttributionJson,
+    contentFile,
     specsJson,
     now,
     now

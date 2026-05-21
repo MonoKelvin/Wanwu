@@ -4,7 +4,6 @@
   "subCategoryId": "tf-g1",
   "name": "爵士 Jazz",
   "summary": "汽车人副官，保时捷变形，热爱地球文化的谈判专家。",
-  "description": "爵士 Jazz：汽车人副官，保时捷变形，热爱地球文化的谈判专家。\n\n**概述**：爵士 Jazz（Jazz）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：汽车人副官，保时捷变形，热爱地球文化的谈判专家。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：汽车人、Hasbro、变形、副官\n\n**规格参数**\n\n**分类**：汽车人 Autobot\n**阵营**：汽车人\n**变形**：保时捷\n**角色**：副官\n**版权**：Hasbro / Takara\n**首次**：1984",
   "tags": [
     "汽车人",
     "Hasbro",
@@ -31,5 +30,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/transformers/tf-jazz/content.md"
 }

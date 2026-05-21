@@ -4,7 +4,6 @@
   "subCategoryId": "hero-indie",
   "name": "祖国人 Homelander",
   "summary": "《黑袍纠察队》Vought 招牌英雄，表面正义实则自恋残暴。",
-  "description": "祖国人 Homelander：《黑袍纠察队》Vought 招牌英雄，表面正义实则自恋残暴。\n\n**概述**：祖国人 Homelander（Homelander）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：《黑袍纠察队》Vought 招牌英雄，表面正义实则自恋残暴。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：黑袍纠察队、讽刺、反派、Vought\n\n**规格参数**\n\n**作品**：The Boys\n**公司**：Vought International\n**特点**：超人讽刺\n**剧集**：Amazon Prime\n**饰演**：安东尼·斯塔尔",
   "tags": [
     "黑袍纠察队",
     "讽刺",
@@ -30,5 +29,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-homelander/content.md"
 }

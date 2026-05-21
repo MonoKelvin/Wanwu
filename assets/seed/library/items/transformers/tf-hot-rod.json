@@ -4,7 +4,6 @@
   "subCategoryId": "tf-g1",
   "name": "热破 Hot Rod",
   "summary": "年轻战士，后继承擎天柱成为补天士。",
-  "description": "热破 Hot Rod：年轻战士，后继承擎天柱成为补天士。\n\n**概述**：热破 Hot Rod（Hot Rod）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：年轻战士，后继承擎天柱成为补天士。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：汽车人、Hasbro、变形、领袖继承\n\n**规格参数**\n\n**分类**：汽车人 Autobot\n**阵营**：汽车人\n**变形**：跑车\n**角色**：领袖继承\n**版权**：Hasbro / Takara\n**首次**：1984",
   "tags": [
     "汽车人",
     "Hasbro",
@@ -32,5 +31,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/transformers/tf-hot-rod/content.md"
 }

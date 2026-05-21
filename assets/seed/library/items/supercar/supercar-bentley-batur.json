@@ -4,7 +4,6 @@
   "subCategoryId": "car-britain",
   "name": "宾利 Batur",
   "summary": "W12 绝版奢华轿跑，Mulliner 定制限量。",
-  "description": "宾利 Batur承载英国Bentley在轻量化、空气动力学或奢华手工方面的传统，2022 年代表英伦跑车从经典 GT 到现代混动/纯电的演进。\n\n英国超跑品牌常具小规模量产、赛车血统与定制服务特色，在古德伍德、银石等赛车文化中孕育。\n\n**性能要点**：6.0L W12 双涡轮，约 750 hp\n\n**相关**：与迈凯伦、阿斯顿·马丁、宾利等构成英国性能车谱系",
   "tags": [
     "英国",
     "Bentley",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/supercar/supercar-bentley-batur/content.md"
 }

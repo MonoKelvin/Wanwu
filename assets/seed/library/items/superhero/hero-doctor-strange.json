@@ -4,7 +4,6 @@
   "subCategoryId": "hero-marvel",
   "name": "奇异博士 Doctor Strange",
   "summary": "史蒂芬·斯特兰奇习得卡玛泰姬神秘术，守护时间宝石的至尊法师。",
-  "description": "奇异博士 Doctor Strange：史蒂芬·斯特兰奇习得卡玛泰姬神秘术，守护时间宝石的至尊法师。\n\n**概述**：奇异博士 Doctor Strange（Doctor Strange）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：史蒂芬·斯特兰奇习得卡玛泰姬神秘术，守护时间宝石的至尊法师。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：漫威、魔法、至尊法师\n\n**规格参数**\n\n**宇宙**：漫威 Marvel\n**首次登场**：1963\n**本名**：史蒂芬·斯特兰奇\n**神器**：阿戈摩托之眼\n**MCU饰演**：本尼迪克特·康伯巴奇",
   "tags": [
     "漫威",
     "魔法",
@@ -28,5 +27,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-doctor-strange/content.md"
 }

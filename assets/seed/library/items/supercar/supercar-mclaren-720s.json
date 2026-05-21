@@ -4,7 +4,6 @@
   "subCategoryId": "car-italy",
   "name": "迈凯伦 720S",
   "summary": "英国沃金双涡轮 V8 超跑，单体碳纤维 Monocage II，极致空气动力学。",
-  "description": "迈凯伦 720S 2017 年发布，接替 650S，搭载 4.0L M840T 双涡轮 V8，约 720 马力。Monocage II 碳纤维单体壳减轻重量，主动空气动力学套件提升下压力。\n\n**品牌**：Bruce McLaren 1963 年创立赛车队，公路车部门 2010 年代量产 570S、720S、P1 等。总部英国沃金（Woking）。F1 车队历史悠久。\n\n**相关**：与法拉利 488、兰博基尼 Huracán 为同级竞品；Senna、765LT 为同系赛道取向衍生。",
   "tags": [
     "迈凯伦",
     "英国",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/supercar/supercar-mclaren-720s/content.md"
 }

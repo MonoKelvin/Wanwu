@@ -4,7 +4,6 @@
   "subCategoryId": "int-zen",
   "name": "禅意阳台",
   "summary": "盆栽、竹篱与石灯的小型都市冥想角。",
-  "description": "禅意阳台：盆栽、竹篱与石灯的小型都市冥想角。\n\n**概述**：禅意阳台在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：盆栽、竹篱与石灯的小型都市冥想角。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：日式、禅意、都市、阳台\n\n**规格参数**\n\n**分类**：日式禅意\n**元素**：都市\n**空间**：阳台\n**材质**：木、竹、石、纸\n**原则**：留白、自然\n**场景**：茶、宿、庭",
   "tags": [
     "日式",
     "禅意",
@@ -27,5 +26,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/interior/interior-zen-balcony/content.md"
 }

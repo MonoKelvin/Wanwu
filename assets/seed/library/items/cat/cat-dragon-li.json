@@ -4,7 +4,6 @@
   "subCategoryId": "cat-short-hair",
   "name": "中华狸花猫",
   "summary": "中国本土自然猫种，狸花纹路、强健独立，被 CFA 以「Chinese Li Hua」名称认可。",
-  "description": "中华狸花猫（狸花猫）为中国广泛分布的本土猫，以 M 额纹、鱼骨刺虎斑与黄绿眼为典型特征。2010 年 CFA 接受「Chinese Li Hua」为标准名称，是较少被国际协会认可的中国本土猫。\n\n性格机警、捕猎能力强、适应力出色。饲养建议：提供攀爬与狩猎类游戏、均衡饮食、绝育与驱虫。\n\n**相关**：与「橘猫」「奶牛猫」等本土毛色类型常并列讨论；在传统文化中常被视为家宅猫。",
   "tags": [
     "狸花",
     "中国",
@@ -32,5 +31,6 @@
     ],
     "minMatchScore": 2,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/cat/cat-dragon-li/content.md"
 }

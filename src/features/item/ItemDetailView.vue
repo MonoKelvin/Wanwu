@@ -93,7 +93,9 @@ function bindThumbsStrip() {
 
 const isLibrary = computed(() => (route.params.source as string) === 'library')
 
-const specEntries = computed(() => Object.entries(item.value?.specs ?? {}))
+const specEntries = computed(() =>
+  Object.entries(item.value?.specs ?? {}).filter(([key]) => key !== '摘要')
+)
 
 const gallerySlides = computed(() => {
   if (!item.value) return []

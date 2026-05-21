@@ -21,10 +21,13 @@ import { pipelineCurate } from './lib/pipeline-curate.mjs'
 import { dedupeLocalMedia } from './lib/dedupe-local-media.mjs'
 import { dedupeCrossMedia } from './lib/dedupe-cross-media.mjs'
 import { enrichDescriptions } from './lib/enrich-descriptions.mjs'
+import { enrichFull } from './lib/enrich-full.mjs'
+import { enrichBatch } from './lib/enrich-batch.mjs'
+import { pruneAllSpecs } from './lib/prune-specs.mjs'
+import { migrateSeedContentRefs } from './lib/migrate-seed-content-refs.mjs'
 import { fixMissingCovers } from './lib/fix-missing-covers.mjs'
 import { cleanupPlaceholders } from './lib/cleanup-placeholders.mjs'
 import { pipelineContent } from './lib/pipeline-content.mjs'
-import { applyExpansion } from './lib/apply-expansion.mjs'
 import { listItemCategories, itemsRoot } from './lib/items.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
@@ -47,13 +50,17 @@ function printHelp() {
   dedupe-local  删除条内 MD5 重复配图
   dedupe-cross  跨条目重复配图去重（非封面）
   enrich-desc   补全条目 description 结构化长文
+  enrich-full   联网多源补全长文 description、specs 与 content.md
+  enrich-batch  按分类依次补全所有待处理条目（小分类优先）
+  prune-specs   删除 specs/description 中的「待补充」并推断合并字段
+  migrate-content  将 JSON 内联 description 迁到 content.md，仅保留 contentFile
   fix-covers    用 gallery-01 补缺失的 cover.jpg
   import      入库（仅新增 id）
   update      按 --id= 强制更新
   all         build → media
   info        统计
 
-选项: --force --slug= --category= --concurrency= --limit= --id= --full
+选项: --force --slug= --category= --concurrency=8 --limit= --id= --full
 
 示例:
   npm run seed:library -- build
@@ -134,6 +141,7 @@ async function main() {
   }
 
   if (step === 'expand') {
+    const { applyExpansion } = await import('./lib/apply-expansion.mjs')
     applyExpansion(root)
     return
   }
@@ -176,6 +184,41 @@ async function main() {
   if (step === 'enrich-desc') {
     const n = enrichDescriptions(root, { category: opts.category, slug: opts.slug, limit: opts.limit })
     console.log(`已 enrich ${n} 条 description`)
+    return
+  }
+
+  if (step === 'enrich-full') {
+    await enrichFull(root, {
+      category: opts.category,
+      slug: opts.slug,
+      limit: opts.limit,
+      force: opts.force,
+      concurrency: opts.concurrency || 8
+    })
+    return
+  }
+
+  if (step === 'prune-specs') {
+    const n = pruneAllSpecs(root, { category: opts.category, slug: opts.slug })
+    console.log(`已清理规格 ${n} 条`)
+    return
+  }
+
+  if (step === 'migrate-content') {
+    const n = migrateSeedContentRefs(root, { category: opts.category })
+    console.log(`已迁移 ${n} 条 → contentFile 引用`)
+    return
+  }
+
+  if (step === 'enrich-batch') {
+    const skip = opts.argv?.filter((a) => a.startsWith('--skip=')).map((a) => a.slice(7))
+    await enrichBatch(root, {
+      skip: skip?.length ? skip : ['book'],
+      force: opts.force,
+      limit: opts.limit,
+      concurrency: opts.concurrency
+    })
+    pipelineBuild(root, opts)
     return
   }
 

@@ -4,7 +4,6 @@
   "subCategoryId": "car-italy",
   "name": "兰博基尼 Countach LPI 800-4",
   "summary": "经典楔形超跑现代复兴，混动 V12 向 Marcello Gandini 设计致敬。",
-  "description": "兰博基尼 Countach LPI 800-4代表意大利Lamborghini在超跑领域的工程与美学结晶，2021 年前后发布，搭载6.5L V12 混动，综合输出约 803 hp。车身空气动力学与碳纤/铝混合结构为赛道与公路兼顾。\n\n意大利超跑以声浪、造型与驾驶参与感著称，Lamborghini在 F1 与民用车技术转化上历史悠久。\n\n**性能要点**：6.5L V12 混动，约 约 803 hp，中置或前置布局因车型而异\n\n**相关**：Limited Production；与同级法拉利、兰博基尼、玛莎拉蒂形成「意式性能三角」",
   "tags": [
     "意大利",
     "Lamborghini",
@@ -33,5 +32,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/supercar/supercar-lamborghini-countach/content.md"
 }

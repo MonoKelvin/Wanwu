@@ -3,10 +3,19 @@
   "slug": "footwear-shoe-air-jordan-1",
   "subCategoryId": "shoe-sneaker",
   "name": "Air Jordan 1",
-  "summary": "篮球鞋文化起点。",
-  "description": "Air Jordan 1：篮球鞋文化起点。\n\n**概述**：Air Jordan 1（Air Jordan 1）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：篮球鞋文化起点。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "Air Jordan 1是耐克乔丹系列的第一款正代篮球鞋，诞生于1985年，作为 迈克尔·乔丹 的首双签名战靴，由设计师Peter Moore设计 [6] 。其经典的黑红配色因曾被 NBA 禁止乔丹穿着上场而衍生出“禁穿”故事 [5] 。 该鞋款元年有High、KO和Low三种鞋型 [6] ，并由此衍生出Nike Du",
+  "tags": [
+    "air jordan 1",
+    "1985年",
+    "耐克"
+  ],
+  "specs": {
+    "外文名": "air jordan 1",
+    "创立时间": "1985年",
+    "所属公司": "耐克",
+    "所属分类": "篮球鞋",
+    "摘要": "# air jordan 1 Air Jordan 1是耐克乔丹系列的第一款正代篮球鞋，诞生于1985年，作为 迈克尔·乔丹 的首双签名战靴，由设计师Peter Moore设计 。其经典的黑红配色因曾被 NBA 禁止乔丹穿着上场而衍生出“禁"
+  },
   "media": {
     "provider": "pixabay",
     "query": "Air Jordan 1 shoes footwear",
@@ -17,5 +26,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/footwear/footwear-shoe-air-jordan-1/content.md"
 }

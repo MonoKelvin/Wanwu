@@ -4,7 +4,6 @@
   "subCategoryId": "ill-concept",
   "name": "数字概念艺术",
   "summary": "影视游戏前期场景与角色氛围设定。",
-  "description": "数字概念艺术依托Photoshop / Blender等数字工具完成创作，属于概念设计领域视觉产出。数字绘画可无损修改图层、色彩与构图，广泛用于娱乐产业流水线。\n\n艺术家常通过社交媒体发布过程视频，形成教程与约稿经济生态。\n\n**创作要点**：Photoshop / Blender，构图与光影，行业规范交付\n\n**相关**：与概念艺术、动画制作、游戏原画岗位技能树重叠",
   "tags": [
     "数字绘画",
     "概念设计",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/illustration/illustration-digital-concept-art/content.md"
 }

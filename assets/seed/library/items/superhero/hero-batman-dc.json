@@ -4,7 +4,6 @@
   "subCategoryId": "hero-dc",
   "name": "蝙蝠侠 Batman",
   "summary": "DC 漫画「黑暗骑士」，布鲁斯·韦恩以财富、智谋与装备打击哥谭犯罪。",
-  "description": "蝙蝠侠（Batman）由 Bob Kane 与 Bill Finger 创作，1939 年《Detective Comics》#27 登场，隶属 DC 漫画。布鲁斯·韦恩（Bruce Wayne）幼年目睹父母遇害后游历习武，回归哥谭成为义警。\n\n无超能力，依赖侦探推理、格斗术、蝙蝠装备与蝙蝠洞科技。宿敌包括小丑、猫女、企鹅人、贝恩等。口号「我是黑夜」。\n\n**影视**：蒂姆·波顿、诺兰《黑暗骑士》三部曲、马特·里夫斯《新蝙蝠侠》等；动画《蝙蝠侠：动画系列》口碑极高。\n\n**相关**：正义联盟核心；与超人亦敌亦友。",
   "tags": [
     "DC",
     "哥谭",
@@ -30,5 +29,6 @@
     "minMatchScore": 0,
     "imageCount": 6,
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-batman-dc/content.md"
 }

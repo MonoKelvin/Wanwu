@@ -4,7 +4,6 @@
   "subCategoryId": "moto-japan",
   "name": "本田 Gold Wing",
   "summary": "豪华旅行车旗舰，水平对置六缸顺滑。",
-  "description": "本田 Gold Wing：豪华旅行车旗舰，水平对置六缸顺滑。\n\n**概述**：本田 Gold Wing（Gold Wing）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：豪华旅行车旗舰，水平对置六缸顺滑。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：日本、Honda、摩托、旅行旗舰\n\n**规格参数**\n\n**分类**：日本品牌\n**厂商**：Honda\n**发动机**：1833 六缸\n**定位**：旅行旗舰\n**总部**：日本\n**赛事**：MotoGP / WSBK",
   "tags": [
     "日本",
     "Honda",
@@ -31,5 +30,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/motorcycle/motorcycle-honda-gold-wing/content.md"
 }

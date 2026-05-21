@@ -4,7 +4,6 @@
   "subCategoryId": "car-italy",
   "name": "阿尔法·罗密欧 33 Stradale",
   "summary": "品牌旗舰超跑复兴，限量手工，融合意大利设计史与未来动力。",
-  "description": "阿尔法·罗密欧 33 Stradale代表意大利Alfa Romeo在超跑领域的工程与美学结晶，2023 年前后发布，搭载混动 / 纯电版本，综合输出限量。车身空气动力学与碳纤/铝混合结构为赛道与公路兼顾。\n\n意大利超跑以声浪、造型与驾驶参与感著称，Alfa Romeo在 F1 与民用车技术转化上历史悠久。\n\n**性能要点**：混动 / 纯电版本，约 限量，中置或前置布局因车型而异\n\n**相关**：致敬 1967 33 Stradale；与同级法拉利、兰博基尼、玛莎拉蒂形成「意式性能三角」",
   "tags": [
     "意大利",
     "Alfa Romeo",
@@ -33,5 +32,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/supercar/supercar-alfa-romeo-33/content.md"
 }

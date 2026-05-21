@@ -4,7 +4,6 @@
   "subCategoryId": "hist-ancient",
   "name": "吴哥通王城",
   "summary": "柬埔寨高棉帝国巴戎寺微笑佛像。",
-  "description": "吴哥通王城：柬埔寨高棉帝国巴戎寺微笑佛像。\n\n**概述**：吴哥通王城在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：柬埔寨高棉帝国巴戎寺微笑佛像。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：世界遗产、柬埔寨、12 世纪、古代\n\n**规格参数**\n\n**分类**：世界史迹\n**地点**：柬埔寨\n**时代**：12 世纪\n**地位**：世界遗产\n**文明**：多元古代文明\n**保护**：UNESCO",
   "tags": [
     "世界遗产",
     "柬埔寨",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/history/history-angkor-thom/content.md"
 }

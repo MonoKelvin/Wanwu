@@ -21,6 +21,8 @@
 | dedupe-local | `npm run seed:library -- dedupe-local` | 删除条内 MD5 重复文件 |
 | dedupe-cross | `npm run seed:library -- dedupe-cross` | 跨条目重复图去重（保留首条封面） |
 | enrich-desc | `npm run seed:library -- enrich-desc` | 补全过短/模板化 description |
+| enrich-full | `npm run seed:library:enrich-full -- --category=movie --concurrency=8` | 多源并行补全（默认 8 条目并发；百科/维基/Wikidata 分域名限流） |
+| enrich-batch | `npm run seed:library:enrich-batch` | 按分类批量补全（默认并发 8，轻量补充模式） |
 | import | `npm run seed:library:reimport` | 仅新增未入库的 `id` |
 | update | `npm run seed:library -- update --id=<uuid>` | 强制更新指定条目 |
 | info | `npm run seed:library -- info` | 统计 |

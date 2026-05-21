@@ -4,7 +4,6 @@
   "subCategoryId": "hist-world",
   "name": "大足石刻",
   "summary": "唐宋摩崖造像，佛教艺术巅峰之一。",
-  "description": "大足石刻：唐宋摩崖造像，佛教艺术巅峰之一。\n\n**概述**：大足石刻在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：唐宋摩崖造像，佛教艺术巅峰之一。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：中国、世界遗产、重庆、唐至宋\n\n**规格参数**\n\n**分类**：中国史迹\n**地点**：重庆\n**时代**：唐至宋\n**地位**：世界遗产\n**类型**：建筑 / 石窟 / 古城\n**保护**：国家级文保",
   "tags": [
     "中国",
     "世界遗产",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/history/history-dazu-rock-carvings/content.md"
 }

@@ -4,7 +4,6 @@
   "subCategoryId": "ui-design-tool",
   "name": "玻璃拟态",
   "summary": "背景模糊与半透明层叠的现代网页视觉。",
-  "description": "玻璃拟态：背景模糊与半透明层叠的现代网页视觉。\n\n**概述**：玻璃拟态在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：背景模糊与半透明层叠的现代网页视觉。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：Web、UI、CSS、风格\n\n**规格参数**\n\n**分类**：Web UI\n**技术**：CSS\n**重点**：风格\n**交付**：设计 + 前端\n**趋势**：Server Components\n**工具**：Figma / Storybook",
   "tags": [
     "Web",
     "UI",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/ui-design/ui-glassmorphism/content.md"
 }

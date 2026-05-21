@@ -3,10 +3,27 @@
   "slug": "game-stardew",
   "subCategoryId": "game-indie",
   "name": "星露谷物语",
-  "summary": "农场生活模拟。",
-  "description": "星露谷物语：农场生活模拟。\n\n**概述**：星露谷物语在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：农场生活模拟。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "《星露谷物语》是由ConcernedApe单人开发，并与《 星界边境 》的制作者Chucklefish共同参与发行的一款开放式乡村模拟经营类游戏 [1] 。该作于2016年2月27日在PC平台发行，同年12月13日登录PS4平台，12月14日登录Xbox One平台；2017年10月5日登录Switch平台；2018年",
+  "tags": [
+    "星露谷物语",
+    "Stardew Valley",
+    "模拟经营类游戏"
+  ],
+  "specs": {
+    "中文名": "星露谷物语",
+    "原版名称": "Stardew Valley",
+    "游戏类型": "模拟经营类游戏",
+    "游戏平台": "PC PS4 PS Vita XBox One iOS 展开 游戏平台 PC PS4 PS Vita XBox One iOS Android Switch Switch 2",
+    "开发商": "ConcernedApe",
+    "发行公司": "ConcernedApe、Chucklefish",
+    "游戏售价": "48 元",
+    "玩家人数": "1 人",
+    "游戏画面": "像素",
+    "游戏分级": "12 （PEGI）",
+    "发行阶段": "已发售",
+    "平台": "PC PS4 PS Vita XBox One iOS 展开 游戏平台 PC PS4 PS Vita XBox One iOS Android Switch Switch 2",
+    "摘要": "# 星露谷物语 《星露谷物语》是由ConcernedApe单人开发，并与《 星界边境 》的制作者Chucklefish共同参与发行的一款开放式乡村模拟经营类游戏 。该作于2016年2月27日在PC平台发行，同年12月13日登录PS4平台，1"
+  },
   "media": {
     "provider": "pixabay",
     "query": "pixel art indie game screenshot",
@@ -15,5 +32,6 @@
     "requiredTags": [],
     "minMatchScore": 0,
     "imageCount": 6
-  }
+  },
+  "contentFile": "library/game/game-stardew/content.md"
 }

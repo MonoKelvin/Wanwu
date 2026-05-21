@@ -4,7 +4,6 @@
   "subCategoryId": "ill-portrait",
   "name": "角色设计",
   "summary": "造型、服装与性格可视化的创作流程。",
-  "description": "角色设计：造型、服装与性格可视化的创作流程。\n\n**概述**：角色设计在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：造型、服装与性格可视化的创作流程。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：数字绘画、IP 开发、三视图、插画\n\n**规格参数**\n\n**分类**：数字插画\n**工具**：三视图\n**领域**：IP 开发\n**输出**：商业 / 同人\n**平台**：Pixiv / ArtStation\n**技能**：构图、色彩、人体",
   "tags": [
     "数字绘画",
     "IP 开发",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/illustration/illustration-character-design/content.md"
 }

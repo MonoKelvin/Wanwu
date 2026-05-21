@@ -4,7 +4,6 @@
   "subCategoryId": "ill-portrait",
   "name": "Pixiv 趋势插画",
   "summary": "日系同人平台流行风格与标签文化。",
-  "description": "Pixiv 趋势插画：日系同人平台流行风格与标签文化。\n\n**概述**：Pixiv 趋势插画（Pixiv ）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：日系同人平台流行风格与标签文化。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：数字绘画、同人、Pixiv、插画\n\n**规格参数**\n\n**分类**：数字插画\n**工具**：Pixiv\n**领域**：同人\n**输出**：商业 / 同人\n**平台**：Pixiv / ArtStation\n**技能**：构图、色彩、人体",
   "tags": [
     "数字绘画",
     "同人",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/illustration/ill-pixiv-trending/content.md"
 }

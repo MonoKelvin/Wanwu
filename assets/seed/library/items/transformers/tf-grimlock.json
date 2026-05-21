@@ -4,7 +4,6 @@
   "subCategoryId": "tf-g1",
   "name": "钢锁 Grimlock",
   "summary": "机器恐龙首领，霸王龙变形，说话简短力量惊人。",
-  "description": "钢锁 Grimlock：机器恐龙首领，霸王龙变形，说话简短力量惊人。\n\n**概述**：钢锁 Grimlock（Grimlock）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：机器恐龙首领，霸王龙变形，说话简短力量惊人。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：汽车人、Hasbro、变形、恐龙派\n\n**规格参数**\n\n**分类**：汽车人 Autobot\n**阵营**：汽车人\n**变形**：霸王龙\n**角色**：恐龙派\n**版权**：Hasbro / Takara\n**首次**：1984",
   "tags": [
     "汽车人",
     "Hasbro",
@@ -32,5 +31,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/transformers/tf-grimlock/content.md"
 }

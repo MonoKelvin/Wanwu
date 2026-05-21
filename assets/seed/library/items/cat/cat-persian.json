@@ -4,7 +4,6 @@
   "subCategoryId": "cat-long-hair",
   "name": "波斯猫 Persian",
   "summary": "长毛扁鼻品种，被毛丰厚华丽，性格安静，需每日梳理。",
-  "description": "波斯猫（Persian）起源可追溯至古代波斯地区，19 世纪进入欧洲猫展后选育出扁脸（peke-face）与现代型。被毛长而密，需每日梳理防打结。性格通常安静、喜室内。\n\n**健康注意**：短鼻型可能有呼吸与泪道问题，选购宜关注正规猫舍健康筛查。毛色体系极丰富，包括纯色、渐层、喜马拉雅型等。\n\n**相关**：与异国短毛猫（Exotic）被毛类似但为短毛；与金吉拉有血缘关联讨论。",
   "tags": [
     "长毛",
     "扁脸",
@@ -34,5 +33,6 @@
     ],
     "minMatchScore": 2,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/cat/cat-persian/content.md"
 }

@@ -4,7 +4,6 @@
   "subCategoryId": "car-italy",
   "name": "法拉利 F8 Tributo",
   "summary": "488 后继中置 V8，空气动力学与轻量化进一步提升。",
-  "description": "法拉利 F8 Tributo代表意大利Ferrari在超跑领域的工程与美学结晶，2019 年前后发布，搭载3.9L V8 双涡轮，综合输出约 720 hp。车身空气动力学与碳纤/铝混合结构为赛道与公路兼顾。\n\n意大利超跑以声浪、造型与驾驶参与感著称，Ferrari在 F1 与民用车技术转化上历史悠久。\n\n**性能要点**：3.9L V8 双涡轮，约 约 720 hp，中置或前置布局因车型而异\n\n**相关**：Tributo 致敬 V8 传统；与同级法拉利、兰博基尼、玛莎拉蒂形成「意式性能三角」",
   "tags": [
     "意大利",
     "Ferrari",
@@ -32,5 +31,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/supercar/supercar-ferrari-f8/content.md"
 }

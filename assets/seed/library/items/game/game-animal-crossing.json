@@ -3,10 +3,33 @@
   "slug": "game-animal-crossing",
   "subCategoryId": "game-indie",
   "name": "集合啦！动物森友会",
-  "summary": "岛屿生活模拟。",
-  "description": "集合啦！动物森友会：岛屿生活模拟。\n\n**概述**：集合啦！动物森友会在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：岛屿生活模拟。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "《集合啦！动物森友会》是由 任天堂 企划制作本部开发并发售的一款模拟经营类游戏，为《 动物森友会 》系列的第七部作品，也是系列首次发售繁体中文版（首次推出简体中文版是 神游科技（中国）有限公司 在2006年6月发售的《 动物森林 》，为《 动物之森 》系列的第一部作品 [1] ）。游戏于2018年9月14日在 任天堂直",
+  "tags": [
+    "集合啦！动物森友会",
+    "あつまれ どうぶつの森",
+    "Animal Crossing: New Horizons 、 あつ森 、 动物之森：新地平线 、 动物之森 、 动森"
+  ],
+  "specs": {
+    "中文名": "集合啦！动物森友会",
+    "原版名称": "あつまれ どうぶつの森",
+    "别 名": "Animal Crossing: New Horizons 、 あつ森 、 动物之森：新地平线 、 动物之森 、 动森",
+    "游戏类型": "模拟经营类游戏",
+    "原作品": "来吧！动物森友会",
+    "游戏平台": "Nintendo Switch 任天堂Switch 2",
+    "所属系列": "《 动物森友会 》系列",
+    "开发商": "任天堂",
+    "发行公司": "任天堂",
+    "发行日期": "2020年3月20日 （全球） 2026年1月15日 （Switch2版）",
+    "制作人": "高桥伸也 （总） 江口胜也 （总） Toshihiko Nakago （助） 野上恒",
+    "总 监": "京极彩",
+    "背景音乐": "Yasuaki Iwata 、 Yumi Takahashi 、 Shinobu Nagata 、 Sayako Doi 、 Masato Ohashi",
+    "内容主题": "经营",
+    "游戏分级": "CERO：A ESRB：E PEGI：3 USK：0 ACB：G",
+    "发行阶段": "正式版",
+    "首发日期": "2020年3月20日 （全球） 2026年1月15日 （Switch2版）",
+    "平台": "Nintendo Switch 任天堂Switch 2",
+    "摘要": "# 集合啦！动物森友会 《集合啦！动物森友会》是由 任天堂 企划制作本部开发并发售的一款模拟经营类游戏，为《 动物森友会 》系列的第七部作品，也是系列首次发售繁体中文版（首次推出简体中文版是 神游科技（中国）有限公司 在2006年6月发售的"
+  },
   "media": {
     "provider": "pixabay",
     "query": "pixel art indie game screenshot",
@@ -15,5 +38,6 @@
     "requiredTags": [],
     "minMatchScore": 0,
     "imageCount": 6
-  }
+  },
+  "contentFile": "library/game/game-animal-crossing/content.md"
 }

@@ -4,7 +4,6 @@
   "subCategoryId": "moto-adventure",
   "name": "Triumph Tiger 900",
   "summary": "英式三缸 ADV。",
-  "description": "Triumph Tiger 900：英式三缸 ADV。\n\n**概述**：Triumph Tiger 900（Triumph Tiger 900）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：英式三缸 ADV。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：探险",
   "tags": [
     "探险"
   ],
@@ -19,5 +18,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 6
-  }
+  },
+  "contentFile": "library/motorcycle/motorcycle-moto-triumph-tiger-900/content.md"
 }

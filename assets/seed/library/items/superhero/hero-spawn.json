@@ -4,7 +4,6 @@
   "subCategoryId": "hero-indie",
   "name": "再生侠 Spawn",
   "summary": "Image 漫画阿尔·西蒙斯死后与地狱契约重生，地狱斗篷与锁链的黑暗英雄。",
-  "description": "再生侠 Spawn：Image 漫画阿尔·西蒙斯死后与地狱契约重生，地狱斗篷与锁链的黑暗英雄。\n\n**概述**：再生侠 Spawn（Spawn）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：Image 漫画阿尔·西蒙斯死后与地狱契约重生，地狱斗篷与锁链的黑暗英雄。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：Image、黑暗英雄、地狱、契约\n\n**规格参数**\n\n**出版**：Image Comics\n**首次登场**：1992\n**创作者**：Todd McFarlane\n**本名**：阿尔·西蒙斯\n**特点**：恐怖黑暗风\n**版权**：McFarlane",
   "tags": [
     "Image",
     "黑暗英雄",
@@ -31,5 +30,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-spawn/content.md"
 }

@@ -4,7 +4,6 @@
   "subCategoryId": "tf-g1",
   "name": "横炮 Sideswipe",
   "summary": "双胞胎之一，兰博基尼变形，决斗爱好者。",
-  "description": "横炮 Sideswipe：双胞胎之一，兰博基尼变形，决斗爱好者。\n\n**概述**：横炮 Sideswipe（Sideswipe）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：双胞胎之一，兰博基尼变形，决斗爱好者。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：汽车人、Hasbro、变形、战士\n\n**规格参数**\n\n**分类**：汽车人 Autobot\n**阵营**：汽车人\n**变形**：兰博基尼\n**角色**：战士\n**版权**：Hasbro / Takara\n**首次**：1984",
   "tags": [
     "汽车人",
     "Hasbro",
@@ -31,5 +30,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/transformers/tf-sideswipe/content.md"
 }

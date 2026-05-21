@@ -4,7 +4,6 @@
   "subCategoryId": "watch-sport",
   "name": "卡西欧 G-Shock",
   "summary": "防震数字表。",
-  "description": "卡西欧 G-Shock：防震数字表。\n\n**概述**：卡西欧 G-Shock（G-Shock）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：防震数字表。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：腕表",
   "tags": [
     "腕表"
   ],
@@ -20,5 +19,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/watch/watch-casio-gshock/content.md"
 }

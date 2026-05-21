@@ -4,7 +4,6 @@
   "subCategoryId": "tf-g1",
   "name": "大黄蜂 Bumblebee",
   "summary": "汽车人侦察兵，常变形为黄色大众甲壳虫或科迈罗，性格友善，与人类联系紧密。",
-  "description": "大黄蜂（Bumblebee）是汽车人侦察兵，因体型较小在 G1 动画中不能说话（靠车载电台表达）。经典变形为黄色大众 Beetle；迈克尔·贝电影中改为雪佛兰科迈罗。\n\n2018 年衍生电影《大黄蜂》为系列前传风格作品。在真人电影中常担任人类少年萨姆/查理的伙伴。\n\n**相关**：与擎天柱亦师亦友；人气角色带动玩具销量；名称 Bumblebee 意为「大黄蜂」。",
   "tags": [
     "汽车人",
     "大黄蜂",
@@ -33,5 +32,6 @@
     "minMatchScore": 0,
     "imageCount": 6,
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/transformers/transformers-bumblebee/content.md"
 }

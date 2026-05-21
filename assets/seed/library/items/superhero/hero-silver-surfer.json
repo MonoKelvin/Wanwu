@@ -4,7 +4,6 @@
   "subCategoryId": "hero-other",
   "name": "银色冲浪者 Silver Surfer",
   "summary": "诺林·拉德，行星吞噬者前使者，宇宙级英雄。",
-  "description": "银色冲浪者 Silver Surfer：诺林·拉德，行星吞噬者前使者，宇宙级英雄。\n\n**概述**：银色冲浪者 Silver Surfer（Silver Surfer）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：诺林·拉德，行星吞噬者前使者，宇宙级英雄。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：漫威、宇宙、冲浪板\n\n**规格参数**\n\n**宇宙**：漫威 Marvel\n**首次登场**：1966\n**本名**：诺林·拉德\n**交通**：银色冲浪板",
   "tags": [
     "漫威",
     "宇宙",
@@ -27,5 +26,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-silver-surfer/content.md"
 }

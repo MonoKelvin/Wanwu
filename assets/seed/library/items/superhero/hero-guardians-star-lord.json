@@ -4,7 +4,6 @@
   "subCategoryId": "hero-marvel-mcu",
   "name": "星爵 Star-Lord",
   "summary": "彼得·奎尔率银河护卫队，半神血统与复古音乐。",
-  "description": "星爵 Star-Lord：彼得·奎尔率银河护卫队，半神血统与复古音乐。\n\n**概述**：星爵 Star-Lord（Star-Lord）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：彼得·奎尔率银河护卫队，半神血统与复古音乐。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：漫威、银河护卫队、太空\n\n**规格参数**\n\n**宇宙**：漫威 Marvel\n**团队**：银河护卫队\n**MCU饰演**：克里斯·帕拉特",
   "tags": [
     "漫威",
     "银河护卫队",
@@ -26,5 +25,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-guardians-star-lord/content.md"
 }

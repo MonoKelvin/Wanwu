@@ -4,7 +4,6 @@
   "subCategoryId": "food-cuisine",
   "name": "广式点心",
   "summary": "蒸笼与虾饺烧卖文化。",
-  "description": "广式点心：蒸笼与虾饺烧卖文化。\n\n**概述**：广式点心在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：蒸笼与虾饺烧卖文化。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：广式",
   "tags": [
     "广式"
   ],
@@ -17,5 +16,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/food/food-dim-sum/content.md"
 }

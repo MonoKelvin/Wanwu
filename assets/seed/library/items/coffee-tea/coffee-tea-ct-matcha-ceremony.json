@@ -4,7 +4,6 @@
   "subCategoryId": "ct-tea",
   "name": "抹茶茶道",
   "summary": "日本茶碗打茶。",
-  "description": "抹茶茶道：日本茶碗打茶。\n\n**概述**：抹茶茶道在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：日本茶碗打茶。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
   "tags": [],
   "specs": {},
   "media": {
@@ -15,5 +14,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/coffee-tea/coffee-tea-ct-matcha-ceremony/content.md"
 }

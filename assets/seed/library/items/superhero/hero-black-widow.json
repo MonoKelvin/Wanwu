@@ -4,7 +4,6 @@
   "subCategoryId": "hero-marvel",
   "name": "黑寡妇 Black Widow",
   "summary": "娜塔莎·罗曼诺夫，红房子特工转神盾局与复仇者顶尖间谍。",
-  "description": "黑寡妇 Black Widow：娜塔莎·罗曼诺夫，红房子特工转神盾局与复仇者顶尖间谍。\n\n**概述**：黑寡妇 Black Widow（Black Widow）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：娜塔莎·罗曼诺夫，红房子特工转神盾局与复仇者顶尖间谍。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：漫威、间谍、复仇者\n\n**规格参数**\n\n**宇宙**：漫威 Marvel\n**首次登场**：1964\n**本名**：娜塔莎·罗曼诺夫\n**训练**：红房子\n**MCU饰演**：斯嘉丽·约翰逊",
   "tags": [
     "漫威",
     "间谍",
@@ -28,5 +27,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-black-widow/content.md"
 }

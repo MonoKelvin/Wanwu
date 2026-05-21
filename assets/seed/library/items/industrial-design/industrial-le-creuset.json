@@ -4,7 +4,6 @@
   "subCategoryId": "id-appliance",
   "name": "Le Creuset 珐琅锅",
   "summary": "法式铸铁彩色珐琅锅，厨房色彩点缀。",
-  "description": "Le Creuset 珐琅锅：法式铸铁彩色珐琅锅，厨房色彩点缀。\n\n**概述**：Le Creuset 珐琅锅（Le Creuset ）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：法式铸铁彩色珐琅锅，厨房色彩点缀。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：家居、Le Creuset、厨具、设计\n\n**规格参数**\n\n**分类**：家居产品设计\n**品牌**：Le Creuset\n**类型**：厨具\n**时期**：1925\n**场景**：家庭\n**特点**：功能与美学",
   "tags": [
     "家居",
     "Le Creuset",
@@ -29,5 +28,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/industrial-design/industrial-le-creuset/content.md"
 }

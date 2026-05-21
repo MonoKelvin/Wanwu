@@ -3,10 +3,39 @@
   "slug": "game-witcher3",
   "subCategoryId": "game-rpg",
   "name": "巫师 3",
-  "summary": "猎魔人 RPG。",
-  "description": "巫师 3：猎魔人 RPG。\n\n**概述**：巫师 3在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：猎魔人 RPG。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "《巫师3：狂猎》是由CD Projekt RED制作，WB Games（北美地区）、Spike Chunsoft（日本地区）发行的一款角色扮演类游戏，于2015年5月19日在Windows、Playstation 4、Xbox One平台发行，2019年10月13日登录 Nintendo Switch 平台。该游戏次世",
+  "tags": [
+    "巫师3：狂猎",
+    "The Witcher 3: Wild Hunt",
+    "猎魔人3：狂猎"
+  ],
+  "specs": {
+    "中文名": "巫师3：狂猎",
+    "原版名称": "The Witcher 3: Wild Hunt",
+    "别 名": "猎魔人3：狂猎",
+    "游戏类型": "动作角色扮演",
+    "原作品": "猎魔人",
+    "游戏平台": "Xbox One PC Playstation 4 Nintendo Switch",
+    "所属系列": "巫师",
+    "地 区": "波兰",
+    "开发商": "CD Projekt Red、Saber Interactive（Switch平台）",
+    "发行公司": "WB Games （北美地区） Spike Chunsoft （日本地区）",
+    "发行日期": "2015年5月19日 2019年10月13日 （Switch）",
+    "游戏售价": "149 元",
+    "背景音乐": "Marcin Przybyowicz 、 Mikolai Stroinski 、 Piotr Musial 、 Percival Schuttenbach",
+    "内容主题": "开放世界、奇幻、旅行",
+    "玩家人数": "1 人",
+    "游戏画面": "3D",
+    "游戏引擎": "REDengine 3",
+    "游戏分级": "18 （泛欧洲游戏信息组织）",
+    "最新版本": "巫师3：狂猎完全版",
+    "发行阶段": "正式版",
+    "主要角色": "利维亚的杰洛特",
+    "衍生作": "巫师之昆特牌",
+    "首发日期": "2015年5月19日 2019年10月13日 （Switch）",
+    "平台": "Xbox One PC Playstation 4 Nintendo Switch",
+    "摘要": "# 巫师3：狂猎 《巫师3：狂猎》是由CD Projekt RED制作，WB Games（北美地区）、Spike Chunsoft（日本地区）发行的一款角色扮演类游戏，于2015年5月19日在Windows、Playstation 4、Xb"
+  },
   "media": {
     "provider": "pixabay",
     "query": "fantasy video game landscape screenshot",
@@ -15,5 +44,6 @@
     "requiredTags": [],
     "minMatchScore": 0,
     "imageCount": 6
-  }
+  },
+  "contentFile": "library/game/game-witcher3/content.md"
 }

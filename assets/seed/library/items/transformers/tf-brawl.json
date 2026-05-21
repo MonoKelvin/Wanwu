@@ -4,7 +4,6 @@
   "subCategoryId": "tf-decepticon",
   "name": "吵闹 Brawl",
   "summary": "战车队坦克，组合金刚混天豹腿部，火力凶猛。",
-  "description": "吵闹 Brawl：战车队坦克，组合金刚混天豹腿部，火力凶猛。\n\n**概述**：吵闹 Brawl（Brawl）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：战车队坦克，组合金刚混天豹腿部，火力凶猛。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：霸天虎、反派、变形、战车队\n\n**规格参数**\n\n**分类**：霸天虎 Decepticon\n**阵营**：霸天虎\n**变形**：M1 坦克\n**角色**：战车队\n**领袖**：威震天 / 惊破天\n**特点**：战车队",
   "tags": [
     "霸天虎",
     "反派",
@@ -31,5 +30,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/transformers/tf-brawl/content.md"
 }

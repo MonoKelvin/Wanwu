@@ -4,7 +4,6 @@
   "subCategoryId": "moto-italy",
   "name": "摩托古兹 V7",
   "summary": "横置 V 双缸经典，意大利巡航传统。",
-  "description": "摩托古兹 V7代表意大利Moto Guzzi在摩托车工程与造型上的传统：V 双缸横置动力、精细底盘与独特排气声浪。意大利品牌常参与 MotoGP 并将赛事技术转化至民用车。\n\n博洛尼亚、瓦雷泽等产地汇聚杜卡迪、阿普利亚、MV Agusta 等名厂，以设计驱动品牌溢价。\n\n**骑行要点**：V 双缸横置，约 65 hp，弯道精准\n\n**相关**：与日系仿赛对比更重风格与电子套件差异",
   "tags": [
     "意大利",
     "Moto Guzzi",
@@ -30,5 +29,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/motorcycle/moto-guzzi-v7/content.md"
 }

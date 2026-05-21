@@ -4,7 +4,6 @@
   "subCategoryId": "watch-dress",
   "name": "冠蓝狮 Spring Drive",
   "summary": "日本精密正装表。",
-  "description": "冠蓝狮 Spring Drive：日本精密正装表。\n\n**概述**：冠蓝狮 Spring Drive（Spring Drive）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：日本精密正装表。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
   "tags": [],
   "specs": {},
   "media": {
@@ -18,5 +17,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/watch/watch-grand-seiko/content.md"
 }

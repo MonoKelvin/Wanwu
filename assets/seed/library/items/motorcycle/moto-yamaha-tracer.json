@@ -4,7 +4,6 @@
   "subCategoryId": "moto-japan",
   "name": "雅马哈 Tracer 9",
   "summary": "运动旅行三缸，长途舒适。",
-  "description": "雅马哈 Tracer 9：运动旅行三缸，长途舒适。\n\n**概述**：雅马哈 Tracer 9（Tracer 9）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：运动旅行三缸，长途舒适。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：日本、Yamaha、摩托、运动旅行\n\n**规格参数**\n\n**分类**：日本品牌\n**厂商**：Yamaha\n**发动机**：890 三缸\n**定位**：运动旅行\n**总部**：日本\n**赛事**：MotoGP / WSBK",
   "tags": [
     "日本",
     "Yamaha",
@@ -31,5 +30,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/motorcycle/moto-yamaha-tracer/content.md"
 }

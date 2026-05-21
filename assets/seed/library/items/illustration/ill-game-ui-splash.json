@@ -4,7 +4,6 @@
   "subCategoryId": "ill-portrait",
   "name": "游戏启动图",
   "summary": "登录界面与版本 KV 商业插画。",
-  "description": "游戏启动图：登录界面与版本 KV 商业插画。\n\n**概述**：游戏启动图在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：登录界面与版本 KV 商业插画。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：数字绘画、商业、手游、插画\n\n**规格参数**\n\n**分类**：数字插画\n**工具**：手游\n**领域**：商业\n**输出**：商业 / 同人\n**平台**：Pixiv / ArtStation\n**技能**：构图、色彩、人体",
   "tags": [
     "数字绘画",
     "商业",
@@ -29,5 +28,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/illustration/ill-game-ui-splash/content.md"
 }

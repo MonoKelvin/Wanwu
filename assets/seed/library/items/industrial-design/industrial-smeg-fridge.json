@@ -4,7 +4,6 @@
   "subCategoryId": "id-appliance",
   "name": "Smeg 冰箱",
   "summary": "50 年代复古造型与大胆配色。",
-  "description": "Smeg 冰箱：50 年代复古造型与大胆配色。\n\n**概述**：Smeg 冰箱（Smeg ）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：50 年代复古造型与大胆配色。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：家居、Smeg、厨电、设计\n\n**规格参数**\n\n**分类**：家居产品设计\n**品牌**：Smeg\n**类型**：厨电\n**时期**：1997\n**场景**：家庭\n**特点**：功能与美学",
   "tags": [
     "家居",
     "Smeg",
@@ -29,5 +28,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/industrial-design/industrial-smeg-fridge/content.md"
 }

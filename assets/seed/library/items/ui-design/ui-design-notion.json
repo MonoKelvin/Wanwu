@@ -4,7 +4,6 @@
   "subCategoryId": "ui-app-screen",
   "name": "Notion 界面",
   "summary": "块编辑知识库 UI。",
-  "description": "Notion 界面：块编辑知识库 UI。\n\n**概述**：Notion 界面（Notion ）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：块编辑知识库 UI。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
   "tags": [],
   "specs": {},
   "media": {
@@ -17,5 +16,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/ui-design/ui-design-notion/content.md"
 }

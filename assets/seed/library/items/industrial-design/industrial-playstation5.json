@@ -4,7 +4,6 @@
   "subCategoryId": "id-product",
   "name": "PlayStation 5",
   "summary": "白色流线主机与 DualSense 触觉反馈。",
-  "description": "PlayStation 5：白色流线主机与 DualSense 触觉反馈。\n\n**概述**：PlayStation 5（PlayStation 5）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：白色流线主机与 DualSense 触觉反馈。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：工业设计、Sony、游戏主机、经典\n\n**规格参数**\n\n**分类**：产品设计\n**品牌**：Sony\n**类型**：游戏主机\n**时期**：2020\n**领域**：消费科技\n**影响**：行业标杆",
   "tags": [
     "工业设计",
     "Sony",
@@ -32,5 +31,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/industrial-design/industrial-playstation5/content.md"
 }

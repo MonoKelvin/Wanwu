@@ -4,7 +4,6 @@
   "subCategoryId": "hero-dc",
   "name": "小丑 Joker",
   "summary": "哥谭犯罪王子，蝙蝠侠宿敌，无固定起源的混乱象征。",
-  "description": "小丑 Joker：哥谭犯罪王子，蝙蝠侠宿敌，无固定起源的混乱象征。\n\n**概述**：小丑 Joker（Joker）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：哥谭犯罪王子，蝙蝠侠宿敌，无固定起源的混乱象征。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：DC、反派、哥谭、混乱\n\n**规格参数**\n\n**宇宙**：DC 漫画\n**首次登场**：1940\n**城市**：哥谭\n**宿敌**：蝙蝠侠\n**特点**：无固定起源\n**饰演**：希斯·莱杰等",
   "tags": [
     "DC",
     "反派",
@@ -29,5 +28,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-joker-dc/content.md"
 }

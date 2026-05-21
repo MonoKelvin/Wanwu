@@ -4,7 +4,6 @@
   "subCategoryId": "ui-design-tool",
   "name": "Android 14 界面",
   "summary": "预测返回手势与隐私仪表盘等新特性。",
-  "description": "Android 14 界面聚焦移动端系统实践，基于Android 14等规范或工具构建一致体验。移动 UI 需考虑触控目标尺寸、单手区域与安全区（刘海、圆角）。\n\n设计与开发通过 Figma Dev Mode、SwiftUI / Compose 交付协作。\n\n**设计要点**：Android 14，栅格 4/8pt，可达性\n\n**相关**：与响应式 Web、可穿戴界面共享设计系统 Token",
   "tags": [
     "移动端",
     "UI",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/ui-design/ui-android-14/content.md"
 }

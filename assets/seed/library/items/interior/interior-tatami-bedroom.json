@@ -4,7 +4,6 @@
   "subCategoryId": "int-zen",
   "name": "榻榻米卧室",
   "summary": "叠席、矮柜与纸灯营造安静睡眠环境。",
-  "description": "榻榻米卧室：叠席、矮柜与纸灯营造安静睡眠环境。\n\n**概述**：榻榻米卧室在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：叠席、矮柜与纸灯营造安静睡眠环境。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：日式、禅意、榻榻米、卧室\n\n**规格参数**\n\n**分类**：日式禅意\n**元素**：榻榻米\n**空间**：卧室\n**材质**：木、竹、石、纸\n**原则**：留白、自然\n**场景**：茶、宿、庭",
   "tags": [
     "日式",
     "禅意",
@@ -29,5 +28,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/interior/interior-tatami-bedroom/content.md"
 }

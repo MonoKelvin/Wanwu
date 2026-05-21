@@ -4,7 +4,6 @@
   "subCategoryId": "hist-medieval",
   "name": "巴黎圣母院",
   "summary": "哥特教堂地标。",
-  "description": "巴黎圣母院：哥特教堂地标。\n\n**概述**：巴黎圣母院在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：哥特教堂地标。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：哥特",
   "tags": [
     "哥特"
   ],
@@ -17,5 +16,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/history/history-notre-dame/content.md"
 }

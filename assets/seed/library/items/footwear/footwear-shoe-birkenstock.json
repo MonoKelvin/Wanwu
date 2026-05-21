@@ -3,10 +3,20 @@
   "slug": "footwear-shoe-birkenstock",
   "subCategoryId": "shoe-sandal",
   "name": "勃肯凉鞋",
-  "summary": "德式健康鞋床。",
-  "description": "勃肯凉鞋：德式健康鞋床。\n\n**概述**：勃肯凉鞋在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：德式健康鞋床。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "勃肯鞋是德国鞋履品牌 BIRKENSTOCK 生产的鞋类产品，由Johann Adam Birkenstock于1774年创立，最初为皇室定制鞋垫。其核心为符合人体工学的鞋床设计，采用橡树软木、乳胶和黄麻等可再生材质制作，通过均匀分配足部压力减少摩擦，提供行走支撑。经典款式包括凉鞋、包头拖鞋等，鞋面多选用牛皮材质，搭配",
+  "tags": [
+    "勃肯鞋",
+    "Birkenstock",
+    "Birkenstocks"
+  ],
+  "specs": {
+    "中文名": "勃肯鞋",
+    "外文名": "Birkenstock",
+    "别 名": "Birkenstocks",
+    "尺码常识": "尺码会比国内通行的尺码略大一些",
+    "对 象": "儿童、少年、成人",
+    "摘要": "# 勃肯鞋 勃肯鞋是德国鞋履品牌 BIRKENSTOCK 生产的鞋类产品，由Johann Adam Birkenstock于1774年创立，最初为皇室定制鞋垫。其核心为符合人体工学的鞋床设计，采用橡树软木、乳胶和黄麻等可再生材质制作，通过均"
+  },
   "media": {
     "provider": "pixabay",
     "query": "shoes footwear",
@@ -15,5 +25,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/footwear/footwear-shoe-birkenstock/content.md"
 }

@@ -4,7 +4,6 @@
   "subCategoryId": "tf-g1",
   "name": "威震天 G1",
   "summary": "霸天虎首领。",
-  "description": "威震天 G1：霸天虎首领。\n\n**概述**：威震天 G1（G1）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：霸天虎首领。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：G1",
   "tags": [
     "G1"
   ],
@@ -17,5 +16,6 @@
     "requiredTags": [],
     "minMatchScore": 0,
     "imageCount": 6
-  }
+  },
+  "contentFile": "library/transformers/transformers-tf-megatron-g1/content.md"
 }

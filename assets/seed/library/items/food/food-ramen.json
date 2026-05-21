@@ -4,7 +4,6 @@
   "subCategoryId": "food-street",
   "name": "拉面",
   "summary": "日式汤底面条。",
-  "description": "拉面：日式汤底面条。\n\n**概述**：拉面在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：日式汤底面条。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
   "tags": [],
   "specs": {},
   "media": {
@@ -15,5 +14,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/food/food-ramen/content.md"
 }

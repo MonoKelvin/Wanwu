@@ -4,7 +4,6 @@
   "subCategoryId": "id-product",
   "name": "戴森 V15 Detect",
   "summary": "戴森旗舰无线吸尘器，激光显尘、压电式颗粒计数与 Hyperdymium 马达。",
-  "description": "Dyson V15 Detect 搭载激光斜照吸头使微尘可见，声学压电传感器可计数与分类颗粒物，LCD 屏实时显示。Hyperdymium 马达提供高吸力，整机平衡设计减轻手腕负担。\n\n**品牌**：James Dyson 1978 年创立，以 cyclone 气旋分离技术革新吸尘器行业，总部英国马尔文。产品线含风扇、吹风机、空气净化器等，强调工程美学与专利壁垒。\n\n**相关**：与 Shark、小米无线吸尘器竞争高端市场；设计奖常客。",
   "tags": [
     "戴森",
     "吸尘器",
@@ -32,5 +31,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/industrial-design/industrial-dyson-v15/content.md"
 }

@@ -4,7 +4,6 @@
   "subCategoryId": "hero-other",
   "name": "沙赞 Shazam",
   "summary": "少年比利·巴特森念「沙赞」变身六神之力成年英雄，魔法与童趣并存。",
-  "description": "沙赞 Shazam：少年比利·巴特森念「沙赞」变身六神之力成年英雄，魔法与童趣并存。\n\n**概述**：沙赞 Shazam（Shazam）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：少年比利·巴特森念「沙赞」变身六神之力成年英雄，魔法与童趣并存。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：DC、魔法、少年、沙赞\n\n**规格参数**\n\n**宇宙**：DC 漫画\n**首次登场**：1939\n**咒语**：Shazam\n**本名**：比利·巴特森\n**特点**：少年变身\n**电影**：2019《沙赞！》",
   "tags": [
     "DC",
     "魔法",
@@ -29,5 +28,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-shazam-dc/content.md"
 }

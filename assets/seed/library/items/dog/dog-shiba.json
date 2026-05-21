@@ -4,7 +4,6 @@
   "subCategoryId": "dog-working",
   "name": "柴犬",
   "summary": "日本网红伴侣犬。",
-  "description": "柴犬：日本网红伴侣犬。\n\n**犬种概览**：柴犬（）在 FCI/AKC 等体系中有历史选育背景与用途定义。\n\n**体态与运动**：肩高、骨量与被毛决定运动需求；工作犬/玩具犬在训练量上差异很大。\n\n**饲养建议**：社会化、牵引习惯、关节与牙齿护理、按体型选择主食与运动量。\n\n**标签**：—",
   "tags": [],
   "specs": {},
   "media": {
@@ -19,5 +18,6 @@
     ],
     "minMatchScore": 2,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/dog/dog-shiba/content.md"
 }

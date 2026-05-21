@@ -4,7 +4,6 @@
   "subCategoryId": "hero-dc",
   "name": "哈莉·奎茵 Harley Quinn",
   "summary": "前精神病医生爱上小丑后成为反英雄，棒球棍与幽默暴力风格。",
-  "description": "哈莉·奎茵 Harley Quinn：前精神病医生爱上小丑后成为反英雄，棒球棍与幽默暴力风格。\n\n**概述**：哈莉·奎茵 Harley Quinn（Harley Quinn）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：前精神病医生爱上小丑后成为反英雄，棒球棍与幽默暴力风格。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：DC、反英雄、小丑、哈莉\n\n**规格参数**\n\n**宇宙**：DC 漫画\n**首次登场**：1992（动画）\n**职业**：前精神病医生\n**武器**：球棒、枪械\n**饰演**：玛格特·罗比\n**特点**：幽默暴力",
   "tags": [
     "DC",
     "反英雄",
@@ -30,5 +29,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-harley-quinn/content.md"
 }

@@ -3,10 +3,33 @@
   "slug": "game-elden-ring",
   "subCategoryId": "game-action",
   "name": "艾尔登法环",
-  "summary": "魂系开放世界。",
-  "description": "艾尔登法环：魂系开放世界。\n\n**概述**：艾尔登法环在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：魂系开放世界。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "《艾尔登法环》是 From Software 开发，万代南梦宫发行的黑暗幻想风开放世界角色扮演 动作 游戏。 [15] 该游戏于2022年2月25日于 Steam 、PlayStation、 Xbox One 、 Xbox Series X / Xbox Series S 发售，售价298元。 [2-3] [6-7] ",
+  "tags": [
+    "艾尔登法环",
+    "Elden Ring",
+    "エルデンリング"
+  ],
+  "specs": {
+    "中文名": "艾尔登法环",
+    "原版名称": "Elden Ring",
+    "别 名": "エルデンリング",
+    "游戏类型": "开放世界 、 角色扮演",
+    "游戏平台": "PC （Steam/微软商店） PlayStation 4 / PlayStation 5 任天堂Switch 2 XBox One Xbox Series X / Xbox Series S",
+    "地 区": "日本",
+    "开发商": "From Software",
+    "发行公司": "万代南梦宫",
+    "发行日期": "2022年2月25日 2026年 （任天堂Switch2版）",
+    "游戏售价": "298 至 498 元",
+    "制作人": "宫崎英高",
+    "编 剧": "乔治·R·R·马丁",
+    "主要配音": "Aimee-Ffion Edwards 、 Martha Mackintosh",
+    "背景音乐": "斋藤司 、 北村友香 、 宫泽翔衣 、 富泽泰 、 工藤吉三",
+    "游戏分级": "PEGI-16",
+    "结局数": "6 个",
+    "首发日期": "2022年2月25日 2026年 （任天堂Switch2版）",
+    "平台": "PC （Steam/微软商店） PlayStation 4 / PlayStation 5 任天堂Switch 2 XBox One Xbox Series X / Xbox Series S",
+    "摘要": "# 艾尔登法环（2022年From Software开发的角色扮演类游戏） 《艾尔登法环》是 From Software 开发，万代南梦宫发行的黑暗幻想风开放世界角色扮演 动作 游戏。 该游戏于2022年2月25日于 Steam 、Play"
+  },
   "media": {
     "provider": "pixabay",
     "query": "action adventure video game screenshot",
@@ -15,5 +38,6 @@
     "requiredTags": [],
     "minMatchScore": 0,
     "imageCount": 6
-  }
+  },
+  "contentFile": "library/game/game-elden-ring/content.md"
 }

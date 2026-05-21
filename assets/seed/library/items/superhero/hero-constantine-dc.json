@@ -4,7 +4,6 @@
   "subCategoryId": "hero-other",
   "name": "康斯坦丁 Constantine",
   "summary": "约翰·康斯坦丁，狡猾驱魔术士，烟与风衣的英伦神秘学反英雄。",
-  "description": "康斯坦丁 Constantine：约翰·康斯坦丁，狡猾驱魔术士，烟与风衣的英伦神秘学反英雄。\n\n**概述**：康斯坦丁 Constantine（Constantine）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：约翰·康斯坦丁，狡猾驱魔术士，烟与风衣的英伦神秘学反英雄。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：DC、魔法、驱魔、反英雄\n\n**规格参数**\n\n**宇宙**：DC / Vertigo\n**首次登场**：1985\n**本名**：约翰·康斯坦丁\n**职业**：驱魔师\n**弱点**：人性自私（剧情）\n**饰演**：基努·里维斯 / Matt Ryan",
   "tags": [
     "DC",
     "魔法",
@@ -30,5 +29,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-constantine-dc/content.md"
 }

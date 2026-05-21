@@ -4,7 +4,6 @@
   "subCategoryId": "car-germany",
   "name": "保时捷 918 Spyder",
   "summary": "插电混动超跑三杰之一，纽北纪录创造者。",
-  "description": "保时捷 918 Spyder体现德国Porsche在精密工程、底盘调校与电子辅助系统上的优势，2013 年世代代表德系性能文化：赛道数据转化为公路驾驶信心。\n\n德国超跑与 GT 强调日常可用性、高速稳定性与制动表现，在纽博格林开发文化影响下诞生众多标杆车型。\n\n**性能要点**：4.6L V8 + 双电机，约 887 hp，四驱或后驱依型号\n\n**相关**：与保时捷、AMG、奥迪 R8 等同属德国性能图谱；部分车型为限量或纪念版",
   "tags": [
     "德国",
     "Porsche",
@@ -32,5 +31,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/supercar/supercar-porsche-918/content.md"
 }

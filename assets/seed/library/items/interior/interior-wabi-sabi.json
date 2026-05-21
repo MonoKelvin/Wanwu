@@ -4,7 +4,6 @@
   "subCategoryId": "int-zen",
   "name": "侘寂 Wabi-Sabi",
   "summary": "不完美、无常与朴素美的日式美学空间。",
-  "description": "侘寂 Wabi-Sabi：不完美、无常与朴素美的日式美学空间。\n\n**概述**：侘寂 Wabi-Sabi（Wabi-Sabi）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：不完美、无常与朴素美的日式美学空间。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：日式、禅意、侘寂、茶室\n\n**规格参数**\n\n**分类**：日式禅意\n**元素**：侘寂\n**空间**：茶室\n**材质**：木、竹、石、纸\n**原则**：留白、自然\n**场景**：茶、宿、庭",
   "tags": [
     "日式",
     "禅意",
@@ -29,5 +28,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/interior/interior-wabi-sabi/content.md"
 }

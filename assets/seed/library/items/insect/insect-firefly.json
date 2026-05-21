@@ -4,7 +4,6 @@
   "subCategoryId": "insect-beetle",
   "name": "萤火虫",
   "summary": "夏夜生物发光。",
-  "description": "萤火虫：夏夜生物发光。\n\n**概述**：萤火虫在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：夏夜生物发光。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
   "tags": [],
   "specs": {},
   "media": {
@@ -18,5 +17,6 @@
     "requiredTags": [],
     "minMatchScore": 0,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/insect/insect-firefly/content.md"
 }

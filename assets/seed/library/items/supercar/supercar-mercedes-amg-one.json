@@ -4,7 +4,6 @@
   "subCategoryId": "car-germany",
   "name": "奔驰 AMG ONE",
   "summary": "F1 动力单元公路化，混动 V6 极限工程。",
-  "description": "奔驰 AMG ONE体现德国Mercedes-AMG在精密工程、底盘调校与电子辅助系统上的优势，2022 年世代代表德系性能文化：赛道数据转化为公路驾驶信心。\n\n德国超跑与 GT 强调日常可用性、高速稳定性与制动表现，在纽博格林开发文化影响下诞生众多标杆车型。\n\n**性能要点**：1.6L V6 混动 F1，约 1063 hp，四驱或后驱依型号\n\n**相关**：与保时捷、AMG、奥迪 R8 等同属德国性能图谱；部分车型为限量或纪念版",
   "tags": [
     "德国",
     "Mercedes-AMG",
@@ -32,5 +31,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/supercar/supercar-mercedes-amg-one/content.md"
 }

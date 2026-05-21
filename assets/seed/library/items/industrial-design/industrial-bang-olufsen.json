@@ -4,7 +4,6 @@
   "subCategoryId": "id-product",
   "name": "B&O 音响",
   "summary": "丹麦雕塑感音响与铝材加工美学。",
-  "description": "B&O 音响：丹麦雕塑感音响与铝材加工美学。\n\n**概述**：B&O 音响（O ）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：丹麦雕塑感音响与铝材加工美学。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：工业设计、Bang & Olufsen、音频、经典\n\n**规格参数**\n\n**分类**：产品设计\n**品牌**：Bang & Olufsen\n**类型**：音频\n**时期**：1925\n**领域**：消费科技\n**影响**：行业标杆",
   "tags": [
     "工业设计",
     "Bang & Olufsen",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/industrial-design/industrial-bang-olufsen/content.md"
 }

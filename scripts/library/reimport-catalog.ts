@@ -2,7 +2,7 @@
  * 将 catalog 入库（增量 / 按 id 更新 / 全量）
  *
  * 用法:
- *   npm run seed:library:reimport              # 仅新增尚未入库的 id
+ *   npm run seed:library:reimport              # 仅新增尚未入库的 id（脚本内会切换 better-sqlite3 编译目标）
  *   npm run seed:library:reimport -- --id=<uuid> --id=<uuid>
  *   npm run seed:library:reimport -- --full    # 全量同步（开发恢复）
  */

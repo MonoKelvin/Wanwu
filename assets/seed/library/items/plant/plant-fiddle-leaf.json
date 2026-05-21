@@ -4,7 +4,6 @@
   "subCategoryId": "plant-aroid",
   "name": "琴叶榕",
   "summary": "大叶室内网红。",
-  "description": "琴叶榕：大叶室内网红。\n\n**植物学概览**：琴叶榕在园艺与室内绿植场景中常见，需结合光照、湿度与基质管理。\n\n**观赏特征**：叶形、花色、生长速度与株型决定摆放位置与修剪方式。\n\n**养护要点**：浇水周期、施肥浓度、换盆与病虫害（红蜘蛛、介壳虫等）预防。\n\n**标签**：—",
   "tags": [],
   "specs": {},
   "media": {
@@ -15,5 +14,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/plant/plant-fiddle-leaf/content.md"
 }

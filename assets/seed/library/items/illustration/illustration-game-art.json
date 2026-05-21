@@ -4,7 +4,6 @@
   "subCategoryId": "ill-portrait",
   "name": "游戏美术",
   "summary": "原画、立绘与 UI 风格统一的视觉体系。",
-  "description": "游戏美术：原画、立绘与 UI 风格统一的视觉体系。\n\n**概述**：游戏美术在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：原画、立绘与 UI 风格统一的视觉体系。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：数字绘画、游戏、Unity / Unreal、插画\n\n**规格参数**\n\n**分类**：数字插画\n**工具**：Unity / Unreal\n**领域**：游戏\n**输出**：商业 / 同人\n**平台**：Pixiv / ArtStation\n**技能**：构图、色彩、人体",
   "tags": [
     "数字绘画",
     "游戏",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/illustration/illustration-game-art/content.md"
 }

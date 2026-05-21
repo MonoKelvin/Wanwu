@@ -4,7 +4,6 @@
   "subCategoryId": "hist-ancient",
   "name": "巨石阵",
   "summary": "英国威尔特郡史前石圈，天文与仪式之谜。",
-  "description": "巨石阵：英国威尔特郡史前石圈，天文与仪式之谜。\n\n**概述**：巨石阵在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：英国威尔特郡史前石圈，天文与仪式之谜。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：世界遗产、英国、史前、古代\n\n**规格参数**\n\n**分类**：世界史迹\n**地点**：英国\n**时代**：史前\n**地位**：世界遗产\n**文明**：多元古代文明\n**保护**：UNESCO",
   "tags": [
     "世界遗产",
     "英国",
@@ -29,5 +28,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/history/history-stonehenge/content.md"
 }

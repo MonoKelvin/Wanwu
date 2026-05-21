@@ -4,7 +4,6 @@
   "subCategoryId": "hero-marvel",
   "name": "雷神 Thor",
   "summary": "漫威阿斯加德王子，妙尔尼尔之锤与雷霆之力，复仇者核心战力。",
-  "description": "雷神（Thor）由 Stan Lee 与 Jack Kirby 创作，1962 年《Journey into Mystery》#83 登场。托尔·奥丁森可使用风暴与飞行，武器妙尔尼尔仅「值得之人」可举起。\n\nMCU 由克里斯·海姆斯沃斯饰演，与洛基、彩虹桥、诸神黄昏等北欧神话元素交织。\n\n**能力要点**：雷霆、飞行、神力、武器召唤\n\n**相关作品**：《雷神》三部曲、《复仇者联盟》系列",
   "tags": [
     "漫威",
     "阿斯加德",
@@ -29,5 +28,6 @@
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-thor/content.md"
 }

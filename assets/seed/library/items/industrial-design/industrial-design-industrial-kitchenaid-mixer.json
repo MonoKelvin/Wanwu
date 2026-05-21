@@ -4,7 +4,6 @@
   "subCategoryId": "id-appliance",
   "name": "KitchenAid 厨师机",
   "summary": "美式搅拌 iconic。",
-  "description": "KitchenAid 厨师机：美式搅拌 iconic。\n\n**概述**：KitchenAid 厨师机（KitchenAid ）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：美式搅拌 iconic。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：厨房",
   "tags": [
     "厨房"
   ],
@@ -19,5 +18,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/industrial-design/industrial-design-industrial-kitchenaid-mixer/content.md"
 }

@@ -4,7 +4,6 @@
   "subCategoryId": "plant-succulent",
   "name": "青锁龙 Crassula",
   "summary": "玉树属常见，玉树、钱串等品种多样。",
-  "description": "青锁龙 Crassula通过肉质组织储水适应干旱环境，原生多分布于非洲、中美洲及墨西哥等地。栽培核心为「充足光照 + 排水介质 + 控水防烂根」。\n\n生长季春至秋可薄肥，冬季多数品种减缓代谢需减少浇水。叶插与分株为常见繁殖方式。\n\n**养护要点**：颗粒土占比 50–80%；浇水见干见湿；夏季遮烈日防灼伤\n\n**相关**：与景天科、仙人掌科混栽需注意需水量差异",
   "tags": [
     "多肉",
     "耐旱",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/plant/plant-crassula/content.md"
 }

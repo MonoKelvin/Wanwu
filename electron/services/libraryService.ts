@@ -112,7 +112,7 @@ export class LibraryService {
     if (!libDb) return []
 
     const sql = `SELECT id, category_id, sub_category_id, slug, name, summary, description, tags,
-      cover_path, cover_attribution, specs, created_at, updated_at FROM items WHERE category_id = ?`
+      cover_path, cover_attribution, content_file, specs, created_at, updated_at FROM items WHERE category_id = ?`
     let rows: Array<Record<string, unknown>>
     if (subCategoryId) {
       rows = libDb.prepare(`${sql} AND sub_category_id = ? ORDER BY name`).all(categoryId, subCategoryId) as Array<
@@ -189,7 +189,7 @@ export class LibraryService {
       const row = libDb
         .prepare(
           `SELECT id, category_id, sub_category_id, slug, name, summary, description, tags,
-           cover_path, cover_attribution, specs, created_at, updated_at FROM items WHERE id = ?`
+           cover_path, cover_attribution, content_file, specs, created_at, updated_at FROM items WHERE id = ?`
         )
         .get(id) as Record<string, unknown> | undefined
       if (row) return this.rowToItem(libDb, row)
@@ -201,30 +201,23 @@ export class LibraryService {
     const libDb = this.db.getLibraryDb(item.categoryId)
     if (!libDb) throw new Error('分类不存在')
     const now = new Date().toISOString()
+    const rowBefore = libDb.prepare('SELECT slug, cover_path, content_file FROM items WHERE id = ?').get(item.id) as
+      | { slug: string | null; cover_path: string | null; content_file: string | null }
+      | undefined
+
     libDb
       .prepare(
         `UPDATE items SET name = ?, summary = ?, description = ?, tags = ?, specs = ?, updated_at = ? WHERE id = ?`
       )
-      .run(
-        item.name,
-        item.summary,
-        item.description,
-        JSON.stringify(item.tags),
-        JSON.stringify(item.specs ?? {}),
-        now,
-        item.id
-      )
+      .run(item.name, item.summary, null, JSON.stringify(item.tags), JSON.stringify(item.specs ?? {}), now, item.id)
 
-    const row = libDb.prepare('SELECT slug, cover_path FROM items WHERE id = ?').get(item.id) as
-      | { slug: string | null; cover_path: string | null }
-      | undefined
     const coverRel = resolveItemCoverRelative({
-      coverPath: row?.cover_path ?? null,
+      coverPath: rowBefore?.cover_path ?? null,
       categoryId: item.categoryId,
-      slug: row?.slug ?? item.slug ?? null
+      slug: rowBefore?.slug ?? item.slug ?? null
     })
     if (item.description != null) {
-      writeItemMarkdown(coverRel, item.description)
+      writeItemMarkdown(coverRel, item.description, rowBefore?.content_file ?? null)
     }
 
     return this.getItem(item.id) ?? { ...item, updatedAt: now }
@@ -394,7 +387,11 @@ export class LibraryService {
       slug: (r.slug as string) ?? null
     })
     const coverAttribution = parseAttribution(r.cover_attribution as string | null)
-    const description = readItemMarkdown(coverRel, (r.description as string) ?? null)
+    const description = readItemMarkdown(
+      coverRel,
+      (r.description as string) ?? null,
+      (r.content_file as string) ?? null
+    )
 
     const galleryAssets: ItemMediaAsset[] = []
     const gallery: string[] = []

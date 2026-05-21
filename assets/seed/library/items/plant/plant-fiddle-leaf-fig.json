@@ -4,7 +4,6 @@
   "subCategoryId": "plant-aroid",
   "name": "琴叶榕 Ficus lyrata",
   "summary": "桑科榕属大型观叶植物，提琴形叶片，北欧风与热带风室内设计的经典品种。",
-  "description": "琴叶榕 Ficus lyrata：桑科榕属大型观叶植物，提琴形叶片，北欧风与热带风室内设计的经典品种。\n\n**植物学概览**：琴叶榕 Ficus lyrata在园艺与室内绿植场景中常见，需结合光照、湿度与基质管理。\n\n**观赏特征**：叶形、花色、生长速度与株型决定摆放位置与修剪方式。\n\n**养护要点**：浇水周期、施肥浓度、换盆与病虫害（红蜘蛛、介壳虫等）预防。\n\n**标签**：琴叶榕、桑科、观叶、室内\n\n**规格参数**\n\n**分类**：桑科观叶\n**科属**：桑科 · 榕属\n**原产地**：西非\n**叶片**：提琴形、革质\n**注意**：忌移动位置、忌积水",
   "tags": [
     "琴叶榕",
     "桑科",
@@ -29,5 +28,6 @@
     "minMatchScore": 1,
     "imageCount": 5,
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/plant/plant-fiddle-leaf-fig/content.md"
 }

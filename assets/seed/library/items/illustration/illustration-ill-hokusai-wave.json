@@ -4,7 +4,6 @@
   "subCategoryId": "ill-classic",
   "name": "神奈川冲浪里",
   "summary": "浮世绘巨浪。",
-  "description": "神奈川冲浪里：浮世绘巨浪。\n\n**概述**：神奈川冲浪里在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：浮世绘巨浪。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
   "tags": [],
   "specs": {},
   "media": {
@@ -15,5 +14,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/illustration/illustration-ill-hokusai-wave/content.md"
 }

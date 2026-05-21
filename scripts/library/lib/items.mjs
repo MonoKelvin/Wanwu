@@ -4,7 +4,8 @@
 import { readFileSync, readdirSync, existsSync } from 'fs'
 import { join } from 'path'
 import { ensureItemId } from './stable-id.mjs'
-import { formatDescription, normalizeMarkdownLabels } from './seed-utils.mjs'
+import { normalizeMarkdownLabels } from './seed-utils.mjs'
+import { normalizeSeedItemContent } from './item-content.mjs'
 import { mediaFileNames, MAX_IMAGES_PER_ITEM, DEFAULT_IMAGES_PER_ITEM } from './media-shared.mjs'
 import { scanValidMediaFiles } from './disk-media.mjs'
 
@@ -109,6 +110,7 @@ export function buildItemsFromSeed(root, filter = {}) {
       if (!subCategoryId) throw new Error(`[${categoryId}/${file}] 缺少 subCategoryId`)
 
       const base = `library/${categoryId}/${mediaDir}`
+      const { contentFile } = normalizeSeedItemContent(raw, categoryId, mediaDir, root)
       const media = { ...packDefaults, ...(raw.media ?? {}) }
       const imageCount = Math.min(
         MAX_IMAGES_PER_ITEM,
@@ -123,12 +125,12 @@ export function buildItemsFromSeed(root, filter = {}) {
         subCategoryId,
         name: raw.name,
         summary: raw.summary ?? '',
-        description: formatDescription(normalizeMarkdownLabels(raw.description ?? '')),
+        description: '',
         tags: raw.tags ?? [],
         specs: raw.specs ?? {},
         coverFile: `${base}/${mediaNames[0]}`,
         galleryFiles: mediaNames.slice(1).map((f) => `${base}/${f}`),
-        contentFile: `${base}/content.md`,
+        contentFile,
         mediaProvider: media.provider ?? packDefaults.provider ?? 'pixabay',
         mediaImageCount: imageCount
       }

@@ -3,10 +3,32 @@
   "slug": "reptile-bearded-dragon",
   "subCategoryId": "reptile-lizard",
   "name": "鬃狮蜥",
-  "summary": "沙漠宠物蜥。",
-  "description": "鬃狮蜥：沙漠宠物蜥。\n\n**概述**：鬃狮蜥在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：沙漠宠物蜥。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "鬃狮蜥（学名： Pogona vitticeps ）是 鬣蜥科、鬃狮蜥属爬行动物。 鬃狮蜥的身体粗而扁平，在背部及颈背上覆盖满了棘状鳞片，体侧的刺有规律的排列至前肢的前方。体色一般以黄色、褐色、红棕色为主，具有明显的深色斑点。成年的鬃狮蜥体长约20厘米，几乎和尾长相等。 [2 ] 遭受威胁时会以张开嘴以及将带刺的咽喉充",
+  "tags": [
+    "鬃狮蜥",
+    "Pogona vitticeps",
+    "中部鬃狮蜥"
+  ],
+  "specs": {
+    "中文名": "鬃狮蜥",
+    "拉丁学名": "Pogona vitticeps",
+    "别 名": "中部鬃狮蜥",
+    "外文名": "Central Bearded Dragon （英文） Inland Bearded Dragon",
+    "国际濒危等级": "无危(LC)",
+    "界": "动物界",
+    "门": "脊索动物门",
+    "纲": "爬行纲",
+    "目": "有鳞目",
+    "科": "鬣蜥科",
+    "属": "鬃狮蜥属",
+    "种": "鬃狮蜥",
+    "亚 门": "脊椎动物亚门",
+    "亚 纲": "双孔亚纲",
+    "亚 目": "蜥蜴亚目",
+    "亚 科": "髭蜥亚科",
+    "命名者及年代": "Ahl, 1926",
+    "摘要": "# 鬃狮蜥 鬃狮蜥（学名： Pogona vitticeps ）是 鬣蜥科、鬃狮蜥属爬行动物。 鬃狮蜥的身体粗而扁平，在背部及颈背上覆盖满了棘状鳞片，体侧的刺有规律的排列至前肢的前方。体色一般以黄色、褐色、红棕色为主，具有明显的深色斑点。成"
+  },
   "media": {
     "provider": "pixabay",
     "query": "reptile animal",
@@ -17,5 +39,6 @@
     "requiredTags": [],
     "minMatchScore": 0,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/reptile/reptile-bearded-dragon/content.md"
 }

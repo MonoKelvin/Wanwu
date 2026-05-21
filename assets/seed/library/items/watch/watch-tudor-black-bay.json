@@ -4,7 +4,6 @@
   "subCategoryId": "watch-sport",
   "name": "帝舵 Black Bay",
   "summary": "复古潜水机械。",
-  "description": "帝舵 Black Bay：复古潜水机械。\n\n**概述**：帝舵 Black Bay（Black Bay）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：复古潜水机械。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
   "tags": [],
   "specs": {},
   "media": {
@@ -18,5 +17,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/watch/watch-tudor-black-bay/content.md"
 }

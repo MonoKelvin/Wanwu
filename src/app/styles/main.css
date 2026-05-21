@@ -1953,16 +1953,26 @@ body {
   color: var(--ww-ink-muted);
 }
 
-.ww-markdown a {
+.ww-markdown a,
+.ww-markdown a.ww-md-external-link {
   color: var(--ww-ink);
   font-weight: 500;
   text-decoration: none;
+  cursor: pointer;
   transition: color var(--ww-duration-fast) var(--ww-ease-out);
 }
 
-.ww-markdown a:hover {
+.ww-markdown a:hover,
+.ww-markdown a.ww-md-external-link:hover {
   color: var(--ww-accent);
   text-decoration: underline;
+}
+
+.ww-markdown a.ww-md-external-link::after {
+  content: ' ↗';
+  font-size: 0.85em;
+  opacity: 0.6;
+  text-decoration: none;
 }
 
 .ww-markdown ul,

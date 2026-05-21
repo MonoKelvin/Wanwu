@@ -4,7 +4,6 @@
   "subCategoryId": "hero-dc",
   "name": "超人 Superman",
   "summary": "DC 漫画首位超级英雄，氪星之子克拉克·肯特，拥有飞行、热视线等经典超能力。",
-  "description": "超人（Superman）由 Jerry Siegel 与 Joe Shuster 创作，1938 年《Action Comics》#1 登场，被誉为现代超级英雄鼻祖。克拉克·肯特（Clark Kent）本名卡尔-艾尔（Kal-El），氪星毁灭前被送往地球。\n\n能力包括超级力量、飞行、热视线、冷冻呼吸、近乎免疫物理伤害。弱点为氪石、魔法、红色太阳。身份为大都会《星球日报》记者。\n\n**影视**：克里斯托弗·里夫系列、亨利·卡维尔 DCEU 版等。与蝙蝠侠、神奇女侠并称 DC 三巨头。",
   "tags": [
     "DC",
     "氪星",
@@ -30,5 +29,6 @@
     "minMatchScore": 0,
     "imageCount": 6,
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/superhero/hero-superman-dc/content.md"
 }

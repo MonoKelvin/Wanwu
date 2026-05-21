@@ -4,7 +4,6 @@
   "subCategoryId": "plant-succulent",
   "name": "拟石莲 Echeveria",
   "summary": "景天科多肉代表属，莲座状叶片、耐旱，品种繁多，易叶插繁殖。",
-  "description": "拟石莲 Echeveria：景天科多肉代表属，莲座状叶片、耐旱，品种繁多，易叶插繁殖。\n\n**植物学概览**：拟石莲 Echeveria在园艺与室内绿植场景中常见，需结合光照、湿度与基质管理。\n\n**观赏特征**：叶形、花色、生长速度与株型决定摆放位置与修剪方式。\n\n**养护要点**：浇水周期、施肥浓度、换盆与病虫害（红蜘蛛、介壳虫等）预防。\n\n**标签**：多肉、景天科、耐旱、莲座\n\n**规格参数**\n\n**分类**：多肉与仙人掌\n**科属**：景天科 · 拟石莲属\n**原产地**：墨西哥及中美\n**繁殖**：叶插、分株\n**浇水**：干透浇透\n**光照**：全日照–半日照",
   "tags": [
     "多肉",
     "景天科",
@@ -30,5 +29,6 @@
     "minMatchScore": 1,
     "imageCount": 5,
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/plant/plant-echeveria/content.md"
 }

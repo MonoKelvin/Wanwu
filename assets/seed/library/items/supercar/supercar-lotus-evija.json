@@ -4,7 +4,6 @@
   "subCategoryId": "car-italy",
   "name": "路特斯 Evija",
   "summary": "英国纯电超跑，2000hp 级四电机目标。",
-  "description": "路特斯 Evija：英国纯电超跑，2000hp 级四电机目标。\n\n**车型定位**：路特斯 Evija代表超跑/性能车谱系中的设计取向（气动、轻量化、动力形式）。\n\n**工程亮点**：车身比例、进气与扩散、悬挂与制动系统决定赛道与公路表现。\n\n**收藏语境**：限量、赛事血统与设计师语言影响二级市场与文化符号价值。\n\n**标签**：英国、Lotus、超跑、GT\n\n**规格参数**\n\n**分类**：英国品牌\n**厂商**：Lotus\n**上市**：2021\n**发动机**：四电机纯电\n**功率**：约 2000 hp\n**总部**：英国\n**传统**：赛车血统",
   "tags": [
     "英国",
     "Lotus",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/supercar/supercar-lotus-evija/content.md"
 }

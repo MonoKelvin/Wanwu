@@ -4,7 +4,6 @@
   "subCategoryId": "ill-classic",
   "name": "维纳斯的诞生",
   "summary": "波提切利贝壳与古典神话唯美。",
-  "description": "维纳斯的诞生：波提切利贝壳与古典神话唯美。\n\n**概述**：维纳斯的诞生在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：波提切利贝壳与古典神话唯美。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：艺术史、文艺复兴、波提切利、名画\n\n**规格参数**\n\n**分类**：古典绘画\n**艺术家**：波提切利\n**流派**：文艺复兴\n**年代**：1485\n**媒介**：油画 / 版画等\n**收藏**：全球主要博物馆",
   "tags": [
     "艺术史",
     "文艺复兴",
@@ -31,5 +30,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/illustration/ill-botticelli-birth-venus/content.md"
 }

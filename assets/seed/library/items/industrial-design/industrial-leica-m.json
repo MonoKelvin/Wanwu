@@ -4,7 +4,6 @@
   "subCategoryId": "id-product",
   "name": "徕卡 M 相机",
   "summary": "旁轴胶片传奇，红色圆标与德制光学。",
-  "description": "徕卡 M 相机：旁轴胶片传奇，红色圆标与德制光学。\n\n**概述**：徕卡 M 相机（M ）在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：旁轴胶片传奇，红色圆标与德制光学。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：工业设计、Leica、相机、经典\n\n**规格参数**\n\n**分类**：产品设计\n**品牌**：Leica\n**类型**：相机\n**时期**：1954\n**领域**：消费科技\n**影响**：行业标杆",
   "tags": [
     "工业设计",
     "Leica",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/industrial-design/industrial-leica-m/content.md"
 }

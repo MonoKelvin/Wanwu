@@ -4,7 +4,6 @@
   "subCategoryId": "music-percussion",
   "name": "爵士鼓组",
   "summary": "流行摇滚节奏核心。",
-  "description": "爵士鼓组：流行摇滚节奏核心。\n\n**概述**：爵士鼓组在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：流行摇滚节奏核心。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
   "tags": [],
   "specs": {},
   "media": {
@@ -15,5 +14,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/music-inst/music-inst-music-drum-kit/content.md"
 }

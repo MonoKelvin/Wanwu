@@ -141,7 +141,14 @@ export async function fetchBaikeMarkdown(keyword) {
 export function baikeKeywordsFromName(name) {
   const primary = name.split(/[（(]/)[0].trim()
   const paren = name.match(/[（(]([^）)]+)[）)]/)?.[1]?.trim()
-  const en = name.match(/[A-Za-z][A-Za-z0-9\s.-]+/)?.[0]?.trim()
+  const en = name.match(/[A-Za-z][A-Za-z0-9\s.:&'-]+/)?.[0]?.trim()
   const keys = [primary, paren, en, name.trim()].filter(Boolean)
-  return [...new Set(keys)]
+  if (primary && !/电影|影片/.test(primary)) {
+    keys.push(`${primary}电影`, `${primary}（电影）`)
+  }
+  const noSpace = primary.replace(/\s+/g, '')
+  if (noSpace !== primary) keys.push(noSpace)
+  const zhOnly = primary.replace(/[A-Za-z0-9\s.:&'-]+/g, '').trim()
+  if (zhOnly && zhOnly !== primary) keys.push(zhOnly, `${zhOnly}电影`)
+  return [...new Set(keys.filter(Boolean))].slice(0, 10)
 }

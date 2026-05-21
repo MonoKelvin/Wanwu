@@ -4,7 +4,6 @@
   "subCategoryId": "plant-aroid",
   "name": "龟背竹 Monstera deliciosa",
   "summary": "天南星科观叶植物，成熟叶片羽裂与孔洞，热带雨林附生习性，室内常见大型绿植。",
-  "description": "龟背竹（Monstera deliciosa）原产墨西哥至巴拿马热带雨林，野外常攀附乔木生长。幼叶完整，随生长出现切刻与孔洞（fenestration），利于风雨穿透、减少风阻。\n\n室内栽培需明亮散射光、排水良好介质，避免暴晒与积水。气生根可引导入水苔柱。果实成熟后据称有菠萝风味（需注意未熟果实含草酸针晶，不宜食用）。\n\n**相关**：与绿萝、蔓绿绒同科；网红绿植「热植」代表品种之一。",
   "tags": [
     "观叶",
     "天南星科",
@@ -31,5 +30,6 @@
     "minMatchScore": 1,
     "imageCount": 5,
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/plant/plant-monstera/content.md"
 }

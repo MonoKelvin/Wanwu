@@ -3,10 +3,22 @@
   "slug": "footwear-shoe-oxford",
   "subCategoryId": "shoe-dress",
   "name": "牛津鞋",
-  "summary": "封闭式正装皮鞋。",
-  "description": "牛津鞋：封闭式正装皮鞋。\n\n**概述**：牛津鞋在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：封闭式正装皮鞋。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "牛津鞋（Oxford Shoes）是源自17世纪英国 牛津大学 的制服鞋，其发源于 苏格兰 和 爱尔兰 乡间早期的无跟牛皮鞋款。最初鞋面带有实用排水孔，后演变为装饰性翼纹设计，采用绑带固定并形成厚底、高跟、鞋侧翼纹设计。1640年该鞋款由牛津大学学生引入校园，1785年至1789年间 法国 受民主思潮影响普及鞋带系统。",
+  "tags": [
+    "牛津鞋",
+    "Oxford Shoes",
+    "巴莫尔鞋、Bal鞋型、Richelieu"
+  ],
+  "specs": {
+    "中文名": "牛津鞋",
+    "外文名": "Oxford Shoes",
+    "别 名": "巴莫尔鞋、Bal鞋型、Richelieu",
+    "用 途": "正装鞋、制服鞋",
+    "发源地": "英国",
+    "材 料": "牛皮",
+    "流行时间": "19世纪",
+    "摘要": "# 牛津鞋 牛津鞋（Oxford Shoes）是源自17世纪英国 牛津大学 的制服鞋，其发源于 苏格兰 和 爱尔兰 乡间早期的无跟牛皮鞋款。最初鞋面带有实用排水孔，后演变为装饰性翼纹设计，采用绑带固定并形成厚底、高跟、鞋侧翼纹设计。1640"
+  },
   "media": {
     "provider": "pixabay",
     "query": "shoes footwear",
@@ -15,5 +27,6 @@
     "requiredTags": [],
     "minMatchScore": 1,
     "imageCount": 5
-  }
+  },
+  "contentFile": "library/footwear/footwear-shoe-oxford/content.md"
 }

@@ -3,10 +3,26 @@
   "slug": "anime-overlord",
   "subCategoryId": "anime-isekai",
   "name": "OVERLORD",
-  "summary": "骨王异世界。",
-  "description": "OVERLORD：骨王异世界。\n\n**作品信息**：OVERLORD为日本动画/漫画 IP，常涉及连载、剧场版或流媒体发行。\n\n**类型与主题**：子类决定叙事基调（少年向、异世界、日常治愈等），影响受众与讨论语境。\n\n**文化影响**：角色设定、作画风格与音乐常成为二次创作与周边生态基础。\n\n**标签**：—",
-  "tags": [],
-  "specs": {},
+  "summary": "《Overlord》是日本轻小说家丸山黄金所著的奇幻冒险小说，原为网络连载，后改编成文库轻小说，于2012年7月30日出版该作品。 [1] 繁体中文版由 台湾 角川发行，简体中文版由 新星出版社 发行，电子版由 轻文轻小说 、 爱奇艺 轻小说发布。 [2-4]",
+  "tags": [
+    "不死者之王",
+    "Overlord",
+    "丸山黄金（丸山くがね）"
+  ],
+  "specs": {
+    "中文名": "不死者之王",
+    "外文名": "Overlord",
+    "作者": "丸山黄金（丸山くがね）",
+    "作品类型": "奇幻，冒险",
+    "原 著": "オーバーロード",
+    "首版出版社": "角川书店 、 Enterbrain",
+    "插 画": "so-bin",
+    "地 区": "日本",
+    "出版期间": "2012年07月30日—连载中",
+    "刊行册数": "16卷（未完结）",
+    "其他出版社": "台湾角川（中国台湾） 新星出版社 （中国大陆）",
+    "摘要": "# Overlord（丸山黄金著作的轻小说） 《Overlord》是日本轻小说家丸山黄金所著的奇幻冒险小说，原为网络连载，后改编成文库轻小说，于2012年7月30日出版该作品。 繁体中文版由 台湾 角川发行，简体中文版由 新星出版社 发行，"
+  },
   "media": {
     "provider": "pixabay",
     "query": "fantasy anime landscape illustration",
@@ -17,5 +33,6 @@
     "requiredTags": [],
     "minMatchScore": 0,
     "imageCount": 6
-  }
+  },
+  "contentFile": "library/anime/anime-overlord/content.md"
 }

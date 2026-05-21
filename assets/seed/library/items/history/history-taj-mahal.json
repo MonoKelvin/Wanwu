@@ -4,7 +4,6 @@
   "subCategoryId": "hist-world",
   "name": "泰姬陵",
   "summary": "莫卧儿白色大理石陵墓，爱情与对称美学。",
-  "description": "泰姬陵：莫卧儿白色大理石陵墓，爱情与对称美学。\n\n**概述**：泰姬陵在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：莫卧儿白色大理石陵墓，爱情与对称美学。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：世界遗产、印度、17 世纪、古代\n\n**规格参数**\n\n**分类**：世界史迹\n**地点**：印度\n**时代**：17 世纪\n**地位**：世界遗产\n**文明**：多元古代文明\n**保护**：UNESCO",
   "tags": [
     "世界遗产",
     "印度",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/history/history-taj-mahal/content.md"
 }

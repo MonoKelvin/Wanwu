@@ -4,7 +4,6 @@
   "subCategoryId": "ui-design-tool",
   "name": "响应式栅格",
   "summary": "断点、流式布局与容器查询现代 CSS。",
-  "description": "响应式栅格：断点、流式布局与容器查询现代 CSS。\n\n**概述**：响应式栅格在本分类中作为代表性条目，用于科普与视觉参考。\n\n**特征**：断点、流式布局与容器查询现代 CSS。\n\n**延伸**：可与同子类条目对照，理解设计/自然/文化史脉络。\n\n**标签**：Web、UI、CSS Grid、布局\n\n**规格参数**\n\n**分类**：Web UI\n**技术**：CSS Grid\n**重点**：布局\n**交付**：设计 + 前端\n**趋势**：Server Components\n**工具**：Figma / Storybook",
   "tags": [
     "Web",
     "UI",
@@ -30,5 +29,6 @@
     "imageCount": 5,
     "category": "all",
     "requiredTags": []
-  }
+  },
+  "contentFile": "library/ui-design/ui-responsive-grid/content.md"
 }
