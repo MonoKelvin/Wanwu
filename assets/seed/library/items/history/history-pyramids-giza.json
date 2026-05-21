@@ -6,9 +6,9 @@
   "summary": "胡夫金字塔与狮身人面像，古埃及王权。",
   "tags": [
     "世界遗产",
-    "埃及",
     "公元前 26 世纪",
-    "古代"
+    "古代",
+    "埃及"
   ],
   "specs": {
     "分类": "世界史迹",
@@ -25,7 +25,7 @@
       "世界遗产",
       "公元前 26 世纪"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "摩托古兹 V7",
   "summary": "横置 V 双缸经典，意大利巡航传统。",
   "tags": [
-    "意大利",
-    "Moto Guzzi",
     "摩托",
-    "仿赛"
+    "仿赛",
+    "意大利",
+    "Moto Guzzi"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -25,7 +25,7 @@
       "意大利",
       "moto guzzi"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

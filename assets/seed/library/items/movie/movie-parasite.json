@@ -3,28 +3,22 @@
   "slug": "movie-parasite",
   "subCategoryId": "movie-horror",
   "name": "寄生虫 Parasite",
-  "summary": "《Parasite》是美国摇滚乐队 Kiss 演唱的歌曲，收录于专辑《Ikons》及多张精选集中。该曲以快节奏摇滚为基底，结合硬核吉他演奏与舞台化表演风格，展现了乐队标志性的戏剧张力 [1] 。 歌词通过\"火の元着火\"\"路地裏Life\"等街头意象，隐喻都市边缘群体的生存困境，反复出现的\"I’d eat U\"宣言强化社会",
+  "summary": "《Parasite》是美国摇滚乐队 Kiss 演唱的歌曲，收录于专辑《Ikons》及多张精选集中。",
   "tags": [
-    "动作",
-    "电影",
     "社会惊悚",
-    "奉俊昊",
-    "动作 / 犯罪电影",
-    "2019"
+    "电影",
+    "动作",
+    "动作 / 犯罪电影"
   ],
   "specs": {
+    "类型": "社会惊悚",
+    "导演": "奉俊昊",
     "分类": "动作 / 犯罪电影",
     "年份": "2019",
-    "导演": "奉俊昊",
-    "类型": "社会惊悚",
     "特技": "实拍 / 特技混合",
     "影响": "类型模板",
     "外文名": "parasite",
-    "所属专辑": "Ikons、Gold、Chronicles",
-    "歌曲时长": "0时3分34秒",
-    "歌曲原唱": "Kiss",
-    "音乐风格": "摇滚",
-    "摘要": "# parasite 《Parasite》是美国摇滚乐队 Kiss 演唱的歌曲，收录于专辑《Ikons》及多张精选集中。该曲以快节奏摇滚为基底，结合硬核吉他演奏与舞台化表演风格，展现了乐队标志性的戏剧张力 。 歌词通过\"火の元着火\"\"路地裏"
+    "所属专辑": "Ikons、Gold、Chronicles"
   },
   "media": {
     "provider": "pixabay",
@@ -34,7 +28,7 @@
       "奉俊昊",
       "parasite"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

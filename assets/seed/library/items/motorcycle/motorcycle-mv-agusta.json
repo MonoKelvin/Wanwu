@@ -5,10 +5,10 @@
   "name": "MV Agusta",
   "summary": "意大利手工跑车美学，三缸/四缸高转。",
   "tags": [
-    "意大利",
-    "MV Agusta",
     "摩托",
-    "仿赛"
+    "仿赛",
+    "意大利",
+    "MV Agusta"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -25,7 +25,7 @@
       "意大利",
       "mv agusta"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

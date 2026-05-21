@@ -5,9 +5,9 @@
   "name": "川崎 Ninja ZX-10R",
   "summary": "绿色猛兽，WSBK 冠军常客。",
   "tags": [
-    "日本",
     "Kawasaki",
     "摩托",
+    "日本",
     "约 203 hp"
   ],
   "specs": {
@@ -26,7 +26,7 @@
       "约 203 hp",
       "ninja"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

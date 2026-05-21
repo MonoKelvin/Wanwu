@@ -6,8 +6,8 @@
   "summary": "英国威尔特郡史前石圈，天文与仪式之谜。",
   "tags": [
     "世界遗产",
-    "英国",
     "史前",
+    "英国",
     "古代"
   ],
   "specs": {
@@ -24,7 +24,7 @@
     "matchTags": [
       "世界遗产"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

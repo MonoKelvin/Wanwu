@@ -5,10 +5,10 @@
   "name": "数字概念艺术",
   "summary": "影视游戏前期场景与角色氛围设定。",
   "tags": [
-    "数字绘画",
-    "概念设计",
+    "插画",
     "Photoshop / Blender",
-    "插画"
+    "数字绘画",
+    "概念设计"
   ],
   "specs": {
     "分类": "数字插画",
@@ -26,7 +26,7 @@
       "概念设计",
       "photoshop / blender"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

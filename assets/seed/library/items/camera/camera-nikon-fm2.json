@@ -3,18 +3,35 @@
   "slug": "camera-nikon-fm2",
   "subCategoryId": "cam-film",
   "name": "尼康 FM2",
-  "summary": "机械胶片单反。",
-  "tags": [],
-  "specs": {},
+  "summary": "机械胶片单反，入门好帮手",
+  "tags": [
+    "FM2",
+    "尼康",
+    "胶片单反",
+    "机械相机"
+  ],
+  "specs": {
+    "品牌": "尼康 Nikon",
+    "类型": "机械胶片单反",
+    "快门类型": "机械快门",
+    "最高速度": "1/4000秒",
+    "闪光灯同步": "1/200秒",
+    "制造时间": "1982年",
+    "机身材质": "黄铜顶板",
+    "评价": "入门好帮手"
+  },
   "media": {
     "provider": "pixabay",
-    "query": "FM2 camera photography",
+    "query": "尼康 FM2 nikon fm2 film camera",
     "category": "all",
     "matchTags": [
-      "fm2"
+      "nikon",
+      "camera"
     ],
-    "requiredTags": [],
-    "minMatchScore": 1,
+    "requiredTags": [
+      "camera"
+    ],
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/camera/camera-nikon-fm2/content.md"

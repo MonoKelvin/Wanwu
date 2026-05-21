@@ -5,10 +5,10 @@
   "name": "游戏启动图",
   "summary": "登录界面与版本 KV 商业插画。",
   "tags": [
+    "插画",
     "数字绘画",
-    "商业",
     "手游",
-    "插画"
+    "商业"
   ],
   "specs": {
     "分类": "数字插画",
@@ -24,7 +24,7 @@
     "matchTags": [
       "数字绘画"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,9 +5,9 @@
   "name": "马丘比丘",
   "summary": "印加高原空中古城，安第斯云雾中的石砌奇迹。",
   "tags": [
+    "15 世纪",
     "世界遗产",
     "秘鲁",
-    "15 世纪",
     "古代"
   ],
   "specs": {
@@ -25,7 +25,7 @@
       "世界遗产",
       "15 世纪"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "海岸风",
   "summary": "蓝白条纹、麻绳与浅色木地板海滨度假感。",
   "tags": [
-    "北欧",
     "家装",
-    "海岸",
-    "度假"
+    "度假",
+    "北欧",
+    "海岸"
   ],
   "specs": {
     "分类": "北欧风格",
@@ -22,7 +22,7 @@
     "provider": "pixabay",
     "query": "interior design room",
     "matchTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

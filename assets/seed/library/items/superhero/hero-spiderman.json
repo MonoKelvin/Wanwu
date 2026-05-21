@@ -5,10 +5,10 @@
   "name": "蜘蛛侠 Spider-Man",
   "summary": "漫威最具代表性的街头英雄，彼得·帕克被放射性蜘蛛咬后获得爬墙与蜘蛛感应。",
   "tags": [
-    "漫威",
+    "街头英雄",
     "Marvel",
-    "纽约",
-    "街头英雄"
+    "漫威",
+    "纽约"
   ],
   "specs": {
     "宇宙": "漫威 Marvel",
@@ -28,7 +28,7 @@
       "spider"
     ],
     "requiredTags": [],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6
   },
   "contentFile": "library/superhero/hero-spiderman/content.md"

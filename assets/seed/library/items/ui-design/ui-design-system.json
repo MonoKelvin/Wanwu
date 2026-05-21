@@ -5,8 +5,8 @@
   "name": "设计系统",
   "summary": "Token、组件库与文档站点统一产品视觉。",
   "tags": [
-    "移动端",
     "UI",
+    "移动端",
     "Storybook",
     "系统"
   ],
@@ -25,7 +25,7 @@
       "移动端",
       "storybook"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

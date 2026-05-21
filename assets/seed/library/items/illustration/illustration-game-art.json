@@ -5,9 +5,9 @@
   "name": "游戏美术",
   "summary": "原画、立绘与 UI 风格统一的视觉体系。",
   "tags": [
-    "数字绘画",
-    "游戏",
     "Unity / Unreal",
+    "游戏",
+    "数字绘画",
     "插画"
   ],
   "specs": {
@@ -25,7 +25,7 @@
       "数字绘画",
       "unity / unreal"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

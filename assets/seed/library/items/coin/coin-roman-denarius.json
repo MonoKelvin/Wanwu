@@ -3,11 +3,11 @@
   "slug": "coin-roman-denarius",
   "subCategoryId": "coin-ancient",
   "name": "罗马银币第纳尔",
-  "summary": "第纳尔是起源于罗马帝国银币Denarius的货币单位，其名称在西班牙语和葡萄牙语中保留词源特征。Denarius继承Solidus金币后，其涵义演变为指代金币 [1] 。现流通于伊拉克、利比亚、突尼斯、阿尔及利亚等国。阿尔及利亚第纳尔由中央银行发行，纸币面值包括5至1000第纳尔，硬币面值包括1分、2分、5分、10分、",
+  "summary": "第纳尔是起源于罗马帝国银币Denarius的货币单位，其名称在西班牙语和葡萄牙语中保留词源特征。",
   "tags": [
-    "罗马",
     "古罗马",
     "第纳尔",
+    "罗马",
     "Denarius"
   ],
   "specs": {
@@ -18,8 +18,7 @@
     "应用国家": "伊拉克 、 利比亚 、 突尼斯 等",
     "发源地": "大马士革",
     "创始人": "哈里发阿布杜勒·马利克",
-    "性 质": "货币",
-    "摘要": "# 第纳尔 第纳尔是起源于罗马帝国银币Denarius的货币单位，其名称在西班牙语和葡萄牙语中保留词源特征。Denarius继承Solidus金币后，其涵义演变为指代金币 。现流通于伊拉克、利比亚、突尼斯、阿尔及利亚等国。阿尔及利亚第纳尔由"
+    "性 质": "货币"
   },
   "media": {
     "provider": "pixabay",
@@ -27,7 +26,7 @@
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/coin/coin-roman-denarius/content.md"

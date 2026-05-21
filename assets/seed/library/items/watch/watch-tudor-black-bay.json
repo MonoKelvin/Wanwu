@@ -8,14 +8,14 @@
   "specs": {},
   "media": {
     "provider": "pixabay",
-    "query": "luxury wristwatch macro dial leather strap",
+    "query": "帝舵 Black Bay luxury wristwatch macro dial leather strap",
     "category": "all",
     "matchTags": [
       "black",
       "watch"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/watch/watch-tudor-black-bay/content.md"

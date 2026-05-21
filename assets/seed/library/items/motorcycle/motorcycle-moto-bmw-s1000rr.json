@@ -16,7 +16,7 @@
       "bmw"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6
   },
   "contentFile": "library/motorcycle/motorcycle-moto-bmw-s1000rr/content.md"

@@ -5,10 +5,10 @@
   "name": "雅马哈 XSR900",
   "summary": "复古运动三缸，咖啡赛车风格。",
   "tags": [
-    "日本",
-    "Yamaha",
     "摩托",
-    "复古"
+    "复古",
+    "日本",
+    "Yamaha"
   ],
   "specs": {
     "分类": "日本品牌",
@@ -25,7 +25,7 @@
       "yamaha",
       "xsr900"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

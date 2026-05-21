@@ -5,10 +5,10 @@
   "name": "无障碍设计",
   "summary": "WCAG 对比度、屏幕阅读器与包容性交互。",
   "tags": [
-    "移动端",
+    "包容",
     "UI",
-    "WCAG",
-    "包容"
+    "移动端",
+    "WCAG"
   ],
   "specs": {
     "分类": "移动 UI",
@@ -25,7 +25,7 @@
       "移动端",
       "wcag"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "屠夫 Billy Butcher",
   "summary": "《黑袍纠察队》领袖，痛恨超级英雄，冷酷复仇驱动纠察队。",
   "tags": [
-    "黑袍纠察队",
+    "领袖",
     "人类",
     "复仇",
-    "领袖"
+    "黑袍纠察队"
   ],
   "specs": {
     "作品": "The Boys",
@@ -25,7 +25,7 @@
       "黑袍纠察队",
       "billy"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

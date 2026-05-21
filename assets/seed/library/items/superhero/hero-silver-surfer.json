@@ -6,8 +6,8 @@
   "summary": "诺林·拉德，行星吞噬者前使者，宇宙级英雄。",
   "tags": [
     "漫威",
-    "宇宙",
-    "冲浪板"
+    "冲浪板",
+    "宇宙"
   ],
   "specs": {
     "宇宙": "漫威 Marvel",
@@ -22,7 +22,7 @@
       "冲浪板",
       "silver"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "平遥古城",
   "summary": "保存完整的明清县城格局与票号金融史。",
   "tags": [
-    "中国",
     "世界遗产",
     "山西",
-    "明清"
+    "明清",
+    "中国"
   ],
   "specs": {
     "分类": "中国史迹",
@@ -24,7 +24,7 @@
     "matchTags": [
       "世界遗产"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

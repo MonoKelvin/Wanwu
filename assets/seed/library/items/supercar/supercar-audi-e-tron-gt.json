@@ -5,10 +5,10 @@
   "name": "奥迪 e-tron GT",
   "summary": "与 Taycan 同平台电动 GT，quattro 与优雅轿跑线条。",
   "tags": [
+    "精密工程",
     "德国",
-    "Audi",
     "超跑",
-    "精密工程"
+    "Audi"
   ],
   "specs": {
     "分类": "德国品牌",
@@ -27,7 +27,7 @@
       "精密工程",
       "tron"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

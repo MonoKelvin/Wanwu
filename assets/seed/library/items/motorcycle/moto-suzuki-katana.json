@@ -5,10 +5,10 @@
   "name": "铃木 Katana",
   "summary": "刀锋造型复兴，现代街车致敬 80 年代。",
   "tags": [
-    "日本",
-    "Suzuki",
     "摩托",
-    "街车"
+    "日本",
+    "街车",
+    "Suzuki"
   ],
   "specs": {
     "分类": "日本品牌",
@@ -25,7 +25,7 @@
       "suzuki",
       "katana"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

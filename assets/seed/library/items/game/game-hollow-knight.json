@@ -3,11 +3,10 @@
   "slug": "game-hollow-knight",
   "subCategoryId": "game-indie",
   "name": "空洞骑士",
-  "summary": "空洞骑士（英文名：The Hollow Knight），别称前辈、纯粹容器，是游戏《空洞骑士》中的最终BOSS角色，主题曲包含《被封印的容器》与《纯粹容器》。由 苍白之王 创造的虚空容器，诞生于深渊并使用骨钉作战，其使命为封印瘟疫源头 辐光 。因未能完全消除情感导致感染外泄，最终在黑卵圣殿被玩家操控的小骑士击败。 空洞",
+  "summary": "空洞骑士（英文名：The Hollow Knight），别称前辈、纯粹容器，是游戏《空洞骑士》中的最终BOSS角色，主题曲包含《被封印的容器》与《纯粹容器》。",
   "tags": [
     "空洞骑士",
-    "The Hollow Knight",
-    "前辈 、 仙贝 、 只虫 、 THK、PV（一般指纯粹容器） 、 被选中的容器"
+    "The Hollow Knight"
   ],
   "specs": {
     "中文名": "空洞骑士",
@@ -17,8 +16,7 @@
     "实 力": "在神居中有“强大的虚无之神”之称，寻神者描述其为骑士万神殿的统治者，并称其具有“无尽力量”",
     "武 器": "骨钉",
     "主题曲": "被封印的容器（于黑卵登场时）、纯粹容器（于诸神堂或骑士万神殿、圣巢万神殿登场时）",
-    "诞生地": "深渊",
-    "摘要": "# 空洞骑士（游戏《空洞骑士》中的最终Boss之一） 空洞骑士（英文名：The Hollow Knight），别称前辈、纯粹容器，是游戏《空洞骑士》中的最终BOSS角色，主题曲包含《被封印的容器》与《纯粹容器》。由 苍白之王 创造的虚空容器"
+    "诞生地": "深渊"
   },
   "media": {
     "provider": "pixabay",
@@ -26,7 +24,7 @@
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6
   },
   "contentFile": "library/game/game-hollow-knight/content.md"

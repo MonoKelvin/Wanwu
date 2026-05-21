@@ -5,10 +5,10 @@
   "name": "迈凯伦 Artura",
   "summary": "混动 V6 新平台，英国超跑电气化转折点。",
   "tags": [
-    "英国",
-    "McLaren",
     "超跑",
-    "GT"
+    "GT",
+    "英国",
+    "McLaren"
   ],
   "specs": {
     "分类": "英国品牌",
@@ -26,7 +26,7 @@
       "mclaren",
       "artura"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

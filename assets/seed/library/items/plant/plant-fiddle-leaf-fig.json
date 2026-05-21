@@ -6,9 +6,9 @@
   "summary": "桑科榕属大型观叶植物，提琴形叶片，北欧风与热带风室内设计的经典品种。",
   "tags": [
     "琴叶榕",
-    "桑科",
     "观叶",
-    "室内"
+    "室内",
+    "桑科"
   ],
   "specs": {
     "分类": "桑科观叶",
@@ -25,7 +25,7 @@
       "琴叶榕",
       "ficus"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "requiredTags": []
   },

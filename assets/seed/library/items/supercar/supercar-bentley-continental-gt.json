@@ -5,10 +5,10 @@
   "name": "宾利欧陆 GT",
   "summary": "奢华与 W12 双涡轮速度的结合，手工内饰典范。",
   "tags": [
-    "英国",
     "Bentley",
     "超跑",
-    "GT"
+    "GT",
+    "英国"
   ],
   "specs": {
     "分类": "英国品牌",
@@ -25,7 +25,7 @@
     "matchTags": [
       "bentley"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "深色模式",
   "summary": "OLED 省电与夜间可读性，对比度与 elevation 规范。",
   "tags": [
-    "移动端",
     "UI",
-    "iOS / Android",
-    "主题"
+    "移动端",
+    "主题",
+    "iOS / Android"
   ],
   "specs": {
     "分类": "移动 UI",
@@ -25,7 +25,7 @@
       "移动端",
       "ios / android"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

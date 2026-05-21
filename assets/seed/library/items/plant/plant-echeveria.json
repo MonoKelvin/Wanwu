@@ -5,8 +5,8 @@
   "name": "拟石莲 Echeveria",
   "summary": "景天科多肉代表属，莲座状叶片、耐旱，品种繁多，易叶插繁殖。",
   "tags": [
-    "多肉",
     "景天科",
+    "多肉",
     "耐旱",
     "莲座"
   ],
@@ -26,7 +26,7 @@
       "景天科",
       "echeveria"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "requiredTags": []
   },

@@ -6,9 +6,9 @@
   "summary": "机器恐龙首领，霸王龙变形，说话简短力量惊人。",
   "tags": [
     "汽车人",
-    "Hasbro",
+    "恐龙派",
     "变形",
-    "恐龙派"
+    "Hasbro"
   ],
   "specs": {
     "分类": "汽车人 Autobot",
@@ -27,7 +27,7 @@
       "恐龙派",
       "grimlock"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

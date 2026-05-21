@@ -23,7 +23,7 @@
       "力量型",
       "hulk"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

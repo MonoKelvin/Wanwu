@@ -5,10 +5,10 @@
   "name": "杜卡迪 Streetfighter V4",
   "summary": "裸缸 V4 街霸，Panigale 动力平台。",
   "tags": [
-    "意大利",
     "Ducati",
-    "摩托",
-    "仿赛"
+    "仿赛",
+    "意大利",
+    "摩托"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -26,7 +26,7 @@
       "ducati",
       "streetfighter"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

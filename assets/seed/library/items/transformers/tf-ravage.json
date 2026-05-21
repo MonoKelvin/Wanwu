@@ -5,9 +5,9 @@
   "name": "机器狗 Ravage",
   "summary": "声波磁带战士，黑豹形态侦察。",
   "tags": [
+    "变形",
     "霸天虎",
     "反派",
-    "变形",
     "磁带战士"
   ],
   "specs": {
@@ -26,7 +26,7 @@
       "磁带战士",
       "ravage"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

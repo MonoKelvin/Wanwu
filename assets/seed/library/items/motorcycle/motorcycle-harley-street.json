@@ -6,9 +6,9 @@
   "summary": "美国哈雷入门级街车，V 型双缸，面向城市通勤与新手骑士的「黑色星期五」系列。",
   "tags": [
     "哈雷",
-    "美式",
     "巡航",
-    "V缸"
+    "V缸",
+    "美式"
   ],
   "specs": {
     "分类": "美式巡航",
@@ -25,7 +25,7 @@
     "matchTags": [
       "street"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "requiredTags": []
   },

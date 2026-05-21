@@ -6,9 +6,9 @@
   "summary": "武器专家，皮卡变形，老兵性格刚烈。",
   "tags": [
     "汽车人",
-    "Hasbro",
     "变形",
-    "武器专家"
+    "武器专家",
+    "Hasbro"
   ],
   "specs": {
     "分类": "汽车人 Autobot",
@@ -27,7 +27,7 @@
       "武器专家",
       "ironhide"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

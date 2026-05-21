@@ -6,8 +6,8 @@
   "summary": "罗根，艾德曼合金爪与再生能力，X 战警标志角色。",
   "tags": [
     "漫威",
-    "X战警",
-    "变种人"
+    "变种人",
+    "X战警"
   ],
   "specs": {
     "宇宙": "漫威 Marvel",
@@ -24,7 +24,7 @@
       "变种人",
       "wolverine"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

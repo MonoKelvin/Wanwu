@@ -5,10 +5,10 @@
   "name": "角色设计",
   "summary": "造型、服装与性格可视化的创作流程。",
   "tags": [
-    "数字绘画",
-    "IP 开发",
     "三视图",
-    "插画"
+    "插画",
+    "数字绘画",
+    "IP 开发"
   ],
   "specs": {
     "分类": "数字插画",
@@ -26,7 +26,7 @@
       "ip 开发",
       "三视图"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

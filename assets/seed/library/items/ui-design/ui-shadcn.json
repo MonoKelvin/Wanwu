@@ -5,10 +5,10 @@
   "name": "shadcn/ui",
   "summary": "基于 Radix 与 Tailwind 的可复制组件代码模式。",
   "tags": [
-    "Web",
+    "组件",
     "UI",
     "React",
-    "组件"
+    "Web"
   ],
   "specs": {
     "分类": "Web UI",
@@ -25,7 +25,7 @@
       "web",
       "ui"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

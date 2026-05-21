@@ -23,7 +23,7 @@
       "至尊法师",
       "doctor"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

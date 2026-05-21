@@ -5,10 +5,10 @@
   "name": "哈雷 Fat Boy",
   "summary": "实心盘轮经典巡航，终结者 2 同款意象。",
   "tags": [
-    "美式",
     "Harley-Davidson",
+    "约 93 hp",
     "巡航",
-    "约 93 hp"
+    "美式"
   ],
   "specs": {
     "分类": "美式巡航",
@@ -26,7 +26,7 @@
       "约 93 hp",
       "fat"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

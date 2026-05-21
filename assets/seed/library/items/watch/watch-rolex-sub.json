@@ -3,20 +3,35 @@
   "slug": "watch-rolex-sub",
   "subCategoryId": "watch-luxury",
   "name": "劳力士潜航者",
-  "summary": "潜水表标杆。",
+  "summary": "潜水表标杆，绿水鬼家喻户晓",
   "tags": [
-    "腕表"
+    "潜水表",
+    "瑞士腕表",
+    "绿水鬼",
+    "劳力士"
   ],
-  "specs": {},
+  "specs": {
+    "品牌": "劳力士 Rolex",
+    "系列": "潜航者型",
+    "表壳材质": "蚝式钢",
+    "防水深度": "300米",
+    "机芯类型": "自动上链",
+    "表径": "41毫米",
+    "经典特性": "日历放大镜",
+    "地位": "潜水表标杆"
+  },
   "media": {
     "provider": "pixabay",
-    "query": "luxury wristwatch macro dial leather strap",
+    "query": "劳力士潜航者 rolex submariner watch",
     "category": "all",
     "matchTags": [
+      "watch",
+      "rolex"
+    ],
+    "requiredTags": [
       "watch"
     ],
-    "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/watch/watch-rolex-sub/content.md"

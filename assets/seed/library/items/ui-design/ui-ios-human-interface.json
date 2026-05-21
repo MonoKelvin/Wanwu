@@ -5,10 +5,10 @@
   "name": "Apple Human Interface Guidelines",
   "summary": "苹果人机界面指南，定义 iOS/iPadOS 导航、触控目标与无障碍设计原则。",
   "tags": [
-    "Apple",
     "iOS",
-    "HIG",
-    "SwiftUI"
+    "SwiftUI",
+    "Apple",
+    "HIG"
   ],
   "specs": {
     "分类": "移动端规范",
@@ -28,7 +28,7 @@
       "hig",
       "swiftui"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

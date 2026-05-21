@@ -10,13 +10,13 @@
   "specs": {},
   "media": {
     "provider": "pixabay",
-    "query": "luxury wristwatch macro dial leather strap",
+    "query": "欧米茄超霸 luxury wristwatch macro dial leather strap",
     "category": "all",
     "matchTags": [
       "watch"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/watch/watch-omega-speedmaster/content.md"

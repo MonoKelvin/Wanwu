@@ -5,8 +5,8 @@
   "name": "兰博基尼 Countach LPI 800-4",
   "summary": "经典楔形超跑现代复兴，混动 V12 向 Marcello Gandini 设计致敬。",
   "tags": [
-    "意大利",
     "Lamborghini",
+    "意大利",
     "超跑",
     "V8/V12"
   ],
@@ -28,7 +28,7 @@
       "v8/v12",
       "countach"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "三星 One UI",
   "summary": "大屏单手友好与折叠屏适配。",
   "tags": [
-    "移动端",
+    "安卓",
     "UI",
-    "One UI",
-    "安卓"
+    "移动端",
+    "One UI"
   ],
   "specs": {
     "分类": "移动 UI",
@@ -26,7 +26,7 @@
       "one ui",
       "one"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

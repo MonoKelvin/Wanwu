@@ -5,10 +5,10 @@
   "name": "震荡波 Shockwave",
   "summary": "赛博坦留守科学家，激光炮手臂，逻辑冷酷。",
   "tags": [
-    "霸天虎",
-    "反派",
+    "科学家",
     "变形",
-    "科学家"
+    "霸天虎",
+    "反派"
   ],
   "specs": {
     "分类": "霸天虎 Decepticon",
@@ -26,7 +26,7 @@
       "科学家",
       "shockwave"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

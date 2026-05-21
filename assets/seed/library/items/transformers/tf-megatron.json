@@ -5,9 +5,9 @@
   "name": "威震天 Megatron",
   "summary": "霸天虎领袖，常变形为手枪或坦克/战机（因系列而异），擎天柱宿敌。",
   "tags": [
-    "霸天虎",
-    "Decepticon",
     "领袖",
+    "Decepticon",
+    "霸天虎",
     "宿敌"
   ],
   "specs": {
@@ -27,7 +27,7 @@
       "decepticon",
       "megatron"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

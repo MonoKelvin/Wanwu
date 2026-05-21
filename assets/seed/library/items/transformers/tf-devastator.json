@@ -5,10 +5,10 @@
   "name": "大力神 Devastator",
   "summary": "工程车合体金刚，六合一破坏力。",
   "tags": [
-    "霸天虎",
-    "反派",
+    "合体金刚",
     "变形",
-    "合体金刚"
+    "霸天虎",
+    "反派"
   ],
   "specs": {
     "分类": "霸天虎 Decepticon",
@@ -26,7 +26,7 @@
       "合体金刚",
       "devastator"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

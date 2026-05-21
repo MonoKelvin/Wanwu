@@ -5,9 +5,9 @@
   "name": "川崎 Versys 650",
   "summary": "多用途街旅，舒适坐姿。",
   "tags": [
-    "日本",
     "Kawasaki",
     "摩托",
+    "日本",
     "街旅"
   ],
   "specs": {
@@ -25,7 +25,7 @@
       "kawasaki",
       "versys"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

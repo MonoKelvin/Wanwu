@@ -5,10 +5,10 @@
   "name": "吵闹 Brawl",
   "summary": "战车队坦克，组合金刚混天豹腿部，火力凶猛。",
   "tags": [
-    "霸天虎",
-    "反派",
     "变形",
-    "战车队"
+    "霸天虎",
+    "战车队",
+    "反派"
   ],
   "specs": {
     "分类": "霸天虎 Decepticon",
@@ -26,7 +26,7 @@
       "战车队",
       "brawl"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

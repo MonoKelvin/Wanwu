@@ -5,9 +5,9 @@
   "name": "死侍 Deadpool",
   "summary": "韦德·威尔逊再生能力与打破第四墙的反英雄。",
   "tags": [
+    "再生",
     "漫威",
-    "反英雄",
-    "再生"
+    "反英雄"
   ],
   "specs": {
     "宇宙": "漫威 Marvel",
@@ -22,7 +22,7 @@
       "反英雄",
       "deadpool"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

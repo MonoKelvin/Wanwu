@@ -6,9 +6,9 @@
   "summary": "女性汽车人战士，粉色流线车体，敏捷射手。",
   "tags": [
     "汽车人",
-    "Hasbro",
     "变形",
-    "女战士"
+    "女战士",
+    "Hasbro"
   ],
   "specs": {
     "分类": "汽车人 Autobot",
@@ -27,7 +27,7 @@
       "女战士",
       "arcee"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

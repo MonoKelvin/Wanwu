@@ -5,8 +5,8 @@
   "name": "玛莎拉蒂 GranCabrio",
   "summary": "意式敞篷 GT，声浪与奢华内饰兼顾地中海生活方式。",
   "tags": [
-    "意大利",
     "Maserati",
+    "意大利",
     "超跑",
     "V8/V12"
   ],
@@ -28,7 +28,7 @@
       "v8/v12",
       "grancabrio"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

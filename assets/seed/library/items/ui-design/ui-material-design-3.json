@@ -5,10 +5,10 @@
   "name": "Material Design 3",
   "summary": "Google 2021 年推出的跨平台设计系统，强调动态配色、圆角与无障碍组件。",
   "tags": [
-    "Google",
-    "Android",
     "设计系统",
-    "Material You"
+    "Android",
+    "Material You",
+    "Google"
   ],
   "specs": {
     "分类": "移动端规范",
@@ -29,7 +29,7 @@
       "material you",
       "material"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

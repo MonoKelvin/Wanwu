@@ -5,10 +5,10 @@
   "name": "颐和园",
   "summary": "昆明湖与万寿山皇家园林。",
   "tags": [
-    "中国",
     "世界遗产",
+    "清代",
     "北京",
-    "清代"
+    "中国"
   ],
   "specs": {
     "分类": "中国史迹",
@@ -24,7 +24,7 @@
     "matchTags": [
       "世界遗产"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

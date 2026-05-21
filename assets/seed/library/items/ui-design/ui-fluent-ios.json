@@ -5,10 +5,10 @@
   "name": "Fluent / iOS 风格",
   "summary": "微软 Fluent 与苹果 HIG 平台规范对比。",
   "tags": [
-    "移动端",
+    "原生",
     "UI",
-    "平台规范",
-    "原生"
+    "移动端",
+    "平台规范"
   ],
   "specs": {
     "分类": "移动 UI",
@@ -26,7 +26,7 @@
       "平台规范",
       "fluent"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

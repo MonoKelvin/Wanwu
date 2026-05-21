@@ -5,10 +5,10 @@
   "name": "阿斯顿·马丁 DB11",
   "summary": "英伦 GT 旗舰，V12 与 V8 传承詹姆斯·邦德气质。",
   "tags": [
-    "英国",
     "Aston Martin",
     "超跑",
-    "GT"
+    "GT",
+    "英国"
   ],
   "specs": {
     "分类": "英国品牌",
@@ -26,7 +26,7 @@
       "aston martin",
       "db11"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

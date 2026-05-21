@@ -5,10 +5,10 @@
   "name": "侘寂 Wabi-Sabi",
   "summary": "不完美、无常与朴素美的日式美学空间。",
   "tags": [
-    "日式",
+    "茶室",
     "禅意",
-    "侘寂",
-    "茶室"
+    "日式",
+    "侘寂"
   ],
   "specs": {
     "分类": "日式禅意",
@@ -24,7 +24,7 @@
     "matchTags": [
       "wabi"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

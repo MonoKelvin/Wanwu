@@ -8,11 +8,11 @@
   "specs": {},
   "media": {
     "provider": "pixabay",
-    "query": "camera photography",
+    "query": "热靴机顶闪光灯 camera photography",
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/camera/camera-flash/content.md"

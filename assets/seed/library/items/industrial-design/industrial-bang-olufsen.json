@@ -5,10 +5,10 @@
   "name": "B&O 音响",
   "summary": "丹麦雕塑感音响与铝材加工美学。",
   "tags": [
-    "工业设计",
     "Bang & Olufsen",
-    "音频",
-    "经典"
+    "工业设计",
+    "经典",
+    "音频"
   ],
   "specs": {
     "分类": "产品设计",
@@ -25,7 +25,7 @@
       "工业设计",
       "bang & olufsen"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

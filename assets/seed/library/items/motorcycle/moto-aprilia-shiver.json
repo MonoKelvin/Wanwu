@@ -5,10 +5,10 @@
   "name": "阿普利亚 Shiver 900",
   "summary": "街车 V 双缸，城市运动骑行。",
   "tags": [
-    "意大利",
-    "Aprilia",
     "摩托",
-    "仿赛"
+    "仿赛",
+    "意大利",
+    "Aprilia"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -26,7 +26,7 @@
       "aprilia",
       "shiver"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

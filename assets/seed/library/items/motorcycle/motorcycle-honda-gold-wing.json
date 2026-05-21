@@ -5,9 +5,9 @@
   "name": "本田 Gold Wing",
   "summary": "豪华旅行车旗舰，水平对置六缸顺滑。",
   "tags": [
-    "日本",
-    "Honda",
     "摩托",
+    "Honda",
+    "日本",
     "旅行旗舰"
   ],
   "specs": {
@@ -26,7 +26,7 @@
       "旅行旗舰",
       "gold"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

@@ -14,7 +14,7 @@
       "turbo"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/supercar/supercar-porsche-911-turbo/content.md"

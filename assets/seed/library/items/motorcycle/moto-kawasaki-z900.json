@@ -5,9 +5,9 @@
   "name": "川崎 Z900",
   "summary": "四缸街车性价比，Z 系列街头暴力美学。",
   "tags": [
-    "日本",
     "Kawasaki",
     "摩托",
+    "日本",
     "街车"
   ],
   "specs": {
@@ -25,7 +25,7 @@
       "motorcycle",
       "kawasaki"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

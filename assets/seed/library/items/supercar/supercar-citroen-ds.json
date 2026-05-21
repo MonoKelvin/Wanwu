@@ -5,8 +5,8 @@
   "name": "雪铁龙 DS",
   "summary": "1955 年法国流线型前驱轿车，液压悬架革命。",
   "tags": [
-    "流线",
-    "法国"
+    "法国",
+    "流线"
   ],
   "specs": {},
   "media": {
@@ -15,7 +15,7 @@
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/supercar/supercar-citroen-ds/content.md"

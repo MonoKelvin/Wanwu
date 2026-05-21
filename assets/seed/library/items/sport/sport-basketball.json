@@ -3,11 +3,11 @@
   "slug": "sport-basketball",
   "subCategoryId": "sport-ball",
   "name": "篮球",
-  "summary": "篮球（basketball），是以手为中心的身体对抗性体育运动，是 奥运会 核心 比赛 项目 [1] ，是仅次于 足球 的世界第二大运动。 [17] 1891年12月21日，由 美国 马萨诸塞州 斯普林菲尔德 基督教青年会 训练学校体育教师 詹姆斯·奈史密斯 发明 [2] 。1896年，篮球运动传入中国天津。1904年",
+  "summary": "篮球（basketball），是以手为中心的身体对抗性体育运动，是 奥运会 核心 比赛 项目 ，是仅次于 足球 的世界第二大运动。",
   "tags": [
+    "球类运动",
     "篮球",
-    "Basketball",
-    "球类运动"
+    "Basketball"
   ],
   "specs": {
     "中文名": "篮球",
@@ -17,8 +17,7 @@
     "代表人物": "迈克尔·乔丹、科比·布莱恩特、姚明、德克·诺维茨基、杨瀚森",
     "发明者": "詹姆斯•奈史密斯",
     "起源地": "美国 马萨诸塞州",
-    "起源时间": "1891年12月21日",
-    "摘要": "# 篮球（团队球类对抗性体育运动） 篮球（basketball），是以手为中心的身体对抗性体育运动，是 奥运会 核心 比赛 项目 ，是仅次于 足球 的世界第二大运动。 1891年12月21日，由 美国 马萨诸塞州 斯普林菲尔德 基督教青年会"
+    "起源时间": "1891年12月21日"
   },
   "media": {
     "provider": "pixabay",
@@ -26,7 +25,7 @@
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/sport/sport-basketball/content.md"

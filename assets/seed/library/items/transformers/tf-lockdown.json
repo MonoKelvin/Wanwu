@@ -5,10 +5,10 @@
   "name": "禁闭 Lockdown",
   "summary": "赏金猎人，多种载具，跨阵营狩猎变形金刚。",
   "tags": [
-    "霸天虎",
-    "反派",
+    "赏金猎人",
     "变形",
-    "赏金猎人"
+    "霸天虎",
+    "反派"
   ],
   "specs": {
     "分类": "霸天虎 Decepticon",
@@ -26,7 +26,7 @@
       "赏金猎人",
       "lockdown"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

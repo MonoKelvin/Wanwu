@@ -6,8 +6,8 @@
   "summary": "家用扫地机器人普及者，传感器导航。",
   "tags": [
     "工业设计",
-    "iRobot",
     "机器人",
+    "iRobot",
     "经典"
   ],
   "specs": {
@@ -26,7 +26,7 @@
       "irobot",
       "机器人"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

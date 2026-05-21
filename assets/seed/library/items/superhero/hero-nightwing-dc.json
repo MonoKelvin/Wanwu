@@ -5,10 +5,10 @@
   "name": "夜翼 Nightwing",
   "summary": "迪克·格雷森脱离罗宾身份后的独立英雄，布鲁德海文守护者。",
   "tags": [
-    "DC",
+    "前罗宾",
     "夜翼",
-    "迪克",
-    "前罗宾"
+    "DC",
+    "迪克"
   ],
   "specs": {
     "宇宙": "DC 漫画",
@@ -25,7 +25,7 @@
       "前罗宾",
       "nightwing"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

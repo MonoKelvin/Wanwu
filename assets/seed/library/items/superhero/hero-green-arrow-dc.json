@@ -5,10 +5,10 @@
   "name": "绿箭侠 Green Arrow",
   "summary": "奥利弗·奎因亿万富翁弓箭手，星城义警与社会正义议题结合。",
   "tags": [
-    "DC",
     "弓箭",
-    "星城",
-    "奥利弗"
+    "DC",
+    "奥利弗",
+    "星城"
   ],
   "specs": {
     "宇宙": "DC 漫画",
@@ -25,7 +25,7 @@
       "奥利弗",
       "green"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "哈雷 Road Glide",
   "summary": "鲨鱼鼻整流罩长途_BAGGER，高速稳定。",
   "tags": [
-    "美式",
     "Harley-Davidson",
     "巡航",
-    "旅行"
+    "旅行",
+    "美式"
   ],
   "specs": {
     "分类": "美式巡航",
@@ -25,7 +25,7 @@
       "harley-davidson",
       "road"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "莫高窟",
   "summary": "敦煌千佛洞壁画与丝路艺术宝库。",
   "tags": [
-    "中国",
     "世界遗产",
     "甘肃",
-    "十六国至元"
+    "十六国至元",
+    "中国"
   ],
   "specs": {
     "分类": "中国史迹",
@@ -25,7 +25,7 @@
       "世界遗产",
       "十六国至元"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

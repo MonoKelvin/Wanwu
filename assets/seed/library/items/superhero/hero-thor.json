@@ -5,9 +5,9 @@
   "name": "雷神 Thor",
   "summary": "漫威阿斯加德王子，妙尔尼尔之锤与雷霆之力，复仇者核心战力。",
   "tags": [
+    "雷霆",
     "漫威",
-    "阿斯加德",
-    "雷霆"
+    "阿斯加德"
   ],
   "specs": {
     "宇宙": "漫威 Marvel",
@@ -24,7 +24,7 @@
       "阿斯加德",
       "thor"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

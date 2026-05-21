@@ -3,35 +3,20 @@
   "slug": "game-zelda-botw",
   "subCategoryId": "game-action",
   "name": "塞尔达 旷野之息",
-  "summary": "《塞尔达传说 旷野之息》是任天堂企划制作本部开发、 Monolith Soft 协力开发的动作冒险游戏，为《 塞尔达传说 》主系列的第19作，于2017年3月3日在 Wii U 、 Nintendo Switch 上发售。 [1] 2025年6月5日发售 Switch 2 增强版。 [17] [19] 游戏的故事发生在",
+  "summary": "《塞尔达传说 旷野之息》是任天堂企划制作本部开发、 Monolith Soft 协力开发的动作冒险游戏，为《 塞尔达传说 》主系列的第19作，于2017年3月3日在 Wii U 、 Nintendo Switch 上发售。",
   "tags": [
     "塞尔达传说 旷野之息",
-    "ゼルダの伝説 ブレス オブ ザ ワイルド",
-    "The Legend of Zelda: Breath of the Wild 、 薩爾達傳說 曠野之息 （繁中译名）"
+    "ゼルダの伝説 ブレス オブ ザ ワイルド"
   ],
   "specs": {
+    "平台": "Wii U Nintendo Switch 任天堂Switch 2",
+    "开发商": "任天堂企划制作本部",
     "中文名": "塞尔达传说 旷野之息",
     "原版名称": "ゼルダの伝説 ブレス オブ ザ ワイルド",
     "别 名": "The Legend of Zelda: Breath of the Wild 、 薩爾達傳說 曠野之息 （繁中译名）",
     "游戏类型": "动作冒险",
     "游戏平台": "Wii U Nintendo Switch 任天堂Switch 2",
-    "所属系列": "《 塞尔达传说 》系列",
-    "地 区": "日本",
-    "开发商": "任天堂企划制作本部",
-    "发行公司": "任天堂",
-    "发行日期": "2017年3月3日 2025年6月5日 （任天堂Switch）",
-    "制作人": "青沼英二",
-    "总 监": "藤林秀麿",
-    "编 剧": "户田昭吾 、 森直树",
-    "主要配音": "高梨谦吾 、 岛村侑 、 武田幸史 、 山口登 、 一色茧 、 下田丽",
-    "背景音乐": "若井淑 、 片冈真央 、 岩田恭明 、 阿部壮志",
-    "游戏画面": "3D",
-    "主要角色": "林克 、 塞尔达 、 达尔克尔 、 力巴尔 、 米法 、 乌尔波扎",
-    "系列前作": "《 塞尔达传说：三角神力三剑客 》",
-    "系列续作": "《 塞尔达传说：王国之泪 》",
-    "首发日期": "2017年3月3日 2025年6月5日 （任天堂Switch）",
-    "平台": "Wii U Nintendo Switch 任天堂Switch 2",
-    "摘要": "# 塞尔达传说：旷野之息 《塞尔达传说 旷野之息》是任天堂企划制作本部开发、 Monolith Soft 协力开发的动作冒险游戏，为《 塞尔达传说 》主系列的第19作，于2017年3月3日在 Wii U 、 Nintendo Switch"
+    "所属系列": "《 塞尔达传说 》系列"
   },
   "media": {
     "provider": "pixabay",
@@ -39,7 +24,7 @@
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6
   },
   "contentFile": "library/game/game-zelda-botw/content.md"

@@ -6,8 +6,8 @@
   "summary": "M 部门 50 周年轻量杰作，后驱纯粹驾驶。",
   "tags": [
     "德国",
-    "BMW M",
     "超跑",
+    "BMW M",
     "精密工程"
   ],
   "specs": {
@@ -26,7 +26,7 @@
       "bmw m",
       "精密工程"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

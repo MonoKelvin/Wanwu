@@ -5,10 +5,10 @@
   "name": "法拉利 SF90 Stradale",
   "summary": "马拉内罗插电混动旗舰，V8 双涡轮加三电机，千匹级性能。",
   "tags": [
+    "V8/V12",
     "意大利",
-    "Ferrari",
     "超跑",
-    "V8/V12"
+    "Ferrari"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -28,7 +28,7 @@
       "v8/v12",
       "sf90"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

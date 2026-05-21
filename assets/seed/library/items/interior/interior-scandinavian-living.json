@@ -5,9 +5,9 @@
   "name": "北欧风客厅",
   "summary": "以浅木色、白色墙面与功能性家具为特征，强调自然光与「hygge」舒适感。",
   "tags": [
-    "北欧",
-    "客厅",
     "简约",
+    "客厅",
+    "北欧",
     "hygge"
   ],
   "specs": {
@@ -25,7 +25,7 @@
     "matchTags": [
       "hygge"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

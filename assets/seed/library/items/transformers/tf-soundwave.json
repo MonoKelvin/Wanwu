@@ -5,10 +5,10 @@
   "name": "声波 Soundwave",
   "summary": "情报官，卡带战士与录音机变形，忠诚威震天。",
   "tags": [
-    "霸天虎",
-    "反派",
+    "情报官",
     "变形",
-    "情报官"
+    "霸天虎",
+    "反派"
   ],
   "specs": {
     "分类": "霸天虎 Decepticon",
@@ -26,7 +26,7 @@
       "情报官",
       "soundwave"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

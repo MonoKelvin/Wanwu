@@ -14,7 +14,7 @@
       "aeron"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/industrial-design/industrial-design-industrial-aeron-chair/content.md"

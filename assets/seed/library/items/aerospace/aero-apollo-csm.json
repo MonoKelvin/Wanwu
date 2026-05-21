@@ -3,20 +3,35 @@
   "slug": "aero-apollo-csm",
   "subCategoryId": "aero-space",
   "name": "阿波罗指令/服务舱",
-  "summary": "登月任务指令舱组合。",
+  "summary": "阿波罗计划核心飞船，人类登月历史见证",
   "tags": [
-    "阿波"
+    "登月",
+    "太空飞船",
+    "阿波罗",
+    "NASA"
   ],
   "specs": {
-    "任务": "Apollo"
+    "计划名称": "阿波罗计划",
+    "所属国家": "美国",
+    "飞船类型": "载人航天器",
+    "主要任务": "载人登月",
+    "组成结构": "指令舱+服务舱",
+    "首飞时间": "1966年",
+    "历史成就": "人类首次登月",
+    "地位": "太空探索里程碑"
   },
   "media": {
     "provider": "pixabay",
-    "query": "spacecraft rocket launch nasa",
+    "query": "apollo spacecraft nasa space",
     "category": "all",
-    "matchTags": [],
-    "requiredTags": [],
-    "minMatchScore": 1,
+    "matchTags": [
+      "apollo",
+      "spacecraft"
+    ],
+    "requiredTags": [
+      "space"
+    ],
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/aerospace/aero-apollo-csm/content.md"

@@ -5,10 +5,10 @@
   "name": "眩晕 Blackout",
   "summary": "直升机变形，电影版首个登场霸天虎。",
   "tags": [
-    "霸天虎",
-    "反派",
     "变形",
-    "突袭"
+    "霸天虎",
+    "突袭",
+    "反派"
   ],
   "specs": {
     "分类": "霸天虎 Decepticon",
@@ -25,7 +25,7 @@
       "霸天虎",
       "blackout"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "蝙蝠侠 Batman",
   "summary": "DC 漫画「黑暗骑士」，布鲁斯·韦恩以财富、智谋与装备打击哥谭犯罪。",
   "tags": [
-    "DC",
-    "哥谭",
     "黑暗骑士",
-    "侦探"
+    "DC",
+    "侦探",
+    "哥谭"
   ],
   "specs": {
     "宇宙": "DC 漫画",
@@ -26,7 +26,7 @@
       "黑暗骑士",
       "batman"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "requiredTags": []
   },

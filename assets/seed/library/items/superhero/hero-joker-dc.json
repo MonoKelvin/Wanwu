@@ -5,10 +5,10 @@
   "name": "小丑 Joker",
   "summary": "哥谭犯罪王子，蝙蝠侠宿敌，无固定起源的混乱象征。",
   "tags": [
-    "DC",
-    "反派",
     "哥谭",
-    "混乱"
+    "DC",
+    "混乱",
+    "反派"
   ],
   "specs": {
     "宇宙": "DC 漫画",
@@ -24,7 +24,7 @@
     "matchTags": [
       "joker"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

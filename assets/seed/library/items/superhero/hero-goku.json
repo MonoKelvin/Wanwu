@@ -5,10 +5,10 @@
   "name": "孙悟空 Goku",
   "summary": "《龙珠》赛亚人战士守护地球，超级赛亚人变身标志。",
   "tags": [
-    "龙珠",
     "赛亚人",
-    "鸟山明",
-    "格斗"
+    "格斗",
+    "龙珠",
+    "鸟山明"
   ],
   "specs": {
     "作者": "鸟山明",
@@ -26,7 +26,7 @@
       "鸟山明",
       "goku"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

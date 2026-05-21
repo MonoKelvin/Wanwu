@@ -6,9 +6,9 @@
   "summary": "厚叶耐旱耐阴，办公室绿植热门。",
   "tags": [
     "观叶",
-    "天南星科",
+    "热植",
     "室内",
-    "热植"
+    "天南星科"
   ],
   "specs": {
     "分类": "天南星科",
@@ -25,7 +25,7 @@
     "matchTags": [
       "天南星科"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -6,8 +6,8 @@
   "summary": "雷诺阿印象派光影中舞会欢乐。",
   "tags": [
     "艺术史",
-    "印象派",
     "雷诺阿",
+    "印象派",
     "名画"
   ],
   "specs": {
@@ -26,7 +26,7 @@
       "印象派",
       "雷诺阿"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

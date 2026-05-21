@@ -5,10 +5,10 @@
   "name": "奥迪 R8 GT",
   "summary": "轻量化赛道取向 R8，V10 自然吸气绝唱世代。",
   "tags": [
+    "精密工程",
     "德国",
-    "Audi",
     "超跑",
-    "精密工程"
+    "Audi"
   ],
   "specs": {
     "分类": "德国品牌",
@@ -26,7 +26,7 @@
       "audi",
       "精密工程"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

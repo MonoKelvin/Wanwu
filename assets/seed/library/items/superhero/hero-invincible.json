@@ -7,8 +7,8 @@
   "tags": [
     "Image",
     "动画",
-    "亚马逊",
-    "成长"
+    "成长",
+    "亚马逊"
   ],
   "specs": {
     "出版": "Image / Skybound",
@@ -26,7 +26,7 @@
       "亚马逊",
       "invincible"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

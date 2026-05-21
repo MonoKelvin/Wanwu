@@ -5,10 +5,10 @@
   "name": "轻小说封面",
   "summary": "文库本封面构图与角色卖点表现。",
   "tags": [
-    "数字绘画",
-    "出版",
     "文库",
-    "插画"
+    "插画",
+    "数字绘画",
+    "出版"
   ],
   "specs": {
     "分类": "数字插画",
@@ -24,7 +24,7 @@
     "matchTags": [
       "数字绘画"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

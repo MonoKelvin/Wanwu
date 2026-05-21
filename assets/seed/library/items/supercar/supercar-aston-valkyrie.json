@@ -5,10 +5,10 @@
   "name": "阿斯顿·马丁 Valkyrie",
   "summary": "与 Red Bull 合作空气动力学怪兽，赛道优先。",
   "tags": [
-    "英国",
     "Aston Martin",
     "超跑",
-    "GT"
+    "GT",
+    "英国"
   ],
   "specs": {
     "分类": "英国品牌",
@@ -26,7 +26,7 @@
       "aston martin",
       "valkyrie"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

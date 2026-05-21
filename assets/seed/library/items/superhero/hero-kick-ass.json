@@ -5,10 +5,10 @@
   "name": "海扁王 Kick-Ass",
   "summary": "无超能力少年穿制服打击犯罪引发模仿者。",
   "tags": [
-    "马克米勒",
-    "写实",
     "喜剧",
-    "暴力"
+    "暴力",
+    "写实",
+    "马克米勒"
   ],
   "specs": {
     "作者": "Mark Millar",
@@ -25,7 +25,7 @@
       "马克米勒",
       "kick"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

@@ -6,9 +6,9 @@
   "summary": "纯电性能轿车，大屏中控与 OTA 更新。",
   "tags": [
     "工业设计",
-    "Tesla",
+    "经典",
     "电动车",
-    "经典"
+    "Tesla"
   ],
   "specs": {
     "分类": "产品设计",
@@ -27,7 +27,7 @@
       "电动车",
       "model"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

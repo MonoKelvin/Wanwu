@@ -5,10 +5,10 @@
   "name": "火星猎人 Martian Manhunter",
   "summary": "荣恩·哈扎特，火星最后幸存者，变形、心灵感应与相位穿墙。",
   "tags": [
+    "荣恩",
     "DC",
-    "火星",
     "心灵感应",
-    "荣恩"
+    "火星"
   ],
   "specs": {
     "宇宙": "DC 漫画",
@@ -25,7 +25,7 @@
       "心灵感应",
       "martian"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

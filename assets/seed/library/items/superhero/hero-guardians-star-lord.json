@@ -5,8 +5,8 @@
   "name": "星爵 Star-Lord",
   "summary": "彼得·奎尔率银河护卫队，半神血统与复古音乐。",
   "tags": [
-    "漫威",
     "银河护卫队",
+    "漫威",
     "太空"
   ],
   "specs": {
@@ -21,7 +21,7 @@
       "银河护卫队",
       "star"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

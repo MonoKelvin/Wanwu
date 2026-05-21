@@ -5,10 +5,10 @@
   "name": "Figma 设计",
   "summary": "协作式界面设计工具，组件与变体驱动设计系统。",
   "tags": [
-    "移动端",
     "UI",
-    "Figma",
-    "协作"
+    "移动端",
+    "协作",
+    "Figma"
   ],
   "specs": {
     "分类": "移动 UI",
@@ -25,7 +25,7 @@
       "ui",
       "design"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -6,9 +6,9 @@
   "summary": "双胞胎之一，兰博基尼变形，决斗爱好者。",
   "tags": [
     "汽车人",
-    "Hasbro",
     "变形",
-    "战士"
+    "战士",
+    "Hasbro"
   ],
   "specs": {
     "分类": "汽车人 Autobot",
@@ -26,7 +26,7 @@
       "hasbro",
       "sideswipe"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

@@ -6,8 +6,8 @@
   "summary": "毕加索 1937 年反战黑白巨作。",
   "tags": [
     "艺术史",
-    "立体主义",
     "毕加索",
+    "立体主义",
     "名画"
   ],
   "specs": {
@@ -27,7 +27,7 @@
       "毕加索",
       "guernica"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

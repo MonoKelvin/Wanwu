@@ -6,9 +6,9 @@
   "summary": "城市指挥官，集装箱卡车变形，秩序与规章象征。",
   "tags": [
     "汽车人",
-    "Hasbro",
+    "指挥官",
     "变形",
-    "指挥官"
+    "Hasbro"
   ],
   "specs": {
     "分类": "汽车人 Autobot",
@@ -27,7 +27,7 @@
       "指挥官",
       "ultra"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

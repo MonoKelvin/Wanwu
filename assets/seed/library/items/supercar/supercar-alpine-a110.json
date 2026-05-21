@@ -17,7 +17,7 @@
       "alpine"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/supercar/supercar-alpine-a110/content.md"

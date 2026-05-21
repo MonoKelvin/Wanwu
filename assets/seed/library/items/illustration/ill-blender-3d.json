@@ -5,10 +5,10 @@
   "name": "Blender 3D 插画",
   "summary": "三渲二或写实渲染的数字艺术。",
   "tags": [
-    "数字绘画",
-    "3D",
     "Blender",
-    "插画"
+    "插画",
+    "数字绘画",
+    "3D"
   ],
   "specs": {
     "分类": "数字插画",
@@ -25,7 +25,7 @@
       "数字绘画",
       "blender"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

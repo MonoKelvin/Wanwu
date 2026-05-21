@@ -5,10 +5,10 @@
   "name": "雅马哈 MT-09",
   "summary": "三缸扭力大师裸车，城市乐趣机器。",
   "tags": [
-    "日本",
-    "Yamaha",
     "摩托",
-    "约 119 hp"
+    "约 119 hp",
+    "日本",
+    "Yamaha"
   ],
   "specs": {
     "分类": "日本品牌",
@@ -25,7 +25,7 @@
       "yamaha",
       "约 119 hp"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

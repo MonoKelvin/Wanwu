@@ -5,10 +5,10 @@
   "name": "神奇女侠 Wonder Woman",
   "summary": "DC 亚马逊公主戴安娜，真理套索与神力护腕，女性超级英雄代表之一。",
   "tags": [
+    "盖尔加朵",
     "DC",
-    "亚马逊",
     "女性英雄",
-    "盖尔加朵"
+    "亚马逊"
   ],
   "specs": {
     "宇宙": "DC 漫画",
@@ -27,7 +27,7 @@
       "盖尔加朵",
       "wonder"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

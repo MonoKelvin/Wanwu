@@ -5,10 +5,10 @@
   "name": "杜卡迪 Scrambler",
   "summary": "意式 scrambler 文化，城市复古骑行。",
   "tags": [
-    "意大利",
     "Ducati",
-    "摩托",
-    "仿赛"
+    "仿赛",
+    "意大利",
+    "摩托"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -26,7 +26,7 @@
       "ducati",
       "scrambler"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

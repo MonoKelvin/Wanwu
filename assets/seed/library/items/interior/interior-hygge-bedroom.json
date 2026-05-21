@@ -5,10 +5,10 @@
   "name": "Hygge 卧室",
   "summary": "蜡烛、针织毯与柔和灯光营造丹麦式舒适。",
   "tags": [
-    "北欧",
     "家装",
-    "hygge",
-    "卧室"
+    "北欧",
+    "卧室",
+    "hygge"
   ],
   "specs": {
     "分类": "北欧风格",
@@ -24,7 +24,7 @@
     "matchTags": [
       "hygge"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

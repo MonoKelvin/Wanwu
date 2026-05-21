@@ -5,10 +5,10 @@
   "name": "印第安 FTR 1200",
   "summary": "扁平赛道风格街车，印第安赛车血统。",
   "tags": [
-    "美式",
     "Indian",
     "巡航",
-    "街车"
+    "街车",
+    "美式"
   ],
   "specs": {
     "分类": "美式巡航",
@@ -25,7 +25,7 @@
       "indian",
       "ftr"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

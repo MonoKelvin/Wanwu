@@ -5,9 +5,9 @@
   "name": "Procreate 速写",
   "summary": "iPad 手绘草稿与色块探索。",
   "tags": [
-    "数字绘画",
-    "速写",
     "Procreate",
+    "速写",
+    "数字绘画",
     "插画"
   ],
   "specs": {
@@ -25,7 +25,7 @@
       "数字绘画",
       "procreate"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

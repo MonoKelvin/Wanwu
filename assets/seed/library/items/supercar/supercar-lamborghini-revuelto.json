@@ -5,8 +5,8 @@
   "name": "兰博基尼 Revuelto",
   "summary": "首款量产混动 V12，三电机配合 LB744 平台，性能与排放平衡。",
   "tags": [
-    "意大利",
     "Lamborghini",
+    "意大利",
     "超跑",
     "V8/V12"
   ],
@@ -28,7 +28,7 @@
       "v8/v12",
       "revuelto"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

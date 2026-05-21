@@ -5,10 +5,10 @@
   "name": "伊姆斯躺椅",
   "summary": "Charles & Ray Eames 1956 年皮革模压胶合板经典。",
   "tags": [
-    "家居",
+    "设计",
     "Herman Miller",
-    "家具",
-    "设计"
+    "家居",
+    "家具"
   ],
   "specs": {
     "分类": "家居产品设计",
@@ -24,7 +24,7 @@
     "matchTags": [
       "herman miller"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -3,10 +3,10 @@
   "slug": "ship-aircraft-carrier",
   "subCategoryId": "ship-navy",
   "name": "航空母舰",
-  "summary": "航空母舰（英文：Aircraft Carrier [11] ），是以 舰载机 为主要战斗装备，并为其提供海上活动基地的大型水面战斗舰艇。简称“ 航母 ”，广义上包括 直升机母舰 [29] 。 现代航空母舰，按 排水量 可分为大型（6万吨以上）、中型（3-6万吨）和小型（3万吨以下）航空母舰，按 动力装置 可分为常规动力",
+  "summary": "航空母舰（英文：Aircraft Carrier ），是以 舰载机 为主要战斗装备，并为其提供海上活动基地的大型水面战斗舰艇。",
   "tags": [
-    "航空母舰",
     "Aircraft Carrier",
+    "航空母舰",
     "1917年7月"
   ],
   "specs": {
@@ -17,9 +17,7 @@
     "所属学科": "军事学",
     "简 称": "航母",
     "装备国家": "美国 、 中国 、 英国 、 法国 、 俄罗斯 、 印度 、 意大利 、 泰国 等",
-    "主战武器": "舰载战斗攻击机",
-    "动力系统": "常规动力、核动力",
-    "摘要": "# 航空母舰（以舰载机为主要战斗装备的大型水面战斗舰艇） 航空母舰（英文：Aircraft Carrier ），是以 舰载机 为主要战斗装备，并为其提供海上活动基地的大型水面战斗舰艇。简称“ 航母 ”，广义上包括 直升机母舰 。 现代航空母"
+    "主战武器": "舰载战斗攻击机"
   },
   "media": {
     "provider": "pixabay",
@@ -27,7 +25,7 @@
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/ship/ship-aircraft-carrier/content.md"

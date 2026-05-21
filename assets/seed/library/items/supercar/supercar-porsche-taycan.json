@@ -5,10 +5,10 @@
   "name": "保时捷 Taycan",
   "summary": "德系高性能纯电标杆，800V 架构与弹射起步。",
   "tags": [
+    "精密工程",
     "德国",
-    "Porsche",
     "超跑",
-    "精密工程"
+    "Porsche"
   ],
   "specs": {
     "分类": "德国品牌",
@@ -27,7 +27,7 @@
       "精密工程",
       "taycan"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

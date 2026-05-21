@@ -5,10 +5,10 @@
   "name": "IKEA 展厅风",
   "summary": "模块化储物、平价设计民主化样板空间。",
   "tags": [
-    "北欧",
     "家装",
-    "IKEA",
-    "展厅"
+    "北欧",
+    "展厅",
+    "IKEA"
   ],
   "specs": {
     "分类": "北欧风格",
@@ -24,7 +24,7 @@
     "matchTags": [
       "ikea"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

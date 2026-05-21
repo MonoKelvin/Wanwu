@@ -6,9 +6,9 @@
   "summary": "白色佛焰苞，蒸腾作用强可指示缺水。",
   "tags": [
     "观叶",
-    "天南星科",
+    "热植",
     "室内",
-    "热植"
+    "天南星科"
   ],
   "specs": {
     "分类": "天南星科",
@@ -26,7 +26,7 @@
       "天南星科",
       "spathiphyllum"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "哈雷 LiveWire",
   "summary": "美式电摩先锋，瞬时扭矩都市骑行。",
   "tags": [
-    "美式",
     "Harley-Davidson",
     "巡航",
-    "约 105 hp"
+    "约 105 hp",
+    "美式"
   ],
   "specs": {
     "分类": "美式巡航",
@@ -26,7 +26,7 @@
       "约 105 hp",
       "livewire"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

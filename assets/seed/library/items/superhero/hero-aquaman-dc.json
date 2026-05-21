@@ -5,10 +5,10 @@
   "name": "海王 Aquaman",
   "summary": "亚特兰蒂斯国王亚瑟·库瑞，统治七海，三叉戟与海洋沟通能力的 DC 英雄。",
   "tags": [
-    "DC",
     "亚特兰蒂斯",
-    "海洋",
-    "三叉戟"
+    "DC",
+    "三叉戟",
+    "海洋"
   ],
   "specs": {
     "宇宙": "DC 漫画",
@@ -26,7 +26,7 @@
       "三叉戟",
       "aquaman"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

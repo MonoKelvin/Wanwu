@@ -5,10 +5,10 @@
   "name": "Stripe Dashboard",
   "summary": "金融科技数据可视化与清晰层级范例。",
   "tags": [
-    "Web",
+    "B2B",
     "UI",
     "Stripe",
-    "B2B"
+    "Web"
   ],
   "specs": {
     "分类": "Web UI",
@@ -26,7 +26,7 @@
       "stripe",
       "b2b"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -6,9 +6,9 @@
   "summary": "汽车人侦察兵，常变形为黄色大众甲壳虫或科迈罗，性格友善，与人类联系紧密。",
   "tags": [
     "汽车人",
+    "侦察兵",
     "大黄蜂",
-    "甲壳虫",
-    "侦察兵"
+    "甲壳虫"
   ],
   "specs": {
     "分类": "汽车人 Autobot",
@@ -29,7 +29,7 @@
       "侦察兵",
       "bumblebee"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "requiredTags": []
   },

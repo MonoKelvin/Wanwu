@@ -3,19 +3,18 @@
   "slug": "jewelry-jewel-jade-bangle",
   "subCategoryId": "jewel-cultural",
   "name": "翡翠手镯",
-  "summary": "翡翠手镯，翡翠饰品 。 [1 ] 手镯 ，亦称“钏”、“手环”、“臂环”等，是一种戴在手腕部位的环形装饰品。其 质料 除了金、银、玉之外，尚有用植物藤制成者。 手镯由来已久，起源于 母系社会 向 父系社会 过渡时期 。据有关文献记载，在古代不论男女都戴手镯，女性作为已婚的象征，男性则作为身份或 工作性质 的象征。在 古",
+  "summary": "翡翠手镯，翡翠饰品 。",
   "tags": [
-    "翡翠手镯",
+    "手饰",
     "Feicuishouzhuo",
-    "手饰"
+    "翡翠手镯"
   ],
   "specs": {
     "中文名": "翡翠手镯",
     "外文名": "Feicuishouzhuo",
     "作 用": "手饰",
     "成 分": "天然矿物成分",
-    "材 质": "硬玉为主的多矿物微晶合体",
-    "摘要": "# 翡翠手镯 翡翠手镯，翡翠饰品 。 手镯 ，亦称“钏”、“手环”、“臂环”等，是一种戴在手腕部位的环形装饰品。其 质料 除了金、银、玉之外，尚有用植物藤制成者。 手镯由来已久，起源于 母系社会 向 父系社会 过渡时期 。据有关文献记载，在"
+    "材 质": "硬玉为主的多矿物微晶合体"
   },
   "media": {
     "provider": "pixabay",
@@ -23,7 +22,7 @@
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/jewelry/jewelry-jewel-jade-bangle/content.md"

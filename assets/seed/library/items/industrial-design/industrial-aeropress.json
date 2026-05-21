@@ -5,10 +5,10 @@
   "name": "AeroPress 爱乐压",
   "summary": "Alan Adler 发明便携压力咖啡器具。",
   "tags": [
-    "家居",
     "AeroPress",
-    "咖啡",
-    "设计"
+    "设计",
+    "家居",
+    "咖啡"
   ],
   "specs": {
     "分类": "家居产品设计",
@@ -24,7 +24,7 @@
     "matchTags": [
       "aeropress"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

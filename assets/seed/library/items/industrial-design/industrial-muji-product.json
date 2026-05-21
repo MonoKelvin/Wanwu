@@ -5,8 +5,8 @@
   "name": "无印良品",
   "summary": "无品牌优质素材哲学，收纳与生活杂货。",
   "tags": [
-    "工业设计",
     "MUJI",
+    "工业设计",
     "生活",
     "经典"
   ],
@@ -25,7 +25,7 @@
       "工业设计",
       "muji"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

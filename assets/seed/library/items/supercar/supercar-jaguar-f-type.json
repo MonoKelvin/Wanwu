@@ -5,10 +5,10 @@
   "name": "捷豹 F-Type",
   "summary": "英伦声浪代表，敞篷与轿跑多形态。",
   "tags": [
-    "英国",
     "Jaguar",
     "超跑",
-    "GT"
+    "GT",
+    "英国"
   ],
   "specs": {
     "分类": "英国品牌",
@@ -26,7 +26,7 @@
       "jaguar",
       "type"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

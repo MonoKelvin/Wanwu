@@ -5,9 +5,9 @@
   "name": "吴哥窟 Angkor Wat",
   "summary": "柬埔寨高棉帝国苏耶跋摩二世庙宇，世界最大宗教建筑群之一，印度教后转佛教。",
   "tags": [
-    "柬埔寨",
     "世界遗产",
     "高棉",
+    "柬埔寨",
     "佛教"
   ],
   "specs": {
@@ -27,7 +27,7 @@
       "世界遗产",
       "angkor"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

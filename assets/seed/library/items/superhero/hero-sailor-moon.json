@@ -5,9 +5,9 @@
   "name": "水手月亮 Sailor Moon",
   "summary": "武内直子魔法少女经典，月野兔变身对抗黑暗王国。",
   "tags": [
-    "魔法少女",
     "武内直子",
     "日本",
+    "魔法少女",
     "经典"
   ],
   "specs": {
@@ -26,7 +26,7 @@
       "武内直子",
       "sailor"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

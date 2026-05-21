@@ -5,10 +5,10 @@
   "name": "芬兰桑拿房",
   "summary": "桦木长椅与石材墙面，蒸汽文化核心。",
   "tags": [
-    "北欧",
     "家装",
-    "芬兰",
-    "桑拿"
+    "北欧",
+    "桑拿",
+    "芬兰"
   ],
   "specs": {
     "分类": "北欧风格",
@@ -22,7 +22,7 @@
     "provider": "pixabay",
     "query": "interior design room",
     "matchTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -6,9 +6,9 @@
   "summary": "Crypton 发行的 Vocaloid 2 虚拟歌手角色，双马尾青色形象席卷同人创作与演唱会文化。",
   "tags": [
     "Vocaloid",
-    "虚拟歌手",
     "同人",
-    "Crypton"
+    "Crypton",
+    "虚拟歌手"
   ],
   "specs": {
     "分类": "数字插画",
@@ -28,7 +28,7 @@
       "crypton",
       "hatsune"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

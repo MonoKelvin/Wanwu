@@ -5,9 +5,9 @@
   "name": "Smeg 冰箱",
   "summary": "50 年代复古造型与大胆配色。",
   "tags": [
+    "厨电",
     "家居",
     "Smeg",
-    "厨电",
     "设计"
   ],
   "specs": {
@@ -24,7 +24,7 @@
     "matchTags": [
       "smeg"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "故宫紫禁城",
   "summary": "明清两代皇宫，北京中轴线世界文化遗产。",
   "tags": [
-    "中国",
     "世界遗产",
+    "明清",
     "北京",
-    "明清"
+    "中国"
   ],
   "specs": {
     "分类": "中国史迹",
@@ -24,7 +24,7 @@
     "matchTags": [
       "世界遗产"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

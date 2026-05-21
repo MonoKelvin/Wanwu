@@ -5,10 +5,10 @@
   "name": "本田 Africa Twin",
   "summary": "ADV 探险标杆，达喀尔血统。",
   "tags": [
-    "日本",
-    "Honda",
     "摩托",
-    "ADV"
+    "Honda",
+    "ADV",
+    "日本"
   ],
   "specs": {
     "分类": "日本品牌",
@@ -26,7 +26,7 @@
       "adv",
       "africa"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

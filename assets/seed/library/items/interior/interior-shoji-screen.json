@@ -5,10 +5,10 @@
   "name": "障子推拉门",
   "summary": "木格纸屏分隔柔光，调节通风与隐私。",
   "tags": [
-    "日式",
+    "隔断",
     "禅意",
-    "障子",
-    "隔断"
+    "日式",
+    "障子"
   ],
   "specs": {
     "分类": "日式禅意",
@@ -22,7 +22,7 @@
     "provider": "pixabay",
     "query": "interior design room",
     "matchTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

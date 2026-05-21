@@ -5,10 +5,10 @@
   "name": "Material You 小组件",
   "summary": "Android 12+ 动态取色与 widget 生态。",
   "tags": [
-    "移动端",
-    "UI",
+    "安卓",
     "Material 3",
-    "安卓"
+    "UI",
+    "移动端"
   ],
   "specs": {
     "分类": "移动 UI",
@@ -26,7 +26,7 @@
       "material 3",
       "material"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -6,8 +6,8 @@
   "summary": "蒙克 1893 年存在焦虑标志性形象。",
   "tags": [
     "艺术史",
-    "表现主义",
     "蒙克",
+    "表现主义",
     "名画"
   ],
   "specs": {
@@ -26,7 +26,7 @@
       "表现主义",
       "the"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

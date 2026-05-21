@@ -5,10 +5,10 @@
   "name": "雅马哈 Tracer 9",
   "summary": "运动旅行三缸，长途舒适。",
   "tags": [
-    "日本",
-    "Yamaha",
     "摩托",
-    "运动旅行"
+    "运动旅行",
+    "日本",
+    "Yamaha"
   ],
   "specs": {
     "分类": "日本品牌",
@@ -26,7 +26,7 @@
       "运动旅行",
       "tracer"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "超人 Superman",
   "summary": "DC 漫画首位超级英雄，氪星之子克拉克·肯特，拥有飞行、热视线等经典超能力。",
   "tags": [
+    "飞行",
     "DC",
-    "氪星",
     "大都会",
-    "飞行"
+    "氪星"
   ],
   "specs": {
     "宇宙": "DC 漫画",
@@ -26,7 +26,7 @@
       "大都会",
       "superman"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "requiredTags": []
   },

@@ -6,8 +6,8 @@
   "summary": "奔驰与迈凯伦合作传奇，前置 V8 与 gullwing 门。",
   "tags": [
     "德国",
-    "Mercedes-Benz",
     "超跑",
+    "Mercedes-Benz",
     "精密工程"
   ],
   "specs": {
@@ -27,7 +27,7 @@
       "精密工程",
       "slr"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

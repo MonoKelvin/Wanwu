@@ -5,10 +5,10 @@
   "name": "阿普利亚 RSV4",
   "summary": "诺阿利亚 V4 仿赛，MotoGP 技术下放。",
   "tags": [
-    "意大利",
-    "Aprilia",
     "摩托",
-    "仿赛"
+    "仿赛",
+    "意大利",
+    "Aprilia"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -26,7 +26,7 @@
       "aprilia",
       "rsv4"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

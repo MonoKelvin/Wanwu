@@ -6,8 +6,8 @@
   "summary": "SLS 后继前中置 V8，AMG 独立跑车线标志。",
   "tags": [
     "德国",
-    "Mercedes-AMG",
     "超跑",
+    "Mercedes-AMG",
     "精密工程"
   ],
   "specs": {
@@ -27,7 +27,7 @@
       "精密工程",
       "amg"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

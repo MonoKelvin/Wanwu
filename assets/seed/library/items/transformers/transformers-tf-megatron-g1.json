@@ -14,7 +14,7 @@
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6
   },
   "contentFile": "library/transformers/transformers-tf-megatron-g1/content.md"

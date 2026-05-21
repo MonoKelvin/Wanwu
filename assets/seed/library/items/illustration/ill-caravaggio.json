@@ -6,9 +6,9 @@
   "summary": "明暗对照法戏剧性宗教与世俗题材。",
   "tags": [
     "艺术史",
-    "巴洛克",
     "卡拉瓦乔",
-    "名画"
+    "名画",
+    "巴洛克"
   ],
   "specs": {
     "分类": "古典绘画",
@@ -26,7 +26,7 @@
       "巴洛克",
       "卡拉瓦乔"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

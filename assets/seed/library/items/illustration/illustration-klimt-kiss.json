@@ -27,7 +27,7 @@
       "克里姆特",
       "the"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

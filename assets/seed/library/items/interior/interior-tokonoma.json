@@ -5,10 +5,10 @@
   "name": "床之间",
   "summary": "挂轴、插花与陈设的待客焦点壁龛。",
   "tags": [
-    "日式",
+    "陈列",
     "禅意",
-    "床之间",
-    "陈列"
+    "日式",
+    "床之间"
   ],
   "specs": {
     "分类": "日式禅意",
@@ -24,7 +24,7 @@
     "matchTags": [
       "床之间"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

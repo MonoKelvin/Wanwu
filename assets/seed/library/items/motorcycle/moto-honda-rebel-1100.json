@@ -5,9 +5,9 @@
   "name": "本田 Rebel 1100",
   "summary": "日式 Bobber 巡航，DCT 可选。",
   "tags": [
-    "日本",
-    "Honda",
     "摩托",
+    "Honda",
+    "日本",
     "巡航"
   ],
   "specs": {
@@ -25,7 +25,7 @@
       "honda",
       "rebel"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

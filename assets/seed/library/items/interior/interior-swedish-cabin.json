@@ -5,9 +5,9 @@
   "name": "瑞典木屋",
   "summary": "红色漆木外观与室内浅色松木。",
   "tags": [
-    "北欧",
     "家装",
     "瑞典",
+    "北欧",
     "木屋"
   ],
   "specs": {
@@ -22,7 +22,7 @@
     "provider": "pixabay",
     "query": "interior design room",
     "matchTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "大足石刻",
   "summary": "唐宋摩崖造像，佛教艺术巅峰之一。",
   "tags": [
-    "中国",
     "世界遗产",
+    "唐至宋",
     "重庆",
-    "唐至宋"
+    "中国"
   ],
   "specs": {
     "分类": "中国史迹",
@@ -25,7 +25,7 @@
       "世界遗产",
       "唐至宋"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

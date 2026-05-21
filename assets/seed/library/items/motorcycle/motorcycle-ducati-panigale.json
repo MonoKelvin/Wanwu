@@ -5,10 +5,10 @@
   "name": "杜卡迪 Panigale V4",
   "summary": "意大利博洛尼亚高性能跑车，V4 发动机、Desmosedici 气门技术，MotoGP 技术下放。",
   "tags": [
-    "杜卡迪",
-    "意大利",
+    "仿赛",
     "V4",
-    "仿赛"
+    "意大利",
+    "杜卡迪"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -27,7 +27,7 @@
       "意大利",
       "panigale"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "requiredTags": []
   },

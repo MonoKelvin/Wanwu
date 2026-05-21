@@ -5,10 +5,10 @@
   "name": "Vtuber 立绘",
   "summary": "Live2D 分层与虚拟主播形象设计。",
   "tags": [
-    "数字绘画",
-    "虚拟",
     "Live2D",
-    "插画"
+    "虚拟",
+    "插画",
+    "数字绘画"
   ],
   "specs": {
     "分类": "数字插画",
@@ -26,7 +26,7 @@
       "live2d",
       "vtuber"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

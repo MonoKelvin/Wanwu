@@ -5,10 +5,10 @@
   "name": "哈雷 Low Rider ST",
   "summary": "运动旅行姿态，丹尼斯·柯克伍德设计影响。",
   "tags": [
-    "美式",
     "Harley-Davidson",
+    "运动旅行",
     "巡航",
-    "运动旅行"
+    "美式"
   ],
   "specs": {
     "分类": "美式巡航",
@@ -26,7 +26,7 @@
       "运动旅行",
       "low"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

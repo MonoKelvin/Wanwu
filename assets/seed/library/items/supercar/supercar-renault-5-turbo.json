@@ -5,8 +5,8 @@
   "name": "雷诺 5 Turbo",
   "summary": "宽体后置拉力热掀背。",
   "tags": [
-    "拉力",
-    "法国"
+    "法国",
+    "拉力"
   ],
   "specs": {},
   "media": {
@@ -17,7 +17,7 @@
       "turbo"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/supercar/supercar-renault-5-turbo/content.md"

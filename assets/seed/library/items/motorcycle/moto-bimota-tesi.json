@@ -5,10 +5,10 @@
   "name": "比摩塔 Tesi",
   "summary": "轮毂转向技术实验品牌，限量手工。",
   "tags": [
-    "意大利",
-    "Bimota",
     "摩托",
-    "仿赛"
+    "仿赛",
+    "意大利",
+    "Bimota"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -24,7 +24,7 @@
     "matchTags": [
       "motorcycle"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

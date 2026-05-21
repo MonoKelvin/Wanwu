@@ -5,10 +5,10 @@
   "name": "印第安 Chief",
   "summary": "旗舰巡航，印第安羽毛帽徽标传承。",
   "tags": [
-    "美式",
     "Indian",
     "巡航",
-    "旗舰"
+    "旗舰",
+    "美式"
   ],
   "specs": {
     "分类": "美式巡航",
@@ -25,7 +25,7 @@
       "indian",
       "chief"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

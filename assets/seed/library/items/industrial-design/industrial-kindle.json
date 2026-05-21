@@ -5,10 +5,10 @@
   "name": "Kindle 电子书",
   "summary": "电子墨水阅读器，护眼与长续航。",
   "tags": [
-    "工业设计",
-    "Amazon",
     "阅读器",
-    "经典"
+    "工业设计",
+    "经典",
+    "Amazon"
   ],
   "specs": {
     "分类": "产品设计",
@@ -27,7 +27,7 @@
       "阅读器",
       "kindle"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

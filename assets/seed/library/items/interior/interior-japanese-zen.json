@@ -5,10 +5,10 @@
   "name": "日式禅意和室",
   "summary": "榻榻米、障子门与枯山水庭院意象，追求留白与季节感的东方居住美学。",
   "tags": [
-    "和室",
-    "榻榻米",
+    "禅意",
     "侘寂",
-    "禅意"
+    "榻榻米",
+    "和室"
   ],
   "specs": {
     "分类": "日式禅意",
@@ -25,7 +25,7 @@
     "matchTags": [
       "榻榻米"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

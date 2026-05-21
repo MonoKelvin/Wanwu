@@ -5,10 +5,10 @@
   "name": "Radix UI",
   "summary": "无样式可访问性 primitives，支撑 shadcn 等。",
   "tags": [
-    "Web",
     "UI",
+    "基础",
     "React",
-    "基础"
+    "Web"
   ],
   "specs": {
     "分类": "Web UI",
@@ -26,7 +26,7 @@
       "react",
       "radix"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -7,8 +7,8 @@
   "tags": [
     "Image",
     "黑暗英雄",
-    "地狱",
-    "契约"
+    "契约",
+    "地狱"
   ],
   "specs": {
     "出版": "Image Comics",
@@ -26,7 +26,7 @@
       "黑暗英雄",
       "spawn"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "秦始皇兵马俑",
   "summary": "陕西西安临潼秦始皇帝陵陪葬坑，公元前 3 世纪陶俑军队，世界文化遗产。",
   "tags": [
-    "秦朝",
-    "西安",
     "世界遗产",
-    "考古"
+    "西安",
+    "考古",
+    "秦朝"
   ],
   "specs": {
     "分类": "中国",
@@ -25,7 +25,7 @@
     "matchTags": [
       "世界遗产"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "requiredTags": []
   },

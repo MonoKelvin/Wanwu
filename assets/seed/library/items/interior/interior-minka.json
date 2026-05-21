@@ -5,10 +5,10 @@
   "name": "民家",
   "summary": "茅草屋顶与粗大梁的传统农家建筑室内。",
   "tags": [
-    "日式",
+    "乡土",
     "禅意",
-    "民家",
-    "乡土"
+    "日式",
+    "民家"
   ],
   "specs": {
     "分类": "日式禅意",
@@ -22,7 +22,7 @@
     "provider": "pixabay",
     "query": "interior design room",
     "matchTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

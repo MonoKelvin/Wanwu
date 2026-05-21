@@ -5,10 +5,10 @@
   "name": "印第安 Challenger",
   "summary": "对标哈雷滑翔系列的豪华_BAGGER。",
   "tags": [
-    "美式",
     "Indian",
+    "豪华旅行",
     "巡航",
-    "豪华旅行"
+    "美式"
   ],
   "specs": {
     "分类": "美式巡航",
@@ -26,7 +26,7 @@
       "豪华旅行",
       "challenger"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

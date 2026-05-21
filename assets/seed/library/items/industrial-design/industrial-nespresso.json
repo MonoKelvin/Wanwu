@@ -5,9 +5,9 @@
   "name": "Nespresso 咖啡机",
   "summary": "胶囊系统与 George Clooney 广告塑造轻奢咖啡仪式。",
   "tags": [
-    "家居",
-    "Nestlé",
     "厨电",
+    "Nestlé",
+    "家居",
     "设计"
   ],
   "specs": {
@@ -25,7 +25,7 @@
       "nestlé",
       "nespresso"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

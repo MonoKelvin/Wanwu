@@ -27,7 +27,7 @@
       "达芬奇",
       "mona"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -3,11 +3,11 @@
   "slug": "reptile-tree-frog",
   "subCategoryId": "reptile-amphibian",
   "name": "红眼树蛙",
-  "summary": "红眼树蛙，是无尾目雨蛙科 [5 ] 红眼蛙属爬行动物 [6 ] 。 雄蛙体型比雌蛙小 [7 ] ； 背部为鲜艳的亮绿色，身体两侧为紫色，腹表面为白色，脚趾为橘红色，带有白色条纹；脚蹼很大，形状像水杯，能够帮助它在树上爬来爬去进行捕食。红眼树蛙有着猩红且充满活力的双眼，故而得名“红眼树蛙” [8 ] 。 红眼树蛙主要分布",
+  "summary": "红眼树蛙，是无尾目雨蛙科 [5 ] 红眼蛙属爬行动物 [6 ] 。",
   "tags": [
+    "动物界",
     "红眼树蛙",
-    "Agalychnis callidryas",
-    "动物界"
+    "Agalychnis callidryas"
   ],
   "specs": {
     "中文名": "红眼树蛙",
@@ -17,13 +17,7 @@
     "亚 门": "脊椎动物亚门",
     "纲": "两栖纲 Amphibia",
     "亚 纲": "滑体亚纲",
-    "目": "无尾目 Anura",
-    "亚 目": "新蛙亚目 Neobatrachia",
-    "科": "雨蛙科",
-    "属": "红眼蛙属 Agalychnis",
-    "种": "红眼树蛙 A. callidryas",
-    "分布区域": "哥斯达黎加、中美洲和南美洲的热带雨林中",
-    "摘要": "# 红眼树蛙 红眼树蛙，是无尾目雨蛙科 红眼蛙属爬行动物 。 雄蛙体型比雌蛙小 ； 背部为鲜艳的亮绿色，身体两侧为紫色，腹表面为白色，脚趾为橘红色，带有白色条纹；脚蹼很大，形状像水杯，能够帮助它在树上爬来爬去进行捕食。红眼树蛙有着猩红且充满"
+    "目": "无尾目 Anura"
   },
   "media": {
     "provider": "pixabay",
@@ -33,7 +27,7 @@
       "reptile"
     ],
     "requiredTags": [],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/reptile/reptile-tree-frog/content.md"

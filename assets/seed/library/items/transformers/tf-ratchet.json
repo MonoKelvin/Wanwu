@@ -6,9 +6,9 @@
   "summary": "汽车人军医，救护车变形，救治同伴。",
   "tags": [
     "汽车人",
-    "Hasbro",
+    "军医",
     "变形",
-    "军医"
+    "Hasbro"
   ],
   "specs": {
     "分类": "汽车人 Autobot",
@@ -26,7 +26,7 @@
       "hasbro",
       "ratchet"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

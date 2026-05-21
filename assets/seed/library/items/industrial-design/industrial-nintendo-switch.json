@@ -6,9 +6,9 @@
   "summary": "掌机主机二合一，Joy-Con 社交游戏。",
   "tags": [
     "工业设计",
-    "Nintendo",
+    "经典",
     "游戏",
-    "经典"
+    "Nintendo"
   ],
   "specs": {
     "分类": "产品设计",
@@ -26,7 +26,7 @@
       "nintendo",
       "switch"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

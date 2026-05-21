@@ -5,8 +5,8 @@
   "name": "Figma 转代码",
   "summary": "设计稿到 React/Vue 的自动化与手工还原流程。",
   "tags": [
-    "Web",
     "UI",
+    "Web",
     "DevMode",
     "交付"
   ],
@@ -26,7 +26,7 @@
       "devmode",
       "figma"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

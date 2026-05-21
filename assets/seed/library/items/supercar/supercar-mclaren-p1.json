@@ -5,10 +5,10 @@
   "name": "迈凯伦 P1",
   "summary": "混动超跑三杰，碳纤 MonoCell 与 Instant Power Assist。",
   "tags": [
-    "英国",
-    "McLaren",
     "超跑",
-    "GT"
+    "GT",
+    "英国",
+    "McLaren"
   ],
   "specs": {
     "分类": "英国品牌",
@@ -25,7 +25,7 @@
     "matchTags": [
       "mclaren"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

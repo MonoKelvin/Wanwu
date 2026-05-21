@@ -5,10 +5,10 @@
   "name": "Vitra 家具",
   "summary": "欧洲现代设计品牌，代理伊姆斯等大师作品。",
   "tags": [
+    "设计",
     "家居",
-    "Vitra",
     "家具",
-    "设计"
+    "Vitra"
   ],
   "specs": {
     "分类": "家居产品设计",
@@ -24,7 +24,7 @@
     "matchTags": [
       "vitra"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

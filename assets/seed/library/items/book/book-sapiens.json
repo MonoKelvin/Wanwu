@@ -3,11 +3,11 @@
   "slug": "book-sapiens",
   "subCategoryId": "book-science",
   "name": "人类简史",
-  "summary": "《人类简史：从动物到上帝》是以色列历史学家 尤瓦尔·赫拉利 创作的历史类著作，2012年首次出版，林俊宏翻译。作者为 牛津大学 历史学博士，现任耶路撒冷希伯来大学历史系教授，研究领域涵盖世界历史与宏观历史进程 [6] 。该书2015年3月进入《 纽约时报 》畅销书榜，次月获得第十届文津图书奖 [3-4] 。 著作以演化",
+  "summary": "《人类简史：从动物到上帝》是以色列历史学家 尤瓦尔·赫拉利 创作的历史类著作，2012年首次出版，林俊宏翻译。",
   "tags": [
     "人类简史：从动物到上帝",
-    "Sapiens: A Brief History of Humankind",
-    "尤瓦尔·赫拉利"
+    "尤瓦尔·赫拉利",
+    "Sapiens: A Brief History of Humankind"
   ],
   "specs": {
     "作品名称": "人类简史：从动物到上帝",
@@ -15,8 +15,7 @@
     "作者": "尤瓦尔·赫拉利",
     "体裁": "历史",
     "首发年份": "2012年",
-    "译 者": "林俊宏",
-    "摘要": "# 人类简史：从动物到上帝（尤瓦尔·赫拉利创作的历史类著作） 《人类简史：从动物到上帝》是以色列历史学家 尤瓦尔·赫拉利 创作的历史类著作，2012年首次出版，林俊宏翻译。作者为 牛津大学 历史学博士，现任耶路撒冷希伯来大学历史系教授，研"
+    "译 者": "林俊宏"
   },
   "media": {
     "provider": "pixabay",
@@ -24,7 +23,7 @@
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/book/book-sapiens/content.md"

@@ -3,11 +3,11 @@
   "slug": "anime-barakamon",
   "subCategoryId": "anime-isekai",
   "name": "元气囝仔",
-  "summary": "《元气囝仔》 是由日本漫画家吉野五月创作的漫画。该作以长崎县五岛列岛为舞台，描写在城市长大的帅哥书法家半田清舟，在移居小岛后与岛上的人们之间的往来日常。 电子版由 网易漫画 独家发布。 [1]",
+  "summary": "《元气囝仔》 是由日本漫画家吉野五月创作的漫画。",
   "tags": [
-    "元气囝仔",
     "ばらかもん",
-    "Barakamon"
+    "Barakamon",
+    "元气囝仔"
   ],
   "specs": {
     "中文名": "元气囝仔",
@@ -17,13 +17,7 @@
     "类 型": "日常系、青年漫画",
     "地 区": "日本",
     "连载杂志": "《 月刊少年GANGAN 》",
-    "丛书系列": "GANGAN COMICS ONLINE",
-    "单行本册数": "全18卷",
-    "首版出版社": "史克威尔·艾尼克斯",
-    "其他出版社": "长鸿出版社（台湾）",
-    "连载网站": "GANGAN ONLINE",
-    "网络连载": "网易漫画",
-    "摘要": "# 元气囝仔（吉野五月著作的漫画） 《元气囝仔》 是由日本漫画家吉野五月创作的漫画。该作以长崎县五岛列岛为舞台，描写在城市长大的帅哥书法家半田清舟，在移居小岛后与岛上的人们之间的往来日常。 电子版由 网易漫画 独家发布。 《元气囝仔》 是由"
+    "丛书系列": "GANGAN COMICS ONLINE"
   },
   "media": {
     "provider": "pixabay",
@@ -31,7 +25,7 @@
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6
   },
   "contentFile": "library/anime/anime-barakamon/content.md"

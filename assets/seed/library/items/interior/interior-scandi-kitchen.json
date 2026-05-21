@@ -5,10 +5,10 @@
   "name": "北欧厨房",
   "summary": "白色橱柜、木质台面与功能收纳。",
   "tags": [
-    "北欧",
     "家装",
-    "厨房",
-    "收纳"
+    "北欧",
+    "收纳",
+    "厨房"
   ],
   "specs": {
     "分类": "北欧风格",
@@ -22,7 +22,7 @@
     "provider": "pixabay",
     "query": "interior design room",
     "matchTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

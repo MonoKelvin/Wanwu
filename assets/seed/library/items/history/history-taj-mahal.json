@@ -7,8 +7,8 @@
   "tags": [
     "世界遗产",
     "印度",
-    "17 世纪",
-    "古代"
+    "古代",
+    "17 世纪"
   ],
   "specs": {
     "分类": "世界史迹",
@@ -25,7 +25,7 @@
       "世界遗产",
       "17 世纪"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

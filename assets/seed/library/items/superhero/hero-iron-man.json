@@ -5,10 +5,10 @@
   "name": "钢铁侠 Iron Man",
   "summary": "漫威天才发明家托尼·斯塔克，以动力装甲与科技装备成为复仇者联盟核心成员。",
   "tags": [
-    "漫威",
     "MCU",
-    "科技英雄",
-    "装甲"
+    "装甲",
+    "漫威",
+    "科技英雄"
   ],
   "specs": {
     "宇宙": "漫威 Marvel",
@@ -27,7 +27,7 @@
       "科技英雄",
       "iron"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "requiredTags": []
   },

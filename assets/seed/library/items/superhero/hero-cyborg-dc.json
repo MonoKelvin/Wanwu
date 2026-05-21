@@ -6,9 +6,9 @@
   "summary": "维克多·斯通半人半机械，母盒科技赋予联网与能量炮能力。",
   "tags": [
     "DC",
-    "机械",
+    "维克多",
     "正义联盟",
-    "维克多"
+    "机械"
   ],
   "specs": {
     "宇宙": "DC 漫画",
@@ -26,7 +26,7 @@
       "维克多",
       "cyborg"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

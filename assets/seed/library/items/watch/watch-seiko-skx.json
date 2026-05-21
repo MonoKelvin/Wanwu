@@ -10,14 +10,14 @@
   "specs": {},
   "media": {
     "provider": "pixabay",
-    "query": "luxury wristwatch macro dial leather strap",
+    "query": "精工 SKX luxury wristwatch macro dial leather strap",
     "category": "all",
     "matchTags": [
       "skx",
       "watch"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/watch/watch-seiko-skx/content.md"

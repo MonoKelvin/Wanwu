@@ -5,10 +5,10 @@
   "name": "赛博朋克城市",
   "summary": "霓虹雨夜、高楼与全息广告的未来都市。",
   "tags": [
-    "数字绘画",
-    "科幻",
+    "插画",
     "霓虹",
-    "插画"
+    "数字绘画",
+    "科幻"
   ],
   "specs": {
     "分类": "数字插画",
@@ -24,7 +24,7 @@
     "matchTags": [
       "数字绘画"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,9 +5,9 @@
   "name": "惊破天 Galvatron",
   "summary": "威震天重生体，宇宙大帝改造后的暴君。",
   "tags": [
+    "变形",
     "霸天虎",
     "反派",
-    "变形",
     "霸天虎领袖"
   ],
   "specs": {
@@ -26,7 +26,7 @@
       "霸天虎领袖",
       "galvatron"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

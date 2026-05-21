@@ -5,10 +5,10 @@
   "name": "绿灯侠 Green Lantern",
   "summary": "情感光谱之绿光军团成员，意志驱动戒指具现化万物。",
   "tags": [
+    "意志",
     "DC",
-    "绿灯军团",
     "戒指",
-    "意志"
+    "绿灯军团"
   ],
   "specs": {
     "宇宙": "DC 漫画",
@@ -25,7 +25,7 @@
       "绿灯军团",
       "green"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

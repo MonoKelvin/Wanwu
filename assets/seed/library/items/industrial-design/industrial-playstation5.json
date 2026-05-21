@@ -5,10 +5,10 @@
   "name": "PlayStation 5",
   "summary": "白色流线主机与 DualSense 触觉反馈。",
   "tags": [
-    "工业设计",
     "Sony",
-    "游戏主机",
-    "经典"
+    "工业设计",
+    "经典",
+    "游戏主机"
   ],
   "specs": {
     "分类": "产品设计",
@@ -27,7 +27,7 @@
       "游戏主机",
       "playstation"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

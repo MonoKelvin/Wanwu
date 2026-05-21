@@ -6,9 +6,9 @@
   "summary": "蜡质叶与伞形花序，花香浓郁需充足光开花。",
   "tags": [
     "观叶",
-    "天南星科",
+    "热植",
     "室内",
-    "热植"
+    "天南星科"
   ],
   "specs": {
     "分类": "天南星科",
@@ -26,7 +26,7 @@
       "天南星科",
       "hoya"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,9 +5,9 @@
   "name": "Storybook",
   "summary": "组件隔离开发与视觉回归文档。",
   "tags": [
-    "Web",
     "UI",
     "Storybook",
+    "Web",
     "文档"
   ],
   "specs": {
@@ -25,7 +25,7 @@
       "web",
       "storybook"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

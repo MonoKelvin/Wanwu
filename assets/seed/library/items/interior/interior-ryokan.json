@@ -5,8 +5,8 @@
   "name": "日式旅馆",
   "summary": "温泉、怀石与客房布草的传统款待体验。",
   "tags": [
-    "日式",
     "禅意",
+    "日式",
     "旅馆",
     "温泉"
   ],
@@ -22,7 +22,7 @@
     "provider": "pixabay",
     "query": "interior design room",
     "matchTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "阿莱西 9093 鸟鸣水壶",
   "summary": "理查德·萨帕 1980 年代经典设计，壶嘴蒸汽驱动鸟哨鸣叫。",
   "tags": [
-    "Alessi",
     "水壶",
-    "萨帕",
-    "后现代"
+    "后现代",
+    "Alessi",
+    "萨帕"
   ],
   "specs": {
     "分类": "家居产品",
@@ -26,7 +26,7 @@
       "alessi",
       "后现代"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

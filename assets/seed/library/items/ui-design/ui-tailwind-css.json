@@ -5,10 +5,10 @@
   "name": "Tailwind CSS",
   "summary": "原子化 utility-first CSS 框架，快速迭代界面。",
   "tags": [
-    "Web",
+    "框架",
     "UI",
-    "Tailwind",
-    "框架"
+    "Web",
+    "Tailwind"
   ],
   "specs": {
     "分类": "Web UI",
@@ -25,7 +25,7 @@
       "web",
       "tailwind"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

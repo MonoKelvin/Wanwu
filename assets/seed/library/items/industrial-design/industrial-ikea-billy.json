@@ -5,10 +5,10 @@
   "name": "IKEA Billy 书柜",
   "summary": "全球最畅销书柜之一，平价模块化。",
   "tags": [
-    "家居",
     "IKEA",
-    "家具",
-    "设计"
+    "设计",
+    "家居",
+    "家具"
   ],
   "specs": {
     "分类": "家居产品设计",
@@ -24,7 +24,7 @@
     "matchTags": [
       "ikea"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

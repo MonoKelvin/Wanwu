@@ -6,8 +6,8 @@
   "summary": "17 世纪荷兰画家维米尔代表作，少女回眸与珍珠耳饰被誉为「北方的蒙娜丽莎」。",
   "tags": [
     "维米尔",
-    "荷兰黄金时代",
     "油画",
+    "荷兰黄金时代",
     "肖像"
   ],
   "specs": {
@@ -26,7 +26,7 @@
       "维米尔",
       "荷兰黄金时代"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -14,7 +14,7 @@
       "loft"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/interior/interior-loft-industrial/content.md"

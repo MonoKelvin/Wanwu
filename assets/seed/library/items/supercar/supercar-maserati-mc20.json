@@ -5,8 +5,8 @@
   "name": "玛莎拉蒂 MC20",
   "summary": "海神发动机回归超跑，蝴蝶门与中置布局重塑品牌性能形象。",
   "tags": [
-    "意大利",
     "Maserati",
+    "意大利",
     "超跑",
     "V8/V12"
   ],
@@ -22,7 +22,7 @@
   "media": {
     "provider": "pixabay",
     "query": "maserati sports car luxury",
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "matchTags": [
       "意大利",
       "maserati",

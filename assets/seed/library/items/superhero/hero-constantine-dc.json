@@ -6,8 +6,8 @@
   "summary": "约翰·康斯坦丁，狡猾驱魔术士，烟与风衣的英伦神秘学反英雄。",
   "tags": [
     "DC",
-    "魔法",
     "驱魔",
+    "魔法",
     "反英雄"
   ],
   "specs": {
@@ -25,7 +25,7 @@
       "反英雄",
       "constantine"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

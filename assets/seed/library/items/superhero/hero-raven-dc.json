@@ -5,10 +5,10 @@
   "name": "渡鸦 Raven",
   "summary": "阿泽拉特之女，掌控黑暗能量与情感的少年泰坦 mystic。",
   "tags": [
+    "渡鸦",
     "DC",
-    "少年泰坦",
     "魔法",
-    "渡鸦"
+    "少年泰坦"
   ],
   "specs": {
     "宇宙": "DC 漫画",
@@ -25,7 +25,7 @@
       "少年泰坦",
       "raven"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

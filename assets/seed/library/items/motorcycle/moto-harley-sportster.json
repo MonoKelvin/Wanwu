@@ -5,10 +5,10 @@
   "name": "哈雷 Sportster S",
   "summary": "液冷 Revolution Max，运动巡航新世代。",
   "tags": [
-    "美式",
     "Harley-Davidson",
     "巡航",
-    "运动巡航"
+    "运动巡航",
+    "美式"
   ],
   "specs": {
     "分类": "美式巡航",
@@ -26,7 +26,7 @@
       "运动巡航",
       "sportster"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

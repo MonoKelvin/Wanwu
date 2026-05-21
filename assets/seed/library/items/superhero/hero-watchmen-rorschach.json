@@ -5,10 +5,10 @@
   "name": "罗夏 Rorschach",
   "summary": "《守望者》道德绝对主义蒙面侦探，面具墨渍可变。",
   "tags": [
-    "守望者",
     "DC",
+    "解构",
     "反英雄",
-    "解构"
+    "守望者"
   ],
   "specs": {
     "作品": "Watchmen",
@@ -26,7 +26,7 @@
       "反英雄",
       "rorschach"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

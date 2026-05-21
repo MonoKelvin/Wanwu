@@ -5,9 +5,9 @@
   "name": "黑寡妇 Black Widow",
   "summary": "娜塔莎·罗曼诺夫，红房子特工转神盾局与复仇者顶尖间谍。",
   "tags": [
+    "复仇者",
     "漫威",
-    "间谍",
-    "复仇者"
+    "间谍"
   ],
   "specs": {
     "宇宙": "漫威 Marvel",
@@ -23,7 +23,7 @@
       "复仇者",
       "black"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

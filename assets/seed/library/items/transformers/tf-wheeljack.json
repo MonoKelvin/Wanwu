@@ -6,9 +6,9 @@
   "summary": "科学家， Lancia 变形，发明火花塞与太空桥。",
   "tags": [
     "汽车人",
-    "Hasbro",
+    "科学家",
     "变形",
-    "科学家"
+    "Hasbro"
   ],
   "specs": {
     "分类": "汽车人 Autobot",
@@ -27,7 +27,7 @@
       "科学家",
       "wheeljack"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

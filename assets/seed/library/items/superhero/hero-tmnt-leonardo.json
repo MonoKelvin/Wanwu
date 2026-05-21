@@ -5,10 +5,10 @@
   "name": "忍者神龟 Leonardo",
   "summary": "四龟之首，双刀忍者，纽约下水道英雄与披萨文化符号。",
   "tags": [
-    "TMNT",
-    "忍者",
     "乌龟",
-    "纽约"
+    "忍者",
+    "纽约",
+    "TMNT"
   ],
   "specs": {
     "首次登场": "1984",
@@ -25,7 +25,7 @@
       "tmnt",
       "leonardo"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

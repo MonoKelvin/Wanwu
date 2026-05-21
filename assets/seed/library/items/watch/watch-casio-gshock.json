@@ -10,14 +10,14 @@
   "specs": {},
   "media": {
     "provider": "pixabay",
-    "query": "luxury wristwatch macro dial leather strap",
+    "query": "卡西欧 G-Shock luxury wristwatch macro dial leather strap",
     "category": "all",
     "matchTags": [
       "shock",
       "watch"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/watch/watch-casio-gshock/content.md"

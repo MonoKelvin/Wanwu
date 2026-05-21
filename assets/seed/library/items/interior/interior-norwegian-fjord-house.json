@@ -5,10 +5,10 @@
   "name": "挪威峡湾屋",
   "summary": "大窗框景与极简应对长冬光线。",
   "tags": [
-    "北欧",
     "家装",
-    "挪威",
-    "景观"
+    "景观",
+    "北欧",
+    "挪威"
   ],
   "specs": {
     "分类": "北欧风格",
@@ -22,7 +22,7 @@
     "provider": "pixabay",
     "query": "interior design room",
     "matchTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

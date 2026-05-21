@@ -5,10 +5,10 @@
   "name": "猎魔人杰洛特 Geralt",
   "summary": "变异猎魔人行走道德灰色世界，剑术与法印对抗怪物。",
   "tags": [
-    "猎魔人",
     "奇幻",
-    "Netflix",
-    "游戏"
+    "游戏",
+    "猎魔人",
+    "Netflix"
   ],
   "specs": {
     "来源": "波兰文学",
@@ -26,7 +26,7 @@
       "netflix",
       "geralt"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

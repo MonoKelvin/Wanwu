@@ -5,8 +5,8 @@
   "name": "蚁人 Ant-Man",
   "summary": "皮姆粒子缩放体型，量子领域关键。",
   "tags": [
-    "漫威",
     "皮姆粒子",
+    "漫威",
     "量子"
   ],
   "specs": {
@@ -21,7 +21,7 @@
       "皮姆粒子",
       "ant"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

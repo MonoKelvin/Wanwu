@@ -3,7 +3,7 @@
   "slug": "jewelry-jewel-diamond-ring",
   "subCategoryId": "jewel-ring",
   "name": "钻戒",
-  "summary": "钻戒是戴在手指上的 钻石 珠宝。钻石是宝石中最坚硬的一种， 古罗马人 认为它代表生命和永恒。15世纪的 欧洲 ，钻戒被认定为坚贞不渝的结婚象征，形成了以钻戒作为结婚信物的传统。",
+  "summary": "钻戒是戴在手指上的 钻石 珠宝。",
   "tags": [
     "钻戒",
     "diamond ring",
@@ -15,8 +15,7 @@
     "含 义": "戴在手指上的钻石珠宝",
     "寓 意": "爱的语言",
     "特 性": "透明性，可湿性，导热性",
-    "起 源": "印度",
-    "摘要": "# 钻戒（戴在手指上的钻石珠宝） 钻戒是戴在手指上的 钻石 珠宝。钻石是宝石中最坚硬的一种， 古罗马人 认为它代表生命和永恒。15世纪的 欧洲 ，钻戒被认定为坚贞不渝的结婚象征，形成了以钻戒作为结婚信物的传统。 。古代戒指以玉石制成环状，象"
+    "起 源": "印度"
   },
   "media": {
     "provider": "pixabay",
@@ -24,7 +23,7 @@
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/jewelry/jewelry-jewel-diamond-ring/content.md"

@@ -5,10 +5,10 @@
   "name": "Chakra UI",
   "summary": "可访问性友好的 React 组件库，主题灵活。",
   "tags": [
-    "Web",
+    "组件",
     "UI",
     "React",
-    "组件"
+    "Web"
   ],
   "specs": {
     "分类": "Web UI",
@@ -26,7 +26,7 @@
       "react",
       "chakra"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

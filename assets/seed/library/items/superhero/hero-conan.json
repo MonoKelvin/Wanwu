@@ -5,10 +5,10 @@
   "name": "野蛮人柯南 Conan",
   "summary": "罗伯特·霍华德剑与魔法经典，西伯莱流浪战士走向王位传奇。",
   "tags": [
-    "剑与魔法",
     "野蛮人",
-    "奇幻",
-    "经典"
+    "剑与魔法",
+    "经典",
+    "奇幻"
   ],
   "specs": {
     "作者": "Robert E. Howard",
@@ -26,7 +26,7 @@
       "野蛮人",
       "conan"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

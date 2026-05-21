@@ -3,30 +3,22 @@
   "slug": "movie-harry-potter",
   "subCategoryId": "movie-action",
   "name": "哈利·波特 Harry Potter",
-  "summary": "《哈利·波特》（Harry Potter）是英国作家 J.K.罗琳 （J. K. Rowling）于1997～2007年所著的 魔幻文学 系列小说，共7部。其中前六部以 霍格沃茨魔法学校 （Hogwarts School of Witchcraft and Wizardry）为主要舞台，描写的是主人公——年轻的巫师学生",
+  "summary": "《哈利·波特》（Harry Potter）是英国作家 J.",
   "tags": [
-    "奇幻",
     "电影",
-    "魔法奇幻",
-    "史诗",
-    "奇幻电影",
-    "2001–11",
-    "多位导演"
+    "多位导演",
+    "奇幻",
+    "2001–11"
   ],
   "specs": {
+    "类型": "魔法奇幻",
+    "导演": "多位导演",
     "分类": "奇幻电影",
     "年份": "2001–11",
-    "导演": "多位导演",
-    "类型": "魔法奇幻",
     "改编": "文学 / 原创",
     "受众": "全年龄至成人",
     "作品名称": "哈利·波特",
-    "外文名": "Harry Potter",
-    "作者": "J.K.罗琳 （英）",
-    "体裁": "小说",
-    "首发年份": "1997年6月30日 至 2007年7月10日",
-    "字 数": "约2908000",
-    "摘要": "# 哈利·波特（J.K.罗琳创作魔幻系列小说） 《哈利·波特》（Harry Potter）是英国作家 J.K.罗琳 （J. K. Rowling）于1997～2007年所著的 魔幻文学 系列小说，共7部。其中前六部以 霍格沃茨魔法学校 （H"
+    "外文名": "Harry Potter"
   },
   "media": {
     "provider": "pixabay",
@@ -35,7 +27,7 @@
       "魔法奇幻",
       "harry"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

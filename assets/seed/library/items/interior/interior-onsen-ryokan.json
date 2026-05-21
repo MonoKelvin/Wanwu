@@ -5,10 +5,10 @@
   "name": "温泉旅馆",
   "summary": "露天风吕、木浴桶与浴衣体验。",
   "tags": [
-    "日式",
     "禅意",
-    "温泉",
-    "旅馆"
+    "日式",
+    "旅馆",
+    "温泉"
   ],
   "specs": {
     "分类": "日式禅意",
@@ -22,7 +22,7 @@
     "provider": "pixabay",
     "query": "interior design room",
     "matchTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

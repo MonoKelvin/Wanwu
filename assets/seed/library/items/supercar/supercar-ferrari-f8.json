@@ -5,10 +5,10 @@
   "name": "法拉利 F8 Tributo",
   "summary": "488 后继中置 V8，空气动力学与轻量化进一步提升。",
   "tags": [
+    "V8/V12",
     "意大利",
-    "Ferrari",
     "超跑",
-    "V8/V12"
+    "Ferrari"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -27,7 +27,7 @@
       "ferrari",
       "v8/v12"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -14,7 +14,7 @@
       "chemex"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/coffee-tea/coffee-tea-ct-chemex/content.md"

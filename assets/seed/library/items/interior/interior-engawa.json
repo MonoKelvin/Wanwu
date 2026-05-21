@@ -5,10 +5,10 @@
   "name": "缘侧",
   "summary": "室内外过渡廊道，坐观庭景。",
   "tags": [
-    "日式",
+    "廊道",
     "禅意",
-    "缘侧",
-    "廊道"
+    "日式",
+    "缘侧"
   ],
   "specs": {
     "分类": "日式禅意",
@@ -22,7 +22,7 @@
     "provider": "pixabay",
     "query": "interior design room",
     "matchTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

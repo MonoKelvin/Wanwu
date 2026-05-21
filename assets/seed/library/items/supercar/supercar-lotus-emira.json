@@ -5,10 +5,10 @@
   "name": "路特斯 Emira",
   "summary": "末代燃油路特斯，中置布局与轻量化哲学延续。",
   "tags": [
-    "英国",
     "Lotus",
     "超跑",
-    "GT"
+    "GT",
+    "英国"
   ],
   "specs": {
     "分类": "英国品牌",
@@ -26,7 +26,7 @@
       "lotus",
       "emira"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "兰博基尼 Huracán",
   "summary": "意大利圣亚加塔入门级中置 V10 超跑，名称源自西班牙斗牛「飓风」。",
   "tags": [
-    "兰博基尼",
     "意大利",
     "V10",
-    "四驱"
+    "四驱",
+    "兰博基尼"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -28,7 +28,7 @@
       "v10",
       "hurac"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "requiredTags": []
   },

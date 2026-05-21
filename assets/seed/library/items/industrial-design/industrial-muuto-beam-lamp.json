@@ -7,8 +7,8 @@
   "tags": [
     "家居",
     "Muuto",
-    "灯具",
-    "设计"
+    "设计",
+    "灯具"
   ],
   "specs": {
     "分类": "家居产品设计",
@@ -24,7 +24,7 @@
     "matchTags": [
       "muuto"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

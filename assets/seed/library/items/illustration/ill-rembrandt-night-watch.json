@@ -6,9 +6,9 @@
   "summary": "伦勃朗光影与荷兰黄金时代群像。",
   "tags": [
     "艺术史",
-    "巴洛克",
     "伦勃朗",
-    "名画"
+    "名画",
+    "巴洛克"
   ],
   "specs": {
     "分类": "古典绘画",
@@ -27,7 +27,7 @@
       "伦勃朗",
       "the"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

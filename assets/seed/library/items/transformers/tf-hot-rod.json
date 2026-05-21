@@ -6,9 +6,9 @@
   "summary": "年轻战士，后继承擎天柱成为补天士。",
   "tags": [
     "汽车人",
-    "Hasbro",
     "变形",
-    "领袖继承"
+    "领袖继承",
+    "Hasbro"
   ],
   "specs": {
     "分类": "汽车人 Autobot",
@@ -27,7 +27,7 @@
       "领袖继承",
       "hot"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

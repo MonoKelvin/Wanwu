@@ -5,8 +5,8 @@
   "name": "Android 14 界面",
   "summary": "预测返回手势与隐私仪表盘等新特性。",
   "tags": [
-    "移动端",
     "UI",
+    "移动端",
     "Android 14",
     "系统"
   ],
@@ -26,7 +26,7 @@
       "android 14",
       "android"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

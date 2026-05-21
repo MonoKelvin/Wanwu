@@ -5,10 +5,10 @@
   "name": "榻榻米卧室",
   "summary": "叠席、矮柜与纸灯营造安静睡眠环境。",
   "tags": [
-    "日式",
     "禅意",
-    "榻榻米",
-    "卧室"
+    "日式",
+    "卧室",
+    "榻榻米"
   ],
   "specs": {
     "分类": "日式禅意",
@@ -24,7 +24,7 @@
     "matchTags": [
       "榻榻米"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

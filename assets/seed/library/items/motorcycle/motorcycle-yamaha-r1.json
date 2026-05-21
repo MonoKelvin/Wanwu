@@ -5,10 +5,10 @@
   "name": "雅马哈 YZF-R1",
   "summary": "十字曲轴四缸仿赛，MotoGP 技术标杆。",
   "tags": [
-    "日本",
-    "Yamaha",
     "摩托",
-    "约 200 hp"
+    "约 200 hp",
+    "日本",
+    "Yamaha"
   ],
   "specs": {
     "分类": "日本品牌",
@@ -26,7 +26,7 @@
       "约 200 hp",
       "yzf"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

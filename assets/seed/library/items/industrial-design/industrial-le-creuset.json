@@ -5,9 +5,9 @@
   "name": "Le Creuset 珐琅锅",
   "summary": "法式铸铁彩色珐琅锅，厨房色彩点缀。",
   "tags": [
-    "家居",
-    "Le Creuset",
     "厨具",
+    "Le Creuset",
+    "家居",
     "设计"
   ],
   "specs": {
@@ -24,7 +24,7 @@
     "matchTags": [
       "le creuset"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

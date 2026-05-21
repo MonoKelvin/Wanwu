@@ -3,41 +3,20 @@
   "slug": "game-minecraft",
   "subCategoryId": "game-indie",
   "name": "我的世界",
-  "summary": "《我的世界》 （Minecraft） 是一款 沙盒 类 电子游戏 ，开创者为 马库斯·阿列克谢·泊松 （Notch） 。游戏由 Mojang Studios维护，现隶属于 微软 Xbox 游戏工作室。 游戏最初于2009年5月17日作为Classic版本发布，并于2011年11月18日发布 Java 正式版。游戏平台囊",
+  "summary": "《我的世界》 （Minecraft） 是一款 沙盒 类 电子游戏 ，开创者为 马库斯·阿列克谢·泊松 （Notch） 。",
   "tags": [
-    "我的世界",
     "Minecraft",
-    "MC 、 方块世界"
+    "我的世界"
   ],
   "specs": {
+    "开发商": "Mojang Studios、 Xbox Game Studios 、SkyBox Labs、4J Studios、Other Ocean Interactive",
     "中文名": "我的世界",
     "原版名称": "Minecraft",
     "别 名": "MC 、 方块世界",
     "游戏类型": "沙盒游戏",
     "原作者": "马库斯·阿列克谢·泊松",
     "所属系列": "Minecraft",
-    "地 区": "全球",
-    "开发商": "Mojang Studios、 Xbox Game Studios 、SkyBox Labs、4J Studios、Other Ocean Interactive",
-    "发行公司": "Mojang Studios Xbox Game Studios 网易游戏 （中国版代理）",
-    "发行日期": "2009年5月16日 （Java版） 2011年8月16日 （基岩版） 2016年11月1日 （教育版） 2016年5月20日 （中国版）",
-    "游戏售价": "89 元",
-    "总 监": "昂内丝·拉尔森",
-    "主要配音": "Dry Hands 、 Minecraft 、 Wet Hands 、 Alpha 、 Sweden",
-    "背景音乐": "Minecraft - Volume Alpha 、 Minecraft - Volume Beta 、 Dragon Fish 、 Shuniji 、 Axolotl",
-    "内容主题": "沙盒游戏， 开放世界",
-    "玩家人数": "1 人 （联机人数最多8人 服务器人数不受限）",
-    "游戏画面": "像素风格， 3D ，高清画质",
-    "游戏引擎": "OpenGL 、Java、 C++",
-    "游戏分级": "DEJUS：L GSRR：P GRB：12+ ESRB ：E(10+) CADPA：8+",
-    "最新版本": "Java版：1.21.6（Pre Release 4） （2025年6月10日） 基岩版：1.21.124（正式版）、1.21.130.28（Beta、Preview版）",
-    "发行阶段": "正式版",
-    "主要角色": "史蒂夫（即Steve） 、 爱丽克丝（即Alex）",
-    "语 种": "114种（Java版），29种（基岩版） 繁体中文/简体中文/英文/日文/韩文/法文/意大利文/德文/西班牙文/荷兰文/葡萄牙文/俄罗斯文",
-    "编程语言": "Java（Java版）,C++（基岩版）",
-    "游戏模式": "生存模式,创造模式,冒险模式,旁观模式，极限模式",
-    "游戏维度": "主世界，下界，末地",
-    "首发日期": "2009年5月16日 （Java版） 2011年8月16日 （基岩版） 2016年11月1日 （教育版） 2016年5月20日 （中国版）",
-    "摘要": "# 我的世界（2009年Mojang Studios开发的沙盒游戏） 《我的世界》 （Minecraft） 是一款 沙盒 类 电子游戏 ，开创者为 马库斯·阿列克谢·泊松 （Notch） 。游戏由 Mojang Studios维护，现隶属于"
+    "地 区": "全球"
   },
   "media": {
     "provider": "pixabay",
@@ -45,7 +24,7 @@
     "category": "all",
     "matchTags": [],
     "requiredTags": [],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6
   },
   "contentFile": "library/game/game-minecraft/content.md"

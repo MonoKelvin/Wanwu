@@ -6,9 +6,9 @@
   "summary": "前精神病医生爱上小丑后成为反英雄，棒球棍与幽默暴力风格。",
   "tags": [
     "DC",
+    "哈莉",
     "反英雄",
-    "小丑",
-    "哈莉"
+    "小丑"
   ],
   "specs": {
     "宇宙": "DC 漫画",
@@ -25,7 +25,7 @@
       "反英雄",
       "harley"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

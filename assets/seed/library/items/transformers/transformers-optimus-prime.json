@@ -6,9 +6,9 @@
   "summary": "汽车人领袖，可变形为重型卡车，象征正义与牺牲精神的变形金刚标志角色。",
   "tags": [
     "汽车人",
-    "Hasbro",
     "卡车",
-    "领袖"
+    "领袖",
+    "Hasbro"
   ],
   "specs": {
     "分类": "汽车人 Autobot",
@@ -27,7 +27,7 @@
       "hasbro",
       "optimus"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "requiredTags": []
   },

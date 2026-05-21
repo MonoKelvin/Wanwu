@@ -6,8 +6,8 @@
   "summary": "「少，但更好」 ten principles 影响现代设计。",
   "tags": [
     "工业设计",
-    "Braun",
     "家电",
+    "Braun",
     "经典"
   ],
   "specs": {
@@ -25,7 +25,7 @@
       "工业设计",
       "braun"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

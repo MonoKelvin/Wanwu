@@ -5,8 +5,8 @@
   "name": "枯山水",
   "summary": "白沙耙纹象征水流，石组为山岛的禅庭。",
   "tags": [
-    "日式",
     "禅意",
+    "日式",
     "枯山水",
     "庭院"
   ],
@@ -24,7 +24,7 @@
     "matchTags": [
       "枯山水"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

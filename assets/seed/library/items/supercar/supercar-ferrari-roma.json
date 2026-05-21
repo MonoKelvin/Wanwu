@@ -5,10 +5,10 @@
   "name": "法拉利 Roma",
   "summary": "前置 V8 GT，优雅双门轿跑，致敬 50–60 年代 dolce vita 风格。",
   "tags": [
+    "V8/V12",
     "意大利",
-    "Ferrari",
     "超跑",
-    "V8/V12"
+    "Ferrari"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -28,7 +28,7 @@
       "v8/v12",
       "roma"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

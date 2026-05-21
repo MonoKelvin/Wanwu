@@ -14,7 +14,7 @@
       "fat"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6
   },
   "contentFile": "library/motorcycle/motorcycle-moto-harley-fatboy/content.md"

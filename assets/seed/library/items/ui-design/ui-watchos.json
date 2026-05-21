@@ -5,9 +5,9 @@
   "name": "watchOS 界面",
   "summary": "圆形屏幕信息密度与并发症布局。",
   "tags": [
-    "移动端",
-    "UI",
     "watchOS",
+    "UI",
+    "移动端",
     "可穿戴"
   ],
   "specs": {
@@ -26,7 +26,7 @@
       "watchos",
       "可穿戴"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

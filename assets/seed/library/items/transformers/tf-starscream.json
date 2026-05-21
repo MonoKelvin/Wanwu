@@ -5,10 +5,10 @@
   "name": "红蜘蛛 Starscream",
   "summary": "霸天虎空军司令，F-15 变形，野心勃勃总想取代威震天。",
   "tags": [
-    "霸天虎",
-    "反派",
+    "空军司令",
     "变形",
-    "空军司令"
+    "霸天虎",
+    "反派"
   ],
   "specs": {
     "分类": "霸天虎 Decepticon",
@@ -26,7 +26,7 @@
       "空军司令",
       "starscream"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

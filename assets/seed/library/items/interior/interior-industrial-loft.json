@@ -5,8 +5,8 @@
   "name": "工业风 Loft",
   "summary": "裸露砖墙、钢梁与复古皮革沙发。",
   "tags": [
-    "北欧",
     "家装",
+    "北欧",
     "工业",
     "Loft"
   ],
@@ -24,7 +24,7 @@
     "matchTags": [
       "loft"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

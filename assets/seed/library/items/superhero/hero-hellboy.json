@@ -6,9 +6,9 @@
   "summary": "恶魔之子为 BPRD 调查超自然现象的 Right Hand of Doom。",
   "tags": [
     "Dark Horse",
-    "恶魔",
+    "奇幻",
     "BPRD",
-    "奇幻"
+    "恶魔"
   ],
   "specs": {
     "出版": "Dark Horse",
@@ -26,7 +26,7 @@
       "bprd",
       "hellboy"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

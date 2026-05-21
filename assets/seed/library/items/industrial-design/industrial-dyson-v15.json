@@ -6,9 +6,9 @@
   "summary": "戴森旗舰无线吸尘器，激光显尘、压电式颗粒计数与 Hyperdymium 马达。",
   "tags": [
     "戴森",
-    "吸尘器",
+    "家电",
     "激光显尘",
-    "家电"
+    "吸尘器"
   ],
   "specs": {
     "分类": "消费电子",
@@ -27,7 +27,7 @@
       "激光显尘",
       "v15"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

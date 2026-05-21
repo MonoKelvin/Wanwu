@@ -5,10 +5,10 @@
   "name": "铃木 Hayabusa",
   "summary": "隼式极速传奇，直列四缸长途高速。",
   "tags": [
-    "日本",
-    "Suzuki",
     "摩托",
-    "极速传说"
+    "日本",
+    "极速传说",
+    "Suzuki"
   ],
   "specs": {
     "分类": "日本品牌",
@@ -26,7 +26,7 @@
       "极速传说",
       "hayabusa"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

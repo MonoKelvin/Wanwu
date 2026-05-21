@@ -5,9 +5,9 @@
   "name": "激光鸟 Laserbeak",
   "summary": "声波磁带，鸟形侦察与暗杀。",
   "tags": [
+    "变形",
     "霸天虎",
     "反派",
-    "变形",
     "磁带战士"
   ],
   "specs": {
@@ -26,7 +26,7 @@
       "磁带战士",
       "laserbeak"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

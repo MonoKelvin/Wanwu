@@ -6,8 +6,8 @@
   "summary": "蒙克多重媒介呐喊形象传播。",
   "tags": [
     "艺术史",
-    "表现主义",
     "蒙克",
+    "表现主义",
     "名画"
   ],
   "specs": {
@@ -25,7 +25,7 @@
       "艺术史",
       "表现主义"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

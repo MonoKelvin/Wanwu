@@ -5,10 +5,10 @@
   "name": "iPhone 设计",
   "summary": "苹果全面屏与钛金属边框迭代，生态系统核心硬件。",
   "tags": [
-    "工业设计",
-    "Apple",
     "智能手机",
-    "经典"
+    "工业设计",
+    "经典",
+    "Apple"
   ],
   "specs": {
     "分类": "产品设计",
@@ -27,7 +27,7 @@
       "智能手机",
       "iphone"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

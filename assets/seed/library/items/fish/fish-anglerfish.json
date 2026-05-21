@@ -14,7 +14,7 @@
       "fish"
     ],
     "requiredTags": [],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/fish/fish-anglerfish/content.md"

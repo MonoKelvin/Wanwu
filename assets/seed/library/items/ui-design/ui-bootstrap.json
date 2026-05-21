@@ -5,10 +5,10 @@
   "name": "Bootstrap",
   "summary": "经典栅格与组件库，适合原型与后台。",
   "tags": [
-    "Web",
+    "框架",
     "UI",
-    "Bootstrap",
-    "框架"
+    "Web",
+    "Bootstrap"
   ],
   "specs": {
     "分类": "Web UI",
@@ -25,7 +25,7 @@
       "web",
       "bootstrap"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

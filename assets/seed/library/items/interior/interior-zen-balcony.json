@@ -5,9 +5,9 @@
   "name": "禅意阳台",
   "summary": "盆栽、竹篱与石灯的小型都市冥想角。",
   "tags": [
-    "日式",
-    "禅意",
     "都市",
+    "禅意",
+    "日式",
     "阳台"
   ],
   "specs": {
@@ -22,7 +22,7 @@
     "provider": "pixabay",
     "query": "interior design room",
     "matchTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

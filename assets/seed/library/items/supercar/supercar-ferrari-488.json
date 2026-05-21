@@ -3,12 +3,12 @@
   "slug": "supercar-ferrari-488",
   "subCategoryId": "car-italy",
   "name": "法拉利 488 GTB",
-  "summary": "意大利马拉内罗中置 V8 超跑，3.9L 双涡轮，488 代表单缸排量（cc）。",
+  "summary": "意大利马拉内罗中置 V8 超跑，3.",
   "tags": [
-    "法拉利",
     "意大利",
     "V8",
-    "中置"
+    "中置",
+    "法拉利"
   ],
   "specs": {
     "分类": "意大利品牌",
@@ -27,7 +27,7 @@
       "意大利",
       "gtb"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "requiredTags": []
   },

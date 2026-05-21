@@ -5,10 +5,10 @@
   "name": "保时捷 918 Spyder",
   "summary": "插电混动超跑三杰之一，纽北纪录创造者。",
   "tags": [
+    "精密工程",
     "德国",
-    "Porsche",
     "超跑",
-    "精密工程"
+    "Porsche"
   ],
   "specs": {
     "分类": "德国品牌",
@@ -27,7 +27,7 @@
       "精密工程",
       "spyder"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

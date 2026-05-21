@@ -5,10 +5,10 @@
   "name": "Notion 风格",
   "summary": "块编辑器、留白与中性色生产力界面。",
   "tags": [
-    "Web",
     "UI",
-    "SaaS",
-    "生产力"
+    "生产力",
+    "Web",
+    "SaaS"
   ],
   "specs": {
     "分类": "Web UI",
@@ -27,7 +27,7 @@
       "生产力",
       "notion"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

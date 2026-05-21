@@ -5,10 +5,10 @@
   "name": "天坛",
   "summary": "皇帝祭天祈谷的圆形建筑群。",
   "tags": [
-    "中国",
     "世界遗产",
+    "明清",
     "北京",
-    "明清"
+    "中国"
   ],
   "specs": {
     "分类": "中国史迹",
@@ -24,7 +24,7 @@
     "matchTags": [
       "世界遗产"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

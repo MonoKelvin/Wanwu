@@ -14,7 +14,7 @@
       "tailwind"
     ],
     "requiredTags": [],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/ui-design/ui-design-tailwind-docs/content.md"

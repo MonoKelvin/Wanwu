@@ -5,10 +5,9 @@
   "name": "印第安 Scout",
   "summary": "美式巡航入门，复古油箱与低座高。",
   "tags": [
-    "美式",
     "Indian",
     "巡航",
-    "巡航"
+    "美式"
   ],
   "specs": {
     "分类": "美式巡航",
@@ -25,7 +24,7 @@
       "indian",
       "scout"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

@@ -5,8 +5,8 @@
   "name": "阿尔法·罗密欧 33 Stradale",
   "summary": "品牌旗舰超跑复兴，限量手工，融合意大利设计史与未来动力。",
   "tags": [
-    "意大利",
     "Alfa Romeo",
+    "意大利",
     "超跑",
     "V8/V12"
   ],
@@ -28,7 +28,7 @@
       "v8/v12",
       "stradale"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

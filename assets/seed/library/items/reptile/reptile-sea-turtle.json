@@ -3,34 +3,20 @@
   "slug": "reptile-sea-turtle",
   "subCategoryId": "reptile-turtle",
   "name": "绿海龟",
-  "summary": "绿海龟（学名： Chelonia mydas ）是龟鳖目、海龟科、海龟属的海洋动物，是各种 海龟 中体型较大的一种，其成龟背甲直线长度可达90-120厘米，体重可达100千克以上。因其体内脂富含主要食物，即海草中的 叶绿素 而得名。然而，它的腹甲为白色或黄白色，背甲则从赤棕含有亮丽的大花斑到墨色不等。背甲中央为五盾，左",
+  "summary": "绿海龟（学名： Chelonia mydas ）是龟鳖目、海龟科、海龟属的海洋动物，是各种 海龟 中体型较大的一种，其成龟背甲直线长度可达90-120厘米，体重可达100千克以上。",
   "tags": [
     "绿海龟",
-    "Chelonia mydas",
-    "海龟 、 黑龟 、 石龟"
+    "Chelonia mydas"
   ],
   "specs": {
+    "保护级别": "CITES 2023年版附录Ⅰ",
     "中文名": "绿海龟",
     "拉丁学名": "Chelonia mydas",
     "别 名": "海龟 、 黑龟 、 石龟",
     "外文名": "英文 Green Turtle 法文 Tortue comestible, Tortue franche, Tortue verte 西班牙文 Tortuga Blanca, Tortuga Verde 阿拉伯文 الخضراء السلحفاة",
     "同义学名": "Testudo mydas Linnaeus, 1758",
     "国际濒危等级": "濒危(EN)",
-    "中国动物保护等级": "国家一级保护野生动物",
-    "界": "动物界",
-    "门": "脊索动物门",
-    "纲": "爬行纲",
-    "目": "龟鳖目",
-    "科": "海龟科",
-    "属": "海龟属",
-    "种": "绿海龟",
-    "亚 门": "脊椎动物亚门",
-    "亚 纲": "无孔亚纲",
-    "亚 目": "潜颈龟亚目",
-    "亚 种": "无亚种",
-    "命名者及年代": "(Linnaeus, 1758)",
-    "保护级别": "CITES 2023年版附录Ⅰ",
-    "摘要": "# 绿海龟 绿海龟（学名： Chelonia mydas ）是龟鳖目、海龟科、海龟属的海洋动物，是各种 海龟 中体型较大的一种，其成龟背甲直线长度可达90-120厘米，体重可达100千克以上。因其体内脂富含主要食物，即海草中的 叶绿素 而得"
+    "中国动物保护等级": "国家一级保护野生动物"
   },
   "media": {
     "provider": "pixabay",
@@ -40,7 +26,7 @@
       "reptile"
     ],
     "requiredTags": [],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 5
   },
   "contentFile": "library/reptile/reptile-sea-turtle/content.md"

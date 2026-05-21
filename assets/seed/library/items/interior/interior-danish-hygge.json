@@ -5,10 +5,10 @@
   "name": "丹麦 Hygge 角落",
   "summary": "壁炉旁阅读角与天然材质。",
   "tags": [
-    "北欧",
     "家装",
-    "丹麦",
-    "角落"
+    "北欧",
+    "角落",
+    "丹麦"
   ],
   "specs": {
     "分类": "北欧风格",
@@ -24,7 +24,7 @@
     "matchTags": [
       "hygge"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

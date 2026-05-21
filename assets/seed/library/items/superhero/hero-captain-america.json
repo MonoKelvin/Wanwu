@@ -5,8 +5,8 @@
   "name": "美国队长 Captain America",
   "summary": "漫威超级士兵计划产物，史蒂夫·罗杰斯手持振金圆盾，象征美国精神与美国队长身份。",
   "tags": [
-    "漫威",
     "复仇者",
+    "漫威",
     "超级士兵",
     "盾牌"
   ],
@@ -27,7 +27,7 @@
       "超级士兵",
       "captain"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "requiredTags": []
   },

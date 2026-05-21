@@ -5,9 +5,9 @@
   "name": "黑豹 Black Panther",
   "summary": "瓦坎达国王特查拉，心形草与振金战衣象征非洲未来主义。",
   "tags": [
+    "振金",
     "漫威",
-    "瓦坎达",
-    "振金"
+    "瓦坎达"
   ],
   "specs": {
     "宇宙": "漫威 Marvel",
@@ -23,7 +23,7 @@
       "瓦坎达",
       "black"
     ],
-    "minMatchScore": 0,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []

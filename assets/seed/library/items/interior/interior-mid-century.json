@@ -5,8 +5,8 @@
   "name": "中世纪现代",
   "summary": "柚木、锥脚椅与复古几何纺织品。",
   "tags": [
-    "北欧",
     "家装",
+    "北欧",
     "MCM",
     "复古"
   ],
@@ -24,7 +24,7 @@
     "matchTags": [
       "mcm"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 5,
     "category": "all",
     "requiredTags": []

@@ -5,10 +5,10 @@
   "name": "铃木 GSX-R750",
   "summary": "750 仿赛经典，赛道日热门。",
   "tags": [
-    "日本",
-    "Suzuki",
     "摩托",
-    "仿赛"
+    "仿赛",
+    "日本",
+    "Suzuki"
   ],
   "specs": {
     "分类": "日本品牌",
@@ -25,7 +25,7 @@
       "suzuki",
       "gsx"
     ],
-    "minMatchScore": 1,
+    "minMatchScore": 2,
     "imageCount": 6,
     "category": "all",
     "requiredTags": []
