@@ -7,6 +7,10 @@ import { useSettingsStore } from '@shared/stores/settings'
 import SettingsRow from '@features/settings/SettingsRow.vue'
 import WwSelect from '@shared/components/WwSelect'
 import { buildStartupModuleOptions } from '@shared/utils/startupModule'
+import WwButton from '@shared/components/WwButton.vue'
+import { useWanwuToast } from '@shared/composables/useWanwuToast'
+import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
+import { resetAllDismissiblePrompts } from '@shared/utils/dismissiblePrompts'
 import {
   COLOR_SCHEME_OPTIONS,
   WINDOW_STATE_MODE_OPTIONS,
@@ -19,6 +23,20 @@ import {
 
 const settingsStore = useSettingsStore()
 const { settings } = storeToRefs(settingsStore)
+const toast = useWanwuToast()
+const confirm = useWanwuConfirm()
+
+async function onResetDismissiblePrompts() {
+  const ok = await confirm.ask({
+    header: '重置确认提示',
+    message: '将恢复所有带「下次不再提醒」的确认对话框（如详情编辑保存/放弃）。',
+    acceptLabel: '重置',
+    rejectLabel: '取消'
+  })
+  if (!ok) return
+  resetAllDismissiblePrompts()
+  toast.success('已重置确认提示')
+}
 
 const startupModuleOptions = computed(() => buildStartupModuleOptions(MODULE_NAV_ITEMS))
 
@@ -109,6 +127,17 @@ async function onColorSchemeChange(v: ColorScheme) {
           :model-value="settings.windowStateMode"
           :options="WINDOW_STATE_MODE_OPTIONS"
           @update:model-value="onWindowStateModeChange"
+        />
+      </SettingsRow>
+      <SettingsRow
+        label="重置确认提示"
+        subtitle="恢复详情编辑等场景的保存/放弃确认弹窗；勾选过「下次不再提醒」的操作会再次提示"
+      >
+        <WwButton
+          label="重置所有提示对话框"
+          variant="outlined"
+          size="small"
+          @click="onResetDismissiblePrompts"
         />
       </SettingsRow>
     </div>

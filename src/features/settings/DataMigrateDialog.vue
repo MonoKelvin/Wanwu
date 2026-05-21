@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
-import Button from 'primevue/button'
-import WwButton from '@shared/components/WwButton.vue'
+import WwDialogFooterButton from '@shared/components/WwDialogFooterButton.vue'
 
 const props = defineProps<{
   visible: boolean
@@ -116,13 +115,18 @@ async function startMigrate() {
 
     <template #footer>
       <template v-if="step === 'intro'">
-        <Button label="取消" severity="secondary" text @click="close" />
-        <WwButton label="选择新位置" icon="folder" @click="pickDirectory" />
+        <WwDialogFooterButton label="取消" cancel @click="close" />
+        <WwDialogFooterButton label="选择新位置" icon="folder" @click="pickDirectory" />
       </template>
       <template v-else-if="step === 'confirm'">
-        <Button label="返回" severity="secondary" text @click="step = 'intro'" />
-        <Button label="取消" severity="secondary" text @click="close" />
-        <WwButton label="开始迁移" icon="arrow-right" :disabled="!canConfirm" @click="startMigrate" />
+        <WwDialogFooterButton label="返回" cancel @click="step = 'intro'" />
+        <WwDialogFooterButton label="取消" cancel @click="close" />
+        <WwDialogFooterButton
+          label="开始迁移"
+          icon="arrow-right"
+          :disabled="!canConfirm"
+          @click="startMigrate"
+        />
       </template>
     </template>
   </Dialog>

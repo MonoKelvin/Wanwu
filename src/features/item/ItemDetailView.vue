@@ -8,11 +8,13 @@ import Textarea from 'primevue/textarea'
 import Skeleton from 'primevue/skeleton'
 import EmptyState from '@app/components/EmptyState.vue'
 import ItemDetailHeroActions from '@features/item/ItemDetailHeroActions.vue'
-import ItemMarkdown from '@features/item/ItemMarkdown.vue'
+import { WwMarkdownReader } from '@shared/markdown'
 import FavoriteGroupPickerDialog from '@features/item/FavoriteGroupPickerDialog.vue'
 import ItemShareCardDialog from '@features/item/ItemShareCardDialog.vue'
 import ItemShareImageDialog from '@features/item/ItemShareImageDialog.vue'
 import { buildItemCopyText } from '@features/item/utils/buildItemCopyText'
+import { DISMISSIBLE_PROMPT_IDS } from '@shared/constants/dismissiblePrompts'
+import { useDismissibleConfirm } from '@shared/composables/useDismissibleConfirm'
 import ImageViewer from '@shared/components/ImageViewer.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import UnsplashAttribution from '@features/item/UnsplashAttribution.vue'
@@ -37,6 +39,7 @@ const U = {
 const route = useRoute()
 const router = useRouter()
 const { backFromItemDetail } = useItemDetailNavigation()
+const dismissConfirm = useDismissibleConfirm()
 
 const item = ref<Item | null>(null)
 const loading = ref(true)
@@ -321,13 +324,30 @@ function startDescEdit() {
   descEditing.value = true
 }
 
-function cancelDescEdit() {
+async function cancelDescEdit() {
+  const ok = await dismissConfirm.ask({
+    id: DISMISSIBLE_PROMPT_IDS.itemDescCancel,
+    header: '放弃编辑',
+    message: '当前修改尚未保存，确定要退出编辑吗？',
+    acceptLabel: '放弃修改',
+    rejectLabel: '继续编辑',
+    danger: true
+  })
+  if (!ok) return
   descEditing.value = false
   descDraft.value = ''
 }
 
 async function saveDescEdit() {
   if (!item.value) return
+  const ok = await dismissConfirm.ask({
+    id: DISMISSIBLE_PROMPT_IDS.itemDescSave,
+    header: '保存详情',
+    message: '确定将当前 Markdown 正文写入该物品吗？',
+    acceptLabel: '保存',
+    rejectLabel: '继续编辑'
+  })
+  if (!ok) return
   descSaving.value = true
   try {
     const updated = await window.wanwu.library.updateItem({
@@ -561,7 +581,7 @@ async function revealInFolder() {
                 class="ww-product-detail__desc-btn ww-product-detail__desc-btn--primary"
                 :disabled="descSaving"
                 aria-label="完成"
-                @click="saveDescEdit"
+                @click="void saveDescEdit()"
               >
                 <WwIcon name="check" size="sm" />
               </button>
@@ -570,7 +590,7 @@ async function revealInFolder() {
                 class="ww-product-detail__desc-btn"
                 :disabled="descSaving"
                 aria-label="取消"
-                @click="cancelDescEdit"
+                @click="void cancelDescEdit()"
               >
                 <WwIcon name="x" size="sm" />
               </button>
@@ -586,7 +606,7 @@ async function revealInFolder() {
               placeholder="Markdown 正文"
             />
           </div>
-          <ItemMarkdown
+          <WwMarkdownReader
             v-else-if="item.description"
             :content="item.description"
             class="ww-product-detail__prose"
@@ -596,7 +616,7 @@ async function revealInFolder() {
 
         <section v-else-if="item.description" class="ww-product-detail__desc">
           <h2 class="ww-section-label">详细介绍</h2>
-          <ItemMarkdown :content="item.description" class="ww-product-detail__prose" />
+          <WwMarkdownReader :content="item.description" class="ww-product-detail__prose" />
         </section>
       </article>
     </div>

@@ -1,7 +1,9 @@
 import { clipboard, dialog, shell } from 'electron'
-import { copyFileSync, existsSync, realpathSync, writeFileSync } from 'fs'
-import { basename, dirname, isAbsolute, normalize, resolve } from 'path'
-import { fileURLToPath } from 'url'
+import { randomUUID } from 'crypto'
+import { copyFileSync, existsSync, realpathSync, unlinkSync, writeFileSync } from 'fs'
+import { basename, dirname, extname, isAbsolute, join, normalize, resolve } from 'path'
+import { tmpdir } from 'os'
+import { fileURLToPath, pathToFileURL } from 'url'
 import { getMainWindow } from '../windowState'
 import { resolveWanwuMediaAbsolute } from './wanwuMedia'
 
@@ -204,4 +206,74 @@ export async function saveTextFile(
 
   writeFileSync(result.filePath, content, 'utf8')
   return { ok: true, path: result.filePath }
+}
+
+/** 大图查看器：远程图临时缓存路径，关闭查看器后释放 */
+const viewerTempById = new Map<number, string[]>()
+let viewerTempSeq = 0
+
+function extFromUrlOrMime(url: string, contentType: string | null): string {
+  const fromMime =
+    contentType?.includes('png') ? 'png'
+    : contentType?.includes('webp') ? 'webp'
+    : contentType?.includes('gif') ? 'gif'
+    : contentType?.includes('jpeg') || contentType?.includes('jpg') ? 'jpg'
+    : null
+  if (fromMime) return fromMime
+  const m = url.match(/\.(jpe?g|png|webp|gif)(\?|#|$)/i)
+  if (m) return m[1].toLowerCase().replace('jpeg', 'jpg')
+  return 'jpg'
+}
+
+/** 解析为可在 ImageViewer 中加载的 URL（本地库直链 file://，远程图写入临时文件） */
+export async function cacheImageForViewer(
+  url: string
+): Promise<{ ok: boolean; displayUrl?: string; cacheId?: number; error?: string }> {
+  const trimmed = url.trim()
+  if (!trimmed) return { ok: false, error: 'empty' }
+
+  if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
+    return { ok: true, displayUrl: trimmed }
+  }
+
+  const localAbs = resolveMediaUrlToAbsolute(trimmed)
+  if (localAbs && existsSync(localAbs)) {
+    return { ok: true, displayUrl: pathToFileURL(localAbs).href }
+  }
+
+  if (!/^https?:\/\//i.test(trimmed)) {
+    return { ok: false, error: 'unsupported' }
+  }
+
+  try {
+    const res = await fetch(trimmed, {
+      headers: { 'User-Agent': 'Wanwu/1.0', Accept: 'image/*,*/*;q=0.8' }
+    })
+    if (!res.ok) return { ok: false, error: 'fetch_failed' }
+
+    const buf = Buffer.from(await res.arrayBuffer())
+    const ext = extFromUrlOrMime(trimmed, res.headers.get('content-type'))
+    const tempPath = join(tmpdir(), `wanwu-viewer-${randomUUID()}.${ext}`)
+    writeFileSync(tempPath, buf)
+
+    const cacheId = ++viewerTempSeq
+    viewerTempById.set(cacheId, [tempPath])
+    return { ok: true, displayUrl: pathToFileURL(tempPath).href, cacheId }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'fetch_failed'
+    return { ok: false, error: message }
+  }
+}
+
+export function releaseViewerImageCache(cacheId: number): void {
+  const paths = viewerTempById.get(cacheId)
+  if (!paths) return
+  for (const p of paths) {
+    try {
+      unlinkSync(p)
+    } catch {
+      /* ignore */
+    }
+  }
+  viewerTempById.delete(cacheId)
 }

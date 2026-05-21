@@ -5,7 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import Tree from 'primevue/tree'
 import type { TreeNode } from 'primevue/treenode'
 import type { TreeNodeDropEvent } from 'primevue/tree'
-import ContextMenu from 'primevue/contextmenu'
+import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import Badge from 'primevue/badge'
 import WwButton from '@shared/components/WwButton.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
@@ -38,7 +38,7 @@ const confirm = useWanwuConfirm()
 
 const expandedKeys = ref<Record<string, boolean>>({})
 const selectionKeys = ref<Record<string, boolean>>({})
-const contextMenu = ref()
+const contextMenu = ref<InstanceType<typeof WwContextMenu> | null>(null)
 const menuItems = ref<WwMenuItem[]>([])
 const feedDialogVisible = ref(false)
 const moveDialogVisible = ref(false)
@@ -319,7 +319,7 @@ function showFeedMenu(event: Event, feed: RssFeed) {
     { label: '移至分组…', wwIcon: 'arrow-right', command: () => openMoveFeed(feed) },
     { label: '删除', wwIcon: 'trash-2', command: () => void softDelete(feed.id) }
   ]
-  contextMenu.value.show(event)
+  contextMenu.value?.show(event)
 }
 
 function showGroupMenu(event: Event, group: RssGroup) {
@@ -328,7 +328,7 @@ function showGroupMenu(event: Event, group: RssGroup) {
     { label: '重命名', wwIcon: 'pencil', command: () => openRenameGroup(group) },
     { label: '删除分组', wwIcon: 'trash-2', command: () => void removeGroup(group.id) }
   ]
-  contextMenu.value.show(event)
+  contextMenu.value?.show(event)
 }
 
 function showRecycleMenu(event: Event, feed: RssFeed) {
@@ -336,7 +336,7 @@ function showRecycleMenu(event: Event, feed: RssFeed) {
     { label: '还原', wwIcon: 'rotate-ccw', command: () => void restore(feed.id) },
     { label: '彻底删除', wwIcon: 'x', command: () => void permanentDelete(feed.id) }
   ]
-  contextMenu.value.show(event)
+  contextMenu.value?.show(event)
 }
 
 function openEditFeed(feed: RssFeed) {
@@ -559,11 +559,7 @@ async function removeGroup(groupId: string) {
       </Tree>
     </div>
 
-    <ContextMenu ref="contextMenu" :model="menuItems">
-      <template #itemicon="{ item }">
-        <WwIcon v-if="item.wwIcon" :name="item.wwIcon" size="sm" class="ww-menu-item-icon" />
-      </template>
-    </ContextMenu>
+    <WwContextMenu ref="contextMenu" :model="menuItems" />
 
     <RssFeedDialog
       v-model:visible="feedDialogVisible"

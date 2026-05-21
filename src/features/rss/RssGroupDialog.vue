@@ -2,7 +2,7 @@
 import { nextTick, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
-import Button from 'primevue/button'
+import WwDialogFooterButton from '@shared/components/WwDialogFooterButton.vue'
 import { useFormFieldHighlight } from '@shared/composables/useFormFieldHighlight'
 
 const props = defineProps<{
@@ -71,8 +71,8 @@ async function submit() {
       />
     </div>
     <template #footer>
-      <Button label="取消" severity="secondary" text @click="close" />
-      <Button :label="confirmLabel ?? '确定'" @click="submit" />
+      <WwDialogFooterButton label="取消" cancel @click="close" />
+      <WwDialogFooterButton :label="confirmLabel ?? '确定'" @click="submit" />
     </template>
   </Dialog>
 </template>

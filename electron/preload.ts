@@ -81,7 +81,10 @@ const api: WanwuApi = {
     pickImageFile: () => ipcRenderer.invoke('shell:pickImageFile'),
     savePngDataUrl: (params) => ipcRenderer.invoke('shell:savePngDataUrl', params),
     saveImageDataUrl: (params) => ipcRenderer.invoke('shell:saveImageDataUrl', params),
-    saveTextFile: (params) => ipcRenderer.invoke('shell:saveTextFile', params)
+    saveTextFile: (params) => ipcRenderer.invoke('shell:saveTextFile', params),
+    cacheImageForViewer: (url) => ipcRenderer.invoke('shell:cacheImageForViewer', url),
+    releaseViewerImageCache: (cacheId) =>
+      ipcRenderer.invoke('shell:releaseViewerImageCache', cacheId)
   },
   share: {
     canNativeShare: () => ipcRenderer.invoke('share:canNativeShare'),

@@ -47,17 +47,20 @@
   border-color: var(--ww-border-subtle);
 }
 
+.ww-action-menu,
 .ww-hero-menu {
   border: none;
   background: var(--ww-glass-bg);
 }
 
+.ww-action-menu.ww-glass-blur::before,
 .ww-hero-menu.ww-glass-blur::before {
   background: var(--ww-glass-bg-soft);
 }
 
+.ww-action-menu__item:hover,
 .ww-hero-menu__item:hover {
-  background: var(--ww-list-hover-bg);
+  background: var(--ww-action-menu-item-hover-bg);
 }
 
 .ww-glass-dialog-mask,

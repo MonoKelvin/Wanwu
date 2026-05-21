@@ -42,6 +42,11 @@
   --ww-toast-error: #d07070;
   --ww-toast-info: #5a8fc4;
 
+  --ww-dialog-footer-cancel-fg: #d4d4d8;
+  --ww-dialog-footer-cancel-bg: rgb(255 255 255 / 0.08);
+  --ww-dialog-footer-cancel-bg-hover: var(--ww-list-hover-bg);
+  --ww-dialog-footer-cancel-bg-active: var(--ww-inset);
+
   --ww-border-subtle: rgb(255 255 255 / 0.08);
   --ww-border-faint: rgb(255 255 255 / 0.05);
 
@@ -55,8 +60,9 @@
   --ww-glass-border-dark: rgb(255 255 255 / 0.22);
   --ww-menu-shadow: 0 18px 44px -6px rgb(0 0 0 / 0.55), 0 8px 20px -4px rgb(0 0 0 / 0.4);
   --ww-menu-panel-bg: rgb(36 36 40 / 0.72);
-  --ww-menu-item-hover-bg: rgb(255 255 255 / 0.075);
-  --ww-menu-item-active-bg: rgb(255 255 255 / 0.1);
+  --ww-menu-item-hover-bg: rgb(255 255 255 / 0.04);
+  --ww-menu-item-active-bg: rgb(255 255 255 / 0.065);
+  --ww-action-menu-item-hover-bg: rgb(255 255 255 / 0.048);
 
   --ww-share-card-choice-active-bg: #fff;
   --ww-share-card-choice-active-fg: #121214;

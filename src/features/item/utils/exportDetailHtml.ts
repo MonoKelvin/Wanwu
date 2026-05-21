@@ -1,4 +1,4 @@
-import { renderMarkdown } from '@shared/utils/markdown'
+import { renderMarkdown } from '@shared/markdown'
 import { isMediaAttribution, mediaAttributionSource } from '@shared/utils/unsplashAttribution'
 import type { Item } from '@shared/types/item'
 import type { MediaAttribution } from '@shared/types/unsplash'

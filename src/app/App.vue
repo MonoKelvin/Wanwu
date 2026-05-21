@@ -7,6 +7,7 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import WwToastMessage from '@shared/components/WwToastMessage.vue'
 import TitleBar from '@app/components/TitleBar.vue'
 import AppShell from '@app/components/AppShell.vue'
+import WwDismissibleConfirmHost from '@app/components/WwDismissibleConfirmHost.vue'
 import { isModuleId } from '@app/config/modules'
 import { useSettingsStore } from '@shared/stores/settings'
 import { resolveStartupPath } from '@shared/utils/startupModule'
@@ -38,6 +39,7 @@ onMounted(async () => {
         </div>
       </template>
     </ConfirmDialog>
+    <WwDismissibleConfirmHost />
     <TitleBar />
     <AppShell class="min-h-0 flex-1" />
   </div>

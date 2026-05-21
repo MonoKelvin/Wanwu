@@ -61,5 +61,6 @@ export const RSS_AUTO_REFRESH_OPTIONS: Array<{ label: string; value: RssAutoRefr
 /** 写入 localStorage 的键（重置设置时清除） */
 export const APP_LOCAL_STORAGE_KEYS = [
   'wanwu.library.viewMode',
-  'wanwu.library.sortField'
+  'wanwu.library.sortField',
+  'wanwu.dismissiblePrompts'
 ] as const

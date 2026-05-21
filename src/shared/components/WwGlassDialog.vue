@@ -8,18 +8,24 @@ const props = defineProps<{
   widthClass?: string
   /** 分享类弹窗：加强背景与面板模糊 */
   strongBlur?: boolean
+  /** 仅遮罩变暗、不模糊页面（用于 Markdown 编辑确认等） */
+  dimMask?: boolean
 }>()
 
 const emit = defineEmits<{
   'update:visible': [v: boolean]
 }>()
 
-const maskClass = computed(() =>
-  props.strongBlur ? 'ww-glass-dialog-mask ww-glass-dialog-mask--strong' : 'ww-glass-dialog-mask'
-)
-const rootClass = computed(() =>
-  props.strongBlur ? 'ww-glass-dialog-root ww-glass-dialog-root--strong' : 'ww-glass-dialog-root'
-)
+const maskClass = computed(() => {
+  if (props.dimMask) return 'ww-glass-dialog-mask ww-glass-dialog-mask--dim'
+  if (props.strongBlur) return 'ww-glass-dialog-mask ww-glass-dialog-mask--strong'
+  return 'ww-glass-dialog-mask'
+})
+const rootClass = computed(() => {
+  if (props.dimMask) return 'ww-glass-dialog-root ww-glass-dialog-root--dim'
+  if (props.strongBlur) return 'ww-glass-dialog-root ww-glass-dialog-root--strong'
+  return 'ww-glass-dialog-root'
+})
 </script>
 
 <template>
@@ -40,7 +46,9 @@ const rootClass = computed(() =>
   >
     <slot />
     <template v-if="$slots.footer" #footer>
-      <slot name="footer" />
+      <div class="ww-dialog-footer">
+        <slot name="footer" />
+      </div>
     </template>
   </Dialog>
 </template>

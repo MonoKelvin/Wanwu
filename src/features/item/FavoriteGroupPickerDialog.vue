@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, ref, watch } from 'vue'
-import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
+import WwDialogFooterButton from '@shared/components/WwDialogFooterButton.vue'
 import WwGlassDialog from '@shared/components/WwGlassDialog.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import { useFormFieldHighlight } from '@shared/composables/useFormFieldHighlight'
@@ -122,8 +122,8 @@ function confirm() {
         @keydown.enter="submitCreate"
       />
       <div class="ww-fav-picker__create-actions">
-        <Button label="取消" severity="secondary" text size="small" @click="creating = false" />
-        <Button label="创建" size="small" @click="submitCreate" />
+        <WwDialogFooterButton label="取消" cancel @click="creating = false" />
+        <WwDialogFooterButton label="创建" @click="submitCreate" />
       </div>
     </div>
 
@@ -133,8 +133,8 @@ function confirm() {
     </button>
 
     <template #footer>
-      <Button label="取消" severity="secondary" text @click="close" />
-      <Button label="确定收藏" :disabled="!selectedId || loading" @click="confirm" />
+      <WwDialogFooterButton label="取消" cancel @click="close" />
+      <WwDialogFooterButton label="确定收藏" :disabled="!selectedId || loading" @click="confirm" />
     </template>
   </WwGlassDialog>
 </template>

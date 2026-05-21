@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
 import IconField from 'primevue/iconfield'
-import Menu from 'primevue/menu'
+import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import SelectButton from 'primevue/selectbutton'
 import EmptyState from '@app/components/EmptyState.vue'
 import WwButton from '@shared/components/WwButton.vue'
@@ -39,7 +39,7 @@ const sortOptions: Array<{ label: string; value: LibrarySortField; wwIcon: WwIco
   { label: '名称', value: 'name', wwIcon: 'arrow-down-a-z' }
 ]
 
-const sortMenu = ref<InstanceType<typeof Menu> | null>(null)
+const sortMenu = ref<InstanceType<typeof WwContextMenu> | null>(null)
 
 const currentSort = computed(() => sortOptions.find((o) => o.value === sortField.value) ?? sortOptions[0])
 
@@ -58,8 +58,9 @@ const showSearchEmpty = computed(
   () => listSearch.value.trim().length > 0 && props.suggestions.length === 0
 )
 
-function toggleSortMenu(event: Event) {
-  sortMenu.value?.toggle(event)
+function toggleSortMenu(event: MouseEvent) {
+  const anchor = event.currentTarget
+  if (anchor instanceof HTMLElement) sortMenu.value?.toggleAnchor(anchor)
 }
 
 function clearSearch() {
@@ -147,11 +148,7 @@ function clearSearch() {
         v-tooltip.bottom="`排序：${currentSort.label}`"
         @click="toggleSortMenu"
       />
-      <Menu ref="sortMenu" :model="sortMenuItems" popup class="ww-page-toolbar-menu">
-        <template #itemicon="{ item }">
-          <WwIcon v-if="item.wwIcon" :name="item.wwIcon" size="sm" class="ww-menu-item-icon" />
-        </template>
-      </Menu>
+      <WwContextMenu ref="sortMenu" :model="sortMenuItems" />
     </div>
   </div>
 </template>

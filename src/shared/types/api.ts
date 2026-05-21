@@ -130,6 +130,14 @@ export interface WanwuApi {
       defaultName?: string
       extension?: string
     }) => Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }>
+    /** 大图查看：本地直链或远程临时缓存 */
+    cacheImageForViewer: (url: string) => Promise<{
+      ok: boolean
+      displayUrl?: string
+      cacheId?: number
+      error?: string
+    }>
+    releaseViewerImageCache: (cacheId: number) => Promise<void>
   }
   share: {
     canNativeShare: () => Promise<boolean>

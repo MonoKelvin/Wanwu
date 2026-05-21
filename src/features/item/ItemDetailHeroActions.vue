@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { computed, useTemplateRef } from 'vue'
+import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
+import type { WwMenuItem } from '@shared/types/menu'
 
 const menuOpen = defineModel<boolean>('menuOpen', { default: false })
 
-defineProps<{
+const props = defineProps<{
   visible: boolean
   hasActiveImage: boolean
   hasSourceLink: boolean
@@ -18,21 +20,33 @@ const emit = defineEmits<{
   uploadImage: []
 }>()
 
-function closeMenu() {
-  menuOpen.value = false
-}
+const menuRef = useTemplateRef<InstanceType<typeof WwContextMenu>>('menuRef')
 
-function toggleMenu(e: Event) {
-  e.stopPropagation()
-  menuOpen.value = !menuOpen.value
-}
+const menuItems = computed((): WwMenuItem[] => {
+  const items: WwMenuItem[] = [
+    {
+      label: '上传图片',
+      wwIcon: 'plus',
+      command: () => emit('uploadImage')
+    }
+  ]
+  if (props.hasActiveImage) {
+    items.push(
+      { label: '查看大图', wwIcon: 'maximize', command: () => emit('openLightbox') },
+      { label: '另存为', wwIcon: 'download', command: () => emit('download') },
+      { label: '在文件夹中显示', wwIcon: 'folder-open', command: () => emit('revealInFolder') }
+    )
+  }
+  if (props.hasSourceLink) {
+    items.push({ label: '源链接', wwIcon: 'external-link', command: () => emit('openSource') })
+  }
+  return items
+})
 
-onMounted(() => document.addEventListener('click', closeMenu))
-onUnmounted(() => document.removeEventListener('click', closeMenu))
-
-function run(action: () => void) {
-  menuOpen.value = false
-  action()
+function toggleMenu(e: MouseEvent) {
+  const anchor = e.currentTarget
+  if (!(anchor instanceof HTMLElement)) return
+  menuRef.value?.toggleAnchor(anchor)
 }
 </script>
 
@@ -48,51 +62,6 @@ function run(action: () => void) {
     >
       <WwIcon name="ellipsis-vertical" size="sm" />
     </button>
-    <div v-if="menuOpen" class="ww-hero-menu ww-glass-blur" role="menu" @click.stop>
-      <button type="button" role="menuitem" class="ww-hero-menu__item" @click="run(() => emit('uploadImage'))">
-        <WwIcon name="plus" size="sm" />
-        上传图片
-      </button>
-      <button
-        v-if="hasActiveImage"
-        type="button"
-        role="menuitem"
-        class="ww-hero-menu__item"
-        @click="run(() => emit('openLightbox'))"
-      >
-        <WwIcon name="maximize" size="sm" />
-        查看大图
-      </button>
-      <button
-        v-if="hasActiveImage"
-        type="button"
-        role="menuitem"
-        class="ww-hero-menu__item"
-        @click="run(() => emit('download'))"
-      >
-        <WwIcon name="download" size="sm" />
-        另存为
-      </button>
-      <button
-        v-if="hasActiveImage"
-        type="button"
-        role="menuitem"
-        class="ww-hero-menu__item"
-        @click="run(() => emit('revealInFolder'))"
-      >
-        <WwIcon name="folder-open" size="sm" />
-        在文件夹中显示
-      </button>
-      <button
-        v-if="hasSourceLink"
-        type="button"
-        role="menuitem"
-        class="ww-hero-menu__item"
-        @click="run(() => emit('openSource'))"
-      >
-        <WwIcon name="external-link" size="sm" />
-        源链接
-      </button>
-    </div>
+    <WwContextMenu ref="menuRef" v-model:open="menuOpen" :model="menuItems" />
   </div>
 </template>

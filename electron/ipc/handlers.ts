@@ -1,9 +1,11 @@
 import { ipcMain, app, dialog, shell } from 'electron'
 import {
+  cacheImageForViewer,
   copyTextToClipboard,
   downloadMediaFile,
   openExternalUrl,
   pickImageFile,
+  releaseViewerImageCache,
   saveImageDataUrl,
   saveTextFile,
   savePngDataUrl,
@@ -445,6 +447,12 @@ export function registerIpcHandlers(services: AppServices): void {
     (_e, params: { content: string; defaultName?: string; extension?: string }) =>
       saveTextFile(params.content, params.defaultName, params.extension)
   )
+
+  ipcMain.handle('shell:cacheImageForViewer', (_e, url: string) => cacheImageForViewer(url))
+
+  ipcMain.handle('shell:releaseViewerImageCache', (_e, cacheId: number) => {
+    releaseViewerImageCache(cacheId)
+  })
 
   ipcMain.handle('share:canNativeShare', () => canNativeShare())
 

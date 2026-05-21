@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
-import Button from 'primevue/button'
+import WwDialogFooterButton from '@shared/components/WwDialogFooterButton.vue'
 import type { RssGroup } from '@shared/types/rss'
 
 const props = defineProps<{
@@ -61,8 +61,8 @@ function confirm() {
       </li>
     </ul>
     <template #footer>
-      <Button label="取消" severity="secondary" text @click="close" />
-      <Button label="确定" :disabled="!selectedId" @click="confirm" />
+      <WwDialogFooterButton label="取消" cancel @click="close" />
+      <WwDialogFooterButton label="确定" :disabled="!selectedId" @click="confirm" />
     </template>
   </Dialog>
 </template>
