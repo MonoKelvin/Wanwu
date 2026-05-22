@@ -22,7 +22,8 @@ release/
 *.local
 
 # 运行时数据
-data/
+.cache/
+assets/packed/
 
 # 环境与日志
 .env

@@ -10,30 +10,30 @@ import {
   saveTextFile,
   savePngDataUrl,
   showMediaInFolder
-} from '../services/shellMedia'
+} from '../services/media/shell'
 import {
   canNativeShare,
   openNativeShare,
   uploadTempShareFile,
   writeShareTempFile
-} from '../services/shareMedia'
+} from '../services/media/share'
 import { getMainWindow, broadcastMaximizedState } from '../windowState'
-import type { DatabaseService } from '../services/database'
-import type { LibraryService } from '../services/libraryService'
-import type { RssService } from '../services/rssService'
-import type { MediaService } from '../services/mediaService'
+import type { DatabaseService } from '../services/core/database'
+import type { LibraryService } from '../services/library/service'
+import type { RssService } from '../services/rss/service'
+import type { MediaService } from '../services/media/service'
 import {
   getDefaultWanwuPath,
   isCustomWanwuPath,
   resolveWanwuPath,
   resolveWanwuPathUnderParent,
   validateMigrationTarget
-} from '../services/dataPaths'
-import { migrateWanwuData } from '../services/dataMigration'
-import { importProfileImage, removeProfileFile } from '../services/userProfileMedia'
-import { toWanwuMediaUrl } from '../services/wanwuMedia'
-import { normalizeAppSettings, mergeAppSettings } from '../services/appSettingsNormalize'
-import { applyRssAutoRefreshSchedule } from '../services/rssScheduler'
+} from '../services/data/paths'
+import { migrateWanwuData } from '../services/data/migration'
+import { importProfileImage, removeProfileFile } from '../services/media/userProfile'
+import { toWanwuMediaUrl } from '../services/media/wanwu'
+import { normalizeAppSettings, mergeAppSettings } from '../services/data/settings'
+import { applyRssAutoRefreshSchedule } from '../services/rss/scheduler'
 import {
   buildDiagnosticsReport,
   clearCacheDirectory,
@@ -41,8 +41,9 @@ import {
   exportDiagnosticsToFile,
   resetAppSettingsInDb,
   restoreDataBackup
-} from '../services/dataMaintenance'
+} from '../services/data/maintenance'
 import { DEFAULT_APP_SETTINGS } from '../../src/shared/types/settings'
+import { waitForLibraryBootstrap } from '../services/library/pack'
 
 export interface AppServices {
   db: DatabaseService | null
@@ -56,15 +57,18 @@ export function registerIpcHandlers(services: AppServices): void {
     return services.library?.listCategories() ?? []
   })
 
-  ipcMain.handle('library:listItems', (_e, params: { categoryId: string; subCategoryId?: string }) => {
+  ipcMain.handle('library:listItems', async (_e, params: { categoryId: string; subCategoryId?: string }) => {
+    await waitForLibraryBootstrap()
     return services.library?.listItems(params.categoryId, params.subCategoryId) ?? []
   })
 
-  ipcMain.handle('library:searchItems', (_e, params: { query: string; limit?: number }) => {
+  ipcMain.handle('library:searchItems', async (_e, params: { query: string; limit?: number }) => {
+    await waitForLibraryBootstrap()
     return services.library?.searchItems(params.query, params.limit) ?? []
   })
 
-  ipcMain.handle('library:getItem', (_e, id: string) => {
+  ipcMain.handle('library:getItem', async (_e, id: string) => {
+    await waitForLibraryBootstrap()
     return services.library?.getItem(id) ?? null
   })
 

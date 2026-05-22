@@ -1,26 +1,30 @@
-# 脚本目录
+# 构建脚本
 
-## 日常开发
+统一入口 `run.mjs`；图鉴数据包由 `build-library-pack.ts` 生成。全库内容维护在 `assets/seed/library/`，不再使用批量种子流水线。
 
-| 文件 | 说明 |
+## npm 命令
+
+| 命令 | 说明 |
 |------|------|
-| `check-node.mjs` | Node 版本检查（`npm run dev`） |
-| `ensure-renderer-fallback.mjs` | Windows 开发备用 renderer |
+| `npm run dev` | `run.mjs dev` + Electron Vite 开发 |
+| `npm run build` | 系统 Node sqlite → 数据包 → 编译 → Electron sqlite |
+| `npm run pack` | 安装包构建入口（**预留**） |
+| `npm run typecheck` | 前端类型检查 |
+| `npm run postinstall` | 为 Electron 重编 `better-sqlite3` |
+| `npm run rebuild` | 强制重编原生模块 |
 
-## 全库数据与配图
+## `run.mjs` 子命令
 
-统一入口 **[library/run.mjs](./library/run.mjs)**，数据配置在 **[assets/seed/library/items/](../assets/seed/library/items/)**。
-
-```bash
-npm run seed:library -- build    # 生成 catalog + media
-npm run seed:library -- media    # 下载配图
-npm run seed:library -- audit
-```
-
-详见 [library/README.md](./library/README.md)。
-
-## 其它
-
-| 文件 | 说明 |
+| 命令 | 用途 |
 |------|------|
-| `probe-rss-feeds.mjs` | 探测 RSS 源可达性 |
+| `check` | 校验 Node 版本 |
+| `dev` | 开发前准备（check + sqlite electron + renderer） |
+| `sqlite electron` | 确保 better-sqlite3 匹配 Electron |
+| `sqlite host` | 为系统 Node 重编（build 数据包前） |
+| `sqlite rebuild [--force]` | 仅为 Electron 重编 |
+| `renderer` | 开发态 renderer 回退包 |
+| `pack` | 安装包占位入口 |
+
+## 数据维护
+
+编辑 `assets/seed/library/items/**/*.json` 与 `content.md` 后更新 `catalog.json`。发布前执行 `npm run build`。

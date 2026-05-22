@@ -2,8 +2,8 @@ import { app, BrowserWindow, nativeImage, protocol, shell } from 'electron'
 import { existsSync } from 'fs'
 import { readFile } from 'fs/promises'
 import { extname, join } from 'path'
-import { resolveWanwuMediaAbsolute } from './services/wanwuMedia'
-import { resolveAppLogoPath } from './services/appAssets'
+import { resolveWanwuMediaAbsolute } from './services/media/wanwu'
+import { resolveAppLogoPath } from './services/media/appAssets'
 import { registerIpcHandlers } from './ipc/handlers'
 import { setMainWindow, broadcastMaximizedState } from './windowState'
 import {
@@ -12,14 +12,15 @@ import {
   DEFAULT_WINDOW_SIZE,
   getInitialWindowBounds,
   readWindowStateModeFromSettings
-} from './services/windowPersistence'
-import { DatabaseService } from './services/database'
-import { LibraryService } from './services/libraryService'
-import { RssService } from './services/rssService'
-import { MediaService } from './services/mediaService'
-import { resolveWanwuPath } from './services/dataPaths'
-import { applyRssAutoRefreshSchedule } from './services/rssScheduler'
-import { runStartupLibrarySeed } from './services/librarySeed'
+} from './services/app/window'
+import { DatabaseService } from './services/core/database'
+import { LibraryService } from './services/library/service'
+import { RssService } from './services/rss/service'
+import { MediaService } from './services/media/service'
+import { resolveWanwuPath } from './services/data/paths'
+import { applyRssAutoRefreshSchedule } from './services/rss/scheduler'
+import { runStartupLibrarySeed } from './services/library/seed'
+import { startLibraryBootstrap } from './services/library/pack'
 
 const isDev = !app.isPackaged
 
@@ -222,7 +223,7 @@ app.whenReady().then(async () => {
   createWindow()
 
   if (services.db) {
-    setImmediate(() => runStartupLibrarySeed(services.db!))
+    startLibraryBootstrap(services.db, () => runStartupLibrarySeed(services.db!))
   }
 
   void services.rss?.pruneUnhealthyDefaultFeeds().catch(() => {})

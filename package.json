@@ -1,6 +1,6 @@
 {
     "name": "wanwu",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "type": "module",
     "description": "万物 - 事物收集与浏览桌面应用",
     "main": "out/main/index.js",
@@ -11,26 +11,12 @@
         "url": "https://github.com/MonoKelvin/Wanwu.git"
     },
     "scripts": {
-        "dev": "node scripts/check-node.mjs && node scripts/ensure-sqlite-electron.mjs && node scripts/ensure-renderer-fallback.mjs && electron-vite dev",
-        "build": "electron-vite build",
-        "preview": "electron-vite preview",
-        "start": "electron-vite preview",
+        "dev": "node scripts/run.mjs dev && electron-vite dev",
+        "build": "node scripts/run.mjs sqlite host && tsx scripts/build-library-pack.ts && electron-vite build && node scripts/run.mjs sqlite rebuild --force",
+        "pack": "node scripts/run.mjs pack",
         "typecheck": "vue-tsc --noEmit -p tsconfig.web.json",
-        "seed:import": "node scripts/library/run.mjs info",
-        "seed:library": "node scripts/library/run.mjs",
-        "seed:library:build": "node scripts/library/run.mjs build",
-        "seed:library:catalog": "node scripts/library/run.mjs build",
-        "seed:library:media": "node scripts/library/run.mjs media",
-        "seed:library:import": "node scripts/library/run.mjs import",
-        "seed:library:retry-media": "node scripts/library/run.mjs retry",
-        "seed:library:audit": "node scripts/library/run.mjs audit",
-        "seed:library:reimport": "node scripts/rebuild-sqlite-host.mjs && tsx scripts/library/reimport-catalog.ts && node scripts/postinstall.mjs --force",
-        "seed:library:enrich-full": "node scripts/library/run.mjs enrich-full",
-        "seed:library:enrich-batch": "node scripts/library/run.mjs enrich-batch",
-        "logo": "node scripts/generate-logo.mjs",
-        "postinstall": "node scripts/postinstall.mjs",
-        "rebuild": "node scripts/postinstall.mjs --force",
-        "rebuild:native-share": "electron-rebuild -f -o electron-native-share"
+        "postinstall": "node scripts/run.mjs sqlite rebuild",
+        "rebuild": "node scripts/run.mjs sqlite rebuild --force"
     },
     "dependencies": {
         "@lucide/vue": "^1.16.0",
@@ -68,5 +54,14 @@
     },
     "engines": {
         "node": ">=20.19.0 || >=22.12.0"
+    },
+    "build": {
+        "extraResources": [
+            {
+                "from": "assets",
+                "to": "assets",
+                "filter": ["**/*"]
+            }
+        ]
     }
 }

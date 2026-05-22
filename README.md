@@ -1,36 +1,160 @@
 # 万物（Wanwu）
 
-桌面端「事物图鉴」应用：用分类与条目组织百科式内容，配图浏览、个人收藏与 RSS 阅读。适合本地查阅、整理兴趣专题，数据保存在本机。
+<p align="center">
+  <img src="assets/logo/icon-256.png" alt="万物 Wanwu" width="128" height="128" />
+</p>
 
-| | |
-|---|---|
-| 平台 | Windows（Electron 桌面应用） |
-| 界面 | 中文，三栏布局 |
-| 技术 | Electron · Vue 3 · PrimeVue · SQLite |
+**万物** 是一款安装在您电脑上的桌面软件，用来**分类浏览、收藏和阅读**各类「事物」——例如猫狗品种、植物、电影、书籍、腕表、美食等。内容以图文卡片形式呈现，像一本可搜索、可收藏的多主题图鉴；同时支持订阅网络资讯（RSS），在个人中心统一管理收藏与资料。
 
-仓库：[github.com/MonoKelvin/Wanwu](https://github.com/MonoKelvin/Wanwu)
-
----
-
-## 功能概览
-
-| 模块 | 你可以做什么 |
-|------|----------------|
-| **全库** | 浏览 14 个内置大类（猫、狗、植物、电影等）及子类下的图鉴条目；查看简介、规格参数与多图详情 |
-| **RSS** | 添加订阅源，阅读拉取到的资讯条目 |
-| **个人** | 编辑昵称等资料，管理收藏 |
-| **设置** | 查看版本、本地数据目录、项目链接 |
-
-点击条目进入详情页，可切换图库缩略图；来自图库的配图会显示作者与来源说明。
+<p align="center">
+  <img src="assets/screenshots/light.png" alt="万物主界面" width="720" />
+</p>
 
 ---
 
-## 安装与运行
+## 这个项目是做什么的？
 
-### 环境
+可以把万物理解成三部分能力组合在一起：
+
+| 能力 | 通俗说明 |
+|------|----------|
+| **内置图鉴库** | 软件自带大量已整理好的条目（名称、简介、参数、配图与长文介绍），按「大类 → 子类」浏览 |
+| **个人空间** | 给喜欢的条目点收藏、分组；可填写昵称、头像等简单资料 |
+| **资讯订阅** | 自行添加 RSS 订阅源，在软件内阅读拉取到的文章列表 |
+
+适合：想**离线或本地查阅**兴趣知识、做主题收藏、顺带读订阅资讯的用户。
+不适合：需要多人协作编辑、实时云端同步或复杂办公场景——万物更偏向**个人本地查阅与整理**。
+
+---
+
+## 功能架构
+
+### 四大模块说明
+
+| 模块 | 您能看到什么 | 常见操作 |
+|------|----------------|----------|
+| **全库** | 左侧选大类（如猫、植物、电影…）与子类；中间为条目卡片列表；点卡片进入详情 | 搜索、看大图与文字介绍、看规格参数、切换多张配图 |
+| **RSS** | 订阅源列表与文章条目 | 添加/删除订阅、阅读摘要、打开原文链接（在系统浏览器中） |
+| **个人** | 头像昵称、收藏分组与已收藏条目 | 管理收藏、查看历史浏览（若已启用） |
+| **设置** | 主题、导航样式、数据目录、备份与诊断等 | 切换浅色/深色、查看本机数据路径、导出诊断信息 |
+
+### 界面预览
+
+以下为各主要模块的主界面示意。
+
+<p align="center">
+  <strong>全库</strong><br />
+  <img src="assets/screenshots/01.png" alt="全库：分类浏览与条目卡片" width="720" />
+</p>
+
+<p align="center">
+  <strong>RSS</strong><br />
+  <img src="assets/screenshots/02.png" alt="RSS：订阅源与文章列表" width="720" />
+</p>
+
+<p align="center">
+  <strong>个人</strong><br />
+  <img src="assets/screenshots/03.png" alt="个人：资料与收藏" width="720" />
+</p>
+
+<p align="center">
+  <strong>设置</strong><br />
+  <img src="assets/screenshots/04.png" alt="设置：关于与软件信息" width="720" />
+</p>
+
+**外观主题**
+
+万物提供**浅色**与**深色**两套界面，可在「设置 → 应用」中切换；也可跟随系统深浅色自动变化。下图以全库为例对比两种主题（左侧深色、右侧浅色）：
+
+<p align="center">
+  <img src="assets/screenshots/theme-split.png" alt="浅色与深色主题对比" width="720" />
+</p>
+
+### 内置图鉴规模
+
+| 项目 | 数量级 |
+|------|--------|
+| 顶层大类 | **36** 个（猫、狗、植物、电影、书籍、腕表、美食、航空等） |
+| 图鉴条目 | **600+** 条（随版本更新，以 `catalog.json` 为准） |
+| 每条内容 | 名称、摘要、标签、规格表、封面与图集；正文多为独立 Markdown 文件 |
+
+配图若来自图库网站，详情页会标注作者与来源链接，便于遵守授权说明。
+
+---
+
+## 如何使用（给日常用户）
+
+以下假设您已取得可运行的程序（见下文「如何获得软件」）。
+
+1. **启动**后，一般会进入 **全库**；在左侧选择大类与子类，中间出现条目卡片。
+2. **点击卡片**进入详情：上方大图，下方文字与规格；有多张图时可在底部缩略图切换。
+3. 在详情页可将条目 **加入收藏**，到 **个人** 模块按分组查看。
+4. 在 **RSS** 中添加订阅地址，选中源后阅读列表；需要完整网页时，通过「在浏览器中打开」。
+5. 在 **设置** 中可切换外观、查看 **数据保存位置**，必要时做备份相关操作。
+
+### 数据保存在哪里？
+
+所有与您相关的数据都在**本机文件夹**中，卸载程序**不会自动删除**该文件夹，便于您自行备份或迁移。
+
+| 内容 | 说明 |
+|------|------|
+| 收藏、个人资料、RSS 订阅与文章缓存 | 用户数据目录下的 `wanwu` 文件夹（Windows 常见路径：`%APPDATA%\wanwu\` 或设置里显示的自定义路径） |
+| 内置图鉴条目与图片 | 随安装包提供的 `assets` 资源；首次运行会解压/同步到本地数据库，之后浏览更快 |
+
+在 **设置 → 数据** 中可查看当前路径。迁移电脑时，复制整个 `wanwu` 文件夹即可保留收藏与订阅。
+
+---
+
+## 如何获得软件？
+
+| 方式 | 说明 |
+|------|------|
+| **安装包（规划中）** | 未来将提供 Windows 安装程序；执行 `npm run pack` 的完整打包流程仍在预留阶段 |
+| **从源码运行（需一定技术基础）** | 克隆本仓库后安装 Node.js，执行 `npm install` 与 `npm run dev`，适合体验最新开发版 |
+
+普通用户更推荐等待正式发布安装包；开发者与尝鲜用户可参考下文「开发人员说明」。
+
+---
+
+## 设计文档与反馈
+
+更完整的产品说明见仓库内 `doc/` 目录（需求说明、用户文档、详细设计等）。
+
+- 问题与建议：[GitHub Issues](https://github.com/MonoKelvin/Wanwu/issues)
+- 许可证：**MIT** © [MonoKelvin](https://github.com/MonoKelvin)
+
+---
+
+## 开发人员说明
+
+以下面向需要**编译、调试或参与维护**的开发者；若您只使用软件，阅读上文即可。
+
+### 技术栈
+
+| 层级 | 技术 |
+|------|------|
+| 桌面壳 | Electron |
+| 界面 | Vue 3、Vue Router、Pinia、PrimeVue、Tailwind |
+| 本地库 | better-sqlite3（用户库、RSS 库、按分类的图鉴库） |
+| 构建 | electron-vite、TypeScript |
+
+### 环境要求
 
 - Node.js **≥ 20.19**（推荐 22 LTS）
 - npm **≥ 10**
+- Windows 上首次 `npm install` 会编译 SQLite 原生模块，需已安装 C++ 构建工具（若失败可执行 `npm run rebuild`）
+
+### 常用命令
+
+| 命令 | 用途 |
+|------|------|
+| `npm run dev` | 开发模式（检查环境、SQLite、启动 Electron Vite） |
+| `npm run build` | 生成图鉴数据包 + 编译应用到 `out/` |
+| `npm run pack` | 安装包构建入口（当前为预留说明） |
+| `npm run typecheck` | 前端 TypeScript 检查 |
+| `npm run rebuild` | 强制为 Electron 重编 `better-sqlite3` |
+
+脚本说明见 [scripts/README.md](scripts/README.md)。
 
 ### 从源码启动
 
@@ -41,98 +165,39 @@ npm install
 npm run dev
 ```
 
-Windows 也可使用 `start-dev.bat` 或 `.\start-dev.ps1`（会检查 Node 版本）。
-
-首次 `npm install` 需编译 SQLite 原生模块，请耐心等待。
-
-### 构建安装包
-
-```bash
-npm run build
-```
-
-产物由 electron-builder 生成，具体输出目录见构建日志。本地快速验证可用 `npm run preview`。
-
----
-
-## 日常使用
-
-1. 启动后默认进入 **全库**，左侧选大类与子类，中间为条目列表，右侧可展开子项面板。
-2. 点击卡片打开 **详情**：大图、文字介绍、标签与规格；多图条目可点底部缩略图切换。
-3. 在详情页可将条目 **加入收藏**，在 **个人** 模块查看。
-4. **RSS** 模块维护订阅源列表，选择源后阅读条目。
-
-**数据存在哪**
-
-| 内容 | 位置 |
-|------|------|
-| 账号、收藏、RSS 数据 | 系统用户目录下的 `wanwu` 文件夹（Windows 多为 `%APPDATA%\wanwu\`） |
-| 全库内置条目与配图 | 安装目录内 `assets`（开发时即仓库内）；首次运行会写入本地数据库 |
-
-卸载程序不会自动删除上述用户目录，备份或迁移时请复制整个 `wanwu` 文件夹。路径可在 **设置** 中查看。
-
----
-
-## 开发说明
-
-### 常用脚本
-
-| 命令 | 用途 |
-|------|------|
-| `npm run dev` | 开发模式（热更新） |
-| `npm run build` | 生产构建 |
-| `npm run typecheck` | 前端类型检查 |
-| `npm run rebuild` | 重新编译 `better-sqlite3`（换 Node 版本后如遇数据库报错可执行） |
-
-### 目录说明
+### 项目结构（简图）
 
 ```
-electron/                 主进程：窗口、IPC、SQLite、RSS 拉取
+electron/                 主进程：窗口、IPC、数据库、RSS、图鉴数据包
+  services/               按 core / data / media / library / rss / app 分模块
 src/
-  app/                    壳层、路由、全局样式与主题
-  modules/                各业务页面（library / rss / personal / settings）
-  features/item/          条目卡片、详情、配图归属展示
-  shared/                 公共类型与状态
+  app/                    应用壳、路由、主题与全局样式
+  modules/                四大页面：library、rss、personal、settings
+  features/item/          条目卡片、详情、配图展示
+  shared/                 公共类型、组件与工具
 assets/
-  seed/library/items/     全库条目源数据（按分类目录，每物品一个 JSON）
-  seed/library/           categories.json；构建产物 catalog.json、media.json
-  library/                全库配图文件（按 分类/slug/ 存放）
-scripts/                  开发检查、全库种子（见 scripts/library/）
+  seed/library/           图鉴种子（JSON、catalog、categories）
+  library/                配图与 content.md 正文
+  packed/                 构建产物：library-data-pack.zip（git 忽略）
+  logo/                   应用图标
+  screenshots/            README 用界面截图（01–04、light、theme-split）
+scripts/                  run.mjs、build-library-pack.ts
 doc/                      需求与设计文档
+pack/                     安装包方案（如 Inno Setup，预留）
 ```
 
-主进程在启动时读取 `assets/seed/library/catalog.json`，将全库条目同步到各分类的 `library_*.sqlite`。
+**数据流（构建与首次启动）**
 
-### 维护全库数据与配图
+1. 维护 `assets/seed/library/items/**/*.json` 与 `assets/library/**/content.md`，更新 `catalog.json`。
+2. `npm run build` 时由 `scripts/build-library-pack.ts` 生成 `assets/packed/library-data-pack.zip`。
+3. 用户首次启动时，主进程异步解压数据包到用户目录下的数据库，避免长时间阻塞界面；catalog 未变时可跳过重复入库。
 
-详见 [assets/seed/library/README.md](assets/seed/library/README.md) 与 [scripts/library/README.md](scripts/library/README.md)。
+维护细则见 [assets/seed/library/README.md](assets/seed/library/README.md)、[electron/services/README.md](electron/services/README.md)。
 
-1. 编辑 `assets/seed/library/items/{分类}/{slug}.json`（条目正文、搜索词、`retryQuery` 等）。
-2. `npm run seed:library -- build` 生成 `catalog.json` / `media.json`。
-3. 配置 `.env` 中 `PIXABAY_API_KEY` 后执行 `npm run seed:library -- media`（加 `-- --force` 覆盖配图）。
-4. `npm run seed:library:reimport` 或重启应用写入数据库。
-
-### 环境变量
-
-| 变量 | 用途 |
-|------|------|
-| `PIXABAY_API_KEY` | 全库配图下载（默认） |
-| `UNSPLASH_ACCESS_KEY` | 可选，仅在 `media.json` 指定 `unsplash` 时需要 |
-
----
-
-## 设计文档
+### 相关文档
 
 | 文档 | 路径 |
 |------|------|
 | 软件需求说明 | [doc/Wanwu（万物）软件需求说明.txt](doc/Wanwu（万物）软件需求说明.txt) |
 | 用户需求文档 | [doc/Wanwu（万物）用户需求文档 v1.0.docx](doc/Wanwu（万物）用户需求文档%20v1.0.docx) |
 | 详细设计文档 | [doc/Wanwu（万物）详细设计文档 v1.0.docx](doc/Wanwu（万物）详细设计文档%20v1.0.docx) |
-
----
-
-## 反馈与许可
-
-问题与建议：[GitHub Issues](https://github.com/MonoKelvin/Wanwu/issues)
-
-MIT © [MonoKelvin](https://github.com/MonoKelvin)

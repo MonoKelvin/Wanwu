@@ -1,3 +1,4 @@
+import { setDocumentFavicon } from '@app/setDocumentFavicon'
 import type { ColorScheme } from '@shared/types/settings'
 
 const STORAGE_KEY = 'wanwu.colorScheme'
@@ -11,6 +12,7 @@ export function applyColorScheme(scheme: ColorScheme): void {
   } catch {
     /* ignore */
   }
+  setDocumentFavicon(scheme)
 }
 
 /** 启动时同步应用，避免首屏闪白 */
