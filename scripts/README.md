@@ -8,7 +8,7 @@
 |------|------|
 | `npm run dev` | `run.mjs dev` + Electron Vite 开发 |
 | `npm run build` | 系统 Node sqlite → 数据包 → 编译 → Electron sqlite |
-| `npm run pack` | 安装包构建入口（**预留**） |
+| `npm run pack` | Windows 安装包（Inno Setup，见 `pack/windows/README.md`） |
 | `npm run typecheck` | 前端类型检查 |
 | `npm run postinstall` | 为 Electron 重编 `better-sqlite3` |
 | `npm run rebuild` | 强制重编原生模块 |
@@ -23,7 +23,7 @@
 | `sqlite host` | 为系统 Node 重编（build 数据包前） |
 | `sqlite rebuild [--force]` | 仅为 Electron 重编 |
 | `renderer` | 开发态 renderer 回退包 |
-| `pack` | 安装包占位入口 |
+| `pack [opts]` | Windows 安装包（转发 `pack/windows/pack.mjs`） |
 
 ## 数据维护
 

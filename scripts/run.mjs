@@ -8,7 +8,7 @@
  *   node scripts/run.mjs sqlite host        # 为系统 Node 重编（build 数据包前）
  *   node scripts/run.mjs sqlite rebuild [--force]
  *   node scripts/run.mjs renderer           # 开发态 renderer 回退包
- *   node scripts/run.mjs pack               # 安装包构建（预留）
+ *   node scripts/run.mjs pack [opts]        # Windows 安装包（转发 pack/windows/pack.mjs）
  */
 import { execFileSync, execSync, spawnSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
@@ -30,7 +30,7 @@ function usage() {
   sqlite host           为当前系统 Node 重编 better-sqlite3
   sqlite rebuild        仅为 Electron 重编 better-sqlite3（可加 --force）
   renderer              若无 out/renderer 则先构建一次
-  pack                  安装包构建入口（预留）
+  pack [opts]           Windows 安装包（--iscc= --skip-build --skip-library-pack）
 `)
   process.exit(1)
 }
@@ -136,24 +136,9 @@ function cmdRenderer() {
 }
 
 function cmdPack() {
-  const iss = join(root, 'pack', 'windows', 'wanwu.iss')
-  console.log(`
-[pack] 万物 · 安装包构建（预留）
-
-  npm run build             数据包 + 编译应用（一步完成）
-
-  平台方案（待接入本命令）:
-  · Windows  Inno Setup    pack/windows/wanwu.iss
-  · macOS    dmg / pkg     （electron-builder 或自定义）
-  · Linux    AppImage/deb
-
-`)
-  if (existsSync(iss)) {
-    console.log(`[pack] 已发现 Inno Setup 脚本: ${iss}`)
-    console.log('[pack] 接入后在此调用 ISCC.exe 编译安装包。\n')
-  } else {
-    console.log('[pack] 尚未配置 pack/windows/wanwu.iss\n')
-  }
+  const packScript = join(root, 'pack', 'windows', 'pack.mjs')
+  const extra = process.argv.slice(3)
+  execFileSync(process.execPath, [packScript, ...extra], { cwd: root, stdio: 'inherit' })
 }
 
 function cmdDev() {

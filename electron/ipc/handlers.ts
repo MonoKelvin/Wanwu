@@ -30,6 +30,7 @@ import {
   validateMigrationTarget
 } from '../services/data/paths'
 import { migrateWanwuData } from '../services/data/migration'
+import { consumeStartupNotices, waitForLibraryBootstrap } from '../services/library/pack'
 import { importProfileImage, removeProfileFile } from '../services/media/userProfile'
 import { toWanwuMediaUrl } from '../services/media/wanwu'
 import { normalizeAppSettings, mergeAppSettings } from '../services/data/settings'
@@ -274,6 +275,11 @@ export function registerIpcHandlers(services: AppServices): void {
     defaultWanwu: getDefaultWanwuPath(),
     isCustom: isCustomWanwuPath()
   }))
+
+  ipcMain.handle('app:getStartupNotices', async () => {
+    await waitForLibraryBootstrap(120_000).catch(() => {})
+    return consumeStartupNotices()
+  })
 
   ipcMain.handle('app:openDataDirectory', () => {
     const dir = resolveWanwuPath()

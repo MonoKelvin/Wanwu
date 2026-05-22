@@ -1,23 +1,18 @@
-import { app } from 'electron'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
-import { join, normalize, resolve } from 'path'
+import { dirname, join, normalize, resolve } from 'path'
+import { ELECTRON_USER_DATA_FOLDER, getElectronPath } from '../core/electronRuntime'
 
 const CONFIG_FILE = 'wanwu-path.json'
 
+export { ELECTRON_USER_DATA_FOLDER }
+
 export interface WanwuPathConfig {
   wanwuPath?: string
+  /** 图鉴数据包 zip（安装程序或用户指定） */
+  libraryPackPath?: string
 }
 
-export function getConfigFilePath(): string {
-  return join(app.getPath('userData'), CONFIG_FILE)
-}
-
-export function getDefaultWanwuPath(): string {
-  return join(app.getPath('userData'), 'wanwu')
-}
-
-export function readWanwuPathConfig(): WanwuPathConfig {
-  const file = getConfigFilePath()
+function parseConfigFile(file: string): WanwuPathConfig {
   if (!existsSync(file)) return {}
   try {
     return JSON.parse(readFileSync(file, 'utf-8')) as WanwuPathConfig
@@ -26,13 +21,90 @@ export function readWanwuPathConfig(): WanwuPathConfig {
   }
 }
 
-/** 当前生效的万物数据目录（含 db / media / cache） */
-export function resolveWanwuPath(): string {
-  const configured = readWanwuPathConfig().wanwuPath?.trim()
-  if (configured) {
-    return normalize(resolve(configured))
+/** 可能存放 wanwu-path.json 的位置（含安装程序历史路径） */
+function listConfigFileCandidates(): string[] {
+  const primary = join(getElectronPath('userData'), CONFIG_FILE)
+  const appData = getElectronPath('appData')
+  const legacy = [
+    join(appData, ELECTRON_USER_DATA_FOLDER, CONFIG_FILE),
+    join(appData, 'Wanwu', CONFIG_FILE)
+  ]
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const p of [primary, ...legacy]) {
+    const key = p.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(p)
   }
-  return getDefaultWanwuPath()
+  return out
+}
+
+export function getConfigFilePath(): string {
+  return join(getElectronPath('userData'), CONFIG_FILE)
+}
+
+export function getDefaultWanwuPath(): string {
+  return join(getElectronPath('userData'), 'wanwu')
+}
+
+export function readWanwuPathConfig(): WanwuPathConfig {
+  const candidates = listConfigFileCandidates()
+  let merged: WanwuPathConfig = {}
+  let primaryFound = false
+
+  for (const file of candidates) {
+    if (!existsSync(file)) continue
+    const parsed = parseConfigFile(file)
+    if (file === candidates[0]) primaryFound = true
+    merged = { ...merged, ...parsed }
+  }
+
+  const primary = getConfigFilePath()
+  if (!primaryFound && existsSync(primary) === false) {
+    for (const file of candidates.slice(1)) {
+      if (!existsSync(file)) continue
+      try {
+        mkdirSync(dirname(primary), { recursive: true })
+        writeFileSync(primary, readFileSync(file, 'utf-8'), 'utf-8')
+        break
+      } catch {
+        /* 无法迁移则继续用合并结果 */
+      }
+    }
+  }
+
+  return merged
+}
+
+function writeWanwuPathConfigFile(config: WanwuPathConfig): void {
+  const userData = getElectronPath('userData')
+  mkdirSync(userData, { recursive: true })
+
+  const payload: WanwuPathConfig = {}
+  const wanwuPath = config.wanwuPath?.trim()
+  if (wanwuPath) payload.wanwuPath = normalize(resolve(wanwuPath))
+
+  const libraryPackPath = config.libraryPackPath?.trim()
+  if (libraryPackPath) payload.libraryPackPath = normalize(resolve(libraryPackPath))
+
+  writeFileSync(getConfigFilePath(), `${JSON.stringify(payload, null, 2)}\n`, 'utf-8')
+}
+
+/** 配置中的万物数据目录（不创建磁盘目录） */
+export function getWanwuDataDirectory(): string {
+  const configured = readWanwuPathConfig().wanwuPath?.trim()
+  return configured ? normalize(resolve(configured)) : normalize(getDefaultWanwuPath())
+}
+
+/** 当前生效的万物数据目录，并确保 db / media / cache 子目录存在 */
+export function resolveWanwuPath(): string {
+  const target = getWanwuDataDirectory()
+  mkdirSync(target, { recursive: true })
+  for (const sub of ['db', 'media', 'cache']) {
+    mkdirSync(join(target, sub), { recursive: true })
+  }
+  return target
 }
 
 export function isCustomWanwuPath(): boolean {
@@ -42,13 +114,15 @@ export function isCustomWanwuPath(): boolean {
 }
 
 export function writeWanwuPathConfig(wanwuPath: string): void {
-  const userData = app.getPath('userData')
-  mkdirSync(userData, { recursive: true })
-  writeFileSync(
-    getConfigFilePath(),
-    `${JSON.stringify({ wanwuPath: normalize(resolve(wanwuPath)) }, null, 2)}\n`,
-    'utf-8'
-  )
+  const existing = readWanwuPathConfig()
+  writeWanwuPathConfigFile({ ...existing, wanwuPath })
+}
+
+export function patchWanwuPathConfig(patch: Partial<WanwuPathConfig>): void {
+  const existing = readWanwuPathConfig()
+  const next: WanwuPathConfig = { ...existing, ...patch }
+  if (patch.libraryPackPath === '') delete next.libraryPackPath
+  writeWanwuPathConfigFile(next)
 }
 
 /** 目标父目录下将创建或使用 wanwu 子目录 */

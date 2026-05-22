@@ -3,7 +3,7 @@
  *
  *   npm run build（第一步）
  *
- * 产出: assets/packed/library-data-pack.zip（随 assets 一并打入安装包）
+ * 产出: assets/packed/library-data-pack.zip（由 pack 单独复制到 release/ 分发，不打进安装包）
  */
 import { createWriteStream, existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'fs'
 import { join } from 'path'
@@ -18,11 +18,13 @@ import {
 import { buildManifestFromCatalog, LIBRARY_PACK_MARKER } from '../electron/services/library/pack'
 
 const require = createRequire(import.meta.url)
-const createArchiver = require('archiver') as typeof import('archiver')
+const { ZipArchive } = require('archiver') as typeof import('archiver')
 
 const root = process.cwd()
 const outDir = join(root, 'assets', 'packed')
 const zipPath = join(outDir, 'library-data-pack.zip')
+const libraryMediaRoot = join(root, 'assets', 'library')
+const MEDIA_FILE = /\.(jpe?g|png|webp|md)$/i
 const cacheDir = join(root, '.cache', 'wanwu-library-pack')
 const CATALOG_IMPORT_MARKER = '.library-catalog-import'
 
@@ -87,6 +89,22 @@ function createPackProgress(prefix = '[build]'): PackProgress {
   }
 }
 
+function collectLibraryMediaFiles(): Array<{ abs: string; name: string }> {
+  const out: Array<{ abs: string; name: string }> = []
+  if (!existsSync(libraryMediaRoot)) return out
+
+  function walk(dir: string, relPrefix: string): void {
+    for (const ent of readdirSync(dir, { withFileTypes: true })) {
+      const rel = relPrefix ? `${relPrefix}/${ent.name}` : ent.name
+      const abs = join(dir, ent.name)
+      if (ent.isDirectory()) walk(abs, rel)
+      else if (MEDIA_FILE.test(ent.name)) out.push({ abs, name: `library/${rel}` })
+    }
+  }
+  walk(libraryMediaRoot, '')
+  return out
+}
+
 async function zipPack(
   stagingDb: string,
   manifestPath: string,
@@ -95,17 +113,21 @@ async function zipPack(
   mkdirSync(outDir, { recursive: true })
   if (existsSync(zipPath)) rmSync(zipPath, { force: true })
 
-  const files = readdirSync(stagingDb).filter(
+  const dbFiles = readdirSync(stagingDb).filter(
     (f) =>
       (f.startsWith('library_') && f.endsWith('.sqlite')) ||
       f === CATALOG_IMPORT_MARKER ||
       f === '.library-media-sync'
   )
-  log.step(`压缩 ${files.length} 个文件 → library-data-pack.zip`)
+  const mediaFiles = collectLibraryMediaFiles()
+  const totalEntries = dbFiles.length + mediaFiles.length + 1
+  log.step(
+    `压缩数据包：${dbFiles.length} 个库文件 + ${mediaFiles.length} 个图鉴媒体 → library-data-pack.zip`
+  )
 
   await new Promise<void>((resolve, reject) => {
     const output = createWriteStream(zipPath)
-    const archive = createArchiver('zip', { zlib: { level: 6 } })
+    const archive = new ZipArchive({ zlib: { level: 9 } })
     let packed = 0
 
     output.on('close', () => resolve())
@@ -113,13 +135,16 @@ async function zipPack(
     archive.on('entry', (entry) => {
       packed++
       const name = typeof entry === 'object' && entry && 'name' in entry ? String(entry.name) : ''
-      log.progress('添加/压缩', packed, files.length + 1, name.split('/').pop())
+      log.progress('打包', packed, totalEntries, name.split('/').pop())
     })
 
     archive.pipe(output)
     archive.file(manifestPath, { name: 'manifest.json' })
-    for (const file of files) {
+    for (const file of dbFiles) {
       archive.file(join(stagingDb, file), { name: `db/${file}` })
+    }
+    for (const file of mediaFiles) {
+      archive.file(file.abs, { name: file.name })
     }
     void archive.finalize()
   })

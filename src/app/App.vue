@@ -11,13 +11,19 @@ import WwDismissibleConfirmHost from '@app/components/WwDismissibleConfirmHost.v
 import { isModuleId } from '@app/config/modules'
 import { useSettingsStore } from '@shared/stores/settings'
 import { resolveStartupPath } from '@shared/utils/startupModule'
+import { useWanwuToast } from '@shared/composables/useWanwuToast'
 
 const settingsStore = useSettingsStore()
+const toast = useWanwuToast()
 const router = useRouter()
 const route = useRoute()
 
 onMounted(async () => {
   await settingsStore.load()
+  const notices = await window.wanwu.app.getStartupNotices()
+  for (const text of notices) {
+    toast.info(text, '图鉴数据', { life: 12_000 })
+  }
   if (route.path === '/' || route.path === '') {
     await router.replace(resolveStartupPath(settingsStore.settings))
   }

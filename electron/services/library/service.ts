@@ -96,6 +96,34 @@ export class LibraryService {
         }))
       }))
     }
+
+    const fromDb: CategoryDto[] = []
+    for (const categoryId of this.db.listLibraryCategoryIds()) {
+      const libDb = this.db.getLibraryDb(categoryId)
+      if (!libDb) continue
+      const root = libDb
+        .prepare('SELECT id, name FROM categories WHERE parent_id IS NULL LIMIT 1')
+        .get() as { id: string; name: string } | undefined
+      const rootId = root?.id ?? categoryId
+      const subs = libDb
+        .prepare(
+          'SELECT id, name FROM categories WHERE parent_id = ? ORDER BY sort_order ASC, name ASC'
+        )
+        .all(rootId) as Array<{ id: string; name: string }>
+      fromDb.push({
+        id: categoryId,
+        name: root?.name ?? categoryId,
+        icon: 'layers',
+        parentId: null,
+        children: subs.map((s) => ({
+          id: s.id,
+          name: s.name,
+          parentId: categoryId
+        }))
+      })
+    }
+    if (fromDb.length > 0) return fromDb
+
     return LIBRARY_CATEGORIES.map((c) => ({
       id: c.id,
       name: c.name,
@@ -181,8 +209,8 @@ export class LibraryService {
   }
 
   getItem(id: string): ItemDto | null {
-    for (const cat of LIBRARY_CATEGORIES) {
-      const libDb = this.db.getLibraryDb(cat.id)
+    for (const categoryId of this.db.listLibraryCategoryIds()) {
+      const libDb = this.db.getLibraryDb(categoryId)
       if (!libDb) continue
       const row = libDb
         .prepare(
@@ -314,9 +342,13 @@ export class LibraryService {
     if (!term) return []
 
     const hits: LibrarySearchHit[] = []
-    for (const cat of LIBRARY_CATEGORIES) {
-      const libDb = this.db.getLibraryDb(cat.id)
+    for (const categoryId of this.db.listLibraryCategoryIds()) {
+      const libDb = this.db.getLibraryDb(categoryId)
       if (!libDb) continue
+      const root = libDb
+        .prepare('SELECT name FROM categories WHERE parent_id IS NULL LIMIT 1')
+        .get() as { name: string } | undefined
+      const categoryName = root?.name ?? categoryId
       const rows = libDb
         .prepare(
           `SELECT i.id, i.name, i.summary, i.sub_category_id, sc.name AS sub_name
@@ -341,8 +373,8 @@ export class LibraryService {
           id: r.id,
           name: r.name,
           summary: r.summary,
-          categoryId: cat.id,
-          categoryName: cat.name,
+          categoryId,
+          categoryName,
           subCategoryName: r.sub_name
         })
         if (hits.length >= limit) return hits

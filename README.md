@@ -109,10 +109,10 @@
 
 | 方式 | 说明 |
 |------|------|
-| **安装包（规划中）** | 未来将提供 Windows 安装程序；执行 `npm run pack` 的完整打包流程仍在预留阶段 |
+| **Windows 安装包** | `npm run pack` → `release/wanwu-win-x64-x.y.z.exe` + 单独分发的 `library-data-pack-x.y.z.zip` |
 | **从源码运行（需一定技术基础）** | 克隆本仓库后安装 Node.js，执行 `npm install` 与 `npm run dev`，适合体验最新开发版 |
 
-普通用户更推荐等待正式发布安装包；开发者与尝鲜用户可参考下文「开发人员说明」。
+打包说明见 [pack/windows/README.md](pack/windows/README.md)。
 
 ---
 
@@ -150,7 +150,7 @@
 |------|------|
 | `npm run dev` | 开发模式（检查环境、SQLite、启动 Electron Vite） |
 | `npm run build` | 生成图鉴数据包 + 编译应用到 `out/` |
-| `npm run pack` | 安装包构建入口（当前为预留说明） |
+| `npm run pack` | Windows 安装包 + 图鉴 zip 单独产出；`-- --skip-library-pack` 可跳过重新压缩图鉴 |
 | `npm run typecheck` | 前端 TypeScript 检查 |
 | `npm run rebuild` | 强制为 Electron 重编 `better-sqlite3` |
 
@@ -183,13 +183,13 @@ assets/
   screenshots/            README 用界面截图（01–04、light、theme-split）
 scripts/                  run.mjs、build-library-pack.ts
 doc/                      需求与设计文档
-pack/                     安装包方案（如 Inno Setup，预留）
+pack/windows/             Windows 打包（pack.mjs、wanwu.iss、builder.json）
 ```
 
 **数据流（构建与首次启动）**
 
 1. 维护 `assets/seed/library/items/**/*.json` 与 `assets/library/**/content.md`，更新 `catalog.json`。
-2. `npm run build` 时由 `scripts/build-library-pack.ts` 生成 `assets/packed/library-data-pack.zip`。
+2. `npm run build` 生成 `assets/packed/library-data-pack.zip`；`npm run pack` 单独发布该 zip。安装包仅含程序与 `logo`，不含 `seed`/`library`。
 3. 用户首次启动时，主进程异步解压数据包到用户目录下的数据库，避免长时间阻塞界面；catalog 未变时可跳过重复入库。
 
 维护细则见 [assets/seed/library/README.md](assets/seed/library/README.md)、[electron/services/README.md](electron/services/README.md)。

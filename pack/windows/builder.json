@@ -1,0 +1,28 @@
+{
+  "appId": "com.monokelvin.wanwu",
+  "productName": "Wanwu",
+  "copyright": "Copyright © 2026 MonoStudio",
+  "directories": {
+    "output": "release",
+    "buildResources": "pack"
+  },
+  "files": [
+    "out/**/*",
+    "package.json"
+  ],
+  "asar": true,
+  "asarUnpack": [
+    "**/node_modules/better-sqlite3/**",
+    "**/node_modules/electron-native-share/**"
+  ],
+  "extraResources": [
+    { "from": "assets/logo", "to": "assets/logo" }
+  ],
+  "forceCodeSigning": false,
+  "win": {
+    "target": [{ "target": "dir", "arch": ["x64"] }],
+    "icon": "pack/app.ico",
+    "executableName": "Wanwu",
+    "signAndEditExecutable": false
+  }
+}

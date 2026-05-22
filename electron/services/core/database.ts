@@ -3,7 +3,7 @@
  * 图鉴分类元数据见 library/categories，预置 RSS 见 rss/defaults。
  */
 import Database from 'better-sqlite3'
-import { existsSync, mkdirSync } from 'fs'
+import { existsSync, mkdirSync, readdirSync } from 'fs'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
 import { LIBRARY_CATEGORIES, loadLibraryCategories } from '../library/categories'
@@ -35,9 +35,15 @@ export class DatabaseService {
     // 图鉴库按需打开；预编译数据包在 main 中后台解压
   }
 
-  /** 各分类图鉴库 id（元数据，不要求已打开连接） */
+  /** 各分类图鉴库 id（从已安装的 library_*.sqlite 发现；开发无库时回退常量） */
   listLibraryCategoryIds(): string[] {
-    return LIBRARY_CATEGORIES.map((c) => c.id)
+    const dbDir = join(this.basePath, 'db')
+    if (!existsSync(dbDir)) return LIBRARY_CATEGORIES.map((c) => c.id)
+    const ids = readdirSync(dbDir)
+      .filter((f) => f.startsWith('library_') && f.endsWith('.sqlite'))
+      .map((f) => f.slice('library_'.length, -'.sqlite'.length))
+      .filter((id) => id.length > 0)
+    return ids.length > 0 ? ids : LIBRARY_CATEGORIES.map((c) => c.id)
   }
 
   closeAllLibraryDbs(): void {
@@ -196,11 +202,15 @@ export class DatabaseService {
   }
 
   private ensureLibraryDb(categoryId: string): Database.Database | undefined {
-    const meta = LIBRARY_CATEGORIES.find((c) => c.id === categoryId)
-    if (!meta) return undefined
+    const dbPath = join(this.basePath, 'db', `library_${categoryId}.sqlite`)
+    if (!existsSync(dbPath)) {
+      const meta = LIBRARY_CATEGORIES.find((c) => c.id === categoryId)
+      if (!meta) return undefined
+    }
     let db = this.libraryDbs.get(categoryId)
     if (!db) {
-      db = this.openLibraryDb(categoryId, meta.name)
+      const meta = LIBRARY_CATEGORIES.find((c) => c.id === categoryId)
+      db = this.openLibraryDb(categoryId, meta?.name ?? categoryId)
       this.libraryDbs.set(categoryId, db)
     }
     return db

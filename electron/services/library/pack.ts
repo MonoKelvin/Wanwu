@@ -1,18 +1,27 @@
 ﻿/**
- * 预编译图鉴数据包：解压 library-data-pack.zip、版本标记、启动引导。
+ * 预编译图鉴数据包：发现 zip → 解压到数据/资源目录 → 成功则删除 zip。
  */
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from 'fs'
+import { copyFileSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import extract from 'extract-zip'
 import type { DatabaseService } from '../core/database'
-import { getBundledLibraryPackPath, getLibraryCatalogPath } from './paths'
+import { getBundledAssetsRoot } from '../core/assetsRoot'
+import { patchWanwuPathConfig, readWanwuPathConfig } from '../data/paths'
+import {
+  discoverLibraryPackZip,
+  getLibraryCatalogPath,
+  isBundledLibrarySeedAvailable,
+  LIBRARY_PACK_ZIP
+} from './paths'
 import { getCatalogSeedToken, type LibraryCatalog } from './seed'
 
 const CATALOG_IMPORT_MARKER = '.library-catalog-import'
 
 export const LIBRARY_PACK_MARKER = '.library-data-pack'
+export const LIBRARY_MEDIA_MARKER = '.library-media-bundle'
 const PACK_MANIFEST = 'manifest.json'
 const STAGING_DIR = '.library-pack-staging'
+const MEDIA_STAGING_DIR = '.library-media-staging'
 
 export interface LibraryPackManifest {
   packVersion: number
@@ -28,6 +37,7 @@ export type LibraryBootstrapPhase = 'idle' | 'installing' | 'ready' | 'error'
 let phase: LibraryBootstrapPhase = 'idle'
 let bootstrapError: string | null = null
 let bootstrapPromise: Promise<void> | null = null
+const startupNotices: string[] = []
 
 export function getLibraryBootstrapPhase(): LibraryBootstrapPhase {
   return phase
@@ -35,6 +45,17 @@ export function getLibraryBootstrapPhase(): LibraryBootstrapPhase {
 
 export function getLibraryBootstrapError(): string | null {
   return bootstrapError
+}
+
+export function consumeStartupNotices(): string[] {
+  const copy = [...startupNotices]
+  startupNotices.length = 0
+  return copy
+}
+
+function pushStartupNotice(message: string): void {
+  startupNotices.push(message)
+  console.warn('[libraryPack]', message)
 }
 
 function packMarkerPath(basePath: string): string {
@@ -136,7 +157,52 @@ function copySqliteFilesFromStaging(stagingDb: string, targetDb: string): number
   return n
 }
 
-/** 从 bundled zip 解压图鉴 sqlite 到用户数据目录（仅替换 library_*.sqlite） */
+function tryDeleteLibraryPackZip(zipPath: string): boolean {
+  try {
+    rmSync(zipPath, { force: true })
+    return !existsSync(zipPath)
+  } catch (err) {
+    console.warn('[libraryPack] 无法删除 zip', zipPath, err)
+    return false
+  }
+}
+
+function clearLibraryPackPathConfigIfMatches(zipPath: string): void {
+  const configured = readWanwuPathConfig().libraryPackPath?.trim()
+  if (configured && configured.toLowerCase() === zipPath.toLowerCase()) {
+    patchWanwuPathConfig({ libraryPackPath: '' })
+  }
+}
+
+/** 从 zip 解压图鉴配图到 resources/assets/library（仅在有 library/ 内容时创建目录） */
+export async function ensureBundledLibraryMediaInstalled(zipPath: string): Promise<'skipped' | 'installed' | 'no-pack'> {
+  const assetsRoot = getBundledAssetsRoot()
+  const marker = join(assetsRoot, LIBRARY_MEDIA_MARKER)
+  if (existsSync(marker)) return 'skipped'
+
+  const staging = join(assetsRoot, MEDIA_STAGING_DIR)
+  rmSync(staging, { recursive: true, force: true })
+  mkdirSync(staging, { recursive: true })
+
+  try {
+    await extract(zipPath, { dir: staging })
+    const libSrc = join(staging, 'library')
+    if (!existsSync(libSrc)) {
+      console.warn('[libraryPack] zip 内无 library/ 媒体目录，跳过配图解压')
+      return 'no-pack'
+    }
+    const libDest = join(assetsRoot, 'library')
+    mkdirSync(libDest, { recursive: true })
+    cpSync(libSrc, libDest, { recursive: true })
+    writeFileSync(marker, `${new Date().toISOString()}\n`, 'utf-8')
+    console.log('[libraryPack] 图鉴配图已就绪')
+    return 'installed'
+  } finally {
+    rmSync(staging, { recursive: true, force: true })
+  }
+}
+
+/** 从 zip 解压图鉴 sqlite 到用户数据目录 */
 export async function applyBundledLibraryPack(
   basePath: string,
   zipPath: string,
@@ -162,48 +228,95 @@ export async function applyBundledLibraryPack(
 }
 
 /**
- * 首次安装：异步解压预编译库；已安装且 catalog 未变则跳过；
- * 已有旧库但种子升级：仅后台 importNew（由 runStartupLibrarySeed 处理）。
+ * 发现 library-data-pack.zip 并导入；成功删除 zip，失败保留并写入启动提示。
  */
-export async function ensureLibraryPackInstalled(dbService: DatabaseService): Promise<'skipped' | 'installed' | 'no-pack'> {
-  const zipPath = getBundledLibraryPackPath()
+export async function applyPendingLibraryPackZip(
+  dbService: DatabaseService
+): Promise<'none' | 'installed' | 'skipped' | 'failed'> {
+  const zipPath = discoverLibraryPackZip()
+  if (!zipPath) return 'none'
+
   const basePath = dbService.getBasePath()
-
-  if (!zipPath) return 'no-pack'
-
   const manifest = await readManifestFromZip(zipPath)
   if (!manifest) {
-    console.warn('[libraryPack] zip 缺少 manifest.json，跳过预装')
-    return 'no-pack'
+    pushStartupNotice(
+      `图鉴数据包无效（缺少 manifest.json），已保留文件：${zipPath}`
+    )
+    return 'failed'
   }
 
   if (isLibraryPackUpToDate(basePath, manifest)) {
+    if (tryDeleteLibraryPackZip(zipPath)) {
+      clearLibraryPackPathConfigIfMatches(zipPath)
+    }
     return 'skipped'
   }
 
   const dbDir = join(basePath, 'db')
   if (countLibrarySqliteFiles(dbDir) > 0 && existsSync(join(dbDir, CATALOG_IMPORT_MARKER))) {
+    if (tryDeleteLibraryPackZip(zipPath)) {
+      clearLibraryPackPathConfigIfMatches(zipPath)
+    }
     return 'skipped'
   }
 
   const t0 = Date.now()
-  console.log(`[libraryPack] 解压预编译库（${manifest.libraryDbCount} 个分类）…`)
-  dbService.closeAllLibraryDbs()
-  await applyBundledLibraryPack(basePath, zipPath, manifest)
-  console.log(`[libraryPack] 解压完成，耗时 ${((Date.now() - t0) / 1000).toFixed(1)}s`)
-  return 'installed'
+  console.log(`[libraryPack] 导入图鉴包（${manifest.libraryDbCount} 个分类）…`)
+
+  try {
+    dbService.closeAllLibraryDbs()
+    await applyBundledLibraryPack(basePath, zipPath, manifest)
+    const mediaResult = await ensureBundledLibraryMediaInstalled(zipPath)
+    if (mediaResult === 'no-pack') {
+      console.log('[libraryPack] 数据包无配图目录，未创建 resources/assets/library')
+    }
+
+    if (!tryDeleteLibraryPackZip(zipPath)) {
+      pushStartupNotice(
+        `图鉴已导入。请手动删除安装目录或数据目录下的 ${LIBRARY_PACK_ZIP}（可能需要管理员权限）。`
+      )
+    } else {
+      clearLibraryPackPathConfigIfMatches(zipPath)
+    }
+
+    console.log(`[libraryPack] 导入完成，耗时 ${((Date.now() - t0) / 1000).toFixed(1)}s`)
+    return 'installed'
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    pushStartupNotice(`图鉴导入失败：${message}。已保留 ${LIBRARY_PACK_ZIP}，请检查后重试。`)
+    return 'failed'
+  }
+}
+
+/** @deprecated 使用 applyPendingLibraryPackZip */
+export async function ensureLibraryPackInstalled(dbService: DatabaseService): Promise<'skipped' | 'installed' | 'no-pack'> {
+  const r = await applyPendingLibraryPackZip(dbService)
+  if (r === 'failed') return 'no-pack'
+  if (r === 'none') return 'no-pack'
+  return r
+}
+
+function shouldRunBundledSeedFallback(): boolean {
+  return isBundledLibrarySeedAvailable()
 }
 
 export function startLibraryBootstrap(dbService: DatabaseService, runSeed: () => void): void {
   if (bootstrapPromise) return
   phase = 'installing'
   bootstrapPromise = (async () => {
-    const packResult = await ensureLibraryPackInstalled(dbService)
-    if (packResult === 'installed') {
+    const packResult = await applyPendingLibraryPackZip(dbService)
+    if (packResult === 'installed' || packResult === 'skipped') {
       phase = 'ready'
       return
     }
-    runSeed()
+    if (packResult === 'failed' && shouldRunBundledSeedFallback()) {
+      runSeed()
+      phase = 'ready'
+      return
+    }
+    if (shouldRunBundledSeedFallback()) {
+      runSeed()
+    }
     phase = 'ready'
   })().catch((err) => {
     phase = 'error'

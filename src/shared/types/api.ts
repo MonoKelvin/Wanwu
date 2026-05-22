@@ -73,6 +73,7 @@ export interface WanwuApi {
       defaultWanwu: string
       isCustom: boolean
     }>
+    getStartupNotices: () => Promise<string[]>
     openDataDirectory: () => Promise<{ ok: boolean }>
     pickDataDirectoryParent: () => Promise<
       | { ok: true; parentDir: string; targetPath: string }
