@@ -123,7 +123,7 @@
 更完整的产品说明见仓库内 `doc/` 目录（需求说明、用户文档、详细设计等）。
 
 - 问题与建议：[GitHub Issues](https://github.com/MonoKelvin/Wanwu/issues)
-- 许可证：[MIT](LICENSE) © [MonoKelvin](https://github.com/MonoKelvin)（[MonoStudio](https://github.com/MonoKelvin)）
+- 许可证：[MIT](LICENSE) © 2026 MonoStudio · [MonoKelvin](https://github.com/MonoKelvin)
 
 ---
 
