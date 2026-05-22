@@ -1,5 +1,7 @@
 # 万物（Wanwu）
 
+> 本仓库中**所有代码、文档与资源**均由 [**Cursor Agent**](https://cursor.com) 参与生成；部分图片和文档信息经由 [**Trae SOLO**](https://solo.trae.cn/) 收集并整理；开发者本人负责监督和取餐。鼠鼠我呀，是一行代码都不想写了~(￣▽￣)~*
+
 <p align="center">
   <img src="assets/logo/icon-256.png" alt="万物 Wanwu" width="128" height="128" />
 </p>
