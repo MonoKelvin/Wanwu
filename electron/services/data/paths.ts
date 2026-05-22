@@ -45,36 +45,28 @@ export function getConfigFilePath(): string {
 }
 
 export function getDefaultWanwuPath(): string {
-  return join(getElectronPath('userData'), 'wanwu')
+  return getElectronPath('userData')
 }
 
 export function readWanwuPathConfig(): WanwuPathConfig {
-  const candidates = listConfigFileCandidates()
-  let merged: WanwuPathConfig = {}
-  let primaryFound = false
-
-  for (const file of candidates) {
-    if (!existsSync(file)) continue
-    const parsed = parseConfigFile(file)
-    if (file === candidates[0]) primaryFound = true
-    merged = { ...merged, ...parsed }
+  const primary = getConfigFilePath()
+  if (existsSync(primary)) {
+    return parseConfigFile(primary)
   }
 
-  const primary = getConfigFilePath()
-  if (!primaryFound && existsSync(primary) === false) {
-    for (const file of candidates.slice(1)) {
-      if (!existsSync(file)) continue
-      try {
-        mkdirSync(dirname(primary), { recursive: true })
-        writeFileSync(primary, readFileSync(file, 'utf-8'), 'utf-8')
-        break
-      } catch {
-        /* 无法迁移则继续用合并结果 */
-      }
+  const candidates = listConfigFileCandidates()
+  for (const file of candidates.slice(1)) {
+    if (!existsSync(file)) continue
+    try {
+      mkdirSync(dirname(primary), { recursive: true })
+      writeFileSync(primary, readFileSync(file, 'utf-8'), 'utf-8')
+      return parseConfigFile(primary)
+    } catch {
+      return parseConfigFile(file)
     }
   }
 
-  return merged
+  return {}
 }
 
 function writeWanwuPathConfigFile(config: WanwuPathConfig): void {
@@ -97,11 +89,16 @@ export function getWanwuDataDirectory(): string {
   return configured ? normalize(resolve(configured)) : normalize(getDefaultWanwuPath())
 }
 
-/** 当前生效的万物数据目录，并确保 db / media / cache 子目录存在 */
+/** 用户数据目录下的资源目录（图鉴配图等） */
+export function getWanwuResourcesDirectory(): string {
+  return join(getWanwuDataDirectory(), 'resources')
+}
+
+/** 当前生效的万物数据目录，并确保 db / media / cache / resources 子目录存在 */
 export function resolveWanwuPath(): string {
   const target = getWanwuDataDirectory()
   mkdirSync(target, { recursive: true })
-  for (const sub of ['db', 'media', 'cache']) {
+  for (const sub of ['db', 'media', 'cache', 'resources']) {
     mkdirSync(join(target, sub), { recursive: true })
   }
   return target
@@ -125,9 +122,9 @@ export function patchWanwuPathConfig(patch: Partial<WanwuPathConfig>): void {
   writeWanwuPathConfigFile(next)
 }
 
-/** 目标父目录下将创建或使用 wanwu 子目录 */
+/** 迁移/安装时使用的数据目录（与所选目录一致，不再追加 wanwu 子目录） */
 export function resolveWanwuPathUnderParent(parentDir: string): string {
-  return normalize(resolve(parentDir, 'wanwu'))
+  return normalize(resolve(parentDir))
 }
 
 export function validateMigrationTarget(
@@ -138,8 +135,8 @@ export function validateMigrationTarget(
   const parent = normalize(resolve(targetParentDir))
   const target = resolveWanwuPathUnderParent(parent)
 
-  if (parent === normalize(resolve(current, '..'))) {
-    return { ok: false, error: '请选择新的父目录，而非当前数据目录本身' }
+  if (parent === current) {
+    return { ok: false, error: '请选择新的数据目录，而非当前数据目录本身' }
   }
 
   if (target === current) {

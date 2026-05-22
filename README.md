@@ -142,7 +142,8 @@
 
 - Node.js **≥ 20.19**（推荐 22 LTS）
 - npm **≥ 10**
-- Windows 上首次 `npm install` 会编译 SQLite 原生模块，需已安装 C++ 构建工具（若失败可执行 `npm run rebuild`）
+- Windows 上首次 `npm install` 会编译 SQLite 原生模块，需已安装 **Visual Studio 生成工具**（勾选「使用 C++ 的桌面开发」）；若失败可执行 `npm run rebuild`
+- 系统分享依赖 `electron-native-share`，未安装 VS 时应用仍可运行/打包，但该功能不可用
 
 ### 常用命令
 
@@ -152,7 +153,7 @@
 | `npm run build` | 生成图鉴数据包 + 编译应用到 `out/` |
 | `npm run pack` | Windows 安装包 + 图鉴 zip 单独产出；`-- --skip-library-pack` 可跳过重新压缩图鉴 |
 | `npm run typecheck` | 前端 TypeScript 检查 |
-| `npm run rebuild` | 强制为 Electron 重编 `better-sqlite3` |
+| `npm run rebuild` | 强制为 Electron 重编 `better-sqlite3`（并尝试 `electron-native-share`） |
 
 脚本说明见 [scripts/README.md](scripts/README.md)。
 

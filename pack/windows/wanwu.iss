@@ -19,9 +19,6 @@
 #ifndef AppExeName
   #define AppExeName "Wanwu.exe"
 #endif
-#ifndef SetupIconPath
-  #define SetupIconPath ""
-#endif
 #ifndef ChineseLangFile
   #define ChineseLangFile "compiler:Default.isl"
 #endif
@@ -60,10 +57,9 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0
 ShowLanguageDialog=no
-#if SetupIconPath != ""
-SetupIconFile={#SetupIconPath}
-UninstallDisplayIcon={#SetupIconPath}
-#endif
+; 相对本 .iss 所在目录 pack/windows/ → pack/app.ico（由 npm run logo:ico 生成）
+SetupIconFile={#SourcePath}\..\app.ico
+UninstallDisplayIcon={#SourcePath}\..\app.ico
 VersionInfoVersion={#AppVersion}
 VersionInfoProductName={#MyAppName}
 VersionInfoCompany={#MyAppPublisher}
@@ -80,13 +76,8 @@ Name: "desktopicon"; Description: "桌面快捷方式"; GroupDescription: "附�
 Source: "{#StageDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-#if SetupIconPath != ""
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#AppExeName}"; IconFilename: "{#SetupIconPath}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#AppExeName}"; IconFilename: "{#SetupIconPath}"; Tasks: desktopicon
-#else
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#AppExeName}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#AppExeName}"; Tasks: desktopicon
-#endif
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#AppExeName}"; IconFilename: "{#SourcePath}\..\app.ico"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#AppExeName}"; IconFilename: "{#SourcePath}\..\app.ico"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#AppExeName}"; Description: "启动万物"; Flags: nowait postinstall skipifsilent

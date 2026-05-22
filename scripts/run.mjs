@@ -15,6 +15,7 @@ import { existsSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { applyWin32MsvsEnv } from './native-rebuild-env.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const require = createRequire(import.meta.url)
@@ -107,20 +108,32 @@ function cmdSqliteHost() {
   console.log(`[万物] better-sqlite3 已匹配 Node ${process.versions.node}`)
 }
 
-function cmdSqliteRebuild() {
-  const force = process.argv.includes('--force') || process.env.WANWU_FORCE_REBUILD === '1'
+function runElectronRebuild(onlyModules, force) {
   const electronRebuildBin = join(
     dirname(require.resolve('@electron/rebuild/package.json')),
     'lib',
     'cli.js'
   )
-  const args = ['-o', 'better-sqlite3']
+  const args = ['-o', onlyModules]
   if (force) args.unshift('-f')
   execFileSync(process.execPath, [electronRebuildBin, ...args], {
     cwd: root,
     stdio: 'inherit',
-    env: process.env
+    env: applyWin32MsvsEnv(process.env)
   })
+}
+
+function cmdSqliteRebuild() {
+  const force = process.argv.includes('--force') || process.env.WANWU_FORCE_REBUILD === '1'
+  runElectronRebuild('better-sqlite3', force)
+  try {
+    runElectronRebuild('electron-native-share', force)
+  } catch {
+    console.warn(
+      '[万物] electron-native-share 未为 Electron 编译，Windows 系统分享不可用。\n' +
+        '       安装「Visual Studio 生成工具」并勾选「使用 C++ 的桌面开发」后执行: npm run rebuild'
+    )
+  }
 }
 
 function cmdRenderer() {

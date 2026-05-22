@@ -21,8 +21,21 @@ import { resolveWanwuPath } from './services/data/paths'
 import { applyRssAutoRefreshSchedule } from './services/rss/scheduler'
 import { runStartupLibrarySeed } from './services/library/seed'
 import { startLibraryBootstrap } from './services/library/pack'
+import { runInstallerLibraryPackImport } from './services/library/installerImport'
 
 const isDev = !app.isPackaged
+const INSTALLER_IMPORT_FLAG = '--installer-import-library-pack'
+
+function parseInstallerImportArgs(): { dataPath: string; zipPath?: string } | null {
+  const idx = process.argv.indexOf(INSTALLER_IMPORT_FLAG)
+  if (idx < 0) return null
+  const dataPath = process.argv[idx + 1]?.trim()
+  if (!dataPath) return null
+  const zipPath = process.argv[idx + 2]?.trim()
+  return { dataPath, zipPath: zipPath || undefined }
+}
+
+const installerImportRequest = parseInstallerImportArgs()
 
 /** Windows：缓解 Chromium 网络子进程异常；保留 GPU 以支持 backdrop-filter 毛玻璃 */
 if (process.platform === 'win32') {
@@ -188,6 +201,27 @@ async function initServices(): Promise<void> {
 }
 
 app.whenReady().then(async () => {
+  if (installerImportRequest) {
+    try {
+      const result = await runInstallerLibraryPackImport(
+        installerImportRequest.dataPath,
+        installerImportRequest.zipPath
+      )
+      if (result.status === 'failed') {
+        console.error('[wanwu] installer import failed:', result.message)
+        app.exit(1)
+        return
+      }
+      console.log('[wanwu] installer import:', result.message)
+      app.exit(0)
+      return
+    } catch (err) {
+      console.error('[wanwu] installer import error', err)
+      app.exit(1)
+      return
+    }
+  }
+
   protocol.handle('wanwu-media', async (request) => {
     const raw = decodeURIComponent(request.url.replace(/^wanwu-media:\/\//i, '')).split(/[?#]/)[0]
     const abs = resolveWanwuMediaAbsolute(raw)

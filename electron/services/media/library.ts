@@ -1,16 +1,24 @@
 import { existsSync, readdirSync } from 'fs'
 import { join } from 'path'
+import { getWanwuResourcesDirectory } from '../data/paths'
 import { getBundledAssetsRoot } from '../core/assetsRoot'
 
-/** 相对路径示例：library/cat/cat-british-shorthair/cover.jpg */
+/** 图鉴配图根目录（优先用户数据 resources，其次安装包内捆绑 assets） */
 export function getLibraryAssetsRoot(): string {
-  return getBundledAssetsRoot()
+  return getWanwuResourcesDirectory()
+}
+
+function resolveUnderRoot(root: string, relativePath: string): string | null {
+  const rel = relativePath.replace(/^\/+/, '').replace(/\\/g, '/')
+  const abs = join(root, rel)
+  return existsSync(abs) ? abs : null
 }
 
 export function resolveLibraryMediaAbsolute(relativePath: string): string | null {
   const rel = relativePath.replace(/^\/+/, '').replace(/\\/g, '/')
-  const abs = join(getBundledAssetsRoot(), rel)
-  return existsSync(abs) ? abs : null
+  const user = resolveUnderRoot(getWanwuResourcesDirectory(), rel)
+  if (user) return user
+  return resolveUnderRoot(getBundledAssetsRoot(), rel)
 }
 
 export function toLibraryMediaUrl(relativePath: string | null | undefined): string | null {
@@ -47,23 +55,36 @@ export function slugDirCandidates(categoryId: string, slug: string): string[] {
   return [...out]
 }
 
+function libraryRootCandidates(categoryId: string): string[] {
+  const roots: string[] = []
+  const seen = new Set<string>()
+  for (const root of [getWanwuResourcesDirectory(), getBundledAssetsRoot()]) {
+    const key = root.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+    roots.push(join(root, 'library', categoryId))
+  }
+  return roots
+}
+
 function firstExistingCoverInDir(categoryId: string, dirName: string): string | null {
   for (const file of COVER_FILENAMES) {
     const rel = coverRelativePath(categoryId, dirName, file)
     if (resolveLibraryMediaAbsolute(rel)) return rel
   }
-  const dirAbs = join(getBundledAssetsRoot(), 'library', categoryId, dirName)
-  if (!existsSync(dirAbs)) return null
-  const file = readdirSync(dirAbs).find((f) => /^cover\.(jpe?g|png|webp)$/i.test(f))
-  if (!file) return null
-  const rel = `library/${categoryId}/${dirName}/${file}`
-  return resolveLibraryMediaAbsolute(rel) ? rel : null
+  for (const libRoot of libraryRootCandidates(categoryId)) {
+    const dirAbs = join(libRoot, dirName)
+    if (!existsSync(dirAbs)) continue
+    const file = readdirSync(dirAbs).find((f) => /^cover\.(jpe?g|png|webp)$/i.test(f))
+    if (!file) continue
+    const rel = `library/${categoryId}/${dirName}/${file}`
+    if (resolveLibraryMediaAbsolute(rel)) return rel
+  }
+  return null
 }
 
 function discoverCoverRelative(categoryId: string, slug: string | null | undefined): string | null {
   if (!slug?.trim()) return null
-  const libRoot = join(getBundledAssetsRoot(), 'library', categoryId)
-  if (!existsSync(libRoot)) return null
 
   for (const dirName of slugDirCandidates(categoryId, slug)) {
     const rel = firstExistingCoverInDir(categoryId, dirName)
@@ -71,11 +92,14 @@ function discoverCoverRelative(categoryId: string, slug: string | null | undefin
   }
 
   const needle = slug.trim().toLowerCase()
-  for (const ent of readdirSync(libRoot, { withFileTypes: true })) {
-    if (!ent.isDirectory()) continue
-    if (ent.name.toLowerCase() === needle || ent.name.toLowerCase().endsWith(needle)) {
-      const rel = firstExistingCoverInDir(categoryId, ent.name)
-      if (rel) return rel
+  for (const libRoot of libraryRootCandidates(categoryId)) {
+    if (!existsSync(libRoot)) continue
+    for (const ent of readdirSync(libRoot, { withFileTypes: true })) {
+      if (!ent.isDirectory()) continue
+      if (ent.name.toLowerCase() === needle || ent.name.toLowerCase().endsWith(needle)) {
+        const rel = firstExistingCoverInDir(categoryId, ent.name)
+        if (rel) return rel
+      }
     }
   }
   return null

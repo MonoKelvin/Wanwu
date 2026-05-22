@@ -82,15 +82,8 @@ async function startMigrate() {
   >
     <div v-if="step === 'intro'" class="ww-settings-migrate-dialog__body">
       <p class="ww-settings-migrate-dialog__lead">
-        将当前数据库、媒体与缓存复制到新的位置。应用会在所选目录下创建
-        <code class="ww-settings-migrate-dialog__code">wanwu</code>
-        文件夹。
+        将数据复制到新目录，完成后自动重启。
       </p>
-      <ul class="ww-settings-migrate-dialog__list">
-        <li>迁移完成后应用会自动重启</li>
-        <li>原目录数据默认保留，确认无误后可手动删除</li>
-        <li>迁移过程中请勿关闭应用</li>
-      </ul>
       <p class="ww-settings-migrate-dialog__current">
         <span class="ww-settings-migrate-dialog__current-label">当前目录</span>
         <span class="ww-settings-migrate-dialog__path">{{ currentPath }}</span>
@@ -103,7 +96,7 @@ async function startMigrate() {
       <p class="ww-settings-migrate-dialog__path is-highlight">{{ targetPath }}</p>
       <label class="ww-settings-migrate-dialog__check">
         <input v-model="overwrite" type="checkbox" />
-        <span>目标 wanwu 文件夹已存在且非空时覆盖合并</span>
+        <span>目标数据目录已存在且非空时覆盖合并</span>
       </label>
       <p v-if="error" class="ww-settings-migrate-dialog__error">{{ error }}</p>
     </div>

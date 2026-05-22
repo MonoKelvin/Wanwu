@@ -32,7 +32,7 @@ async function onRssAutoRefreshChange(v: RssAutoRefreshMinutes | null) {
 <template>
   <div class="ww-settings-section">
     <div class="ww-settings-group">
-      <SettingsRow label="每次获取条目" subtitle="刷新与加载更多时使用的条数">
+      <SettingsRow label="每次获取条目">
         <SelectButton
           class="ww-settings-segment"
           :model-value="settings.rssFetchLimit"
@@ -43,10 +43,7 @@ async function onRssAutoRefreshChange(v: RssAutoRefreshMinutes | null) {
           @update:model-value="onRssFetchLimitChange"
         />
       </SettingsRow>
-      <SettingsRow
-        label="后台定时刷新"
-        subtitle="应用运行期间自动拉取所有已启用订阅源（不含回收站）"
-      >
+      <SettingsRow label="后台定时刷新">
         <WwSelect
           :model-value="settings.rssAutoRefreshMinutes"
           :options="RSS_AUTO_REFRESH_OPTIONS"

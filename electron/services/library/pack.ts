@@ -6,7 +6,7 @@ import { join } from 'path'
 import extract from 'extract-zip'
 import type { DatabaseService } from '../core/database'
 import { getBundledAssetsRoot } from '../core/assetsRoot'
-import { patchWanwuPathConfig, readWanwuPathConfig } from '../data/paths'
+import { getWanwuResourcesDirectory, patchWanwuPathConfig, readWanwuPathConfig } from '../data/paths'
 import {
   discoverLibraryPackZip,
   getLibraryCatalogPath,
@@ -99,7 +99,7 @@ function manifestMatches(a: LibraryPackManifest, b: LibraryPackManifest): boolea
   )
 }
 
-async function readManifestFromZip(zipPath: string): Promise<LibraryPackManifest | null> {
+export async function readManifestFromZip(zipPath: string): Promise<LibraryPackManifest | null> {
   const staging = join(process.cwd(), '.cache', 'wanwu-pack-read')
   mkdirSync(staging, { recursive: true })
   try {
@@ -174,13 +174,16 @@ function clearLibraryPackPathConfigIfMatches(zipPath: string): void {
   }
 }
 
-/** 从 zip 解压图鉴配图到 resources/assets/library（仅在有 library/ 内容时创建目录） */
-export async function ensureBundledLibraryMediaInstalled(zipPath: string): Promise<'skipped' | 'installed' | 'no-pack'> {
-  const assetsRoot = getBundledAssetsRoot()
-  const marker = join(assetsRoot, LIBRARY_MEDIA_MARKER)
+/** 从 zip 解压图鉴配图到用户数据目录 resources/library */
+export async function ensureBundledLibraryMediaInstalled(
+  zipPath: string,
+  dataPath?: string
+): Promise<'skipped' | 'installed' | 'no-pack'> {
+  const resourcesRoot = dataPath ? join(dataPath, 'resources') : getWanwuResourcesDirectory()
+  const marker = join(resourcesRoot, LIBRARY_MEDIA_MARKER)
   if (existsSync(marker)) return 'skipped'
 
-  const staging = join(assetsRoot, MEDIA_STAGING_DIR)
+  const staging = join(resourcesRoot, MEDIA_STAGING_DIR)
   rmSync(staging, { recursive: true, force: true })
   mkdirSync(staging, { recursive: true })
 
@@ -191,11 +194,11 @@ export async function ensureBundledLibraryMediaInstalled(zipPath: string): Promi
       console.warn('[libraryPack] zip 内无 library/ 媒体目录，跳过配图解压')
       return 'no-pack'
     }
-    const libDest = join(assetsRoot, 'library')
+    const libDest = join(resourcesRoot, 'library')
     mkdirSync(libDest, { recursive: true })
     cpSync(libSrc, libDest, { recursive: true })
     writeFileSync(marker, `${new Date().toISOString()}\n`, 'utf-8')
-    console.log('[libraryPack] 图鉴配图已就绪')
+    console.log('[libraryPack] 图鉴配图已解压到', libDest)
     return 'installed'
   } finally {
     rmSync(staging, { recursive: true, force: true })
@@ -266,9 +269,9 @@ export async function applyPendingLibraryPackZip(
   try {
     dbService.closeAllLibraryDbs()
     await applyBundledLibraryPack(basePath, zipPath, manifest)
-    const mediaResult = await ensureBundledLibraryMediaInstalled(zipPath)
+    const mediaResult = await ensureBundledLibraryMediaInstalled(zipPath, basePath)
     if (mediaResult === 'no-pack') {
-      console.log('[libraryPack] 数据包无配图目录，未创建 resources/assets/library')
+      console.log('[libraryPack] 数据包无配图目录，未写入 resources/library')
     }
 
     if (!tryDeleteLibraryPackZip(zipPath)) {

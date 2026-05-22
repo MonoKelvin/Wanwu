@@ -22,6 +22,7 @@ import { createInterface } from 'node:readline'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { rcedit } from 'rcedit'
+import { packBuildEnv } from '../../scripts/native-rebuild-env.mjs'
 
 const PACK_DIR = dirname(fileURLToPath(import.meta.url))
 const PACK_ROOT = join(PACK_DIR, '..')
@@ -30,19 +31,32 @@ const ISS_FILE = join(PACK_DIR, 'wanwu.iss')
 const BUILDER_CONFIG = join(PACK_DIR, 'builder.json')
 const RELEASE_DIR = join(ROOT, 'release')
 const APP_ICO = join(PACK_ROOT, 'app.ico')
-const LOGO_PNG = join(ROOT, 'assets', 'logo', 'icon-256.png')
+const LOGO_ICO_SCRIPT = join(ROOT, 'scripts', 'generate-app-ico.mjs')
+const LOGO_PNG_SOURCE = join(ROOT, 'assets', 'logo', 'icon-256.png')
 const LIBRARY_PACK_ZIP = join(ROOT, 'assets', 'packed', 'library-data-pack.zip')
 const LIBRARY_PACK_NAME = 'library-data-pack.zip'
 const CHINESE_ISL = join(PACK_DIR, 'ChineseSimplified.isl')
 /** 禁止打入安装包的整包归档（会导致卸载不干净） */
 const FORBIDDEN_STAGE_ARCHIVE = /^wanwu-payload-.*\.(zip|7z)$/i
 
-const DEFAULT_ISCC = 'D:\\Inno Setup 7\\ISCC.exe'
-const ISCC_CANDIDATES = [
-  DEFAULT_ISCC,
+const ISCC_NAME = 'ISCC.exe'
+
+/** Inno Setup 卸载项注册表路径（含 6/7、HKLM/HKCU、WOW6432Node） */
+const INNO_UNINSTALL_KEYS = [
+  'HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Inno Setup 7_is1',
+  'HKLM\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Inno Setup 7_is1',
+  'HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Inno Setup 6_is1',
+  'HKLM\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Inno Setup 6_is1',
+  'HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Inno Setup 7_is1',
+  'HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Inno Setup 6_is1'
+]
+
+const ISCC_STATIC_CANDIDATES = [
+  'D:\\Inno Setup 7\\ISCC.exe',
   'C:\\Program Files (x86)\\Inno Setup 7\\ISCC.exe',
   'C:\\Program Files (x86)\\Inno Setup 6\\ISCC.exe',
-  'C:\\Program Files\\Inno Setup 7\\ISCC.exe'
+  'C:\\Program Files\\Inno Setup 7\\ISCC.exe',
+  'C:\\Program Files\\Inno Setup 6\\ISCC.exe'
 ]
 
 function parseArgs(argv) {
@@ -65,6 +79,100 @@ function fileExists(path) {
   }
 }
 
+function regQueryValue(keyPath, valueName) {
+  if (process.platform !== 'win32') return null
+  try {
+    const out = execSync(`reg query "${keyPath}" /v "${valueName}"`, {
+      encoding: 'utf8',
+      windowsHide: true,
+      stdio: ['pipe', 'pipe', 'pipe']
+    })
+    const re = new RegExp(`REG_SZ\\s+(.+)$`, 'im')
+    for (const line of out.split(/\r?\n/)) {
+      if (!line.includes(valueName)) continue
+      const m = line.match(re)
+      if (m?.[1]) return m[1].trim().replace(/^"|"$/g, '')
+    }
+  } catch {
+    /* 键不存在 */
+  }
+  return null
+}
+
+/** 从卸载注册表读取 Inno Setup 安装目录 */
+function findInnoDirFromRegistry() {
+  for (const key of INNO_UNINSTALL_KEYS) {
+    const appPath =
+      regQueryValue(key, 'Inno Setup: App Path') ?? regQueryValue(key, 'InstallLocation')
+    if (appPath) return appPath.replace(/[\\/]+$/, '')
+  }
+  return null
+}
+
+function isccFromDir(dir) {
+  if (!dir) return null
+  const p = join(dir.replace(/[\\/]+$/, ''), ISCC_NAME)
+  return fileExists(p) ? p : null
+}
+
+/** 常见 Program Files 下的 Inno 目录 */
+function isccFromProgramFiles() {
+  const roots = [
+    process.env['ProgramFiles(x86)'],
+    process.env.ProgramFiles,
+    process.env.ProgramW6432
+  ].filter(Boolean)
+  const names = ['Inno Setup 7', 'Inno Setup 6']
+  for (const root of roots) {
+    for (const name of names) {
+      const hit = isccFromDir(join(root, name))
+      if (hit) return hit
+    }
+  }
+  return null
+}
+
+/** PATH 中的 ISCC（若安装时勾选了命令行工具） */
+function isccFromPathEnv() {
+  if (process.platform !== 'win32') return null
+  try {
+    const out = execSync('where ISCC', {
+      encoding: 'utf8',
+      windowsHide: true,
+      stdio: ['pipe', 'pipe', 'pipe']
+    })
+    const first = out
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .find((l) => l && fileExists(l))
+    return first ?? null
+  } catch {
+    return null
+  }
+}
+
+/** 按优先级收集 ISCC.exe 候选路径（去重） */
+function discoverIsccCandidates(explicit) {
+  const seen = new Set()
+  const add = (p) => {
+    if (!p || seen.has(p)) return
+    seen.add(p)
+    list.push(p)
+  }
+  const list = []
+
+  add(explicit?.trim().replace(/^["']|["']$/g, ''))
+  add(process.env.INNO_SETUP_ISCC?.trim().replace(/^["']|["']$/g, ''))
+
+  add(isccFromPathEnv())
+  add(isccFromDir(findInnoDirFromRegistry()))
+  add(isccFromProgramFiles())
+
+  for (const p of ISCC_STATIC_CANDIDATES) add(p)
+
+  return list.filter((p) => fileExists(p))
+}
+
 async function promptIsccPath() {
   const rl = createInterface({ input: process.stdin, output: process.stdout })
   const answer = await new Promise((resolve) => {
@@ -80,13 +188,24 @@ async function promptIsccPath() {
 }
 
 async function resolveIscc(explicit) {
-  if (explicit && fileExists(explicit)) return explicit
-  for (const p of ISCC_CANDIDATES) {
-    if (fileExists(p)) return p
+  const found = discoverIsccCandidates(explicit)
+  if (found.length > 0) {
+    if (found.length > 1) {
+      console.log(`[pack] 已自动定位 ISCC（${found.length} 处候选，使用首个）`)
+    }
+    return found[0]
   }
+
   const entered = await promptIsccPath()
-  if (entered && fileExists(entered)) return entered
+  const manual = entered?.trim().replace(/^["']|["']$/g, '')
+  if (manual && fileExists(manual)) return manual
+  if (manual) {
+    const fromDir = isccFromDir(manual)
+    if (fromDir) return fromDir
+  }
+
   console.error('[pack] 无效路径或未找到 ISCC.exe')
+  console.error('[pack] 可设置环境变量 INNO_SETUP_ISCC 或参数 --iscc="完整路径"')
   process.exit(1)
 }
 
@@ -114,23 +233,31 @@ function findWinUnpackedDir() {
   return null
 }
 
-/** pack/app.ico：安装包、卸载程序、Wanwu.exe 共用 */
+/** pack/app.ico：由 assets/logo/icon-256.png 生成，供 Inno 安装包 / electron-builder / rcedit */
 function ensureAppIco() {
-  if (!fileExists(LOGO_PNG)) {
-    console.error(`[pack] 缺少源图标: ${LOGO_PNG}`)
+  if (!fileExists(LOGO_PNG_SOURCE)) {
+    console.error(`[pack] 缺少软件图标源图: ${LOGO_PNG_SOURCE}`)
     process.exit(1)
   }
-  if (fileExists(APP_ICO) && statSync(APP_ICO).mtimeMs >= statSync(LOGO_PNG).mtimeMs) {
-    return APP_ICO
+  const needRegen =
+    !fileExists(APP_ICO) || statSync(LOGO_PNG_SOURCE).mtimeMs > statSync(APP_ICO).mtimeMs
+  if (needRegen) {
+    if (!fileExists(LOGO_ICO_SCRIPT)) {
+      console.error(`[pack] 缺少 ${LOGO_ICO_SCRIPT}`)
+      process.exit(1)
+    }
+    console.log('[pack] 从 assets/logo/icon-256.png 生成 pack/app.ico（安装包与 exe 共用）…')
+    execFileSync(process.execPath, [LOGO_ICO_SCRIPT], { cwd: ROOT, stdio: 'inherit' })
   }
-  console.log('[pack] 生成 pack/app.ico …')
-  const buf = execFileSync(`npx --yes png-to-ico "${LOGO_PNG}"`, {
-    cwd: ROOT,
-    encoding: 'buffer',
-    maxBuffer: 32 * 1024 * 1024,
-    shell: true
-  })
-  writeFileSync(APP_ICO, buf)
+  if (!fileExists(APP_ICO)) {
+    console.error('[pack] 未生成 pack/app.ico')
+    process.exit(1)
+  }
+  const icoSize = statSync(APP_ICO).size
+  if (icoSize < 1024) {
+    console.error(`[pack] pack/app.ico 体积异常（${icoSize} B），请执行 npm run logo:ico`)
+    process.exit(1)
+  }
   return APP_ICO
 }
 
@@ -269,13 +396,22 @@ function publishLibraryPackToRelease(version) {
 }
 
 function runBuild(skipLibraryPack) {
+  const buildEnv = packBuildEnv(process.env)
+  if (process.platform === 'win32') {
+    const msvs = buildEnv.GYP_MSVS_VERSION
+    console.log(
+      msvs
+        ? `[pack] MSVC: GYP_MSVS_VERSION=${msvs}`
+        : '[pack] MSVC: 使用本机 Visual Studio（含 VS2026 时自动打 node-gyp 补丁）'
+    )
+  }
   if (skipLibraryPack) {
     logLibraryPackZip()
     console.log('[pack] 1/4  npm run build:app（跳过重新生成 library-data-pack.zip）…')
-    execSync('npm run build:app', { cwd: ROOT, stdio: 'inherit', shell: true })
+    execSync('npm run build:app', { cwd: ROOT, stdio: 'inherit', shell: true, env: buildEnv })
   } else {
     console.log('[pack] 1/4  npm run build（含图鉴 library-data-pack.zip）…')
-    execSync('npm run build', { cwd: ROOT, stdio: 'inherit', shell: true })
+    execSync('npm run build', { cwd: ROOT, stdio: 'inherit', shell: true, env: buildEnv })
     if (!fileExists(LIBRARY_PACK_ZIP)) {
       console.error(`[pack] 未生成 ${LIBRARY_PACK_ZIP}，请检查 build-library-pack.ts`)
       process.exit(1)
@@ -286,13 +422,26 @@ function runBuild(skipLibraryPack) {
 
 function runElectronBuilder() {
   console.log('[pack] 2/4  electron-builder (win dir) …')
-  const env = { ...process.env, CSC_IDENTITY_AUTO_DISCOVERY: 'false' }
-  execSync(`npx electron-builder --win dir --config "${BUILDER_CONFIG}"`, {
-    cwd: ROOT,
-    stdio: 'inherit',
-    shell: true,
-    env
-  })
+  const env = {
+    ...packBuildEnv(process.env),
+    CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  }
+  if (env.ELECTRON_MIRROR) {
+    console.log(`[pack] ELECTRON_MIRROR=${env.ELECTRON_MIRROR}`)
+  }
+  const cmd = `npx electron-builder --win dir --config "${BUILDER_CONFIG}"`
+  const maxAttempts = 3
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      execSync(cmd, { cwd: ROOT, stdio: 'inherit', shell: true, env })
+      return
+    } catch (err) {
+      if (attempt >= maxAttempts) throw err
+      console.warn(
+        `[pack] electron-builder 失败（常见为下载 Electron 超时），${attempt + 1}/${maxAttempts} 次重试…`
+      )
+    }
+  }
 }
 
 function runInnoSetup(iscc, innoVersion, setupVersion, stageDir, exeName, appIcon, chineseLang) {
@@ -305,7 +454,6 @@ function runInnoSetup(iscc, innoVersion, setupVersion, stageDir, exeName, appIco
     `/DOutputDir=${RELEASE_DIR}`,
     `/DStageDir=${stageDir}`,
     `/DAppExeName=${exeName}`,
-    `/DSetupIconPath=${appIcon}`,
     `/DChineseLangFile=${chineseLang}`
   ]
   execFileSync(iscc, [...defines, ISS_FILE], { cwd: ROOT, stdio: 'inherit' })

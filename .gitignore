@@ -16,6 +16,11 @@ out/
 release/
 release/wanwu-payload-*
 pack/app.ico
+pack/windows/*.exe
+
+# 本地发布脚本与临时说明（勿提交）
+scripts/publish-github*
+doc/RELEASE_*.md
 .vite/
 *.tsbuildinfo
 

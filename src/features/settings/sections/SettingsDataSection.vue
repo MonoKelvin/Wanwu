@@ -35,7 +35,7 @@ async function openDataFolder() {
         <div class="ww-settings-block__head">
           <div>
             <p class="ww-settings-block__title">数据目录</p>
-            <p class="ww-settings-block__subtitle">本地数据库与媒体文件存储位置</p>
+            <p class="ww-settings-block__subtitle">数据库与媒体存放位置</p>
           </div>
           <WwButton
             label="迁移目录…"
@@ -55,7 +55,7 @@ async function openDataFolder() {
           <WwIcon name="external-link" size="xs" class="ww-settings-path-row__icon" aria-hidden="true" />
         </button>
         <p v-if="paths?.isCustom" class="ww-settings-block__meta">
-          已使用自定义路径 · 默认 {{ paths.defaultWanwu }}
+          自定义路径 · 默认 {{ paths.defaultWanwu }}
         </p>
       </div>
     </div>
@@ -63,7 +63,7 @@ async function openDataFolder() {
       <div class="ww-settings-block ww-settings-block--inline">
         <div class="ww-settings-block__text">
           <p class="ww-settings-block__title">备份与维护</p>
-          <p class="ww-settings-block__subtitle">备份为 zip 包；恢复将覆盖当前数据目录并重启应用</p>
+          <p class="ww-settings-block__subtitle">备份为 zip；恢复会覆盖数据并重启</p>
         </div>
         <div class="ww-settings-block__actions ww-settings-block__actions--end">
           <WwButton
@@ -87,7 +87,7 @@ async function openDataFolder() {
     </div>
 
     <div class="ww-settings-group">
-      <SettingsRow label="清除缓存" subtitle="仅删除 cache 目录，不影响数据库与媒体">
+      <SettingsRow label="清除缓存" subtitle="删除 cache 目录">
         <WwButton
           label="清除"
           icon="trash-2"
@@ -98,7 +98,7 @@ async function openDataFolder() {
           @click="onClearCache"
         />
       </SettingsRow>
-      <SettingsRow label="重置所有设置" subtitle="恢复默认选项，并清除全库列表显示偏好">
+      <SettingsRow label="重置所有设置" subtitle="恢复默认选项">
         <WwButton
           label="重置"
           icon="rotate-ccw"
@@ -109,7 +109,7 @@ async function openDataFolder() {
           @click="onResetSettings"
         />
       </SettingsRow>
-      <SettingsRow label="导出诊断日志" subtitle="版本、路径、RSS 与数据库摘要，便于反馈问题">
+      <SettingsRow label="导出诊断日志" subtitle="版本与路径等信息">
         <WwButton
           label="导出"
           icon="save"
@@ -123,7 +123,7 @@ async function openDataFolder() {
     </div>
 
     <div class="ww-settings-group ww-settings-group--muted">
-      <SettingsRow label="数据库加密" subtitle="SQLCipher 加密待启用">
+      <SettingsRow label="数据库加密" subtitle="即将支持">
         <ToggleSwitch
           v-model="dbEncryptionEnabled"
           class="ww-settings-switch"

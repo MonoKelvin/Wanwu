@@ -16,7 +16,7 @@ function dirHasEntries(dir: string): boolean {
 }
 
 /**
- * 将当前万物数据目录复制到 targetParentDir/wanwu，并写入路径配置。
+ * 将当前万物数据目录复制到 targetParentDir，并写入路径配置。
  * 调用方须在复制前关闭数据库连接。
  */
 export function migrateWanwuData(
@@ -35,7 +35,7 @@ export function migrateWanwuData(
     if (!options?.overwriteExisting) {
       return {
         ok: false,
-        error: '目标位置已存在 wanwu 文件夹且非空，请更换目录或确认覆盖',
+        error: '目标数据目录已存在且非空，请更换目录或确认覆盖',
         code: 'target_exists'
       }
     }

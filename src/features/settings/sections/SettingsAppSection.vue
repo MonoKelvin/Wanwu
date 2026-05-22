@@ -77,7 +77,7 @@ async function onColorSchemeChange(v: ColorScheme) {
 <template>
   <div class="ww-settings-section">
     <div class="ww-settings-group">
-      <SettingsRow label="外观主题" subtitle="浅色 / 深色一键切换，立即生效">
+      <SettingsRow label="外观主题">
         <SelectButton
           class="ww-settings-segment"
           :model-value="settings.colorScheme"
@@ -88,7 +88,7 @@ async function onColorSchemeChange(v: ColorScheme) {
           @update:model-value="onColorSchemeChange"
         />
       </SettingsRow>
-      <SettingsRow label="导航图标对齐" subtitle="模块侧栏图标的垂直对齐方式">
+      <SettingsRow label="导航图标对齐">
         <SelectButton
           class="ww-settings-segment"
           :model-value="settings.navAlign"
@@ -99,7 +99,7 @@ async function onColorSchemeChange(v: ColorScheme) {
           @update:model-value="onNavAlignChange"
         />
       </SettingsRow>
-      <SettingsRow label="导航显示模式" subtitle="仅图标，或图标加文字">
+      <SettingsRow label="导航显示模式">
         <SelectButton
           class="ww-settings-segment ww-settings-segment--wide"
           :model-value="settings.navDisplay"
@@ -110,7 +110,7 @@ async function onColorSchemeChange(v: ColorScheme) {
           @update:model-value="onNavDisplayChange"
         />
       </SettingsRow>
-      <SettingsRow label="默认启动模块" subtitle="下次打开应用时进入的模块">
+      <SettingsRow label="默认启动模块">
         <WwSelect
           size="narrow"
           :model-value="settings.startupModule"
@@ -119,20 +119,14 @@ async function onColorSchemeChange(v: ColorScheme) {
           @update:model-value="onStartupModuleChange"
         />
       </SettingsRow>
-      <SettingsRow
-        label="窗口状态"
-        subtitle="记忆上次的大小、位置、最大化与所在屏幕；最大化每次启动铺满工作区；不记忆则使用默认尺寸"
-      >
+      <SettingsRow label="窗口状态">
         <WwSelect
           :model-value="settings.windowStateMode"
           :options="WINDOW_STATE_MODE_OPTIONS"
           @update:model-value="onWindowStateModeChange"
         />
       </SettingsRow>
-      <SettingsRow
-        label="重置确认提示"
-        subtitle="恢复详情编辑等场景的保存/放弃确认弹窗；勾选过「下次不再提醒」的操作会再次提示"
-      >
+      <SettingsRow label="重置确认提示">
         <WwButton
           label="重置所有提示对话框"
           variant="outlined"

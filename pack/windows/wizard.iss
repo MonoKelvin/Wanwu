@@ -1,19 +1,16 @@
 [Code]
 const
   CAppFolderName = 'Wanwu';
-  CDataFolderName = 'wanwu';
   CRegRoot = 'Software\MonoStudio\Wanwu';
   CLibraryPackFileName = 'library-data-pack.zip';
-
 var
   WwSettingsPage: TWizardPage;
-  WwDataParentEdit: TNewEdit;
+  WwDataDirEdit: TNewEdit;
   WwLibraryZipEdit: TNewEdit;
   DataPath: string;
   LibraryPackSource: string;
   GKeepUserDataOnUninstall: Boolean;
-  UninstallWelcomePage: TNewNotebookPage;
-  UninstallKeepDataCheck: TNewCheckBox;
+  GUninstallWelcomeConfirmed: Boolean;
 
 function JsonEscapeBackslash(const S: string): string;
 begin
@@ -43,20 +40,20 @@ begin
     Result := P;
 end;
 
-function EnsureDataPath(const Parent: string): string;
-var
-  P: string;
+{ 数据目录即用户所选路径，不再自动创建 wanwu 子目录 }
+function NormalizeDataDir(const Raw: string): string;
 begin
-  P := RemoveBackslashUnlessRoot(Parent);
-  if CompareText(ExtractFileName(P), CDataFolderName) = 0 then
-    Result := P
-  else
-    Result := P + '\' + CDataFolderName;
+  Result := RemoveBackslashUnlessRoot(Trim(Raw));
 end;
 
 function ElectronConfigDir: string;
 begin
   Result := ExpandConstant('{userappdata}\wanwu');
+end;
+
+function DefaultDataDir: string;
+begin
+  Result := ElectronConfigDir;
 end;
 
 function WanwuPathConfigFile: string;
@@ -71,112 +68,129 @@ begin
   Result := '';
 end;
 
-procedure WwBrowseDataParentClick(Sender: TObject);
+procedure WwBrowseDataDirClick(Sender: TObject);
 var
   Dir: string;
 begin
-  Dir := WwDataParentEdit.Text;
-  if BrowseForFolder('选择设置目录', Dir, True) then
-    WwDataParentEdit.Text := Dir;
+  Dir := WwDataDirEdit.Text;
+  if BrowseForFolder('选择数据存放位置', Dir, True) then
+    WwDataDirEdit.Text := Dir;
 end;
 
-function ResolveLibraryPackSource(const ParentDir, WanwuDir: string): string;
+procedure WwBrowseLibraryZipClick(Sender: TObject);
 var
-  InWanwu, InParent: string;
+  Zip, InitDir: string;
+begin
+  Zip := WwLibraryZipEdit.Text;
+  InitDir := '';
+  if Zip <> '' then
+    InitDir := ExtractFileDir(Zip);
+  if GetOpenFileName(
+    '选择图鉴资源包',
+    Zip,
+    InitDir,
+    'ZIP 文件 (*.zip)|*.zip|所有文件 (*.*)|*.*',
+    'zip') then
+    WwLibraryZipEdit.Text := Zip;
+end;
+
+function ResolveLibraryPackSource(const DataDir: string): string;
+var
+  InData, InApp: string;
 begin
   Result := Trim(WwLibraryZipEdit.Text);
   if (Result <> '') and FileExists(Result) then
     Exit;
   Result := '';
-  InWanwu := WanwuDir + '\' + CLibraryPackFileName;
-  InParent := RemoveBackslashUnlessRoot(ParentDir) + '\' + CLibraryPackFileName;
-  if FileExists(InWanwu) then
-    Result := InWanwu
-  else if FileExists(InParent) then
-    Result := InParent;
+  InData := DataDir + '\' + CLibraryPackFileName;
+  InApp := ExpandConstant('{app}') + '\' + CLibraryPackFileName;
+  if FileExists(InData) then
+    Result := InData
+  else if FileExists(InApp) then
+    Result := InApp;
 end;
 
 procedure CreateWwWizardPages;
 var
   Top, RowH, Gap, W, BtnW: Integer;
-  HintLabel, LblData, LblPack, NoteLabel: TNewStaticText;
-  BtnData: TNewButton;
+  HintLabel, LblData, LblPack: TNewStaticText;
+  BtnData, BtnPack: TNewButton;
 begin
   WwSettingsPage := CreateCustomPage(
     wpSelectDir,
-    '数据与图鉴',
-    '个人数据与图鉴资源使用同一设置位置'
+    '用户数据和资源设置',
+    '设置数据位置与图鉴资源包'
   );
 
   Top := ScaleY(8);
-  Gap := ScaleY(10);
-  RowH := ScaleY(23);
-  BtnW := ScaleX(72);
-  W := WwSettingsPage.SurfaceWidth - ScaleX(32);
+  Gap := ScaleY(12);
+  RowH := ScaleY(24);
+  BtnW := ScaleX(76);
+  W := WwSettingsPage.SurfaceWidth - ScaleX(24);
 
   HintLabel := TNewStaticText.Create(WwSettingsPage);
   HintLabel.Parent := WwSettingsPage.Surface;
   HintLabel.Left := ScaleX(0);
   HintLabel.Top := Top;
   HintLabel.Width := W;
+  HintLabel.Height := ScaleY(72);
   HintLabel.AutoSize := False;
   HintLabel.WordWrap := True;
   HintLabel.Caption :=
-    '数据（收藏、订阅等）与图鉴包均放在下方目录；将自动创建「' + CDataFolderName + '」子目录。' + #13#10 +
-    '图鉴包下载：{#GitHubReleasesURL}';
-  Top := Top + ScaleY(52);
+    '1. 选择个人数据存放位置。' + #13#10 +
+    '2. 图鉴资源包可留空（从安装目录查找）或选择 zip。' + #13#10 +
+    '下载：{#GitHubReleasesURL}';
+  Top := Top + HintLabel.Height + Gap;
 
   LblData := TNewStaticText.Create(WwSettingsPage);
   LblData.Parent := WwSettingsPage.Surface;
   LblData.Left := ScaleX(0);
   LblData.Top := Top;
-  LblData.Caption := '设置目录：';
-  Top := Top + Gap;
+  LblData.AutoSize := True;
+  LblData.Caption := '数据目录';
+  Top := Top + ScaleY(18);
 
-  WwDataParentEdit := TNewEdit.Create(WwSettingsPage);
-  WwDataParentEdit.Parent := WwSettingsPage.Surface;
-  WwDataParentEdit.Left := ScaleX(0);
-  WwDataParentEdit.Top := Top;
-  WwDataParentEdit.Width := W - BtnW - ScaleX(8);
-  WwDataParentEdit.Height := RowH;
-  WwDataParentEdit.Text := ElectronConfigDir;
+  WwDataDirEdit := TNewEdit.Create(WwSettingsPage);
+  WwDataDirEdit.Parent := WwSettingsPage.Surface;
+  WwDataDirEdit.Left := ScaleX(0);
+  WwDataDirEdit.Top := Top;
+  WwDataDirEdit.Width := W - BtnW - ScaleX(10);
+  WwDataDirEdit.Height := RowH;
+  WwDataDirEdit.Text := DefaultDataDir;
 
   BtnData := TNewButton.Create(WwSettingsPage);
   BtnData.Parent := WwSettingsPage.Surface;
-  BtnData.Left := WwDataParentEdit.Left + WwDataParentEdit.Width + ScaleX(8);
+  BtnData.Left := WwDataDirEdit.Left + WwDataDirEdit.Width + ScaleX(10);
   BtnData.Top := Top;
   BtnData.Width := BtnW;
   BtnData.Height := RowH;
   BtnData.Caption := '浏览…';
-  BtnData.OnClick := @WwBrowseDataParentClick;
+  BtnData.OnClick := @WwBrowseDataDirClick;
   Top := Top + RowH + Gap;
 
   LblPack := TNewStaticText.Create(WwSettingsPage);
   LblPack.Parent := WwSettingsPage.Surface;
   LblPack.Left := ScaleX(0);
   LblPack.Top := Top;
-  LblPack.Caption := '图鉴包 zip（可选，可填完整路径）：';
-  Top := Top + Gap;
+  LblPack.AutoSize := True;
+  LblPack.Caption := '资源包 zip（可选）';
+  Top := Top + ScaleY(18);
 
   WwLibraryZipEdit := TNewEdit.Create(WwSettingsPage);
   WwLibraryZipEdit.Parent := WwSettingsPage.Surface;
   WwLibraryZipEdit.Left := ScaleX(0);
   WwLibraryZipEdit.Top := Top;
-  WwLibraryZipEdit.Width := W;
+  WwLibraryZipEdit.Width := W - BtnW - ScaleX(10);
   WwLibraryZipEdit.Height := RowH;
-  Top := Top + RowH + Gap;
 
-  NoteLabel := TNewStaticText.Create(WwSettingsPage);
-  NoteLabel.Parent := WwSettingsPage.Surface;
-  NoteLabel.Left := ScaleX(0);
-  NoteLabel.Top := Top;
-  NoteLabel.Width := W;
-  NoteLabel.AutoSize := False;
-  NoteLabel.WordWrap := True;
-  NoteLabel.Font.Style := [fsItalic];
-  NoteLabel.Caption :=
-    '留空时将在设置目录或 wanwu 子目录查找 ' + CLibraryPackFileName + '；' +
-    '也可将 zip 放到程序安装目录，由应用首次启动时导入。';
+  BtnPack := TNewButton.Create(WwSettingsPage);
+  BtnPack.Parent := WwSettingsPage.Surface;
+  BtnPack.Left := WwLibraryZipEdit.Left + WwLibraryZipEdit.Width + ScaleX(10);
+  BtnPack.Top := Top;
+  BtnPack.Width := BtnW;
+  BtnPack.Height := RowH;
+  BtnPack.Caption := '浏览…';
+  BtnPack.OnClick := @WwBrowseLibraryZipClick;
 end;
 
 procedure WriteWanwuPathConfig(TargetPath, LibPackPath: String);
@@ -193,13 +207,6 @@ begin
       '  "libraryPackPath": "' + JsonEscapeBackslash(LibPackPath) + '"';
   Json := Json + #13#10 + '}' + #13#10;
   SaveStringToFile(WanwuPathConfigFile, Json, False);
-end;
-
-procedure InitDataDirectoryLayout(const RootPath: string);
-begin
-  ForceDirectories(RootPath + '\db');
-  ForceDirectories(RootPath + '\media');
-  ForceDirectories(RootPath + '\cache');
 end;
 
 procedure SaveInstallRegistry;
@@ -267,9 +274,39 @@ begin
     Exit;
   if not FileExists(LibraryPackSource) then
     Exit;
+  ForceDirectories(DataPath);
   Dest := DataPath + '\' + CLibraryPackFileName;
   if CopyFile(LibraryPackSource, Dest, False) then
     Result := Dest;
+end;
+
+procedure RunLibraryPackImport(const DataDir: string);
+var
+  ExePath, ZipPath, Params: string;
+  ResultCode: Integer;
+begin
+  ZipPath := DataDir + '\' + CLibraryPackFileName;
+  if not FileExists(ZipPath) then
+    Exit;
+  WizardForm.StatusLabel.Caption := '正在解压图鉴资源包到数据目录，请稍候…';
+  WizardForm.ProgressGauge.Style := npbstMarquee;
+  try
+    ExePath := ExpandConstant('{app}\{#AppExeName}');
+    Params :=
+      '--installer-import-library-pack "' + DataDir + '" "' + ZipPath + '"';
+    if Exec(ExePath, Params, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+    begin
+      if (ResultCode <> 0) then
+        MsgBox(
+          '图鉴解压未完成（代码 ' + IntToStr(ResultCode) + '），可启动应用后重试。',
+          mbInformation, MB_OK);
+    end
+    else
+      MsgBox('无法运行图鉴导入，可启动应用后重试。', mbInformation, MB_OK);
+  finally
+    WizardForm.ProgressGauge.Style := npbstNormal;
+    WizardForm.StatusLabel.Caption := '';
+  end;
 end;
 
 function InitializeSetup: Boolean;
@@ -281,7 +318,7 @@ end;
 
 procedure InitializeWizard;
 var
-  InstallDir, StoredData, ParentDir: string;
+  InstallDir, StoredData: string;
 begin
   CreateWwWizardPages;
 
@@ -292,16 +329,12 @@ begin
   if (StoredData = '') then
     TryReadDataPathFromConfig(StoredData);
   if StoredData <> '' then
-  begin
-    ParentDir := ExtractFileDir(RemoveBackslashUnlessRoot(StoredData));
-    if ParentDir <> '' then
-      WwDataParentEdit.Text := ParentDir;
-  end;
+    WwDataDirEdit.Text := RemoveBackslashUnlessRoot(StoredData);
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
 var
-  AppDir, ParentDir, PackFile: string;
+  AppDir, DataDir: string;
 begin
   Result := True;
   if CurPageID = wpSelectDir then
@@ -319,18 +352,18 @@ begin
   end
   else if CurPageID = WwSettingsPage.ID then
   begin
-    ParentDir := Trim(WwDataParentEdit.Text);
-    if ParentDir = '' then
+    DataDir := NormalizeDataDir(WwDataDirEdit.Text);
+    if DataDir = '' then
     begin
-      MsgBox('请选择设置目录。', mbError, MB_OK);
+      MsgBox('请选择数据目录。', mbError, MB_OK);
       Result := False;
       Exit;
     end;
-    DataPath := EnsureDataPath(ParentDir);
-    LibraryPackSource := ResolveLibraryPackSource(ParentDir, DataPath);
+    DataPath := DataDir;
+    LibraryPackSource := ResolveLibraryPackSource(DataPath);
     if (Trim(WwLibraryZipEdit.Text) <> '') and (LibraryPackSource = '') then
     begin
-      MsgBox('找不到所填图鉴包路径，请检查或留空。', mbError, MB_OK);
+      MsgBox('找不到所填资源包路径，请检查或留空。', mbError, MB_OK);
       Result := False;
       Exit;
     end;
@@ -344,90 +377,59 @@ begin
   if CurStep <> ssPostInstall then
     Exit;
 
-  TargetData := DataPath;
-  if HasPreviousInstallRegistry then
+  TargetData := NormalizeDataDir(DataPath);
+  if TargetData = '' then
   begin
-    if (TargetData = '') then
-    begin
-      TargetData := RegDataPath;
-      if (TargetData = '') and not TryReadDataPathFromConfig(TargetData) then
-        TargetData := EnsureDataPath(ElectronConfigDir);
-    end;
+    if RegDataPath <> '' then
+      TargetData := NormalizeDataDir(RegDataPath)
+    else if TryReadDataPathFromConfig(TargetData) then
+      TargetData := NormalizeDataDir(TargetData)
+    else
+      TargetData := DefaultDataDir;
   end;
 
-  InitDataDirectoryLayout(TargetData);
+  DataPath := TargetData;
   InstalledPack := '';
   if LibraryPackSource <> '' then
-  begin
-    DataPath := TargetData;
     InstalledPack := InstallLibraryPackToDataDir;
-  end;
-  DataPath := TargetData;
+
   SaveInstallRegistry;
   WriteWanwuPathConfig(TargetData, InstalledPack);
+  if FileExists(TargetData + '\' + CLibraryPackFileName) then
+    RunLibraryPackImport(TargetData);
 end;
 
-function ConfirmDeleteUserData: Boolean;
-begin
-  Result := MsgBox(
-    '将删除收藏、订阅等全部个人数据，且无法恢复。' + #13#10 +
-    '建议先在应用内备份。' + #13#10#13#10 +
-    '确定删除？',
-    mbConfirmation, MB_YESNO) = IDYES;
-end;
-
-procedure UninstallKeepDataCheckClick(Sender: TObject);
-begin
-  if UninstallKeepDataCheck.Checked then
-    Exit;
-  if not ConfirmDeleteUserData then
-    UninstallKeepDataCheck.Checked := True;
-end;
-
-procedure InitializeUninstallProgressForm;
+function ShowWwUninstallWelcomeDlg: Boolean;
 var
-  InfoLabel: TNewStaticText;
-  NoteLabel: TNewStaticText;
+  Res: Integer;
 begin
   GKeepUserDataOnUninstall := True;
+  Res := MsgBox(
+    '卸载万物？' + #13#10#13#10 +
+    '是 = 保留个人数据' + #13#10 +
+    '否 = 删除全部数据与缓存' + #13#10 +
+    '取消 = 中止',
+    mbConfirmation, MB_YESNOCANCEL or MB_DEFBUTTON1);
+  case Res of
+    IDYES:
+      begin
+        GKeepUserDataOnUninstall := True;
+        Result := True;
+      end;
+    IDNO:
+      begin
+        GKeepUserDataOnUninstall := False;
+        Result := True;
+      end;
+  else
+    Result := False;
+  end;
+end;
 
-  UninstallWelcomePage := TNewNotebookPage.Create(UninstallProgressForm);
-  UninstallWelcomePage.Notebook := UninstallProgressForm.OuterNotebook;
-  UninstallWelcomePage.Parent := UninstallProgressForm.OuterNotebook;
-  UninstallWelcomePage.Align := alClient;
-
-  InfoLabel := TNewStaticText.Create(UninstallWelcomePage);
-  InfoLabel.Parent := UninstallWelcomePage;
-  InfoLabel.Left := ScaleX(16);
-  InfoLabel.Top := ScaleY(16);
-  InfoLabel.Width := UninstallWelcomePage.Width - ScaleX(32);
-  InfoLabel.AutoSize := False;
-  InfoLabel.WordWrap := True;
-  InfoLabel.Caption := '即将卸载万物。程序文件将被删除。';
-
-  UninstallKeepDataCheck := TNewCheckBox.Create(UninstallWelcomePage);
-  UninstallKeepDataCheck.Parent := UninstallWelcomePage;
-  UninstallKeepDataCheck.Left := ScaleX(16);
-  UninstallKeepDataCheck.Top := InfoLabel.Top + ScaleY(48);
-  UninstallKeepDataCheck.Width := UninstallWelcomePage.Width - ScaleX(32);
-  UninstallKeepDataCheck.Caption := '保留我的数据（推荐）';
-  UninstallKeepDataCheck.Checked := True;
-  UninstallKeepDataCheck.OnClick := @UninstallKeepDataCheckClick;
-
-  NoteLabel := TNewStaticText.Create(UninstallWelcomePage);
-  NoteLabel.Parent := UninstallWelcomePage;
-  NoteLabel.Left := ScaleX(16);
-  NoteLabel.Top := UninstallKeepDataCheck.Top + ScaleY(36);
-  NoteLabel.Width := UninstallWelcomePage.Width - ScaleX(32);
-  NoteLabel.AutoSize := False;
-  NoteLabel.WordWrap := True;
-  NoteLabel.Font.Style := [fsItalic];
-  NoteLabel.Caption :=
-    '若曾改过数据保存位置，该文件夹需自行处理。';
-
-  UninstallProgressForm.OuterNotebook.ActivePage := UninstallWelcomePage;
-  UninstallProgressForm.PageNameLabel.Caption := '卸载';
-  UninstallProgressForm.PageDescriptionLabel.Caption := '是否保留个人数据';
+function InitializeUninstall: Boolean;
+begin
+  Result := ShowWwUninstallWelcomeDlg;
+  GUninstallWelcomeConfirmed := Result;
 end;
 
 procedure DeleteUserDataAtPath(const P: string);
@@ -436,16 +438,32 @@ begin
     DelTree(P, True, True, True);
 end;
 
+procedure DeleteAppCacheDir;
+var
+  InstallPath, CacheDir: string;
+begin
+  if RegQueryStringValue(HKCU, CRegRoot, 'InstallPath', InstallPath) and (InstallPath <> '') then
+  begin
+    CacheDir := InstallPath + '\.cache';
+    if DirExists(CacheDir) then
+      DelTree(CacheDir, True, True, True);
+  end;
+end;
+
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
-  StoredData, ConfigFile: string;
+  StoredData: string;
 begin
-  if CurUninstallStep <> usUninstall then
+  if CurUninstallStep = usUninstall then
+  begin
+    DeleteAppCacheDir;
+    Exit;
+  end;
+
+  if CurUninstallStep <> usPostUninstall then
     Exit;
 
-  if Assigned(UninstallKeepDataCheck) then
-    GKeepUserDataOnUninstall := UninstallKeepDataCheck.Checked
-  else
+  if not GUninstallWelcomeConfirmed then
     GKeepUserDataOnUninstall := True;
 
   if not GKeepUserDataOnUninstall then
@@ -454,9 +472,7 @@ begin
     if (StoredData = '') and not TryReadDataPathFromConfig(StoredData) then
       StoredData := '';
     DeleteUserDataAtPath(StoredData);
-    ConfigFile := WanwuPathConfigFile;
-    if FileExists(ConfigFile) then
-      DeleteFile(ConfigFile);
+    DeleteUserDataAtPath(ElectronConfigDir);
   end;
   RemoveInstallRegistry;
 end;

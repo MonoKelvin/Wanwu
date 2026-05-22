@@ -16,8 +16,7 @@ const heroHover = ref(false)
 const copyrightYear = new Date().getFullYear()
 const githubUrl = 'https://github.com/MonoKelvin/Wanwu'
 
-const appIntro =
-  '万物是一款桌面端「事物图鉴」应用：用分类与条目组织百科式内容，支持配图浏览、个人收藏与 RSS 阅读。数据保存在本机，适合本地查阅与整理兴趣专题。'
+const appIntro = '桌面端事物图鉴：分类条目、收藏与 RSS，数据保存在本机。'
 
 const developers = [
   { name: 'Cursor', href: 'https://cursor.com', note: 'AI 辅助设计与开发' },

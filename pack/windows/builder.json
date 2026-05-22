@@ -10,6 +10,7 @@
     "out/**/*",
     "package.json"
   ],
+  "npmRebuild": false,
   "asar": true,
   "asarUnpack": [
     "**/node_modules/better-sqlite3/**",
