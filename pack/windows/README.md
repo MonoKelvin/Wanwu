@@ -91,6 +91,25 @@ npm run pack -- --skip-build          # 只重打 Inno
 
 仍找不到时再提示手动输入路径。
 
+## 代码签名（可选）
+
+打包完成后会尝试用 `signtool` 签名 `Wanwu.exe` 与安装包。**未安装 Windows SDK 时只会打出警告，不影响打包成功。**
+
+| 环境变量 | 说明 |
+|----------|------|
+| `WANWU_SKIP_SIGN=1` | 跳过签名且不提示 |
+| `WANWU_SELF_SIGN=1` | 开发用自签证书（需已安装 Windows SDK） |
+| `WANWU_SIGN_PFX` | 正式证书 `.pfx` 路径 |
+| `WANWU_SIGN_PASSWORD` | 证书密码（可选） |
+
+安装 Windows SDK（Visual Studio 安装器 → 单个组件 → **Windows SDK**）后 `signtool` 即可用。正式证书签名示例：
+
+```powershell
+$env:WANWU_SIGN_PFX = "C:\certs\wanwu.pfx"
+$env:WANWU_SIGN_PASSWORD = "your-password"
+npm run pack
+```
+
 ## 常见问题
 
 ### `Cannot create symbolic link` / `winCodeSign`

@@ -2,6 +2,7 @@ import { renderMarkdown } from '@shared/markdown'
 import { isMediaAttribution, mediaAttributionSource } from '@shared/utils/unsplashAttribution'
 import type { Item } from '@shared/types/item'
 import type { MediaAttribution } from '@shared/types/unsplash'
+import { htmlExportStyles, resolveShareTheme } from '@features/item/utils/shareExportTheme'
 
 export type ShareExportFormat = 'png' | 'jpeg' | 'html'
 
@@ -53,141 +54,8 @@ function attributionHtml(attribution: MediaAttribution | null): string {
   return `<p class="credit">Photo by <a href="${profile}" target="_blank" rel="noopener noreferrer">${photographer}</a> on <a href="${page}" target="_blank" rel="noopener noreferrer">${brand}</a></p>`
 }
 
-function exportStyles(): string {
-  return `
-:root {
-  color-scheme: light;
-  --ink: #121214;
-  --muted: #5a5a62;
-  --faint: #888890;
-  --border: rgb(18 18 22 / 0.08);
-  --panel: #f5f5f6;
-  --accent: #3a3a42;
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--ink);
-  background: #fff;
-}
-.page {
-  max-width: 68rem;
-  margin: 0 auto;
-  padding: 1.5rem 1.25rem 2.5rem;
-}
-.main {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.75rem;
-  align-items: start;
-}
-@media (min-width: 900px) {
-  .page { padding: 1.75rem 1.75rem 3rem; }
-  .main { grid-template-columns: 1.08fr 0.92fr; gap: 2.5rem; }
-}
-.gallery { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; }
-.hero {
-  width: 100%;
-  max-height: 26rem;
-  object-fit: cover;
-  border-radius: 0.75rem;
-  border: 1px solid var(--border);
-  background: var(--panel);
-}
-.credit { margin: 0; font-size: 0.75rem; color: var(--faint); }
-.credit a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
-.thumbs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.thumbs img {
-  width: 4rem;
-  height: 4rem;
-  object-fit: cover;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-}
-.eyebrow {
-  margin: 0 0 0.35rem;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
-h1 {
-  margin: 0 0 0.5rem;
-  font-size: 1.75rem;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.lead { margin: 0; color: var(--muted); font-size: 0.9375rem; }
-.tags { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.75rem; }
-.tag {
-  display: inline-block;
-  padding: 0.2rem 0.625rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  background: var(--panel);
-  color: var(--accent);
-  border: 1px solid var(--border);
-}
-.section-label {
-  margin: 0 0 0.625rem;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
-.specs { margin: 0; }
-.spec-row {
-  display: grid;
-  grid-template-columns: minmax(0, 0.38fr) minmax(0, 1fr);
-  gap: 0.75rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border);
-}
-.spec-row dt { margin: 0; color: var(--muted); font-weight: 500; }
-.spec-row dd { margin: 0; color: var(--ink); }
-.desc { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
-.prose { font-size: 0.8125rem; line-height: 1.55; color: var(--ink); }
-.prose p { margin: 0 0 0.5rem; }
-.prose a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
-.prose h2 { margin: 1rem 0 0.5rem; font-size: 1rem; }
-.prose h3, .prose h4 { margin: 0.875rem 0 0.375rem; font-size: 0.9375rem; }
-.prose ul, .prose ol { margin: 0 0 0.5rem; padding-left: 1.25rem; }
-.prose blockquote {
-  margin: 0.5rem 0;
-  padding: 0.5rem 0.75rem;
-  border-left: 3px solid var(--border);
-  color: var(--muted);
-}
-.prose code {
-  padding: 0.1em 0.35em;
-  border-radius: 0.25rem;
-  background: var(--panel);
-  font-size: 0.92em;
-}
-.prose pre {
-  overflow: auto;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  background: var(--panel);
-  border: 1px solid var(--border);
-}
-.footer-note {
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
-  font-size: 0.75rem;
-  color: var(--faint);
-}
-`.trim()
+function exportStyles(theme: ReturnType<typeof resolveShareTheme>): string {
+  return htmlExportStyles(theme)
 }
 
 export async function buildDetailShareHtml(options: {
@@ -207,9 +75,10 @@ export async function buildDetailShareHtml(options: {
     return dataUrl
   }
 
+  const theme = resolveShareTheme()
   const heroSrc = (await embed(heroUrl)) ?? heroUrl
   const heroBlock = heroSrc
-    ? `<img class="hero" src="${escapeHtml(heroSrc)}" alt="${escapeHtml(item.name)}" />`
+    ? `<div class="hero-wrap"><img class="hero" src="${escapeHtml(heroSrc)}" alt="${escapeHtml(item.name)}" /></div>`
     : ''
 
   const thumbBlocks: string[] = []
@@ -246,12 +115,12 @@ export async function buildDetailShareHtml(options: {
   const summary = item.summary ? `<p class="lead">${escapeHtml(item.summary)}</p>` : ''
 
   return `<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="${theme}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${escapeHtml(item.name)} — Wanwu</title>
-  <style>${exportStyles()}</style>
+  <style>${exportStyles(theme)}</style>
 </head>
 <body>
   <div class="page">

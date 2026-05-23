@@ -140,17 +140,23 @@ function findSigntool() {
     /* ignore */
   }
 
-  const kitsRoot = process.env['ProgramFiles(x86)']
-    ? join(process.env['ProgramFiles(x86)'], 'Windows Kits', '10', 'bin')
-    : null
-  if (!kitsRoot || !existsSync(kitsRoot)) return null
+  const kitsRoots = [
+    process.env['ProgramFiles(x86)']
+      ? join(process.env['ProgramFiles(x86)'], 'Windows Kits', '10', 'bin')
+      : null,
+    process.env.ProgramFiles ? join(process.env.ProgramFiles, 'Windows Kits', '10', 'bin') : null
+  ].filter((p) => p && existsSync(p))
 
-  for (const ver of readdirSync(kitsRoot, { withFileTypes: true })
-    .filter((d) => d.isDirectory() && /^\d/.test(d.name))
-    .map((d) => d.name)
-    .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }))) {
-    const candidate = join(kitsRoot, ver, 'x64', 'signtool.exe')
-    if (existsSync(candidate)) return candidate
+  for (const kitsRoot of kitsRoots) {
+    for (const ver of readdirSync(kitsRoot, { withFileTypes: true })
+      .filter((d) => d.isDirectory() && /^\d/.test(d.name))
+      .map((d) => d.name)
+      .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }))) {
+      for (const arch of ['x64', 'x86', 'arm64']) {
+        const candidate = join(kitsRoot, ver, arch, 'signtool.exe')
+        if (existsSync(candidate)) return candidate
+      }
+    }
   }
   return null
 }
@@ -186,7 +192,9 @@ export function signWindowsBinary(filePath, opts = {}) {
 
   const signtool = findSigntool()
   if (!signtool) {
-    packWarn(`未找到 signtool，跳过 ${label} 签名`)
+    packWarn(
+      `未找到 signtool，跳过 ${label} 签名（不影响打包；需签名请安装 Windows SDK，或设置 WANWU_SKIP_SIGN=1 隐藏此提示）`
+    )
     return false
   }
 

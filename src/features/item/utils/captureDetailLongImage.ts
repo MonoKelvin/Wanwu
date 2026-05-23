@@ -1,36 +1,53 @@
 import type { ShareExportFormat } from '@features/item/utils/exportDetailHtml'
+import {
+  captureBackgroundColor,
+  shareCaptureFixCss,
+  syncThemeVarsToClone
+} from '@features/item/utils/shareExportTheme'
 
 export type ShareImageFormat = ShareExportFormat
 
-const SHARE_CAPTURE_FIX_CSS = `
-[data-share-capture] {
-  -webkit-font-smoothing: antialiased;
-  text-rendering: geometricPrecision;
-}
-[data-share-capture] .ww-product-detail__pill-tag {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-sizing: border-box !important;
-  height: 1.375rem !important;
-  padding: 0 0.5rem !important;
-  line-height: 1 !important;
-  vertical-align: middle !important;
-}
-`
+function injectShareCaptureFixes(doc: Document, liveRoot: HTMLElement) {
+  syncThemeVarsToClone(doc)
 
-function injectShareCaptureFixes(doc: Document) {
-  const el = doc.querySelector('[data-share-capture]') as HTMLElement | null
-  if (!el) return
+  const capture = doc.querySelector('[data-share-capture]') as HTMLElement | null
+  if (!capture) return
 
-  el.style.overflow = 'visible'
-  el.style.maxHeight = 'none'
-  el.style.height = 'auto'
-  el.style.boxShadow = 'none'
+  capture.style.overflow = 'visible'
+  capture.style.maxHeight = 'none'
+  capture.style.height = 'auto'
+  capture.style.boxShadow = 'none'
+  capture.style.background = getComputedStyle(document.documentElement)
+    .getPropertyValue('--ww-content')
+    .trim()
 
   const style = doc.createElement('style')
-  style.textContent = SHARE_CAPTURE_FIX_CSS
+  style.textContent = shareCaptureFixCss()
   doc.head.appendChild(style)
+
+  const liveHeroImgs = liveRoot.querySelectorAll('.ww-product-detail__hero-img')
+  doc.querySelectorAll('[data-share-capture] .ww-product-detail__hero-img').forEach((node, index) => {
+    if (!(node instanceof HTMLImageElement)) return
+    const liveImg = liveHeroImgs[index] as HTMLImageElement | undefined
+    const nw = liveImg?.naturalWidth ?? node.naturalWidth
+    const nh = liveImg?.naturalHeight ?? node.naturalHeight
+    if (!nw || !nh) return
+
+    const frame = node.closest('.ww-product-detail__hero-frame') as HTMLElement | null
+    const liveFrame = liveImg?.closest('.ww-product-detail__hero-frame') as HTMLElement | null
+    const boxW = liveFrame?.clientWidth ?? frame?.clientWidth ?? nw
+    const boxH = liveFrame?.clientHeight ?? frame?.clientHeight ?? nh
+    const scale = Math.min(boxW / nw, boxH / nh, 1)
+    const w = Math.max(1, Math.round(nw * scale))
+    const h = Math.max(1, Math.round(nh * scale))
+
+    node.style.width = `${w}px`
+    node.style.height = `${h}px`
+    node.style.maxWidth = '100%'
+    node.style.maxHeight = '100%'
+    node.style.objectFit = 'contain'
+    node.style.display = 'block'
+  })
 }
 
 export async function captureDetailLongImage(
@@ -38,17 +55,21 @@ export async function captureDetailLongImage(
   format: Exclude<ShareExportFormat, 'html'> = 'png'
 ): Promise<string> {
   const { default: html2canvas } = await import('html2canvas')
+  const bg = captureBackgroundColor()
+
   const canvas = await html2canvas(root, {
     scale: Math.min(2, window.devicePixelRatio || 1.5),
     useCORS: true,
     logging: false,
-    backgroundColor: '#ffffff',
+    backgroundColor: bg,
     scrollX: 0,
-    scrollY: -window.scrollY,
+    scrollY: 0,
+    width: root.scrollWidth,
+    height: root.scrollHeight,
     windowWidth: root.scrollWidth,
     windowHeight: root.scrollHeight,
     onclone: (doc) => {
-      injectShareCaptureFixes(doc)
+      injectShareCaptureFixes(doc, root)
     }
   })
 
