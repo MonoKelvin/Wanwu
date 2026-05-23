@@ -36,6 +36,19 @@ v1.1 重点：**Windows 安装包**、**图鉴数据包独立分发**、**安装
 - `getWanwuDataDirectory()` 与 `resolveWanwuPath()` 分离：探测 zip 路径时不再顺带 `mkdir` 数据子目录。
 - 图鉴 bootstrap 异步执行，不阻塞窗口创建（v1.1.1+ 继续优化启动通知与列表 IPC）。
 
+## v1.1.2
+
+- **云斋**模块初版：侧栏入口、展车页、`scene-renderer`、自定义导航图标。
+- 云斋 3D 资源与 `item.json` 约定落地；README / 脚本说明精简。
+
+## 云斋（cloud-abode，WIP）
+
+- 侧栏新增 **云斋**，路由 `/cloud-abode/:slug?`；首车 `xiaomi-su7`（`items/xiaomi-su7/item.json`，id 为 UUID）。
+- 通用 3D：`src/modules/scene-renderer`（Three.js r170、OrbitControls、HDR/PMREM、GLTF）。
+- 展车：全屏画布、加载进度、底部 ColorBar 车身色；配置写入 `localStorage`。
+- 车型 `item.json` 仅含模型与定制；展厅/HDR/BGM 等共用资源由 `cloud-abode` 模块配置引用。
+- 云斋 3D 资源在 `assets/` 与 `showroomAssets.ts` 中维护；开发素材可参考 [su7-replica](https://github.com/alphardex/su7-replica)。
+
 ## v1.1.x 增量优化（文档与代码同步维护）
 
 见 [roadmap-performance-packaging.md](roadmap-performance-packaging.md) Phase 1–2，已落地部分包括：

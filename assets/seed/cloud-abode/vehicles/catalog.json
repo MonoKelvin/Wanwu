@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "vehicles": [
+    {
+      "id": "c8f3a12e-6d4b-4a9f-8e2c-1d5b7e9a0f63",
+      "slug": "xiaomi-su7",
+      "itemFile": "items/xiaomi-su7/item.json"
+    }
+  ]
+}

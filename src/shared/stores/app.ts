@@ -8,6 +8,7 @@ function defaultModulePaths(): Record<ModuleId, string> {
   return {
     library: modulePathById('library'),
     rss: modulePathById('rss'),
+    'cloud-abode': modulePathById('cloud-abode'),
     personal: modulePathById('personal'),
     settings: modulePathById('settings')
   }

@@ -53,3 +53,6 @@ desktop.ini
 # 测试与覆盖率
 coverage/
 .nyc_output/
+
+# gamemcu SU7 逆向用本地 bundle（可重新 curl 下载，勿提交）
+doc/design/_su7-reverse/

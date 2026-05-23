@@ -29,6 +29,12 @@ const router = createRouter({
       meta: { module: 'rss', title: 'RSS' }
     },
     {
+      path: '/cloud-abode/:slug?',
+      name: 'cloud-abode',
+      component: () => import('@modules/cloud-abode/CloudAbodeView.vue'),
+      meta: { module: 'cloud-abode', title: '云斋' }
+    },
+    {
       path: '/personal',
       name: 'personal',
       component: () => import('@modules/personal/PersonalView.vue'),

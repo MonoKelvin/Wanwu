@@ -1,0 +1,29 @@
+{
+  "id": "c8f3a12e-6d4b-4a9f-8e2c-1d5b7e9a0f63",
+  "slug": "xiaomi-su7",
+  "name": "小米 SU7",
+  "brand": "小米",
+  "summary": "三维 PBR 展车，支持车身颜色、轮毂与涂装定制；模型资源仅供开发学习。",
+  "thumb": "",
+  "model": {
+    "path": "mesh/sm_car.gltf",
+    "format": "gltf"
+  },
+  "textures": {
+    "bodyAo": "texture/t_car_body_AO.raw.jpg"
+  },
+  "customization": {
+    "defaultConfig": {
+      "bodyColor": "#c0c0c0",
+      "wheelId": "wheel-default",
+      "liveryId": "livery-default"
+    },
+    "paintMeshes": ["body", "Body", "car_body"],
+    "wheels": [
+      { "id": "wheel-default", "label": "默认轮毂" }
+    ],
+    "liveries": [
+      { "id": "livery-default", "label": "默认涂装" }
+    ]
+  }
+}

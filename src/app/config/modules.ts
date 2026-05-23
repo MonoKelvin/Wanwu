@@ -18,6 +18,7 @@ export interface ModuleNavItem {
 export const MODULE_NAV_ITEMS = [
   { id: 'library', label: '全库', icon: 'database', path: '/library' },
   { id: 'rss', label: 'RSS', icon: 'globe', path: '/rss' },
+  { id: 'cloud-abode', label: '云斋', icon: 'cloud-abode', path: '/cloud-abode' },
   { id: 'personal', label: '个人', icon: 'user', path: '/personal' },
   { id: 'settings', label: '设置', icon: 'settings', path: '/settings' }
 ] as const satisfies readonly ModuleNavItem[]

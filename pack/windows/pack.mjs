@@ -57,7 +57,7 @@ const INSTALLER_EXE_PATTERN = /^wanwu-win-x64-.*\.exe$/i
 const CHINESE_ISL = join(PACK_DIR, 'ChineseSimplified.isl')
 const LICENSE_FILE = join(ROOT, 'LICENSE')
 const FORBIDDEN_STAGE_ARCHIVE = /^wanwu-payload-.*\.(zip|7z)$/i
-const FORBIDDEN_ASSET_DIRS = ['seed', 'library', 'packed', 'screenshots']
+const FORBIDDEN_ASSET_DIRS = ['seed', 'library', 'packed']
 
 const ISCC_NAME = 'ISCC.exe'
 const INNO_UNINSTALL_KEYS = [
