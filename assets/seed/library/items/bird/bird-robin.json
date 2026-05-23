@@ -7,7 +7,13 @@
   "tags": [
     "欧亚"
   ],
-  "specs": {},
+  "specs": {
+    "分类": "鸟类",
+    "代表": "欧亚鸲",
+    "习性": "橙胸鸣禽。",
+    "分布": "因种而异",
+    "保护": "查阅 IUCN 红色名录"
+  },
   "media": {
     "provider": "pixabay",
     "query": "robin bird wildlife photo",

@@ -3,25 +3,23 @@
   "slug": "camera-50mm-lens",
   "subCategoryId": "cam-lens",
   "name": "50mm 定焦镜头",
-  "summary": "多发性骨髓瘤（Multiple myeloma，简称 MM ）是一种浆细胞恶性增殖性疾病。",
+  "summary": "全画幅约 47° 视角，接近人眼透视，人称「标准镜」；大光圈款适合人像与弱光。",
   "tags": [
-    "多发性骨髓瘤",
-    "Multiple myeloma （MM）",
-    "血液科"
+    "镜头",
+    "定焦",
+    "人像",
+    "街拍"
   ],
   "specs": {
-    "中文名": "多发性骨髓瘤",
-    "外文名": "Multiple myeloma （MM）",
-    "就诊科室": "血液科",
-    "多发群体": "中老年人，男性",
-    "常见发病部位": "骨髓",
-    "常见病因": "浆细胞 恶性增殖",
-    "常见症状": "四联征即“CRAB”症状",
-    "传染性": "无"
+    "名称": "50mm 标准镜头",
+    "视角": "约47°（全画幅）",
+    "特点": "接近人眼透视",
+    "光圈": "f/1.8、f/1.4 等常见",
+    "用途": "人像、街拍、纪实"
   },
   "media": {
     "provider": "pixabay",
-    "query": "50mm 定焦镜头 mm camera photography",
+    "query": "50mm camera lens",
     "category": "all",
     "matchTags": [],
     "requiredTags": [],

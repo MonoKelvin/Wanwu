@@ -5,7 +5,9 @@
   "name": "大型邮轮",
   "summary": "海上度假综合体。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "海上度假综合体。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "ship ocean",

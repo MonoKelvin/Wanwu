@@ -23,7 +23,9 @@
     "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
+      "英国",
       "spaniel",
+      "猎犬",
       "dog"
     ],
     "requiredTags": [

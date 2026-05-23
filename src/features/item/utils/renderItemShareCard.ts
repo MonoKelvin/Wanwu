@@ -23,12 +23,10 @@ export {
 } from '../shareCard/templateCatalog'
 export {
   DEFAULT_SHARE_CARD_STYLE,
-  DEFAULT_CENTER_STYLE,
   SHARE_CARD_FONT_OPTIONS,
   SHARE_CARD_SIZE_OPTIONS,
   SHARE_CARD_COLOR_OPTIONS,
-  SHARE_CARD_FILTER_OPTIONS,
-  createDefaultStylesByTemplate
+  SHARE_CARD_FILTER_OPTIONS
 } from '../shareCard/styleCatalog'
 
 export interface RenderShareCardOptions {

@@ -23,9 +23,10 @@ async function onRssFetchLimitChange(v: RssFetchLimit) {
   if (v && v !== settings.value.rssFetchLimit) await settingsStore.setRssFetchLimit(v)
 }
 
-async function onRssAutoRefreshChange(v: RssAutoRefreshMinutes | null) {
-  if (v === null || v === undefined || v === settings.value.rssAutoRefreshMinutes) return
-  await settingsStore.setRssAutoRefreshMinutes(v)
+async function onRssAutoRefreshChange(v: unknown) {
+  const minutes = v as RssAutoRefreshMinutes | null
+  if (minutes === null || minutes === undefined || minutes === settings.value.rssAutoRefreshMinutes) return
+  await settingsStore.setRssAutoRefreshMinutes(minutes)
 }
 </script>
 

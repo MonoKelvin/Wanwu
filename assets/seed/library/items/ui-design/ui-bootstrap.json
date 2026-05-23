@@ -11,12 +11,13 @@
     "Bootstrap"
   ],
   "specs": {
-    "分类": "Web UI",
-    "技术": "Bootstrap",
-    "重点": "框架",
-    "交付": "设计 + 前端",
-    "趋势": "Server Components",
-    "工具": "Figma / Storybook"
+    "分类": "Web 框架",
+    "首发": "2011",
+    "起源": "Twitter",
+    "当前版本": "v5.3",
+    "特点": "12 列栅格、预制组件",
+    "技术": "HTML / CSS / JS",
+    "许可": "MIT"
   },
   "media": {
     "provider": "pixabay",

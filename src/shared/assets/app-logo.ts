@@ -31,9 +31,6 @@ export const APP_LOGO_DARK = {
   256: logo256Dark
 } as const satisfies Record<AppLogoSize, string>
 
-/** @deprecated 使用 resolveAppLogo；保留兼容 */
-export const APP_LOGO = APP_LOGO_LIGHT
-
 export function resolveAppLogo(scheme: ColorScheme): typeof APP_LOGO_LIGHT {
   return scheme === 'dark' ? APP_LOGO_DARK : APP_LOGO_LIGHT
 }

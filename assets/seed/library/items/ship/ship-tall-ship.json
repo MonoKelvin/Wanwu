@@ -5,7 +5,9 @@
   "name": "高桅帆船",
   "summary": "古典风帆航海。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "古典风帆航海。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "ship ocean",

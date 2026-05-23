@@ -7,7 +7,13 @@
   "tags": [
     "帝企"
   ],
-  "specs": {},
+  "specs": {
+    "分类": "鸟类",
+    "代表": "帝企鹅",
+    "习性": "南极群居企鹅。",
+    "分布": "因种而异",
+    "保护": "查阅 IUCN 红色名录"
+  },
   "media": {
     "provider": "pixabay",
     "query": "penguin emperor bird wildlife photo",

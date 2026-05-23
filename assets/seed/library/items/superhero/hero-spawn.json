@@ -11,12 +11,11 @@
     "地狱"
   ],
   "specs": {
-    "出版": "Image Comics",
+    "出版社": "Image",
     "首次登场": "1992",
     "创作者": "Todd McFarlane",
-    "本名": "阿尔·西蒙斯",
-    "特点": "恐怖黑暗风",
-    "版权": "McFarlane"
+    "能力": "地狱斗篷",
+    "主题": "复仇与救赎"
   },
   "media": {
     "provider": "pixabay",

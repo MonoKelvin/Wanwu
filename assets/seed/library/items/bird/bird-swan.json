@@ -5,7 +5,13 @@
   "name": "白天鹅",
   "summary": "游弋水禽优雅。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "分类": "鸟类",
+    "代表": "白天鹅",
+    "习性": "游弋水禽优雅。",
+    "分布": "因种而异",
+    "保护": "查阅 IUCN 红色名录"
+  },
   "media": {
     "provider": "pixabay",
     "query": "swan bird wildlife photo",

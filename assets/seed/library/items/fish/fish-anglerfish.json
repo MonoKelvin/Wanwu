@@ -5,7 +5,9 @@
   "name": "鮟鱇鱼",
   "summary": "深海发光诱捕。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "深海发光诱捕。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "fish aquarium",

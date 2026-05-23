@@ -1,0 +1,38 @@
+{
+  "id": "0dd2c0ce-929a-4972-8358-7744357aa677",
+  "slug": "dog-brussels-griffon",
+  "subCategoryId": "dog-toy",
+  "name": "布鲁塞尔格里芬犬",
+  "summary": "比利时小型伴侣犬，「猴面」表情，自信亲人，适合公寓。",
+  "tags": [
+    "小型",
+    "比利时",
+    "伴侣犬",
+    "梗犬"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "比利时",
+    "体重": "3–6 kg",
+    "寿命": "12–15 年",
+    "特征": "短鼻、大眼",
+    "性格": "自信、依恋、警觉"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "brussels griffon dog portrait",
+    "category": "animals",
+    "matchTags": [
+      "小型",
+      "比利时",
+      "伴侣犬",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "library/dog/dog-brussels-griffon/content.md"
+}

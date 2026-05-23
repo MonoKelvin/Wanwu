@@ -5,7 +5,13 @@
   "name": "非洲灰鹦鹉",
   "summary": "高智商说话鸟。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "分类": "鸟类",
+    "代表": "非洲灰鹦鹉",
+    "习性": "高智商说话鸟。",
+    "分布": "因种而异",
+    "保护": "查阅 IUCN 红色名录"
+  },
   "media": {
     "provider": "pixabay",
     "query": "parrot african grey bird wildlife photo",

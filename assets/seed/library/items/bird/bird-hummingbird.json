@@ -7,7 +7,13 @@
   "tags": [
     "蜂鸟"
   ],
-  "specs": {},
+  "specs": {
+    "分类": "鸟类",
+    "代表": "蜂鸟",
+    "习性": "悬停采蜜。",
+    "分布": "因种而异",
+    "保护": "查阅 IUCN 红色名录"
+  },
   "media": {
     "provider": "pixabay",
     "query": "hummingbird bird wildlife photo",

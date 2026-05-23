@@ -5,7 +5,9 @@
   "name": "爵士鼓组",
   "summary": "流行摇滚节奏核心。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "流行摇滚节奏核心。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "musical instrument",

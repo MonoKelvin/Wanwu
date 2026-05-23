@@ -7,7 +7,9 @@
   "tags": [
     "腕表"
   ],
-  "specs": {},
+  "specs": {
+    "概述": "入门潜水机械。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "精工 SKX luxury wristwatch macro dial leather strap",

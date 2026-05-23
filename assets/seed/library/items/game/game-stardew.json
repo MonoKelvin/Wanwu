@@ -10,14 +10,12 @@
     "Stardew Valley"
   ],
   "specs": {
-    "平台": "PC PS4 PS Vita XBox One iOS 展开 游戏平台 PC PS4 PS Vita XBox One iOS Android Switch Switch 2",
     "开发商": "ConcernedApe",
-    "中文名": "星露谷物语",
-    "原版名称": "Stardew Valley",
-    "游戏类型": "模拟经营类游戏",
-    "游戏平台": "PC PS4 PS Vita XBox One iOS 展开 游戏平台 PC PS4 PS Vita XBox One iOS Android Switch Switch 2",
-    "发行公司": "ConcernedApe、Chucklefish",
-    "游戏售价": "48 元"
+    "首发": "2016年2月26日",
+    "平台": "PC / 主机 / 移动端",
+    "类型": "农场生活模拟",
+    "舞台": "星露谷",
+    "灵感": "牧场物语"
   },
   "media": {
     "provider": "pixabay",

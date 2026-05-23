@@ -5,7 +5,12 @@
   "name": "工业风 Loft",
   "summary": "裸露砖墙开放厨房。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "风格": "工业风 Loft",
+    "地面": "因风格而异",
+    "采光": "自然光为主",
+    "关键词": "居住美学"
+  },
   "media": {
     "provider": "pixabay",
     "query": "Loft interior design room",

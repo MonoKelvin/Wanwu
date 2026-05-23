@@ -1,0 +1,38 @@
+{
+  "id": "6ae48774-2888-4511-9dd2-9da747b3e3b4",
+  "slug": "dog-cavalier-king-charles-spaniel",
+  "subCategoryId": "dog-toy",
+  "name": "骑士查理王小猎犬",
+  "summary": "英国王室宠犬，丝质长耳，温柔亲人，需关注心脏健康。",
+  "tags": [
+    "英国",
+    "王室",
+    "伴侣犬",
+    "长耳"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "英国",
+    "体重": "5–8 kg",
+    "寿命": "9–14 年",
+    "特征": "丝质被毛、长耳",
+    "性格": "温柔、亲人、活泼"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cavalier king charles spaniel portrait",
+    "category": "animals",
+    "matchTags": [
+      "英国",
+      "王室",
+      "伴侣犬",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "library/dog/dog-cavalier-king-charles-spaniel/content.md"
+}

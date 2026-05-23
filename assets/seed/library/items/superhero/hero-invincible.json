@@ -11,12 +11,11 @@
     "亚马逊"
   ],
   "specs": {
-    "出版": "Image / Skybound",
+    "出版社": "Image",
     "首次登场": "2003",
-    "作者": "Robert Kirkman",
-    "主角": "马克·格雷森",
-    "动画": "2021 Prime Video",
-    "主题": "父辈与暴力"
+    "创作者": "Robert Kirkman",
+    "身份": "维尔特鲁姆混血",
+    "媒介": "动画/漫画"
   },
   "media": {
     "provider": "pixabay",

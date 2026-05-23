@@ -10,14 +10,7 @@
     "霸天虎",
     "反派"
   ],
-  "specs": {
-    "分类": "霸天虎 Decepticon",
-    "阵营": "霸天虎",
-    "变形": "F-15 战斗机",
-    "角色": "空军司令",
-    "领袖": "威震天 / 惊破天",
-    "特点": "空军司令"
-  },
+  "specs": {},
   "media": {
     "provider": "pixabay",
     "query": "transformers robot toy action figure",

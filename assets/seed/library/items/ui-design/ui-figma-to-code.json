@@ -11,12 +11,11 @@
     "交付"
   ],
   "specs": {
-    "分类": "Web UI",
-    "技术": "DevMode",
-    "重点": "交付",
-    "交付": "设计 + 前端",
-    "趋势": "Server Components",
-    "工具": "Figma / Storybook"
+    "分类": "设计交付",
+    "工具": "Figma Dev Mode",
+    "输出": "React、Vue、SwiftUI",
+    "方法": "Token 管道、Code Connect",
+    "定位": "辅助而非全自动"
   },
   "media": {
     "provider": "pixabay",

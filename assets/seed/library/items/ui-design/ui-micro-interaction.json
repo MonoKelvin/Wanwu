@@ -11,12 +11,11 @@
     "动效"
   ],
   "specs": {
-    "分类": "移动 UI",
-    "平台": "Motion",
-    "重点": "动效",
-    "工具": "Figma 等",
-    "规范": "HIG / Material",
-    "趋势": "动态色与折叠屏"
+    "分类": "交互设计",
+    "理论": "Dan Saffer《Microinteractions》",
+    "结构": "Trigger → Feedback → Loop",
+    "时长": "通常 <300ms",
+    "注意": "prefers-reduced-motion"
   },
   "media": {
     "provider": "pixabay",

@@ -7,7 +7,13 @@
   "tags": [
     "漫威"
   ],
-  "specs": {},
+  "specs": {
+    "宇宙": "漫威",
+    "首次登场": "1961",
+    "成员": "四人组",
+    "基地": "巴克斯特大厦",
+    "宿敌": "毁灭博士"
+  },
   "media": {
     "provider": "pixabay",
     "query": "action figure toy collectible",

@@ -11,12 +11,12 @@
     "移动端"
   ],
   "specs": {
-    "分类": "移动 UI",
-    "平台": "Material 3",
-    "重点": "安卓",
-    "工具": "Figma 等",
-    "规范": "HIG / Material",
-    "趋势": "动态色与折叠屏"
+    "分类": "Android 组件",
+    "平台": "Android 12+",
+    "风格": "Material You",
+    "框架": "Jetpack Glance",
+    "特点": "动态取色、多尺寸",
+    "场景": "主屏信息卡片"
   },
   "media": {
     "provider": "pixabay",

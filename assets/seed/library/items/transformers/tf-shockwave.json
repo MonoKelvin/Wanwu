@@ -10,14 +10,7 @@
     "霸天虎",
     "反派"
   ],
-  "specs": {
-    "分类": "霸天虎 Decepticon",
-    "阵营": "霸天虎",
-    "变形": "手枪 / 飞船",
-    "角色": "科学家",
-    "领袖": "威震天 / 惊破天",
-    "特点": "科学家"
-  },
+  "specs": {},
   "media": {
     "provider": "pixabay",
     "query": "transformers robot toy action figure",

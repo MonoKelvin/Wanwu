@@ -11,12 +11,12 @@
     "iOS / Android"
   ],
   "specs": {
-    "分类": "移动 UI",
-    "平台": "iOS / Android",
-    "重点": "主题",
-    "工具": "Figma 等",
-    "规范": "HIG / Material",
-    "趋势": "动态色与折叠屏"
+    "分类": "UI 主题",
+    "平台": "iOS / Android / Web",
+    "标准": "prefers-color-scheme",
+    "原则": "对比度、elevation 分层",
+    "系统支持": "iOS 13+、Android 10+",
+    "收益": "弱光阅读、OLED 省电"
   },
   "media": {
     "provider": "pixabay",

@@ -55,8 +55,13 @@ function hide() {
   open.value = false
 }
 
+function itemDisabled(item: WwMenuItem): boolean {
+  const disabled = item.disabled
+  return typeof disabled === 'function' ? disabled() : Boolean(disabled)
+}
+
 function runItem(item: WwMenuItem, event: MouseEvent) {
-  if (item.disabled) return
+  if (itemDisabled(item)) return
   hide()
   item.command?.({ originalEvent: event, item })
 }
@@ -110,8 +115,8 @@ defineExpose({ show, hide, showBelowAnchor, toggleAnchor })
           type="button"
           role="menuitem"
           class="ww-action-menu__item"
-          :class="[item.class, { 'is-disabled': item.disabled }]"
-          :disabled="item.disabled"
+          :class="[item.class, { 'is-disabled': itemDisabled(item) }]"
+          :disabled="itemDisabled(item)"
           @click="runItem(item, $event)"
         >
           <WwIcon v-if="item.wwIcon" :name="item.wwIcon" size="sm" />

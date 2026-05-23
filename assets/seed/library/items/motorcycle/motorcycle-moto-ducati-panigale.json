@@ -5,7 +5,14 @@
   "name": "杜卡迪 Panigale",
   "summary": "意式 V 型双缸仿赛。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "代表车系": "Panigale V4 / V2",
+    "厂商": "Ducati",
+    "发动机": "V4 / 双缸",
+    "最大功率": "约 160–214 hp",
+    "赛事": "WSBK",
+    "产地": "意大利"
+  },
   "media": {
     "provider": "pixabay",
     "query": "Panigale motorcycle",

@@ -7,7 +7,13 @@
   "tags": [
     "腕表"
   ],
-  "specs": {},
+  "specs": {
+    "品牌": "Casio G-Shock",
+    "诞生": "1983年",
+    "设计": "伊部菊雄",
+    "特色": "防震结构",
+    "定位": "运动与街头潮流"
+  },
   "media": {
     "provider": "pixabay",
     "query": "卡西欧 G-Shock luxury wristwatch macro dial leather strap",

@@ -5,7 +5,9 @@
   "name": "乐烧茶碗",
   "summary": "日本禅茶陶。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "日本禅茶陶。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "ceramic pottery",

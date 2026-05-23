@@ -23,7 +23,9 @@
     "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "山地犬",
+      "大型",
+      "瑞士",
+      "三色",
       "dog"
     ],
     "requiredTags": [

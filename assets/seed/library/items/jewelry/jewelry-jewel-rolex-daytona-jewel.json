@@ -5,7 +5,9 @@
   "name": "劳力士迪通拿",
   "summary": "计时码表收藏。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "计时码表收藏。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "jewelry luxury",

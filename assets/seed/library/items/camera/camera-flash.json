@@ -5,7 +5,9 @@
   "name": "热靴机顶闪光灯",
   "summary": "人像补光附件。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "人像补光附件。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "热靴机顶闪光灯 camera photography",

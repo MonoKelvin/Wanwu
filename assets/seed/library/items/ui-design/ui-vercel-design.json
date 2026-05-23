@@ -11,12 +11,11 @@
     "开发者"
   ],
   "specs": {
-    "分类": "Web UI",
-    "技术": "Vercel",
-    "重点": "开发者",
-    "交付": "设计 + 前端",
-    "趋势": "Server Components",
-    "工具": "Figma / Storybook"
+    "分类": "开发者产品美学",
+    "代表": "Vercel 官网与 Dashboard",
+    "特点": "黑白极简、Geist 字体",
+    "生态": "Next.js、shadcn、v0",
+    "影响": "2020s SaaS landing 范式"
   },
   "media": {
     "provider": "pixabay",

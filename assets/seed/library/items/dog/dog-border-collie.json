@@ -24,9 +24,9 @@
     "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
-      "牧羊犬",
-      "高智商",
       "运动型",
+      "欧洲",
+      "牧羊犬",
       "dog"
     ],
     "requiredTags": [

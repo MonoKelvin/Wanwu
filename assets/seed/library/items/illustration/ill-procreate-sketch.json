@@ -11,12 +11,10 @@
     "插画"
   ],
   "specs": {
-    "分类": "数字插画",
-    "工具": "Procreate",
-    "领域": "速写",
-    "输出": "商业 / 同人",
-    "平台": "Pixiv / ArtStation",
-    "技能": "构图、色彩、人体"
+    "软件": "Procreate",
+    "平台": "iPadOS",
+    "特色": "Timelapse",
+    "笔刷": "可自定义"
   },
   "media": {
     "provider": "pixabay",

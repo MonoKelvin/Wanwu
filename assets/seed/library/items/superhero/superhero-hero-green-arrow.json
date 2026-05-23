@@ -7,7 +7,13 @@
   "tags": [
     "DC"
   ],
-  "specs": {},
+  "specs": {
+    "宇宙": "DC",
+    "身份": "星城守护者",
+    "武器": "多功能箭",
+    "主题": "社会正义",
+    "团队": "正义联盟"
+  },
   "media": {
     "provider": "pixabay",
     "query": "action figure toy collectible",

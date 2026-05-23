@@ -3,22 +3,23 @@
   "slug": "anime-attack-on-titan",
   "subCategoryId": "anime-fantasy",
   "name": "进击的巨人 Attack on Titan",
-  "summary": "《进击的巨人 ATTACK ON TITAN》是由日本 东宝 电影公司于2015年8月1日推出的电影。",
+  "summary": "谏山创黑暗奇幻漫画，人类筑墙抵御巨人，艾伦与调查兵团揭开世界真相。",
   "tags": [
-    "奇幻冒险",
     "黑暗奇幻",
     "谏山创",
-    "调查兵团"
+    "调查兵团",
+    "WIT",
+    "MAPPA"
   ],
   "specs": {
-    "主题": "自由、战争、历史",
-    "分类": "奇幻冒险",
-    "作者": "谏山创",
-    "连载": "2009–2021",
-    "动画": "WIT / MAPPA",
+    "原作": "谏山创",
+    "连载": "2009–2021（别册少年Magazine）",
+    "动画制作": "WIT Studio / MAPPA",
+    "首播": "2013-04-07（日本）",
+    "类型": "黑暗奇幻 / 动作",
     "主角": "艾伦·耶格尔",
-    "中文名": "进击的巨人 ATTACK ON TITAN",
-    "外文名": "進撃の巨人 ATTACK ON TITAN"
+    "话数": "漫画全 139 话",
+    "地区": "日本"
   },
   "media": {
     "provider": "pixabay",

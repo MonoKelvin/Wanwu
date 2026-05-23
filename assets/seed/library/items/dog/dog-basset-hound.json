@@ -1,0 +1,39 @@
+{
+  "id": "b5dfdcc7-d418-41fe-8a48-65255a3ee072",
+  "slug": "dog-basset-hound",
+  "subCategoryId": "dog-hound",
+  "name": "巴吉度猎犬",
+  "summary": "法国短腿嗅猎犬，长耳垂目，嗅觉出众，性格温和需控重。",
+  "tags": [
+    "嗅猎犬",
+    "法国",
+    "短腿",
+    "垂耳"
+  ],
+  "specs": {
+    "分类": "嗅觉猎犬",
+    "原产地": "法国",
+    "肩高": "33–38 cm",
+    "体重": "20–29 kg",
+    "特点": "矮脚长耳",
+    "寿命": "10–12 年",
+    "性格": "温和、固执"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "basset hound dog portrait",
+    "category": "animals",
+    "matchTags": [
+      "嗅猎犬",
+      "法国",
+      "短腿",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "library/dog/dog-basset-hound/content.md"
+}

@@ -5,7 +5,13 @@
   "name": "Notion 界面",
   "summary": "块编辑知识库 UI。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "分类": "SaaS 产品 UI",
+    "产品": "Notion",
+    "首发": "2016",
+    "特点": "块编辑、斜杠命令",
+    "场景": "知识库、协作 wiki"
+  },
   "media": {
     "provider": "pixabay",
     "query": "Notion web interface ui design",

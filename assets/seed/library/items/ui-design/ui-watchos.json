@@ -11,12 +11,13 @@
     "可穿戴"
   ],
   "specs": {
-    "分类": "移动 UI",
-    "平台": "watchOS",
-    "重点": "可穿戴",
-    "工具": "Figma 等",
-    "规范": "HIG / Material",
-    "趋势": "动态色与折叠屏"
+    "分类": "可穿戴规范",
+    "发布方": "Apple",
+    "适用": "Apple Watch",
+    "原则": "一屏一事、glanceable",
+    "触控": "最小 44×44 pt",
+    "输入": "Digital Crown、触控",
+    "框架": "SwiftUI / WatchKit"
   },
   "media": {
     "provider": "pixabay",

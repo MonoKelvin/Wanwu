@@ -11,12 +11,13 @@
     "Web"
   ],
   "specs": {
-    "分类": "Web UI",
-    "技术": "React",
-    "重点": "基础",
-    "交付": "设计 + 前端",
-    "趋势": "Server Components",
-    "工具": "Figma / Storybook"
+    "分类": "Web 原语库",
+    "维护方": "WorkOS",
+    "框架": "React",
+    "特点": "无样式、可访问性",
+    "代表组件": "Dialog、Dropdown",
+    "下游": "shadcn/ui、Park UI",
+    "许可": "MIT"
   },
   "media": {
     "provider": "pixabay",

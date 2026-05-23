@@ -5,7 +5,9 @@
   "name": "帝舵 Black Bay",
   "summary": "复古潜水机械。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "复古潜水机械。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "帝舵 Black Bay luxury wristwatch macro dial leather strap",

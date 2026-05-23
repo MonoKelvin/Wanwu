@@ -5,7 +5,9 @@
   "name": "集装箱货轮",
   "summary": "全球贸易海运。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "全球贸易海运。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "ship ocean",

@@ -16,6 +16,10 @@
   border-color: var(--ww-glass-border);
 }
 
+[data-theme='dark'] .ww-empty-state__art {
+  opacity: 0.88;
+}
+
 .ww-product-detail__toast {
   color: var(--ww-ink);
   border-color: var(--ww-glass-border);

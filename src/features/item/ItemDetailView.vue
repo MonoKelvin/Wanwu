@@ -426,7 +426,6 @@ async function revealInFolder() {
     <EmptyState
       v-else-if="!item"
       variant="not-found"
-      code="404"
       title="未找到物品"
       description="该条目可能已被删除或 ID 不正确。"
     />

@@ -5,7 +5,16 @@
   "name": "迈凯伦 F1",
   "summary": "中央驾驶三座超跑。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "首发年份": "1992",
+    "厂商": "McLaren",
+    "发动机": "V12 自然吸气",
+    "最大功率": "627 hp",
+    "极速": "约 391 km/h",
+    "产量": "106 辆",
+    "设计师": "Gordon Murray",
+    "产地": "英国"
+  },
   "media": {
     "provider": "pixabay",
     "query": "F1 supercar",

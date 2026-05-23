@@ -100,9 +100,8 @@ watch(
     <EmptyState
       v-else-if="!isRefreshing && rssStore.entries.length === 0"
       variant="rss"
-      code="FEED"
       title="尚无文章"
-      description="该源暂无内容，或拉取失败。可点击右上角重试。"
+      description="暂无内容，点击右上角重试。"
     />
 
     <div v-else class="flex flex-col">

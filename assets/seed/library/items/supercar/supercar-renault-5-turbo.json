@@ -8,7 +8,14 @@
     "法国",
     "拉力"
   ],
-  "specs": {},
+  "specs": {
+    "首发年份": "1980",
+    "厂商": "Renault",
+    "发动机": "涡轮四缸",
+    "布局": "中置后驱",
+    "赛事": "Group B",
+    "产地": "法国"
+  },
   "media": {
     "provider": "pixabay",
     "query": "Turbo supercar",

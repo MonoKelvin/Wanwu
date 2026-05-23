@@ -58,14 +58,16 @@ async function onNavDisplayChange(v: NavDisplay) {
   if (v && v !== settings.value.navDisplay) await settingsStore.setNavDisplay(v)
 }
 
-async function onStartupModuleChange(v: StartupModule | null) {
-  if (!v || v === settings.value.startupModule) return
-  await settingsStore.setStartupModule(v)
+async function onStartupModuleChange(v: unknown) {
+  const module = v as StartupModule | null
+  if (!module || module === settings.value.startupModule) return
+  await settingsStore.setStartupModule(module)
 }
 
-async function onWindowStateModeChange(v: WindowStateMode | null) {
-  if (!v || v === settings.value.windowStateMode) return
-  await settingsStore.setWindowStateMode(v)
+async function onWindowStateModeChange(v: unknown) {
+  const mode = v as WindowStateMode | null
+  if (!mode || mode === settings.value.windowStateMode) return
+  await settingsStore.setWindowStateMode(mode)
 }
 
 async function onColorSchemeChange(v: ColorScheme) {

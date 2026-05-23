@@ -10,10 +10,11 @@
     "Steinway & Sons"
   ],
   "specs": {
-    "中文名": "施坦威",
-    "外文名": "Steinway & Sons",
-    "地 位": "国际顶级钢琴演奏家",
-    "成立机构": "Steinway & Sons施坦威"
+    "品牌": "Steinway & Sons",
+    "类型": "三角钢琴",
+    "创立": "1853年纽约",
+    "特色": "音乐会级音色与击弦机",
+    "应用": "多数音乐厅首选"
   },
   "media": {
     "provider": "pixabay",

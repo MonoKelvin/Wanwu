@@ -119,9 +119,8 @@
       ],
       "query": "dog breed portrait",
       "matchTags": [
-        "牧羊犬",
-        "高智商",
         "运动型",
+        "欧洲",
         "dog"
       ],
       "imageCount": 5
@@ -1234,8 +1233,8 @@
       ],
       "query": "Pembroke dog breed portrait",
       "matchTags": [
-        "牧牛犬",
-        "pembroke",
+        "矮腿",
+        "英国",
         "dog"
       ],
       "imageCount": 5
@@ -1341,7 +1340,7 @@
       ],
       "query": "dog breed portrait",
       "matchTags": [
-        "工作犬",
+        "德国",
         "家庭犬",
         "dog"
       ],
@@ -1395,6 +1394,7 @@
       ],
       "query": "dog breed portrait",
       "matchTags": [
+        "英国",
         "spaniel",
         "dog"
       ],
@@ -1430,6 +1430,7 @@
       "query": "dog breed portrait",
       "matchTags": [
         "嗅猎犬",
+        "三色",
         "dog"
       ],
       "imageCount": 5
@@ -1465,6 +1466,7 @@
       "query": "dog breed portrait",
       "matchTags": [
         "威尔士",
+        "长尾",
         "dog"
       ],
       "imageCount": 5
@@ -1498,7 +1500,8 @@
       ],
       "query": "dog breed portrait",
       "matchTags": [
-        "山地犬",
+        "大型",
+        "瑞士",
         "dog"
       ],
       "imageCount": 5
@@ -1625,6 +1628,7 @@
       "query": "dog breed portrait",
       "matchTags": [
         "伴侣犬",
+        "短鼻",
         "dog"
       ],
       "imageCount": 5
@@ -1677,7 +1681,7 @@
       ],
       "query": "dog breed portrait",
       "matchTags": [
-        "寻回犬",
+        "狩猎",
         "防水毛",
         "dog"
       ],
@@ -1747,7 +1751,8 @@
       ],
       "query": "dog breed portrait",
       "matchTags": [
-        "工作犬",
+        "豹纹",
+        "美国",
         "dog"
       ],
       "imageCount": 5
@@ -1836,6 +1841,8 @@
       ],
       "query": "dog breed portrait",
       "matchTags": [
+        "蓝舌",
+        "松狮",
         "dog"
       ],
       "imageCount": 5
@@ -1971,7 +1978,8 @@
       ],
       "query": "dog breed portrait",
       "matchTags": [
-        "无毛犬",
+        "小型",
+        "伴侣",
         "dog"
       ],
       "imageCount": 5
@@ -9181,6 +9189,150 @@
       "category": "all",
       "matchTags": [],
       "requiredTags": [],
+      "imageCount": 5
+    },
+    "dog-basenji": {
+      "provider": "pixabay",
+      "imageType": "photo",
+      "orientation": "all",
+      "minMatchScore": 2,
+      "perPage": 24,
+      "category": "animals",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "basenji dog breed portrait",
+      "matchTags": [
+        "古老",
+        "不吠",
+        "dog"
+      ],
+      "imageCount": 5
+    },
+    "dog-basset-hound": {
+      "provider": "pixabay",
+      "imageType": "photo",
+      "orientation": "all",
+      "minMatchScore": 2,
+      "perPage": 24,
+      "category": "animals",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "basset hound dog portrait",
+      "matchTags": [
+        "嗅猎犬",
+        "法国",
+        "dog"
+      ],
+      "imageCount": 5
+    },
+    "dog-berner-mountain": {
+      "provider": "pixabay",
+      "imageType": "photo",
+      "orientation": "all",
+      "minMatchScore": 2,
+      "perPage": 24,
+      "category": "animals",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "bernese mountain dog portrait",
+      "matchTags": [
+        "大型",
+        "瑞士",
+        "dog"
+      ],
+      "imageCount": 5
+    },
+    "dog-bloodhound": {
+      "provider": "pixabay",
+      "imageType": "photo",
+      "orientation": "all",
+      "minMatchScore": 2,
+      "perPage": 24,
+      "category": "animals",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "bloodhound dog portrait",
+      "matchTags": [
+        "嗅猎犬",
+        "大型",
+        "dog"
+      ],
+      "imageCount": 5
+    },
+    "dog-briard": {
+      "provider": "pixabay",
+      "imageType": "photo",
+      "orientation": "all",
+      "minMatchScore": 2,
+      "perPage": 24,
+      "category": "animals",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "briard dog breed portrait",
+      "matchTags": [
+        "牧羊犬",
+        "法国",
+        "dog"
+      ],
+      "imageCount": 5
+    },
+    "dog-brussels-griffon": {
+      "provider": "pixabay",
+      "imageType": "photo",
+      "orientation": "all",
+      "minMatchScore": 2,
+      "perPage": 24,
+      "category": "animals",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "brussels griffon dog portrait",
+      "matchTags": [
+        "小型",
+        "比利时",
+        "dog"
+      ],
+      "imageCount": 5
+    },
+    "dog-cavalier-king-charles-spaniel": {
+      "provider": "pixabay",
+      "imageType": "photo",
+      "orientation": "all",
+      "minMatchScore": 2,
+      "perPage": 24,
+      "category": "animals",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "cavalier king charles spaniel portrait",
+      "matchTags": [
+        "英国",
+        "王室",
+        "dog"
+      ],
+      "imageCount": 5
+    },
+    "dog-collie": {
+      "provider": "pixabay",
+      "imageType": "photo",
+      "orientation": "all",
+      "minMatchScore": 2,
+      "perPage": 24,
+      "category": "animals",
+      "requiredTags": [
+        "dog"
+      ],
+      "query": "rough collie dog portrait",
+      "matchTags": [
+        "牧羊犬",
+        "苏格兰",
+        "dog"
+      ],
       "imageCount": 5
     }
   }

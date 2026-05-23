@@ -12,7 +12,7 @@ const MODULE_VIEW: Record<ModuleId, Component> = {
   settings: SettingsView
 }
 
-export function moduleIdFromPath(path: string): ModuleId | undefined {
+function moduleIdFromPath(path: string): ModuleId | undefined {
   const seg = path.replace(/^#/, '').split('/').filter(Boolean)[0]
   return seg && isModuleId(seg) ? seg : undefined
 }

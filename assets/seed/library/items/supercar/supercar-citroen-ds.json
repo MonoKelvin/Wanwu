@@ -8,7 +8,14 @@
     "法国",
     "流线"
   ],
-  "specs": {},
+  "specs": {
+    "生产": "1955–1975",
+    "厂商": "Citroën",
+    "特色": "液压悬挂",
+    "设计师": "Flaminio Bertoni",
+    "产地": "法国",
+    "定位": "豪华轿车"
+  },
   "media": {
     "provider": "pixabay",
     "query": "DS supercar",

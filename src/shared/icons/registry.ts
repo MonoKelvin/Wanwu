@@ -125,7 +125,3 @@ export const wwIcons = {
 } satisfies Record<string, Component>
 
 export type WwIconName = keyof typeof wwIcons
-
-export function resolveWwIcon(name: string): Component | undefined {
-    return wwIcons[name as WwIconName]
-}

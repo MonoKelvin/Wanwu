@@ -5,7 +5,13 @@
   "name": "无印良品闹钟",
   "summary": "极简生活杂货。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "品牌": "MUJI",
+    "类型": "闹钟",
+    "特色": "静音唤醒",
+    "机芯": "石英",
+    "设计": "极简"
+  },
   "media": {
     "provider": "pixabay",
     "query": "product design",

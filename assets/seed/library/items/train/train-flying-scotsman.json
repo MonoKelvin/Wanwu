@@ -5,7 +5,9 @@
   "name": "飞行苏格兰人号",
   "summary": "蒸汽机车传奇。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "蒸汽机车传奇。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "train railway",

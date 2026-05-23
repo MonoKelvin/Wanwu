@@ -7,7 +7,15 @@
   "tags": [
     "探险"
   ],
-  "specs": {},
+  "specs": {
+    "首发年份": "2020",
+    "厂商": "Triumph",
+    "排量": "888 cc",
+    "发动机": "直列三缸",
+    "最大功率": "约 95 hp",
+    "车型": "冒险旅行",
+    "产地": "英国 / 泰国"
+  },
   "media": {
     "provider": "pixabay",
     "query": "Triumph Tiger 900 motorcycle",

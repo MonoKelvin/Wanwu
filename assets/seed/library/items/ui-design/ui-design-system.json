@@ -11,12 +11,12 @@
     "系统"
   ],
   "specs": {
-    "分类": "移动 UI",
-    "平台": "Storybook",
-    "重点": "系统",
-    "工具": "Figma 等",
-    "规范": "HIG / Material",
-    "趋势": "动态色与折叠屏"
+    "分类": "设计方法论",
+    "核心": "Token、组件、文档",
+    "代表": "Material、HIG、Polaris",
+    "工具链": "Figma、Storybook",
+    "概念": "Atomic Design",
+    "价值": "一致性与效率"
   },
   "media": {
     "provider": "pixabay",

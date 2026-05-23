@@ -365,7 +365,8 @@ onUnmounted(() => {
 
 function focusNicknameInput() {
   nextTick(() => {
-    const el = nicknameInputRef.value?.$el as HTMLElement | undefined
+    const comp = nicknameInputRef.value as { $el?: HTMLElement } | null
+    const el = comp?.$el
     const input = el?.querySelector('input') ?? el
     input?.focus()
     if (input instanceof HTMLInputElement) input.select()

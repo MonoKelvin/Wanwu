@@ -5,7 +5,13 @@
   "name": "Chemex 咖啡壶",
   "summary": "玻璃漏斗冲煮器。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "名称": "Chemex 咖啡壶",
+    "发明": "1941年 Peter Schlumbohm",
+    "材质": "硼硅玻璃",
+    "滤纸": "厚滤纸，口感干净",
+    "造型": "现代艺术博物馆收藏设计"
+  },
   "media": {
     "provider": "pixabay",
     "query": "coffee cup espresso latte art",

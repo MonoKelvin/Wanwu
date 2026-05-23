@@ -4,7 +4,7 @@
 
 伯恩山犬（Bernese Mountain Dog）是一种源自瑞士的大型工作犬，以其美丽的三色被毛和温柔的性格著称。它们是瑞士最受欢迎的犬种之一。
 
-![伯恩山犬](https://aka.doubaocdn.com/s/n4Qr1dSWNE)
+![伯恩山犬](https://pixabay.com/get/ga55bd7277343539b135711b542700bbd145b14fde2aaabefd5832453155011b6ee94c6cc5b691fe77c6e8d9acd75d67fa30168594a11944f499e258fe1a6392f_1280.jpg)
 *美丽的伯恩山犬*
 
 ## 历史起源

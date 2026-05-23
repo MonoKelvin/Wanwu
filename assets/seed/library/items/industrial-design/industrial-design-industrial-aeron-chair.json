@@ -5,7 +5,14 @@
   "name": "赫曼米勒 Aeron",
   "summary": "人体工学网椅。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "首发": "1994",
+    "品牌": "Herman Miller",
+    "设计师": "Stumpf & Chadwick",
+    "材料": "Pellicle 网布",
+    "类型": "办公椅",
+    "产地": "美国"
+  },
   "media": {
     "provider": "pixabay",
     "query": "Aeron product design",

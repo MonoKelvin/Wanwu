@@ -10,14 +10,7 @@
     "大黄蜂",
     "甲壳虫"
   ],
-  "specs": {
-    "分类": "汽车人 Autobot",
-    "阵营": "汽车人",
-    "变形": "甲壳虫 / 科迈罗（作品不同）",
-    "特点": "侦察、与人类互动",
-    "电影": "《大黄蜂》2018",
-    "颜色": "黄色为主"
-  },
+  "specs": {},
   "media": {
     "provider": "pixabay",
     "query": "transformers robot toy action figure",

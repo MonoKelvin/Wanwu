@@ -7,7 +7,9 @@
   "tags": [
     "腕表"
   ],
-  "specs": {},
+  "specs": {
+    "概述": "月球表。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "欧米茄超霸 luxury wristwatch macro dial leather strap",

@@ -7,7 +7,13 @@
   "tags": [
     "金刚"
   ],
-  "specs": {},
+  "specs": {
+    "分类": "鸟类",
+    "代表": "金刚鹦鹉",
+    "习性": "热带大型鹦鹉。",
+    "分布": "因种而异",
+    "保护": "查阅 IUCN 红色名录"
+  },
   "media": {
     "provider": "pixabay",
     "query": "macaw bird wildlife photo",

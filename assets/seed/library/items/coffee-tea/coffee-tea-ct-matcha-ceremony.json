@@ -5,7 +5,9 @@
   "name": "抹茶茶道",
   "summary": "日本茶碗打茶。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "日本茶碗打茶。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "tea cup teapot ceremony",

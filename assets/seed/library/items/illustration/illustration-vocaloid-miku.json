@@ -11,13 +11,11 @@
     "虚拟歌手"
   ],
   "specs": {
-    "分类": "数字插画",
-    "引擎": "Vocaloid 2",
-    "发行": "2007",
-    "开发商": "Crypton Future Media",
-    "形象设计": "KEI",
-    "声源": "藤田咲",
-    "文化": "Piapro / MMD"
+    "类型": "虚拟歌姬",
+    "首发": "2007",
+    "开发商": "Crypton",
+    "引擎": "VOCALOID",
+    "形象": "双马尾"
   },
   "media": {
     "provider": "pixabay",

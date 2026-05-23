@@ -1,4 +1,4 @@
-import type { ShareCardPalette, ShareCardTemplateId } from './types'
+import type { ShareCardPalette } from './types'
 import {
   DEFAULT_SHARE_CARD_FILTER,
   type ShareCardFilterId
@@ -191,18 +191,6 @@ export function applyStyleColorPalette(
   return { ...base, ...map[colorId] }
 }
 
-export function createDefaultStylesByTemplate(): Record<ShareCardTemplateId, ShareCardStyle> {
-  return {
-    classic: { ...DEFAULT_SHARE_CARD_STYLE },
-    center: { ...DEFAULT_SHARE_CARD_STYLE },
-    corner: { ...DEFAULT_SHARE_CARD_STYLE },
-    vivid: { ...DEFAULT_SHARE_CARD_STYLE },
-    cinema: { ...DEFAULT_SHARE_CARD_STYLE },
-    minimal: { ...DEFAULT_SHARE_CARD_STYLE },
-    split: { ...DEFAULT_SHARE_CARD_STYLE }
-  }
-}
-
 export interface ResolvedShareCardStyle {
   fontStack: string
   type: ReturnType<typeof styleTypography>
@@ -246,9 +234,3 @@ export function resolveShareCardStyle(
     useCustom: true
   }
 }
-
-/** @deprecated use DEFAULT_SHARE_CARD_STYLE */
-export const DEFAULT_CENTER_STYLE = DEFAULT_SHARE_CARD_STYLE
-
-/** @deprecated use ShareCardStyle */
-export type ShareCardCenterStyle = ShareCardStyle

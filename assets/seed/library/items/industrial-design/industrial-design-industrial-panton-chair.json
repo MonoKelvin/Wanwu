@@ -7,7 +7,13 @@
   "tags": [
     "家具"
   ],
-  "specs": {},
+  "specs": {
+    "首发": "1967",
+    "设计师": "Verner Panton",
+    "品牌": "Vitra",
+    "材料": "注塑聚丙烯",
+    "类型": "餐椅"
+  },
   "media": {
     "provider": "pixabay",
     "query": "Panton product design",

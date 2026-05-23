@@ -5,7 +5,14 @@
   "name": "哈雷 Fat Boy",
   "summary": "美式巡航重金属。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "首发年份": "1990",
+    "厂商": "Harley-Davidson",
+    "发动机": "Milwaukee-Eight V 双缸",
+    "排量": "约 1868 cc",
+    "车型": "巡航",
+    "产地": "美国"
+  },
   "media": {
     "provider": "pixabay",
     "query": "Fat Boy motorcycle",

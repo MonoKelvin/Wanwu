@@ -9,14 +9,11 @@
     "Chelonia mydas"
   ],
   "specs": {
-    "保护级别": "CITES 2023年版附录Ⅰ",
-    "中文名": "绿海龟",
-    "拉丁学名": "Chelonia mydas",
-    "别 名": "海龟 、 黑龟 、 石龟",
-    "外文名": "英文 Green Turtle 法文 Tortue comestible, Tortue franche, Tortue verte 西班牙文 Tortuga Blanca, Tortuga Verde 阿拉伯文 الخضراء السلحفاة",
-    "同义学名": "Testudo mydas Linnaeus, 1758",
-    "国际濒危等级": "濒危(EN)",
-    "中国动物保护等级": "国家一级保护野生动物"
+    "中文名": "海龟",
+    "分类": "龟鳖目海龟科",
+    "栖息": "热带与亚热带海域",
+    "威胁": "海洋塑料、误捕、栖息地破坏",
+    "习性": "长距离洄游产卵"
   },
   "media": {
     "provider": "pixabay",

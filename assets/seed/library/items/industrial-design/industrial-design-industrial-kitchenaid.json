@@ -7,7 +7,13 @@
   "tags": [
     "厨房"
   ],
-  "specs": {},
+  "specs": {
+    "首发": "1919",
+    "品牌": "KitchenAid",
+    "类型": "厨师机",
+    "代表": "Artisan 5qt",
+    "特色": "行星搅拌"
+  },
   "media": {
     "provider": "pixabay",
     "query": "KitchenAid product design",

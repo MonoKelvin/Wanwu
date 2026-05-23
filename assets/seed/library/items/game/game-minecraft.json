@@ -9,14 +9,13 @@
     "我的世界"
   ],
   "specs": {
-    "开发商": "Mojang Studios、 Xbox Game Studios 、SkyBox Labs、4J Studios、Other Ocean Interactive",
-    "中文名": "我的世界",
-    "原版名称": "Minecraft",
-    "别 名": "MC 、 方块世界",
-    "游戏类型": "沙盒游戏",
-    "原作者": "马库斯·阿列克谢·泊松",
-    "所属系列": "Minecraft",
-    "地 区": "全球"
+    "开发商": "Mojang Studios",
+    "创始人": "Markus Persson（Notch）",
+    "首发": "2011年正式版",
+    "类型": "沙盒建造",
+    "平台": "全平台",
+    "特色": "方块世界、生存与创造模式",
+    "收购": "2014年微软收购"
   },
   "media": {
     "provider": "pixabay",

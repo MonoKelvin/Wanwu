@@ -5,7 +5,9 @@
   "name": "代尔夫特蓝陶",
   "summary": "荷兰陶瓷。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "荷兰陶瓷。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "ceramic pottery",

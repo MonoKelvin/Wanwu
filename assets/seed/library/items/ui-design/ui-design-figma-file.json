@@ -5,7 +5,13 @@
   "name": "Figma 设计稿",
   "summary": "协作 UI 画布界面。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "分类": "设计交付物",
+    "工具": "Figma",
+    "内容": "Frame、Component、Variant",
+    "协作": "实时多人、Comment",
+    "交付": "Dev Mode、Prototype"
+  },
   "media": {
     "provider": "pixabay",
     "query": "Figma design system ui",

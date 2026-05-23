@@ -5,7 +5,9 @@
   "name": "精品咖啡馆",
   "summary": "第三波咖啡空间。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "第三波咖啡空间。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "coffee shop interior cozy",

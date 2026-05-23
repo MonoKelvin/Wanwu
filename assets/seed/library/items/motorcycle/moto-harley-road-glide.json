@@ -11,12 +11,11 @@
     "美式"
   ],
   "specs": {
-    "分类": "美式巡航",
     "厂商": "Harley-Davidson",
-    "发动机": "Milwaukee-Eight",
-    "风格": "旅行",
-    "总部": "美国",
-    "文化": "公路与改装"
+    "发动机": "Milwaukee-Eight 117",
+    "车型": "Bagger 旅行",
+    "特色": "固定双导流罩",
+    "产地": "美国"
   },
   "media": {
     "provider": "pixabay",

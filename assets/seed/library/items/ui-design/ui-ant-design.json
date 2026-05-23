@@ -11,12 +11,13 @@
     "企业"
   ],
   "specs": {
-    "分类": "Web UI",
-    "技术": "React",
-    "重点": "企业",
-    "交付": "设计 + 前端",
-    "趋势": "Server Components",
-    "工具": "Figma / Storybook"
+    "分类": "Web 组件库",
+    "发布方": "蚂蚁集团",
+    "首发": "2015",
+    "框架": "React",
+    "场景": "企业级后台",
+    "特点": "Table、Form、ProLayout",
+    "许可": "MIT"
   },
   "media": {
     "provider": "pixabay",

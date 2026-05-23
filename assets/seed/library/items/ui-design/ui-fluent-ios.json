@@ -11,12 +11,11 @@
     "平台规范"
   ],
   "specs": {
-    "分类": "移动 UI",
-    "平台": "平台规范",
-    "重点": "原生",
-    "工具": "Figma 等",
-    "规范": "HIG / Material",
-    "趋势": "动态色与折叠屏"
+    "分类": "跨平台对照",
+    "Fluent": "Microsoft Windows",
+    "HIG": "Apple iOS / macOS",
+    "策略": "Platform-adaptive",
+    "材质": "Acrylic / Blur"
   },
   "media": {
     "provider": "pixabay",

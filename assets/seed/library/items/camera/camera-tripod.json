@@ -5,7 +5,9 @@
   "name": "碳纤维三脚架",
   "summary": "风光长曝光支撑。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "风光长曝光支撑。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "碳纤维三脚架 camera photography",

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import WwIcon from '@shared/components/WwIcon.vue'
-import type { WwIconName } from '@shared/icons/registry'
+import emptyGhost from '@assets/icons/empty-ghost.svg'
+import emptyLibrary from '@assets/icons/empty-library.svg'
+import emptyNotFound from '@assets/icons/empty-not-found.svg'
+import emptyRss from '@assets/icons/empty-rss.svg'
 
 const props = withDefaults(
   defineProps<{
-    variant?: 'empty' | 'guide' | 'rss' | 'not-found'
+    variant?: 'empty' | 'ghost' | 'rss' | 'not-found'
     title: string
     description?: string
     code?: string
@@ -14,18 +16,14 @@ const props = withDefaults(
   { variant: 'empty', compact: false }
 )
 
-const iconName = computed((): WwIconName => {
-  switch (props.variant) {
-    case 'guide':
-      return 'compass'
-    case 'rss':
-      return 'globe'
-    case 'not-found':
-      return 'search'
-    default:
-      return 'inbox'
-  }
-})
+const EMPTY_ART: Record<typeof props.variant, string> = {
+  empty: emptyLibrary,
+  ghost: emptyGhost,
+  rss: emptyRss,
+  'not-found': emptyNotFound
+}
+
+const artSrc = computed(() => EMPTY_ART[props.variant])
 </script>
 
 <template>
@@ -34,12 +32,14 @@ const iconName = computed((): WwIconName => {
     <div class="ww-empty-state__glow ww-empty-state__glow--b" aria-hidden="true" />
 
     <div class="ww-empty-state__card">
-      <p v-if="code" class="ww-empty-state__code">{{ code }}</p>
-      <div class="ww-empty-state__img" aria-hidden="true">
-        <WwIcon :name="iconName" class="ww-empty-state__icon" />
+      <div class="ww-empty-state__content">
+        <p v-if="compact && code" class="ww-empty-state__code">{{ code }}</p>
+        <div class="ww-empty-state__img" aria-hidden="true">
+          <img class="ww-empty-state__art" :src="artSrc" alt="" />
+        </div>
+        <h3 class="ww-empty-state__title">{{ title }}</h3>
+        <p v-if="description" class="ww-empty-state__desc">{{ description }}</p>
       </div>
-      <h3 class="ww-empty-state__title">{{ title }}</h3>
-      <p v-if="description" class="ww-empty-state__desc">{{ description }}</p>
       <div v-if="$slots.default" class="ww-empty-state__actions">
         <slot />
       </div>

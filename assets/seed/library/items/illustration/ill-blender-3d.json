@@ -11,12 +11,10 @@
     "3D"
   ],
   "specs": {
-    "分类": "数字插画",
-    "工具": "Blender",
-    "领域": "3D",
-    "输出": "商业 / 同人",
-    "平台": "Pixiv / ArtStation",
-    "技能": "构图、色彩、人体"
+    "软件": "Blender",
+    "授权": "开源",
+    "用途": "3D/三渲二",
+    "渲染": "Cycles/Eevee"
   },
   "media": {
     "provider": "pixabay",

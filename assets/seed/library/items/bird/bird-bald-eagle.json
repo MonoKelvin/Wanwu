@@ -7,7 +7,13 @@
   "tags": [
     "白头"
   ],
-  "specs": {},
+  "specs": {
+    "分类": "鸟类",
+    "代表": "白头海雕",
+    "习性": "北美国鸟猛禽。",
+    "分布": "因种而异",
+    "保护": "查阅 IUCN 红色名录"
+  },
   "media": {
     "provider": "pixabay",
     "query": "bald eagle bird wildlife photo",

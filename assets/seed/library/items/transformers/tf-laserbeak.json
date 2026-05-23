@@ -10,14 +10,7 @@
     "反派",
     "磁带战士"
   ],
-  "specs": {
-    "分类": "霸天虎 Decepticon",
-    "阵营": "霸天虎",
-    "变形": "机械鸟",
-    "角色": "磁带战士",
-    "领袖": "威震天 / 惊破天",
-    "特点": "磁带战士"
-  },
+  "specs": {},
   "media": {
     "provider": "pixabay",
     "query": "transformers robot toy action figure",

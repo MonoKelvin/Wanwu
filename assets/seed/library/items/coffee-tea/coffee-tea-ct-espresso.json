@@ -5,7 +5,9 @@
   "name": "意式浓缩",
   "summary": "高压萃取咖啡。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "概述": "高压萃取咖啡。"
+  },
   "media": {
     "provider": "pixabay",
     "query": "coffee cup espresso latte art",

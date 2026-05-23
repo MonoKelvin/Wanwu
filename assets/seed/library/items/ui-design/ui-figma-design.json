@@ -11,12 +11,13 @@
     "Figma"
   ],
   "specs": {
-    "分类": "移动 UI",
-    "平台": "Figma",
-    "重点": "协作",
-    "工具": "Figma 等",
-    "规范": "HIG / Material",
-    "趋势": "动态色与折叠屏"
+    "分类": "设计工具",
+    "首发": "2016",
+    "平台": "Web / Desktop",
+    "特点": "实时协作、组件变体",
+    "核心功能": "Dev Mode、Auto Layout",
+    "生态": "插件、FigJam",
+    "用户群": "产品、设计、开发"
   },
   "media": {
     "provider": "pixabay",

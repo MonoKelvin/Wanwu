@@ -7,7 +7,12 @@
   "tags": [
     "北欧"
   ],
-  "specs": {},
+  "specs": {
+    "风格": "北欧风客厅",
+    "地面": "因风格而异",
+    "采光": "自然光为主",
+    "关键词": "北欧"
+  },
   "media": {
     "provider": "pixabay",
     "query": "interior design room",

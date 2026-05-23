@@ -5,7 +5,12 @@
   "name": "现代轻奢公寓",
   "summary": "大理石与金属线条。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "风格": "现代轻奢公寓",
+    "地面": "因风格而异",
+    "采光": "自然光为主",
+    "关键词": "居住美学"
+  },
   "media": {
     "provider": "pixabay",
     "query": "interior design room",

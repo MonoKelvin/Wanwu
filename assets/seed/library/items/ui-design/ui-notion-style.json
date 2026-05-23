@@ -11,12 +11,11 @@
     "SaaS"
   ],
   "specs": {
-    "分类": "Web UI",
-    "技术": "SaaS",
-    "重点": "生产力",
-    "交付": "设计 + 前端",
-    "趋势": "Server Components",
-    "工具": "Figma / Storybook"
+    "分类": "SaaS 界面风格",
+    "代表产品": "Notion",
+    "特点": "块编辑、中性色、留白",
+    "场景": "知识库、文档、wiki",
+    "字体": "Inter 系无衬线"
   },
   "media": {
     "provider": "pixabay",

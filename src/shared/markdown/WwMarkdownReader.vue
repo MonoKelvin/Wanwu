@@ -5,7 +5,7 @@
  */
 defineOptions({ inheritAttrs: false })
 
-import { computed, useAttrs, useTemplateRef } from 'vue'
+import { computed, useAttrs, useTemplateRef, type ComponentPublicInstance } from 'vue'
 import ImageViewer from '@shared/components/ImageViewer.vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import { useMarkdownReader } from './composables/useMarkdownReader'
@@ -44,7 +44,7 @@ const attrsWithoutClass = computed(() => {
   return rest
 })
 
-function onRootRef(el: Element | null) {
+function onRootRef(el: Element | ComponentPublicInstance | null) {
   bindRoot(el instanceof HTMLElement ? el : null)
 }
 </script>

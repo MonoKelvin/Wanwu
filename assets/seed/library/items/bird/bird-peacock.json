@@ -3,9 +3,21 @@
   "slug": "bird-peacock",
   "subCategoryId": "bird-tropical",
   "name": "蓝孔雀",
-  "summary": "开屏求偶展示。",
-  "tags": [],
-  "specs": {},
+  "summary": "南亚雉科鸟类，雄鸟尾屏开屏求偶，金属光泽来自结构色而非色素。",
+  "tags": [
+    "鸟类",
+    "求偶",
+    "观赏鸟"
+  ],
+  "specs": {
+    "学名": "Pavo cristatus",
+    "科属": "雉科 · 孔雀属",
+    "分布": "南亚、引入世界各地",
+    "体长": "雄鸟含尾羽可达 2.3 米",
+    "习性": "日行、杂食",
+    "繁殖": "雌鸟筑巢孵卵",
+    "保护": "蓝孔雀无危；绿孔雀极危"
+  },
   "media": {
     "provider": "pixabay",
     "query": "peacock bird wildlife photo",

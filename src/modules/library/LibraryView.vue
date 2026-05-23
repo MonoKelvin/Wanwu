@@ -210,8 +210,7 @@ const playListStagger = ref(false)
 
       <EmptyState
         v-if="!hasCategory"
-        variant="guide"
-        code="—"
+        variant="ghost"
         title="尚未选择分类"
         description="在左侧展开分类树，浏览该类别下的物品。"
       />
@@ -230,7 +229,6 @@ const playListStagger = ref(false)
 
       <EmptyState
         v-else-if="store.items.length === 0"
-        code="EMPTY"
         title="这里还是空的"
         description="该分类下暂无条目。"
       />
@@ -238,7 +236,6 @@ const playListStagger = ref(false)
       <EmptyState
         v-else-if="displayedItems.length === 0"
         variant="not-found"
-        code="404"
         title="无匹配结果"
         description="请调整关键词或清除搜索。"
       />

@@ -5,7 +5,14 @@
   "name": "保时捷 911 Turbo",
   "summary": "后置涡轮经典。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "首发年份": "1975",
+    "厂商": "Porsche",
+    "发动机": "双涡轮六缸",
+    "最大功率": "约 650 hp",
+    "驱动": "四驱",
+    "产地": "德国"
+  },
   "media": {
     "provider": "pixabay",
     "query": "Turbo supercar",

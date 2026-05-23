@@ -11,12 +11,12 @@
     "One UI"
   ],
   "specs": {
-    "分类": "移动 UI",
-    "平台": "One UI",
-    "重点": "安卓",
-    "工具": "Figma 等",
-    "规范": "HIG / Material",
-    "趋势": "动态色与折叠屏"
+    "分类": "Android 定制 UI",
+    "发布方": "Samsung",
+    "首发": "2018",
+    "原则": "Reachability、单手区",
+    "基于": "Android + Material You",
+    "特色": "Good Lock、折叠屏优化"
   },
   "media": {
     "provider": "pixabay",

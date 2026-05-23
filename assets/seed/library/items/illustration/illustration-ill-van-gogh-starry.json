@@ -5,7 +5,12 @@
   "name": "星夜",
   "summary": "梵高漩涡夜空。",
   "tags": [],
-  "specs": {},
+  "specs": {
+    "艺术家": "梵高",
+    "年份": "1889",
+    "收藏": "MoMA",
+    "主题": "夜空"
+  },
   "media": {
     "provider": "pixabay",
     "query": "digital illustration artwork",
