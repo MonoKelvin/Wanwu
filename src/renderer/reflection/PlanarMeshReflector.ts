@@ -1,0 +1,132 @@
+import * as THREE from 'three'
+
+export interface PlanarMeshReflectorOptions {
+  renderer: THREE.WebGLRenderer
+  scene: THREE.Scene
+  camera: THREE.Camera
+  floorMesh: THREE.Mesh
+  resolution?: number
+  ignoreObjects?: THREE.Object3D[]
+}
+
+/**
+ * 平面反射（移植 su7-replica MeshReflectorMaterial 核心逻辑，无 kokomi）
+ */
+export class PlanarMeshReflector {
+  readonly reflectMatrix = new THREE.Matrix4()
+  readonly texture: THREE.Texture
+
+  private readonly renderer: THREE.WebGLRenderer
+  private readonly scene: THREE.Scene
+  private readonly camera: THREE.Camera
+  private readonly floorMesh: THREE.Mesh
+  private readonly reflectCamera = new THREE.PerspectiveCamera()
+  private readonly reflectPlane = new THREE.Plane()
+  private readonly renderTarget: THREE.WebGLRenderTarget
+  private readonly ignoreObjects: THREE.Object3D[]
+
+  constructor(options: PlanarMeshReflectorOptions) {
+    this.renderer = options.renderer
+    this.scene = options.scene
+    this.camera = options.camera
+    this.floorMesh = options.floorMesh
+    this.ignoreObjects = [
+      this.floorMesh,
+      ...(options.ignoreObjects ?? [])
+    ]
+
+    const size = options.resolution ?? 1024
+    this.renderTarget = new THREE.WebGLRenderTarget(size, size, {
+      type: THREE.UnsignedByteType
+    })
+    this.texture = this.renderTarget.texture
+    this.texture.generateMipmaps = true
+    this.texture.minFilter = THREE.LinearMipmapLinearFilter
+    this.texture.magFilter = THREE.LinearFilter
+  }
+
+  update(): void {
+    this.reflectPlane.set(new THREE.Vector3(0, 1, 0), 0)
+    this.reflectPlane.applyMatrix4(this.floorMesh.matrixWorld)
+
+    const cam = this.camera as THREE.PerspectiveCamera
+    this.reflectCamera.copy(cam)
+    this.reflectCamera.projectionMatrix.copy(cam.projectionMatrix)
+
+    const view = new THREE.Vector3()
+    this.camera.getWorldPosition(view)
+
+    const normal = this.reflectPlane.normal.clone()
+    const target = new THREE.Vector3()
+    this.reflectPlane.projectPoint(view, target)
+    const mirrorPos = target.clone().sub(view).add(target)
+    this.reflectCamera.position.copy(mirrorPos)
+
+    const lookAt = new THREE.Vector3(0, 0, -1)
+      .applyQuaternion(this.camera.getWorldQuaternion(new THREE.Quaternion()))
+      .add(view)
+    const floorPos = new THREE.Vector3()
+    this.floorMesh.getWorldPosition(floorPos)
+    lookAt.sub(floorPos)
+    lookAt.reflect(normal).negate()
+    lookAt.add(floorPos)
+
+    this.reflectCamera.up.set(0, 1, 0)
+    this.reflectCamera.up.applyQuaternion(this.camera.getWorldQuaternion(new THREE.Quaternion()))
+    this.reflectCamera.up.reflect(normal)
+    this.reflectCamera.lookAt(lookAt)
+    this.reflectCamera.updateMatrixWorld()
+
+    const bias = new THREE.Matrix4().set(0.5, 0, 0, 0.5, 0, 0.5, 0, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0, 1)
+    bias.multiply(this.reflectCamera.projectionMatrix)
+    bias.multiply(this.reflectCamera.matrixWorldInverse)
+    this.reflectMatrix.copy(bias)
+
+    const clipPlane = this.reflectPlane.clone()
+    clipPlane.applyMatrix4(this.reflectCamera.matrixWorldInverse)
+    const clip = new THREE.Vector4(
+      clipPlane.normal.x,
+      clipPlane.normal.y,
+      clipPlane.normal.z,
+      clipPlane.constant
+    )
+    const proj = this.reflectCamera.projectionMatrix.clone()
+    const q = new THREE.Vector4(
+      (Math.sign(clip.x) + proj.elements[8]) / proj.elements[0],
+      (Math.sign(clip.y) + proj.elements[9]) / proj.elements[5],
+      -1,
+      (1 + proj.elements[10]) / proj.elements[14]
+    )
+    clip.multiplyScalar(2 / clip.dot(q))
+    proj.elements[2] = clip.x
+    proj.elements[6] = clip.y
+    proj.elements[10] = clip.z + 1
+    proj.elements[14] = clip.w
+    this.reflectCamera.projectionMatrix.copy(proj)
+
+    const prevTarget = this.renderer.getRenderTarget()
+    const prevAutoClear = this.renderer.autoClear
+    this.renderer.setRenderTarget(this.renderTarget)
+    this.renderer.autoClear = true
+    this.renderer.clear()
+
+    const hidden: THREE.Object3D[] = []
+    for (const obj of this.ignoreObjects) {
+      if (obj.visible) {
+        hidden.push(obj)
+        obj.visible = false
+      }
+    }
+
+    this.renderer.render(this.scene, this.reflectCamera)
+
+    for (const obj of hidden) obj.visible = true
+
+    this.renderer.setRenderTarget(prevTarget)
+    this.renderer.autoClear = prevAutoClear
+  }
+
+  dispose(): void {
+    this.renderTarget.dispose()
+  }
+}

@@ -1,10 +1,16 @@
-/** 仓库 assets/ 根目录（dev/build 下通过 import.meta.url 解析） */
-const ASSETS_ROOT = new URL('../../../assets/', import.meta.url)
+import { toWanwuMediaUrl } from './profileMedia'
 
-/** @param path 相对于 assets/ 的路径，如 hdr/t_env_light.hdr */
+/**
+ * 捆绑资源 URL（相对 assets/ 根目录）。
+ * 使用 Electron `wanwu-media://` 协议，避免 Vite dev 下 `/assets` 返回 index.html 导致 HDR/模型加载失败。
+ */
 export function assetUrl(path: string): string {
   const normalized = path.replace(/\\/g, '/').replace(/^\//, '')
-  return new URL(normalized, ASSETS_ROOT).href
+  const url = toWanwuMediaUrl(normalized)
+  if (!url) {
+    throw new Error(`无效资源路径: ${path}`)
+  }
+  return url
 }
 
 export function vehicleItemAssetUrl(slug: string, relativePath: string): string {

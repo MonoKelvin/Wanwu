@@ -20,10 +20,31 @@
     },
     "paintMeshes": ["body", "Body", "car_body"],
     "wheels": [
-      { "id": "wheel-default", "label": "默认轮毂" }
+      {
+        "id": "wheel-default",
+        "label": "低风阻",
+        "match": ["wheel", "M_wheel"],
+        "rimColor": "#8a8a8a",
+        "metalness": 0.72,
+        "roughness": 0.28
+      },
+      {
+        "id": "wheel-sport",
+        "label": "运动轮毂",
+        "match": ["wheel", "M_wheel"],
+        "rimColor": "#1c1c1e",
+        "metalness": 0.88,
+        "roughness": 0.18
+      }
     ],
     "liveries": [
-      { "id": "livery-default", "label": "默认涂装" }
+      { "id": "livery-default", "label": "标准涂装" },
+      {
+        "id": "livery-racing",
+        "label": "赛道拉花",
+        "accentMeshes": ["body.001", "body_smoothblack"],
+        "accentColor": "#b91c1c"
+      }
     ]
   }
 }

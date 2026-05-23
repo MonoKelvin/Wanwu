@@ -41,6 +41,25 @@ export interface VehicleCustomization {
     liveryId: string
   }
   paintMeshes: string[]
-  wheels: Array<{ id: string; label: string }>
-  liveries: Array<{ id: string; label: string }>
+  wheels: WheelOption[]
+  liveries: LiveryOption[]
+}
+
+/** 轮毂方案：按材质名/网格名匹配并调色（v1 无需多份 GLB） */
+export interface WheelOption {
+  id: string
+  label: string
+  /** 匹配网格或材质名（不区分大小写），默认 wheel / M_wheel */
+  match?: string[]
+  rimColor?: string
+  metalness?: number
+  roughness?: number
+}
+
+/** 涂装方案：主色仍由 bodyColor 控制，可附加 accent 网格配色 */
+export interface LiveryOption {
+  id: string
+  label: string
+  accentMeshes?: string[]
+  accentColor?: string
 }

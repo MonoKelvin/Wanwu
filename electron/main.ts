@@ -55,6 +55,11 @@ const MEDIA_MIME: Record<string, string> = {
   '.webp': 'image/webp',
   '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
+  '.hdr': 'image/vnd.radiance',
+  '.glb': 'model/gltf-binary',
+  '.gltf': 'model/gltf+json',
+  '.bin': 'application/octet-stream',
+  '.mp3': 'audio/mpeg',
   '.md': 'text/markdown; charset=utf-8'
 }
 
