@@ -14,7 +14,7 @@ import {
   type WindowStateMode
 } from '@shared/types/settings'
 import { isModuleId } from '@app/config/modules'
-import { applyColorScheme, readStoredColorScheme } from '@app/theme/applyTheme'
+import { applyColorScheme, readStoredColorScheme, watchSystemColorScheme } from '@app/theme/applyTheme'
 
 function normalizeSettings(data: Partial<AppSettings>): AppSettings {
   const limit = data.rssFetchLimit
@@ -39,7 +39,11 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
       ? data.windowStateMode
       : 'remember'
 
-  const colorScheme: ColorScheme = data.colorScheme === 'dark' ? 'dark' : 'light'
+  const colorScheme: ColorScheme =
+    data.colorScheme === 'dark' ? 'dark'
+    : data.colorScheme === 'light' ? 'light'
+    : data.colorScheme === 'system' ? 'system'
+    : 'system'
 
   return {
     navAlign: data.navAlign === 'center' ? 'center' : 'start',
@@ -60,9 +64,17 @@ function applySettingsToDocument(settings: AppSettings) {
   applyColorScheme(settings.colorScheme)
 }
 
+let stopSystemThemeWatch: (() => void) | null = null
+
 export const useSettingsStore = defineStore('settings', () => {
   const settings = ref<AppSettings>({ ...DEFAULT_APP_SETTINGS })
   const loaded = ref(false)
+
+  if (!stopSystemThemeWatch) {
+    stopSystemThemeWatch = watchSystemColorScheme(() => {
+      if (settings.value.colorScheme === 'system') applyColorScheme('system')
+    })
+  }
 
   async function load() {
     const data = await window.wanwu.app.getSettings()

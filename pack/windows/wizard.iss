@@ -280,29 +280,30 @@ begin
     Result := Dest;
 end;
 
-procedure RunLibraryPackImport(const DataDir: string);
+procedure RunDataDirSetup(const DataDir: string);
 var
   ExePath, ZipPath, Params: string;
   ResultCode: Integer;
 begin
+  ForceDirectories(DataDir);
+  ExePath := ExpandConstant('{app}\{#AppExeName}');
   ZipPath := DataDir + '\' + CLibraryPackFileName;
-  if not FileExists(ZipPath) then
-    Exit;
-  WizardForm.StatusLabel.Caption := '正在解压图鉴资源包到数据目录，请稍候…';
+  if FileExists(ZipPath) then
+    Params := '--installer-import-library-pack "' + DataDir + '" "' + ZipPath + '"'
+  else
+    Params := '--installer-import-library-pack "' + DataDir + '"';
+  WizardForm.StatusLabel.Caption := '正在配置数据目录，请稍候…';
   WizardForm.ProgressGauge.Style := npbstMarquee;
   try
-    ExePath := ExpandConstant('{app}\{#AppExeName}');
-    Params :=
-      '--installer-import-library-pack "' + DataDir + '" "' + ZipPath + '"';
     if Exec(ExePath, Params, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
     begin
       if (ResultCode <> 0) then
         MsgBox(
-          '图鉴解压未完成（代码 ' + IntToStr(ResultCode) + '），可启动应用后重试。',
+          '数据目录配置未完成（代码 ' + IntToStr(ResultCode) + '），可启动应用后在设置中检查。',
           mbInformation, MB_OK);
     end
     else
-      MsgBox('无法运行图鉴导入，可启动应用后重试。', mbInformation, MB_OK);
+      MsgBox('无法运行数据目录配置，可启动应用后在设置中指定。', mbInformation, MB_OK);
   finally
     WizardForm.ProgressGauge.Style := npbstNormal;
     WizardForm.StatusLabel.Caption := '';
@@ -395,8 +396,7 @@ begin
 
   SaveInstallRegistry;
   WriteWanwuPathConfig(TargetData, InstalledPack);
-  if FileExists(TargetData + '\' + CLibraryPackFileName) then
-    RunLibraryPackImport(TargetData);
+  RunDataDirSetup(TargetData);
 end;
 
 function ShowWwUninstallWelcomeDlg: Boolean;

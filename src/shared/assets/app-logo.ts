@@ -1,5 +1,6 @@
 /** 应用 Logo（assets/logo/icon-*.png，无 SVG） */
-import type { ColorScheme } from '@shared/types/settings'
+import { resolveColorScheme } from '@app/theme/applyTheme'
+import type { ColorScheme, ResolvedColorScheme } from '@shared/types/settings'
 
 import logo16 from '@assets/logo/icon-16.png'
 import logo32 from '@assets/logo/icon-32.png'
@@ -31,10 +32,12 @@ export const APP_LOGO_DARK = {
   256: logo256Dark
 } as const satisfies Record<AppLogoSize, string>
 
-export function resolveAppLogo(scheme: ColorScheme): typeof APP_LOGO_LIGHT {
-  return scheme === 'dark' ? APP_LOGO_DARK : APP_LOGO_LIGHT
+export function resolveAppLogo(scheme: ColorScheme | ResolvedColorScheme): typeof APP_LOGO_LIGHT {
+  const resolved: ResolvedColorScheme =
+    scheme === 'system' ? resolveColorScheme('system') : scheme === 'dark' ? 'dark' : 'light'
+  return resolved === 'dark' ? APP_LOGO_DARK : APP_LOGO_LIGHT
 }
 
-export function appLogoFor(scheme: ColorScheme, size: AppLogoSize): string {
+export function appLogoFor(scheme: ColorScheme | ResolvedColorScheme, size: AppLogoSize): string {
   return resolveAppLogo(scheme)[size]
 }

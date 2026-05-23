@@ -110,6 +110,8 @@ export function resolveItemCoverRelative(params: {
   coverPath: string | null | undefined
   categoryId: string
   slug: string | null | undefined
+  /** 列表等场景设为 false，避免 readdir 扫目录 */
+  allowDiscover?: boolean
 }): string | null {
   const candidates: string[] = []
   if (params.coverPath) candidates.push(...relPathCandidates(params.coverPath))
@@ -127,6 +129,7 @@ export function resolveItemCoverRelative(params: {
     seen.add(rel)
     if (resolveLibraryMediaAbsolute(rel)) return rel
   }
+  if (params.allowDiscover === false) return null
   return discoverCoverRelative(params.categoryId, params.slug)
 }
 

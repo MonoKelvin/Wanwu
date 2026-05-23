@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { onMounted, onUnmounted } from 'vue'
 import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog'
 import WwIcon from '@shared/components/WwIcon.vue'
@@ -8,24 +7,22 @@ import WwToastMessage from '@shared/components/WwToastMessage.vue'
 import TitleBar from '@app/components/TitleBar.vue'
 import AppShell from '@app/components/AppShell.vue'
 import WwDismissibleConfirmHost from '@app/components/WwDismissibleConfirmHost.vue'
-import { isModuleId } from '@app/config/modules'
 import { useSettingsStore } from '@shared/stores/settings'
-import { resolveStartupPath } from '@shared/utils/startupModule'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 
 const settingsStore = useSettingsStore()
 const toast = useWanwuToast()
-const router = useRouter()
-const route = useRoute()
+
+function showLibraryNotice(text: string) {
+  toast.info(text, '图鉴数据', { life: 12_000 })
+}
+
+onUnmounted(window.wanwu.app.onStartupNotice(showLibraryNotice))
 
 onMounted(async () => {
-  await settingsStore.load()
-  const notices = await window.wanwu.app.getStartupNotices()
-  for (const text of notices) {
-    toast.info(text, '图鉴数据', { life: 12_000 })
-  }
-  if (route.path === '/' || route.path === '') {
-    await router.replace(resolveStartupPath(settingsStore.settings))
+  if (!settingsStore.loaded) await settingsStore.load()
+  for (const text of await window.wanwu.app.getStartupNotices()) {
+    showLibraryNotice(text)
   }
 })
 </script>

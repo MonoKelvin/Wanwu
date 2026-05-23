@@ -8,14 +8,17 @@
   },
   "files": [
     "out/**/*",
-    "package.json"
+    "package.json",
+    "!node_modules/**/{test,tests,__tests__,docs,doc,example,examples}/**",
+    "!node_modules/**/*.{md,ts,map}"
   ],
   "npmRebuild": false,
   "asar": true,
   "asarUnpack": [
-    "**/node_modules/better-sqlite3/**",
-    "**/node_modules/electron-native-share/**"
+    "**/node_modules/better-sqlite3/**/*.node",
+    "**/node_modules/electron-native-share/**/*.node"
   ],
+  "afterPack": "pack/windows/pack-lib.mjs",
   "extraResources": [
     { "from": "assets/logo", "to": "assets/logo" }
   ],

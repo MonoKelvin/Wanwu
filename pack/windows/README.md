@@ -8,9 +8,10 @@ npm run pack
 
 流程：
 
+0. **清理** `release/` 旧产物（见下）
 1. `npm run build` → `assets/packed/library-data-pack.zip`
 2. 复制为 `release/library-data-pack-x.y.z.zip`（**单独分发，不打进安装包**）
-3. `electron-builder` → `release/win-unpacked`（仅程序 + seed/logo，无图鉴 zip）
+3. `electron-builder` → 全新 `release/win-unpacked`（仅程序 + logo，无图鉴 zip）
 4. 从 `assets/logo/icon-256.png` 生成 `pack/app.ico`（png2icons / Windows 兼容 ICO）
 5. `rcedit` 为 `Wanwu.exe` 写入 `app.ico`
 6. Inno Setup → `release/wanwu-win-x64-x.y.z.exe`（`SetupIconFile` 同为 `app.ico`）
@@ -37,13 +38,44 @@ npm run pack
 | 附加 | 桌面快捷方式 |
 | 完成页 | 启动应用、打开发布页 |
 
+## 打包前清理
+
+默认每次 `npm run pack` 会先清理 `release/`，避免上次文件污染本次安装包：
+
+| 清理对象 | 完整打包 | `--skip-build` |
+|----------|----------|----------------|
+| `release/win-unpacked` | 删除后重建 | **保留** |
+| `wanwu-win-x64-*.exe` | 删除 | 删除 |
+| `library-data-pack-{当前版本}.zip` | 删除后重新复制 | 删除后重新复制 |
+| `wanwu-payload-*.zip` 等整包归档 | 删除 | 删除 |
+| `builder-debug.yml` 等 | 删除 | 删除 |
+| `.cache/wanwu-*`（图鉴构建/读 zip 临时目录） | 删除 | 不删 |
+| `assets/packed/*.zip` | 删除（重建图鉴包时） | 保留 |
+| `release/library-data-pack-*.zip` | 删除（重建图鉴包时） | 保留 |
+
+`.cache` 与 `assets/packed` **不会**打进程序安装包；清理它们是为了图鉴 **单独 zip** 构建时不混入旧 SQLite/旧 zip。`build-library-pack.ts` 开头也会清理，pack 在完整流程里再清一次是双保险。
+
+保留全部 release 内容时可加 `--no-clean`（同时跳过 `.cache` 清理）。
+
 ## 可选参数
 
 | 参数 | 说明 |
 |------|------|
 | `--skip-library-pack` | 不重新生成图鉴 zip（仍 `build:app`） |
 | `--skip-build` | 跳过 build 与 electron-builder |
+| `--no-clean` | 跳过 release 清理（保留 win-unpacked、旧安装包等） |
 | `--iscc="路径"` | 指定 `ISCC.exe` |
+
+打包体积优化（v1.1+）：`builder.json` 仅解包原生 `.node`；`pack-lib.mjs`（electron-builder afterPack）裁剪 `locales` 为 `zh-CN` / `en-US` 并写入 exe 文件信息。详见 [doc/optimization/roadmap-performance-packaging.md](../../doc/optimization/roadmap-performance-packaging.md)。
+
+## 脚本结构
+
+| 文件 | 说明 |
+|------|------|
+| `pack.mjs` | 打包入口（清理 → build → electron-builder → Inno） |
+| `pack-lib.mjs` | 日志、exe 元数据/签名、electron-builder afterPack |
+| `builder.json` | electron-builder 配置 |
+| `wanwu.iss` / `wizard.iss` | Inno Setup 安装脚本 |
 
 ```bash
 npm run pack -- --skip-library-pack   # 只改代码

@@ -1,7 +1,6 @@
 ﻿/** 图鉴条目查询、收藏聚合、用户上传配图 */
 import { randomUUID } from 'crypto'
 import type { DatabaseService } from '../core/database'
-import { LIBRARY_CATEGORIES } from './categories'
 import { loadLibraryCategories } from './seed'
 import { resolveItemCoverRelative, resolveMediaRelative, toLibraryMediaUrl } from '../media/library'
 import { readItemMarkdown, writeItemMarkdown } from './content'
@@ -78,8 +77,30 @@ function parseAttribution(json: string | null | undefined): MediaAttribution | n
   }
 }
 
+const LIST_ITEM_SQL = `SELECT i.id, i.category_id, i.sub_category_id, i.slug, i.name, i.summary, i.tags,
+  i.cover_path, i.cover_attribution, i.created_at, i.updated_at,
+  sc.name AS sub_category_name
+FROM items i
+LEFT JOIN categories sc ON sc.id = i.sub_category_id
+WHERE i.category_id = ?`
+
+const LIST_ITEM_BY_ID_PREFIX = `SELECT i.id, i.category_id, i.sub_category_id, i.slug, i.name, i.summary, i.tags,
+  i.cover_path, i.cover_attribution, i.created_at, i.updated_at,
+  sc.name AS sub_category_name
+FROM items i
+LEFT JOIN categories sc ON sc.id = i.sub_category_id
+WHERE i.id IN `
+
+const ITEM_BY_ID_SQL = `SELECT id, category_id, sub_category_id, slug, name, summary, description, tags,
+  cover_path, cover_attribution, content_file, specs, created_at, updated_at FROM items WHERE id = ?`
+
+const IN_QUERY_CHUNK = 400
+
 export class LibraryService {
   constructor(private readonly db: DatabaseService) {}
+
+  /** 条目 id → 分类 id，加速重复 getItem / 收藏查询 */
+  private readonly itemCategoryCache = new Map<string, string>()
 
   listCategories(): CategoryDto[] {
     const file = loadLibraryCategories()
@@ -124,57 +145,126 @@ export class LibraryService {
     }
     if (fromDb.length > 0) return fromDb
 
-    return LIBRARY_CATEGORIES.map((c) => ({
-      id: c.id,
-      name: c.name,
-      icon: c.icon,
-      parentId: null,
-      children: [] as CategoryDto[]
-    }))
+    return []
   }
 
   listItems(categoryId: string, subCategoryId?: string): ItemDto[] {
     const libDb = this.db.getLibraryDb(categoryId)
     if (!libDb) return []
 
-    const sql = `SELECT id, category_id, sub_category_id, slug, name, summary, description, tags,
-      cover_path, cover_attribution, content_file, specs, created_at, updated_at FROM items WHERE category_id = ?`
     let rows: Array<Record<string, unknown>>
     if (subCategoryId) {
-      rows = libDb.prepare(`${sql} AND sub_category_id = ? ORDER BY name`).all(categoryId, subCategoryId) as Array<
+      rows = libDb
+        .prepare(`${LIST_ITEM_SQL} AND i.sub_category_id = ? ORDER BY i.name`)
+        .all(categoryId, subCategoryId) as Array<Record<string, unknown>>
+    } else {
+      rows = libDb.prepare(`${LIST_ITEM_SQL} ORDER BY i.name`).all(categoryId) as Array<
         Record<string, unknown>
       >
-    } else {
-      rows = libDb.prepare(`${sql} ORDER BY name`).all(categoryId) as Array<Record<string, unknown>>
     }
 
-    return rows.map((r) => this.rowToItem(libDb, r))
+    for (const r of rows) {
+      this.itemCategoryCache.set(r.id as string, categoryId)
+    }
+    return rows.map((r) => this.rowToItemList(libDb, r))
   }
 
-  private mapFavoriteRow(row: {
-    id: string
-    item_id: string
-    source: string
-    group_id: string
-    created_at: string
-  }): FavoriteEntryDto {
-    const source = row.source === 'rss' ? 'rss' : 'library'
-    let item: FavoriteEntryDto['item'] = null
+  /** 批量查图鉴条目摘要（收藏列表等） */
+  private findLibraryListSummariesByIds(ids: Iterable<string>): Map<string, FavoriteEntryDto['item']> {
+    const out = new Map<string, FavoriteEntryDto['item']>()
+    const pending = new Set(ids)
+    if (pending.size === 0) return out
 
-    if (source === 'library') {
-      const full = this.getItem(row.item_id)
-      if (full) {
-        item = {
-          id: full.id,
-          name: full.name,
-          summary: full.summary,
-          coverPath: full.coverPath,
-          categoryId: full.categoryId,
-          subCategoryName: full.subCategoryName ?? null,
-          source: 'library'
+    for (const categoryId of this.db.listLibraryCategoryIds()) {
+      if (pending.size === 0) break
+      const libDb = this.db.getLibraryDb(categoryId)
+      if (!libDb) continue
+
+      const batch = Array.from(pending)
+      for (let i = 0; i < batch.length; i += IN_QUERY_CHUNK) {
+        const chunk = batch.slice(i, i + IN_QUERY_CHUNK)
+        const placeholders = chunk.map(() => '?').join(',')
+        const rows = libDb
+          .prepare(`${LIST_ITEM_BY_ID_PREFIX}(${placeholders})`)
+          .all(...chunk) as Array<Record<string, unknown>>
+
+        for (const r of rows) {
+          const dto = this.rowToItemList(libDb, r)
+          this.itemCategoryCache.set(dto.id, dto.categoryId)
+          pending.delete(dto.id)
+          out.set(dto.id, {
+            id: dto.id,
+            name: dto.name,
+            summary: dto.summary,
+            coverPath: dto.coverPath,
+            categoryId: dto.categoryId,
+            subCategoryName: dto.subCategoryName ?? null,
+            source: 'library'
+          })
         }
       }
     }
+    return out
+  }
+
+  /** 列表场景：不读 content.md、不加载 gallery、不扫目录找封面 */
+  private rowToItemList(libDb: import('better-sqlite3').Database, r: Record<string, unknown>): ItemDto {
+    let tags: string[] = []
+    try {
+      tags = JSON.parse((r.tags as string) || '[]')
+    } catch {
+      tags = []
+    }
+
+    const subId = (r.sub_category_id as string) ?? null
+    let subCategoryName = (r.sub_category_name as string | undefined) ?? null
+    if (subCategoryName == null && subId) {
+      const sub = libDb.prepare('SELECT name FROM categories WHERE id = ?').get(subId) as
+        | { name: string }
+        | undefined
+      subCategoryName = sub?.name ?? null
+    }
+
+    const coverRel = resolveItemCoverRelative({
+      coverPath: (r.cover_path as string) ?? null,
+      categoryId: r.category_id as string,
+      slug: (r.slug as string) ?? null,
+      allowDiscover: false
+    })
+
+    return {
+      id: r.id as string,
+      categoryId: r.category_id as string,
+      subCategoryId: subId,
+      subCategoryName,
+      slug: (r.slug as string) ?? null,
+      source: 'library',
+      name: r.name as string,
+      summary: (r.summary as string) ?? null,
+      description: null,
+      tags,
+      specs: {},
+      coverPath: toLibraryMediaUrl(coverRel),
+      coverAttribution: parseAttribution(r.cover_attribution as string | null),
+      gallery: [],
+      galleryAssets: [],
+      createdAt: r.created_at as string,
+      updatedAt: r.updated_at as string
+    }
+  }
+
+  private mapFavoriteRow(
+    row: {
+      id: string
+      item_id: string
+      source: string
+      group_id: string
+      created_at: string
+    },
+    libraryItems: Map<string, FavoriteEntryDto['item']>
+  ): FavoriteEntryDto {
+    const source = row.source === 'rss' ? 'rss' : 'library'
+    const item = source === 'library' ? (libraryItems.get(row.item_id) ?? null) : null
 
     return {
       id: row.id,
@@ -187,7 +277,10 @@ export class LibraryService {
   }
 
   listFavoriteEntries(): FavoriteEntryDto[] {
-    return this.db.listFavorites().map((row) => this.mapFavoriteRow(row))
+    const rows = this.db.listFavorites()
+    const libraryIds = rows.filter((r) => r.source !== 'rss').map((r) => r.item_id)
+    const libraryItems = this.findLibraryListSummariesByIds(libraryIds)
+    return rows.map((row) => this.mapFavoriteRow(row, libraryItems))
   }
 
   listFavoriteGroups(): FavoriteGroupDto[] {
@@ -209,16 +302,24 @@ export class LibraryService {
   }
 
   getItem(id: string): ItemDto | null {
+    const cachedCategory = this.itemCategoryCache.get(id)
+    if (cachedCategory) {
+      const libDb = this.db.getLibraryDb(cachedCategory)
+      if (libDb) {
+        const row = libDb.prepare(ITEM_BY_ID_SQL).get(id) as Record<string, unknown> | undefined
+        if (row) return this.rowToItem(libDb, row)
+      }
+      this.itemCategoryCache.delete(id)
+    }
+
     for (const categoryId of this.db.listLibraryCategoryIds()) {
       const libDb = this.db.getLibraryDb(categoryId)
       if (!libDb) continue
-      const row = libDb
-        .prepare(
-          `SELECT id, category_id, sub_category_id, slug, name, summary, description, tags,
-           cover_path, cover_attribution, content_file, specs, created_at, updated_at FROM items WHERE id = ?`
-        )
-        .get(id) as Record<string, unknown> | undefined
-      if (row) return this.rowToItem(libDb, row)
+      const row = libDb.prepare(ITEM_BY_ID_SQL).get(id) as Record<string, unknown> | undefined
+      if (row) {
+        this.itemCategoryCache.set(id, categoryId)
+        return this.rowToItem(libDb, row)
+      }
     }
     return null
   }

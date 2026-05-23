@@ -1,7 +1,8 @@
 import { app, BrowserWindow, nativeImage, protocol, shell } from 'electron'
-import { existsSync } from 'fs'
-import { readFile } from 'fs/promises'
+import { existsSync, statSync } from 'fs'
+import { createReadStream } from 'fs'
 import { extname, join } from 'path'
+import { Readable } from 'stream'
 import { resolveWanwuMediaAbsolute } from './services/media/wanwu'
 import { resolveAppLogoPath } from './services/media/appAssets'
 import { registerIpcHandlers } from './ipc/handlers'
@@ -229,13 +230,18 @@ app.whenReady().then(async () => {
       return new Response('Not Found', { status: 404 })
     }
     try {
-      const body = await readFile(abs)
-      return new Response(body, {
-        headers: {
-          'Content-Type': mediaMimeType(abs),
-          'Cache-Control': 'private, max-age=3600'
-        }
-      })
+      const stat = statSync(abs)
+      if (!stat.isFile()) {
+        return new Response('Not Found', { status: 404 })
+      }
+      const headers: Record<string, string> = {
+        'Content-Type': mediaMimeType(abs),
+        'Cache-Control': 'private, max-age=3600',
+        'Content-Length': String(stat.size)
+      }
+      const stream = createReadStream(abs)
+      const body = Readable.toWeb(stream) as ReadableStream<Uint8Array>
+      return new Response(body, { headers })
     } catch (err) {
       console.error('[wanwu] wanwu-media read failed', abs, err)
       return new Response('Not Found', { status: 404 })

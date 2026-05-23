@@ -13,8 +13,11 @@ export type RssAutoRefreshMinutes = 0 | 30 | 60 | 120
 /** 启动时窗口行为 */
 export type WindowStateMode = 'remember' | 'maximize' | 'default'
 
-/** 界面配色 */
-export type ColorScheme = 'light' | 'dark'
+/** 界面配色偏好；`system` 表示跟随操作系统 */
+export type ColorScheme = 'light' | 'dark' | 'system'
+
+/** 实际应用到 DOM 的配色 */
+export type ResolvedColorScheme = 'light' | 'dark'
 
 export interface AppSettings {
   navAlign: NavAlign
@@ -35,10 +38,11 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   lastActiveModule: 'library',
   rssAutoRefreshMinutes: 0,
   windowStateMode: 'remember',
-  colorScheme: 'light'
+  colorScheme: 'system'
 }
 
 export const COLOR_SCHEME_OPTIONS: Array<{ label: string; value: ColorScheme }> = [
+  { label: '跟随系统', value: 'system' },
   { label: '浅色', value: 'light' },
   { label: '深色', value: 'dark' }
 ]

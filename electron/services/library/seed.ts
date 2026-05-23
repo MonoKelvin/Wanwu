@@ -1,23 +1,28 @@
 ﻿/**
- * 图鉴种子：catalog.json 入库、增量/全量同步、启动后台 seed。
+ * 图鉴种子：从 items 目录各 JSON 入库、增量/全量同步、启动后台 seed。
  */
-import { existsSync, readFileSync, statSync, writeFileSync } from 'fs'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
 import type Database from 'better-sqlite3'
 import type { DatabaseService } from '../core/database'
 import type { MediaAttribution } from '../../../src/shared/types/unsplash'
-import { resolveLibraryMediaAbsolute } from '../media/library'
 import {
   loadLibraryCategories,
   syncLibraryCategories,
   type LibraryCategoriesFile,
   type LibraryCategoryDef
 } from './categories'
-import { getLibraryCatalogPath, getLibrarySeedRoot } from './paths'
+import {
+  computeSeedFingerprint,
+  getSeedFingerprintToken,
+  loadLibrarySeedCatalog,
+  loadLibrarySeedItems
+} from './itemSource'
 
 export type { LibraryCategoriesFile, LibraryCategoryDef } from './categories'
 export { loadLibraryCategories } from './categories'
+export { loadLibrarySeedCatalog, loadLibrarySeedItems, computeSeedFingerprint } from './itemSource'
 
 export const LIBRARY_CATALOG_SCHEMA = 3
 
@@ -75,15 +80,11 @@ export interface ImportLibraryResult {
   updated: number
 }
 
-function seedRoot(): string {
-  return getLibrarySeedRoot()
-}
-
 const CATALOG_IMPORT_MARKER = '.library-catalog-import'
 
-/** 与 catalog 内容/规模绑定的指纹；变更后才会重新扫描入库 */
-export function getCatalogSeedToken(catalog: LibraryCatalog): string {
-  return `schema:${catalog.schema ?? 0}:media:${catalog.mediaConfigVersion ?? 0}:n:${catalog.items.length}`
+/** 与种子 items 指纹绑定的 token；变更后才会重新扫描入库 */
+export function getCatalogSeedToken(_catalog?: LibraryCatalog): string {
+  return getSeedFingerprintToken(computeSeedFingerprint())
 }
 
 function catalogImportMarkerPath(basePath: string): string {
@@ -97,12 +98,8 @@ interface CatalogImportMarker {
   itemCount: number
 }
 
-function catalogJsonPath(): string {
-  return getLibraryCatalogPath()
-}
-
 function itemCountFromToken(token: string): number {
-  const m = /:n:(\d+)$/.exec(token)
+  const m = /:n:(\d+)(?::|$)/.exec(token)
   return m ? Number(m[1]) : 0
 }
 
@@ -122,25 +119,20 @@ function readCatalogImportMarker(basePath: string): CatalogImportMarker | null {
   }
 }
 
-export function writeCatalogImportMarker(basePath: string, catalog: LibraryCatalog): void {
-  const catalogPath = catalogJsonPath()
-  const stat = existsSync(catalogPath) ? statSync(catalogPath) : { mtimeMs: 0, size: 0 }
-  const body = [
-    getCatalogSeedToken(catalog),
-    String(stat.mtimeMs),
-    String(stat.size)
-  ].join('\n')
+export function writeCatalogImportMarker(basePath: string, _catalog?: LibraryCatalog): void {
+  const fp = computeSeedFingerprint()
+  const body = [getSeedFingerprintToken(fp), String(fp.newestMtimeMs), String(fp.totalBytes)].join('\n')
   writeFileSync(catalogImportMarkerPath(basePath), body, 'utf-8')
 }
 
-/** catalog 未变更且曾完整入库时，无需再读 1.6MB JSON */
+/** 种子未变更且曾完整入库时，无需再扫描全部 JSON */
 function tryFastSkipImportNew(dbService: DatabaseService): ImportLibraryResult | null {
-  const catalogPath = catalogJsonPath()
-  if (!existsSync(catalogPath)) return null
-  const stat = statSync(catalogPath)
+  const fp = computeSeedFingerprint()
+  if (fp.itemCount === 0) return null
   const marker = readCatalogImportMarker(dbService.getBasePath())
   if (!marker) return null
-  if (marker.mtimeMs !== stat.mtimeMs || marker.size !== stat.size) return null
+  if (marker.token !== getSeedFingerprintToken(fp)) return null
+  if (marker.mtimeMs !== fp.newestMtimeMs || marker.size !== fp.totalBytes) return null
   return { imported: 0, skipped: marker.itemCount, updated: 0 }
 }
 
@@ -164,16 +156,14 @@ function prepareLibraryDbsForImport(
   onProgress?: (progress: ImportLibraryProgress) => void
 ): void {
   const categoryDefs = categoriesFile?.categories ?? []
-  const catIds = [...new Set(items.map((i) => i.categoryId))]
+  const catIds = Array.from(new Set(items.map((i) => i.categoryId)))
   const total = catIds.length
   let current = 0
   for (const catId of catIds) {
-    const libDb = dbService.getLibraryDb(catId)
-    if (libDb) {
-      ensureItemColumns(libDb)
-      const catDef = categoryDefs.find((c) => c.id === catId)
-      if (catDef) syncLibraryCategories(libDb, catDef)
-    }
+    const catDef = categoryDefs.find((c) => c.id === catId)
+    const libDb = dbService.createLibraryDbForImport(catId, catDef?.name ?? catId)
+    ensureItemColumns(libDb)
+    if (catDef) syncLibraryCategories(libDb, catDef)
     current++
     onProgress?.({
       stage: 'prepare-categories',
@@ -406,9 +396,7 @@ function importItems(
 }
 
 export function loadLibraryCatalog(): LibraryCatalog | null {
-  const path = catalogJsonPath()
-  if (!existsSync(path)) return null
-  return JSON.parse(readFileSync(path, 'utf-8')) as LibraryCatalog
+  return loadLibrarySeedCatalog()
 }
 
 function importCatalogItems(
@@ -492,8 +480,9 @@ export function importLibraryCatalog(
   return { imported: 0, skipped: 0, updated: 0 }
 }
 
-/** 应用启动：后台增量入库 + 配图同步（不阻塞窗口） */
+/** 应用启动：后台增量入库 + 配图同步（开发环境含 items 种子时） */
 export function runStartupLibrarySeed(dbService: DatabaseService): void {
+  if (computeSeedFingerprint().itemCount === 0) return
   const t0 = Date.now()
   try {
     const seedResult = importLibraryCatalog(dbService, { importNew: true })

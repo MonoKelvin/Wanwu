@@ -1,12 +1,12 @@
 import { appLogoFor } from '@shared/assets/app-logo'
-import type { ColorScheme } from '@shared/types/settings'
+import type { ColorScheme, ResolvedColorScheme } from '@shared/types/settings'
 
-function currentScheme(): ColorScheme {
+function currentScheme(): ResolvedColorScheme {
   return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
 }
 
 /** 页面 favicon 与 assets/logo 同源，无需 public/ 目录 */
-export function setDocumentFavicon(scheme?: ColorScheme): void {
+export function setDocumentFavicon(scheme?: ResolvedColorScheme): void {
   const head = document.head
   for (const el of head.querySelectorAll('link[data-ww-favicon]')) {
     el.remove()

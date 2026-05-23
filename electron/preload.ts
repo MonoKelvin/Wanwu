@@ -50,6 +50,11 @@ const api: WanwuApi = {
   app: {
     getPaths: () => ipcRenderer.invoke('app:getPaths'),
     getStartupNotices: () => ipcRenderer.invoke('app:getStartupNotices'),
+    onStartupNotice: (listener: (message: string) => void) => {
+      const handler = (_event: unknown, message: string) => listener(message)
+      ipcRenderer.on('app:startup-notice', handler)
+      return () => ipcRenderer.removeListener('app:startup-notice', handler)
+    },
     openDataDirectory: () => ipcRenderer.invoke('app:openDataDirectory'),
     pickDataDirectoryParent: () => ipcRenderer.invoke('app:pickDataDirectoryParent'),
     migrateDataDirectory: (params) => ipcRenderer.invoke('app:migrateDataDirectory', params),

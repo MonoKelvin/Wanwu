@@ -35,21 +35,18 @@ export class DatabaseService {
     // 图鉴库按需打开；预编译数据包在 main 中后台解压
   }
 
-  /** 各分类图鉴库 id（从已安装的 library_*.sqlite 发现；开发无库时回退常量） */
+  /** 各分类图鉴库 id（仅从已存在的 library_*.sqlite 发现） */
   listLibraryCategoryIds(): string[] {
     const dbDir = join(this.basePath, 'db')
-    if (!existsSync(dbDir)) return LIBRARY_CATEGORIES.map((c) => c.id)
-    const ids = readdirSync(dbDir)
+    if (!existsSync(dbDir)) return []
+    return readdirSync(dbDir)
       .filter((f) => f.startsWith('library_') && f.endsWith('.sqlite'))
       .map((f) => f.slice('library_'.length, -'.sqlite'.length))
       .filter((id) => id.length > 0)
-    return ids.length > 0 ? ids : LIBRARY_CATEGORIES.map((c) => c.id)
   }
 
   closeAllLibraryDbs(): void {
-    for (const db of this.libraryDbs.values()) {
-      db.close()
-    }
+    this.libraryDbs.forEach((db) => db.close())
     this.libraryDbs.clear()
   }
 
@@ -99,7 +96,16 @@ export class DatabaseService {
     if (!settingsRow) {
       this.userDb
         .prepare('INSERT INTO app_settings (id, json) VALUES (1, ?)')
-        .run(JSON.stringify({ navAlign: 'start', navDisplay: 'icon', rssFetchLimit: 20, startupModule: 'last', lastActiveModule: 'library', rssAutoRefreshMinutes: 0 }))
+        .run(JSON.stringify({
+          navAlign: 'start',
+          navDisplay: 'icon',
+          rssFetchLimit: 20,
+          startupModule: 'last',
+          lastActiveModule: 'library',
+          rssAutoRefreshMinutes: 0,
+          windowStateMode: 'remember',
+          colorScheme: 'system'
+        }))
     }
   }
 
@@ -201,12 +207,9 @@ export class DatabaseService {
     return db
   }
 
-  private ensureLibraryDb(categoryId: string): Database.Database | undefined {
+  private openLibraryDbIfExists(categoryId: string): Database.Database | undefined {
     const dbPath = join(this.basePath, 'db', `library_${categoryId}.sqlite`)
-    if (!existsSync(dbPath)) {
-      const meta = LIBRARY_CATEGORIES.find((c) => c.id === categoryId)
-      if (!meta) return undefined
-    }
+    if (!existsSync(dbPath)) return undefined
     let db = this.libraryDbs.get(categoryId)
     if (!db) {
       const meta = LIBRARY_CATEGORIES.find((c) => c.id === categoryId)
@@ -216,8 +219,23 @@ export class DatabaseService {
     return db
   }
 
+  /** 只打开已存在的分类库；不存在时不创建文件 */
   getLibraryDb(categoryId: string): Database.Database | undefined {
-    return this.ensureLibraryDb(categoryId)
+    return this.openLibraryDbIfExists(categoryId)
+  }
+
+  /** 种子/图鉴包导入时创建或打开分类库 */
+  createLibraryDbForImport(categoryId: string, categoryName?: string): Database.Database {
+    const dbPath = join(this.basePath, 'db', `library_${categoryId}.sqlite`)
+    if (!existsSync(dbPath)) {
+      mkdirSync(join(this.basePath, 'db'), { recursive: true })
+    }
+    let db = this.libraryDbs.get(categoryId)
+    if (!db) {
+      db = this.openLibraryDb(categoryId, categoryName ?? categoryId)
+      this.libraryDbs.set(categoryId, db)
+    }
+    return db
   }
 
   getRssDb(): Database.Database {

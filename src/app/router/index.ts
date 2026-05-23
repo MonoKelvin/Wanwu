@@ -1,10 +1,21 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupModulePathMemory } from '@app/router/moduleMemory'
+import { useSettingsStore } from '@shared/stores/settings'
+import { resolveStartupPath } from '@shared/utils/startupModule'
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
-    { path: '/', redirect: '/library' },
+    {
+      path: '/',
+      name: 'root',
+      beforeEnter: async () => {
+        const store = useSettingsStore()
+        if (!store.loaded) await store.load()
+        return { path: resolveStartupPath(store.settings), replace: true }
+      },
+      component: { template: '<div />' }
+    },
     {
       path: '/library/:catId?/:subId?',
       name: 'library',

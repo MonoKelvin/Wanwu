@@ -38,7 +38,8 @@ function normalizeWindowStateMode(v: unknown): WindowStateMode {
 }
 
 function normalizeColorScheme(v: unknown): ColorScheme {
-  return v === 'dark' ? 'dark' : 'light'
+  if (v === 'dark' || v === 'light' || v === 'system') return v
+  return 'system'
 }
 
 export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppSettings {

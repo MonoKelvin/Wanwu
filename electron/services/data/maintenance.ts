@@ -1,5 +1,5 @@
 ﻿import { app, dialog } from 'electron'
-import { ZipArchive } from 'archiver'
+import { ZipArchive } from '../zipArchive'
 import { createRequire } from 'node:module'
 import { cpSync, createWriteStream, existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'fs'
 import { mkdir, stat, writeFile } from 'fs/promises'

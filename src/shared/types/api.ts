@@ -74,6 +74,8 @@ export interface WanwuApi {
       isCustom: boolean
     }>
     getStartupNotices: () => Promise<string[]>
+    /** 图鉴 bootstrap 完成后推送（如导入失败提示） */
+    onStartupNotice: (listener: (message: string) => void) => () => void
     openDataDirectory: () => Promise<{ ok: boolean }>
     pickDataDirectoryParent: () => Promise<
       | { ok: true; parentDir: string; targetPath: string }

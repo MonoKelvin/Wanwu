@@ -1,4 +1,3 @@
-import html2canvas from 'html2canvas'
 import type { ShareExportFormat } from '@features/item/utils/exportDetailHtml'
 
 export type ShareImageFormat = ShareExportFormat
@@ -38,6 +37,7 @@ export async function captureDetailLongImage(
   root: HTMLElement,
   format: Exclude<ShareExportFormat, 'html'> = 'png'
 ): Promise<string> {
+  const { default: html2canvas } = await import('html2canvas')
   const canvas = await html2canvas(root, {
     scale: Math.min(2, window.devicePixelRatio || 1.5),
     useCORS: true,

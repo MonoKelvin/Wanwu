@@ -44,7 +44,6 @@ import {
   restoreDataBackup
 } from '../services/data/maintenance'
 import { DEFAULT_APP_SETTINGS } from '../../src/shared/types/settings'
-import { waitForLibraryBootstrap } from '../services/library/pack'
 
 export interface AppServices {
   db: DatabaseService | null
@@ -276,10 +275,7 @@ export function registerIpcHandlers(services: AppServices): void {
     isCustom: isCustomWanwuPath()
   }))
 
-  ipcMain.handle('app:getStartupNotices', async () => {
-    await waitForLibraryBootstrap(120_000).catch(() => {})
-    return consumeStartupNotices()
-  })
+  ipcMain.handle('app:getStartupNotices', () => consumeStartupNotices())
 
   ipcMain.handle('app:openDataDirectory', () => {
     const dir = resolveWanwuPath()

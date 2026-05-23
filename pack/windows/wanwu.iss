@@ -23,6 +23,13 @@
   #define ChineseLangFile "compiler:Default.isl"
 #endif
 
+#ifndef LicenseFile
+  #define LicenseFile "..\..\LICENSE"
+#endif
+#ifndef AppCopyright
+  #define AppCopyright "Copyright (C) MonoStudio"
+#endif
+
 #define MyAppName "万物"
 #define MyAppPublisher "MonoStudio"
 #define MyAppURL "https://github.com/MonoKelvin/Wanwu"
@@ -63,6 +70,9 @@ UninstallDisplayIcon={#SourcePath}\..\app.ico
 VersionInfoVersion={#AppVersion}
 VersionInfoProductName={#MyAppName}
 VersionInfoCompany={#MyAppPublisher}
+VersionInfoCopyright={#AppCopyright}
+VersionInfoDescription={#MyAppName} 安装程序
+LicenseFile={#LicenseFile}
 ChangesAssociations=no
 
 [Languages]
@@ -74,6 +84,7 @@ Name: "desktopicon"; Description: "桌面快捷方式"; GroupDescription: "附�
 ; 图鉴数据包单独分发，由安装向导复制到用户数据目录
 [Files]
 Source: "{#StageDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#LicenseFile}"; DestDir: "{app}"; DestName: "LICENSE"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#AppExeName}"; IconFilename: "{#SourcePath}\..\app.ico"

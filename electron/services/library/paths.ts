@@ -1,4 +1,4 @@
-import { existsSync } from 'fs'
+import { existsSync, readdirSync } from 'fs'
 import { dirname, join } from 'path'
 import { getWanwuDataDirectory, readWanwuPathConfig } from '../data/paths'
 import { getBundledAssetsRoot } from '../core/assetsRoot'
@@ -9,14 +9,32 @@ export function getLibrarySeedRoot(): string {
   return join(getBundledAssetsRoot(), 'seed', 'library')
 }
 
+export function getLibraryItemsDir(): string {
+  return join(getLibrarySeedRoot(), 'items')
+}
+
+function hasAnySeedItemJson(dir: string): boolean {
+  if (!existsSync(dir)) return false
+  for (const ent of readdirSync(dir, { withFileTypes: true })) {
+    const abs = join(dir, ent.name)
+    if (ent.isDirectory()) {
+      if (hasAnySeedItemJson(abs)) return true
+      continue
+    }
+    if (ent.isFile() && ent.name.endsWith('.json') && !ent.name.startsWith('_')) return true
+  }
+  return false
+}
+
 export function isBundledLibrarySeedAvailable(): boolean {
-  return existsSync(getLibraryCatalogPath())
+  return hasAnySeedItemJson(getLibraryItemsDir())
 }
 
 export function getLibraryCategoriesPath(): string {
   return join(getLibrarySeedRoot(), 'categories.json')
 }
 
+/** @deprecated 图鉴种子已改为 items 目录独立 JSON，不再使用 catalog.json */
 export function getLibraryCatalogPath(): string {
   return join(getLibrarySeedRoot(), 'catalog.json')
 }

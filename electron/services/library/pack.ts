@@ -5,15 +5,16 @@ import { copyFileSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync,
 import { join } from 'path'
 import extract from 'extract-zip'
 import type { DatabaseService } from '../core/database'
+import { getMainWindow } from '../../windowState'
 import { getBundledAssetsRoot } from '../core/assetsRoot'
 import { getWanwuResourcesDirectory, patchWanwuPathConfig, readWanwuPathConfig } from '../data/paths'
 import {
   discoverLibraryPackZip,
-  getLibraryCatalogPath,
   isBundledLibrarySeedAvailable,
   LIBRARY_PACK_ZIP
 } from './paths'
 import { getCatalogSeedToken, type LibraryCatalog } from './seed'
+import { computeSeedFingerprint } from './itemSource'
 
 const CATALOG_IMPORT_MARKER = '.library-catalog-import'
 
@@ -56,6 +57,7 @@ export function consumeStartupNotices(): string[] {
 function pushStartupNotice(message: string): void {
   startupNotices.push(message)
   console.warn('[libraryPack]', message)
+  getMainWindow()?.webContents.send('app:startup-notice', message)
 }
 
 function packMarkerPath(basePath: string): string {
@@ -77,14 +79,13 @@ export function writePackMarker(basePath: string, manifest: LibraryPackManifest)
   writeFileSync(packMarkerPath(basePath), `${JSON.stringify(manifest, null, 2)}\n`, 'utf-8')
 }
 
-export function buildManifestFromCatalog(catalog: LibraryCatalog, libraryDbCount: number): LibraryPackManifest {
-  const catalogPath = getLibraryCatalogPath()
-  const stat = existsSync(catalogPath) ? statSync(catalogPath) : { mtimeMs: 0, size: 0 }
+export function buildManifestFromCatalog(_catalog: LibraryCatalog, libraryDbCount: number): LibraryPackManifest {
+  const fp = computeSeedFingerprint()
   return {
     packVersion: 1,
-    catalogToken: getCatalogSeedToken(catalog),
-    catalogMtimeMs: stat.mtimeMs,
-    catalogSize: stat.size,
+    catalogToken: getCatalogSeedToken(),
+    catalogMtimeMs: fp.newestMtimeMs,
+    catalogSize: fp.totalBytes,
     builtAt: new Date().toISOString(),
     libraryDbCount
   }

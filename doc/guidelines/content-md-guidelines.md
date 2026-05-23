@@ -62,4 +62,4 @@
 
 ## 维护方式
 
-直接编辑 `assets/library/{category}/{slug}/content.md` 与对应 `assets/seed/library/items/**/*.json`，更新 `catalog.json` 后执行 `npm run build` 生成数据包。
+直接编辑 `assets/library/{category}/{slug}/content.md` 与对应 `assets/seed/library/items/` 下 JSON，执行 `npm run build` 生成数据包。

@@ -19,7 +19,7 @@ import '@app/styles/theme-components.css'
 import App from '@app/App.vue'
 import router from '@app/router'
 
-applyColorScheme(readStoredColorScheme() ?? 'light')
+applyColorScheme(readStoredColorScheme() ?? 'system')
 
 const app = createApp(App)
 app.use(createPinia())

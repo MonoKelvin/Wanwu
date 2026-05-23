@@ -2,7 +2,7 @@
  * 安装程序在安装阶段调用：将 library-data-pack.zip 解压到用户数据目录。
  * 通过 Wanwu.exe --installer-import-library-pack "<dataDir>" ["<zipPath>"] 触发。
  */
-import { existsSync, rmSync } from 'fs'
+import { existsSync, mkdirSync, rmSync } from 'fs'
 import { join, normalize, resolve } from 'path'
 import {
   applyBundledLibraryPack,
@@ -38,13 +38,18 @@ export async function runInstallerLibraryPackImport(
     return { ok: false, status: 'failed', message: '数据目录无效' }
   }
 
+  mkdirSync(dataPath, { recursive: true })
+  for (const sub of ['db', 'media', 'cache', 'resources']) {
+    mkdirSync(join(dataPath, sub), { recursive: true })
+  }
+
   const zipPath = normalize(
     resolve((rawZipPath?.trim() || join(dataPath, LIBRARY_PACK_ZIP)).trim())
   )
 
   if (!existsSync(zipPath)) {
     patchWanwuPathConfig({ wanwuPath: dataPath, libraryPackPath: '' })
-    return { ok: true, status: 'none', message: '未找到图鉴数据包，已跳过导入' }
+    return { ok: true, status: 'none', message: '未指定图鉴包，已应用数据目录' }
   }
 
   const manifest = await readManifestFromZip(zipPath)

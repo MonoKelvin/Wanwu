@@ -28,11 +28,11 @@
 
 ## 图鉴内容
 
-正文与规格约定见 `doc/content-md-guidelines.md`。直接编辑 `assets/library/**/content.md` 与 `assets/seed/library/items/**/*.json`。
+正文与规格约定见 [doc/guidelines/content-md-guidelines.md](../doc/guidelines/content-md-guidelines.md)。
 
 ## 数据发布
 
-编辑 `assets/seed/library/items/**/*.json` 与 `assets/library/**/content.md` 后更新 `catalog.json`，再执行：
+编辑 `assets/seed/library/items/` 下 JSON 与 `assets/library/` 下 `content.md` 后执行：
 
 ```bash
 npm run build

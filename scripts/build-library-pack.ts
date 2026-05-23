@@ -1,5 +1,5 @@
 /**
- * 从 assets/seed/library/catalog.json 生成预编译图鉴 SQLite 数据包
+ * 从 assets/seed/library/items 各 JSON 生成预编译图鉴 SQLite 数据包
  *
  *   npm run build（第一步）
  *
@@ -7,7 +7,7 @@
  */
 import { createWriteStream, existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import { createRequire } from 'module'
+import { ZipArchive } from '../electron/services/zipArchive'
 import { DatabaseService } from '../electron/services/core/database'
 import type { ImportLibraryProgress } from '../electron/services/library/seed'
 import {
@@ -17,9 +17,6 @@ import {
 } from '../electron/services/library/seed'
 import { buildManifestFromCatalog, LIBRARY_PACK_MARKER } from '../electron/services/library/pack'
 
-const require = createRequire(import.meta.url)
-const { ZipArchive } = require('archiver') as typeof import('archiver')
-
 const root = process.cwd()
 const outDir = join(root, 'assets', 'packed')
 const zipPath = join(outDir, 'library-data-pack.zip')
@@ -28,15 +25,61 @@ const MEDIA_FILE = /\.(jpe?g|png|webp|md)$/i
 const cacheDir = join(root, '.cache', 'wanwu-library-pack')
 const CATALOG_IMPORT_MARKER = '.library-catalog-import'
 
+/** 构建前删除旧 zip 与 staging，避免半成品污染本次 library-data-pack.zip */
+function cleanLibraryPackBuildOutputs(): void {
+  rmSync(cacheDir, { recursive: true, force: true })
+  mkdirSync(outDir, { recursive: true })
+  if (!existsSync(outDir)) return
+  for (const name of readdirSync(outDir)) {
+    if (!/\.zip$/i.test(name)) continue
+    const p = join(outDir, name)
+    if (!UNIFIED_PACK) console.log(`[build] 清理旧图鉴 zip: ${p}`)
+    rmSync(p, { force: true })
+  }
+}
+
 const STAGE_LABEL: Record<ImportLibraryProgress['stage'], string> = {
   'prepare-categories': '准备分类库',
   'import-items': '写入条目',
   'cleanup-category': '清理分类'
 }
 
+const UNIFIED_PACK = process.env.WANWU_PACK_PROGRESS === '1'
+const WANWU_PROGRESS_MARKER = '@@WANWU_PROGRESS@@'
+
+function emitUnifiedProgress(local: number, label: string): void {
+  const line = `${WANWU_PROGRESS_MARKER}${JSON.stringify({
+    local: Math.min(1, Math.max(0, local)),
+    label
+  })}\n`
+  process.stderr.write(line)
+}
+
+const UNIFIED_PHASE = {
+  catalog: { start: 0, end: 0.03 },
+  clean: { start: 0.03, end: 0.06 },
+  import: { start: 0.06, end: 0.7 },
+  manifest: { start: 0.7, end: 0.74 },
+  zip: { start: 0.74, end: 1 }
+} as const
+
+type UnifiedPhase = keyof typeof UNIFIED_PHASE
+
+function emitPhaseProgress(phase: UnifiedPhase, local: number, label: string): void {
+  const range = UNIFIED_PHASE[phase]
+  const text = label.length > 72 ? `${label.slice(0, 71)}…` : label
+  emitUnifiedProgress(range.start + (range.end - range.start) * Math.min(1, Math.max(0, local)), text)
+}
+
 interface PackProgress {
-  step(title: string): void
-  progress(label: string, current: number, total: number, detail?: string): void
+  step(title: string, phase?: UnifiedPhase): void
+  progress(
+    label: string,
+    current: number,
+    total: number,
+    detail?: string,
+    phase?: UnifiedPhase
+  ): void
   done(message: string): void
 }
 
@@ -44,7 +87,7 @@ function createPackProgress(prefix = '[build]'): PackProgress {
   const t0 = Date.now()
   let lastLineAt = 0
   let lastPct = -1
-  const isTTY = Boolean(process.stdout.isTTY)
+  const isTTY = Boolean(process.stdout.isTTY) && !UNIFIED_PACK
 
   function elapsedSec(): string {
     return ((Date.now() - t0) / 1000).toFixed(0)
@@ -57,12 +100,23 @@ function createPackProgress(prefix = '[build]'): PackProgress {
   }
 
   return {
-    step(title) {
+    step(title, phase = 'catalog') {
+      if (UNIFIED_PACK) {
+        emitPhaseProgress(phase, 0, title)
+        return
+      }
       if (isTTY) process.stdout.write('\n')
       console.log(`${prefix} ▶ ${title}`)
     },
 
-    progress(label, current, total, detail = '') {
+    progress(label, current, total, detail = '', phase = 'import') {
+      const local = total > 0 ? current / total : 0
+      if (UNIFIED_PACK) {
+        const extra = detail ? ` · ${detail}` : ''
+        emitPhaseProgress(phase, local, `${label} ${current}/${total}${extra}`)
+        return
+      }
+
       const pct = total > 0 ? Math.min(100, Math.floor((current * 100) / total)) : 0
       const now = Date.now()
       const throttle = now - lastLineAt < 150
@@ -83,6 +137,10 @@ function createPackProgress(prefix = '[build]'): PackProgress {
     },
 
     done(message) {
+      if (UNIFIED_PACK) {
+        emitUnifiedProgress(1, message)
+        return
+      }
       if (isTTY) process.stdout.write('\n')
       console.log(`${prefix} ✓ ${message}（总耗时 ${elapsedSec()}s）`)
     }
@@ -122,7 +180,8 @@ async function zipPack(
   const mediaFiles = collectLibraryMediaFiles()
   const totalEntries = dbFiles.length + mediaFiles.length + 1
   log.step(
-    `压缩数据包：${dbFiles.length} 个库文件 + ${mediaFiles.length} 个图鉴媒体 → library-data-pack.zip`
+    `压缩数据包：${dbFiles.length} 个库文件 + ${mediaFiles.length} 个图鉴媒体 → library-data-pack.zip`,
+    'zip'
   )
 
   await new Promise<void>((resolve, reject) => {
@@ -132,10 +191,10 @@ async function zipPack(
 
     output.on('close', () => resolve())
     archive.on('error', reject)
-    archive.on('entry', (entry) => {
+    archive.on('entry', (entry: { name?: string }) => {
       packed++
-      const name = typeof entry === 'object' && entry && 'name' in entry ? String(entry.name) : ''
-      log.progress('打包', packed, totalEntries, name.split('/').pop())
+      const name = entry.name ?? ''
+      log.progress('打包', packed, totalEntries, name.split('/').pop(), 'zip')
     })
 
     archive.pipe(output)
@@ -151,36 +210,38 @@ async function zipPack(
 }
 
 function mapSeedProgress(log: PackProgress, p: ImportLibraryProgress): void {
-  log.progress(STAGE_LABEL[p.stage], p.current, p.total, p.detail)
+  log.progress(STAGE_LABEL[p.stage], p.current, p.total, p.detail, 'import')
 }
 
 async function main(): Promise<void> {
   const log = createPackProgress()
 
-  log.step('读取 assets/seed/library/catalog.json')
+  log.step('扫描 assets/seed/library/items', 'catalog')
   const catalog = loadLibraryCatalog()
   if (!catalog?.items?.length) {
-    console.error('[build] 未找到 catalog.json 或条目为空，请先维护种子 JSON 并提交 catalog.json')
+    console.error('[build] 未找到种子条目，请维护 assets/seed/library/items 下各 JSON')
     process.exit(1)
   }
-  console.log(`[build]   共 ${catalog.items.length} 条`)
+  if (!UNIFIED_PACK) console.log(`[build]   共 ${catalog.items.length} 条`)
 
-  log.step('清理缓存并初始化数据库目录')
-  rmSync(cacheDir, { recursive: true, force: true })
+  log.step('清理图鉴包旧产物与缓存', 'clean')
+  cleanLibraryPackBuildOutputs()
   mkdirSync(join(cacheDir, 'db'), { recursive: true })
 
-  log.step(`根据 catalog 生成 SQLite（约 1–3 分钟）`)
+  log.step(`根据种子 JSON 生成 SQLite（约 1–3 分钟）`, 'import')
   const db = new DatabaseService(cacheDir)
   await db.init({ skipLibrarySeed: true })
   const result = importLibraryCatalog(db, {
     full: true,
     onProgress: (p) => mapSeedProgress(log, p)
   })
-  console.log(
-    `[build]   写入 ${result.imported} · 更新 ${result.updated} · 跳过 ${result.skipped}`
-  )
+  if (!UNIFIED_PACK) {
+    console.log(
+      `[build]   写入 ${result.imported} · 更新 ${result.updated} · 跳过 ${result.skipped}`
+    )
+  }
 
-  log.step('写入版本标记')
+  log.step('写入版本标记', 'manifest')
   writeCatalogImportMarker(cacheDir, catalog)
   writeFileSync(
     join(cacheDir, 'db', '.library-media-sync'),
