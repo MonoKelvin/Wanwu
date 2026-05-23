@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { Group } from 'three'
-import SceneCanvas from '@modules/scene-renderer/components/SceneCanvas.vue'
-import type { SceneRenderer } from '@modules/scene-renderer/core/SceneRenderer'
+import SceneCanvas from '@renderer/components/SceneCanvas.vue'
+import type { SceneRenderer } from '@renderer/core/SceneRenderer'
 import { CLOUD_ABODE_SHOWROOM } from '@modules/cloud-abode/config/showroomAssets'
 import { assetUrl, vehicleItemAssetUrl } from '@shared/utils/assetUrl'
 import ColorBar from '../components/ColorBar.vue'

@@ -1,7 +1,7 @@
 # 万物（Wanwu）
 
 > 本仓库中**所有代码、文档与资源**均由 [**Cursor Agent**](https://cursor.com) 参与生成；部分图片和文档信息经由 [**Trae SOLO**](https://solo.trae.cn/) 收集并整理；开发者本人负责监督和取餐。鼠鼠我呀，是一行代码都不想写了~(￣▽￣)~*
-> 
+>
 > **郑重声明：** 本项目仅供学习与非商业使用；素材可能涉及第三方版权，商业使用及由此产生的法律责任由使用者自行承担。
 
 <p align="center">
@@ -26,7 +26,7 @@
 | **个人空间** | 给喜欢的条目点收藏、分组；可填写昵称、头像等简单资料 |
 | **资讯订阅** | 自行添加 RSS 订阅源，在软件内阅读拉取到的文章列表 |
 
-适合：想**离线或本地查阅**兴趣知识、做主题收藏、顺带读订阅资讯的用户。  
+适合：想**离线或本地查阅**兴趣知识、做主题收藏、顺带读订阅资讯的用户。
 不适合：需要多人协作编辑、实时云端同步或复杂办公场景——万物更偏向**个人本地查阅与整理**。
 
 ---
@@ -106,7 +106,8 @@
 
 ### 技术栈
 
-Electron · Vue 3 · Pinia · PrimeVue · better-sqlite3 · electron-vite · TypeScript。云斋展车使用 Three.js 与自研 `scene-renderer` 模块。
+Electron · Vue 3 · Pinia · PrimeVue · better-sqlite3 · electron-vite · TypeScript。
+三维渲染模块使用 Three.js 与自研 `renderer` 模块。
 
 ### 环境要求
 
@@ -142,8 +143,8 @@ npm run dev
 | `src/modules/library` | 全库浏览与条目 |
 | `src/modules/rss` | 订阅与阅读 |
 | `src/modules/cloud-abode` | 云斋（展车、车型配置） |
-| `src/modules/scene-renderer` | 通用 WebGL / Three.js 渲染 |
 | `src/modules/personal`、`settings` | 个人与设置 |
+| `src/renderer` | 通用 WebGL / Three.js 渲染 |
 | `assets/` | 图鉴种子与媒体、云斋 3D 资源、应用图标等 |
 
 开发与发布时的资源约定、逆向与里程碑等细节放在 `doc/design/`，发布前再统一整理对外说明。
