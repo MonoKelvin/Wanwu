@@ -1,10 +1,12 @@
 import * as THREE from 'three'
 import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/config/showroomLighting'
+import { upgradeStandardToPhysical } from '@renderer/materials/ShaderLibrary'
 
 export interface ShowroomTextureUrls {
   floorNormal: string
   floorRoughness: string
   showroomAo: string
+  /** 地板聚光遮罩 + 车身接触阴影（与实时 Spot 叠加） */
   showroomLight: string
 }
 
@@ -33,6 +35,19 @@ function ensureUv2(mesh: THREE.Mesh): void {
   const geo = mesh.geometry
   if (!geo.attributes.uv || geo.attributes.uv2) return
   geo.setAttribute('uv2', geo.attributes.uv)
+}
+
+function ensureFloorPhysicalMaterial(mesh: THREE.Mesh): THREE.MeshPhysicalMaterial | null {
+  const raw = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material
+  if (!raw) return null
+  if (raw instanceof THREE.MeshPhysicalMaterial) return raw
+  if (!(raw instanceof THREE.MeshStandardMaterial)) return null
+  const physical = upgradeStandardToPhysical(raw)
+  if (physical !== raw) {
+    if (Array.isArray(mesh.material)) mesh.material[0] = physical
+    else mesh.material = physical
+  }
+  return physical
 }
 
 /** 在 GLTF ReflecFloor 原有材质上挂贴图（su7 StartRoom，不创建新平面） */
@@ -92,9 +107,8 @@ export async function applyShowroomMaterials(
     ensureUv2(mesh)
     if (!isFloorMesh(mesh)) return
 
-    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
-    for (const mat of materials) {
-      if (mat) patchFloorMaterial(mat, floorMaps)
-    }
+    const physical = ensureFloorPhysicalMaterial(mesh)
+    if (!physical) return
+    patchFloorMaterial(physical, floorMaps)
   })
 }

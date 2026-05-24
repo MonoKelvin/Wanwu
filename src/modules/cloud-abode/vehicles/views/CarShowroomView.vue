@@ -28,7 +28,6 @@ import {
   prepareShowroomScene
 } from '../services/showroomScene'
 import { initShowroomDynamicEnvironment } from '../services/showroomEnvironment'
-import LeftCustomBar from '../components/LeftCustomBar.vue'
 import { loadVehicleItem } from '../services/loadVehicleCatalog'
 import { useVehicleGarageStore } from '../stores/vehicleGarage'
 import { useShowroomPrefsStore } from '../stores/showroomPrefs'
@@ -118,51 +117,78 @@ function disposeCanvasInteraction(): void {
 }
 
 const { muted } = storeToRefs(prefs)
+const { config: garageConfig, activeItem: garageItem } = storeToRefs(garage)
 const bgmUrl = assetUrl(CLOUD_ABODE_SHOWROOM.bgm)
 const { play: playBgm, stop: stopBgm } = useShowroomBgm(bgmUrl, muted)
 
-async function onReady(r: SceneRenderer) {
-  disposeCanvasInteraction()
-  renderer = r
-  director?.dispose()
-  director = new ShowroomDirector(r.engine, {
-    reflectionFloorTintMul: SHOWROOM_LIGHTING.floorTintMul
-  })
-  pathTracingSupported.value = r.engine.capabilities.pathTracing
-  pathTracingActive.value = false
-  pathTracingSamples.value = 0
-  stopPathTracingPoll()
-  r.storeBloomRest(
-    SHOWROOM_LIGHTING.bloomIntensity,
-    SHOWROOM_LIGHTING.bloomLuminanceSmoothing
+function onBodyColorChange(color: string): void {
+  garage.patchConfig({ bodyColor: color })
+  if (!carRoot.value) return
+  applyBodyColor(
+    carRoot.value,
+    color,
+    garageItem.value?.customization.paintMeshes
   )
-  r.setBloomIntensity(SHOWROOM_LIGHTING.bloomIntensity)
-  r.setBloomSmoothing(SHOWROOM_LIGHTING.bloomLuminanceSmoothing)
-  sceneReady.value = false
+}
+
+async function onReady(r: SceneRenderer) {
   loading.value = true
   error.value = ''
   progress.value = 0
-  carRoot.value = null
-  viewMode.value = 'customize'
-
-  const item = loadVehicleItem(props.slug)
-  if (!item) {
-    error.value = '未找到车型配置'
-    loading.value = false
-    return
-  }
-
-  garage.bindVehicle(item)
-
-  const fail = (step: string, e: unknown): never => {
-    console.error(`[CarShowroom] 失败步骤: ${step}`, e)
-    if (e instanceof Error) {
-      throw new Error(`${step}: ${e.message}`, { cause: e })
-    }
-    throw new Error(`${step}: ${String(e)}`)
-  }
 
   try {
+    disposeCanvasInteraction()
+    try {
+      director?.dispose()
+    } catch (e) {
+      console.warn('[CarShowroom] 清理旧 director 失败', e)
+    }
+    director = null
+
+    renderer = r
+    director = new ShowroomDirector(r.engine, {
+      reflectionFloorTintMul: SHOWROOM_LIGHTING.floorTintMul
+    })
+    pathTracingSupported.value = r.engine.capabilities.pathTracing
+    pathTracingActive.value = false
+    pathTracingSamples.value = 0
+    stopPathTracingPoll()
+    r.storeBloomRest(
+      SHOWROOM_LIGHTING.bloomIntensity,
+      SHOWROOM_LIGHTING.bloomLuminanceSmoothing
+    )
+    r.setBloomIntensity(SHOWROOM_LIGHTING.bloomIntensity)
+    r.setBloomSmoothing(SHOWROOM_LIGHTING.bloomLuminanceSmoothing)
+    r.setCameraFov(SHOWROOM_LIGHTING.cameraFov)
+    r.engine.controls.target.set(
+      SHOWROOM_LIGHTING.orbitTarget.x,
+      SHOWROOM_LIGHTING.orbitTarget.y,
+      SHOWROOM_LIGHTING.orbitTarget.z
+    )
+    r.engine.threeCamera.position.set(0, 0.8, -7)
+    r.engine.syncOrbitControls()
+    r.resize()
+
+    sceneReady.value = false
+    carRoot.value = null
+    viewMode.value = 'customize'
+
+    const item = loadVehicleItem(props.slug)
+    if (!item) {
+      error.value = '未找到车型配置'
+      return
+    }
+
+    garage.bindVehicle(item)
+
+    const fail = (step: string, e: unknown): never => {
+      console.error(`[CarShowroom] 失败步骤: ${step}`, e)
+      if (e instanceof Error) {
+        throw new Error(`${step}: ${e.message}`, { cause: e })
+      }
+      throw new Error(`${step}: ${String(e)}`)
+    }
+
     const cfg = garage.config ?? item.customization.defaultConfig
     await initShowroomDynamicEnvironment(
       r.engine,
@@ -196,14 +222,11 @@ async function onReady(r: SceneRenderer) {
     })
     applyCustomization(car, item.customization, cfg.wheelId, cfg.liveryId)
     if (handles) {
-      try {
-        enableReflecFloorShader(handles, SHOWROOM_LIGHTING.floorTintMul)
-        attachShowroomFloorReflector(r.engine, handles, car)
-        director.bindShowroom(handles)
-        director.playEnter(handles)
-      } catch (e) {
-        fail('enableReflecFloorShader/attachReflector/playEnter', e)
-      }
+      enableReflecFloorShader(handles, SHOWROOM_LIGHTING.floorTintMul)
+      attachShowroomFloorReflector(r.engine, handles, car)
+      director.bindShowroom(handles)
+      await director.initLightRig(handles)
+      director.playEnter(handles)
     } else {
       console.error('[CarShowroom] 未找到展厅 floor/light 句柄，聚光与反射不可用')
     }
@@ -270,13 +293,13 @@ onBeforeUnmount(() => {
 })
 
 watch(
-  () => garage.config?.bodyColor,
+  () => garageConfig.value?.bodyColor,
   (color) => {
     if (!color || !carRoot.value) return
     applyBodyColor(
       carRoot.value,
       color,
-      garage.activeItem?.customization.paintMeshes
+      garageItem.value?.customization.paintMeshes
     )
   }
 )
@@ -315,74 +338,51 @@ watch(
     <ShowroomPreloader :visible="loading" :progress="progress" />
     <div
       v-if="error && !loading"
-      class="absolute inset-0 z-10 flex items-center justify-center bg-black/70 p-6 text-center text-sm text-red-300"
+      class="ww-showroom-error absolute inset-0 z-10 flex items-center justify-center p-6 text-center"
     >
       {{ error }}
     </div>
-    <div
-      v-if="!loading && !error"
-      class="pointer-events-none absolute inset-x-0 top-3 z-10 flex items-start justify-between px-4"
-    >
-      <p class="text-xs text-white/50">
-        长按画布进入行驶，松开恢复 · 右侧切换展示模式
-      </p>
-      <ShowroomHud
-        :path-tracing-supported="pathTracingSupported"
-        :path-tracing-active="pathTracingActive"
-        :path-tracing-samples="pathTracingSamples"
-        :path-tracing-loading="pathTracingLoading"
-        @screenshot="captureScreenshot"
-        @path-tracing-toggle="togglePathTracingPreview"
-      />
-    </div>
     <ScreenshotFlash ref="screenshotFlash" />
-    <p
-      v-if="viewMode === 'radar' && !loading"
-      class="pointer-events-none absolute inset-x-0 top-14 z-10 text-center text-xs text-cyan-300/80"
-    >
-      雷达感知（v1 占位视角）
-    </p>
-    <p
-      v-if="viewMode === 'size' && !loading"
-      class="pointer-events-none absolute inset-x-0 top-14 z-10 text-center text-xs text-white/60"
-    >
-      车身尺寸（v1 占位视角）
-    </p>
-    <div
-      v-if="!loading && !error && garage.config && garage.activeItem"
-      class="pointer-events-none absolute inset-y-0 left-4 z-10 flex items-center"
-    >
-      <LeftCustomBar
-        class="pointer-events-auto"
-        :body-color="garage.config.bodyColor"
-        :wheel-id="garage.config.wheelId"
-        :livery-id="garage.config.liveryId"
-        :wheels="garage.activeItem.customization.wheels"
-        :liveries="garage.activeItem.customization.liveries"
-        @update:body-color="(c) => garage.patchConfig({ bodyColor: c })"
-        @update:wheel-id="(id) => garage.patchConfig({ wheelId: id })"
-        @update:livery-id="(id) => garage.patchConfig({ liveryId: id })"
-      />
-    </div>
-    <div
-      v-if="!loading && !error"
-      class="pointer-events-none absolute inset-y-0 right-4 z-10 flex items-center"
-    >
-      <StateTable
-        v-model="viewMode"
-        class="pointer-events-auto"
-        :disabled="false"
-      />
-    </div>
-    <div
-      v-if="!loading && !error && garage.config"
-      class="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center pb-8"
-    >
-      <ColorBar
-        class="pointer-events-auto"
-        :model-value="garage.config.bodyColor"
-        @update:model-value="(c) => garage.patchConfig({ bodyColor: c })"
-      />
+    <div v-if="!loading && !error" class="ww-showroom-overlay absolute inset-0 z-10">
+      <header class="ww-showroom-layout__top ww-showroom-layout__top--tools">
+        <ShowroomHud
+          :path-tracing-supported="pathTracingSupported"
+          :path-tracing-active="pathTracingActive"
+          :path-tracing-samples="pathTracingSamples"
+          :path-tracing-loading="pathTracingLoading"
+          @screenshot="captureScreenshot"
+          @path-tracing-toggle="togglePathTracingPreview"
+        />
+      </header>
+
+      <p
+        v-if="viewMode === 'radar'"
+        class="ww-showroom-layout__banner ww-showroom-layout__banner--accent"
+      >
+        雷达感知（v1 占位视角）
+      </p>
+      <p v-if="viewMode === 'size'" class="ww-showroom-layout__banner">
+        车身尺寸（v1 占位视角）
+      </p>
+
+      <div class="ww-showroom-layout__side ww-showroom-layout__side--right">
+        <StateTable
+          v-model="viewMode"
+          class="ww-showroom-interactive"
+          :disabled="false"
+        />
+      </div>
+
+      <div
+        v-if="garage.config"
+        class="ww-showroom-layout__bottom"
+      >
+        <ColorBar
+          class="ww-showroom-interactive"
+          :model-value="garage.config.bodyColor"
+          @update:model-value="onBodyColorChange"
+        />
+      </div>
     </div>
   </div>
 </template>

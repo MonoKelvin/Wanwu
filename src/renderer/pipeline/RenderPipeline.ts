@@ -5,6 +5,7 @@ import type { WebGPUPostStack } from '../pipeline/WebGPUPostStack'
 import type { ReflectionSystem } from '../reflection/ReflectionSystem'
 import type { AnimationSystem } from '../animation/AnimationSystem'
 import type { PathTracingController } from '../path/PathTracingController'
+import { Vector2 } from 'three'
 
 export interface RenderPipelineDeps {
   context: IRenderContext
@@ -66,9 +67,14 @@ export class RenderPipeline {
 
   resize(): void {
     this.deps.context.resize()
-    const { clientWidth, clientHeight } = this.deps.context.domElement
-    this.deps.postStack?.setSize(clientWidth, clientHeight)
-    this.deps.getWebgpuPostStack()?.setSize(clientWidth, clientHeight)
+    const renderer = this.deps.context.effectsWebGL
+    const size = new Vector2()
+    renderer.getDrawingBufferSize(size)
+    this.deps.postStack?.setSize(Math.floor(size.width), Math.floor(size.height))
+    this.deps.getWebgpuPostStack()?.setSize(
+      this.deps.context.domElement.clientWidth,
+      this.deps.context.domElement.clientHeight
+    )
   }
 
   dispose(): void {

@@ -9,6 +9,7 @@ export { PostStack, createPostComposer, setBloomSmoothing } from './pipeline/Pos
 export { EnvironmentManager } from './lighting/EnvironmentManager'
 export { ReflectionSystem } from './reflection/ReflectionSystem'
 export { PlanarMeshReflector } from './reflection/PlanarMeshReflector'
+export { PackedMipMapGenerator } from './reflection/PackedMipMapGenerator'
 export { AssetLoader } from './assets/AssetLoader'
 export { AnimationSystem } from './animation/AnimationSystem'
 export { CinematicCameraController } from './camera/CinematicCameraController'

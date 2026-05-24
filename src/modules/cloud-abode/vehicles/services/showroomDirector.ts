@@ -9,11 +9,19 @@ import { createSpeedStreakParticles } from '@modules/cloud-abode/vehicles/effect
 import type { ParticleSystem } from '@renderer/effects/ParticleSystem'
 import type { ReflectionFloorHandles } from '@modules/cloud-abode/vehicles/types/showroomScene'
 import { setObjectClipping } from '@renderer/utils/materialClipping'
-import { updateReflecFloorUniforms } from '@renderer/shaders/reflecFloorPatch'
+import { updateReflecFloorUniforms } from '@modules/cloud-abode/vehicles/shaders/reflecFloorPatch'
 import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/config/showroomLighting'
 import { DriveCameraShake } from '@modules/cloud-abode/vehicles/effects/driveCameraShake'
 import { setFloorVisible, setLightPanelState, setLightPanelOpacity } from './showroomScene'
-import { setBodyEnvMapIntensity } from './vehicleShowroom'
+import { applyVehicleExteriorSides, setBodyEnvMapIntensity } from './vehicleShowroom'
+import {
+  createShowroomLightRig,
+  disposeShowroomLightRig,
+  setShowroomLightRigIntensity,
+  syncSpotLightToFloorUniforms,
+  type ShowroomLightRig
+} from './showroomRealtimeLights'
+import { enableShowroomShadows } from './showroomShadows'
 import type { ShowroomViewMode } from '../types/showroom'
 
 const SHOWROOM_CAMERA = { x: 0, y: 0.8, z: -7 } as const
@@ -45,6 +53,7 @@ export class ShowroomDirector {
   private floorScrollSpeed = 0
   private floorVisible = true
   private readonly reflectionFloorTintMul: number
+  private lightRig: ShowroomLightRig | null = null
   private unsubLoop: (() => void) | null = null
   private readonly cinematic: CinematicCameraController
 
@@ -77,6 +86,32 @@ export class ShowroomDirector {
     this.showroomHandles = handles
   }
 
+  /** 异步初始化实时灯光（RectArea + Spot），su7 模式下跳过 */
+  async initLightRig(handles: ReflectionFloorHandles): Promise<void> {
+    this.showroomHandles = handles
+    if (!SHOWROOM_LIGHTING.enableRealtimeLightRig) {
+      handles.lightRig = null
+      this.lightRig = null
+      return
+    }
+    try {
+      disposeShowroomLightRig(this.engine.threeScene, this.lightRig)
+    } catch (err) {
+      console.warn('[ShowroomDirector] 清理旧灯光失败', err)
+    }
+    try {
+      this.lightRig = await createShowroomLightRig(this.engine.threeScene, handles)
+      handles.lightRig = this.lightRig
+      if (SHOWROOM_LIGHTING.enableSpotShadows) {
+        enableShowroomShadows(this.engine, handles, this.vehicleRoot)
+      }
+    } catch (err) {
+      console.error('[ShowroomDirector] 实时灯光初始化失败', err)
+      this.lightRig = null
+      handles.lightRig = null
+    }
+  }
+
   get isRushActive(): boolean {
     return this.driveActive
   }
@@ -104,6 +139,7 @@ export class ShowroomDirector {
     setLightPanelState(handles, 0)
     setFloorVisible(handles, true)
     this.setFloorVisible(true)
+    setShowroomLightRigIntensity(this.lightRig, 0)
     this.engine.environment.dynamicEnvironment?.setIntensity(0)
     this.engine.environment.dynamicEnvironment?.setWeight(0)
     updateReflecFloorUniforms(handles.floorMaterial, {
@@ -157,6 +193,8 @@ export class ShowroomDirector {
           handles.lightMaterial.emissiveIntensity = params.lightIntensity
           handles.lightMaterial.needsUpdate = true
           setLightPanelState(handles, params.lightIntensity, { fadeOpacity: false })
+          setShowroomLightRigIntensity(this.lightRig, params.lightIntensity)
+          syncSpotLightToFloorUniforms(this.lightRig, handles.floorMaterial, params.lightIntensity)
           updateReflecFloorUniforms(handles.floorMaterial, {
             reflectIntensity: params.reflectIntensity,
             floorColor: lightColor,
@@ -261,6 +299,9 @@ export class ShowroomDirector {
 
   tickFrame(dt: number, elapsed: number): void {
     if (this.showroomHandles?.floorMaterial && this.floorVisible) {
+      if (this.lightRig) {
+        syncSpotLightToFloorUniforms(this.lightRig, this.showroomHandles.floorMaterial)
+      }
       updateReflecFloorUniforms(this.showroomHandles.floorMaterial, {
         time: elapsed,
         speed: this.floorScrollSpeed
@@ -294,6 +335,12 @@ export class ShowroomDirector {
     this.driveTimeline?.kill()
     this.cameraShake.reset()
     this.setAeroMode(false)
+    try {
+      disposeShowroomLightRig(this.engine.threeScene, this.lightRig)
+    } catch (err) {
+      console.warn('[ShowroomDirector] 灯光清理失败', err)
+    }
+    this.lightRig = null
     if (this.windLines) {
       this.engine.threeScene.remove(this.windLines)
       this.windLines.geometry.dispose()
@@ -361,7 +408,11 @@ export class ShowroomDirector {
         lightOpacity: 0,
         duration: SHOWROOM_LIGHTING.rushLightFadeDuration,
         ease: SHOWROOM_EASE.out,
-        onUpdate: () => setLightPanelOpacity(handles, params.lightOpacity)
+        onUpdate: () => {
+          setLightPanelOpacity(handles, params.lightOpacity)
+          setShowroomLightRigIntensity(this.lightRig, params.lightOpacity)
+          syncSpotLightToFloorUniforms(this.lightRig, handles.floorMaterial, params.lightIntensity)
+        }
       },
       0
     )
@@ -494,7 +545,11 @@ export class ShowroomDirector {
           lightOpacity: 1,
           duration: SHOWROOM_LIGHTING.rushLightFadeDuration * durMul,
           ease: SHOWROOM_EASE.out,
-          onUpdate: () => setLightPanelOpacity(handles, params.lightOpacity)
+          onUpdate: () => {
+            setLightPanelOpacity(handles, params.lightOpacity)
+            setShowroomLightRigIntensity(this.lightRig, params.lightOpacity)
+            syncSpotLightToFloorUniforms(this.lightRig, handles.floorMaterial, params.lightIntensity)
+          }
         },
         0
       )
@@ -571,10 +626,10 @@ export class ShowroomDirector {
     if (!enabled) {
       for (const mat of this.aeroMaterials) {
         mat.clippingPlanes = null
-        mat.side = THREE.FrontSide
         mat.needsUpdate = true
       }
       this.aeroMaterials = []
+      if (this.vehicleRoot) applyVehicleExteriorSides(this.vehicleRoot)
       if (this.windLines) this.windLines.visible = false
       return
     }

@@ -24,17 +24,13 @@ function select(color: string) {
 </script>
 
 <template>
-  <div
-    class="pointer-events-auto flex items-center gap-2 rounded-full bg-black/35 px-3 py-2 backdrop-blur-md"
-    role="toolbar"
-    aria-label="车身颜色"
-  >
+  <div class="ww-showroom-colorbar" role="toolbar" aria-label="车身颜色">
     <button
       v-for="c in PRESETS"
       :key="c"
       type="button"
-      class="h-8 w-8 rounded-full border-2 transition-transform hover:scale-110"
-      :class="props.modelValue === c ? 'border-white' : 'border-white/30'"
+      class="ww-showroom-colorbar__swatch"
+      :class="{ 'ww-showroom-colorbar__swatch--active': props.modelValue === c }"
       :style="{ backgroundColor: c }"
       :aria-label="`颜色 ${c}`"
       @click="select(c)"

@@ -31,8 +31,14 @@ export function patchReflecFloorMaterial(
   }
 
   mat.envMapIntensity = 0
+  mat.lightMapIntensity = 0
+  mat.aoMapIntensity = SHOWROOM_LIGHTING.floorAoIntensity
 
   mat.onBeforeCompile = (shader) => {
+    shader.defines ??= {}
+    if (mat.lightMap) shader.defines.USE_LIGHTMAP = ''
+    if (mat.aoMap) shader.defines.USE_AOMAP = ''
+
     Object.assign(shader.uniforms, {
       uFloorTime: uniforms.uFloorTime,
       uFloorSpeed: uniforms.uFloorSpeed,
@@ -64,18 +70,6 @@ uniform sampler2D uReflectTexture;
 uniform vec2 uMipmapTextureSize;
 ${shader.fragmentShader}`
 
-    shader.fragmentShader = shader.fragmentShader.replace(
-      '#include <normal_fragment_maps>',
-      `#include <normal_fragment_maps>
-      vec2 scrollUv = vWorldFloorPos.xz;
-      scrollUv.x += uFloorTime * uFloorSpeed;
-      #ifdef USE_NORMALMAP
-        vec3 scrollN = texture2D(normalMap, scrollUv).xyz * 2.0 - 1.0;
-        scrollN = scrollN.rbg;
-        normal = normalize(normal + scrollN * 0.28);
-      #endif`
-    )
-
     const floorOutput = reflecFloorOutput
       .replace(
         '__FLOOR_ROUGHNESS_MUL__',
@@ -92,7 +86,8 @@ ${shader.fragmentShader}`
     )
   }
 
-  mat.customProgramCacheKey = () => 'wanwu-reflec-floor-v18-lygia'
+  mat.customProgramCacheKey = () =>
+    `wanwu-reflec-floor-v21-packed-${mat.lightMap ? 'lm' : 'no-lm'}-${mat.aoMap ? 'ao' : 'no-ao'}`
   mat.needsUpdate = true
   mat.userData.reflecFloorUniforms = uniforms
 }

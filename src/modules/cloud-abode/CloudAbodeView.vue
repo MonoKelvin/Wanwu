@@ -33,33 +33,21 @@ function openVehicle(nextSlug: string) {
 </script>
 
 <template>
-  <div class="flex h-full min-h-0 overflow-hidden">
-    <aside
-      class="flex w-44 shrink-0 flex-col gap-1 border-r border-ww-border bg-ww-rail/80 p-2"
-      aria-label="车型列表"
-    >
-      <p class="px-2 py-1 text-xs font-medium text-ww-muted">虚拟汽车</p>
-      <RouterLink
-        to="/cloud-abode/products"
-        class="mb-2 block rounded-lg px-3 py-2 text-sm text-color transition-colors hover:bg-ww-canvas/60"
-      >
-        商品商城
-      </RouterLink>
-      <button
-        v-for="v in catalog.vehicles"
-        :key="v.id"
-        type="button"
-        class="rounded-lg px-3 py-2 text-left text-sm transition-colors"
-        :class="
-          v.slug === slug
-            ? 'bg-ww-accent/15 text-ww-accent'
-            : 'text-color hover:bg-ww-canvas/60'
-        "
-        @click="openVehicle(v.slug)"
-      >
-        {{ vehicleDisplayName(v.slug) }}
-      </button>
-    </aside>
+  <div class="flex h-full min-h-0 flex-col overflow-hidden">
+    <header class="ww-cloud-abode-nav">
+      <nav class="ww-cloud-abode-nav__tabs" aria-label="车型">
+        <button
+          v-for="v in catalog.vehicles"
+          :key="v.id"
+          type="button"
+          class="ww-cloud-abode-nav__tab"
+          :class="{ 'ww-cloud-abode-nav__tab--active': v.slug === slug }"
+          @click="openVehicle(v.slug)"
+        >
+          {{ vehicleDisplayName(v.slug) }}
+        </button>
+      </nav>
+    </header>
     <CarShowroomView :key="slug" class="min-h-0 min-w-0 flex-1" :slug="slug" />
   </div>
 </template>

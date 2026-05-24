@@ -74,6 +74,205 @@ function createBloomComposer(
   return { composer, bloom }
 }
 
+interface PostStackCoreState {
+  composer: EffectComposer
+  bloom: BloomEffect | null
+  depthOfField: DepthOfFieldEffect | null
+  toneMapping: ToneMappingEffect | null
+  ssao: SSAOEffect | null
+  ssr: ScreenSpaceReflectionEffect | null
+  normalPass: NormalPass | null
+  smaa: SMAAEffect | null
+  temporal: TemporalBlendEffect | null
+  historyTarget: WebGLRenderTarget | null
+  historyCopyPass: CopyPass | null
+}
+
+function createBloomOnlyStack(
+  renderer: WebGLRenderer,
+  scene: Scene,
+  camera: Camera,
+  quality: RenderQuality,
+  options: PostStackOptions
+): PostStackCoreState {
+  const bundle = createBloomComposer(renderer, scene, camera, quality, options)
+  return {
+    composer: bundle.composer,
+    bloom: bundle.bloom,
+    depthOfField: null,
+    toneMapping: null,
+    ssao: null,
+    ssr: null,
+    normalPass: null,
+    smaa: null,
+    temporal: null,
+    historyTarget: null,
+    historyCopyPass: null
+  }
+}
+
+function createExtendedPostStack(
+  renderer: WebGLRenderer,
+  scene: Scene,
+  camera: Camera,
+  quality: RenderQuality,
+  options: PostStackOptions
+): PostStackCoreState {
+  const cinematic = CINEMATIC_POST
+  const multisampling = multisamplingForQuality(quality)
+  const composer = new EffectComposer(renderer, { multisampling })
+  composer.addPass(new RenderPass(scene, camera))
+
+  const isHigh = quality === 'high'
+  const isMedium = quality === 'medium'
+  const cinematicEnabled = options.cinematic ?? isHigh
+  const useNormalPass =
+    (options.enableSSR || options.enableSSAO) && (isHigh || isMedium)
+
+  const normalPass = useNormalPass
+    ? new NormalPass(scene, camera, {
+        resolutionScale:
+          options.normalPassResolutionScale ??
+          (cinematicEnabled ? cinematic.normalPassResolutionScale : 0.5)
+      })
+    : null
+  if (normalPass) {
+    composer.addPass(normalPass)
+  }
+
+  const ssr =
+    options.enableSSR && isHigh
+      ? new ScreenSpaceReflectionEffect({
+          intensity: options.ssrIntensity ?? 0.35,
+          maxDistance: options.ssrMaxDistance ?? cinematic.ssrMaxDistance,
+          thickness: options.ssrThickness ?? cinematic.ssrThickness,
+          steps: options.ssrSteps ?? cinematic.ssrSteps,
+          normalBuffer: normalPass?.texture ?? null
+        })
+      : null
+  if (ssr) {
+    composer.addPass(new EffectPass(camera, ssr))
+  }
+
+  const depthOfField = options.enableDoF
+    ? new DepthOfFieldEffect(camera as PerspectiveCamera, {
+        focusDistance: options.dofFocusDistance ?? 7,
+        focusRange: options.dofFocusRange ?? 2.5,
+        bokehScale: options.dofBokehScale ?? 1.2,
+        resolutionScale: isHigh ? 0.5 : 0.35
+      })
+    : null
+  if (depthOfField) {
+    composer.addPass(new EffectPass(camera, depthOfField))
+  }
+
+  const ssao =
+    options.enableSSAO && (isHigh || isMedium)
+      ? new SSAOEffect(camera, normalPass?.texture ?? undefined, {
+          blendFunction: BlendFunction.MULTIPLY,
+          samples: options.ssaoSamples ?? (cinematicEnabled ? cinematic.ssaoSamples : 16),
+          rings: options.ssaoRings ?? (cinematicEnabled ? cinematic.ssaoRings : 5),
+          luminanceInfluence: 0.65,
+          radius: options.ssaoRadius ?? (cinematicEnabled ? cinematic.ssaoRadius : 0.12),
+          intensity: options.ssaoIntensity ?? (cinematicEnabled ? cinematic.ssaoIntensity : 1.1),
+          bias: 0.025,
+          fade: 0.012,
+          resolutionScale: cinematicEnabled ? 0.65 : 0.5
+        })
+      : null
+  if (ssao) {
+    composer.addPass(new EffectPass(camera, ssao))
+  }
+
+  const bloom = new BloomEffect({
+    blendFunction: BlendFunction.ADD,
+    intensity: options.bloomIntensity ?? 1,
+    luminanceThreshold: options.bloomLuminanceThreshold ?? 0,
+    luminanceSmoothing: options.bloomLuminanceSmoothing ?? 1.6,
+    mipmapBlur: true
+  })
+  composer.addPass(new EffectPass(camera, bloom))
+
+  const toneMapping =
+    options.enableToneMapping !== false && cinematicEnabled
+      ? new ToneMappingEffect({
+          mode: ToneMappingMode.ACES_FILMIC,
+          whitePoint: options.toneMappingWhitePoint ?? cinematic.toneMappingWhitePoint,
+          middleGrey: options.toneMappingMiddleGrey ?? cinematic.toneMappingMiddleGrey
+        })
+      : null
+  if (toneMapping) {
+    composer.addPass(new EffectPass(camera, toneMapping))
+  }
+
+  const temporal =
+    options.enableTemporalAA && cinematicEnabled && isHigh
+      ? new TemporalBlendEffect(options.temporalFeedback ?? 0.88)
+      : null
+  if (temporal) {
+    composer.addPass(new EffectPass(camera, temporal))
+  }
+
+  const gradeEnabled = options.enableCinematicGrade ?? cinematicEnabled
+  if (gradeEnabled && isHigh) {
+    composer.addPass(
+      new EffectPass(
+        camera,
+        new VignetteEffect({
+          offset: options.vignetteOffset ?? cinematic.vignetteOffset,
+          darkness: options.vignetteDarkness ?? cinematic.vignetteDarkness
+        }),
+        new BrightnessContrastEffect({
+          brightness: options.gradeBrightness ?? cinematic.brightness,
+          contrast: options.gradeContrast ?? cinematic.contrast
+        })
+      )
+    )
+    const aberration = options.chromaticAberration ?? cinematic.chromaticAberration
+    composer.addPass(
+      new EffectPass(
+        camera,
+        new ChromaticAberrationEffect({
+          offset: new Vector2(aberration, aberration),
+          radialModulation: false,
+          modulationOffset: 0
+        })
+      )
+    )
+  }
+
+  const smaa = (options.enableSMAA ?? cinematicEnabled) && isHigh ? new SMAAEffect() : null
+  if (smaa) {
+    composer.addPass(new EffectPass(camera, smaa))
+  }
+
+  let historyTarget: WebGLRenderTarget | null = null
+  let historyCopyPass: CopyPass | null = null
+  if (temporal) {
+    const { width, height } = drawingBufferSize(renderer)
+    historyTarget = new WebGLRenderTarget(width, height, { depthBuffer: false })
+    historyTarget.texture.name = 'PostStack.History'
+    historyCopyPass = new CopyPass(historyTarget, true)
+  }
+
+  const { width, height } = drawingBufferSize(renderer)
+  composer.setSize(width, height)
+
+  return {
+    composer,
+    bloom,
+    depthOfField,
+    toneMapping,
+    ssao,
+    ssr,
+    normalPass,
+    smaa,
+    temporal,
+    historyTarget,
+    historyCopyPass
+  }
+}
+
 /**
  * 影视级后期栈 — 默认 Bloom-only（与旧版一致）；扩展 pass 仅在显式开启时加载。
  */
@@ -92,7 +291,6 @@ export class PostStack {
   private readonly historyTarget: WebGLRenderTarget | null
   private readonly historyCopyPass: CopyPass | null
   private readonly prevViewMatrix = new Matrix4()
-  private readonly cinematic = CINEMATIC_POST
   private disposed = false
   private historyReady = false
 
@@ -105,185 +303,28 @@ export class PostStack {
   ) {
     this.renderer = renderer
 
-    if (!wantsExtendedPost(options)) {
-      const bundle = createBloomComposer(renderer, scene, camera, quality, options)
-      this.composer = bundle.composer
-      this.bloom = bundle.bloom
-      this.depthOfField = null
-      this.toneMapping = null
-      this.ssao = null
-      this.ssr = null
-      this.normalPass = null
-      this.smaa = null
-      this.temporal = null
-      this.historyTarget = null
-      this.historyCopyPass = null
-      return
-    }
+    const state = !wantsExtendedPost(options)
+      ? createBloomOnlyStack(renderer, scene, camera, quality, options)
+      : (() => {
+          try {
+            return createExtendedPostStack(renderer, scene, camera, quality, options)
+          } catch (err) {
+            console.warn('[PostStack] 扩展后期初始化失败，降级 Bloom-only', err)
+            return createBloomOnlyStack(renderer, scene, camera, quality, options)
+          }
+        })()
 
-    try {
-      this.buildExtendedStack(renderer, scene, camera, quality, options)
-    } catch (err) {
-      console.warn('[PostStack] 扩展后期初始化失败，降级 Bloom-only', err)
-      const bundle = createBloomComposer(renderer, scene, camera, quality, options)
-      this.composer = bundle.composer
-      this.bloom = bundle.bloom
-      this.depthOfField = null
-      this.toneMapping = null
-      this.ssao = null
-      this.ssr = null
-      this.normalPass = null
-      this.smaa = null
-      this.temporal = null
-      this.historyTarget = null
-      this.historyCopyPass = null
-    }
-  }
-
-  private buildExtendedStack(
-    renderer: WebGLRenderer,
-    scene: Scene,
-    camera: Camera,
-    quality: RenderQuality,
-    options: PostStackOptions
-  ): void {
-    const multisampling = multisamplingForQuality(quality)
-    this.composer = new EffectComposer(renderer, { multisampling })
-    this.composer.addPass(new RenderPass(scene, camera))
-
-    const isHigh = quality === 'high'
-    const isMedium = quality === 'medium'
-    const cinematic = options.cinematic ?? isHigh
-    const useNormalPass =
-      (options.enableSSR || options.enableSSAO) && (isHigh || isMedium)
-
-    this.normalPass = useNormalPass
-      ? new NormalPass(scene, camera, {
-          resolutionScale:
-            options.normalPassResolutionScale ??
-            (cinematic ? this.cinematic.normalPassResolutionScale : 0.5)
-        })
-      : null
-    if (this.normalPass) {
-      this.composer.addPass(this.normalPass)
-    }
-
-    this.ssr =
-      options.enableSSR && isHigh
-        ? new ScreenSpaceReflectionEffect({
-            intensity: options.ssrIntensity ?? 0.35,
-            maxDistance: options.ssrMaxDistance ?? this.cinematic.ssrMaxDistance,
-            thickness: options.ssrThickness ?? this.cinematic.ssrThickness,
-            steps: options.ssrSteps ?? this.cinematic.ssrSteps,
-            normalBuffer: this.normalPass?.texture ?? null
-          })
-        : null
-    if (this.ssr) {
-      this.composer.addPass(new EffectPass(camera, this.ssr))
-    }
-
-    this.depthOfField = options.enableDoF
-      ? new DepthOfFieldEffect(camera as PerspectiveCamera, {
-          focusDistance: options.dofFocusDistance ?? 7,
-          focusRange: options.dofFocusRange ?? 2.5,
-          bokehScale: options.dofBokehScale ?? 1.2,
-          resolutionScale: isHigh ? 0.5 : 0.35
-        })
-      : null
-    if (this.depthOfField) {
-      this.composer.addPass(new EffectPass(camera, this.depthOfField))
-    }
-
-    this.ssao =
-      options.enableSSAO && (isHigh || isMedium)
-        ? new SSAOEffect(camera, this.normalPass?.texture ?? null, {
-            blendFunction: BlendFunction.MULTIPLY,
-            samples: options.ssaoSamples ?? (cinematic ? this.cinematic.ssaoSamples : 16),
-            rings: options.ssaoRings ?? (cinematic ? this.cinematic.ssaoRings : 5),
-            luminanceInfluence: 0.65,
-            radius: options.ssaoRadius ?? (cinematic ? this.cinematic.ssaoRadius : 0.12),
-            intensity: options.ssaoIntensity ?? (cinematic ? this.cinematic.ssaoIntensity : 1.1),
-            bias: 0.025,
-            fade: 0.012,
-            resolutionScale: cinematic ? 0.65 : 0.5
-          })
-        : null
-    if (this.ssao) {
-      this.composer.addPass(new EffectPass(camera, this.ssao))
-    }
-
-    this.bloom = new BloomEffect({
-      blendFunction: BlendFunction.ADD,
-      intensity: options.bloomIntensity ?? 1,
-      luminanceThreshold: options.bloomLuminanceThreshold ?? 0,
-      luminanceSmoothing: options.bloomLuminanceSmoothing ?? 1.6,
-      mipmapBlur: true
-    })
-    this.composer.addPass(new EffectPass(camera, this.bloom))
-
-    this.toneMapping =
-      options.enableToneMapping !== false && cinematic
-        ? new ToneMappingEffect({
-            mode: ToneMappingMode.ACES_FILMIC,
-            whitePoint: options.toneMappingWhitePoint ?? this.cinematic.toneMappingWhitePoint,
-            middleGrey: options.toneMappingMiddleGrey ?? this.cinematic.toneMappingMiddleGrey
-          })
-        : null
-    if (this.toneMapping) {
-      this.composer.addPass(new EffectPass(camera, this.toneMapping))
-    }
-
-    this.temporal =
-      options.enableTemporalAA && cinematic && isHigh
-        ? new TemporalBlendEffect(options.temporalFeedback ?? 0.88)
-        : null
-    if (this.temporal) {
-      this.composer.addPass(new EffectPass(camera, this.temporal))
-    }
-
-    const gradeEnabled = options.enableCinematicGrade ?? cinematic
-    if (gradeEnabled && isHigh) {
-      this.composer.addPass(
-        new EffectPass(
-          camera,
-          new VignetteEffect({
-            offset: options.vignetteOffset ?? this.cinematic.vignetteOffset,
-            darkness: options.vignetteDarkness ?? this.cinematic.vignetteDarkness
-          }),
-          new BrightnessContrastEffect({
-            brightness: options.gradeBrightness ?? this.cinematic.brightness,
-            contrast: options.gradeContrast ?? this.cinematic.contrast
-          })
-        )
-      )
-      const aberration = options.chromaticAberration ?? this.cinematic.chromaticAberration
-      this.composer.addPass(
-        new EffectPass(
-          camera,
-          new ChromaticAberrationEffect({
-            offset: new Vector2(aberration, aberration)
-          })
-        )
-      )
-    }
-
-    this.smaa = (options.enableSMAA ?? cinematic) && isHigh ? new SMAAEffect() : null
-    if (this.smaa) {
-      this.composer.addPass(new EffectPass(camera, this.smaa))
-    }
-
-    if (this.temporal) {
-      const { width, height } = drawingBufferSize(renderer)
-      this.historyTarget = new WebGLRenderTarget(width, height, { depthBuffer: false })
-      this.historyTarget.texture.name = 'PostStack.History'
-      this.historyCopyPass = new CopyPass(this.historyTarget, true)
-    } else {
-      this.historyTarget = null
-      this.historyCopyPass = null
-    }
-
-    const { width, height } = drawingBufferSize(renderer)
-    this.composer.setSize(width, height)
+    this.composer = state.composer
+    this.bloom = state.bloom
+    this.depthOfField = state.depthOfField
+    this.toneMapping = state.toneMapping
+    this.ssao = state.ssao
+    this.ssr = state.ssr
+    this.normalPass = state.normalPass
+    this.smaa = state.smaa
+    this.temporal = state.temporal
+    this.historyTarget = state.historyTarget
+    this.historyCopyPass = state.historyCopyPass
   }
 
   static create(

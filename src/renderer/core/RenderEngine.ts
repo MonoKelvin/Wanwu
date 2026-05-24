@@ -119,7 +119,7 @@ export class RenderEngine {
       }
     }
 
-    if (this.postStack?.toneMapping) {
+    if (this.postStack) {
       this.context.effectsWebGL.toneMapping = THREE.NoToneMapping
     }
 
@@ -319,6 +319,14 @@ export class RenderEngine {
   setBloomThreshold(threshold: number): void {
     this.postStack?.setBloomThreshold(threshold)
     this.webgpuPostStack?.setBloomThreshold(threshold)
+  }
+
+  /** 启用 WebGL 实时阴影（展厅 SpotLight 车底接触阴影） */
+  enableShadowMapping(type: THREE.ShadowMapType = THREE.PCFSoftShadowMap): void {
+    const renderer = this.context.renderer as THREE.WebGLRenderer
+    renderer.shadowMap.enabled = true
+    renderer.shadowMap.type = type
+    renderer.shadowMap.autoUpdate = true
   }
 
   resize(): void {

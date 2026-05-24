@@ -28,6 +28,7 @@ export interface RenderEngineOptions {
   enableTemporalAA?: boolean
   dofFocusDistance?: number
   dofFocusRange?: number
+  dofBokehScale?: number
   /** 启用 GPU 路径追踪（WebGL 后端，场景加载后生效） */
   enablePathTracing?: boolean
   pathTracingMaxSamples?: number

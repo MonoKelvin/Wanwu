@@ -1,18 +1,17 @@
 /**
- * 云斋展厅参数 — 对齐 gamemcu SU7 / su7-replica Experience + World
- * @see D:\Work\Code\git\su7-replica\src\Experience
+ * 云斋展厅参数 — 对齐 su7-replica 实时渲染（烘焙 lightMap + emissive 灯板 + Bloom）
  */
 export const SHOWROOM_LIGHTING = {
   useHdrEnvironment: true,
   cameraFov: 33.4,
   cameraFovRush: 36,
-  /** su7 Car：仅 bodyMat.envMapIntensity 动画（入场值压低，避免镜面感） */
-  bodyEnvMapIntensity: 0.9,
+  orbitTarget: { x: 0, y: 0.8, z: 0 } as const,
+  /** su7 Car：仅 bodyMat.envMapIntensity 动画 */
+  bodyEnvMapIntensity: 1,
   bodyEnvMapIntensityRush: 10,
-  /** DynamicEnv 混合强度 — 低于 1 避免全场泛亮 */
-  envIntensity: 0.52,
+  /** DynamicEnv 混合强度 */
+  envIntensity: 1,
   envIntensityRush: 0.01,
-  /** 非车身零件 IBL 强度分级 */
   wheelEnvIntensity: 0.36,
   chromeEnvIntensity: 0.44,
   glassEnvIntensity: 0.5,
@@ -21,28 +20,43 @@ export const SHOWROOM_LIGHTING = {
   envFadeInDuration: 4,
   envFadeInDelay: 0.5,
   envWeightFadeOverlap: 2.5,
-  bodyAoIntensity: 1,
-  floorReflectIntensity: 18,
-  floorReflectMix: 0.38,
-  /** su7 roughnessLevel = roughness * (1.7 - 0.7*r) * 4 */
+  bodyAoIntensity: 0.45,
+  /** 平面反射强度（地板 shader，su7 默认 25） */
+  floorReflectIntensity: 25,
+  floorReflectMix: 1,
   floorReflectRoughnessMul: 4,
+  /** 地板 lightMap（聚光遮罩 + 软接触阴影，su7 无 shadowMap） */
   floorLightMapIntensity: 1,
-  /** lightMap pow 指数，>1 收紧聚光、压暗周围 */
-  floorSpotContrast: 1.15,
+  /** lightMap pow，≈1 保留烘焙软阴影 */
+  floorSpotContrast: 1,
   floorAoIntensity: 1,
-  keyLightEmissive: 0.92,
-  bloomIntensity: 0.42,
+  /** su7 仅用 GLTF emissive 灯板，不用实时 RectArea/Spot */
+  enableRealtimeLightRig: false,
+  rectAreaLightIntensity: 0,
+  spotLightIntensity: 0,
+  spotAngle: 0.42,
+  spotPenumbra: 0.42,
+  spotDistance: 14,
+  spotHeight: 7.5,
+  spotOffset: { x: 0, z: 1.2 } as const,
+  /** su7 无 WebGL shadowMap；接触阴影来自 lightMap 烘焙 */
+  enableSpotShadows: false,
+  spotShadowMapSize: 2048,
+  spotShadowBias: -0.00015,
+  spotShadowNormalBias: 0.025,
+  spotShadowRadius: 8,
+  realtimeSpotWeight: 0,
+  keyLightEmissive: 0.85,
+  /** su7 Postprocessing：intensity 1 / threshold 0 */
+  bloomIntensity: 1,
   bloomLuminanceSmoothing: 1.6,
   bloomLuminanceThreshold: 0,
   bloomIntensityRush: 2,
   bloomLuminanceSmoothingRush: 0.4,
-  toneMappingExposure: 0.9,
-  /** 屏幕空间反射 — 对齐 webgi SSReflectionPlugin（逐步启用） */
+  toneMappingExposure: 1,
   enableSSR: false,
   ssrIntensity: 0.42,
-  /** 屏幕空间环境光遮蔽 */
   enableSSAO: false,
-  /** 影视级后期 — SMAA / Grade / TAA（逐步启用） */
   cinematic: false,
   enableSMAA: false,
   enableCinematicGrade: false,
@@ -50,7 +64,6 @@ export const SHOWROOM_LIGHTING = {
   floorTintMul: 3,
   lightFadeInDuration: 4,
   lightFadeInDelay: 1,
-  /** rush：speed 0→4(2s)→10(4s)，Car.update rotateZ(-speed*0.03) */
   rushSpeedMid: 4,
   rushSpeedMax: 10,
   rushSpeedMidDuration: 2,

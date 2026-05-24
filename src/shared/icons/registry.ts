@@ -55,6 +55,8 @@ import {
     TriangleAlert,
     User,
     Video,
+    Volume2,
+    VolumeX,
     X,
     Zap
 } from '@lucide/vue'
@@ -122,6 +124,8 @@ export const wwIcons = {
     'triangle-alert': TriangleAlert,
     user: User,
     video: Video,
+    'volume-2': Volume2,
+    'volume-x': VolumeX,
     x: X,
     zap: Zap
 } satisfies Record<string, Component>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Camera, Sparkles, Volume2, VolumeX } from '@lucide/vue'
 import type { SceneQuality } from '@renderer/types'
+import WwIcon from '@shared/components/WwIcon.vue'
+import WwSelect from '@shared/components/WwSelect/WwSelect.vue'
 import { useShowroomPrefsStore } from '../stores/showroomPrefs'
 
 defineProps<{
@@ -17,38 +18,32 @@ const emit = defineEmits<{
 
 const prefs = useShowroomPrefsStore()
 
-const qualityOptions: { value: SceneQuality; label: string }[] = [
+const qualityOptions = [
   { value: 'high', label: '高' },
   { value: 'medium', label: '中' },
   { value: 'low', label: '低' }
-]
+] as const satisfies ReadonlyArray<{ value: SceneQuality; label: string }>
 </script>
 
 <template>
-  <div class="pointer-events-auto flex items-center gap-2">
-    <select
-      :value="prefs.quality"
-      class="rounded-lg border border-white/15 bg-black/50 px-2 py-1 text-[11px] text-white/80 outline-none"
+  <div class="ww-showroom-toolbar ww-showroom-interactive" role="toolbar" aria-label="展车工具">
+    <WwSelect
+      :model-value="prefs.quality"
+      :options="qualityOptions"
+      option-label="label"
+      option-value="value"
+      size="narrow"
+      :overlay-opacity="0.72"
+      fit-options
       title="切换后重新进入展车页生效"
-      @change="prefs.setQuality(($event.target as HTMLSelectElement).value as SceneQuality)"
-    >
-      <option
-        v-for="opt in qualityOptions"
-        :key="opt.value"
-        :value="opt.value"
-      >
-        画质 {{ opt.label }}
-      </option>
-    </select>
+      @update:model-value="prefs.setQuality($event as SceneQuality)"
+    />
+
     <button
       v-if="pathTracingSupported"
       type="button"
-      class="flex h-9 items-center gap-1.5 rounded-full border px-2.5 text-[11px] transition"
-      :class="
-        pathTracingActive
-          ? 'border-amber-400/40 bg-amber-500/20 text-amber-200'
-          : 'border-white/15 bg-black/50 text-white/80 hover:bg-white/10'
-      "
+      class="ww-showroom-path-chip"
+      :class="{ 'ww-showroom-path-chip--active': pathTracingActive }"
       :disabled="pathTracingLoading"
       :title="
         pathTracingActive
@@ -57,25 +52,26 @@ const qualityOptions: { value: SceneQuality; label: string }[] = [
       "
       @click="emit('pathTracingToggle')"
     >
-      <Sparkles class="h-3.5 w-3.5 shrink-0" />
+      <WwIcon name="sparkles" size="sm" />
       <span v-if="pathTracingActive">{{ pathTracingSamples ?? 0 }}</span>
     </button>
+
     <button
       type="button"
-      class="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-black/50 text-white/80 transition hover:bg-white/10"
+      class="ww-glass-btn ww-glass-btn--icon"
       title="截图"
       @click="emit('screenshot')"
     >
-      <Camera class="h-4 w-4" />
+      <WwIcon name="image" size="sm" />
     </button>
+
     <button
       type="button"
-      class="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-black/50 text-white/80 transition hover:bg-white/10"
+      class="ww-glass-btn ww-glass-btn--icon"
       :title="prefs.muted ? '取消静音' : '静音'"
       @click="prefs.toggleMute()"
     >
-      <VolumeX v-if="prefs.muted" class="h-4 w-4" />
-      <Volume2 v-else class="h-4 w-4" />
+      <WwIcon :name="prefs.muted ? 'volume-x' : 'volume-2'" size="sm" />
     </button>
   </div>
 </template>

@@ -1,5 +1,18 @@
 import type { RenderBackend } from '../types/engine'
 
+/** 探测用最小 WebGPU 类型（DOM lib 未包含 GPU 接口） */
+interface GPUAdapterLike {
+  readonly limits?: unknown
+}
+
+interface GPULike {
+  requestAdapter(options?: {
+    powerPreference?: 'low-power' | 'high-performance'
+  }): Promise<GPUAdapterLike | null>
+}
+
+type NavigatorWithWebGPU = Navigator & { gpu?: GPULike }
+
 export interface BackendProbeResult {
   requested: RenderBackend
   effective: RenderBackend
@@ -37,7 +50,7 @@ function detectWebGL2(): boolean {
 
 async function detectWebGPU(): Promise<boolean> {
   if (typeof navigator === 'undefined') return false
-  const gpu = (navigator as Navigator & { gpu?: GPU }).gpu
+  const gpu = (navigator as NavigatorWithWebGPU).gpu
   if (!gpu) return false
   try {
     const adapter = await gpu.requestAdapter({ powerPreference: 'high-performance' })

@@ -9,13 +9,13 @@ defineProps<{
   <Transition name="ww-fade">
     <div
       v-if="visible"
-      class="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/80 text-white"
+      class="ww-showroom-preloader pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center"
     >
-      <p class="mb-2 text-sm text-white/70">加载展车资源</p>
+      <p class="mb-2 text-sm" style="color: var(--ww-on-media-fg-muted)">加载展车资源</p>
       <p class="text-3xl font-semibold tabular-nums">{{ Math.round(progress * 100) }}%</p>
-      <div class="mt-4 h-1 w-48 overflow-hidden rounded-full bg-white/20">
+      <div class="ww-showroom-preloader__bar mt-4 w-48 overflow-hidden rounded-full">
         <div
-          class="h-full bg-orange-400 transition-all duration-200"
+          class="ww-showroom-preloader__bar-fill"
           :style="{ width: `${Math.min(100, Math.round(progress * 100))}%` }"
         />
       </div>

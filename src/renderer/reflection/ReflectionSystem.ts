@@ -18,7 +18,13 @@ export class ReflectionSystem {
   }
 
   update(): void {
-    for (const r of this.reflectors) r.update()
+    for (const r of this.reflectors) {
+      try {
+        r.update()
+      } catch (err) {
+        console.error('[ReflectionSystem] 反射器更新失败', err)
+      }
+    }
   }
 
   dispose(): void {

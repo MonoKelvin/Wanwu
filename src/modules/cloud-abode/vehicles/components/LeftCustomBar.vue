@@ -1,5 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import Slider from 'primevue/slider'
+
+const COLOR_PRESETS = [
+  '#c0c0c0',
+  '#1a1a1a',
+  '#8b1e2f',
+  '#1e3a5f',
+  '#f5f5f5',
+  '#2d5016',
+  '#d4af37',
+  '#5c4033'
+] as const
 
 const props = defineProps<{
   bodyColor: string
@@ -17,9 +29,7 @@ const emit = defineEmits<{
 
 const hue = computed({
   get() {
-    const c = new Option().style
-    c.color = props.bodyColor
-    return c.color ? rgbToHue(props.bodyColor) : 0
+    return rgbToHue(props.bodyColor)
   },
   set(v: number) {
     emit('update:bodyColor', hslToHex(v, 72, 52))
@@ -57,57 +67,67 @@ function hslToHex(h: number, s: number, l: number): string {
 
 <template>
   <aside
-    class="pointer-events-auto flex w-14 flex-col items-center gap-4 rounded-2xl border border-white/10 bg-black/45 px-2 py-4 backdrop-blur-md"
+    class="ww-showroom-panel ww-showroom-custom ww-glass-blur ww-glass-blur--dark"
     aria-label="车身定制"
   >
-    <label class="flex w-full flex-col items-center gap-1 text-[10px] text-white/55">
-      Hue
-      <input
-        v-model.number="hue"
-        type="range"
-        min="0"
-        max="360"
-        class="h-24 w-2 appearance-none rounded-full bg-gradient-to-b from-red-500 via-green-400 to-blue-500 [writing-mode:vertical-lr]"
+    <p class="ww-showroom-panel__title">定制</p>
+
+    <section class="ww-showroom-custom__section">
+      <span class="ww-showroom-custom__label">预设颜色</span>
+      <div class="ww-showroom-custom__swatches" role="list">
+        <button
+          v-for="c in COLOR_PRESETS"
+          :key="c"
+          type="button"
+          class="ww-showroom-custom__swatch"
+          :class="{ 'ww-showroom-custom__swatch--active': bodyColor === c }"
+          :style="{ backgroundColor: c }"
+          :aria-label="`颜色 ${c}`"
+          @click="emit('update:bodyColor', c)"
+        />
+      </div>
+    </section>
+
+    <section class="ww-showroom-custom__section">
+      <span class="ww-showroom-custom__label">色相</span>
+      <Slider v-model="hue" class="ww-showroom-hue" :min="0" :max="360" :step="1" />
+      <div
+        class="ww-showroom-custom__preview"
+        :style="{ backgroundColor: bodyColor }"
+        :title="bodyColor"
       />
-    </label>
-    <div
-      class="h-10 w-10 rounded-full border-2 border-white/30 shadow-inner"
-      :style="{ backgroundColor: bodyColor }"
-      :title="bodyColor"
-    />
-    <div v-if="wheels.length > 1" class="flex w-full flex-col gap-1">
-      <span class="text-center text-[10px] text-white/45">轮毂</span>
-      <button
-        v-for="w in wheels"
-        :key="w.id"
-        type="button"
-        class="rounded px-1 py-0.5 text-[10px] transition"
-        :class="
-          wheelId === w.id
-            ? 'bg-white/20 text-white'
-            : 'text-white/50 hover:bg-white/10'
-        "
-        @click="emit('update:wheelId', w.id)"
-      >
-        {{ w.label }}
-      </button>
-    </div>
-    <div v-if="liveries.length > 1" class="flex w-full flex-col gap-1">
-      <span class="text-center text-[10px] text-white/45">涂装</span>
-      <button
-        v-for="l in liveries"
-        :key="l.id"
-        type="button"
-        class="rounded px-1 py-0.5 text-[10px] transition"
-        :class="
-          liveryId === l.id
-            ? 'bg-white/20 text-white'
-            : 'text-white/50 hover:bg-white/10'
-        "
-        @click="emit('update:liveryId', l.id)"
-      >
-        {{ l.label }}
-      </button>
-    </div>
+    </section>
+
+    <section v-if="wheels.length > 1" class="ww-showroom-custom__section">
+      <span class="ww-showroom-custom__label">轮毂</span>
+      <div class="ww-showroom-custom__options">
+        <button
+          v-for="w in wheels"
+          :key="w.id"
+          type="button"
+          class="ww-showroom-custom__option"
+          :class="{ 'ww-showroom-custom__option--active': wheelId === w.id }"
+          @click="emit('update:wheelId', w.id)"
+        >
+          {{ w.label }}
+        </button>
+      </div>
+    </section>
+
+    <section v-if="liveries.length > 1" class="ww-showroom-custom__section">
+      <span class="ww-showroom-custom__label">涂装</span>
+      <div class="ww-showroom-custom__options">
+        <button
+          v-for="l in liveries"
+          :key="l.id"
+          type="button"
+          class="ww-showroom-custom__option"
+          :class="{ 'ww-showroom-custom__option--active': liveryId === l.id }"
+          @click="emit('update:liveryId', l.id)"
+        >
+          {{ l.label }}
+        </button>
+      </div>
+    </section>
   </aside>
 </template>

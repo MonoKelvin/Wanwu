@@ -3,10 +3,11 @@ import { PlanarMeshReflector } from '@renderer/reflection/PlanarMeshReflector'
 import {
   bindFloorReflector,
   patchReflecFloorMaterial
-} from '@renderer/shaders/reflecFloorPatch'
+} from '@modules/cloud-abode/vehicles/shaders/reflecFloorPatch'
 import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/config/showroomLighting'
 import type { ReflectionFloorHandles } from '@modules/cloud-abode/vehicles/types/showroomScene'
 import type { RenderEngine } from '@renderer/core/RenderEngine'
+import { upgradeStandardToPhysical } from '@renderer/materials/ShaderLibrary'
 import { collectVehicleReflectorIgnores } from './vehicleShowroom'
 
 function isFloorMesh(mesh: THREE.Mesh): boolean {
@@ -36,6 +37,25 @@ export function resolveLightPanelRoot(handles: ReflectionFloorHandles): THREE.Ob
   return node
 }
 
+function ensureUv2(mesh: THREE.Mesh): void {
+  const geo = mesh.geometry
+  if (!geo.attributes.uv || geo.attributes.uv2) return
+  geo.setAttribute('uv2', geo.attributes.uv)
+}
+
+function ensureFloorPhysicalMaterial(mesh: THREE.Mesh): THREE.MeshPhysicalMaterial | null {
+  const raw = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material
+  if (!raw) return null
+  if (raw instanceof THREE.MeshPhysicalMaterial) return raw
+  if (!(raw instanceof THREE.MeshStandardMaterial)) return null
+  const physical = upgradeStandardToPhysical(raw)
+  if (physical !== raw) {
+    if (Array.isArray(mesh.material)) mesh.material[0] = physical
+    else mesh.material = physical
+  }
+  return physical
+}
+
 export function extractShowroomHandles(root: THREE.Object3D): ReflectionFloorHandles | null {
   let floorMesh: THREE.Mesh | null = null
   let lightMesh: THREE.Mesh | null = null
@@ -47,19 +67,31 @@ export function extractShowroomHandles(root: THREE.Object3D): ReflectionFloorHan
     if (!lightMesh && isLightMesh(mesh)) lightMesh = mesh
   })
 
-  if (!floorMesh || !lightMesh) return null
+  if (!floorMesh || !lightMesh) {
+    console.warn('[showroomScene] 未找到 floor/light mesh')
+    return null
+  }
 
-  const floorMat = Array.isArray(floorMesh.material) ? floorMesh.material[0] : floorMesh.material
-  const lightMat = Array.isArray(lightMesh.material) ? lightMesh.material[0] : lightMesh.material
+  ensureUv2(floorMesh)
 
-  if (!(floorMat instanceof THREE.MeshPhysicalMaterial)) return null
-  if (!(lightMat instanceof THREE.MeshStandardMaterial)) return null
+  const floorMat = ensureFloorPhysicalMaterial(floorMesh)
+  if (floorMat && !floorMat.lightMap) {
+    console.warn('[showroomScene] 地板 Physical 材质缺少 lightMap，请先 applyShowroomMaterials')
+  }
+  const lightRaw = Array.isArray(lightMesh.material) ? lightMesh.material[0] : lightMesh.material
+  if (!floorMat || !(lightRaw instanceof THREE.MeshStandardMaterial)) {
+    console.warn('[showroomScene] floor/light 材质类型不匹配', {
+      floor: floorMat?.constructor.name,
+      light: lightRaw?.constructor.name
+    })
+    return null
+  }
 
   return {
     floorMesh,
     lightMesh,
     floorMaterial: floorMat,
-    lightMaterial: lightMat
+    lightMaterial: lightRaw
   }
 }
 
@@ -68,11 +100,37 @@ export function prepareShowroomScene(root: THREE.Object3D): void {
     if (!(obj as THREE.Mesh).isMesh) return
     const mesh = obj as THREE.Mesh
     const n = mesh.name.toLowerCase()
-    if (isFloorMesh(mesh) || isLightMesh(mesh)) return
+    if (isFloorMesh(mesh)) {
+      mesh.receiveShadow = true
+      return
+    }
+    if (isLightMesh(mesh)) {
+      mesh.castShadow = false
+      mesh.receiveShadow = false
+      return
+    }
     if (n.startsWith('plane.') || n === 'floor') {
       mesh.visible = false
     }
   })
+}
+
+/** GLTF 地板 ReflecFloor 默认偏移 ~11.8m，对齐至车辆/轨道中心 */
+export function centerShowroomOnCar(
+  root: THREE.Object3D,
+  target = new THREE.Vector3(0, 0, 0)
+): void {
+  const floor =
+    root.getObjectByName('ReflecFloor') ??
+    root.getObjectByName('ReflecFloor'.toLowerCase())
+  if (!floor) return
+
+  root.updateWorldMatrix(true, true)
+  const box = new THREE.Box3().setFromObject(floor)
+  const center = box.getCenter(new THREE.Vector3())
+  root.position.x += target.x - center.x
+  root.position.z += target.z - center.z
+  root.updateWorldMatrix(true, true)
 }
 
 export interface LightPanelStateOptions {
@@ -143,6 +201,12 @@ export function enableReflecFloorShader(
   handles: ReflectionFloorHandles,
   floorTintMul?: number
 ): void {
+  if (!handles.floorMaterial.lightMap) {
+    console.warn('[showroomScene] 地板 lightMap 未绑定，聚光/阴影可能不可见')
+  }
+
+  handles.floorMesh.receiveShadow = true
+
   patchReflecFloorMaterial(handles.floorMaterial, {
     time: 0,
     speed: 0,
