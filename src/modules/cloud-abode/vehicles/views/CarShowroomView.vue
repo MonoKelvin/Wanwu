@@ -5,13 +5,17 @@ import type { Group } from 'three'
 import SceneCanvas from '@renderer/components/SceneCanvas.vue'
 import type { SceneRenderer } from '@renderer/core/SceneRenderer'
 import { CLOUD_ABODE_SHOWROOM } from '@modules/cloud-abode/config/showroomAssets'
+import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/config/showroomLighting'
+import { ShowroomDirector } from '../services/showroomDirector'
+import { bindShowroomHoldRush } from '../composables/useShowroomHoldRush'
+import type { HoldRushBindings } from '../composables/useShowroomHoldRush'
 import { assetUrl, vehicleItemAssetUrl } from '@shared/utils/assetUrl'
 import ColorBar from '../components/ColorBar.vue'
 import ShowroomPreloader from '../components/ShowroomPreloader.vue'
 import StateTable from '../components/StateTable.vue'
 import ShowroomHud from '../components/ShowroomHud.vue'
 import ScreenshotFlash from '../components/ScreenshotFlash.vue'
-import { applyBodyColor, setupVehicleMaterials } from '../services/materialBinder'
+import { applyBodyColor, prepareVehicleForShowroom } from '../services/vehicleShowroom'
 import {
   applyCustomization,
   collectWheelSpinNodes
@@ -20,8 +24,10 @@ import { applyShowroomMaterials } from '../services/showroomMaterials'
 import {
   attachShowroomFloorReflector,
   enableReflecFloorShader,
-  extractShowroomHandles
+  extractShowroomHandles,
+  prepareShowroomScene
 } from '../services/showroomScene'
+import { initShowroomDynamicEnvironment } from '../services/showroomEnvironment'
 import LeftCustomBar from '../components/LeftCustomBar.vue'
 import { loadVehicleItem } from '../services/loadVehicleCatalog'
 import { useVehicleGarageStore } from '../stores/vehicleGarage'
@@ -42,38 +48,96 @@ const carRoot = ref<Group | null>(null)
 const viewMode = ref<ShowroomViewMode>('customize')
 const sceneReady = ref(false)
 const screenshotFlash = ref<InstanceType<typeof ScreenshotFlash> | null>(null)
+const pathTracingActive = ref(false)
+const pathTracingSamples = ref(0)
+const pathTracingLoading = ref(false)
+const pathTracingSupported = ref(false)
 
 let renderer: SceneRenderer | null = null
-let pointerDownAt = 0
-let removeCanvasListeners: (() => void) | null = null
+let director: ShowroomDirector | null = null
+let holdRushBindings: HoldRushBindings | null = null
+let pathTracingRaf = 0
+
+function stopPathTracingPoll(): void {
+  if (pathTracingRaf) cancelAnimationFrame(pathTracingRaf)
+  pathTracingRaf = 0
+}
+
+function startPathTracingPoll(): void {
+  stopPathTracingPoll()
+  const tick = () => {
+    if (!pathTracingActive.value || !renderer) {
+      pathTracingRaf = 0
+      return
+    }
+    pathTracingSamples.value = renderer.engine.pathTracingSamples
+    pathTracingRaf = requestAnimationFrame(tick)
+  }
+  pathTracingRaf = requestAnimationFrame(tick)
+}
+
+async function stopPathTracingPreview(): Promise<void> {
+  if (!renderer || !pathTracingActive.value) return
+  renderer.engine.disablePathTracing()
+  renderer.setInteractLocked(false)
+  pathTracingActive.value = false
+  pathTracingSamples.value = 0
+  prefs.setPathTracingPreview(false)
+  stopPathTracingPoll()
+}
+
+async function togglePathTracingPreview(): Promise<void> {
+  if (!renderer || pathTracingLoading.value || !pathTracingSupported.value) return
+  const engine = renderer.engine
+
+  if (pathTracingActive.value) {
+    await stopPathTracingPreview()
+    return
+  }
+
+  pathTracingLoading.value = true
+  try {
+    const ok = await engine.enablePathTracing()
+    if (!ok) {
+      console.warn('[CarShowroom] 路径追踪不可用', engine.pathTracingError)
+      return
+    }
+    await engine.setPathTracingEnabled(true)
+    renderer.setInteractLocked(true)
+    pathTracingActive.value = true
+    prefs.setPathTracingPreview(true)
+    startPathTracingPoll()
+  } finally {
+    pathTracingLoading.value = false
+  }
+}
+
+function disposeCanvasInteraction(): void {
+  holdRushBindings?.dispose()
+  holdRushBindings = null
+}
 
 const { muted } = storeToRefs(prefs)
 const bgmUrl = assetUrl(CLOUD_ABODE_SHOWROOM.bgm)
 const { play: playBgm, stop: stopBgm } = useShowroomBgm(bgmUrl, muted)
 
-function bindRushClick(r: SceneRenderer) {
-  removeCanvasListeners?.()
-  const el = r.domElement
-  const onDown = () => {
-    pointerDownAt = performance.now()
-  }
-  const onClick = () => {
-    if (performance.now() - pointerDownAt > 280) return
-    void (async () => {
-      await r.toggleRushMode(assetUrl(CLOUD_ABODE_SHOWROOM.effects.speedLines))
-      viewMode.value = r.isRushActive ? 'drive' : 'customize'
-    })()
-  }
-  el.addEventListener('pointerdown', onDown)
-  el.addEventListener('click', onClick)
-  removeCanvasListeners = () => {
-    el.removeEventListener('pointerdown', onDown)
-    el.removeEventListener('click', onClick)
-  }
-}
-
 async function onReady(r: SceneRenderer) {
+  disposeCanvasInteraction()
   renderer = r
+  director?.dispose()
+  director = new ShowroomDirector(r.engine, {
+    reflectionFloorTintMul: SHOWROOM_LIGHTING.floorTintMul
+  })
+  pathTracingSupported.value = r.engine.capabilities.pathTracing
+  pathTracingActive.value = false
+  pathTracingSamples.value = 0
+  stopPathTracingPoll()
+  r.storeBloomRest(
+    SHOWROOM_LIGHTING.bloomIntensity,
+    SHOWROOM_LIGHTING.bloomLuminanceSmoothing
+  )
+  r.setBloomIntensity(SHOWROOM_LIGHTING.bloomIntensity)
+  r.setBloomSmoothing(SHOWROOM_LIGHTING.bloomLuminanceSmoothing)
   sceneReady.value = false
   loading.value = true
   error.value = ''
@@ -90,41 +154,73 @@ async function onReady(r: SceneRenderer) {
 
   garage.bindVehicle(item)
 
+  const fail = (step: string, e: unknown): never => {
+    console.error(`[CarShowroom] 失败步骤: ${step}`, e)
+    if (e instanceof Error) {
+      throw new Error(`${step}: ${e.message}`, { cause: e })
+    }
+    throw new Error(`${step}: ${String(e)}`)
+  }
+
   try {
     const cfg = garage.config ?? item.customization.defaultConfig
-    await r.initDynamicEnvironment(
+    await initShowroomDynamicEnvironment(
+      r.engine,
       assetUrl(CLOUD_ABODE_SHOWROOM.hdrDay),
-      assetUrl(CLOUD_ABODE_SHOWROOM.hdrNight)
+      assetUrl(CLOUD_ABODE_SHOWROOM.hdrNight),
+      { fallbackIntensity: SHOWROOM_LIGHTING.envIntensity }
+    ).catch((e) => fail('initShowroomDynamicEnvironment', e))
+    const car = await r.loadGltf(vehicleItemAssetUrl(props.slug, item.model.path)).catch((e) =>
+      fail('loadGltf(vehicle)', e)
     )
-    const car = await r.loadGltf(vehicleItemAssetUrl(props.slug, item.model.path))
     carRoot.value = car
-    r.setVehicleRoot(car)
-    const showroom = await r.loadGltf(assetUrl(CLOUD_ABODE_SHOWROOM.sceneGltf))
+    director.bindVehicle(car)
+    const showroom = await r.loadGltf(assetUrl(CLOUD_ABODE_SHOWROOM.sceneGltf)).catch((e) =>
+      fail('loadGltf(showroom)', e)
+    )
+    prepareShowroomScene(showroom)
     await applyShowroomMaterials(showroom, {
       floorNormal: assetUrl(CLOUD_ABODE_SHOWROOM.textures.floorNormal),
       floorRoughness: assetUrl(CLOUD_ABODE_SHOWROOM.textures.floorRoughness),
       showroomAo: assetUrl(CLOUD_ABODE_SHOWROOM.textures.showroomAo),
       showroomLight: assetUrl(CLOUD_ABODE_SHOWROOM.textures.showroomLight)
-    })
+    }).catch((e) => fail('applyShowroomMaterials', e))
     const handles = extractShowroomHandles(showroom)
-    if (handles) {
-      enableReflecFloorShader(handles)
-      r.registerShowroom(handles)
-      attachShowroomFloorReflector(r, handles)
-    }
     const bodyAo = item.textures?.bodyAo
       ? vehicleItemAssetUrl(props.slug, item.textures.bodyAo)
       : undefined
-    await setupVehicleMaterials(car, item.customization, cfg.bodyColor, bodyAo)
+    await prepareVehicleForShowroom(car, {
+      bodyColor: cfg.bodyColor,
+      bodyAoUrl: bodyAo,
+      paintMeshes: item.customization.paintMeshes
+    })
     applyCustomization(car, item.customization, cfg.wheelId, cfg.liveryId)
-    r.setWheelSpinNodes(collectWheelSpinNodes(car))
-    r.playShowroomEnter()
-    bindRushClick(r)
+    if (handles) {
+      try {
+        enableReflecFloorShader(handles, SHOWROOM_LIGHTING.floorTintMul)
+        attachShowroomFloorReflector(r.engine, handles, car)
+        director.bindShowroom(handles)
+        director.playEnter(handles)
+      } catch (e) {
+        fail('enableReflecFloorShader/attachReflector/playEnter', e)
+      }
+    } else {
+      console.error('[CarShowroom] 未找到展厅 floor/light 句柄，聚光与反射不可用')
+    }
+    director.setSpinTargets(collectWheelSpinNodes(car))
+    disposeCanvasInteraction()
+    holdRushBindings = bindShowroomHoldRush(r.engine, director, viewMode)
     sceneReady.value = true
     if (!muted.value) playBgm()
+    if (prefs.pathTracingPreview && pathTracingSupported.value) {
+      void togglePathTracingPreview()
+    }
   } catch (e) {
-    error.value =
-      e instanceof Error ? e.message : '3D 资源加载失败，请检查云斋资源是否已拷贝齐全'
+    const base = e instanceof Error ? e.message : '3D 资源加载失败，请检查云斋资源是否已拷贝齐全'
+    const stack =
+      e instanceof Error && e.stack ? `\n${e.stack.split('\n').slice(0, 10).join('\n')}` : ''
+    console.error('[CarShowroom] 加载失败', e)
+    error.value = `${base}${stack}`
   } finally {
     loading.value = false
   }
@@ -151,22 +247,37 @@ watch(muted, (m) => {
   else playBgm()
 })
 
-watch(viewMode, async (mode) => {
-  if (!renderer || !sceneReady.value || loading.value) return
-  await renderer.applyViewMode(mode, assetUrl(CLOUD_ABODE_SHOWROOM.effects.speedLines))
+watch(viewMode, async (mode, prev) => {
+  if (!director || !sceneReady.value || loading.value) return
+  if (prev === 'drive' && mode !== 'drive' && director.isRushActive) {
+    director.endHoldDrive()
+  }
+  if (mode === 'drive' && !director.isRushActive) {
+    await director.applyViewMode('drive')
+    return
+  }
+  if (mode !== 'drive') {
+    await director.applyViewMode(mode)
+  }
 })
 
 onBeforeUnmount(() => {
-  removeCanvasListeners?.()
-  removeCanvasListeners = null
+  disposeCanvasInteraction()
+  void stopPathTracingPreview()
+  director?.dispose()
+  director = null
   stopBgm()
 })
 
 watch(
   () => garage.config?.bodyColor,
   (color) => {
-    if (!color || !carRoot.value || !garage.activeItem) return
-    applyBodyColor(carRoot.value, garage.activeItem.customization, color)
+    if (!color || !carRoot.value) return
+    applyBodyColor(
+      carRoot.value,
+      color,
+      garage.activeItem?.customization.paintMeshes
+    )
   }
 )
 
@@ -185,6 +296,18 @@ watch(
       :key="prefs.quality"
       class="min-h-0 flex-1"
       :quality="prefs.quality"
+      :exposure="SHOWROOM_LIGHTING.toneMappingExposure"
+      :bloom-intensity="SHOWROOM_LIGHTING.bloomIntensity"
+      :bloom-luminance-smoothing="SHOWROOM_LIGHTING.bloomLuminanceSmoothing"
+      :bloom-luminance-threshold="SHOWROOM_LIGHTING.bloomLuminanceThreshold"
+      :enable-ssr="SHOWROOM_LIGHTING.enableSSR"
+      :enable-ssao="SHOWROOM_LIGHTING.enableSSAO"
+      :ssr-intensity="SHOWROOM_LIGHTING.ssrIntensity"
+      :enable-tone-mapping="true"
+      :cinematic="SHOWROOM_LIGHTING.cinematic"
+      :enable-smaa="SHOWROOM_LIGHTING.enableSMAA"
+      :enable-cinematic-grade="SHOWROOM_LIGHTING.enableCinematicGrade"
+      :enable-temporal-a-a="SHOWROOM_LIGHTING.enableTemporalAA"
       @ready="onReady"
       @progress="onProgress"
       @error="(msg) => { error = msg; loading = false }"
@@ -201,9 +324,16 @@ watch(
       class="pointer-events-none absolute inset-x-0 top-3 z-10 flex items-start justify-between px-4"
     >
       <p class="text-xs text-white/50">
-        单击画布切换行驶 · 右侧切换展示模式
+        长按画布进入行驶，松开恢复 · 右侧切换展示模式
       </p>
-      <ShowroomHud @screenshot="captureScreenshot" />
+      <ShowroomHud
+        :path-tracing-supported="pathTracingSupported"
+        :path-tracing-active="pathTracingActive"
+        :path-tracing-samples="pathTracingSamples"
+        :path-tracing-loading="pathTracingLoading"
+        @screenshot="captureScreenshot"
+        @path-tracing-toggle="togglePathTracingPreview"
+      />
     </div>
     <ScreenshotFlash ref="screenshotFlash" />
     <p
@@ -241,7 +371,7 @@ watch(
       <StateTable
         v-model="viewMode"
         class="pointer-events-auto"
-        :disabled="renderer?.isInteractLocked"
+        :disabled="false"
       />
     </div>
     <div

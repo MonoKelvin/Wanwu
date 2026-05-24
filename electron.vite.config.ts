@@ -1,6 +1,7 @@
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
+import glsl from 'vite-plugin-glsl'
 
 const sharedAlias = {
   '@shared': resolve(__dirname, 'src/shared')
@@ -34,7 +35,13 @@ export default defineConfig({
     root: '.',
     server: {
       host: '127.0.0.1',
-      strictPort: true
+      strictPort: true,
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true
+        }
+      }
     },
     build: {
       rollupOptions: {
@@ -54,6 +61,12 @@ export default defineConfig({
         '@assets': resolve(__dirname, 'assets')
       }
     },
-    plugins: [vue()]
+    plugins: [
+      vue(),
+      glsl({
+        root: resolve(__dirname),
+        include: ['**/*.glsl', '**/*.frag', '**/*.vert']
+      })
+    ]
   }
 })

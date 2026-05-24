@@ -4,10 +4,10 @@ import {
   bindFloorReflector,
   patchReflecFloorMaterial
 } from '@renderer/shaders/reflecFloorPatch'
-import type { ShowroomSceneHandles } from '@renderer/types'
-import type { SceneRenderer } from '@renderer/core/SceneRenderer' // type-only，避免循环依赖
-
-export type { ShowroomSceneHandles }
+import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/config/showroomLighting'
+import type { ReflectionFloorHandles } from '@modules/cloud-abode/vehicles/types/showroomScene'
+import type { RenderEngine } from '@renderer/core/RenderEngine'
+import { collectVehicleReflectorIgnores } from './vehicleShowroom'
 
 function isFloorMesh(mesh: THREE.Mesh): boolean {
   const name = mesh.name.toLowerCase()
@@ -23,8 +23,20 @@ function isLightMesh(mesh: THREE.Mesh): boolean {
   return mats.some((m) => m?.name?.toLowerCase() === 'light')
 }
 
-/** 从 sm_startroom 提取 ReflecFloor / light.001 */
-export function extractShowroomHandles(root: THREE.Object3D): ShowroomSceneHandles | null {
+export function resolveLightPanelRoot(handles: ReflectionFloorHandles): THREE.Object3D {
+  let node: THREE.Object3D = handles.lightMesh
+  while (node.parent) {
+    const n = node.parent.name.toLowerCase()
+    if (n.includes('light') && node.parent.type !== 'Scene') {
+      node = node.parent
+    } else {
+      break
+    }
+  }
+  return node
+}
+
+export function extractShowroomHandles(root: THREE.Object3D): ReflectionFloorHandles | null {
   let floorMesh: THREE.Mesh | null = null
   let lightMesh: THREE.Mesh | null = null
 
@@ -51,38 +63,114 @@ export function extractShowroomHandles(root: THREE.Object3D): ShowroomSceneHandl
   }
 }
 
-/** 展厅地板 ReflecFloor 着色器补丁（在 applyShowroomMaterials 之后调用） */
-export function enableReflecFloorShader(handles: ShowroomSceneHandles): void {
+export function prepareShowroomScene(root: THREE.Object3D): void {
+  root.traverse((obj) => {
+    if (!(obj as THREE.Mesh).isMesh) return
+    const mesh = obj as THREE.Mesh
+    const n = mesh.name.toLowerCase()
+    if (isFloorMesh(mesh) || isLightMesh(mesh)) return
+    if (n.startsWith('plane.') || n === 'floor') {
+      mesh.visible = false
+    }
+  })
+}
+
+export interface LightPanelStateOptions {
+  fadeOpacity?: boolean
+}
+
+export function setFloorVisible(handles: ReflectionFloorHandles, visible: boolean): void {
+  handles.floorMesh.visible = visible
+}
+
+export function setLightPanelOpacity(handles: ReflectionFloorHandles, opacity: number): void {
+  const o = THREE.MathUtils.clamp(opacity, 0, 1)
+  handles.lightMaterial.opacity = o
+  handles.lightMaterial.alphaTest = o > 0.92 ? 0.1 : 0
+  handles.lightMaterial.needsUpdate = true
+}
+
+export function setLightPanelState(
+  handles: ReflectionFloorHandles,
+  amount: number,
+  options: LightPanelStateOptions = {}
+): void {
+  const a = THREE.MathUtils.clamp(amount, 0, 1)
+  const fadeOpacity = options.fadeOpacity ?? false
+  const lightRoot = resolveLightPanelRoot(handles)
+
+  lightRoot.visible = true
+  handles.lightMesh.visible = true
+  handles.lightMaterial.visible = true
+
+  if (a <= 0.001) {
+    handles.lightMaterial.emissive.set(0x000000)
+    handles.lightMaterial.emissiveIntensity = 0
+    if (fadeOpacity) {
+      handles.lightMaterial.opacity = 0
+      handles.lightMaterial.alphaTest = 0
+    } else {
+      handles.lightMaterial.opacity = 1
+      handles.lightMaterial.alphaTest = 0.1
+    }
+  } else {
+    handles.lightMaterial.emissive.set(0xffffff)
+    handles.lightMaterial.emissiveIntensity = a * SHOWROOM_LIGHTING.keyLightEmissive
+
+    if (fadeOpacity) {
+      handles.lightMaterial.opacity = a
+      handles.lightMaterial.alphaTest = a > 0.92 ? 0.1 : 0
+    } else {
+      handles.lightMaterial.opacity = 1
+      handles.lightMaterial.alphaTest = 0.1
+    }
+  }
+
+  handles.lightMaterial.needsUpdate = true
+}
+
+export function collectReflectorIgnoreTargets(
+  handles: ReflectionFloorHandles,
+  vehicleRoot?: THREE.Object3D | null
+): THREE.Object3D[] {
+  const lightRoot = resolveLightPanelRoot(handles)
+  const list: THREE.Object3D[] = [lightRoot, handles.lightMesh, handles.floorMesh]
+  if (vehicleRoot) list.push(...collectVehicleReflectorIgnores(vehicleRoot))
+  return list
+}
+
+export function enableReflecFloorShader(
+  handles: ReflectionFloorHandles,
+  floorTintMul?: number
+): void {
   patchReflecFloorMaterial(handles.floorMaterial, {
     time: 0,
     speed: 0,
     reflectIntensity: 0,
-    floorColor: new THREE.Color(0x000000)
+    floorColor: new THREE.Color(0x000000),
+    floorTintMul
   })
 
-  handles.lightMaterial.emissive = new THREE.Color(0xffffff)
-  handles.lightMaterial.emissiveIntensity = 0
   handles.lightMaterial.toneMapped = false
   handles.lightMaterial.transparent = true
-  handles.lightMaterial.opacity = 0
-  handles.lightMaterial.alphaTest = 0.1
   handles.lightMaterial.depthWrite = false
+  setLightPanelState(handles, 0)
 }
 
-/** 绑定展厅地板平面反射（需在 SceneRenderer 与车型加载完成后调用） */
 export function attachShowroomFloorReflector(
-  sceneRenderer: SceneRenderer,
-  handles: ShowroomSceneHandles
+  engine: RenderEngine,
+  handles: ReflectionFloorHandles,
+  vehicleRoot?: THREE.Object3D | null
 ): PlanarMeshReflector {
   const reflector = new PlanarMeshReflector({
-    renderer: sceneRenderer.webglRenderer,
-    scene: sceneRenderer.threeScene,
-    camera: sceneRenderer.threeCamera,
+    renderer: engine.webglRenderer,
+    scene: engine.threeScene,
+    camera: engine.threeCamera,
     floorMesh: handles.floorMesh,
-    resolution: 1024,
-    ignoreObjects: [handles.lightMesh]
+    resolution: SHOWROOM_LIGHTING.reflectorResolution,
+    ignoreObjects: collectReflectorIgnoreTargets(handles, vehicleRoot)
   })
   bindFloorReflector(handles.floorMaterial, reflector)
-  sceneRenderer.setFloorReflector(reflector)
+  engine.reflection.addReflector(reflector)
   return reflector
 }

@@ -21,34 +21,38 @@ void main() {
 }
 `
 
+export interface DynamicEnvMixerOptions {
+  /** 为 false 时不 dispose 传入的 PMREM 贴图（由 SceneRenderer 统一管理） */
+  disposeEnvTextures?: boolean
+}
+
 /**
- * 双 HDR 混合（对标 su7-replica DynamicEnv）
- * - envmap1: 夜间 HDR
- * - envmap2: 日间 HDR
- * - weight 0→1：夜→昼；输出 RT 直接作 scene.environment（CubeUV），不做每帧 PMREM
+ * 双 PMREM 环境混合（day/night HDR 权重插值）
+ * 输入须为 PMREMGenerator.fromEquirectangular().texture，且 mapping = CubeUVReflectionMapping
  */
 export class DynamicEnvMixer {
   private readonly rt: THREE.WebGLRenderTarget
   private readonly material: THREE.ShaderMaterial
   private readonly quad: THREE.Mesh
   private readonly renderMix: (r: THREE.WebGLRenderer) => void
-  readonly nightHdr: THREE.DataTexture
-  readonly dayHdr: THREE.DataTexture
+  private readonly disposeEnvTextures: boolean
+  readonly nightEnv: THREE.Texture
+  readonly dayEnv: THREE.Texture
   weight = 0
   intensity = 1
 
   constructor(
     renderer: THREE.WebGLRenderer,
-    nightHdr: THREE.DataTexture,
-    dayHdr: THREE.DataTexture
+    nightEnv: THREE.Texture,
+    dayEnv: THREE.Texture,
+    options: DynamicEnvMixerOptions = {}
   ) {
-    this.nightHdr = nightHdr
-    this.dayHdr = dayHdr
-    nightHdr.mapping = THREE.EquirectangularReflectionMapping
-    dayHdr.mapping = THREE.EquirectangularReflectionMapping
+    this.nightEnv = nightEnv
+    this.dayEnv = dayEnv
+    this.disposeEnvTextures = options.disposeEnvTextures ?? false
 
-    const w = nightHdr.image.width ?? 1024
-    const h = nightHdr.image.height ?? 512
+    const w = 1024
+    const h = 512
     this.rt = new THREE.WebGLRenderTarget(w, h, {
       type: THREE.HalfFloatType,
       generateMipmaps: false
@@ -58,8 +62,8 @@ export class DynamicEnvMixer {
       vertexShader: MIX_VERT,
       fragmentShader: MIX_FRAG,
       uniforms: {
-        uEnvmap1: { value: nightHdr },
-        uEnvmap2: { value: dayHdr },
+        uEnvmap1: { value: nightEnv },
+        uEnvmap2: { value: dayEnv },
         uWeight: { value: 0 },
         uIntensity: { value: 1 }
       },
@@ -77,6 +81,8 @@ export class DynamicEnvMixer {
       r.render(this.quad, cam)
       r.setRenderTarget(prev)
     }
+
+    void renderer
   }
 
   setWeight(value: number): void {
@@ -89,7 +95,6 @@ export class DynamicEnvMixer {
     this.material.uniforms.uIntensity.value = value
   }
 
-  /** 每帧混合并返回环境贴图（与 su7 dynamicEnv.update 一致） */
   update(renderer: THREE.WebGLRenderer): THREE.Texture {
     this.renderMix(renderer)
     const tex = this.rt.texture
@@ -101,7 +106,20 @@ export class DynamicEnvMixer {
     this.rt.dispose()
     this.material.dispose()
     this.quad.geometry.dispose()
-    this.nightHdr.dispose()
-    this.dayHdr.dispose()
+    if (this.disposeEnvTextures) {
+      this.nightEnv.dispose()
+      this.dayEnv.dispose()
+    }
   }
+}
+
+/** HDR 纹理 → PMREM CubeUV 环境贴图 */
+export function hdrToPmremEnv(
+  pmrem: THREE.PMREMGenerator,
+  hdr: THREE.DataTexture
+): THREE.Texture {
+  const env = pmrem.fromEquirectangular(hdr).texture
+  hdr.dispose()
+  env.mapping = THREE.CubeUVReflectionMapping
+  return env
 }

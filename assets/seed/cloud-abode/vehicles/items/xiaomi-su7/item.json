@@ -18,7 +18,7 @@
       "wheelId": "wheel-default",
       "liveryId": "livery-default"
     },
-    "paintMeshes": ["body", "Body", "car_body"],
+    "paintMeshes": ["body", "body.001"],
     "wheels": [
       {
         "id": "wheel-default",

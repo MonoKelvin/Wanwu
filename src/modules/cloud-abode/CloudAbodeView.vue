@@ -39,6 +39,12 @@ function openVehicle(nextSlug: string) {
       aria-label="车型列表"
     >
       <p class="px-2 py-1 text-xs font-medium text-ww-muted">虚拟汽车</p>
+      <RouterLink
+        to="/cloud-abode/products"
+        class="mb-2 block rounded-lg px-3 py-2 text-sm text-color transition-colors hover:bg-ww-canvas/60"
+      >
+        商品商城
+      </RouterLink>
       <button
         v-for="v in catalog.vehicles"
         :key="v.id"

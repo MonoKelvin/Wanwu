@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { hideSubtree, restoreVisibility } from '../utils/visibilitySubtree'
 
 export interface PlanarMeshReflectorOptions {
   renderer: THREE.WebGLRenderer
@@ -10,11 +11,12 @@ export interface PlanarMeshReflectorOptions {
 }
 
 /**
- * 平面反射（移植 su7-replica MeshReflectorMaterial 核心逻辑，无 kokomi）
+ * 平面 mesh 反射 — mipmap 链 + 反射矩阵（对齐 git HEAD）
  */
 export class PlanarMeshReflector {
   readonly reflectMatrix = new THREE.Matrix4()
-  readonly texture: THREE.Texture
+  readonly mipmapTexture: THREE.Texture
+  readonly resolution: number
 
   private readonly renderer: THREE.WebGLRenderer
   private readonly scene: THREE.Scene
@@ -25,27 +27,31 @@ export class PlanarMeshReflector {
   private readonly renderTarget: THREE.WebGLRenderTarget
   private readonly ignoreObjects: THREE.Object3D[]
 
+  /** @deprecated 使用 mipmapTexture */
+  get texture(): THREE.Texture {
+    return this.mipmapTexture
+  }
+
   constructor(options: PlanarMeshReflectorOptions) {
     this.renderer = options.renderer
     this.scene = options.scene
     this.camera = options.camera
     this.floorMesh = options.floorMesh
-    this.ignoreObjects = [
-      this.floorMesh,
-      ...(options.ignoreObjects ?? [])
-    ]
+    this.resolution = options.resolution ?? 1024
+    this.ignoreObjects = [this.floorMesh, ...(options.ignoreObjects ?? [])]
 
-    const size = options.resolution ?? 1024
-    this.renderTarget = new THREE.WebGLRenderTarget(size, size, {
+    this.renderTarget = new THREE.WebGLRenderTarget(this.resolution, this.resolution, {
       type: THREE.UnsignedByteType
     })
-    this.texture = this.renderTarget.texture
-    this.texture.generateMipmaps = true
-    this.texture.minFilter = THREE.LinearMipmapLinearFilter
-    this.texture.magFilter = THREE.LinearFilter
+    this.mipmapTexture = this.renderTarget.texture
+    this.mipmapTexture.generateMipmaps = true
+    this.mipmapTexture.minFilter = THREE.LinearMipmapLinearFilter
+    this.mipmapTexture.magFilter = THREE.LinearFilter
   }
 
   update(): void {
+    if (!this.floorMesh?.matrixWorld) return
+
     this.reflectPlane.set(new THREE.Vector3(0, 1, 0), 0)
     this.reflectPlane.applyMatrix4(this.floorMesh.matrixWorld)
 
@@ -112,15 +118,13 @@ export class PlanarMeshReflector {
 
     const hidden: THREE.Object3D[] = []
     for (const obj of this.ignoreObjects) {
-      if (obj.visible) {
-        hidden.push(obj)
-        obj.visible = false
-      }
+      hidden.push(...hideSubtree(obj))
     }
 
+    this.reflectCamera.layers.set(0)
     this.renderer.render(this.scene, this.reflectCamera)
 
-    for (const obj of hidden) obj.visible = true
+    restoreVisibility(hidden)
 
     this.renderer.setRenderTarget(prevTarget)
     this.renderer.autoClear = prevAutoClear

@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-/** M5 风阻占位：简化流线（无 sm_windspeed.glb 时） */
+/** 风阻可视化流线（云斋 aero 模式占位） */
 export function createAeroWindLines(): THREE.LineSegments {
   const count = 48
   const positions = new Float32Array(count * 2 * 3)

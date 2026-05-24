@@ -29,10 +29,22 @@ const router = createRouter({
       meta: { module: 'rss', title: 'RSS' }
     },
     {
+      path: '/cloud-abode/products',
+      name: 'product-catalog',
+      component: () => import('@modules/cloud-abode/views/ProductCatalogView.vue'),
+      meta: { module: 'cloud-abode', title: '云斋 · 商品' }
+    },
+    {
       path: '/cloud-abode/:slug?',
       name: 'cloud-abode',
       component: () => import('@modules/cloud-abode/CloudAbodeView.vue'),
       meta: { module: 'cloud-abode', title: '云斋' }
+    },
+    {
+      path: '/product/:id',
+      name: 'product-detail',
+      component: () => import('@modules/cloud-abode/views/ProductDetailView.vue'),
+      meta: { module: 'cloud-abode', title: '商品详情' }
     },
     {
       path: '/personal',

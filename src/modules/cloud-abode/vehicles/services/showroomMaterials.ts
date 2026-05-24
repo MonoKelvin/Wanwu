@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/config/showroomLighting'
 
 export interface ShowroomTextureUrls {
   floorNormal: string
@@ -28,6 +29,13 @@ function isFloorMesh(mesh: THREE.Mesh): boolean {
   return mats.some((m) => m?.name?.toLowerCase() === 'floor')
 }
 
+function ensureUv2(mesh: THREE.Mesh): void {
+  const geo = mesh.geometry
+  if (!geo.attributes.uv || geo.attributes.uv2) return
+  geo.setAttribute('uv2', geo.attributes.uv)
+}
+
+/** 在 GLTF ReflecFloor 原有材质上挂贴图（su7 StartRoom，不创建新平面） */
 function patchFloorMaterial(
   mat: THREE.Material,
   maps: {
@@ -45,10 +53,9 @@ function patchFloorMaterial(
   }
 
   mat.aoMap = maps.ao
-  mat.aoMapIntensity = 1
+  mat.aoMapIntensity = SHOWROOM_LIGHTING.floorAoIntensity
   mat.lightMap = maps.light
-  mat.lightMapIntensity = 1
-  // 最终亮度由 ReflecFloor 着色器按 lightMap 遮罩控制
+  mat.lightMapIntensity = SHOWROOM_LIGHTING.floorLightMapIntensity
   mat.normalMap = maps.normal
   mat.normalScale = new THREE.Vector2(1, -1)
   mat.roughnessMap = maps.roughness
@@ -60,9 +67,6 @@ function patchFloorMaterial(
   mat.needsUpdate = true
 }
 
-/**
- * 展厅贴图（对标 su7 StartRoom：在 GLTF 原有 floorMat 上挂贴图，不重建材质）
- */
 export async function applyShowroomMaterials(
   showroomRoot: THREE.Object3D,
   urls: ShowroomTextureUrls
@@ -85,6 +89,7 @@ export async function applyShowroomMaterials(
   showroomRoot.traverse((obj) => {
     if (!(obj as THREE.Mesh).isMesh) return
     const mesh = obj as THREE.Mesh
+    ensureUv2(mesh)
     if (!isFloorMesh(mesh)) return
 
     const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
