@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import type { PlanarMeshReflector } from '@renderer/reflection/PlanarMeshReflector'
-import { SHOWROOM_SCENE_DEFAULTS } from '@modules/cloud-abode/config/showroomDefaults'
-import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/config/showroomLighting'
+import { SHOWROOM_SCENE_DEFAULTS } from '@modules/cloud-abode/vehicles_dev/config/showroomDefaults'
+import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/vehicles_dev/config/showroomLighting'
 import { reflecFloorOutput } from './lygia'
 
 export interface ReflecFloorControls {

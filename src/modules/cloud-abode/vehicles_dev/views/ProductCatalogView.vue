@@ -4,7 +4,7 @@
       <div class="mb-6 flex items-center justify-between">
         <h1 class="text-3xl font-bold">云斋 · 商品</h1>
         <RouterLink to="/cloud-abode" class="text-sm text-ww-accent hover:underline">
-          返回展车
+          返回云斋
         </RouterLink>
       </div>
 

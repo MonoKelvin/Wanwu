@@ -12,8 +12,3 @@ export function assetUrl(path: string): string {
   }
   return url
 }
-
-export function vehicleItemAssetUrl(slug: string, relativePath: string): string {
-  const normalized = relativePath.replace(/\\/g, '/').replace(/^\//, '')
-  return assetUrl(`seed/cloud-abode/vehicles/items/${slug}/${normalized}`)
-}

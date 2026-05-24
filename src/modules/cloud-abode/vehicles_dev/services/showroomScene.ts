@@ -3,9 +3,9 @@ import { PlanarMeshReflector } from '@renderer/reflection/PlanarMeshReflector'
 import {
   bindFloorReflector,
   patchReflecFloorMaterial
-} from '@modules/cloud-abode/vehicles/shaders/reflecFloorPatch'
-import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/config/showroomLighting'
-import type { ReflectionFloorHandles } from '@modules/cloud-abode/vehicles/types/showroomScene'
+} from '@modules/cloud-abode/vehicles_dev/shaders/reflecFloorPatch'
+import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/vehicles_dev/config/showroomLighting'
+import type { ReflectionFloorHandles } from '@modules/cloud-abode/vehicles_dev/types/showroomScene'
 import type { RenderEngine } from '@renderer/core/RenderEngine'
 import { upgradeStandardToPhysical } from '@renderer/materials/ShaderLibrary'
 import { collectVehicleReflectorIgnores } from './vehicleShowroom'

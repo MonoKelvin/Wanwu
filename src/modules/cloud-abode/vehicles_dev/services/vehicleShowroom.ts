@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import {
   createCarPaintMaterial
-} from '@modules/cloud-abode/vehicles/materials/carPaint'
-import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/config/showroomLighting'
+} from '@modules/cloud-abode/vehicles_dev/materials/carPaint'
+import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/vehicles_dev/config/showroomLighting'
 import {
   replaceMeshMaterial,
   upgradeStandardToPhysical

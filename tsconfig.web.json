@@ -22,5 +22,6 @@
       "@assets/*": ["assets/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.d.ts"]
+  "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.d.ts"],
+  "exclude": ["src/modules/cloud-abode/vehicles_dev/**"]
 }

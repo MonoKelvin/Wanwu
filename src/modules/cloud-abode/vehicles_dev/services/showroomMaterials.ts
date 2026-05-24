@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/config/showroomLighting'
+import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/vehicles_dev/config/showroomLighting'
 import { upgradeStandardToPhysical } from '@renderer/materials/ShaderLibrary'
 
 export interface ShowroomTextureUrls {

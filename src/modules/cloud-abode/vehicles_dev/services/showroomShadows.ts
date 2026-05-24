@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import type { RenderEngine } from '@renderer/core/RenderEngine'
-import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/config/showroomLighting'
+import { SHOWROOM_LIGHTING } from '@modules/cloud-abode/vehicles_dev/config/showroomLighting'
 import type { ReflectionFloorHandles } from '../types/showroomScene'
 import type { ShowroomLightRig } from './showroomRealtimeLights'
 
