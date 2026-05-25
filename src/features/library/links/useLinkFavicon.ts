@@ -1,60 +1,74 @@
 import { computed, ref, watch, type MaybeRefOrGetter, toValue } from 'vue'
-
-const cache = new Map<string, string>()
-
-function faviconUrlForPage(url: string): string | null {
-  try {
-    const { hostname } = new URL(url)
-    if (!hostname) return null
-    if (cache.has(hostname)) return cache.get(hostname)!
-    const src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostname)}&sz=64`
-    cache.set(hostname, src)
-    return src
-  } catch {
-    return null
-  }
-}
+import {
+  isLikelyGenericFavicon,
+  linkFaviconSources
+} from '@shared/utils/linkIcon'
 
 export function invalidateFaviconForUrl(url: string): void {
-  try {
-    const { hostname } = new URL(url)
-    cache.delete(hostname)
-  } catch {
-    /* ignore */
-  }
+  /* 多源按 URL 重新解析，无需缓存 */
+  void url
 }
 
 export function useLinkFavicon(pageUrl: MaybeRefOrGetter<string>) {
-  const src = ref<string | null>(null)
+  const sourceIndex = ref(0)
+  const sources = ref<string[]>([])
   const failed = ref(false)
   const loaded = ref(false)
 
   function resolve() {
+    sourceIndex.value = 0
     failed.value = false
     loaded.value = false
-    src.value = faviconUrlForPage(toValue(pageUrl))
+    sources.value = linkFaviconSources(toValue(pageUrl))
   }
 
   watch(() => toValue(pageUrl), resolve, { immediate: true })
 
-  const pending = computed(() => !!src.value && !failed.value && !loaded.value)
-  const showImage = computed(() => !!src.value && !failed.value && loaded.value)
-  const showFallback = computed(() => !src.value || failed.value)
+  const activeSrc = computed(() => {
+    if (failed.value || !sources.value.length) return null
+    return sources.value[sourceIndex.value] ?? null
+  })
 
-  function onLoad() {
+  const pending = computed(() => !!activeSrc.value && !failed.value && !loaded.value)
+  const showImage = computed(() => !!activeSrc.value && !failed.value && loaded.value)
+  const showFallback = computed(() => !activeSrc.value || failed.value)
+
+  function tryNextSource() {
+    loaded.value = false
+    if (sourceIndex.value < sources.value.length - 1) {
+      sourceIndex.value += 1
+      return
+    }
+    failed.value = true
+  }
+
+  function onLoad(event: Event) {
+    const img = event.target
+    if (!(img instanceof HTMLImageElement)) return
+    if (isLikelyGenericFavicon(img)) {
+      tryNextSource()
+      return
+    }
     loaded.value = true
   }
 
   function onError() {
-    failed.value = true
-    loaded.value = false
-    src.value = null
+    tryNextSource()
   }
 
   function refresh() {
-    invalidateFaviconForUrl(toValue(pageUrl))
     resolve()
   }
 
-  return { src, failed, loaded, pending, showImage, showFallback, onLoad, onError, refresh }
+  return {
+    activeSrc,
+    failed,
+    loaded,
+    pending,
+    showImage,
+    showFallback,
+    onLoad,
+    onError,
+    refresh
+  }
 }

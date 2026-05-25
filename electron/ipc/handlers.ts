@@ -96,10 +96,39 @@ export function registerIpcHandlers(services: AppServices): void {
 
   ipcMain.handle('links:listAllBookmarks', () => services.links?.listAllBookmarks() ?? [])
 
+  ipcMain.handle('links:syncFromBrowser', () => {
+    if (!services.links) throw new Error('链接服务未就绪')
+    return services.links.syncFromEdge()
+  })
+
+  ipcMain.handle('links:syncToBrowser', () => {
+    if (!services.links) throw new Error('链接服务未就绪')
+    return services.links.syncToEdge()
+  })
+
+  ipcMain.handle('links:reorderBookmarks', (_e, params: { folderId: string; orderedIds: string[] }) => {
+    if (!services.links) throw new Error('链接服务未就绪')
+    services.links.reorderBookmarks(params.folderId, params.orderedIds)
+  })
+
+  /** @deprecated 实时同步等场景：完整双向合并 */
   ipcMain.handle('links:sync', () => {
     if (!services.links) throw new Error('链接服务未就绪')
     return services.links.syncMerge()
   })
+
+  ipcMain.handle('links:createFolder', (_e, input: { parentId: string; name: string }) => {
+    if (!services.links) throw new Error('链接服务未就绪')
+    return services.links.createFolder(input)
+  })
+
+  ipcMain.handle(
+    'links:deleteFolder',
+    (_e, input: { folderId: string; moveBookmarksToRoot: boolean }) => {
+      if (!services.links) throw new Error('链接服务未就绪')
+      services.links.deleteFolder(input)
+    }
+  )
 
   ipcMain.handle('links:createBookmark', (_e, input: { folderId: string; title: string; url: string }) => {
     if (!services.links) throw new Error('链接服务未就绪')
@@ -123,9 +152,26 @@ export function registerIpcHandlers(services: AppServices): void {
     services.links?.permanentDeleteBookmark(id)
   })
 
-  ipcMain.handle('links:probeUnreachable', (_e, ids: string[]) => {
-    return services.links?.probeUnreachable(ids) ?? {}
-  })
+  ipcMain.handle(
+    'links:probeUnreachable',
+    async (event, payload: { ids: string[]; progressChannel?: string }) => {
+      if (!services.links) {
+        return {
+          results: {},
+          invalidCount: 0,
+          byIssue: { invalid_syntax: 0, network: 0, http_status: 0, timeout: 0 }
+        }
+      }
+      const ids = payload?.ids ?? []
+      const channel = payload?.progressChannel
+      const sender = event.sender
+      return services.links.probeUnreachable(ids, (progress) => {
+        if (channel && !sender.isDestroyed()) {
+          sender.send(channel, progress)
+        }
+      })
+    }
+  )
 
   ipcMain.handle('rss:listGroups', () => services.rss?.listGroups() ?? [])
 

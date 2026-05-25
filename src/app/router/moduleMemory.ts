@@ -42,6 +42,10 @@ export function setupModulePathMemory(router: Router) {
       return true
     }
 
+    if (to.meta.module === fromModule && from.fullPath !== to.fullPath) {
+      store.rememberModulePath(id, from.fullPath)
+    }
+
     if (to.meta.module !== fromModule) {
       store.rememberModulePath(id, from.fullPath)
     }

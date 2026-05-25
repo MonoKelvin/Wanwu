@@ -1,31 +1,31 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import Tree from 'primevue/tree'
 import type { TreeNode } from 'primevue/treenode'
+import Badge from 'primevue/badge'
 import WwIcon from '@shared/components/WwIcon.vue'
 import { usePersistedTreeExpanded } from '@shared/composables/usePersistedTreeExpanded'
 import { filterTreeNodes } from '@library/catalog/filterTreeNodes'
+import { collectExpandableKeys } from '@library/utils/treeKeys'
 import type { WwIconName } from '@shared/icons/registry'
-
 const props = withDefaults(
   defineProps<{
     nodes: TreeNode[]
-    /** localStorage 键，用于记忆展开状态 */
-    expandedStorageKey: string
+    /** localStorage 键；空字符串时不自动持久化（需配合 v-model:expanded-keys） */
+    expandedStorageKey?: string
     selectionKeys: Record<string, boolean>
     searchQuery?: string
-    /** key 前缀：仅该前缀节点显示大分类图标（如 major:） */
     majorKeyPrefix?: string
-    /** 子节点是否显示图标 */
     showChildIcons?: boolean
-    /** 子节点默认图标 */
     childIcon?: WwIconName
     emptyLabel?: string
     treeClass?: string
-    /** 为 true 时展开当前可见分支（如链接全局搜索过滤后的目录） */
     expandAllBranches?: boolean
+    defaultExpandedKeys?: Record<string, boolean>
+    nodeBadge?: (node: TreeNode) => string | number | null | undefined
   }>(),
   {
+    expandedStorageKey: '',
     searchQuery: '',
     expandAllBranches: false,
     majorKeyPrefix: 'major:',
@@ -36,12 +36,61 @@ const props = withDefaults(
   }
 )
 
+const expandedKeysModel = defineModel<Record<string, boolean>>('expandedKeys', {
+  default: undefined
+})
+
 const emit = defineEmits<{
   select: [node: TreeNode]
   'update:selectionKeys': [keys: Record<string, boolean>]
+  contextmenu: [event: MouseEvent, node: TreeNode]
 }>()
 
-const { expandedKeys, expandForSearch } = usePersistedTreeExpanded(props.expandedStorageKey)
+const internalPersisted = props.expandedStorageKey
+  ? usePersistedTreeExpanded(props.expandedStorageKey)
+  : null
+
+const fallbackExpanded = ref<Record<string, boolean>>({})
+
+const expandedKeys = computed({
+  get: () => expandedKeysModel.value ?? internalPersisted?.expandedKeys.value ?? fallbackExpanded.value,
+  set: (keys) => {
+    const next = keys ?? {}
+    if (expandedKeysModel.value !== undefined) {
+      expandedKeysModel.value = next
+    } else if (internalPersisted) {
+      internalPersisted.expandedKeys.value = next
+    } else {
+      fallbackExpanded.value = next
+    }
+  }
+})
+
+function mergeExpandedKeys(keys: Record<string, boolean>) {
+  expandedKeys.value = { ...expandedKeys.value, ...keys }
+  internalPersisted?.mergeExpandedKeys(keys)
+}
+
+function expandForSearch(nodes: TreeNode[]) {
+  internalPersisted?.expandForSearch(nodes)
+  if (!internalPersisted && nodes.length) {
+    expandedKeys.value = { ...expandedKeys.value, ...collectExpandableKeys(nodes) }
+  }
+}
+
+function applyDefaultExpanded() {
+  if (props.defaultExpandedKeys && Object.keys(props.defaultExpandedKeys).length) {
+    mergeExpandedKeys(props.defaultExpandedKeys)
+  }
+}
+
+onMounted(applyDefaultExpanded)
+
+watch(
+  () => props.defaultExpandedKeys,
+  () => applyDefaultExpanded(),
+  { deep: true }
+)
 
 const filteredNodes = computed(() =>
   filterTreeNodes(props.nodes, props.searchQuery ?? '')
@@ -78,6 +127,15 @@ function nodeIcon(node: TreeNode): WwIconName | null {
 function onNodeSelect(node: TreeNode) {
   emit('select', node)
 }
+
+function onNodeContextMenu(event: MouseEvent, node: TreeNode) {
+  event.stopPropagation()
+  emit('contextmenu', event, node)
+}
+
+function badgeForNode(node: TreeNode): string | number | null | undefined {
+  return props.nodeBadge?.(node)
+}
 </script>
 
 <template>
@@ -91,22 +149,34 @@ function onNodeSelect(node: TreeNode) {
   >
     <template #default="{ node }">
       <span
-        class="ww-catalog-tree__label inline-flex min-w-0 items-center"
-        :class="{ 'gap-2': nodeIcon(node) }"
+        class="ww-catalog-tree__label inline-flex min-w-0 items-center gap-0.5"
+        @contextmenu.prevent="onNodeContextMenu($event, node)"
       >
-        <WwIcon
-          v-if="nodeIcon(node)"
-          :name="nodeIcon(node)!"
-          size="sm"
-          class="shrink-0"
-          :class="{ 'ww-catalog-tree__major-icon': isMajorNode(node) }"
-        />
         <span
-          class="truncate"
-          :class="{ 'ww-catalog-tree__major-text font-semibold': isMajorNode(node) }"
+          class="ww-catalog-tree__label-main"
+          :class="{ 'gap-2': nodeIcon(node) }"
         >
-          {{ node.label }}
+          <WwIcon
+            v-if="nodeIcon(node)"
+            :name="nodeIcon(node)!"
+            size="sm"
+            class="shrink-0"
+            :class="{ 'ww-catalog-tree__major-icon': isMajorNode(node) }"
+          />
+          <span
+            class="truncate"
+            :class="{ 'ww-catalog-tree__major-text font-semibold': isMajorNode(node) }"
+          >
+            {{ node.label }}
+          </span>
         </span>
+        <Badge
+          v-if="badgeForNode(node) != null"
+          :value="badgeForNode(node)!"
+          severity="secondary"
+          size="small"
+          class="ww-catalog-tree__badge"
+        />
       </span>
     </template>
   </Tree>
@@ -197,5 +267,41 @@ function onNodeSelect(node: TreeNode) {
 
 .ww-catalog-tree__major-text {
   font-weight: 600;
+}
+
+.ww-catalog-tree__label {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.ww-catalog-tree__label-main {
+  display: inline-flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+}
+
+.ww-catalog-tree__badge {
+  flex-shrink: 0;
+  margin-inline-start: auto;
+}
+
+.ww-catalog-tree__badge .p-badge,
+.ww-catalog-tree__badge .p-badge.p-badge-circle,
+.ww-catalog-tree__badge .p-badge.p-badge-sm {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0.6875rem !important;
+  width: auto !important;
+  height: 1.125rem !important;
+  padding: 0 0.3125rem !important;
+  font-size: 0.625rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  border-radius: 9999px !important;
 }
 </style>

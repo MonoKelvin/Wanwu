@@ -1,6 +1,12 @@
 import type { FavoriteEntry, FavoriteGroup } from './favorite'
 import type { Category, Item, LibrarySearchHit } from './item'
-import type { LinkBookmark, LinkFolder, LinksSyncResult } from './links'
+import type {
+  LinkBookmark,
+  LinkFolder,
+  LinksProbeProgress,
+  LinksProbeSummary,
+  LinksSyncResult
+} from './links'
 import type { AppSettings } from './settings'
 import type { RssEntry, RssFeed, RssFeedInput, RssFeedUpdate, RssGroup } from './rss'
 
@@ -18,7 +24,13 @@ export interface WanwuApi {
     listFolders: () => Promise<LinkFolder[]>
     listBookmarks: (params: { folderId: string; includeDeleted?: boolean }) => Promise<LinkBookmark[]>
     listAllBookmarks: () => Promise<LinkBookmark[]>
+    syncFromBrowser: () => Promise<LinksSyncResult>
+    syncToBrowser: () => Promise<LinksSyncResult>
+    reorderBookmarks: (params: { folderId: string; orderedIds: string[] }) => Promise<void>
+    /** @deprecated 使用 syncFromBrowser / syncToBrowser */
     sync: () => Promise<LinksSyncResult>
+    createFolder: (input: { parentId: string; name: string }) => Promise<LinkFolder>
+    deleteFolder: (input: { folderId: string; moveBookmarksToRoot: boolean }) => Promise<void>
     createBookmark: (input: { folderId: string; title: string; url: string }) => Promise<LinkBookmark>
     updateBookmark: (input: {
       id: string
@@ -29,7 +41,10 @@ export interface WanwuApi {
     softDeleteBookmark: (id: string) => Promise<void>
     restoreBookmark: (id: string) => Promise<void>
     permanentDeleteBookmark: (id: string) => Promise<void>
-    probeUnreachable: (ids: string[]) => Promise<Record<string, boolean>>
+    probeUnreachable: (
+      ids: string[],
+      onProgress?: (progress: LinksProbeProgress) => void
+    ) => Promise<LinksProbeSummary>
     onBookmarksFileChanged: (listener: () => void) => () => void
   }
   rss: {

@@ -1,7 +1,8 @@
 import type { TreeNode } from 'primevue/treenode'
 import {
   EDGE_ROOT_FOLDER_ID,
-  LINKS_RECYCLE_BIN_ID
+  LINKS_RECYCLE_BIN_ID,
+  LOCAL_COLLECTIONS_ROOT_ID
 } from '@shared/stores/links'
 import type { LinkBookmark, LinkFolder } from '@shared/types/links'
 import { findLinkFolder } from '@features/library/links/linksFolderTree'
@@ -30,6 +31,11 @@ export function isUnderEdgeRoot(folders: LinkFolder[], folderId: string): boolea
   return collectAncestorFolderIds(folders, folderId).includes(EDGE_ROOT_FOLDER_ID)
 }
 
+export function isUnderLocalRoot(folders: LinkFolder[], folderId: string): boolean {
+  if (folderId === LINKS_RECYCLE_BIN_ID) return false
+  return collectAncestorFolderIds(folders, folderId).includes(LOCAL_COLLECTIONS_ROOT_ID)
+}
+
 export function matchingFolderIdsForBookmarks(
   folders: LinkFolder[],
   bookmarks: LinkBookmark[]
@@ -55,8 +61,13 @@ export function filterTreeNodesByFolderIds(
     for (const node of list) {
       const key = String(node.key ?? '')
       const folderId = key.startsWith('fld:') ? key.slice(4) : ''
+      const sourceId = key.startsWith('src:') ? key.slice(4) : ''
       const children = node.children?.length ? walk(node.children) : []
-      if ((folderId && allowed.has(folderId)) || children.length) {
+      if (
+        (folderId && allowed.has(folderId)) ||
+        (sourceId && allowed.has(sourceId)) ||
+        children.length
+      ) {
         out.push({
           ...node,
           children: children.length ? children : undefined
@@ -68,7 +79,7 @@ export function filterTreeNodesByFolderIds(
   return walk(nodes)
 }
 
-/** 全库侧栏「链接」来源节点（Edge / 回收站） */
+/** 全库侧栏「链接」来源节点（Edge / 本地文件夹 / 回收站） */
 export function filterLinksSourceTreeNodes(
   nodes: TreeNode[],
   folders: LinkFolder[],
@@ -76,15 +87,18 @@ export function filterLinksSourceTreeNodes(
 ): TreeNode[] {
   if (!matches.length) return []
 
-  const edgeHit = matches.some((b) => !b.deleted && isUnderEdgeRoot(folders, b.folderId))
-  const recycleHit = matches.some(
-    (b) => b.deleted || b.folderId === LINKS_RECYCLE_BIN_ID
-  )
+  const edgeHit = matches.some((b) => isUnderEdgeRoot(folders, b.folderId))
+  const localHit = matches.some((b) => isUnderLocalRoot(folders, b.folderId))
+  const recycleHit = matches.some((b) => b.folderId === LINKS_RECYCLE_BIN_ID)
 
   return nodes.filter((n) => {
     const key = String(n.key)
     if (key === `ln:${EDGE_ROOT_FOLDER_ID}`) return edgeHit
     if (key === `ln:${LINKS_RECYCLE_BIN_ID}`) return recycleHit
+    if (!key.startsWith('ln:')) return true
+    const folderId = key.slice(3)
+    if (folderId === LOCAL_COLLECTIONS_ROOT_ID) return localHit
+    if (isUnderLocalRoot(folders, folderId)) return localHit
     return true
   })
 }

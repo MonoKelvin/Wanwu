@@ -8,50 +8,75 @@ import WwInputIcon from '@shared/components/WwInputIcon.vue'
 import WwLiveSyncButton from '@shared/components/WwLiveSyncButton.vue'
 import WwViewModeToggle, { type WwViewMode } from '@shared/components/WwViewModeToggle.vue'
 import type { WwMenuItem } from '@shared/types/menu'
+import { LINKS_SORT_OPTIONS, type LinksSortMode } from '@features/library/links/linksSort'
 
 const search = defineModel<string>('search', { default: '' })
 const viewMode = defineModel<WwViewMode>('viewMode', { default: 'list' })
 const liveSync = defineModel<boolean>('liveSync', { default: true })
+const sortMode = defineModel<LinksSortMode>('sortMode', { required: true })
 
-const props = defineProps<{
-  syncing?: boolean
-}>()
+const props = withDefaults(
+  defineProps<{
+    syncing?: boolean
+    checkingLinks?: boolean
+    canCreateFolder?: boolean
+    /** Edge 等从浏览器文件同步的来源才显示 */
+    showBrowserSync?: boolean
+  }>(),
+  { showBrowserSync: true }
+)
 
 const emit = defineEmits<{
-  sync: []
+  syncFromBrowser: []
+  syncToBrowser: []
   add: []
+  createFolder: []
   filterUnreachable: []
-  sort: []
-  batch: []
 }>()
 
 const moreMenuOpen = ref(false)
 const moreMenu = ref<InstanceType<typeof WwContextMenu> | null>(null)
 
-const moreItems = computed((): WwMenuItem[] => [
-  {
-    label: '立即同步',
-    wwIcon: 'refresh-cw',
-    disabled: () => props.syncing,
-    command: () => emit('sync')
-  },
-  {
-    label: '检查无效链接',
-    wwIcon: 'sliders-horizontal',
-    command: () => emit('filterUnreachable')
-  },
-  {
-    label: '排序',
-    wwIcon: 'arrow-down-a-z',
-    command: () => emit('sort')
-  },
-  { separator: true },
-  {
-    label: '批量操作',
-    wwIcon: 'list',
-    command: () => emit('batch')
-  }
-])
+const moreItems = computed((): WwMenuItem[] => {
+  const sortItems: WwMenuItem[] = LINKS_SORT_OPTIONS.map((opt) => ({
+    label: opt.label,
+    wwIcon: opt.wwIcon,
+    class: sortMode.value === opt.value ? 'ww-page-toolbar-menu__item--active' : undefined,
+    command: () => {
+      sortMode.value = opt.value
+    }
+  }))
+
+  const syncItems: WwMenuItem[] = props.showBrowserSync
+    ? [
+        {
+          label: '同步到软件',
+          wwIcon: 'refresh-cw',
+          disabled: () => !!props.syncing,
+          command: () => emit('syncFromBrowser')
+        },
+        {
+          label: '同步到浏览器',
+          wwIcon: 'share',
+          disabled: () => !!props.syncing,
+          command: () => emit('syncToBrowser')
+        },
+        { separator: true }
+      ]
+    : []
+
+  return [
+    ...syncItems,
+    ...sortItems,
+    { separator: true },
+    {
+      label: '检查无效链接',
+      wwIcon: 'circle-alert',
+      disabled: () => !!props.syncing || !!props.checkingLinks,
+      command: () => emit('filterUnreachable')
+    }
+  ]
+})
 
 function toggleMoreMenu(event: MouseEvent) {
   const anchor = event.currentTarget
@@ -69,7 +94,23 @@ function toggleMoreMenu(event: MouseEvent) {
 
     <div class="ww-page-toolbar__cluster ww-page-toolbar__cluster--nowrap">
       <WwViewModeToggle v-model="viewMode" aria-label="链接展示方式" />
-      <WwLiveSyncButton v-model="liveSync" :syncing="syncing" />
+      <WwLiveSyncButton
+        v-if="showBrowserSync"
+        v-model="liveSync"
+        :syncing="syncing"
+      />
+
+      <WwButton
+        v-if="canCreateFolder"
+        type="button"
+        icon="folder-plus"
+        size="small"
+        variant="outlined"
+        severity="secondary"
+        aria-label="新建目录"
+        v-tooltip.bottom="'新建目录'"
+        @click="emit('createFolder')"
+      />
 
       <WwButton
         type="button"
@@ -142,7 +183,6 @@ function toggleMoreMenu(event: MouseEvent) {
   width: 100%;
 }
 
-/* 不显示 PrimeVue 默认空列表文案；保留带 .ww-empty-state 的自定义 #empty 插槽 */
 .p-autocomplete-empty-message:not(:has(.ww-empty-state)) {
   display: none !important;
   padding: 0 !important;
@@ -201,16 +241,6 @@ function toggleMoreMenu(event: MouseEvent) {
   width: var(--ww-toolbar-h);
   min-width: var(--ww-toolbar-h);
   padding: 0;
-}
-
-.ww-page-toolbar-menu.p-menu {
-  min-width: 7.5rem;
-}
-
-.ww-page-toolbar-menu .p-menu-item.ww-page-toolbar-menu__item--active > .p-menu-item-content {
-  background: var(--ww-menu-item-active-bg) !important;
-  color: var(--ww-ink) !important;
-  font-weight: 500;
 }
 
 .ww-page-toolbar--links .ww-page-toolbar__search--links {

@@ -1,4 +1,4 @@
-import { onUnmounted, ref, watch } from 'vue'
+import { onUnmounted, ref, toValue, watch, type MaybeRefOrGetter } from 'vue'
 
 const STORAGE_KEY = 'wanwu:links:live-sync'
 
@@ -10,7 +10,11 @@ function readEnabled(): boolean {
   }
 }
 
-export function useLinksLiveSync(onSync: () => void | Promise<void>) {
+/** @param watchActive 为 false 时不监听浏览器收藏夹文件（如本地「收藏夹」） */
+export function useLinksLiveSync(
+  onSync: () => void | Promise<void>,
+  watchActive: MaybeRefOrGetter<boolean> = true
+) {
   const liveSyncEnabled = ref(readEnabled())
   let unsubscribe: (() => void) | null = null
 
@@ -25,15 +29,15 @@ export function useLinksLiveSync(onSync: () => void | Promise<void>) {
   function bindWatcher() {
     unsubscribe?.()
     unsubscribe = null
-    if (!liveSyncEnabled.value) return
+    if (!liveSyncEnabled.value || !toValue(watchActive)) return
     unsubscribe = window.wanwu.links.onBookmarksFileChanged(() => {
       void onSync()
     })
   }
 
   watch(
-    liveSyncEnabled,
-    (enabled) => {
+    [liveSyncEnabled, () => toValue(watchActive)],
+    ([enabled]) => {
       persistEnabled(enabled)
       bindWatcher()
     },

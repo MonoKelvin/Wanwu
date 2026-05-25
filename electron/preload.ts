@@ -15,13 +15,32 @@ const api: WanwuApi = {
     listFolders: () => ipcRenderer.invoke('links:listFolders'),
     listBookmarks: (params) => ipcRenderer.invoke('links:listBookmarks', params),
     listAllBookmarks: () => ipcRenderer.invoke('links:listAllBookmarks'),
+    syncFromBrowser: () => ipcRenderer.invoke('links:syncFromBrowser'),
+    syncToBrowser: () => ipcRenderer.invoke('links:syncToBrowser'),
+    reorderBookmarks: (params) => ipcRenderer.invoke('links:reorderBookmarks', params),
     sync: () => ipcRenderer.invoke('links:sync'),
+    createFolder: (input) => ipcRenderer.invoke('links:createFolder', input),
+    deleteFolder: (input) => ipcRenderer.invoke('links:deleteFolder', input),
     createBookmark: (input) => ipcRenderer.invoke('links:createBookmark', input),
     updateBookmark: (input) => ipcRenderer.invoke('links:updateBookmark', input),
     softDeleteBookmark: (id) => ipcRenderer.invoke('links:softDeleteBookmark', id),
     restoreBookmark: (id) => ipcRenderer.invoke('links:restoreBookmark', id),
     permanentDeleteBookmark: (id) => ipcRenderer.invoke('links:permanentDeleteBookmark', id),
-    probeUnreachable: (ids) => ipcRenderer.invoke('links:probeUnreachable', ids),
+    probeUnreachable: (ids, onProgress) => {
+      const progressChannel =
+        onProgress ? `links:probe-progress:${crypto.randomUUID()}` : undefined
+      const handler = (_: unknown, progress: { done: number; total: number }) => {
+        onProgress?.(progress)
+      }
+      if (progressChannel && onProgress) {
+        ipcRenderer.on(progressChannel, handler)
+      }
+      return ipcRenderer
+        .invoke('links:probeUnreachable', { ids, progressChannel })
+        .finally(() => {
+          if (progressChannel) ipcRenderer.removeListener(progressChannel, handler)
+        })
+    },
     onBookmarksFileChanged: (listener: () => void) => {
       const handler = () => listener()
       ipcRenderer.on('links:bookmarks-file-changed', handler)

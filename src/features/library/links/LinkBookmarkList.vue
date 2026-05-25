@@ -95,13 +95,14 @@ const emit = defineEmits<{
   border-radius: 0.625rem;
   background: var(--ww-content);
   border: 1px solid var(--ww-border-faint);
-  box-shadow: var(--ww-shadow-card);
+  box-shadow: none;
   transition:
     box-shadow var(--ww-duration) var(--ww-ease-out),
     transform var(--ww-duration) var(--ww-ease-out);
 }
 
-.ww-links-bookmark-list__row:hover {
+.ww-links-bookmark-list__row:hover,
+.ww-links-bookmark-list__row:focus-within {
   box-shadow: var(--ww-shadow-hover);
   transform: translateY(-2px);
 }

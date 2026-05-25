@@ -23,9 +23,24 @@ export interface LinkBookmark {
   faviconUrl?: string | null
 }
 
+export type LinkReachabilityIssue = 'invalid_syntax' | 'network' | 'http_status' | 'timeout'
+
+export interface LinksProbeProgress {
+  done: number
+  total: number
+}
+
+export interface LinksProbeSummary {
+  results: Record<string, boolean>
+  invalidCount: number
+  byIssue: Record<LinkReachabilityIssue, number>
+}
+
 export interface LinksSyncResult {
   added: number
   updated: number
   skippedDeleted: number
+  /** 浏览器已删除、软件内移入回收站的数量 */
+  removed: number
   pushedToBrowser: number
 }

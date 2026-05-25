@@ -6,6 +6,12 @@ import IconField from 'primevue/iconfield'
 import WwInputIcon from '@shared/components/WwInputIcon.vue'
 import InputText from 'primevue/inputtext'
 import WwCatalogTree from '@shared/components/WwCatalogTree.vue'
+import WwContextMenu from '@shared/components/WwContextMenu.vue'
+import LinkFolderNameDialog from '@features/library/links/LinkFolderNameDialog.vue'
+import LinkFolderDeleteDialog from '@features/library/links/LinkFolderDeleteDialog.vue'
+import { useLinksFolderDialogs } from '@features/library/links/useLinksFolderDialogs'
+import type { CatalogNode } from '@library/types/catalog'
+import type { WwMenuItem } from '@shared/types/menu'
 import { isLibraryMajorId, type LibraryMajorId } from '@library/config/majors'
 import {
   composeLibraryTree,
@@ -13,8 +19,14 @@ import {
   sectionTreeForMajor
 } from '@features/library/libraryCategoryTree'
 import { useIllustratedHandbookStore } from '@shared/stores/illustratedHandbook'
-import { useLinksStore } from '@shared/stores/links'
+import { LINKS_RECYCLE_BIN_ID, LOCAL_COLLECTIONS_ROOT_ID, useLinksStore } from '@shared/stores/links'
 import { filterLinksSourceTreeNodes } from '@features/library/links/linksSearch'
+import { resolveLinksEntryTarget } from '@features/library/links/linksNavigation'
+import {
+  defaultLinksCatalogExpanded,
+  readLinksCatalogSelection,
+  writeLinksCatalogSelection
+} from '@features/library/links/linksCatalogTreeMemory'
 import { filterTreeNodes } from '@library/catalog/filterTreeNodes'
 
 const EXPANDED_STORAGE_KEY = 'wanwu:library:category-tree-expanded'
@@ -26,6 +38,26 @@ const linksStore = useLinksStore()
 
 const selectionKeys = ref<Record<string, boolean>>({})
 const categorySearch = ref('')
+
+const linksContextMenu = ref<InstanceType<typeof WwContextMenu> | null>(null)
+const linksContextMenuOpen = ref(false)
+const linksContextParentId = ref<string | null>(null)
+const linksContextDeleteId = ref<string | null>(null)
+
+const {
+  folderDialogVisible,
+  folderDeleteVisible,
+  folderDeleteName,
+  folderDeleteStats,
+  openCreateFolderDialog,
+  openDeleteFolderDialog,
+  onFolderDialogConfirm,
+  onFolderDeleteConfirm
+} = useLinksFolderDialogs({
+  navigateFolder: (id) => {
+    void router.push({ name: 'library-links', params: { folderId: id } })
+  }
+})
 
 const activeMajor = computed<LibraryMajorId | null>(() => {
   const m = route.meta.major as string | undefined
@@ -70,6 +102,12 @@ const expandAllLibraryBranches = computed(
     (linksStore.isGlobalSearch || !!categorySearch.value.trim())
 )
 
+const linksDefaultExpanded = computed(() =>
+  activeMajor.value === 'links' ? defaultLinksCatalogExpanded() : undefined
+)
+
+const showLinksSourceIcons = computed(() => activeMajor.value === 'links')
+
 function syncSelectionFromRoute() {
   const major = activeMajor.value
   if (!major) {
@@ -79,7 +117,10 @@ function syncSelectionFromRoute() {
 
   if (major === 'links') {
     const folderId = route.params.folderId as string | undefined
-    selectionKeys.value = folderId ? { [`ln:${folderId}`]: true } : { 'major:links': true }
+    selectionKeys.value = folderId
+      ? { [`ln:${folderId}`]: true }
+      : readLinksCatalogSelection()
+    if (folderId) writeLinksCatalogSelection(selectionKeys.value)
     return
   }
 
@@ -121,12 +162,77 @@ watch(
   () => syncSelectionFromRoute()
 )
 
+watch(
+  selectionKeys,
+  (keys) => {
+    if (activeMajor.value === 'links') writeLinksCatalogSelection(keys)
+  },
+  { deep: true }
+)
+
 function navigateMajor(majorId: LibraryMajorId) {
   if (majorId === 'illustrated-handbook') {
     void router.push({ name: 'library-illustrated-handbook' })
     return
   }
-  void router.push({ name: 'library-links' })
+  const target = resolveLinksEntryTarget()
+  if (typeof target === 'string') void router.push(target)
+  else void router.push(target)
+}
+
+function linksCatalogNodeBadge(node: TreeNode): number | undefined {
+  if (activeMajor.value !== 'links') return undefined
+  if (String(node.key) !== `ln:${LINKS_RECYCLE_BIN_ID}`) return undefined
+  return linksStore.recycleBinCount
+}
+
+function linksCatalogNodeKind(node: TreeNode): string | undefined {
+  return (node.data as CatalogNode | undefined)?.meta?.kind as string | undefined
+}
+
+const linksFolderContextItems = computed((): WwMenuItem[] => {
+  const items: WwMenuItem[] = [
+    {
+      label: '新建目录',
+      wwIcon: 'folder-plus',
+      command: () => {
+        const parent = linksContextParentId.value
+        if (!parent) return
+        openCreateFolderDialog(parent)
+      }
+    }
+  ]
+  if (linksContextDeleteId.value) {
+    items.push(
+      { separator: true },
+      {
+        label: '删除目录',
+        wwIcon: 'trash-2',
+        command: () => {
+          const id = linksContextDeleteId.value
+          if (!id) return
+          void openDeleteFolderDialog(id)
+        }
+      }
+    )
+  }
+  return items
+})
+
+function onLinksNodeContextMenu(event: MouseEvent, node: TreeNode) {
+  if (activeMajor.value !== 'links') return
+  event.stopPropagation()
+  const key = String(node.key)
+  if (!key.startsWith('ln:')) return
+
+  const kind = linksCatalogNodeKind(node)
+  if (kind !== 'local-root' && kind !== 'local-folder') return
+
+  const folderId = key.slice(3)
+  linksContextDeleteId.value = kind === 'local-folder' ? folderId : null
+  linksContextParentId.value =
+    kind === 'local-folder' ? folderId : LOCAL_COLLECTIONS_ROOT_ID
+  linksContextMenu.value?.show(event)
 }
 
 function onNodeSelect(node: TreeNode) {
@@ -175,11 +281,35 @@ function onNodeSelect(node: TreeNode) {
         v-model:selection-keys="selectionKeys"
         :search-query="categorySearch"
         :expand-all-branches="expandAllLibraryBranches"
+        :default-expanded-keys="linksDefaultExpanded"
         major-key-prefix="major:"
+        :show-child-icons="showLinksSourceIcons"
+        child-icon="folder"
+        :node-badge="linksCatalogNodeBadge"
         tree-class="ww-catalog-tree--library-majors"
         @select="onNodeSelect"
+        @contextmenu="onLinksNodeContextMenu"
+      />
+      <WwContextMenu
+        v-if="activeMajor === 'links'"
+        ref="linksContextMenu"
+        v-model:open="linksContextMenuOpen"
+        :model="linksFolderContextItems"
       />
     </div>
+
+    <LinkFolderNameDialog
+      v-model:visible="folderDialogVisible"
+      title="新建目录"
+      @confirm="onFolderDialogConfirm"
+    />
+    <LinkFolderDeleteDialog
+      v-model:visible="folderDeleteVisible"
+      :folder-name="folderDeleteName"
+      :link-count="folderDeleteStats.linkCount"
+      :child-folder-count="folderDeleteStats.childFolderCount"
+      @confirm="onFolderDeleteConfirm"
+    />
   </div>
 </template>
 

@@ -86,13 +86,14 @@ const emit = defineEmits<{
   background: var(--ww-content);
   overflow: hidden;
   cursor: pointer;
-  box-shadow: var(--ww-shadow-card);
+  box-shadow: none;
   transition:
     transform var(--ww-duration) var(--ww-ease-out),
     box-shadow var(--ww-duration) var(--ww-ease-out);
 }
 
-.ww-link-card:hover {
+.ww-link-card:hover,
+.ww-link-card:focus-within {
   box-shadow: var(--ww-shadow-hover);
   transform: translateY(-3px);
 }

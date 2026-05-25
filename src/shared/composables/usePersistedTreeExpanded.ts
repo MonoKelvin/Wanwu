@@ -38,5 +38,9 @@ export function usePersistedTreeExpanded(storageKey: string) {
     expandedKeys.value = { ...expandedKeys.value, ...collectExpandableKeys(nodes) }
   }
 
-  return { expandedKeys, expandForSearch }
+  function mergeExpandedKeys(keys: Record<string, boolean>) {
+    expandedKeys.value = { ...expandedKeys.value, ...keys }
+  }
+
+  return { expandedKeys, expandForSearch, mergeExpandedKeys }
 }

@@ -26,6 +26,11 @@ body {
   overflow: hidden;
 }
 
+/** 窗口顶栏为 fixed 时，侧栏/分类面板顶区预留拖拽条高度（与 PageHeader 对齐） */
+.ww-chrome-safe {
+  padding-top: calc(var(--ww-titlebar-height) + 0.5rem);
+}
+
 /* PrimeVue ScrollPanel：与原生滚动条同风格（详见 scrollbars.css） */
 .p-scrollpanel .p-scrollpanel-bar {
   width: var(--ww-scrollbar-thumb-w) !important;

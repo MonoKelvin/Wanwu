@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import { useLinkFavicon } from '@features/library/links/useLinkFavicon'
 
@@ -14,14 +14,25 @@ const props = withDefaults(
 defineOptions({ inheritAttrs: false })
 
 const root = ref<HTMLElement | null>(null)
-const { src, failed, pending, showImage, showFallback, onLoad, onError } = useLinkFavicon(() => props.url)
+const {
+  activeSrc,
+  failed,
+  pending,
+  showImage,
+  showFallback,
+  onLoad,
+  onError
+} = useLinkFavicon(() => props.url)
 
-/** 浏览器缓存命中时 @load 可能早于骨架渲染，补检 complete */
-watch([src, failed], async () => {
-  if (!src.value || failed.value) return
+const fallbackIconPx = computed(() => (props.size === 'sm' ? 16 : 18))
+
+watch([activeSrc, failed], async () => {
+  if (!activeSrc.value || failed.value) return
   await nextTick()
-  const img = root.value?.querySelector('img')
-  if (img?.complete && img.naturalWidth > 0) onLoad()
+  const img = root.value?.querySelector('img.ww-link-favicon__img')
+  if (img instanceof HTMLImageElement && img.complete && img.naturalWidth > 0) {
+    onLoad({ target: img } as Event)
+  }
 })
 </script>
 
@@ -33,21 +44,22 @@ watch([src, failed], async () => {
     aria-hidden="true"
   >
     <span v-if="pending" class="ww-link-favicon__skeleton" />
+    <WwIcon
+      v-if="showFallback"
+      name="globe"
+      :size="fallbackIconPx"
+      class="ww-link-favicon__fallback"
+    />
     <img
-      v-if="src && !failed"
+      v-if="activeSrc && !failed"
       v-show="showImage"
-      :src="src"
+      :key="activeSrc"
+      :src="activeSrc"
       alt=""
       class="ww-link-favicon__img"
       decoding="async"
       @load="onLoad"
       @error="onError"
-    />
-    <WwIcon
-      v-if="showFallback"
-      name="globe"
-      :size="size === 'sm' ? 'sm' : 'md'"
-      class="ww-link-favicon__fallback"
     />
   </span>
 </template>
@@ -61,6 +73,7 @@ watch([src, failed], async () => {
   flex-shrink: 0;
   border-radius: 0.25rem;
   overflow: hidden;
+  background: var(--ww-inset);
 }
 
 .ww-link-favicon__skeleton {
@@ -104,16 +117,21 @@ watch([src, failed], async () => {
 }
 
 .ww-link-favicon__img {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   object-fit: contain;
+  padding: 0.1875rem;
 }
 
 .ww-link-favicon__fallback {
   color: var(--ww-ink-muted);
+  opacity: 0.88;
 }
 
 .ww-link-favicon:hover .ww-link-favicon__fallback {
   color: var(--ww-accent);
+  opacity: 1;
 }
 </style>
