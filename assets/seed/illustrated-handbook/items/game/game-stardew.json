@@ -1,0 +1,30 @@
+{
+  "id": "0ce51732-e93e-4578-baae-acb9cafaba58",
+  "slug": "game-stardew",
+  "subCategoryId": "game-indie",
+  "name": "星露谷物语",
+  "summary": "《星露谷物语》是由ConcernedApe单人开发，并与《 星界边境 》的制作者Chucklefish共同参与发行的一款开放式乡村模拟经营类游戏 。",
+  "tags": [
+    "星露谷物语",
+    "模拟经营类游戏",
+    "Stardew Valley"
+  ],
+  "specs": {
+    "开发商": "ConcernedApe",
+    "首发": "2016年2月26日",
+    "平台": "PC / 主机 / 移动端",
+    "类型": "农场生活模拟",
+    "舞台": "星露谷",
+    "灵感": "牧场物语"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "pixel art indie game screenshot",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6
+  },
+  "contentFile": "illustrated-handbook/game/game-stardew/content.md"
+}

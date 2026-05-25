@@ -3147,6 +3147,30 @@ body {
   display: none;
 }
 
+.ww-library-tree--majors > .p-tree-root-children > .p-tree-node > .p-tree-node-content {
+  font-weight: 600;
+}
+
+.ww-library-tree__major-icon {
+  color: var(--ww-accent);
+}
+
+.ww-links-split {
+  min-height: 12rem;
+}
+
+.ww-links-list__row--deleted,
+.ww-links-card--deleted {
+  opacity: 0.45;
+}
+
+.ww-links-list__row--deleted .ww-links-list__row span,
+.ww-links-card--deleted h3,
+.ww-links-card--deleted p {
+  text-decoration: line-through;
+  color: var(--ww-ink-muted);
+}
+
 .ww-library-list-meta {
   margin: 0 0 0.5rem;
   padding-top: 0.25rem;

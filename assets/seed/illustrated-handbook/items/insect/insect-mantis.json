@@ -1,0 +1,31 @@
+{
+  "id": "d61dccd1-505a-4a2c-aefc-574e3b42ab8b",
+  "slug": "insect-mantis",
+  "subCategoryId": "insect-dragonfly",
+  "name": "螳螂",
+  "summary": "螳螂（学名：Mantodea）是螳螂目昆虫的统称，又叫“刀螂”。",
+  "tags": [
+    "螳螂",
+    "Mantodea"
+  ],
+  "specs": {
+    "中文名": "螳螂",
+    "分类": "螳螂目",
+    "特征": "镰刀状前足捕食",
+    "习性": "部分雌性会食雄",
+    "应用": "生物防治"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "insect macro",
+    "category": "animals",
+    "matchTags": [
+      "insect",
+      "macro"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/insect/insect-mantis/content.md"
+}

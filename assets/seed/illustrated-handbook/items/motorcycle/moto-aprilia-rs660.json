@@ -1,0 +1,35 @@
+{
+  "id": "746f38b8-bdb5-4311-a32d-86346d83a708",
+  "slug": "moto-aprilia-rs660",
+  "subCategoryId": "moto-italy",
+  "name": "阿普利亚 RS 660",
+  "summary": "中级排量双缸仿赛，赛道入门利器。",
+  "tags": [
+    "摩托",
+    "仿赛",
+    "意大利",
+    "Aprilia"
+  ],
+  "specs": {
+    "首发年份": "2020",
+    "厂商": "Aprilia",
+    "排量": "659 cc",
+    "发动机": "平行双缸",
+    "最大功率": "约 100 hp",
+    "车型": "跑车",
+    "产地": "意大利"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "RS 660 motorcycle",
+    "matchTags": [
+      "意大利",
+      "aprilia"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/moto-aprilia-rs660/content.md"
+}

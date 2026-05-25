@@ -1,0 +1,33 @@
+{
+  "id": "c29f9013-3ab4-4ab3-9d48-df48b2932fe2",
+  "slug": "hero-tmnt-leonardo",
+  "subCategoryId": "hero-anime",
+  "name": "忍者神龟 Leonardo",
+  "summary": "四龟之首，双刀忍者，纽约下水道英雄与披萨文化符号。",
+  "tags": [
+    "乌龟",
+    "忍者",
+    "纽约",
+    "TMNT"
+  ],
+  "specs": {
+    "作品": "忍者神龟",
+    "首次登场": "1984",
+    "武器": "双刀",
+    "眼罩色": "蓝",
+    "角色": "队长"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Leonardo action figure toy collectible",
+    "matchTags": [
+      "tmnt",
+      "leonardo"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-tmnt-leonardo/content.md"
+}

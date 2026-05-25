@@ -1,0 +1,38 @@
+{
+  "id": "d5b2123c-954a-44a7-9d4d-c9000b7f7f44",
+  "slug": "aero-airbus-a380",
+  "subCategoryId": "aero-commercial",
+  "name": "空客 A380",
+  "summary": "世界最大客机，双层四引擎，航空工程奇迹",
+  "tags": [
+    "双层飞机",
+    "空客",
+    "大型客机",
+    "空中客车A380"
+  ],
+  "specs": {
+    "制造厂商": "欧洲空中客车",
+    "首飞时间": "2005年",
+    "载客容量": "500+座",
+    "发动机": "四引擎",
+    "生产状态": "停产",
+    "累计产量": "251架",
+    "设计特点": "双层宽体",
+    "历史地位": "世界最大客机"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "airbus a380 airplane",
+    "category": "all",
+    "matchTags": [
+      "a380",
+      "airbus"
+    ],
+    "requiredTags": [
+      "a380"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/aerospace/aero-airbus-a380/content.md"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "1e20d6a8-5cab-4d1c-b44d-710fd92ee5cb",
+  "slug": "plant-succulent-echeveria",
+  "subCategoryId": "plant-succulent",
+  "name": "拟石莲",
+  "summary": "多肉莲座型。",
+  "tags": [],
+  "specs": {
+    "分类": "观叶 / 多肉",
+    "光照": "明亮散射光",
+    "浇水": "见干见湿",
+    "湿度": "中等",
+    "繁殖": "扦插 / 分株"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "houseplant",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/plant/plant-succulent-echeveria/content.md"
+}

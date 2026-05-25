@@ -1,0 +1,36 @@
+{
+  "id": "f199f0c1-f020-437e-9f77-35b74cf73489",
+  "slug": "dog-shar-pei",
+  "subCategoryId": "dog-asia",
+  "name": "中国沙皮犬",
+  "summary": "中国本土皱皮犬，全身褶皱，短毛，历史上护卫与斗犬。",
+  "tags": [
+    "皱皮",
+    "短毛",
+    "本土",
+    "中国"
+  ],
+  "specs": {
+    "分类": "亚洲犬种",
+    "原产地": "中国",
+    "体重": "18–25 kg",
+    "寿命": "9–11 年",
+    "特征": "全身褶皱",
+    "注意": "皮肤护理",
+    "性格": "冷静、护主"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-shar-pei/content.md"
+}

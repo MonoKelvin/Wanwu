@@ -1,0 +1,36 @@
+{
+  "id": "d2953845-450c-482c-bf5a-8b4b04e1650e",
+  "slug": "dog-miniature-schnauzer",
+  "subCategoryId": "dog-europe",
+  "name": "迷你雪纳瑞",
+  "summary": "德国梗犬小型版，胡须眉造型，不掉毛，警觉亲人，城市流行。",
+  "tags": [
+    "德国",
+    "雪纳瑞",
+    "小型",
+    "梗犬"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "德国",
+    "体重": "5–9 kg",
+    "寿命": "12–15 年",
+    "被毛": "硬毛需修剪",
+    "性格": "警觉、聪明、亲人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "雪纳瑞",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-miniature-schnauzer/content.md"
+}

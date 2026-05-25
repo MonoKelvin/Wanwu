@@ -1,0 +1,38 @@
+{
+  "id": "8df18bbe-f769-40ac-ba7a-1db13cd9b3d1",
+  "slug": "aero-boeing-747",
+  "subCategoryId": "aero-commercial",
+  "name": "波音 747",
+  "summary": "首款宽体客机，航空史传奇，俗称珍宝客机",
+  "tags": [
+    "Boeing747",
+    "珍宝客机",
+    "波音",
+    "宽体客机"
+  ],
+  "specs": {
+    "制造厂商": "美国波音",
+    "首飞时间": "1969年",
+    "载客容量": "400-500座",
+    "设计特点": "驼峰上层舱",
+    "生产状态": "停产",
+    "累计产量": "1574架",
+    "历史地位": "首款宽体客机",
+    "文化影响": "航空传奇"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "boeing 747 jumbo jet",
+    "category": "all",
+    "matchTags": [
+      "boeing",
+      "747"
+    ],
+    "requiredTags": [
+      "747"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/aerospace/aero-boeing-747/content.md"
+}

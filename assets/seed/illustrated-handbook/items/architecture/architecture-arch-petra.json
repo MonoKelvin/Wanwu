@@ -1,0 +1,31 @@
+{
+  "id": "e79f7e19-61dd-4d21-8693-4842a22106c5",
+  "slug": "architecture-arch-petra",
+  "subCategoryId": "arch-classical",
+  "name": "佩特拉古城",
+  "summary": "佩特拉（Petra），又称“玫瑰城”或“岩石城”（希腊语译名），《 圣经·旧约 》称其为Sela，位于 约旦 安曼 西南260公里的穆萨山谷，面积26,171公顷，属沙漠气候，因赤红色砂岩在阳光下呈玫瑰色调得名 。",
+  "tags": [
+    "佩特拉",
+    "Petra"
+  ],
+  "specs": {
+    "中文名": "佩特拉",
+    "外文名": "Petra",
+    "别 名": "石城、玫瑰城",
+    "性 质": "约旦的一座古城",
+    "位 置": "约旦 安曼 南260公里处",
+    "所属国家": "约旦",
+    "地理坐标": "N30 19 50.016 E35 26 35.988",
+    "面 积": "26171 公顷"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "landmark architecture",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/architecture/architecture-arch-petra/content.md"
+}

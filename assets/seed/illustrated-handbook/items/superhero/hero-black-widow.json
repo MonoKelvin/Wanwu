@@ -1,0 +1,33 @@
+{
+  "id": "d7d1f60a-4972-44f0-aee2-305ddcf60896",
+  "slug": "hero-black-widow",
+  "subCategoryId": "hero-marvel",
+  "name": "黑寡妇 Black Widow",
+  "summary": "娜塔莎·罗曼诺夫，红房子特工转神盾局与复仇者顶尖间谍。",
+  "tags": [
+    "复仇者",
+    "漫威",
+    "间谍"
+  ],
+  "specs": {
+    "宇宙": "漫威",
+    "首次登场": "1964",
+    "本名": "娜塔莎·罗曼诺夫",
+    "技能": "间谍、格斗、武器",
+    "背景": "红房子训练",
+    "团队": "复仇者"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Black Widow action figure toy collectible",
+    "matchTags": [
+      "复仇者",
+      "black"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-black-widow/content.md"
+}

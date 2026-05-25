@@ -1,0 +1,28 @@
+{
+  "id": "30041be0-1222-4b87-9154-4297fb0c5244",
+  "slug": "tf-ratchet",
+  "subCategoryId": "tf-g1",
+  "name": "救护车 Ratchet",
+  "summary": "汽车人军医，救护车变形，救治同伴。",
+  "tags": [
+    "汽车人",
+    "军医",
+    "变形",
+    "Hasbro"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "matchTags": [
+      "汽车人",
+      "hasbro",
+      "ratchet"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/tf-ratchet/content.md"
+}

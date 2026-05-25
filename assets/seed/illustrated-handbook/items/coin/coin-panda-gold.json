@@ -1,0 +1,31 @@
+{
+  "id": "6d2af6b0-4553-4d47-94bc-adbdd360af4c",
+  "slug": "coin-panda-gold",
+  "subCategoryId": "coin-gold",
+  "name": "熊猫金币",
+  "summary": "熊猫金币是 中国人民银行 自1982年开始发行的一款成系列发行的金币。",
+  "tags": [
+    "熊猫金币",
+    "中国金币总公司",
+    "熊猫",
+    "中国人民银行"
+  ],
+  "specs": {
+    "名称": "熊猫金币",
+    "发行": "中国人民银行",
+    "首发": "1982年",
+    "材质": "金（成色99.9%）",
+    "图案": "大熊猫",
+    "地位": "中国投资金币 flagship"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "coins currency collection macro",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/coin/coin-panda-gold/content.md"
+}

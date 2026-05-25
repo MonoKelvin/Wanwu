@@ -1,0 +1,37 @@
+{
+  "id": "ef2c0c8a-0df0-4dce-b57c-82d95ffbd76c",
+  "slug": "cat-birman",
+  "subCategoryId": "cat-long-hair",
+  "name": "伯曼猫 Birman",
+  "summary": "缅甸圣猫传说品种，重点色四足白套，蓝眼长毛，性格温顺亲人。",
+  "tags": [
+    "欧洲",
+    "蓝眼",
+    "长毛",
+    "重点色"
+  ],
+  "specs": {
+    "原产地": "缅甸传说／法国育成",
+    "体重": "3–6 kg",
+    "寿命": "12–16 年",
+    "被毛": "中长丝质，重点色",
+    "性格": "温顺、亲人、安静",
+    "识别特征": "蓝眼、四足白手套"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Birman cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "重点色",
+      "birman",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-birman/content.md"
+}

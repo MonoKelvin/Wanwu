@@ -1,0 +1,29 @@
+{
+  "id": "5f1b1287-6704-48e9-a0a5-66ca326c7223",
+  "slug": "food-pho",
+  "subCategoryId": "food-street",
+  "name": "越南河粉",
+  "summary": "越南河粉（越南语：phở）是越南传统美食，融合中国粤闽地区河粉与法国饮食文化，20世纪初由广东移民引入越南后本土化发展形成，2024年 河内 河粉被列入越南国家级非物质文化遗产名录 。",
+  "tags": [
+    "越南河粉",
+    "Pho",
+    "食物"
+  ],
+  "specs": {
+    "中文名": "越南河粉",
+    "外文名": "Pho",
+    "分 类": "食物",
+    "口 味": "香辣",
+    "主要食材": "大米"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "food dish plate",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/food/food-pho/content.md"
+}

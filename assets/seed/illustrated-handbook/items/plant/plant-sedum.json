@@ -1,0 +1,34 @@
+{
+  "id": "7ebaa1ab-a55e-4920-aba1-a9577b7f56f6",
+  "slug": "plant-sedum",
+  "subCategoryId": "plant-succulent",
+  "name": "景天 Sedum",
+  "summary": "多肉质叶，地被或盆栽，繁殖极易。",
+  "tags": [
+    "多肉",
+    "耐旱",
+    "室内",
+    "盆栽"
+  ],
+  "specs": {
+    "分类": "多肉植物",
+    "光照": "明亮直射至半日照",
+    "介质": "排水颗粒土",
+    "浇水": "干透再浇",
+    "繁殖": "叶插 / 砍头",
+    "注意": "冬季防低温积水",
+    "季节": "生长季春秋"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Sedum houseplant",
+    "matchTags": [
+      "sedum"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/plant/plant-sedum/content.md"
+}

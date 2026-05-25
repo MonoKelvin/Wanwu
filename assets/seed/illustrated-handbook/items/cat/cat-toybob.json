@@ -1,0 +1,37 @@
+{
+  "id": "85d83484-2ec5-4173-ab85-e3e9f6488118",
+  "slug": "cat-toybob",
+  "subCategoryId": "cat-japan",
+  "name": "玩具短尾猫 Toybob",
+  "summary": "俄罗斯育成的微型短尾品种，体型极小、尾短，性格亲人，仍较稀有。",
+  "tags": [
+    "微型",
+    "稀有",
+    "短尾",
+    "日本关联"
+  ],
+  "specs": {
+    "分类": "日本品种",
+    "育成地": "俄罗斯",
+    "体重": "1–2 kg",
+    "特征": "迷你、短尾",
+    "性格": "亲人",
+    "状态": "稀有新兴品种"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Toybob cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "日本关联",
+      "toybob",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-toybob/content.md"
+}

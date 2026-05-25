@@ -1,0 +1,34 @@
+{
+  "id": "fc8eaaea-8b2c-45ef-9606-bfeaf2184633",
+  "slug": "ui-dark-mode",
+  "subCategoryId": "ui-design-tool",
+  "name": "深色模式",
+  "summary": "OLED 省电与夜间可读性，对比度与 elevation 规范。",
+  "tags": [
+    "UI",
+    "移动端",
+    "主题",
+    "iOS / Android"
+  ],
+  "specs": {
+    "分类": "UI 主题",
+    "平台": "iOS / Android / Web",
+    "标准": "prefers-color-scheme",
+    "原则": "对比度、elevation 分层",
+    "系统支持": "iOS 13+、Android 10+",
+    "收益": "弱光阅读、OLED 省电"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "design system ui",
+    "matchTags": [
+      "移动端",
+      "ios / android"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-dark-mode/content.md"
+}

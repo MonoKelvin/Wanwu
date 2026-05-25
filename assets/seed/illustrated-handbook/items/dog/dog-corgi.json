@@ -1,0 +1,38 @@
+{
+  "id": "e6ffb5d6-2197-4e26-b710-0734115bdd0c",
+  "slug": "dog-corgi",
+  "subCategoryId": "dog-toy",
+  "name": "威尔士柯基犬 Pembroke",
+  "summary": "英国王室喜爱的矮腿牧牛犬，大耳、短尾（或断尾传统），活泼聪明。",
+  "tags": [
+    "矮腿",
+    "英国",
+    "柯基",
+    "牧牛犬"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "威尔士",
+    "体重": "10–14 kg",
+    "寿命": "12–15 年",
+    "特征": "短腿、大耳",
+    "用途": "牧牛（历史）",
+    "性格": "活泼、聪明、亲人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Pembroke dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "牧牛犬",
+      "pembroke",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-corgi/content.md"
+}

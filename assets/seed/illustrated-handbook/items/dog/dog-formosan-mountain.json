@@ -1,0 +1,35 @@
+{
+  "id": "f744de03-51f2-41ec-8559-c8df1cb8dcd0",
+  "slug": "dog-formosan-mountain",
+  "subCategoryId": "dog-europe",
+  "name": "台湾高山犬 / 福尔摩沙犬",
+  "summary": "台湾本土犬种，中型立耳，敏捷忠诚，保种与推广进行中。",
+  "tags": [
+    "保种",
+    "立耳",
+    "台湾",
+    "本土"
+  ],
+  "specs": {
+    "分类": "亚洲犬种",
+    "原产地": "台湾",
+    "体重": "12–18 kg",
+    "寿命": "10–12 年",
+    "状态": "保种中",
+    "性格": "忠诚、敏捷"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "/ dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-formosan-mountain/content.md"
+}

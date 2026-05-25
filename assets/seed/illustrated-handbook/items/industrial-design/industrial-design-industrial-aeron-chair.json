@@ -1,0 +1,28 @@
+{
+  "id": "0d40093c-6110-4703-9ce9-0b1a81674871",
+  "slug": "industrial-design-industrial-aeron-chair",
+  "subCategoryId": "id-furniture",
+  "name": "赫曼米勒 Aeron",
+  "summary": "人体工学网椅。",
+  "tags": [],
+  "specs": {
+    "首发": "1994",
+    "品牌": "Herman Miller",
+    "设计师": "Stumpf & Chadwick",
+    "材料": "Pellicle 网布",
+    "类型": "办公椅",
+    "产地": "美国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Aeron product design",
+    "category": "all",
+    "matchTags": [
+      "aeron"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-design-industrial-aeron-chair/content.md"
+}

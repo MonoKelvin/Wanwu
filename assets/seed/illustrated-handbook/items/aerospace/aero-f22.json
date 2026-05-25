@@ -1,0 +1,38 @@
+{
+  "id": "eb8a4a0e-2a68-48b0-85d3-0eb58e0c8843",
+  "slug": "aero-f22",
+  "subCategoryId": "aero-fighter",
+  "name": "F-22 猛禽",
+  "summary": "美国第五代隐身战斗机，空中优势巅峰",
+  "tags": [
+    "F-22",
+    "隐身战机",
+    "第五代战机",
+    "美国空军"
+  ],
+  "specs": {
+    "研发国家": "美国",
+    "首飞时间": "1997年",
+    "飞机类型": "第五代隐身战斗机",
+    "设计特点": "超声速巡航",
+    "制造商": "洛克希德·马丁",
+    "服役状态": "现役",
+    "技术特性": "全向隐身",
+    "历史地位": "首款第五代战机"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "f22 raptor fighter jet",
+    "category": "all",
+    "matchTags": [
+      "f22",
+      "raptor"
+    ],
+    "requiredTags": [
+      "fighter"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/aerospace/aero-f22/content.md"
+}

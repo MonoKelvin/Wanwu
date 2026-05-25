@@ -1,0 +1,29 @@
+{
+  "id": "ea5574ca-6dbf-4a71-89d2-9c565e09bf26",
+  "slug": "industrial-design-industrial-kitchenaid-mixer",
+  "subCategoryId": "id-appliance",
+  "name": "KitchenAid 厨师机",
+  "summary": "美式搅拌 iconic。",
+  "tags": [
+    "厨房"
+  ],
+  "specs": {
+    "型号": "Artisan",
+    "功率": "约 325 W",
+    "容量": "4.8 L",
+    "档位数": "10",
+    "品牌": "KitchenAid"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "KitchenAid product design",
+    "category": "all",
+    "matchTags": [
+      "kitchenaid"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-design-industrial-kitchenaid-mixer/content.md"
+}

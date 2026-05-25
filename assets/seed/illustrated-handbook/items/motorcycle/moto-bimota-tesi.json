@@ -1,0 +1,32 @@
+{
+  "id": "1b6f72ab-3ba7-40dd-baf6-149fae665f35",
+  "slug": "moto-bimota-tesi",
+  "subCategoryId": "moto-sport",
+  "name": "比摩塔 Tesi",
+  "summary": "轮毂转向技术实验品牌，限量手工。",
+  "tags": [
+    "摩托",
+    "仿赛",
+    "意大利",
+    "Bimota"
+  ],
+  "specs": {
+    "厂商": "Bimota",
+    "特色": "轮毂转向",
+    "产量": "限量",
+    "产地": "意大利",
+    "定位": "实验跑车"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "motorcycle sport bike",
+    "matchTags": [
+      "motorcycle"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/moto-bimota-tesi/content.md"
+}

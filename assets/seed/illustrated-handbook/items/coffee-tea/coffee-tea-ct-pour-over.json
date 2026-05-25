@@ -1,0 +1,29 @@
+{
+  "id": "e16d9753-eb20-46a5-9864-119d4e11e79c",
+  "slug": "coffee-tea-ct-pour-over",
+  "subCategoryId": "ct-coffee",
+  "name": "手冲咖啡",
+  "summary": "手冲咖啡是指通过手工研磨冲泡制作的咖啡饮品，采用常压萃取（压力0.",
+  "tags": [
+    "手冲咖啡",
+    "pour-over",
+    "咖啡"
+  ],
+  "specs": {
+    "名称": "手冲咖啡",
+    "器具": "滤杯、滤纸、手冲壶",
+    "萃取": "重力滴滤",
+    "风味": "层次清晰、酸质明亮",
+    "代表": "V60、Kalita 等"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "coffee cup espresso latte art",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/coffee-tea/coffee-tea-ct-pour-over/content.md"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "274fba69-9d8d-4d7e-ada6-3b2528aea147",
+  "slug": "ill-rembrandt-night-watch",
+  "subCategoryId": "ill-classic",
+  "name": "夜巡 The Night Watch",
+  "summary": "伦勃朗光影与荷兰黄金时代群像。",
+  "tags": [
+    "艺术史",
+    "伦勃朗",
+    "名画",
+    "巴洛克"
+  ],
+  "specs": {
+    "艺术家": "伦勃朗",
+    "年代": "1642",
+    "收藏": "国立博物馆",
+    "国家": "荷兰"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "The Night Watch museum artwork",
+    "matchTags": [
+      "艺术史",
+      "巴洛克",
+      "伦勃朗",
+      "the"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/illustration/ill-rembrandt-night-watch/content.md"
+}

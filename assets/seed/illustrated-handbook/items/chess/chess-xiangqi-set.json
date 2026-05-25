@@ -1,0 +1,30 @@
+{
+  "id": "3f6d4ded-a5bb-49ff-aeea-86737aa4ffa6",
+  "slug": "chess-xiangqi-set",
+  "subCategoryId": "chess-chinese",
+  "name": "中国象棋",
+  "summary": "象棋（Xiangqi），曾用名“ 中国象棋 ”，是一种两人参与的对抗性棋类运动。",
+  "tags": [
+    "Xiangqi",
+    "中国象棋",
+    "象棋",
+    "中国"
+  ],
+  "specs": {
+    "名称": "中国象棋",
+    "棋盘": "9×10 楚河汉界",
+    "棋子": "每方16枚",
+    "特色": "炮、兵/卒过河规则",
+    "起源": "战国至宋代定型"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "chinese chess xiangqi board",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/chess/chess-xiangqi-set/content.md"
+}

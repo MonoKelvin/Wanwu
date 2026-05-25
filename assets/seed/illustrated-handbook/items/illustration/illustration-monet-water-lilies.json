@@ -1,0 +1,33 @@
+{
+  "id": "f3ce0ea0-b002-4b7f-b635-b558d212ef71",
+  "slug": "illustration-monet-water-lilies",
+  "subCategoryId": "ill-digital",
+  "name": "睡莲 Water Lilies",
+  "summary": "莫奈吉维尼花园光影与印象派色彩。",
+  "tags": [
+    "艺术史",
+    "莫奈",
+    "印象派",
+    "名画"
+  ],
+  "specs": {
+    "艺术家": "莫奈",
+    "系列": "睡莲",
+    "地点": "吉维尼",
+    "收藏": "橘园等"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Water Lilies digital illustration artwork",
+    "matchTags": [
+      "艺术史",
+      "印象派",
+      "water"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/illustration/illustration-monet-water-lilies/content.md"
+}

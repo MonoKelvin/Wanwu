@@ -1,0 +1,33 @@
+{
+  "id": "bcbb65a1-358d-4581-967f-ee14e41db483",
+  "slug": "history-temple-of-heaven",
+  "subCategoryId": "hist-china",
+  "name": "天坛",
+  "summary": "皇帝祭天祈谷的圆形建筑群。",
+  "tags": [
+    "世界遗产",
+    "明清",
+    "北京",
+    "中国"
+  ],
+  "specs": {
+    "分类": "中国史迹",
+    "地点": "北京",
+    "时代": "明清",
+    "地位": "世界遗产",
+    "类型": "建筑 / 石窟 / 古城",
+    "保护": "国家级文保"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "historic landmark architecture",
+    "matchTags": [
+      "世界遗产"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/history/history-temple-of-heaven/content.md"
+}

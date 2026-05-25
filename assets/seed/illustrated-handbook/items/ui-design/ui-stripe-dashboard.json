@@ -1,0 +1,34 @@
+{
+  "id": "ef50c6f9-061f-401c-a67b-a4660deece9f",
+  "slug": "ui-stripe-dashboard",
+  "subCategoryId": "ui-design-tool",
+  "name": "Stripe Dashboard",
+  "summary": "金融科技数据可视化与清晰层级范例。",
+  "tags": [
+    "B2B",
+    "UI",
+    "Stripe",
+    "Web"
+  ],
+  "specs": {
+    "分类": "B2B 产品 UI",
+    "产品": "Stripe Dashboard",
+    "场景": "支付、账单、风控",
+    "特点": "数据 hierarchy、indigo accent",
+    "影响": "fintech SaaS 设计标杆"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Stripe Dashboard design system ui",
+    "matchTags": [
+      "web",
+      "stripe",
+      "b2b"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-stripe-dashboard/content.md"
+}

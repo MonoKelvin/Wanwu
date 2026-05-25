@@ -1,0 +1,30 @@
+{
+  "id": "127fbeee-5d4e-450b-b39d-6c0ae6022f9c",
+  "slug": "bird-bald-eagle",
+  "subCategoryId": "bird-raptor",
+  "name": "白头海雕",
+  "summary": "北美国鸟猛禽。",
+  "tags": [
+    "白头"
+  ],
+  "specs": {
+    "分类": "鸟类",
+    "代表": "白头海雕",
+    "习性": "北美国鸟猛禽。",
+    "分布": "因种而异",
+    "保护": "查阅 IUCN 红色名录"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "bald eagle bird wildlife photo",
+    "category": "animals",
+    "matchTags": [
+      "bird",
+      "wildlife"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/bird/bird-bald-eagle/content.md"
+}

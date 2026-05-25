@@ -1,0 +1,40 @@
+{
+  "id": "fbdb41a8-7bbb-4c92-b923-af517d033961",
+  "slug": "cat-turkish-van",
+  "subCategoryId": "cat-long-hair",
+  "name": "土耳其梵猫 Turkish Van",
+  "summary": "「游泳猫」之称，白身色尾、异色眼常见，被毛防水爱戏水。",
+  "tags": [
+    "游泳",
+    "异色眼",
+    "半长毛",
+    "土耳其"
+  ],
+  "specs": {
+    "分类": "欧洲品种",
+    "原产地": "土耳其凡湖",
+    "体重": "3–8 kg",
+    "寿命": "13–17 年",
+    "毛色": "Van 图案（色尾白身）",
+    "特点": "喜水、被毛防水",
+    "性格": "外向、好动"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Turkish Van cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "半长毛",
+      "土耳其",
+      "异色眼",
+      "turkish",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-turkish-van/content.md"
+}

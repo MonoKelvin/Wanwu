@@ -1,0 +1,29 @@
+{
+  "id": "c2e002db-9244-421e-8dc3-462f7caadccc",
+  "slug": "coffee-tea-ct-teapot-yixing",
+  "subCategoryId": "ct-tea",
+  "name": "宜兴紫砂壶",
+  "summary": "紫砂壶是中国特有的手工制造陶土工艺品，起源于明代正德年间的江苏宜兴丁蜀镇，以当地紫砂泥为原料制成。",
+  "tags": [
+    "中国的江苏宜兴",
+    "redware ceramic tea-pot",
+    "紫砂壶"
+  ],
+  "specs": {
+    "名称": "宜兴紫砂壶",
+    "产地": "江苏宜兴",
+    "泥料": "紫泥、朱泥、段泥等",
+    "用途": "泡茶（尤其乌龙茶）",
+    "特色": "双气孔结构，愈用愈润"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "tea cup teapot ceremony",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/coffee-tea/coffee-tea-ct-teapot-yixing/content.md"
+}

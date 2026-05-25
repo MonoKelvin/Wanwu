@@ -1,0 +1,35 @@
+{
+  "id": "e2e7cc4b-65f4-4fe3-82c3-261efac893d1",
+  "slug": "ui-material-you-widget",
+  "subCategoryId": "ui-design-tool",
+  "name": "Material You 小组件",
+  "summary": "Android 12+ 动态取色与 widget 生态。",
+  "tags": [
+    "安卓",
+    "Material 3",
+    "UI",
+    "移动端"
+  ],
+  "specs": {
+    "分类": "Android 组件",
+    "平台": "Android 12+",
+    "风格": "Material You",
+    "框架": "Jetpack Glance",
+    "特点": "动态取色、多尺寸",
+    "场景": "主屏信息卡片"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Material You design system ui",
+    "matchTags": [
+      "移动端",
+      "material 3",
+      "material"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-material-you-widget/content.md"
+}

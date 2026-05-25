@@ -1,0 +1,36 @@
+{
+  "id": "d28e4f5b-18ce-4771-bfdd-9915d0b0c95d",
+  "slug": "hero-wonder-woman",
+  "subCategoryId": "hero-dc",
+  "name": "神奇女侠 Wonder Woman",
+  "summary": "DC 亚马逊公主戴安娜，真理套索与神力护腕，女性超级英雄代表之一。",
+  "tags": [
+    "盖尔加朵",
+    "DC",
+    "女性英雄",
+    "亚马逊"
+  ],
+  "specs": {
+    "宇宙": "DC 漫画",
+    "首次登场": "1941",
+    "创作者": "William Moulton Marston",
+    "本名": "戴安娜·普林斯 Diana Prince",
+    "装备": "真理套索、护腕、神剑",
+    "所属": "正义联盟"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Wonder Woman action figure toy collectible",
+    "matchTags": [
+      "亚马逊",
+      "女性英雄",
+      "盖尔加朵",
+      "wonder"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-wonder-woman/content.md"
+}

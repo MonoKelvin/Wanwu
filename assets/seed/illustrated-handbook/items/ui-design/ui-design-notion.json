@@ -1,0 +1,27 @@
+{
+  "id": "1509ae93-220e-4ab8-ab4a-3467c0f4d7e5",
+  "slug": "ui-design-notion",
+  "subCategoryId": "ui-app-screen",
+  "name": "Notion 界面",
+  "summary": "块编辑知识库 UI。",
+  "tags": [],
+  "specs": {
+    "分类": "SaaS 产品 UI",
+    "产品": "Notion",
+    "首发": "2016",
+    "特点": "块编辑、斜杠命令",
+    "场景": "知识库、协作 wiki"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Notion web interface ui design",
+    "category": "all",
+    "matchTags": [
+      "notion"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-design-notion/content.md"
+}

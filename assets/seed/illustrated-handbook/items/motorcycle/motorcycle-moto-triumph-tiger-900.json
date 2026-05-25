@@ -1,0 +1,31 @@
+{
+  "id": "c6b3b910-0f8d-49c1-99e4-c497f3447423",
+  "slug": "motorcycle-moto-triumph-tiger-900",
+  "subCategoryId": "moto-adventure",
+  "name": "Triumph Tiger 900",
+  "summary": "英式三缸 ADV。",
+  "tags": [
+    "探险"
+  ],
+  "specs": {
+    "首发年份": "2020",
+    "厂商": "Triumph",
+    "排量": "888 cc",
+    "发动机": "直列三缸",
+    "最大功率": "约 95 hp",
+    "车型": "冒险旅行",
+    "产地": "英国 / 泰国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Triumph Tiger 900 motorcycle",
+    "category": "all",
+    "matchTags": [
+      "triumph"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6
+  },
+  "contentFile": "illustrated-handbook/motorcycle/motorcycle-moto-triumph-tiger-900/content.md"
+}

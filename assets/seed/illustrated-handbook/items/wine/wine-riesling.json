@@ -1,0 +1,31 @@
+{
+  "id": "71924134-162c-452f-b7d3-46e82e851db7",
+  "slug": "wine-riesling",
+  "subCategoryId": "wine-white",
+  "name": "雷司令",
+  "summary": "雷司令（Riesling）是德国古老酿酒葡萄（ Vitis vinifera ）品种，以Gouais Blanc为母本，父本不详，杂交组配而成。",
+  "tags": [
+    "Riesling",
+    "里斯林",
+    "雷司",
+    "雷司令"
+  ],
+  "specs": {
+    "代表产区": "德国摩泽尔、阿尔萨斯、澳洲等",
+    "品种": "雷司令（Riesling）",
+    "风格": "高酸、花香蜂蜜感",
+    "甜度": "干型至甜型均可",
+    "侍酒": "约8–12°C",
+    "搭配": "海鲜、亚洲辣味菜"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "wine bottle glass vineyard",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/wine/wine-riesling/content.md"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "d1427f26-3659-4c33-be1e-4fdce349db09",
+  "slug": "cat-bengal",
+  "subCategoryId": "cat-short-hair",
+  "name": "孟加拉猫 Bengal",
+  "summary": "亚洲豹猫杂交选育，豹纹玫瑰纹、肌肉发达，性格活跃需大量刺激。",
+  "tags": [
+    "美洲",
+    "杂交",
+    "豹纹",
+    "活跃"
+  ],
+  "specs": {
+    "原产地": "美国（亚洲豹猫杂交）",
+    "体重": "3.5–7 kg",
+    "寿命": "12–16 年",
+    "被毛": "短毛、豹纹/玫瑰纹",
+    "性格": "活跃、聪明、好奇",
+    "识别特征": "野性斑点、肌肉型"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Bengal cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "bengal",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-bengal/content.md"
+}

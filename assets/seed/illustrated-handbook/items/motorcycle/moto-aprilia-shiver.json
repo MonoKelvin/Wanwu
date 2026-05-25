@@ -1,0 +1,36 @@
+{
+  "id": "caceb76e-c96d-4570-b3ce-2abb061ad100",
+  "slug": "moto-aprilia-shiver",
+  "subCategoryId": "moto-italy",
+  "name": "阿普利亚 Shiver 900",
+  "summary": "街车 V 双缸，城市运动骑行。",
+  "tags": [
+    "摩托",
+    "仿赛",
+    "意大利",
+    "Aprilia"
+  ],
+  "specs": {
+    "首发年份": "2017",
+    "厂商": "Aprilia",
+    "排量": "896 cc",
+    "发动机": "V 双缸",
+    "最大功率": "约 95 hp",
+    "车型": "街车",
+    "产地": "意大利"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Shiver 900 motorcycle",
+    "matchTags": [
+      "意大利",
+      "aprilia",
+      "shiver"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/moto-aprilia-shiver/content.md"
+}

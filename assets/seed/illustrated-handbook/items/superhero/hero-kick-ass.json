@@ -1,0 +1,33 @@
+{
+  "id": "3d168984-24c1-4afd-9bc1-d7fba9140728",
+  "slug": "hero-kick-ass",
+  "subCategoryId": "hero-indie",
+  "name": "海扁王 Kick-Ass",
+  "summary": "无超能力少年穿制服打击犯罪引发模仿者。",
+  "tags": [
+    "喜剧",
+    "暴力",
+    "写实",
+    "马克米勒"
+  ],
+  "specs": {
+    "作品": "Kick-Ass",
+    "首次登场": "2008",
+    "特点": "无超能力",
+    "伙伴": "超杀女",
+    "风格": "讽刺暴力"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Kick-Ass action figure toy collectible",
+    "matchTags": [
+      "马克米勒",
+      "kick"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-kick-ass/content.md"
+}

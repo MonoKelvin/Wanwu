@@ -1,0 +1,34 @@
+{
+  "id": "ef45d0c1-838e-4b04-8978-7e6e67821c8e",
+  "slug": "moto-mv-agusta-superveloce",
+  "subCategoryId": "moto-italy",
+  "name": "MV Agusta Superveloce",
+  "summary": "复古外壳的现代三缸超跑。",
+  "tags": [
+    "摩托",
+    "仿赛",
+    "意大利",
+    "MV Agusta"
+  ],
+  "specs": {
+    "首发年份": "2020",
+    "厂商": "MV Agusta",
+    "排量": "798 cc",
+    "发动机": "三缸",
+    "车型": "复古跑车",
+    "产地": "意大利"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "MV Agusta Superveloce motorcycle",
+    "matchTags": [
+      "意大利",
+      "mv agusta"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/moto-mv-agusta-superveloce/content.md"
+}

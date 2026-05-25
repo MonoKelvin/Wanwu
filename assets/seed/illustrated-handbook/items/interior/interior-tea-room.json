@@ -1,0 +1,31 @@
+{
+  "id": "3b523386-49dc-4b8e-8003-4ba4ccd6f991",
+  "slug": "interior-tea-room",
+  "subCategoryId": "int-zen",
+  "name": "茶室",
+  "summary": "榻榻米、蹲踞入口与一期一会茶道空间。",
+  "tags": [
+    "禅意",
+    "日式",
+    "茶道",
+    "和室"
+  ],
+  "specs": {
+    "分类": "日式禅意",
+    "元素": "茶道",
+    "空间": "和室",
+    "材质": "木、竹、石、纸",
+    "原则": "留白、自然",
+    "场景": "茶、宿、庭"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/interior/interior-tea-room/content.md"
+}

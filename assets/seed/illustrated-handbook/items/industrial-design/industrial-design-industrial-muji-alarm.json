@@ -1,0 +1,25 @@
+{
+  "id": "771527c7-9d51-4194-9488-2246559b0abb",
+  "slug": "industrial-design-industrial-muji-alarm",
+  "subCategoryId": "id-product",
+  "name": "无印良品闹钟",
+  "summary": "极简生活杂货。",
+  "tags": [],
+  "specs": {
+    "品牌": "MUJI",
+    "类型": "闹钟",
+    "特色": "静音唤醒",
+    "机芯": "石英",
+    "设计": "极简"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "product design",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-design-industrial-muji-alarm/content.md"
+}

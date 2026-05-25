@@ -1,0 +1,28 @@
+{
+  "id": "79ec9c29-4c87-4e78-8d26-5dd354e16fdb",
+  "slug": "music-inst-music-saxophone",
+  "subCategoryId": "music-wind",
+  "name": "萨克斯风",
+  "summary": "萨克斯风（Saxophone）是由比利时乐器制作大师阿道夫·萨克斯于1840年发明的木管乐器，其管体通常采用黄铜制造，因其与单簧管相似的发声原理（使用单簧片）通常归类为木管乐器，兼具铜管乐器声学特性导致分类分歧。",
+  "tags": [
+    "Sax",
+    "萨克斯风",
+    "Saxophone"
+  ],
+  "specs": {
+    "发明": "阿道夫·萨克斯（1840年代）",
+    "类型": "木管乐器（金属管体）",
+    "族系": "高音、中音、次中音、上低音等",
+    "应用": "爵士、古典、流行"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "musical instrument",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/music-inst/music-inst-music-saxophone/content.md"
+}

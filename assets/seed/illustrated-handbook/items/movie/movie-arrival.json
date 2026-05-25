@@ -1,0 +1,37 @@
+{
+  "id": "7c630d01-7494-4d09-af99-1eded72148aa",
+  "slug": "movie-arrival",
+  "subCategoryId": "movie-action",
+  "name": "降临 Arrival",
+  "summary": "维伦纽瓦执导的严肃科幻：语言学家通过七肢桶文字理解非线性时间，在沟通与抉择中探讨语言与命运。",
+  "tags": [
+    "科幻电影",
+    "电影",
+    "维伦纽瓦",
+    "科幻"
+  ],
+  "specs": {
+    "导演": "丹尼斯·维伦纽瓦",
+    "编剧": "埃里克·海瑟尔（改编自特德·蒋）",
+    "上映": "2016-11-11（美国）",
+    "片长": "约 116 分钟",
+    "国家": "美国",
+    "类型": "科幻 / 剧情",
+    "主演": "艾米·亚当斯",
+    "主要荣誉": "奥斯卡最佳音效剪辑等"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Arrival cinema film still",
+    "matchTags": [
+      "外星接触",
+      "维伦纽瓦",
+      "arrival"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/movie/movie-arrival/content.md"
+}

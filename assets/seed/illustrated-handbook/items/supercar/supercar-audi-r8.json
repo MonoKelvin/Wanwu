@@ -1,0 +1,34 @@
+{
+  "id": "65eb779c-a1cf-464f-bc3d-b17c318247f3",
+  "slug": "supercar-audi-r8",
+  "subCategoryId": "car-italy",
+  "name": "奥迪 R8",
+  "summary": "共享兰博基尼平台的德系中置超跑，日常可用性高。",
+  "tags": [
+    "精密工程",
+    "德国",
+    "超跑",
+    "Audi"
+  ],
+  "specs": {
+    "首发年份": "2006",
+    "厂商": "Audi",
+    "发动机": "V10",
+    "最大功率": "620 hp",
+    "布局": "中置",
+    "产地": "德国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "R8 supercar",
+    "matchTags": [
+      "audi",
+      "精密工程"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/supercar/supercar-audi-r8/content.md"
+}

@@ -50,4 +50,4 @@
 - 根目录 [README.md](../README.md) — 用户与开发者入门
 - [pack/windows/README.md](../pack/windows/README.md) — Windows 安装包
 - [electron/services/README.md](../electron/services/README.md) — 主进程服务模块
-- [assets/seed/library/README.md](../assets/seed/library/README.md) — 图鉴种子数据
+- [assets/seed/illustrated-handbook/README.md](../assets/seed/illustrated-handbook/README.md) — 图鉴种子数据

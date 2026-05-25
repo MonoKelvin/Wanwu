@@ -20,7 +20,7 @@ npm run pack
 
 **禁止**将整应用打成 zip 塞进 ISS，否则无法干净卸载。
 
-安装包内 **仅含** `assets/logo`。图鉴种子、配图与 SQLite 均在 `library-data-pack-*.zip` 中单独发布，勿把 `assets/seed`、`assets/library`、`assets/packed` 打进 `extraResources`。
+安装包内 **仅含** `assets/logo`。图鉴种子、配图与 SQLite 均在 `library-data-pack-*.zip` 中单独发布，勿把 `assets/seed`、`assets/packed` 打进 `extraResources`（图鉴配图在 `assets/seed/illustrated-handbook/resources`，随数据包分发）。
 
 ## 发布物
 

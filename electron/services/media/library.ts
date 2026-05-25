@@ -1,11 +1,26 @@
 import { existsSync, readdirSync } from 'fs'
 import { join } from 'path'
 import { getWanwuResourcesDirectory } from '../data/paths'
-import { getBundledAssetsRoot } from '../core/assetsRoot'
+import {
+  getIllustratedHandbookBundledMediaRoot,
+  ILLUSTRATED_HANDBOOK_MEDIA_DIR
+} from '../library/paths'
 
-/** 图鉴配图根目录（优先用户数据 resources，其次安装包内捆绑 assets） */
+/** 图鉴配图根目录（用户数据 resources） */
 export function getLibraryAssetsRoot(): string {
   return getWanwuResourcesDirectory()
+}
+
+function normalizeRel(path: string): string {
+  return path.replace(/^\/+/, '').replace(/\\/g, '/')
+}
+
+/** 去掉 illustrated-handbook/ 前缀，得到 resources 下的相对路径 */
+export function handbookMediaInnerPath(relativePath: string): string {
+  const n = normalizeRel(relativePath)
+  const prefix = `${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/`
+  if (n.startsWith(prefix)) return n.slice(prefix.length)
+  return n
 }
 
 function resolveUnderRoot(root: string, relativePath: string): string | null {
@@ -15,35 +30,43 @@ function resolveUnderRoot(root: string, relativePath: string): string | null {
 }
 
 export function resolveLibraryMediaAbsolute(relativePath: string): string | null {
-  const rel = relativePath.replace(/^\/+/, '').replace(/\\/g, '/')
-  const user = resolveUnderRoot(getWanwuResourcesDirectory(), rel)
+  const inner = handbookMediaInnerPath(relativePath)
+  if (!inner) return null
+
+  const user = resolveUnderRoot(
+    getWanwuResourcesDirectory(),
+    `${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/${inner}`
+  )
   if (user) return user
-  return resolveUnderRoot(getBundledAssetsRoot(), rel)
+
+  return resolveUnderRoot(getIllustratedHandbookBundledMediaRoot(), inner)
 }
 
 export function toLibraryMediaUrl(relativePath: string | null | undefined): string | null {
   const rel = relativePath?.trim()
   if (!rel) return null
-  const normalized = rel.replace(/^\/+/, '').replace(/\\/g, '/')
-  if (!resolveLibraryMediaAbsolute(normalized)) return null
-  return `wanwu-media://${encodeURI(normalized)}`
+  const normalized = normalizeRel(rel)
+  const urlPath = normalized.startsWith(`${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/`)
+    ? normalized
+    : `${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/${normalized}`
+  if (!resolveLibraryMediaAbsolute(urlPath)) return null
+  return `wanwu-media://${encodeURI(urlPath)}`
 }
 
 export function coverRelativePath(categoryId: string, slug: string, filename = 'cover.jpg'): string {
-  return `library/${categoryId}/${slug}/${filename}`
+  return `${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/${categoryId}/${slug}/${filename}`
 }
 
 const COVER_FILENAMES = ['cover.jpg', 'cover.jpeg', 'cover.png', 'cover.webp']
 
-function normalizeRel(path: string): string {
-  return path.replace(/^\/+/, '').replace(/\\/g, '/')
-}
-
 function relPathCandidates(path: string): string[] {
   const n = normalizeRel(path)
-  const out = [n]
-  if (n && !n.startsWith('library/')) out.push(`library/${n}`)
-  return [...new Set(out)]
+  if (!n) return []
+  const out = new Set<string>([n])
+  if (!n.startsWith(`${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/`)) {
+    out.add(`${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/${n}`)
+  }
+  return [...out]
 }
 
 export function slugDirCandidates(categoryId: string, slug: string): string[] {
@@ -57,13 +80,14 @@ export function slugDirCandidates(categoryId: string, slug: string): string[] {
 
 function libraryRootCandidates(categoryId: string): string[] {
   const roots: string[] = []
-  const seen = new Set<string>()
-  for (const root of [getWanwuResourcesDirectory(), getBundledAssetsRoot()]) {
-    const key = root.toLowerCase()
-    if (seen.has(key)) continue
-    seen.add(key)
-    roots.push(join(root, 'library', categoryId))
-  }
+  const userCat = join(
+    getWanwuResourcesDirectory(),
+    ILLUSTRATED_HANDBOOK_MEDIA_DIR,
+    categoryId
+  )
+  if (existsSync(userCat)) roots.push(userCat)
+  const bundledCat = join(getIllustratedHandbookBundledMediaRoot(), categoryId)
+  if (existsSync(bundledCat)) roots.push(bundledCat)
   return roots
 }
 
@@ -77,7 +101,7 @@ function firstExistingCoverInDir(categoryId: string, dirName: string): string | 
     if (!existsSync(dirAbs)) continue
     const file = readdirSync(dirAbs).find((f) => /^cover\.(jpe?g|png|webp)$/i.test(f))
     if (!file) continue
-    const rel = `library/${categoryId}/${dirName}/${file}`
+    const rel = coverRelativePath(categoryId, dirName, file)
     if (resolveLibraryMediaAbsolute(rel)) return rel
   }
   return null
@@ -110,7 +134,6 @@ export function resolveItemCoverRelative(params: {
   coverPath: string | null | undefined
   categoryId: string
   slug: string | null | undefined
-  /** 列表等场景设为 false，避免 readdir 扫目录 */
   allowDiscover?: boolean
 }): string | null {
   const candidates: string[] = []
@@ -140,8 +163,13 @@ export function resolveMediaRelative(relativePath: string | null | undefined): s
     if (resolveLibraryMediaAbsolute(rel)) return rel
   }
   const rel = normalizeRel(relativePath)
-  const m = rel.match(/^library\/([^/]+)\/([^/]+)\/(gallery-\d+\.(?:jpe?g|png|webp))$/i)
+  const m = rel.match(
+    new RegExp(
+      `^${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/([^/]+)/([^/]+)/(gallery-\\d+\\.(?:jpe?g|png|webp))$`,
+      'i'
+    )
+  )
   if (!m) return null
-  const alt = `library/${m[1]}/${m[2]}/${m[3]}`
+  const alt = `${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/${m[1]}/${m[2]}/${m[3]}`
   return resolveLibraryMediaAbsolute(alt) ? alt : null
 }

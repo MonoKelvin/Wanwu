@@ -1,0 +1,38 @@
+{
+  "id": "2b2aa1f2-f1f0-4c31-9ee1-0a0d749d5d3b",
+  "slug": "dog-catahoula-leopard",
+  "subCategoryId": "dog-americas",
+  "name": "卡塔胡拉豹犬",
+  "summary": "路易斯安那州工作犬，豹纹毛色、蓝眼常见，牧猪与护卫。",
+  "tags": [
+    "豹纹",
+    "美国",
+    "工作犬",
+    "牧猪"
+  ],
+  "specs": {
+    "分类": "美洲犬种",
+    "原产地": "美国路易斯安那",
+    "体重": "16–48 kg",
+    "寿命": "10–14 年",
+    "特征": "豹纹、蓝眼常见",
+    "性格": "果断、精力充沛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "豹纹",
+      "美国",
+      "工作犬",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-catahoula-leopard/content.md"
+}

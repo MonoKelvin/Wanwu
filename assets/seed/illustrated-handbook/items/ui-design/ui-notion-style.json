@@ -1,0 +1,35 @@
+{
+  "id": "e88c2445-81ae-4378-83ba-dd60b10aa3ad",
+  "slug": "ui-notion-style",
+  "subCategoryId": "ui-design-tool",
+  "name": "Notion 风格",
+  "summary": "块编辑器、留白与中性色生产力界面。",
+  "tags": [
+    "UI",
+    "生产力",
+    "Web",
+    "SaaS"
+  ],
+  "specs": {
+    "分类": "SaaS 界面风格",
+    "代表产品": "Notion",
+    "特点": "块编辑、中性色、留白",
+    "场景": "知识库、文档、wiki",
+    "字体": "Inter 系无衬线"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Notion design system ui",
+    "matchTags": [
+      "web",
+      "saas",
+      "生产力",
+      "notion"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-notion-style/content.md"
+}

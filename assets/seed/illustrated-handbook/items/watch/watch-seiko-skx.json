@@ -1,0 +1,26 @@
+{
+  "id": "895d4e1c-d53a-4898-9d6e-8d370c427d51",
+  "slug": "watch-seiko-skx",
+  "subCategoryId": "watch-sport",
+  "name": "精工 SKX",
+  "summary": "入门潜水机械。",
+  "tags": [
+    "腕表"
+  ],
+  "specs": {
+    "概述": "入门潜水机械。"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "精工 SKX luxury wristwatch macro dial leather strap",
+    "category": "all",
+    "matchTags": [
+      "skx",
+      "watch"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/watch/watch-seiko-skx/content.md"
+}

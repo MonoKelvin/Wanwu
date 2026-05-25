@@ -1,0 +1,38 @@
+{
+  "id": "11f8adac-0400-4942-8295-c56a241cdf8e",
+  "slug": "cat-manx",
+  "subCategoryId": "cat-short-hair",
+  "name": "马恩岛猫 Manx",
+  "summary": "马恩岛无尾突变猫，圆身短尾或全无尾，后腿较长善跳跃，捕鼠能力强。",
+  "tags": [
+    "马恩岛",
+    "短毛",
+    "欧洲",
+    "无尾"
+  ],
+  "specs": {
+    "分类": "欧洲品种",
+    "原产地": "马恩岛",
+    "体重": "3.5–5.5 kg",
+    "寿命": "9–14 年",
+    "尾型": "Rumpy 至 Longy",
+    "性格": "温和、忠诚",
+    "注意": "脊柱健康筛查"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Manx cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "马恩岛",
+      "manx",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-manx/content.md"
+}

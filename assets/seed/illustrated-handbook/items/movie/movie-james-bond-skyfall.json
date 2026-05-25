@@ -1,0 +1,36 @@
+{
+  "id": "0d7a65e5-02a4-4b5a-98d5-3cdd6a84e132",
+  "slug": "movie-james-bond-skyfall",
+  "subCategoryId": "movie-action",
+  "name": "007：大破天幕杀机 Skyfall",
+  "summary": "门德斯 2012 年邦德 50 周年作：席尔瓦追杀 M，苏格兰天幕庄园终极对决。",
+  "tags": [
+    "电影",
+    "动作",
+    "特工",
+    "2012"
+  ],
+  "specs": {
+    "导演": "萨姆·门德斯",
+    "编剧": "尼尔·珀维斯等",
+    "上映": "2012-10-23（英国）",
+    "片长": "约 143 分钟",
+    "国家": "英国 / 美国",
+    "类型": "动作 / 惊悚 / 冒险",
+    "主演": "丹尼尔·克雷格、哈维尔·巴登",
+    "主要荣誉": "奥斯卡最佳原创歌曲（阿黛尔《Skyfall》）等 2 项"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Skyfall cinema film still",
+    "matchTags": [
+      "萨姆·门德斯",
+      "skyfall"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/movie/movie-james-bond-skyfall/content.md"
+}

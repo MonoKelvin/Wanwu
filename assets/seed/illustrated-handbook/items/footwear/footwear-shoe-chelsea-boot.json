@@ -1,0 +1,29 @@
+{
+  "id": "5a1560a9-f882-4cab-ba7a-44ca85576b90",
+  "slug": "footwear-shoe-chelsea-boot",
+  "subCategoryId": "shoe-boot",
+  "name": "切尔西靴",
+  "summary": "切尔西靴是起源于英国维多利亚时代的踝靴，由维多利亚女王御用制鞋师J.",
+  "tags": [
+    "chelsea boots",
+    "切尔西靴",
+    "马术活动的靴子"
+  ],
+  "specs": {
+    "名称": "切尔西靴",
+    "特征": "弹性侧片、无鞋带",
+    "起源": "维多利亚时代英国",
+    "材质": "皮革、麂皮常见",
+    "风格": "摇滚与都市休闲"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "shoes footwear",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/footwear/footwear-shoe-chelsea-boot/content.md"
+}

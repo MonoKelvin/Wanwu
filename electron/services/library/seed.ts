@@ -198,7 +198,7 @@ function upsertItem(
   mode: UpsertMode
 ): 'insert' | 'update' | 'skip' {
   if (!item.id) {
-    throw new Error(`条目 ${item.slug} 缺少稳定 id，请检查 assets/seed/library 配置`)
+    throw new Error(`条目 ${item.slug} 缺少稳定 id，请检查 assets/seed/illustrated-handbook 配置`)
   }
 
   const cover = item.coverFile?.replace(/\\/g, '/') ?? null

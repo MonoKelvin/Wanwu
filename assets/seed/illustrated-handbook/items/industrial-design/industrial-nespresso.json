@@ -1,0 +1,33 @@
+{
+  "id": "62ff54ab-95cc-4611-afd6-c7bb2fcc28fa",
+  "slug": "industrial-nespresso",
+  "subCategoryId": "id-appliance",
+  "name": "Nespresso 咖啡机",
+  "summary": "胶囊系统与 George Clooney 广告塑造轻奢咖啡仪式。",
+  "tags": [
+    "厨电",
+    "Nestlé",
+    "家居",
+    "设计"
+  ],
+  "specs": {
+    "首发": "1986",
+    "品牌": "Nestlé",
+    "压力": "19 bar",
+    "类型": "胶囊咖啡",
+    "特色": "铝胶囊"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Nespresso product design",
+    "matchTags": [
+      "nestlé",
+      "nespresso"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-nespresso/content.md"
+}

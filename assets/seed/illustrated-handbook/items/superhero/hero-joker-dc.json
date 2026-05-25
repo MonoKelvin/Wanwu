@@ -1,0 +1,33 @@
+{
+  "id": "bf87133e-f66a-4b87-90b7-c7cacae83cf6",
+  "slug": "hero-joker-dc",
+  "subCategoryId": "hero-dc",
+  "name": "小丑 Joker",
+  "summary": "哥谭犯罪王子，蝙蝠侠宿敌，无固定起源的混乱象征。",
+  "tags": [
+    "哥谭",
+    "DC",
+    "混乱",
+    "反派"
+  ],
+  "specs": {
+    "宇宙": "DC",
+    "首次登场": "1940",
+    "类型": "超级反派",
+    "城市": "哥谭",
+    "特点": "混乱、不可预测",
+    "宿敌": "蝙蝠侠"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Joker action figure toy collectible",
+    "matchTags": [
+      "joker"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-joker-dc/content.md"
+}

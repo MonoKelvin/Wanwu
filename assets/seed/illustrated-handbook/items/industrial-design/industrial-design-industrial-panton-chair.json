@@ -1,0 +1,29 @@
+{
+  "id": "be8aa51c-709d-4425-a4d6-33b885250c44",
+  "slug": "industrial-design-industrial-panton-chair",
+  "subCategoryId": "id-furniture",
+  "name": "Panton 椅",
+  "summary": "一体塑料悬臂椅。",
+  "tags": [
+    "家具"
+  ],
+  "specs": {
+    "首发": "1967",
+    "设计师": "Verner Panton",
+    "品牌": "Vitra",
+    "材料": "注塑聚丙烯",
+    "类型": "餐椅"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Panton product design",
+    "category": "all",
+    "matchTags": [
+      "panton"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-design-industrial-panton-chair/content.md"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "d4243de9-810f-4432-95f1-c9fe4d25a5c2",
+  "slug": "camera-canon-r5",
+  "subCategoryId": "cam-body",
+  "name": "佳能 EOS R5",
+  "summary": "EOS R系统主力机型，8K视频无反",
+  "tags": [
+    "EOS R",
+    "全画幅无反",
+    "R5",
+    "佳能"
+  ],
+  "specs": {
+    "品牌": "佳能 Canon",
+    "系统": "EOS R系统",
+    "像素": "约4500万",
+    "视频能力": "8K视频",
+    "防抖": "机身五轴防抖",
+    "连拍": "机械12张/秒",
+    "卡口": "RF卡口",
+    "定位": "专业级全画幅"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "佳能 EOS R5 canon eos r5 camera",
+    "category": "all",
+    "matchTags": [
+      "canon",
+      "camera"
+    ],
+    "requiredTags": [
+      "camera"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/camera/camera-canon-r5/content.md"
+}

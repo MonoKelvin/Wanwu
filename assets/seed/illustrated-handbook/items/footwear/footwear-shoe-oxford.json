@@ -1,0 +1,28 @@
+{
+  "id": "ff05b2b2-5fdc-4673-986f-6ee0f6ab0bda",
+  "slug": "footwear-shoe-oxford",
+  "subCategoryId": "shoe-dress",
+  "name": "牛津鞋",
+  "summary": "牛津鞋（Oxford Shoes）是源自17世纪英国 牛津大学 的制服鞋，其发源于 苏格兰 和 爱尔兰 乡间早期的无跟牛皮鞋款。",
+  "tags": [
+    "Oxford Shoes",
+    "牛津鞋"
+  ],
+  "specs": {
+    "名称": "牛津鞋",
+    "闭合": "封闭式鞋带（Closed Lacing）",
+    "场合": "正装与商务",
+    "变体": "Cap-toe、Whole-cut 等",
+    "起源": "19世纪牛津大学流行"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "shoes footwear",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/footwear/footwear-shoe-oxford/content.md"
+}

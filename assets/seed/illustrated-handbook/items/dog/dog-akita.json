@@ -1,0 +1,36 @@
+{
+  "id": "b8bd2f1c-4a6c-4f27-bb7f-c62cfa0c6096",
+  "slug": "dog-akita",
+  "subCategoryId": "dog-working",
+  "name": "秋田犬",
+  "summary": "日本大型天然纪念犬，忠犬八公闻名，单层性格沉稳威严。",
+  "tags": [
+    "大型",
+    "日本",
+    "天然纪念",
+    "忠诚"
+  ],
+  "specs": {
+    "原产地": "日本秋田县",
+    "体重": "32–59 kg",
+    "寿命": "10–12 年",
+    "被毛": "双层毛，赤/白/虎斑等",
+    "性格": "忠诚、沉稳、警觉",
+    "识别特征": "卷尾、厚毛、日本犬微笑嘴型"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "天然纪念",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-akita/content.md"
+}

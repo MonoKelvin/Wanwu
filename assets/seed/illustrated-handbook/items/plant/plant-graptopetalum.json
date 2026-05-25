@@ -1,0 +1,34 @@
+{
+  "id": "2195c183-8bfa-487a-906a-2351f370f3f5",
+  "slug": "plant-graptopetalum",
+  "subCategoryId": "plant-succulent",
+  "name": "风车草 Graptopetalum",
+  "summary": "粉紫色调莲座，杂交拟石莲流行。",
+  "tags": [
+    "多肉",
+    "耐旱",
+    "室内",
+    "盆栽"
+  ],
+  "specs": {
+    "分类": "多肉植物",
+    "光照": "明亮直射至半日照",
+    "介质": "排水颗粒土",
+    "浇水": "干透再浇",
+    "繁殖": "叶插 / 砍头",
+    "注意": "冬季防低温积水",
+    "季节": "生长季春秋"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Graptopetalum houseplant",
+    "matchTags": [
+      "graptopetalum"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/plant/plant-graptopetalum/content.md"
+}

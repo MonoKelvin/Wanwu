@@ -1,0 +1,40 @@
+{
+  "id": "d2dff1f2-916a-4ab4-9de1-467f2bf2db6b",
+  "slug": "dog-boston-terrier",
+  "subCategoryId": "dog-americas",
+  "name": "波士顿梗",
+  "summary": "美国「美国绅士」小型梗犬，黑白燕尾服毛色，短鼻友善。",
+  "tags": [
+    "伴侣犬",
+    "短鼻",
+    "美国",
+    "梗犬"
+  ],
+  "specs": {
+    "分类": "伴侣犬",
+    "原产地": "美国",
+    "体重": "4.5–11 kg",
+    "肩高": "38–43 cm",
+    "毛色": "黑白燕尾服",
+    "寿命": "11–13 年",
+    "特点": "短鼻",
+    "性格": "友善、活泼"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "伴侣犬",
+      "短鼻",
+      "美国",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-boston-terrier/content.md"
+}

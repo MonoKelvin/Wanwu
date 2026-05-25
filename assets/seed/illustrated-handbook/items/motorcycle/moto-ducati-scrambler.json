@@ -1,0 +1,35 @@
+{
+  "id": "f7ca9682-4891-4f89-9acd-4e6d0bb55c9e",
+  "slug": "moto-ducati-scrambler",
+  "subCategoryId": "moto-italy",
+  "name": "杜卡迪 Scrambler",
+  "summary": "意式 scrambler 文化，城市复古骑行。",
+  "tags": [
+    "Ducati",
+    "仿赛",
+    "意大利",
+    "摩托"
+  ],
+  "specs": {
+    "首发年份": "2015",
+    "厂商": "Ducati",
+    "发动机": "L 型双缸",
+    "排量": "803–1103 cc",
+    "车型": "复古街车",
+    "产地": "意大利"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Scrambler motorcycle",
+    "matchTags": [
+      "意大利",
+      "ducati",
+      "scrambler"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/moto-ducati-scrambler/content.md"
+}

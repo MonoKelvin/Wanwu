@@ -1,0 +1,31 @@
+{
+  "id": "dc46d394-7029-411d-b499-464f506236af",
+  "slug": "interior-zen-balcony",
+  "subCategoryId": "int-zen",
+  "name": "禅意阳台",
+  "summary": "盆栽、竹篱与石灯的小型都市冥想角。",
+  "tags": [
+    "都市",
+    "禅意",
+    "日式",
+    "阳台"
+  ],
+  "specs": {
+    "分类": "日式禅意",
+    "元素": "都市",
+    "空间": "阳台",
+    "材质": "木、竹、石、纸",
+    "原则": "留白、自然",
+    "场景": "茶、宿、庭"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/interior/interior-zen-balcony/content.md"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "2a7d375a-7644-447a-82bf-c72ae09be03f",
+  "slug": "cat-chinese-white",
+  "subCategoryId": "cat-china",
+  "name": "中国白猫（狮猫型白猫）",
+  "summary": "以纯白被毛为主的地方类型，部分异色眼，与临清狮猫文化带重叠。",
+  "tags": [
+    "异色眼",
+    "田园猫",
+    "白猫",
+    "中国"
+  ],
+  "specs": {
+    "分类": "中国品种",
+    "类型": "地方/毛色型",
+    "毛色": "纯白",
+    "注意": "防晒、听力筛查",
+    "眼色": "蓝/异色/琥珀"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "田园猫",
+      "异色眼",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-chinese-white/content.md"
+}

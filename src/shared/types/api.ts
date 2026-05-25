@@ -1,5 +1,6 @@
 import type { FavoriteEntry, FavoriteGroup } from './favorite'
 import type { Category, Item, LibrarySearchHit } from './item'
+import type { LinkBookmark, LinkFolder, LinksSyncResult } from './links'
 import type { AppSettings } from './settings'
 import type { RssEntry, RssFeed, RssFeedInput, RssFeedUpdate, RssGroup } from './rss'
 
@@ -12,6 +13,22 @@ export interface WanwuApi {
     updateItem: (item: Item) => Promise<Item>
     createItem: (item: Partial<Item>) => Promise<Item>
     uploadItemImage: (params: { itemId: string; filePath: string }) => Promise<Item>
+  }
+  links: {
+    listFolders: () => Promise<LinkFolder[]>
+    listBookmarks: (params: { folderId: string; includeDeleted?: boolean }) => Promise<LinkBookmark[]>
+    sync: () => Promise<LinksSyncResult>
+    createBookmark: (input: { folderId: string; title: string; url: string }) => Promise<LinkBookmark>
+    updateBookmark: (input: {
+      id: string
+      title?: string
+      url?: string
+      folderId?: string
+    }) => Promise<LinkBookmark | null>
+    softDeleteBookmark: (id: string) => Promise<void>
+    restoreBookmark: (id: string) => Promise<void>
+    permanentDeleteBookmark: (id: string) => Promise<void>
+    probeUnreachable: (ids: string[]) => Promise<Record<string, boolean>>
   }
   rss: {
     listGroups: () => Promise<RssGroup[]>

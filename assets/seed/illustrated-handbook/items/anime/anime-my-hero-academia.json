@@ -1,0 +1,35 @@
+{
+  "id": "f49821dd-a9a1-4598-9d47-cfed64730058",
+  "slug": "anime-my-hero-academia",
+  "subCategoryId": "anime-fantasy",
+  "name": "我的英雄学院",
+  "summary": "《 我的英雄学院：一人的正义 》是由BANDAI NAMCO制作发行的动作类游戏，改编自 堀越耕平 在《 周刊少年JUMP 》连载的同名漫画。",
+  "tags": [
+    "日本",
+    "2016 动画",
+    "热血",
+    "少年向"
+  ],
+  "specs": {
+    "原作": "堀越耕平",
+    "连载": "2014–（周刊少年Jump）",
+    "动画制作": "Bones",
+    "首播": "2016-04-03（日本）",
+    "主角": "绿谷出久",
+    "类型": "超级英雄 / 校园",
+    "地区": "日本",
+    "单行本": "连载中"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "japanese anime character illustration",
+    "matchTags": [
+      "少年漫"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-my-hero-academia/content.md"
+}

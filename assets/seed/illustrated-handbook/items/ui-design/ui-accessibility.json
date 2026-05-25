@@ -1,0 +1,33 @@
+{
+  "id": "0763e9c9-8441-4855-bf53-52e86ba87eda",
+  "slug": "ui-accessibility",
+  "subCategoryId": "ui-design-tool",
+  "name": "无障碍设计",
+  "summary": "WCAG 对比度、屏幕阅读器与包容性交互。",
+  "tags": [
+    "包容",
+    "UI",
+    "移动端",
+    "WCAG"
+  ],
+  "specs": {
+    "分类": "包容性设计",
+    "标准": "WCAG 2.2",
+    "原则": "POUR 四原则",
+    "对比度": "正文 ≥4.5:1",
+    "技术": "语义 HTML、ARIA、屏幕阅读器"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "design system ui",
+    "matchTags": [
+      "移动端",
+      "wcag"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-accessibility/content.md"
+}

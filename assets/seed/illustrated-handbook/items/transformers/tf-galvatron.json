@@ -1,0 +1,28 @@
+{
+  "id": "08b0f00b-026a-4210-a10e-71173d0fc7fd",
+  "slug": "tf-galvatron",
+  "subCategoryId": "tf-decepticon",
+  "name": "惊破天 Galvatron",
+  "summary": "威震天重生体，宇宙大帝改造后的暴君。",
+  "tags": [
+    "变形",
+    "霸天虎",
+    "反派",
+    "霸天虎领袖"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "matchTags": [
+      "霸天虎",
+      "霸天虎领袖",
+      "galvatron"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/tf-galvatron/content.md"
+}

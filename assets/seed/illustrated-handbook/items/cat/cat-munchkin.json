@@ -1,0 +1,38 @@
+{
+  "id": "2763d5f4-f36a-4f79-ac17-2351ee0e9b8f",
+  "slug": "cat-munchkin",
+  "subCategoryId": "cat-americas",
+  "name": "曼基康猫 Munchkin",
+  "summary": "天然矮腿突变品种，脊柱形态特殊，性格活泼，争议与喜爱并存。",
+  "tags": [
+    "矮腿",
+    "突变",
+    "美洲",
+    "争议品种"
+  ],
+  "specs": {
+    "分类": "美洲品种",
+    "原产地": "美国",
+    "体重": "2–4 kg",
+    "寿命": "12–15 年",
+    "特征": "天然短腿",
+    "性格": "活泼、外向",
+    "注意": "繁育伦理与健康"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Munchkin cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "争议品种",
+      "munchkin",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-munchkin/content.md"
+}

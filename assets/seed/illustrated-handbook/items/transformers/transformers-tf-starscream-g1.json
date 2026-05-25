@@ -1,0 +1,19 @@
+{
+  "id": "cd7afae5-9102-4bf9-bc63-69c18153bd14",
+  "slug": "transformers-tf-starscream-g1",
+  "subCategoryId": "tf-g1",
+  "name": "红蜘蛛 G1",
+  "summary": "霸天虎空军指挥官。",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6
+  },
+  "contentFile": "illustrated-handbook/transformers/transformers-tf-starscream-g1/content.md"
+}

@@ -1,6 +1,7 @@
 ﻿import { copyFileSync, existsSync, mkdirSync, readdirSync } from 'fs'
 import { extname, join } from 'path'
 import { randomUUID } from 'crypto'
+import { ILLUSTRATED_HANDBOOK_MEDIA_DIR } from './paths'
 import {
   getLibraryAssetsRoot,
   resolveItemCoverRelative,
@@ -8,8 +9,12 @@ import {
   slugDirCandidates
 } from '../media/library'
 
+function userHandbookCategoryRoot(categoryId: string): string {
+  return join(getLibraryAssetsRoot(), ILLUSTRATED_HANDBOOK_MEDIA_DIR, categoryId)
+}
+
 export function resolveItemMediaDir(categoryId: string, slug: string | null | undefined): string {
-  const libRoot = join(getLibraryAssetsRoot(), 'library', categoryId)
+  const libRoot = userHandbookCategoryRoot(categoryId)
   if (slug?.trim()) {
     for (const dir of slugDirCandidates(categoryId, slug)) {
       if (existsSync(join(libRoot, dir))) return dir
@@ -46,7 +51,7 @@ export function copyUserImageToLibrary(params: UploadItemImageParams): UploadIte
 
   const mediaDir = resolveItemMediaDir(categoryId, slug)
   const ext = pickImageExtension(sourceFilePath)
-  const dirAbs = join(getLibraryAssetsRoot(), 'library', categoryId, mediaDir)
+  const dirAbs = join(userHandbookCategoryRoot(categoryId), mediaDir)
   mkdirSync(dirAbs, { recursive: true })
 
   const coverRel = resolveItemCoverRelative({
@@ -58,7 +63,7 @@ export function copyUserImageToLibrary(params: UploadItemImageParams): UploadIte
 
   if (!hasCover) {
     const filename = ext === '.jpg' ? 'cover.jpg' : `cover${ext}`
-    const relativePath = `library/${categoryId}/${mediaDir}/${filename}`
+    const relativePath = `illustrated-handbook/${categoryId}/${mediaDir}/${filename}`
     copyFileSync(sourceFilePath, join(dirAbs, filename))
     return { relativePath, isCover: true }
   }
@@ -73,7 +78,7 @@ export function copyUserImageToLibrary(params: UploadItemImageParams): UploadIte
   }
   const next = maxIdx + 1
   const filename = `gallery-${String(next).padStart(2, '0')}${ext === '.jpg' ? '.jpg' : ext}`
-  const relativePath = `library/${categoryId}/${mediaDir}/${filename}`
+  const relativePath = `illustrated-handbook/${categoryId}/${mediaDir}/${filename}`
   copyFileSync(sourceFilePath, join(dirAbs, filename))
   return { relativePath, isCover: false }
 }

@@ -1,0 +1,35 @@
+{
+  "id": "f255ccb1-80bb-4af5-b7af-0b85b345f8c0",
+  "slug": "anime-blue-lock",
+  "subCategoryId": "anime-isekai",
+  "name": "蓝色监狱",
+  "summary": "电视动画片《蓝色监狱》改编自 金城宗幸 负责故事、野村优介负责作画的同名漫画作品。",
+  "tags": [
+    "日本",
+    "热血",
+    "少年向",
+    "2022 动画"
+  ],
+  "specs": {
+    "原作": "金城宗幸（作画：野村佐纪）",
+    "连载": "2021–（周刊少年Magazine）",
+    "动画制作": "8bit",
+    "首播": "2022-10-09（日本）",
+    "主角": "洁世一",
+    "类型": "体育 / 心理战",
+    "地区": "日本",
+    "单行本": "连载中"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "fantasy anime landscape illustration",
+    "matchTags": [
+      "少年漫"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-blue-lock/content.md"
+}

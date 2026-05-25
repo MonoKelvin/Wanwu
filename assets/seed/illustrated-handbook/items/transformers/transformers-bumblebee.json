@@ -1,0 +1,30 @@
+{
+  "id": "bf06d3d0-3e4b-4426-bff0-39fb36529117",
+  "slug": "transformers-bumblebee",
+  "subCategoryId": "tf-g1",
+  "name": "大黄蜂 Bumblebee",
+  "summary": "汽车人侦察兵，常变形为黄色大众甲壳虫或科迈罗，性格友善，与人类联系紧密。",
+  "tags": [
+    "汽车人",
+    "侦察兵",
+    "大黄蜂",
+    "甲壳虫"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "category": "transportation",
+    "matchTags": [
+      "汽车人",
+      "大黄蜂",
+      "甲壳虫",
+      "侦察兵",
+      "bumblebee"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/transformers-bumblebee/content.md"
+}

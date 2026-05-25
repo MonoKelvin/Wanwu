@@ -1,0 +1,31 @@
+{
+  "id": "3632e14f-af5a-4c28-8272-a5921f5854a6",
+  "slug": "motorcycle-moto-bmw-r1250gs",
+  "subCategoryId": "moto-germany",
+  "name": "BMW R 1250 GS",
+  "summary": "拳击手探险旗舰。",
+  "tags": [
+    "宝马"
+  ],
+  "specs": {
+    "首发年份": "2018",
+    "厂商": "BMW",
+    "排量": "1254 cc",
+    "发动机": "水平对置双缸",
+    "最大功率": "约 136 hp",
+    "车型": "冒险旅行",
+    "产地": "德国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "BMW R 1250 GS motorcycle",
+    "category": "all",
+    "matchTags": [
+      "bmw"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6
+  },
+  "contentFile": "illustrated-handbook/motorcycle/motorcycle-moto-bmw-r1250gs/content.md"
+}

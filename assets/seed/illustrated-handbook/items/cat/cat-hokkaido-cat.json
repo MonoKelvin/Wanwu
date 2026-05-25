@@ -1,0 +1,36 @@
+{
+  "id": "1c814382-54c2-498f-9db8-a90808d2d231",
+  "slug": "cat-hokkaido-cat",
+  "subCategoryId": "cat-japan",
+  "name": "北海道猫（地方型）",
+  "summary": "北海道寒冷地区家猫类型，被毛厚实、体型结实，适应低温环境。",
+  "tags": [
+    "耐寒",
+    "地方型",
+    "厚毛",
+    "北海道"
+  ],
+  "specs": {
+    "分类": "日本品种",
+    "分布": "北海道",
+    "类型": "地理型家猫",
+    "特征": "厚毛、结实",
+    "气候": "寒冷适应"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "地方型",
+      "北海道",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-hokkaido-cat/content.md"
+}

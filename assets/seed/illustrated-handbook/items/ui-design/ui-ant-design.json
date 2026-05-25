@@ -1,0 +1,36 @@
+{
+  "id": "a927f45e-062b-46f4-b065-82db1355238f",
+  "slug": "ui-ant-design",
+  "subCategoryId": "ui-design-tool",
+  "name": "Ant Design",
+  "summary": "蚂蚁金服企业级 React 组件与设计语言。",
+  "tags": [
+    "UI",
+    "React",
+    "Web",
+    "企业"
+  ],
+  "specs": {
+    "分类": "Web 组件库",
+    "发布方": "蚂蚁集团",
+    "首发": "2015",
+    "框架": "React",
+    "场景": "企业级后台",
+    "特点": "Table、Form、ProLayout",
+    "许可": "MIT"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Ant Design design system ui",
+    "matchTags": [
+      "web",
+      "react",
+      "ant"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-ant-design/content.md"
+}

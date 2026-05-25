@@ -1,0 +1,34 @@
+{
+  "id": "7fe3ae27-fb3b-4ff8-8bbb-83f7267c9480",
+  "slug": "ui-fluent-ios",
+  "subCategoryId": "ui-design-tool",
+  "name": "Fluent / iOS 风格",
+  "summary": "微软 Fluent 与苹果 HIG 平台规范对比。",
+  "tags": [
+    "原生",
+    "UI",
+    "移动端",
+    "平台规范"
+  ],
+  "specs": {
+    "分类": "跨平台对照",
+    "Fluent": "Microsoft Windows",
+    "HIG": "Apple iOS / macOS",
+    "策略": "Platform-adaptive",
+    "材质": "Acrylic / Blur"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Fluent / iOS design system ui",
+    "matchTags": [
+      "移动端",
+      "平台规范",
+      "fluent"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-fluent-ios/content.md"
+}

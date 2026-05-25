@@ -1,0 +1,36 @@
+{
+  "id": "a1698b03-3721-47b4-976f-f1dfd4676e99",
+  "slug": "movie-lord-of-the-rings",
+  "subCategoryId": "movie-action",
+  "name": "指环王 The Lord of the Rings",
+  "summary": "杰克逊 2001–2003 年三部曲：弗罗多护戒摧毁魔戒，中土史诗奇幻电影工业标杆。",
+  "tags": [
+    "2001–03",
+    "电影",
+    "史诗奇幻",
+    "奇幻"
+  ],
+  "specs": {
+    "导演": "彼得·杰克逊",
+    "编剧": "弗兰·沃尔什等",
+    "上映": "2001–2003",
+    "片长": "三部合计约 9 小时+",
+    "国家": "新西兰 / 美国",
+    "类型": "奇幻 / 冒险",
+    "主演": "伊利亚·伍德、维果·莫腾森",
+    "主要荣誉": "奥斯卡 17 项（含《王者归来》11 项）"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "The Lord of the Rings cinema film still",
+    "matchTags": [
+      "史诗奇幻",
+      "the"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/movie/movie-lord-of-the-rings/content.md"
+}

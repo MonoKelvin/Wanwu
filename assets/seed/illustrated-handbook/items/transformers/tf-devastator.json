@@ -1,0 +1,28 @@
+{
+  "id": "7edb7fd4-927d-48bb-b76d-4319b38442ab",
+  "slug": "tf-devastator",
+  "subCategoryId": "tf-decepticon",
+  "name": "大力神 Devastator",
+  "summary": "工程车合体金刚，六合一破坏力。",
+  "tags": [
+    "合体金刚",
+    "变形",
+    "霸天虎",
+    "反派"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "matchTags": [
+      "霸天虎",
+      "合体金刚",
+      "devastator"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/tf-devastator/content.md"
+}

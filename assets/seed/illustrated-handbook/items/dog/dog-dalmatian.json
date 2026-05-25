@@ -1,0 +1,39 @@
+{
+  "id": "ab18a264-9fcb-4ac5-bb51-c7d42786cc29",
+  "slug": "dog-dalmatian",
+  "subCategoryId": "dog-europe",
+  "name": "大麦町犬",
+  "summary": "斑点犬标志品种，短毛白底黑点，历史上曾作马车犬，精力旺盛。",
+  "tags": [
+    "马车犬",
+    "欧洲",
+    "运动型",
+    "斑点"
+  ],
+  "specs": {
+    "分类": "工作/伴侣犬",
+    "原产地": "克罗地亚",
+    "肩高": "56–61 cm",
+    "体重": "23–32 kg",
+    "被毛": "短毛斑点",
+    "寿命": "10–13 年",
+    "特点": "斑点随年龄显现",
+    "性格": "精力充沛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "运动型",
+      "马车犬",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-dalmatian/content.md"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "02a037f2-9da7-4f28-ae6f-e8c711bd28f9",
+  "slug": "industrial-herman-miller",
+  "subCategoryId": "id-furniture",
+  "name": "Herman Miller Aeron",
+  "summary": "人体工学办公椅，网格悬挂支撑。",
+  "tags": [
+    "Herman Miller",
+    "家居",
+    "设计",
+    "办公"
+  ],
+  "specs": {
+    "创立": "1905",
+    "总部": "美国密歇根",
+    "代表产品": "Aeron / Eames",
+    "领域": "办公家具",
+    "地位": "行业标杆"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Herman Miller Aeron product design",
+    "matchTags": [
+      "herman miller",
+      "herman"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-herman-miller/content.md"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "c557bdbb-cae5-453a-b8f8-d7d789a3ca33",
+  "slug": "dog-australian-shepherd",
+  "subCategoryId": "dog-working",
+  "name": "澳洲牧羊犬",
+  "summary": "美国育成的牧羊犬（非澳大利亚原产），陨石色、高能量，敏捷赛常见。",
+  "tags": [
+    "敏捷",
+    "美国",
+    "牧羊犬",
+    "陨石色"
+  ],
+  "specs": {
+    "原产地": "美国育成（非澳洲原产）",
+    "体重": "16–32 kg",
+    "寿命": "12–15 年",
+    "被毛": "中长双层，陨石/三色等",
+    "性格": "精力充沛、聪明、专注",
+    "识别特征": "陨石色、异色眼、白袜套斑"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "牧羊犬",
+      "陨石色",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-australian-shepherd/content.md"
+}

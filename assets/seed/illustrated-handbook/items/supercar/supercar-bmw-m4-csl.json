@@ -1,0 +1,34 @@
+{
+  "id": "fdc91baf-37d7-4aa8-b2a1-74ad636128eb",
+  "slug": "supercar-bmw-m4-csl",
+  "subCategoryId": "car-germany",
+  "name": "宝马 M4 CSL",
+  "summary": "M 部门 50 周年轻量杰作，后驱纯粹驾驶。",
+  "tags": [
+    "德国",
+    "超跑",
+    "BMW M",
+    "精密工程"
+  ],
+  "specs": {
+    "首发年份": "2022",
+    "厂商": "BMW M",
+    "发动机": "直六 双涡轮",
+    "最大功率": "550 hp",
+    "产量": "1000 辆",
+    "产地": "德国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "M4 CSL supercar",
+    "matchTags": [
+      "bmw m",
+      "精密工程"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/supercar/supercar-bmw-m4-csl/content.md"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "bbdc55a6-3325-4096-8f8f-12af9d29677d",
+  "slug": "history-suzhou-garden",
+  "subCategoryId": "hist-world",
+  "name": "苏州古典园林",
+  "summary": "拙政园等私家园林叠山理水。",
+  "tags": [
+    "世界遗产",
+    "明至清",
+    "江苏",
+    "中国"
+  ],
+  "specs": {
+    "分类": "中国史迹",
+    "地点": "江苏",
+    "时代": "明至清",
+    "地位": "世界遗产",
+    "类型": "建筑 / 石窟 / 古城",
+    "保护": "国家级文保"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "suzhou classical garden china",
+    "matchTags": [
+      "世界遗产",
+      "明至清"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/history/history-suzhou-garden/content.md"
+}

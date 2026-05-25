@@ -1,0 +1,33 @@
+{
+  "id": "c0f6d781-3b89-4ede-9009-5aa575819603",
+  "slug": "hero-green-arrow-dc",
+  "subCategoryId": "hero-other",
+  "name": "绿箭侠 Green Arrow",
+  "summary": "奥利弗·奎因亿万富翁弓箭手，星城义警与社会正义议题结合。",
+  "tags": [
+    "弓箭",
+    "DC",
+    "奥利弗",
+    "星城"
+  ],
+  "specs": {
+    "宇宙": "DC",
+    "首次登场": "1941",
+    "本名": "奥利弗·奎恩",
+    "城市": "星城",
+    "武器": "弓箭"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Green Arrow action figure toy collectible",
+    "matchTags": [
+      "奥利弗",
+      "green"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-green-arrow-dc/content.md"
+}

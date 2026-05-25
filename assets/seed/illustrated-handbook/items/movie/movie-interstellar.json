@@ -1,0 +1,36 @@
+{
+  "id": "da2b5ee1-2c9b-437b-bfcb-3405b779bcc6",
+  "slug": "movie-interstellar",
+  "subCategoryId": "movie-scifi",
+  "name": "星际穿越 Interstellar",
+  "summary": "诺兰 2014 年硬科幻：库珀穿越虫洞为人类寻家，相对论时间差与父女情感并重。",
+  "tags": [
+    "科幻电影",
+    "电影",
+    "诺兰",
+    "科幻"
+  ],
+  "specs": {
+    "导演": "克里斯托弗·诺兰",
+    "编剧": "乔纳森·诺兰、克里斯托弗·诺兰",
+    "上映": "2014-11-07（美国）",
+    "片长": "约 169 分钟",
+    "国家": "美国 / 英国",
+    "类型": "科幻 / 剧情",
+    "主演": "马修·麦康纳",
+    "主要荣誉": "奥斯卡最佳视觉效果"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cyberpunk city night rain cinematic",
+    "matchTags": [
+      "硬科幻",
+      "interstellar"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/movie/movie-interstellar/content.md"
+}

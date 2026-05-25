@@ -1,0 +1,34 @@
+{
+  "id": "ed34d90f-140d-4cf3-a225-6859fc9d01bd",
+  "slug": "industrial-roomba",
+  "subCategoryId": "id-product",
+  "name": "iRobot Roomba",
+  "summary": "家用扫地机器人普及者，传感器导航。",
+  "tags": [
+    "工业设计",
+    "机器人",
+    "iRobot",
+    "经典"
+  ],
+  "specs": {
+    "首发": "2002",
+    "品牌": "iRobot",
+    "类型": "扫地机器人",
+    "导航": "视觉 / LiDAR",
+    "特色": "自动集尘"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "iRobot Roomba product design",
+    "matchTags": [
+      "工业设计",
+      "irobot",
+      "机器人"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-roomba/content.md"
+}

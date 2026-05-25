@@ -1,0 +1,39 @@
+{
+  "id": "b8f0bb77-473e-42c2-ae17-cb9ab4710cf2",
+  "slug": "dog-nova-scotia-tolling",
+  "subCategoryId": "dog-americas",
+  "name": "新斯科舍诱鸭寻回犬",
+  "summary": "加拿大中型寻回犬，赤红色被毛，以嬉戏诱鸭入猎射程闻名。",
+  "tags": [
+    "加拿大",
+    "诱鸭",
+    "赤毛",
+    "寻回犬"
+  ],
+  "specs": {
+    "分类": "寻回猎犬",
+    "原产地": "加拿大",
+    "肩高": "45–54 cm",
+    "毛色": "红色系",
+    "体重": "17–23 kg",
+    "寿命": "12–14 年",
+    "特点": "诱鸭狩猎",
+    "性格": "活泼、聪明"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "寻回犬",
+      "加拿大",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-nova-scotia-tolling/content.md"
+}

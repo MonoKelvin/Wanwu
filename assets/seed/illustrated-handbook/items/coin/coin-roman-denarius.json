@@ -1,0 +1,30 @@
+{
+  "id": "6c04cc99-3a18-498d-917f-6691c592a1af",
+  "slug": "coin-roman-denarius",
+  "subCategoryId": "coin-ancient",
+  "name": "罗马银币第纳尔",
+  "summary": "第纳尔是起源于罗马帝国银币Denarius的货币单位，其名称在西班牙语和葡萄牙语中保留词源特征。",
+  "tags": [
+    "古罗马",
+    "第纳尔",
+    "罗马",
+    "Denarius"
+  ],
+  "specs": {
+    "名称": "罗马迪纳里乌斯银币",
+    "时代": "罗马共和国至帝国",
+    "材质": "银",
+    "用途": "日常交易与军饷",
+    "历史": "西方货币体系重要源头"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "coins currency collection macro",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/coin/coin-roman-denarius/content.md"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "32ac2954-028c-4df9-9b65-86b2285c0699",
+  "slug": "plant-philodendron",
+  "subCategoryId": "plant-aroid",
+  "name": "蔓绿绒 Philodendron",
+  "summary": "天南星科藤本观叶，心形叶与气生根，室内攀爬热植代表。",
+  "tags": [
+    "观叶",
+    "热植",
+    "室内",
+    "天南星科"
+  ],
+  "specs": {
+    "分类": "天南星科",
+    "光照": "明亮散射光",
+    "温度": "喜暖湿",
+    "浇水": "保持介质微湿",
+    "湿度": "中至高",
+    "繁殖": "扦插 / 分株",
+    "注意": "忌长期积水"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Philodendron houseplant",
+    "matchTags": [
+      "天南星科",
+      "philodendron"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/plant/plant-philodendron/content.md"
+}

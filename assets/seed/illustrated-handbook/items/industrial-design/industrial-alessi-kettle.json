@@ -1,0 +1,33 @@
+{
+  "id": "215b361a-2059-47df-9604-fdd1575886c0",
+  "slug": "industrial-alessi-kettle",
+  "subCategoryId": "id-product",
+  "name": "阿莱西 9093 鸟鸣水壶",
+  "summary": "理查德·萨帕 1980 年代经典设计，壶嘴蒸汽驱动鸟哨鸣叫。",
+  "tags": [
+    "水壶",
+    "后现代",
+    "Alessi",
+    "萨帕"
+  ],
+  "specs": {
+    "首发": "1985",
+    "设计师": "Michael Graves",
+    "品牌": "Alessi",
+    "型号": "9093",
+    "特色": "鸟鸣蒸汽"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "9093 product design",
+    "matchTags": [
+      "alessi",
+      "后现代"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-alessi-kettle/content.md"
+}

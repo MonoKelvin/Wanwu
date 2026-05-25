@@ -1,0 +1,26 @@
+{
+  "id": "e4fe7b8c-e4de-4b91-8a2f-56417040e824",
+  "slug": "interior-scandi-living",
+  "subCategoryId": "int-nordic",
+  "name": "北欧风客厅",
+  "summary": "浅木白墙 Hygge。",
+  "tags": [
+    "北欧"
+  ],
+  "specs": {
+    "风格": "北欧风客厅",
+    "地面": "因风格而异",
+    "采光": "自然光为主",
+    "关键词": "北欧"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/interior/interior-scandi-living/content.md"
+}

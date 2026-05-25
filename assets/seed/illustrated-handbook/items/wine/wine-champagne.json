@@ -1,0 +1,33 @@
+{
+  "id": "ee3af840-9df3-4447-a659-d300cbc32390",
+  "slug": "wine-champagne",
+  "subCategoryId": "wine-sparkling",
+  "name": "香槟",
+  "summary": "法国香槟区法定起泡酒，二次发酵带来细腻气泡，是庆典与餐酒搭配的经典之选。",
+  "tags": [
+    "法国",
+    "起泡酒",
+    "香槟区",
+    "餐酒搭配"
+  ],
+  "specs": {
+    "产区": "法国香槟区（AOC）",
+    "类型": "起泡葡萄酒",
+    "主要品种": "霞多丽、黑皮诺、莫尼耶",
+    "工艺": "传统方法二次发酵",
+    "典型风味": "柑橘、白花、矿物、烤面包（陈年）",
+    "侍酒温度": "约 6–8°C",
+    "常见风格": "Brut 干型为主",
+    "命名保护": "仅法定产区可称 Champagne"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "wine bottle glass vineyard",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/wine/wine-champagne/content.md"
+}

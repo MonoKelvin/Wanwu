@@ -1,13 +1,13 @@
 import type { Component } from 'vue'
 import { isModuleId, type ModuleId } from '@app/config/modules'
 import CloudAbodeView from '@modules/cloud-abode/CloudAbodeView.vue'
-import LibraryView from '@modules/library/LibraryView.vue'
+import LibraryShellView from '@modules/library/LibraryShellView.vue'
 import PersonalView from '@modules/personal/PersonalView.vue'
 import RssView from '@modules/rss/RssView.vue'
 import SettingsView from '@modules/settings/SettingsView.vue'
 
 const MODULE_VIEW: Record<ModuleId, Component> = {
-  library: LibraryView,
+  library: LibraryShellView,
   rss: RssView,
   'cloud-abode': CloudAbodeView,
   personal: PersonalView,

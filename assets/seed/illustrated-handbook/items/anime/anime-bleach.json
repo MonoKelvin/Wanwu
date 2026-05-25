@@ -1,0 +1,37 @@
+{
+  "id": "6b067929-cc07-4673-a63d-d84d003aa68b",
+  "slug": "anime-bleach",
+  "subCategoryId": "anime-shonen",
+  "name": "死神 BLEACH",
+  "summary": "久保带人少年漫画，黑崎一护成为代理死神斩灭虚并对抗尸魂界阴谋。",
+  "tags": [
+    "死神",
+    "久保带人",
+    "Jump",
+    "Pierrot",
+    "热血"
+  ],
+  "specs": {
+    "原作": "久保带人",
+    "连载": "2001–2016（周刊少年Jump）",
+    "动画制作": "Studio Pierrot",
+    "首播": "2004-10-05（日本）",
+    "主角": "黑崎一护",
+    "类型": "奇幻 / 战斗",
+    "地区": "日本",
+    "单行本": "74 卷"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "japanese anime character illustration",
+    "matchTags": [
+      "少年漫",
+      "bleach"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-bleach/content.md"
+}

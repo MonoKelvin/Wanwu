@@ -1,0 +1,33 @@
+{
+  "id": "c1a0b0c7-52ec-469d-a046-03dd021e7c9c",
+  "slug": "hero-shazam-dc",
+  "subCategoryId": "hero-other",
+  "name": "沙赞 Shazam",
+  "summary": "少年比利·巴特森念「沙赞」变身六神之力成年英雄，魔法与童趣并存。",
+  "tags": [
+    "DC",
+    "少年",
+    "魔法",
+    "沙赞"
+  ],
+  "specs": {
+    "宇宙": "DC",
+    "首次登场": "1940",
+    "咒语": "Shazam",
+    "本名": "比利·巴特森",
+    "能力": "六神之力",
+    "特点": "少年变成人形英雄"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Shazam action figure toy collectible",
+    "matchTags": [
+      "shazam"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-shazam-dc/content.md"
+}

@@ -16,6 +16,7 @@ import {
 } from './services/app/window'
 import { DatabaseService } from './services/core/database'
 import { LibraryService } from './services/library/service'
+import { LinksService } from './services/links/service'
 import { RssService } from './services/rss/service'
 import { MediaService } from './services/media/service'
 import { resolveWanwuPath } from './services/data/paths'
@@ -86,6 +87,7 @@ let mainWindow: BrowserWindow | null = null
 const services = {
   db: null as DatabaseService | null,
   library: null as LibraryService | null,
+  links: null as LinksService | null,
   rss: null as RssService | null,
   media: null as MediaService | null
 }
@@ -200,6 +202,7 @@ async function initServices(): Promise<void> {
   services.db = new DatabaseService(userData)
   await services.db.init({ skipLibrarySeed: true })
   services.library = new LibraryService(services.db)
+  services.links = new LinksService(userData)
   services.rss = new RssService(services.db)
   services.media = new MediaService(userData)
   registerIpcHandlers(services)

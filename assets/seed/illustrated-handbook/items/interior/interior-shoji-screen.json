@@ -1,0 +1,31 @@
+{
+  "id": "8f41ce0a-8844-4e12-affa-b68c9c7afee0",
+  "slug": "interior-shoji-screen",
+  "subCategoryId": "int-zen",
+  "name": "障子推拉门",
+  "summary": "木格纸屏分隔柔光，调节通风与隐私。",
+  "tags": [
+    "隔断",
+    "禅意",
+    "日式",
+    "障子"
+  ],
+  "specs": {
+    "分类": "日式禅意",
+    "元素": "障子",
+    "空间": "隔断",
+    "材质": "木、竹、石、纸",
+    "原则": "留白、自然",
+    "场景": "茶、宿、庭"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/interior/interior-shoji-screen/content.md"
+}

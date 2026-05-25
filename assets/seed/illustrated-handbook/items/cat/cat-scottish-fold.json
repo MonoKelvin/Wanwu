@@ -1,0 +1,37 @@
+{
+  "id": "26c00e32-48d1-4b27-96ec-e4e517f07032",
+  "slug": "cat-scottish-fold",
+  "subCategoryId": "cat-long-hair",
+  "name": "苏格兰折耳猫 Scottish Fold",
+  "summary": "苏格兰突变折耳基因品种，圆脸折叠耳，性格温和，需关注软骨发育问题。",
+  "tags": [
+    "折耳",
+    "苏格兰",
+    "短毛",
+    "欧洲"
+  ],
+  "specs": {
+    "原产地": "苏格兰",
+    "体重": "2.7–6 kg",
+    "寿命": "11–15 年",
+    "被毛": "短毛或长毛",
+    "性格": "温和、安静",
+    "识别特征": "折耳、圆脸"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Scottish Fold cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "苏格兰",
+      "scottish",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-scottish-fold/content.md"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "fa249cc3-987e-4973-bdfc-8a93a9b55181",
+  "slug": "cat-british-shorthair",
+  "subCategoryId": "cat-short-hair",
+  "name": "英国短毛猫",
+  "summary": "源自英国的短毛品种，圆脸厚毛、性格沉稳，是最经典的室内伴侣猫之一。",
+  "tags": [
+    "室内猫",
+    "短毛",
+    "欧洲",
+    "英国"
+  ],
+  "specs": {
+    "原产地": "英国",
+    "体重": "4–8 kg",
+    "寿命": "12–17 年",
+    "被毛": "短而浓密",
+    "性格": "沉稳、亲人、独立",
+    "识别特征": "圆脸、厚毛、铜眼（蓝猫）"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "室内猫",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-british-shorthair/content.md"
+}

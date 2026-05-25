@@ -1,0 +1,34 @@
+{
+  "id": "72ccec7d-8dcf-41b4-b524-249f466e2085",
+  "slug": "hero-black-panther",
+  "subCategoryId": "hero-marvel-mcu",
+  "name": "黑豹 Black Panther",
+  "summary": "瓦坎达国王特查拉，心形草与振金战衣象征非洲未来主义。",
+  "tags": [
+    "振金",
+    "漫威",
+    "瓦坎达"
+  ],
+  "specs": {
+    "宇宙": "漫威",
+    "首次登场": "1966",
+    "本名": "特查拉 T'Challa",
+    "国度": "瓦坎达",
+    "能力": "黑豹神之力、振金科技",
+    "身份": "国王与英雄",
+    "代表作": "《黑豹》电影"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Black Panther action figure toy collectible",
+    "matchTags": [
+      "瓦坎达",
+      "black"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-black-panther/content.md"
+}

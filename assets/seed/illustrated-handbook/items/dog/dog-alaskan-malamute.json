@@ -1,0 +1,37 @@
+{
+  "id": "dfa2ee0b-d476-4f85-9036-84deaada3eac",
+  "slug": "dog-alaskan-malamute",
+  "subCategoryId": "dog-working",
+  "name": "阿拉斯加雪橇犬",
+  "summary": "北极拉橇大型犬，厚毛、力量型，与哈士奇相比体型更大更慢。",
+  "tags": [
+    "大型",
+    "雪橇犬",
+    "厚毛",
+    "阿拉斯加"
+  ],
+  "specs": {
+    "原产地": "美国阿拉斯加",
+    "体重": "34–45 kg",
+    "寿命": "10–14 年",
+    "被毛": "浓密双层，灰白/黑白等",
+    "性格": "友善、独立、群居",
+    "识别特征": "巨型骨量、厚毛、面罩斑纹"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "雪橇犬",
+      "阿拉斯加",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-alaskan-malamute/content.md"
+}

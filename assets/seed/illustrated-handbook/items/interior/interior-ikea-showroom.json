@@ -1,0 +1,33 @@
+{
+  "id": "2d23f735-995e-44a4-ada3-303b1c19ad64",
+  "slug": "interior-ikea-showroom",
+  "subCategoryId": "int-nordic",
+  "name": "IKEA 展厅风",
+  "summary": "模块化储物、平价设计民主化样板空间。",
+  "tags": [
+    "家装",
+    "北欧",
+    "展厅",
+    "IKEA"
+  ],
+  "specs": {
+    "分类": "北欧风格",
+    "风格": "IKEA",
+    "空间": "展厅",
+    "材质": "木、棉麻、羊毛",
+    "光线": "重视自然光",
+    "品牌": "IKEA / Hay 等"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "IKEA interior design room",
+    "matchTags": [
+      "ikea"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/interior/interior-ikea-showroom/content.md"
+}

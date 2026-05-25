@@ -1,0 +1,38 @@
+{
+  "id": "b2f6d26f-1f04-4461-9c57-d771707ccfe9",
+  "slug": "dog-cocker-spaniel",
+  "subCategoryId": "dog-europe",
+  "name": "英国可卡犬",
+  "summary": "英国猎禽 spaniel，长耳卷毛，性格活泼亲人，需耳部护理。",
+  "tags": [
+    "英国",
+    "spaniel",
+    "猎犬",
+    "长耳"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "英国",
+    "体重": "12–15 kg",
+    "寿命": "12–14 年",
+    "被毛": "中长卷毛",
+    "性格": "活泼、温顺"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "英国",
+      "spaniel",
+      "猎犬",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-cocker-spaniel/content.md"
+}

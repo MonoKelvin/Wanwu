@@ -1,0 +1,33 @@
+{
+  "id": "e7aa0c35-f4dc-4f7a-a8db-f1a50c4bba01",
+  "slug": "illustration-character-design",
+  "subCategoryId": "ill-portrait",
+  "name": "角色设计",
+  "summary": "造型、服装与性格可视化的创作流程。",
+  "tags": [
+    "三视图",
+    "插画",
+    "数字绘画",
+    "IP 开发"
+  ],
+  "specs": {
+    "领域": "影视/游戏",
+    "产出": "设定表",
+    "要素": "剪影/配色",
+    "流程": "概念→定稿"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "digital illustration artwork",
+    "matchTags": [
+      "数字绘画",
+      "ip 开发",
+      "三视图"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/illustration/illustration-character-design/content.md"
+}

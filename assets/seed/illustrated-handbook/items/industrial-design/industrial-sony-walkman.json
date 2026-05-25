@@ -1,0 +1,34 @@
+{
+  "id": "08272d83-f90a-4cf0-b4dc-f94545e1e1ce",
+  "slug": "industrial-sony-walkman",
+  "subCategoryId": "id-product",
+  "name": "索尼 Walkman",
+  "summary": "便携式音乐革命，私人聆听文化起点。",
+  "tags": [
+    "Sony",
+    "工业设计",
+    "经典",
+    "音频"
+  ],
+  "specs": {
+    "首发": "1979",
+    "品牌": "Sony",
+    "类型": "便携播放器",
+    "影响": "个人音频开创",
+    "产地": "日本"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Walkman product design",
+    "matchTags": [
+      "工业设计",
+      "sony",
+      "walkman"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-sony-walkman/content.md"
+}

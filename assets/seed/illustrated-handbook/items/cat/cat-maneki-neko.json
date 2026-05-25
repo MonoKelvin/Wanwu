@@ -1,0 +1,35 @@
+{
+  "id": "29b221f1-c8f5-41dd-bd29-7629c0614a23",
+  "slug": "cat-maneki-neko",
+  "subCategoryId": "cat-japan",
+  "name": "招猫（招财猫）",
+  "summary": "日本传统招财雕塑形象，多基于短尾三花猫，举手寓意招财进宝。",
+  "tags": [
+    "日本",
+    "文化",
+    "吉祥",
+    "招猫"
+  ],
+  "specs": {
+    "分类": "日本品种",
+    "类型": "文化符号",
+    "起源": "日本江户",
+    "形象": "短尾举手猫",
+    "材质": "陶瓷等",
+    "关联": "日本短尾、三毛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-maneki-neko/content.md"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "f7f1eb58-7e11-438d-9fd0-9d54e3a20ab8",
+  "slug": "industrial-philips-hue",
+  "subCategoryId": "id-furniture",
+  "name": "Philips Hue",
+  "summary": "智能灯泡与场景自动化家居照明。",
+  "tags": [
+    "Philips",
+    "家居",
+    "智能家居",
+    "设计"
+  ],
+  "specs": {
+    "首发": "2012",
+    "品牌": "Signify / Philips",
+    "协议": "Zigbee",
+    "特色": "RGB 彩光",
+    "类型": "智能照明"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Philips Hue product design",
+    "matchTags": [
+      "philips",
+      "智能家居"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-philips-hue/content.md"
+}

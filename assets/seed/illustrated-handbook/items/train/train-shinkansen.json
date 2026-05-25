@@ -1,0 +1,30 @@
+{
+  "id": "e02303f9-7a35-4654-9d4e-13ef7edef86e",
+  "slug": "train-shinkansen",
+  "subCategoryId": "train-highspeed",
+  "name": "新干线",
+  "summary": "新干线 （新幹線，しんかんせん，Shinkansen）是日本的 高速铁路 系统。",
+  "tags": [
+    "新干线",
+    "1964年10月1日",
+    "新幹線 しんかんせん Shinkansen"
+  ],
+  "specs": {
+    "名称": "新干线",
+    "国家": "日本",
+    "首发": "1964年东海道新干线",
+    "运营": "JR 各社",
+    "速度": "最高约320 km/h（部分线路）",
+    "特点": "准点率极高"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "train railway",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/train/train-shinkansen/content.md"
+}

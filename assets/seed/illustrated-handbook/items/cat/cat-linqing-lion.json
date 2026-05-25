@@ -1,0 +1,35 @@
+{
+  "id": "69330dad-8a64-4101-b61c-aa573c4fc5b4",
+  "slug": "cat-linqing-lion",
+  "subCategoryId": "cat-long-hair",
+  "name": "临清狮猫",
+  "summary": "山东临清名猫，鸳鸯眼、长毛、白被毛为主，历史与运河文化相关。",
+  "tags": [
+    "名猫",
+    "山东",
+    "长毛",
+    "鸳鸯眼"
+  ],
+  "specs": {
+    "分类": "中国品种",
+    "原产地": "山东临清",
+    "特征": "白长毛、鸳鸯眼常见",
+    "文化": "运河名城",
+    "护理": "定期梳毛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "鸳鸯眼",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-linqing-lion/content.md"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "99fb6ba6-da87-447d-a1fc-3e94a973387b",
+  "slug": "dog-cardigan-corgi",
+  "subCategoryId": "dog-toy",
+  "name": "卡迪根威尔士柯基",
+  "summary": "威尔士古老牧牛犬，长尾、耳尖圆，比彭布罗克柯基更古老。",
+  "tags": [
+    "威尔士",
+    "长尾",
+    "柯基",
+    "牧牛"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "威尔士",
+    "体重": "11–17 kg",
+    "寿命": "12–15 年",
+    "特征": "保留尾、虎斑常见",
+    "性格": "稳重、聪明"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "威尔士",
+      "长尾",
+      "柯基",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-cardigan-corgi/content.md"
+}

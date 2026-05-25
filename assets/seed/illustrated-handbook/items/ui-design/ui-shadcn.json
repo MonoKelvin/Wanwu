@@ -1,0 +1,34 @@
+{
+  "id": "2804b48f-6aa3-4f6d-8918-a305a1051dc6",
+  "slug": "ui-shadcn",
+  "subCategoryId": "ui-design-tool",
+  "name": "shadcn/ui",
+  "summary": "基于 Radix 与 Tailwind 的可复制组件代码模式。",
+  "tags": [
+    "组件",
+    "UI",
+    "React",
+    "Web"
+  ],
+  "specs": {
+    "分类": "Web 组件模式",
+    "作者": "shadcn",
+    "基础": "Radix UI + Tailwind",
+    "分发": "CLI 复制源码",
+    "生态": "Next.js、v0",
+    "许可": "MIT"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "web dashboard ui design laptop",
+    "matchTags": [
+      "web",
+      "ui"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-shadcn/content.md"
+}

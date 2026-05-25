@@ -1,0 +1,33 @@
+{
+  "id": "9b0eb268-dd4d-4c29-8cc0-8c19dc92c154",
+  "slug": "illustration-hokusai-wave",
+  "subCategoryId": "ill-classic",
+  "name": "神奈川冲浪里",
+  "summary": "葛饰北斋浮世绘巨浪与富士山。",
+  "tags": [
+    "艺术史",
+    "浮世绘",
+    "北斋",
+    "名画"
+  ],
+  "specs": {
+    "艺术家": "葛饰北斋",
+    "年代": "约1831",
+    "系列": "富岳三十六景",
+    "媒介": "木版画",
+    "收藏": "多家博物馆"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "museum artwork",
+    "matchTags": [
+      "艺术史",
+      "浮世绘"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/illustration/illustration-hokusai-wave/content.md"
+}

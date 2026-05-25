@@ -1,0 +1,33 @@
+{
+  "id": "167ccc45-8bd1-4e68-a866-f20849010157",
+  "slug": "anime-sword-art-online",
+  "subCategoryId": "anime-isekai",
+  "name": "刀剑神域",
+  "summary": "《刀剑神域》是 川原砾 著作、 abec 负责插画、 电击文库 所属的轻小说。",
+  "tags": [
+    "奇幻冒险",
+    "日本",
+    "剧情",
+    "虚拟现实"
+  ],
+  "specs": {
+    "原作": "川原砾（插画：abec）",
+    "连载": "2009–（轻小说）",
+    "动画制作": "A-1 Pictures",
+    "首播": "2012-07-08（日本）",
+    "主角": "桐谷和人",
+    "类型": "VRMMO / 冒险",
+    "地区": "日本",
+    "话数": "SAO 篇 25 集等"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "fantasy anime landscape illustration",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-sword-art-online/content.md"
+}

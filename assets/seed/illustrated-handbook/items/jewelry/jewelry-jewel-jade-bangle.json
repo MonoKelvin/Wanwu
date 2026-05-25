@@ -1,0 +1,29 @@
+{
+  "id": "e3285fd0-779f-47a3-8ef5-b94f97549a7b",
+  "slug": "jewelry-jewel-jade-bangle",
+  "subCategoryId": "jewel-cultural",
+  "name": "翡翠手镯",
+  "summary": "翡翠手镯，翡翠饰品 。",
+  "tags": [
+    "手饰",
+    "Feicuishouzhuo",
+    "翡翠手镯"
+  ],
+  "specs": {
+    "材质": "翡翠/和田玉等",
+    "类型": "手镯",
+    "评价": "种水色工",
+    "文化": "东方礼赠与收藏",
+    "保养": "避免撞击与化学品"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "jewelry luxury",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/jewelry/jewelry-jewel-jade-bangle/content.md"
+}

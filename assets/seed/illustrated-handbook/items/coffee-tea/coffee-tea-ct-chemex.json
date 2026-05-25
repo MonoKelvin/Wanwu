@@ -1,0 +1,27 @@
+{
+  "id": "b839efd2-70b9-498f-9fbd-978b36a7ea7a",
+  "slug": "coffee-tea-ct-chemex",
+  "subCategoryId": "ct-equipment",
+  "name": "Chemex 咖啡壶",
+  "summary": "玻璃漏斗冲煮器。",
+  "tags": [],
+  "specs": {
+    "名称": "Chemex 咖啡壶",
+    "发明": "1941年 Peter Schlumbohm",
+    "材质": "硼硅玻璃",
+    "滤纸": "厚滤纸，口感干净",
+    "造型": "现代艺术博物馆收藏设计"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "coffee cup espresso latte art",
+    "category": "all",
+    "matchTags": [
+      "chemex"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/coffee-tea/coffee-tea-ct-chemex/content.md"
+}

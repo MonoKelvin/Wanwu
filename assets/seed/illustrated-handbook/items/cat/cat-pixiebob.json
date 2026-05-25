@@ -1,0 +1,36 @@
+{
+  "id": "68872f8e-4e29-4210-9620-50cdc6a3b85f",
+  "slug": "cat-pixiebob",
+  "subCategoryId": "cat-americas",
+  "name": "像素豹猫 Pixiebob",
+  "summary": "美国西北野猫外观选育，短尾、斑纹、_polydactyl 多趾常见，性格犬系。",
+  "tags": [
+    "斑纹",
+    "短尾",
+    "美洲",
+    "犬系"
+  ],
+  "specs": {
+    "分类": "美洲品种",
+    "育成地": "美国西北部",
+    "体重": "4–8 kg",
+    "寿命": "12–15 年",
+    "特征": "野猫外观、多趾可选",
+    "性格": "忠诚、犬系"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Pixiebob cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "pixiebob",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-pixiebob/content.md"
+}

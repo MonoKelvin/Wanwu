@@ -1,0 +1,39 @@
+{
+  "id": "84f0b392-570a-4b17-b6a1-c641300ad5b5",
+  "slug": "dog-xoloitzcuintli",
+  "subCategoryId": "dog-americas",
+  "name": "墨西哥无毛犬",
+  "summary": "墨西哥古老犬种，阿兹特克文化关联，有毛与无毛型，皮肤需护理。",
+  "tags": [
+    "墨西哥",
+    "国犬",
+    "古老品种",
+    "无毛犬"
+  ],
+  "specs": {
+    "分类": "古老犬种",
+    "原产地": "墨西哥",
+    "体型": "玩具/迷你/标准",
+    "被毛": "无毛或短毛",
+    "寿命": "13–18 年",
+    "特点": "皮肤护理",
+    "性格": "冷静、忠诚"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "无毛犬",
+      "墨西哥",
+      "古老品种",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-xoloitzcuintli/content.md"
+}

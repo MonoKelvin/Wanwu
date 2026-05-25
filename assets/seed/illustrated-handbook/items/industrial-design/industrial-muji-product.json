@@ -1,0 +1,33 @@
+{
+  "id": "0b359398-098b-4a49-ab2a-a464035b7e45",
+  "slug": "industrial-muji-product",
+  "subCategoryId": "id-product",
+  "name": "无印良品",
+  "summary": "无品牌优质素材哲学，收纳与生活杂货。",
+  "tags": [
+    "MUJI",
+    "工业设计",
+    "生活",
+    "经典"
+  ],
+  "specs": {
+    "创立": "1980",
+    "品牌": "MUJI",
+    "理念": "空无一物",
+    "总部": "日本东京",
+    "领域": "生活杂货"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "product design",
+    "matchTags": [
+      "工业设计",
+      "muji"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-muji-product/content.md"
+}

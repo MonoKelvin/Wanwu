@@ -1,0 +1,39 @@
+{
+  "id": "4822c639-bde9-4584-8f78-5c089335de84",
+  "slug": "dog-border-collie",
+  "subCategoryId": "dog-working",
+  "name": "边境牧羊犬",
+  "summary": "源自英苏边境的牧羊犬，智商极高、工作驱动强，飞盘与敏捷赛常见冠军。",
+  "tags": [
+    "运动型",
+    "欧洲",
+    "牧羊犬",
+    "高智商"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "英国/苏格兰边境",
+    "体重": "12–20 kg",
+    "寿命": "12–15 年",
+    "用途": "牧羊、敏捷、伴侣",
+    "运动需求": "极高",
+    "性格": "专注、敏感、忠诚"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "运动型",
+      "欧洲",
+      "牧羊犬",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-border-collie/content.md"
+}

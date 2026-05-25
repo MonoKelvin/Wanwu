@@ -1,0 +1,33 @@
+{
+  "id": "34bf8d74-9e14-4540-b54c-38f3f701f35d",
+  "slug": "anime-mushoku-tensei",
+  "subCategoryId": "anime-isekai",
+  "name": "无职转生",
+  "summary": "《无职转生 ~到了异世界就拿出真本事~》（無職転生 〜異世界行ったら本気だす〜）是藤川由香创作的奇幻漫画作品，改编自“不讲理不求人”著作、“白鹰”负责插画的同名轻小说作品，漫画的中文版由 哔哩哔哩漫画 发布，繁体中文版由台湾角川出版社代理发行。",
+  "tags": [
+    "奇幻冒险",
+    "日本",
+    "剧情",
+    "奇幻"
+  ],
+  "specs": {
+    "原作": "理不尽な孫の手（插画：シロウ白）",
+    "连载": "2012–（轻小说 / Web）",
+    "动画制作": "Studio Bind",
+    "首播": "2021-01-11（日本）",
+    "主角": "鲁迪乌斯·格雷拉特",
+    "类型": "异世界 / 奇幻",
+    "地区": "日本",
+    "话数": "多季电视动画"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "fantasy anime landscape illustration",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-mushoku-tensei/content.md"
+}

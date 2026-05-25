@@ -1,0 +1,36 @@
+{
+  "id": "b1f60e3e-2a68-4eea-8072-787e328b7d30",
+  "slug": "movie-2001-space-odyssey",
+  "subCategoryId": "movie-classic",
+  "name": "2001 太空漫游",
+  "summary": "斯坦利·库布里克 1968 年科幻史诗：黑石、HAL 9000 与星门旅程，以视觉与古典音乐探讨人类进化与未知文明。",
+  "tags": [
+    "科幻电影",
+    "电影",
+    "科幻",
+    "经典科幻"
+  ],
+  "specs": {
+    "导演": "斯坦利·库布里克",
+    "编剧": "库布里克、阿瑟·克拉克",
+    "上映": "1968-04-02（美国）",
+    "片长": "约 149 分钟",
+    "国家": "英国 / 美国",
+    "类型": "科幻",
+    "配乐": "古典音乐选曲",
+    "主要荣誉": "奥斯卡最佳视觉效果"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "2001 cinema film still",
+    "matchTags": [
+      "经典科幻",
+      "库布里克"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/movie/movie-2001-space-odyssey/content.md"
+}

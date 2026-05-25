@@ -1,0 +1,21 @@
+{
+  "id": "ab760f63-452e-48c6-924c-7e80a4e20b73",
+  "slug": "coffee-tea-ct-matcha-ceremony",
+  "subCategoryId": "ct-tea",
+  "name": "抹茶茶道",
+  "summary": "日本茶碗打茶。",
+  "tags": [],
+  "specs": {
+    "概述": "日本茶碗打茶。"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "tea cup teapot ceremony",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/coffee-tea/coffee-tea-ct-matcha-ceremony/content.md"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "8355ffa4-f34a-4194-8a06-f8a55a4d59c7",
+  "slug": "supercar-jaguar-f-type",
+  "subCategoryId": "car-italy",
+  "name": "捷豹 F-Type",
+  "summary": "英伦声浪代表，敞篷与轿跑多形态。",
+  "tags": [
+    "Jaguar",
+    "超跑",
+    "GT",
+    "英国"
+  ],
+  "specs": {
+    "首发年份": "2013",
+    "厂商": "Jaguar",
+    "发动机": "V8 / 四缸",
+    "车型": "跑车",
+    "产地": "英国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "F-Type supercar",
+    "matchTags": [
+      "jaguar",
+      "type"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/supercar/supercar-jaguar-f-type/content.md"
+}

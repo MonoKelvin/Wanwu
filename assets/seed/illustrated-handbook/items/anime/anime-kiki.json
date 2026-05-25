@@ -1,0 +1,35 @@
+{
+  "id": "18949aa4-5a1e-4400-bef9-73999899cb54",
+  "slug": "anime-kiki",
+  "subCategoryId": "anime-ghibli",
+  "name": "魔女宅急便",
+  "summary": "《魔女宅急便》是 清水崇 执导奇幻儿童片，由 小芝风花 主演， 宫泽理惠 、 尾野真千子 等人共演，2014年3月1日在日本公映 。",
+  "tags": [
+    "魔女の宅急便",
+    "奇幻，儿童",
+    "魔女宅急便",
+    "吉卜力"
+  ],
+  "specs": {
+    "导演": "宫崎骏",
+    "编剧": "宫崎骏",
+    "上映": "1989-07-29（日本）",
+    "片长": "约 103 分钟",
+    "制作": "吉卜力工作室",
+    "配乐": "久石让",
+    "原作": "角野荣子",
+    "类型": "动画 / 奇幻 / 成长"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "anime forest spirit girl illustration",
+    "category": "all",
+    "matchTags": [
+      "吉卜力"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6
+  },
+  "contentFile": "illustrated-handbook/anime/anime-kiki/content.md"
+}

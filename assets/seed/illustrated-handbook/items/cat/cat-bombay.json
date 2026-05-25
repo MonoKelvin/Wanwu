@@ -1,0 +1,36 @@
+{
+  "id": "a068ca7c-fe8f-4568-97a8-bf941dd45044",
+  "slug": "cat-bombay",
+  "subCategoryId": "cat-short-hair",
+  "name": "孟买猫 Bombay",
+  "summary": "美国选育纯黑短毛，铜色眼、体态圆润，被称「迷你黑豹」。",
+  "tags": [
+    "美洲",
+    "短毛",
+    "纯黑",
+    "铜眼"
+  ],
+  "specs": {
+    "原产地": "美国肯塔基州",
+    "体重": "2.5–5.5 kg",
+    "寿命": "12–16 年",
+    "被毛": "短而贴身，纯黑",
+    "性格": "亲人、安静、爱膝",
+    "识别特征": "漆光黑毛、铜金色圆眼"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Bombay cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "bombay",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-bombay/content.md"
+}

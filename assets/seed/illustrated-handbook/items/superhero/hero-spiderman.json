@@ -1,0 +1,35 @@
+{
+  "id": "164a58b1-eba4-40cc-8d89-b45199c76e4f",
+  "slug": "hero-spiderman",
+  "subCategoryId": "hero-marvel",
+  "name": "蜘蛛侠 Spider-Man",
+  "summary": "漫威最具代表性的街头英雄，彼得·帕克被放射性蜘蛛咬后获得爬墙与蜘蛛感应。",
+  "tags": [
+    "街头英雄",
+    "Marvel",
+    "漫威",
+    "纽约"
+  ],
+  "specs": {
+    "宇宙": "漫威 Marvel",
+    "首次登场": "1962",
+    "创作者": "Stan Lee / Steve Ditko",
+    "本名": "彼得·帕克 Peter Parker",
+    "能力": "爬墙、蜘蛛感应、蛛网",
+    "所属团队": "复仇者联盟（阶段性）"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Spider-Man action figure toy collectible",
+    "category": "people",
+    "matchTags": [
+      "marvel",
+      "街头英雄",
+      "spider"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-spiderman/content.md"
+}

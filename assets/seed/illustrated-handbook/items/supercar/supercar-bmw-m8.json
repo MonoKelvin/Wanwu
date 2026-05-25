@@ -1,0 +1,34 @@
+{
+  "id": "d9f7b5d6-0573-46b2-a811-057a566be16e",
+  "slug": "supercar-bmw-m8",
+  "subCategoryId": "car-germany",
+  "name": "宝马 M8 Competition",
+  "summary": "豪华轿跑巅峰，四驱与 V8 双涡轮兼顾巡航与赛道。",
+  "tags": [
+    "德国",
+    "超跑",
+    "BMW M",
+    "精密工程"
+  ],
+  "specs": {
+    "首发年份": "2019",
+    "厂商": "BMW M",
+    "发动机": "V8 双涡轮",
+    "最大功率": "625 hp",
+    "驱动": "xDrive",
+    "产地": "德国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "M8 Competition supercar",
+    "matchTags": [
+      "bmw m",
+      "精密工程"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/supercar/supercar-bmw-m8/content.md"
+}

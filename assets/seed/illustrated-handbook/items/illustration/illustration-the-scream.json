@@ -1,0 +1,33 @@
+{
+  "id": "ee6e24c8-504b-4322-8279-d99aacc1c989",
+  "slug": "illustration-the-scream",
+  "subCategoryId": "ill-classic",
+  "name": "呐喊 The Scream",
+  "summary": "蒙克 1893 年存在焦虑标志性形象。",
+  "tags": [
+    "艺术史",
+    "蒙克",
+    "表现主义",
+    "名画"
+  ],
+  "specs": {
+    "艺术家": "蒙克",
+    "年代": "1893",
+    "流派": "表现主义",
+    "收藏": "国家美术馆（奥斯陆）"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "The Scream museum artwork",
+    "matchTags": [
+      "艺术史",
+      "表现主义",
+      "the"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/illustration/illustration-the-scream/content.md"
+}

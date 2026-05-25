@@ -1,0 +1,37 @@
+{
+  "id": "6a1f2569-0ed0-4c5a-ab7e-8de2e67600db",
+  "slug": "cat-russian-blue",
+  "subCategoryId": "cat-short-hair",
+  "name": "俄罗斯蓝猫 Russian Blue",
+  "summary": "银蓝短毛、翠绿双眼，性格矜持优雅，低过敏性被毛著称。",
+  "tags": [
+    "蓝毛",
+    "绿眼",
+    "短毛",
+    "欧洲"
+  ],
+  "specs": {
+    "分类": "欧洲品种",
+    "原产地": "俄罗斯",
+    "体重": "3–5.5 kg",
+    "寿命": "15–20 年",
+    "被毛": "双层银蓝短毛",
+    "眼色": "绿色",
+    "性格": "矜持、聪明、亲人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Russian Blue cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "russian",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-russian-blue/content.md"
+}

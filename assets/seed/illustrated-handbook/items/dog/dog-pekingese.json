@@ -1,0 +1,35 @@
+{
+  "id": "5aa68a7b-a0a5-48e4-a4b5-6e29d5c41369",
+  "slug": "dog-pekingese",
+  "subCategoryId": "dog-toy",
+  "name": "北京犬 / 京巴",
+  "summary": "中国宫廷犬，扁平脸、长毛，历史上皇室饲养，现为伴侣犬。",
+  "tags": [
+    "宫廷",
+    "短鼻",
+    "伴侣",
+    "中国"
+  ],
+  "specs": {
+    "分类": "亚洲犬种",
+    "原产地": "中国北京",
+    "体重": "3–6 kg",
+    "寿命": "12–14 年",
+    "特征": "扁脸、长毛",
+    "性格": "勇敢、高傲"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "/ dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-pekingese/content.md"
+}

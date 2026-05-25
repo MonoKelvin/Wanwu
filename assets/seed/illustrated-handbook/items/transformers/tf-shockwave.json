@@ -1,0 +1,28 @@
+{
+  "id": "694a66ef-5198-451b-af93-cd89b0f1046d",
+  "slug": "tf-shockwave",
+  "subCategoryId": "tf-decepticon",
+  "name": "震荡波 Shockwave",
+  "summary": "赛博坦留守科学家，激光炮手臂，逻辑冷酷。",
+  "tags": [
+    "科学家",
+    "变形",
+    "霸天虎",
+    "反派"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "matchTags": [
+      "霸天虎",
+      "科学家",
+      "shockwave"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/tf-shockwave/content.md"
+}

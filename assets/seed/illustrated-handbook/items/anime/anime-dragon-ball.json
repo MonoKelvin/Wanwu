@@ -1,0 +1,37 @@
+{
+  "id": "bf88ea66-f46a-41e7-97fa-63855139ac36",
+  "slug": "anime-dragon-ball",
+  "subCategoryId": "anime-shonen",
+  "name": "龙珠 Dragon Ball",
+  "summary": "鸟山明少年漫画，孙悟空从寻找龙珠到宇宙级战斗的热血冒险经典。",
+  "tags": [
+    "少年热血",
+    "鸟山明",
+    "赛亚人",
+    "Jump",
+    "东映"
+  ],
+  "specs": {
+    "原作": "鸟山明",
+    "连载": "1984–1995（周刊少年Jump）",
+    "动画制作": "东映动画",
+    "首播": "1986-02-26（日本）",
+    "主角": "孙悟空",
+    "类型": "格斗 / 冒险 / 科幻",
+    "地区": "日本",
+    "单行本": "42 卷"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "japanese anime character illustration",
+    "matchTags": [
+      "少年漫",
+      "dragon"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-dragon-ball/content.md"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "be2f5377-82bc-4137-a12a-3ce0cf7e5c36",
+  "slug": "movie-avatar-way-of-water",
+  "subCategoryId": "movie-action",
+  "name": "阿凡达：水之道",
+  "summary": "卡梅隆 2022 年续集：杰克一家迁入潘多拉海洋部落，与人类复仇部队展开水陆大战。",
+  "tags": [
+    "电影",
+    "2022",
+    "奇幻",
+    "卡梅隆"
+  ],
+  "specs": {
+    "导演": "詹姆斯·卡梅隆",
+    "上映": "2022-12-16（美国）",
+    "片长": "约 192 分钟",
+    "国家": "美国",
+    "类型": "科幻 / 动作 / 冒险",
+    "主演": "萨姆·沃辛顿、佐伊·索尔达娜",
+    "主要荣誉": "奥斯卡最佳视觉效果",
+    "票房": "全球票房纪录级"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "： cinema film still",
+    "matchTags": [
+      "科幻奇幻"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/movie/movie-avatar-way-of-water/content.md"
+}

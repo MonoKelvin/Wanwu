@@ -1,0 +1,29 @@
+{
+  "id": "500d1a9e-1515-4f70-876f-b4d42841161b",
+  "slug": "book-harry-potter",
+  "subCategoryId": "book-fiction",
+  "name": "哈利·波特与魔法石",
+  "summary": "《哈利·波特与魔法石》（英国版《Harry Potter and the Philosopher&#x27;s Stone》，美国版《Harry Potter and the Sorcerer&#x27;s Stone》）是英国女作家 J.",
+  "tags": [
+    "哈利·波特与魔法石",
+    "【英】J.K.罗琳"
+  ],
+  "specs": {
+    "作品名称": "哈利·波特与魔法石",
+    "外文名": "Harry Potter and the Philosopher&#x27;s Stone",
+    "作者": "【英】J.K.罗琳",
+    "体裁": "长篇小说",
+    "首发年份": "1997年",
+    "篇幅": "228000"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "open books reading library desk",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/book/book-harry-potter/content.md"
+}

@@ -1,0 +1,32 @@
+{
+  "id": "0ba48fe3-2327-44c0-938d-46bde2ad3aed",
+  "slug": "supercar-bentley-continental-gt",
+  "subCategoryId": "car-britain",
+  "name": "宾利欧陆 GT",
+  "summary": "奢华与 W12 双涡轮速度的结合，手工内饰典范。",
+  "tags": [
+    "Bentley",
+    "超跑",
+    "GT",
+    "英国"
+  ],
+  "specs": {
+    "首发年份": "2003",
+    "厂商": "Bentley",
+    "发动机": "W12 / V8",
+    "车型": "豪华 GT",
+    "产地": "英国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "GT supercar",
+    "matchTags": [
+      "bentley"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/supercar/supercar-bentley-continental-gt/content.md"
+}

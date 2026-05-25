@@ -1,0 +1,36 @@
+{
+  "id": "744ff561-b7cf-4c26-bf90-3bd3b70e74d1",
+  "slug": "dog-greyhound",
+  "subCategoryId": "dog-hound",
+  "name": "灵缇 / 格力犬",
+  "summary": "世界上奔跑速度最快的犬种，流线体型，退役赛狗领养文化盛行。",
+  "tags": [
+    "视觉猎犬",
+    "赛狗",
+    "英国",
+    "高速"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "英国/中东古老型",
+    "体重": "27–40 kg",
+    "寿命": "10–14 年",
+    "特点": "极速短跑",
+    "性格": "安静、温和"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "/ dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "视觉猎犬",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-greyhound/content.md"
+}

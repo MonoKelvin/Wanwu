@@ -1,5 +1,5 @@
 /**
- * 从 assets/seed/library/items 各 JSON 生成预编译图鉴 SQLite 数据包
+ * 从 assets/seed/illustrated-handbook/items 各 JSON 生成预编译图鉴 SQLite 数据包
  *
  *   npm run build（第一步）
  *
@@ -20,7 +20,7 @@ import { buildManifestFromCatalog, LIBRARY_PACK_MARKER } from '../electron/servi
 const root = process.cwd()
 const outDir = join(root, 'assets', 'packed')
 const zipPath = join(outDir, 'library-data-pack.zip')
-const libraryMediaRoot = join(root, 'assets', 'library')
+const libraryMediaRoot = join(root, 'assets', 'seed', 'illustrated-handbook', 'resources')
 const MEDIA_FILE = /\.(jpe?g|png|webp|md)$/i
 const cacheDir = join(root, '.cache', 'wanwu-library-pack')
 const CATALOG_IMPORT_MARKER = '.library-catalog-import'
@@ -156,7 +156,9 @@ function collectLibraryMediaFiles(): Array<{ abs: string; name: string }> {
       const rel = relPrefix ? `${relPrefix}/${ent.name}` : ent.name
       const abs = join(dir, ent.name)
       if (ent.isDirectory()) walk(abs, rel)
-      else if (MEDIA_FILE.test(ent.name)) out.push({ abs, name: `library/${rel}` })
+      else if (MEDIA_FILE.test(ent.name)) {
+        out.push({ abs, name: `illustrated-handbook/${rel}` })
+      }
     }
   }
   walk(libraryMediaRoot, '')
@@ -216,10 +218,10 @@ function mapSeedProgress(log: PackProgress, p: ImportLibraryProgress): void {
 async function main(): Promise<void> {
   const log = createPackProgress()
 
-  log.step('扫描 assets/seed/library/items', 'catalog')
+  log.step('扫描 assets/seed/illustrated-handbook/items', 'catalog')
   const catalog = loadLibraryCatalog()
   if (!catalog?.items?.length) {
-    console.error('[build] 未找到种子条目，请维护 assets/seed/library/items 下各 JSON')
+    console.error('[build] 未找到种子条目，请维护 assets/seed/illustrated-handbook/items 下各 JSON')
     process.exit(1)
   }
   if (!UNIFIED_PACK) console.log(`[build]   共 ${catalog.items.length} 条`)

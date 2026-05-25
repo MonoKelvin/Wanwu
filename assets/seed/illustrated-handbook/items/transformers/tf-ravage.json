@@ -1,0 +1,28 @@
+{
+  "id": "009fc37f-67a0-4106-afa9-eda9b592dabe",
+  "slug": "tf-ravage",
+  "subCategoryId": "tf-decepticon",
+  "name": "机器狗 Ravage",
+  "summary": "声波磁带战士，黑豹形态侦察。",
+  "tags": [
+    "变形",
+    "霸天虎",
+    "反派",
+    "磁带战士"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "matchTags": [
+      "霸天虎",
+      "磁带战士",
+      "ravage"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/tf-ravage/content.md"
+}

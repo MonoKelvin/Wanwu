@@ -1,0 +1,33 @@
+{
+  "id": "719342ad-bf57-4596-9416-705b6355cdc1",
+  "slug": "history-forbidden-city",
+  "subCategoryId": "hist-china",
+  "name": "故宫紫禁城",
+  "summary": "明清两代皇宫，北京中轴线世界文化遗产。",
+  "tags": [
+    "世界遗产",
+    "明清",
+    "北京",
+    "中国"
+  ],
+  "specs": {
+    "分类": "中国史迹",
+    "地点": "北京",
+    "时代": "明清",
+    "地位": "1987 世界遗产",
+    "类型": "建筑 / 石窟 / 古城",
+    "保护": "国家级文保"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "historic landmark architecture",
+    "matchTags": [
+      "世界遗产"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/history/history-forbidden-city/content.md"
+}

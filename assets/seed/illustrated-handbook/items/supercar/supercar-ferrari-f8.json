@@ -1,0 +1,35 @@
+{
+  "id": "a7381cf9-d652-40af-9e13-f0d6ca7a0148",
+  "slug": "supercar-ferrari-f8",
+  "subCategoryId": "car-italy",
+  "name": "法拉利 F8 Tributo",
+  "summary": "488 后继中置 V8，空气动力学与轻量化进一步提升。",
+  "tags": [
+    "V8/V12",
+    "意大利",
+    "超跑",
+    "Ferrari"
+  ],
+  "specs": {
+    "首发年份": "2019",
+    "厂商": "Ferrari",
+    "发动机": "V8 双涡轮",
+    "最大功率": "720 hp",
+    "百公里加速": "2.9 s",
+    "产地": "意大利"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "F8 Tributo supercar",
+    "matchTags": [
+      "意大利",
+      "ferrari",
+      "v8/v12"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/supercar/supercar-ferrari-f8/content.md"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "ff24bb57-b814-4c60-be8a-47ab604181b0",
+  "slug": "cat-okinawa-cat",
+  "subCategoryId": "cat-short-hair",
+  "name": "冲绳猫（琉球猫）",
+  "summary": "琉球群岛地方家猫，热带气候适应，短毛为主，冲绳「岛猫」文化鲜明。",
+  "tags": [
+    "岛猫",
+    "冲绳",
+    "琉球",
+    "短毛"
+  ],
+  "specs": {
+    "分类": "日本品种",
+    "分布": "冲绳群岛",
+    "类型": "地理型家猫",
+    "气候": "热带",
+    "文化": "岛猫照护"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-okinawa-cat/content.md"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "0050de2a-7d53-4cfd-8fd5-65a8846d023f",
+  "slug": "tf-ironhide",
+  "subCategoryId": "tf-g1",
+  "name": "铁皮 Ironhide",
+  "summary": "武器专家，皮卡变形，老兵性格刚烈。",
+  "tags": [
+    "汽车人",
+    "变形",
+    "武器专家",
+    "Hasbro"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "matchTags": [
+      "汽车人",
+      "hasbro",
+      "武器专家",
+      "ironhide"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/tf-ironhide/content.md"
+}

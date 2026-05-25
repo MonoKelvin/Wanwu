@@ -1,0 +1,34 @@
+{
+  "id": "205322ad-fa7c-4738-bcc1-2509dbab0ad3",
+  "slug": "motorcycle-indian-scout",
+  "subCategoryId": "moto-america",
+  "name": "印第安 Scout",
+  "summary": "美式巡航入门，复古油箱与低座高。",
+  "tags": [
+    "Indian",
+    "巡航",
+    "美式"
+  ],
+  "specs": {
+    "首发年份": "2015",
+    "厂商": "Indian",
+    "排量": "1133 cc",
+    "发动机": "液冷 V 双缸",
+    "最大功率": "约 100 hp",
+    "车型": "巡航",
+    "产地": "美国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Scout motorcycle",
+    "matchTags": [
+      "indian",
+      "scout"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/motorcycle-indian-scout/content.md"
+}

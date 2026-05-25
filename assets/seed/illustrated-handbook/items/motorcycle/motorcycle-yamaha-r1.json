@@ -1,0 +1,36 @@
+{
+  "id": "54641c79-70ae-487f-8543-cd1b00aa86f0",
+  "slug": "motorcycle-yamaha-r1",
+  "subCategoryId": "moto-japan",
+  "name": "雅马哈 YZF-R1",
+  "summary": "十字曲轴四缸仿赛，MotoGP 技术标杆。",
+  "tags": [
+    "摩托",
+    "约 200 hp",
+    "日本",
+    "Yamaha"
+  ],
+  "specs": {
+    "首发年份": "1998",
+    "厂商": "Yamaha",
+    "排量": "998 cc",
+    "发动机": "直列四缸",
+    "最大功率": "约 200 hp",
+    "车型": "超级跑车",
+    "产地": "日本"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "YZF-R1 motorcycle",
+    "matchTags": [
+      "yamaha",
+      "约 200 hp",
+      "yzf"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/motorcycle-yamaha-r1/content.md"
+}

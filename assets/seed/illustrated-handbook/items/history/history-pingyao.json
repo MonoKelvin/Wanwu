@@ -1,0 +1,33 @@
+{
+  "id": "9165ecd3-16e3-4bb8-888a-78d1a648c244",
+  "slug": "history-pingyao",
+  "subCategoryId": "hist-world",
+  "name": "平遥古城",
+  "summary": "保存完整的明清县城格局与票号金融史。",
+  "tags": [
+    "世界遗产",
+    "山西",
+    "明清",
+    "中国"
+  ],
+  "specs": {
+    "分类": "中国史迹",
+    "地点": "山西",
+    "时代": "明清",
+    "地位": "世界遗产",
+    "类型": "建筑 / 石窟 / 古城",
+    "保护": "国家级文保"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "historic landmark architecture",
+    "matchTags": [
+      "世界遗产"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/history/history-pingyao/content.md"
+}

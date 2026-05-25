@@ -1,0 +1,33 @@
+{
+  "id": "48bf58b7-c6db-4135-adb7-1ac1a9eb9cc9",
+  "slug": "ui-glassmorphism",
+  "subCategoryId": "ui-design-tool",
+  "name": "玻璃拟态",
+  "summary": "背景模糊与半透明层叠的现代网页视觉。",
+  "tags": [
+    "CSS",
+    "UI",
+    "风格",
+    "Web"
+  ],
+  "specs": {
+    "分类": "Web 视觉风格",
+    "技术": "backdrop-filter、blur",
+    "代表平台": "iOS、Windows 11",
+    "兴起": "约 2020 年",
+    "注意": "对比度与性能"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "design system ui",
+    "matchTags": [
+      "web",
+      "css"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-glassmorphism/content.md"
+}

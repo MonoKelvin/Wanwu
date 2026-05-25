@@ -1,0 +1,34 @@
+{
+  "id": "77cd0a34-80f7-4550-9675-d51d61f82389",
+  "slug": "moto-harley-low-rider-st",
+  "subCategoryId": "moto-america",
+  "name": "哈雷 Low Rider ST",
+  "summary": "运动旅行姿态，丹尼斯·柯克伍德设计影响。",
+  "tags": [
+    "Harley-Davidson",
+    "运动旅行",
+    "巡航",
+    "美式"
+  ],
+  "specs": {
+    "厂商": "Harley-Davidson",
+    "发动机": "Milwaukee-Eight",
+    "排量": "约 1923 cc",
+    "车型": "Bagger",
+    "产地": "美国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Low Rider ST motorcycle",
+    "matchTags": [
+      "harley-davidson",
+      "运动旅行",
+      "low"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/moto-harley-low-rider-st/content.md"
+}

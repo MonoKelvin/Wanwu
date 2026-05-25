@@ -1,0 +1,28 @@
+{
+  "id": "f5660934-dfa9-4534-bc17-7e32c35f8cc8",
+  "slug": "tf-soundwave",
+  "subCategoryId": "tf-decepticon",
+  "name": "声波 Soundwave",
+  "summary": "情报官，卡带战士与录音机变形，忠诚威震天。",
+  "tags": [
+    "情报官",
+    "变形",
+    "霸天虎",
+    "反派"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "matchTags": [
+      "霸天虎",
+      "情报官",
+      "soundwave"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/tf-soundwave/content.md"
+}

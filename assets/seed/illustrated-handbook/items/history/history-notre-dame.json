@@ -1,0 +1,26 @@
+{
+  "id": "ef5e1294-ae92-4b3d-ae3c-93ced7f4f910",
+  "slug": "history-notre-dame",
+  "subCategoryId": "hist-medieval",
+  "name": "巴黎圣母院",
+  "summary": "哥特教堂地标。",
+  "tags": [
+    "哥特"
+  ],
+  "specs": {
+    "类型": "文化遗产",
+    "概述": "哥特教堂地标。",
+    "地位": "世界遗产或国保（视条目）",
+    "参观": "提前预约 / 旺季错峰"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "notre dame cathedral paris",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/history/history-notre-dame/content.md"
+}

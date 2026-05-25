@@ -1,0 +1,35 @@
+{
+  "id": "b5875bfc-bed3-4d41-a2df-7fb88c1c6851",
+  "slug": "moto-yamaha-mt-09",
+  "subCategoryId": "moto-japan",
+  "name": "雅马哈 MT-09",
+  "summary": "三缸扭力大师裸车，城市乐趣机器。",
+  "tags": [
+    "摩托",
+    "约 119 hp",
+    "日本",
+    "Yamaha"
+  ],
+  "specs": {
+    "首发年份": "2013",
+    "厂商": "Yamaha",
+    "排量": "890 cc",
+    "发动机": "三缸",
+    "最大功率": "约 117 hp",
+    "车型": "街车",
+    "产地": "日本"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "MT-09 motorcycle",
+    "matchTags": [
+      "yamaha",
+      "约 119 hp"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/moto-yamaha-mt-09/content.md"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "61933e2e-2c10-4387-8b76-92431aaf7674",
+  "slug": "industrial-playstation5",
+  "subCategoryId": "id-product",
+  "name": "PlayStation 5",
+  "summary": "白色流线主机与 DualSense 触觉反馈。",
+  "tags": [
+    "Sony",
+    "工业设计",
+    "经典",
+    "游戏主机"
+  ],
+  "specs": {
+    "首发": "2020",
+    "品牌": "Sony",
+    "设计师": "Yujin Morisawa",
+    "芯片": "AMD Zen2",
+    "特色": "DualSense"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "PlayStation 5 product design",
+    "matchTags": [
+      "工业设计",
+      "sony",
+      "游戏主机",
+      "playstation"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-playstation5/content.md"
+}

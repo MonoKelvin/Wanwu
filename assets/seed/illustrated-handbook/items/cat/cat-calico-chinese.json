@@ -1,0 +1,36 @@
+{
+  "id": "2ba095f7-4be0-49dc-8879-72e30a79853a",
+  "slug": "cat-calico-chinese",
+  "subCategoryId": "cat-china",
+  "name": "三花猫（中华田园三花）",
+  "summary": "白橘黑三色家猫，几乎均为母猫，中国城乡极常见，象征好运。",
+  "tags": [
+    "中国",
+    "三花",
+    "母猫",
+    "田园猫"
+  ],
+  "specs": {
+    "分类": "中国品种",
+    "类型": "毛色型",
+    "毛色": "白+橘+黑",
+    "性别": "几乎均为雌性",
+    "文化": "吉祥",
+    "分布": "亚洲广泛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "田园猫",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-calico-chinese/content.md"
+}

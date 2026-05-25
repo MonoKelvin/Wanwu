@@ -1,0 +1,31 @@
+{
+  "id": "a4bcbe50-5771-49aa-a1ed-2fe4c89ba1dc",
+  "slug": "footwear-shoe-air-jordan-1",
+  "subCategoryId": "shoe-sneaker",
+  "name": "Air Jordan 1",
+  "summary": "Air Jordan 1是耐克乔丹系列的第一款正代篮球鞋，诞生于1985年，作为 迈克尔·乔丹 的首双签名战靴，由设计师Peter Moore设计 。",
+  "tags": [
+    "1985年",
+    "耐克",
+    "air jordan 1"
+  ],
+  "specs": {
+    "型号": "Air Jordan 1",
+    "联名": "Michael Jordan × Nike",
+    "首发": "1985年",
+    "标志": "飞翼/飞人 Logo",
+    "影响": "开启篮球签名鞋文化"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Air Jordan 1 shoes footwear",
+    "category": "all",
+    "matchTags": [
+      "air"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/footwear/footwear-shoe-air-jordan-1/content.md"
+}

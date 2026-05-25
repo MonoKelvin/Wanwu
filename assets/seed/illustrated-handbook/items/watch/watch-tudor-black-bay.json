@@ -1,0 +1,24 @@
+{
+  "id": "f4eb2aba-fe57-44b9-90a2-f976501466ec",
+  "slug": "watch-tudor-black-bay",
+  "subCategoryId": "watch-sport",
+  "name": "帝舵 Black Bay",
+  "summary": "复古潜水机械。",
+  "tags": [],
+  "specs": {
+    "概述": "复古潜水机械。"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "帝舵 Black Bay luxury wristwatch macro dial leather strap",
+    "category": "all",
+    "matchTags": [
+      "black",
+      "watch"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/watch/watch-tudor-black-bay/content.md"
+}

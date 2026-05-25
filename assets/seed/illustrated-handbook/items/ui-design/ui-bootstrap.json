@@ -1,0 +1,35 @@
+{
+  "id": "991bffb4-9296-4678-98ae-26107c0e0359",
+  "slug": "ui-bootstrap",
+  "subCategoryId": "ui-design-tool",
+  "name": "Bootstrap",
+  "summary": "经典栅格与组件库，适合原型与后台。",
+  "tags": [
+    "框架",
+    "UI",
+    "Web",
+    "Bootstrap"
+  ],
+  "specs": {
+    "分类": "Web 框架",
+    "首发": "2011",
+    "起源": "Twitter",
+    "当前版本": "v5.3",
+    "特点": "12 列栅格、预制组件",
+    "技术": "HTML / CSS / JS",
+    "许可": "MIT"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Bootstrap design system ui",
+    "matchTags": [
+      "web",
+      "bootstrap"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-bootstrap/content.md"
+}

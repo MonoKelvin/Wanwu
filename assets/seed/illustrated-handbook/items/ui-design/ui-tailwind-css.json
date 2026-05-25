@@ -1,0 +1,35 @@
+{
+  "id": "413543a5-301e-45ab-bd9a-d1b12273c2d0",
+  "slug": "ui-tailwind-css",
+  "subCategoryId": "ui-design-tool",
+  "name": "Tailwind CSS",
+  "summary": "原子化 utility-first CSS 框架，快速迭代界面。",
+  "tags": [
+    "框架",
+    "UI",
+    "Web",
+    "Tailwind"
+  ],
+  "specs": {
+    "分类": "Web 框架",
+    "首发": "2017",
+    "作者": "Tailwind Labs",
+    "范式": "Utility-first CSS",
+    "当前版本": "v4",
+    "生态": "Headless UI、shadcn",
+    "特点": "JIT 编译、Design Token"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Tailwind CSS design system ui",
+    "matchTags": [
+      "web",
+      "tailwind"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-tailwind-css/content.md"
+}

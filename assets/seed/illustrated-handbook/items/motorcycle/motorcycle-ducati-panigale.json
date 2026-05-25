@@ -1,0 +1,36 @@
+{
+  "id": "8aab2b89-bca4-4900-a4c7-58dd8735510a",
+  "slug": "motorcycle-ducati-panigale",
+  "subCategoryId": "moto-italy",
+  "name": "杜卡迪 Panigale V4",
+  "summary": "意大利博洛尼亚高性能跑车，V4 发动机、Desmosedici 气门技术，MotoGP 技术下放。",
+  "tags": [
+    "仿赛",
+    "V4",
+    "意大利",
+    "杜卡迪"
+  ],
+  "specs": {
+    "首发年份": "2018",
+    "厂商": "Ducati",
+    "排量": "1103 cc",
+    "发动机": "V4",
+    "最大功率": "约 214 hp",
+    "车型": "超级跑车",
+    "产地": "意大利"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Panigale V4 motorcycle",
+    "category": "transportation",
+    "matchTags": [
+      "杜卡迪",
+      "意大利",
+      "panigale"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/motorcycle-ducati-panigale/content.md"
+}

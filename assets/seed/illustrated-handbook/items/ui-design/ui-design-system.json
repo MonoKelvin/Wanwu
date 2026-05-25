@@ -1,0 +1,34 @@
+{
+  "id": "33354221-409c-45c3-b6db-5a95906ca5fd",
+  "slug": "ui-design-system",
+  "subCategoryId": "ui-design-tool",
+  "name": "设计系统",
+  "summary": "Token、组件库与文档站点统一产品视觉。",
+  "tags": [
+    "UI",
+    "移动端",
+    "Storybook",
+    "系统"
+  ],
+  "specs": {
+    "分类": "设计方法论",
+    "核心": "Token、组件、文档",
+    "代表": "Material、HIG、Polaris",
+    "工具链": "Figma、Storybook",
+    "概念": "Atomic Design",
+    "价值": "一致性与效率"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "design system ui",
+    "matchTags": [
+      "移动端",
+      "storybook"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-design-system/content.md"
+}

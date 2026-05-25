@@ -1,0 +1,35 @@
+{
+  "id": "d967a959-51ae-4b6a-9824-207e8611bd2b",
+  "slug": "moto-indian-ftr",
+  "subCategoryId": "moto-america",
+  "name": "印第安 FTR 1200",
+  "summary": "扁平赛道风格街车，印第安赛车血统。",
+  "tags": [
+    "Indian",
+    "巡航",
+    "街车",
+    "美式"
+  ],
+  "specs": {
+    "首发年份": "2018",
+    "厂商": "Indian",
+    "排量": "1203 cc",
+    "发动机": "V 双缸",
+    "最大功率": "约 120 hp",
+    "车型": "街车",
+    "产地": "美国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "FTR 1200 motorcycle",
+    "matchTags": [
+      "indian",
+      "ftr"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/moto-indian-ftr/content.md"
+}

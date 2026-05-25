@@ -1,0 +1,33 @@
+{
+  "id": "9b346ee4-3417-461f-a6a5-68236eb124b4",
+  "slug": "anime-steins-gate",
+  "subCategoryId": "anime-isekai",
+  "name": "命运石之门",
+  "summary": "《命运石之门》是一款由 5pb.",
+  "tags": [
+    "2011 动画",
+    "奇幻冒险",
+    "日本",
+    "剧情"
+  ],
+  "specs": {
+    "原作": "5pb. / Nitroplus（视觉小说）",
+    "动画制作": "WHITE FOX",
+    "首播": "2011-04-06（日本）",
+    "话数": "24 集 + 剧场版",
+    "主角": "冈部伦太郎",
+    "类型": "科幻 / 悬疑",
+    "地区": "日本",
+    "导演": "佐藤卓哉、滨崎博嗣"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "fantasy anime landscape illustration",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-steins-gate/content.md"
+}

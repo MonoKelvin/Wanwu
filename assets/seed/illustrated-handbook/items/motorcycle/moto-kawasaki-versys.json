@@ -1,0 +1,35 @@
+{
+  "id": "64396f31-cef3-4d64-8d0f-ee73e05a4b54",
+  "slug": "moto-kawasaki-versys",
+  "subCategoryId": "moto-japan",
+  "name": "川崎 Versys 650",
+  "summary": "多用途街旅，舒适坐姿。",
+  "tags": [
+    "Kawasaki",
+    "摩托",
+    "日本",
+    "街旅"
+  ],
+  "specs": {
+    "首发年份": "2007",
+    "厂商": "Kawasaki",
+    "排量": "649 cc",
+    "发动机": "平行双缸",
+    "最大功率": "约 70 hp",
+    "车型": "冒险旅行",
+    "产地": "日本"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Versys 650 motorcycle",
+    "matchTags": [
+      "kawasaki",
+      "versys"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/moto-kawasaki-versys/content.md"
+}

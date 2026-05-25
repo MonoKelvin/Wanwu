@@ -1,0 +1,31 @@
+{
+  "id": "6f7b4971-0b9c-49cd-82d9-778eb0256c78",
+  "slug": "book-1984",
+  "subCategoryId": "book-fiction",
+  "name": "一九八四",
+  "summary": "《一九八四》是英国 左翼 作家 乔治·奥威尔 创作的长篇政治小说，于1949年6月首次出版。",
+  "tags": [
+    "1984",
+    "Nineteen Eighty-Four",
+    "一九八四"
+  ],
+  "specs": {
+    "作品名称": "一九八四",
+    "外文名": "Nineteen Eighty-Four",
+    "作品别名": "1984",
+    "作者": "乔治·奥威尔 （英）",
+    "体裁": "长篇小说",
+    "首发年份": "1949年",
+    "篇幅": "217000"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "open books reading library desk",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/book/book-1984/content.md"
+}

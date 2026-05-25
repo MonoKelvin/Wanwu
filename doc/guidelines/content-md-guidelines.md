@@ -1,6 +1,6 @@
 # 全库 content.md 编写规范
 
-面向 `assets/library/{category}/{slug}/content.md` 与 `assets/seed/library/items/**/*.json` 的维护约定。
+面向 `assets/seed/illustrated-handbook/resources/{category}/{slug}/content.md` 与 `assets/seed/illustrated-handbook/items/**/*.json` 的维护约定。
 
 ## 分工
 
@@ -62,4 +62,4 @@
 
 ## 维护方式
 
-直接编辑 `assets/library/{category}/{slug}/content.md` 与对应 `assets/seed/library/items/` 下 JSON，执行 `npm run build` 生成数据包。
+直接编辑 `assets/seed/illustrated-handbook/resources/{category}/{slug}/content.md` 与对应 `items/` 下 JSON，执行 `npm run build` 生成数据包。

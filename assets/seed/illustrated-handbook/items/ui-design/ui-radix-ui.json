@@ -1,0 +1,36 @@
+{
+  "id": "bae53049-b04d-43ed-a770-776a9572c628",
+  "slug": "ui-radix-ui",
+  "subCategoryId": "ui-design-tool",
+  "name": "Radix UI",
+  "summary": "无样式可访问性 primitives，支撑 shadcn 等。",
+  "tags": [
+    "UI",
+    "基础",
+    "React",
+    "Web"
+  ],
+  "specs": {
+    "分类": "Web 原语库",
+    "维护方": "WorkOS",
+    "框架": "React",
+    "特点": "无样式、可访问性",
+    "代表组件": "Dialog、Dropdown",
+    "下游": "shadcn/ui、Park UI",
+    "许可": "MIT"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Radix UI design system ui",
+    "matchTags": [
+      "web",
+      "react",
+      "radix"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-radix-ui/content.md"
+}

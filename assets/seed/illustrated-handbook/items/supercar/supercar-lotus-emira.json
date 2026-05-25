@@ -1,0 +1,33 @@
+{
+  "id": "2ee405cd-86b4-4210-94df-0da64e810b66",
+  "slug": "supercar-lotus-emira",
+  "subCategoryId": "car-britain",
+  "name": "路特斯 Emira",
+  "summary": "末代燃油路特斯，中置布局与轻量化哲学延续。",
+  "tags": [
+    "Lotus",
+    "超跑",
+    "GT",
+    "英国"
+  ],
+  "specs": {
+    "首发年份": "2021",
+    "厂商": "Lotus",
+    "发动机": "四缸 / V6",
+    "车型": "超跑",
+    "产地": "英国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Emira supercar",
+    "matchTags": [
+      "lotus",
+      "emira"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/supercar/supercar-lotus-emira/content.md"
+}

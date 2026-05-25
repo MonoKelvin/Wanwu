@@ -1,0 +1,28 @@
+{
+  "id": "99903f9c-5434-48f1-97c8-d413bea8d5dd",
+  "slug": "transformers-optimus-prime",
+  "subCategoryId": "tf-g1",
+  "name": "擎天柱 Optimus Prime",
+  "summary": "汽车人领袖，可变形为重型卡车，象征正义与牺牲精神的变形金刚标志角色。",
+  "tags": [
+    "汽车人",
+    "卡车",
+    "领袖",
+    "Hasbro"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "category": "transportation",
+    "matchTags": [
+      "汽车人",
+      "hasbro",
+      "optimus"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/transformers-optimus-prime/content.md"
+}

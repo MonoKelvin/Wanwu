@@ -1,0 +1,36 @@
+{
+  "id": "50906177-c195-4e2f-ab0d-2f6ad47cfc22",
+  "slug": "cat-norwegian-forest",
+  "subCategoryId": "cat-long-hair",
+  "name": "挪威森林猫 Norwegian Forest",
+  "summary": "北欧大型长毛猫，双层被毛御寒，性格独立又亲人，维京传说常与之关联。",
+  "tags": [
+    "大型",
+    "挪威",
+    "欧洲",
+    "长毛"
+  ],
+  "specs": {
+    "分类": "欧洲品种",
+    "原产地": "挪威",
+    "体重": "4.5–9 kg",
+    "寿命": "14–16 年",
+    "特征": "双层毛、尾蓬松",
+    "性格": "独立、友善、爱攀爬"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Norwegian Forest cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "norwegian",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-norwegian-forest/content.md"
+}

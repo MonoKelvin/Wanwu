@@ -16,6 +16,7 @@
       "@/*": ["src/*"],
       "@app/*": ["src/app/*"],
       "@modules/*": ["src/modules/*"],
+      "@library/*": ["src/library/*"],
       "@renderer/*": ["src/renderer/*"],
       "@features/*": ["src/features/*"],
       "@shared/*": ["src/shared/*"],

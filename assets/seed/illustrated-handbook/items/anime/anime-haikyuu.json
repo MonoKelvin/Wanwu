@@ -1,0 +1,35 @@
+{
+  "id": "ae43f2d6-dbf5-4dd9-9aea-efde83f63a19",
+  "slug": "anime-haikyuu",
+  "subCategoryId": "anime-fantasy",
+  "name": "排球少年！！",
+  "summary": "《排球少年!",
+  "tags": [
+    "日本",
+    "热血",
+    "少年向",
+    "少年漫"
+  ],
+  "specs": {
+    "原作": "古馆春一",
+    "连载": "2012–2020（周刊少年Jump）",
+    "动画制作": "Production I.G",
+    "首播": "2014-04-06（日本）",
+    "主角": "日向翔阳",
+    "类型": "体育 / 热血",
+    "地区": "日本",
+    "单行本": "45 卷"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "japanese anime character illustration",
+    "matchTags": [
+      "少年漫"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-haikyuu/content.md"
+}

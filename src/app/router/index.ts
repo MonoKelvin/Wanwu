@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupModulePathMemory } from '@app/router/moduleMemory'
 import { useSettingsStore } from '@shared/stores/settings'
 import { resolveStartupPath } from '@shared/utils/startupModule'
+import { isLibraryMajorId } from '@library/config/majors'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -17,10 +18,54 @@ const router = createRouter({
       component: { template: '<div />' }
     },
     {
-      path: '/library/:catId?/:subId?',
-      name: 'library',
-      component: () => import('@modules/library/LibraryView.vue'),
-      meta: { module: 'library', title: '全库' }
+      path: '/library/:legacyCat/:legacySub?',
+      redirect: (to) => {
+        const cat = String(to.params.legacyCat ?? '')
+        if (isLibraryMajorId(cat)) {
+          if (cat === 'links') {
+            return {
+              name: 'library-links',
+              params: { folderId: to.params.legacySub as string | undefined }
+            }
+          }
+          return {
+            name: 'library-illustrated-handbook',
+            params: {
+              catId: to.params.legacySub as string | undefined,
+              subId: undefined
+            }
+          }
+        }
+        const sub = to.params.legacySub as string | undefined
+        return {
+          name: 'library-illustrated-handbook',
+          params: { catId: cat, subId: sub }
+        }
+      }
+    },
+    {
+      path: '/library',
+      component: () => import('@modules/library/LibraryShellView.vue'),
+      meta: { module: 'library', title: '全库' },
+      children: [
+        {
+          path: '',
+          redirect: { name: 'library-illustrated-handbook' }
+        },
+        {
+          path: 'illustrated-handbook/:catId?/:subId?',
+          name: 'library-illustrated-handbook',
+          component: () =>
+            import('@modules/library/illustrated-handbook/IllustratedHandbookView.vue'),
+          meta: { module: 'library', major: 'illustrated-handbook', title: '图鉴' }
+        },
+        {
+          path: 'links/:folderId?',
+          name: 'library-links',
+          component: () => import('@modules/library/links/LinksView.vue'),
+          meta: { module: 'library', major: 'links', title: '链接' }
+        }
+      ]
     },
     {
       path: '/rss/:feedId?',

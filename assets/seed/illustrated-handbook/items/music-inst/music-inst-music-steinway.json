@@ -1,0 +1,29 @@
+{
+  "id": "2ee112b7-380c-40ac-9b94-713b2a099f23",
+  "slug": "music-inst-music-steinway",
+  "subCategoryId": "music-keyboard",
+  "name": "施坦威钢琴",
+  "summary": "施坦威（Steinway & Sons）是国际高端钢琴品牌，1853年由 德国 移民亨利·恩格尔哈特·施坦威在 纽约 创立，专注于手工制造三角钢琴与立式钢琴，生产基地分布于纽约阿斯托利亚和德国 汉堡 [1-2] 。",
+  "tags": [
+    "施坦威",
+    "国际顶级钢琴演奏家",
+    "Steinway & Sons"
+  ],
+  "specs": {
+    "品牌": "Steinway & Sons",
+    "类型": "三角钢琴",
+    "创立": "1853年纽约",
+    "特色": "音乐会级音色与击弦机",
+    "应用": "多数音乐厅首选"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "musical instrument",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/music-inst/music-inst-music-steinway/content.md"
+}

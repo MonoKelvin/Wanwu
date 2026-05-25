@@ -1,0 +1,36 @@
+{
+  "id": "7be64187-c0eb-4c59-943a-d6d3a12c281d",
+  "slug": "movie-mission-impossible",
+  "subCategoryId": "movie-action",
+  "name": "碟中谍 Mission: Impossible",
+  "summary": "德·帕尔玛 1996 年谍战动作：伊森·亨特潜入 CIA 总部洗清内鬼冤屈。",
+  "tags": [
+    "电影",
+    "动作",
+    "1996–",
+    "多位"
+  ],
+  "specs": {
+    "导演": "布莱恩·德·帕尔玛",
+    "编剧": "罗伯特·汤恩等",
+    "上映": "1996-05-22（美国）",
+    "片长": "约 110 分钟",
+    "国家": "美国",
+    "类型": "动作 / 惊悚 / 冒险",
+    "主演": "汤姆·克鲁斯",
+    "主要荣誉": "奥斯卡最佳音效剪辑提名"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Mission cinema film still",
+    "matchTags": [
+      "特工动作",
+      "mission"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/movie/movie-mission-impossible/content.md"
+}

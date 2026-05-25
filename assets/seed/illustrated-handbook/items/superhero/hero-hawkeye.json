@@ -1,0 +1,33 @@
+{
+  "id": "9938982c-3ca1-4019-bfae-104e819b162e",
+  "slug": "hero-hawkeye",
+  "subCategoryId": "hero-marvel-mcu",
+  "name": "鹰眼 Hawkeye",
+  "summary": "克林特·巴顿顶尖射手，复仇者远程火力。",
+  "tags": [
+    "复仇者",
+    "漫威",
+    "射手"
+  ],
+  "specs": {
+    "宇宙": "漫威",
+    "首次登场": "1964",
+    "本名": "克林特·巴顿",
+    "技能": "神射手、战术",
+    "武器": "特制箭矢",
+    "团队": "复仇者"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Hawkeye action figure toy collectible",
+    "matchTags": [
+      "复仇者",
+      "hawkeye"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-hawkeye/content.md"
+}

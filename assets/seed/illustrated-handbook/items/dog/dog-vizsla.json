@@ -1,0 +1,39 @@
+{
+  "id": "ac47b0ae-6664-48af-a2ab-da79c6573228",
+  "slug": "dog-vizsla",
+  "subCategoryId": "dog-americas",
+  "name": "维兹拉犬",
+  "summary": "匈牙利指针犬，赤金色短毛，贴人「Velcro dog」，狩猎与伴侣。",
+  "tags": [
+    "狩猎",
+    "赤金",
+    "指针犬",
+    "匈牙利"
+  ],
+  "specs": {
+    "分类": "指示猎犬",
+    "原产地": "匈牙利",
+    "肩高": "54–64 cm",
+    "毛色": "金锈色",
+    "体重": "20–30 kg",
+    "寿命": "12–14 年",
+    "特点": "极粘人",
+    "性格": "敏感、精力充沛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "指针犬",
+      "匈牙利",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-vizsla/content.md"
+}

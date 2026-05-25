@@ -11,6 +11,17 @@ const api: WanwuApi = {
     createItem: (item) => ipcRenderer.invoke('library:createItem', item),
     uploadItemImage: (params) => ipcRenderer.invoke('library:uploadItemImage', params)
   },
+  links: {
+    listFolders: () => ipcRenderer.invoke('links:listFolders'),
+    listBookmarks: (params) => ipcRenderer.invoke('links:listBookmarks', params),
+    sync: () => ipcRenderer.invoke('links:sync'),
+    createBookmark: (input) => ipcRenderer.invoke('links:createBookmark', input),
+    updateBookmark: (input) => ipcRenderer.invoke('links:updateBookmark', input),
+    softDeleteBookmark: (id) => ipcRenderer.invoke('links:softDeleteBookmark', id),
+    restoreBookmark: (id) => ipcRenderer.invoke('links:restoreBookmark', id),
+    permanentDeleteBookmark: (id) => ipcRenderer.invoke('links:permanentDeleteBookmark', id),
+    probeUnreachable: (ids) => ipcRenderer.invoke('links:probeUnreachable', ids)
+  },
   rss: {
     listGroups: () => ipcRenderer.invoke('rss:listGroups'),
     createGroup: (name) => ipcRenderer.invoke('rss:createGroup', { name }),

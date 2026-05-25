@@ -1,0 +1,35 @@
+{
+  "id": "80c26d8b-a8b8-4c8a-9b2b-e093d02a046d",
+  "slug": "industrial-tesla-model-s",
+  "subCategoryId": "id-product",
+  "name": "特斯拉 Model S",
+  "summary": "纯电性能轿车，大屏中控与 OTA 更新。",
+  "tags": [
+    "工业设计",
+    "经典",
+    "电动车",
+    "Tesla"
+  ],
+  "specs": {
+    "首发": "2012",
+    "品牌": "Tesla",
+    "动力": "纯电",
+    "续航": "600+ km",
+    "特色": "OTA 大屏"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Model S product design",
+    "matchTags": [
+      "工业设计",
+      "tesla",
+      "电动车",
+      "model"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-tesla-model-s/content.md"
+}

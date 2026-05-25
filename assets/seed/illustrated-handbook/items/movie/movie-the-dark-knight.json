@@ -1,0 +1,35 @@
+{
+  "id": "7ae2791c-55cf-45b1-bafc-eeaace5f3d41",
+  "slug": "movie-the-dark-knight",
+  "subCategoryId": "movie-horror",
+  "name": "蝙蝠侠：黑暗骑士",
+  "summary": "诺兰 2008 年蝙蝠侠续作：希斯·莱杰小丑挑战哥谭秩序，黑暗骑士背负罪名守护城市。",
+  "tags": [
+    "DC",
+    "诺兰",
+    "动作犯罪",
+    "小丑"
+  ],
+  "specs": {
+    "导演": "克里斯托弗·诺兰",
+    "编剧": "乔纳森·诺兰、克里斯托弗·诺兰",
+    "上映": "2008-07-18（美国）",
+    "片长": "约 152 分钟",
+    "国家": "美国 / 英国",
+    "类型": "动作 / 犯罪 / 剧情",
+    "主演": "克里斯蒂安·贝尔、希斯·莱杰",
+    "主要荣誉": "奥斯卡最佳男配角（希斯·莱杰）等 2 项"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "： cinema film still",
+    "matchTags": [
+      "蝙蝠侠"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/movie/movie-the-dark-knight/content.md"
+}

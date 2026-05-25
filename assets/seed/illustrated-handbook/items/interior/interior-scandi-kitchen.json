@@ -1,0 +1,31 @@
+{
+  "id": "255befc7-4636-42c8-9e50-6d7159034d06",
+  "slug": "interior-scandi-kitchen",
+  "subCategoryId": "int-nordic",
+  "name": "北欧厨房",
+  "summary": "白色橱柜、木质台面与功能收纳。",
+  "tags": [
+    "家装",
+    "北欧",
+    "收纳",
+    "厨房"
+  ],
+  "specs": {
+    "分类": "北欧风格",
+    "风格": "厨房",
+    "空间": "收纳",
+    "材质": "木、棉麻、羊毛",
+    "光线": "重视自然光",
+    "品牌": "IKEA / Hay 等"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/interior/interior-scandi-kitchen/content.md"
+}

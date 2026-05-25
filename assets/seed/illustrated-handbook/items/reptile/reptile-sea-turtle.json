@@ -1,0 +1,30 @@
+{
+  "id": "5ff3ccbe-baa9-4ff0-86f7-8ff01742a10f",
+  "slug": "reptile-sea-turtle",
+  "subCategoryId": "reptile-turtle",
+  "name": "绿海龟",
+  "summary": "绿海龟（学名： Chelonia mydas ）是龟鳖目、海龟科、海龟属的海洋动物，是各种 海龟 中体型较大的一种，其成龟背甲直线长度可达90-120厘米，体重可达100千克以上。",
+  "tags": [
+    "绿海龟",
+    "Chelonia mydas"
+  ],
+  "specs": {
+    "中文名": "海龟",
+    "分类": "龟鳖目海龟科",
+    "栖息": "热带与亚热带海域",
+    "威胁": "海洋塑料、误捕、栖息地破坏",
+    "习性": "长距离洄游产卵"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "reptile animal",
+    "category": "animals",
+    "matchTags": [
+      "reptile"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/reptile/reptile-sea-turtle/content.md"
+}

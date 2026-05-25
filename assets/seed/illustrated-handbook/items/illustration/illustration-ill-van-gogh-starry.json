@@ -1,0 +1,24 @@
+{
+  "id": "af04dd43-729c-4e78-ba9a-5feb33bc4a13",
+  "slug": "illustration-ill-van-gogh-starry",
+  "subCategoryId": "ill-digital",
+  "name": "星夜",
+  "summary": "梵高漩涡夜空。",
+  "tags": [],
+  "specs": {
+    "艺术家": "梵高",
+    "年份": "1889",
+    "收藏": "MoMA",
+    "主题": "夜空"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "digital illustration artwork",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/illustration/illustration-ill-van-gogh-starry/content.md"
+}

@@ -1,0 +1,30 @@
+{
+  "id": "4ee57e73-7523-4968-8562-947e6f05e5a6",
+  "slug": "bird-crane-red",
+  "subCategoryId": "bird-water",
+  "name": "丹顶鹤",
+  "summary": "东亚祥瑞鹤。",
+  "tags": [
+    "丹顶"
+  ],
+  "specs": {
+    "分类": "鸟类",
+    "代表": "丹顶鹤",
+    "习性": "东亚祥瑞鹤。",
+    "分布": "因种而异",
+    "保护": "查阅 IUCN 红色名录"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "crane red bird wildlife photo",
+    "category": "animals",
+    "matchTags": [
+      "bird",
+      "wildlife"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/bird/bird-crane-red/content.md"
+}

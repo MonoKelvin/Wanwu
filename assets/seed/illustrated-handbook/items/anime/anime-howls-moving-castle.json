@@ -1,0 +1,33 @@
+{
+  "id": "430ff4d9-8799-40f1-b046-09ed248bdb43",
+  "slug": "anime-howls-moving-castle",
+  "subCategoryId": "anime-ghibli",
+  "name": "哈尔的移动城堡",
+  "summary": "《哈尔的移动城堡》是由 吉卜力工作室 、 德间书店 等出品 ， 宫崎骏 执导并编剧， 倍赏千惠子 、 木村拓哉 、 美轮明宏 、 我修院达也 等配音的奇幻动画电影 。",
+  "tags": [
+    "奇幻冒险",
+    "日本",
+    "剧情",
+    "奇幻"
+  ],
+  "specs": {
+    "导演": "宫崎骏",
+    "编剧": "宫崎骏",
+    "上映": "2004-11-20（日本）",
+    "片长": "约 119 分钟",
+    "制作": "吉卜力工作室",
+    "配乐": "久石让",
+    "原作": "戴安娜·韦恩·琼斯",
+    "类型": "动画 / 奇幻 / 爱情"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "anime forest spirit girl illustration",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-howls-moving-castle/content.md"
+}

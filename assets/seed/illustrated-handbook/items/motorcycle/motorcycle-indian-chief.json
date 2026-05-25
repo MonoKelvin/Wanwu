@@ -1,0 +1,34 @@
+{
+  "id": "f2fd019f-d197-4896-85b8-526a80795e68",
+  "slug": "motorcycle-indian-chief",
+  "subCategoryId": "moto-america",
+  "name": "印第安 Chief",
+  "summary": "旗舰巡航，印第安羽毛帽徽标传承。",
+  "tags": [
+    "Indian",
+    "巡航",
+    "旗舰",
+    "美式"
+  ],
+  "specs": {
+    "首发年份": "1922 / 2014 复兴",
+    "厂商": "Indian",
+    "排量": "约 1900 cc",
+    "发动机": "Thunderstroke V 双缸",
+    "车型": "巡航",
+    "产地": "美国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Chief motorcycle",
+    "matchTags": [
+      "indian",
+      "chief"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/motorcycle-indian-chief/content.md"
+}

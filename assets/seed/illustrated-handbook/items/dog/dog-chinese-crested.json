@@ -1,0 +1,38 @@
+{
+  "id": "be1a2759-b8cb-474a-a359-0583e8c7f786",
+  "slug": "dog-chinese-crested",
+  "subCategoryId": "dog-asia",
+  "name": "中国冠毛犬",
+  "summary": "小型无毛犬（粉扑型有毛），头冠毛发，活泼伴侣。",
+  "tags": [
+    "小型",
+    "伴侣",
+    "无毛犬",
+    "中国"
+  ],
+  "specs": {
+    "分类": "亚洲犬种",
+    "历史": "中国沿海",
+    "体重": "3–6 kg",
+    "寿命": "13–15 年",
+    "类型": "无毛/粉扑",
+    "性格": "活泼、亲人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "小型",
+      "伴侣",
+      "无毛犬",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-chinese-crested/content.md"
+}

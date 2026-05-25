@@ -1,0 +1,32 @@
+{
+  "id": "9d6f576e-2c64-456d-9d49-a1843f084919",
+  "slug": "ill-pixiv-trending",
+  "subCategoryId": "ill-portrait",
+  "name": "Pixiv 趋势插画",
+  "summary": "日系同人平台流行风格与标签文化。",
+  "tags": [
+    "同人",
+    "Pixiv",
+    "数字绘画",
+    "插画"
+  ],
+  "specs": {
+    "平台": "Pixiv",
+    "国家": "日本",
+    "内容": "插画/同人",
+    "功能": "趋势/标签"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Pixiv digital illustration artwork",
+    "matchTags": [
+      "数字绘画",
+      "pixiv"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/illustration/ill-pixiv-trending/content.md"
+}

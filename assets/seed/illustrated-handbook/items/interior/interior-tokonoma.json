@@ -1,0 +1,33 @@
+{
+  "id": "cf15e3f1-f588-4186-a14c-3bd1cd7ad2c0",
+  "slug": "interior-tokonoma",
+  "subCategoryId": "int-zen",
+  "name": "床之间",
+  "summary": "挂轴、插花与陈设的待客焦点壁龛。",
+  "tags": [
+    "陈列",
+    "禅意",
+    "日式",
+    "床之间"
+  ],
+  "specs": {
+    "分类": "日式禅意",
+    "元素": "床之间",
+    "空间": "陈列",
+    "材质": "木、竹、石、纸",
+    "原则": "留白、自然",
+    "场景": "茶、宿、庭"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "matchTags": [
+      "床之间"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/interior/interior-tokonoma/content.md"
+}

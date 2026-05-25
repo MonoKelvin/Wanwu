@@ -1,0 +1,39 @@
+{
+  "id": "6d5cbf33-060b-4df4-9c99-203bb0890d50",
+  "slug": "anime-attack-on-titan",
+  "subCategoryId": "anime-fantasy",
+  "name": "进击的巨人 Attack on Titan",
+  "summary": "谏山创黑暗奇幻漫画，人类筑墙抵御巨人，艾伦与调查兵团揭开世界真相。",
+  "tags": [
+    "黑暗奇幻",
+    "谏山创",
+    "调查兵团",
+    "WIT",
+    "MAPPA"
+  ],
+  "specs": {
+    "原作": "谏山创",
+    "连载": "2009–2021（别册少年Magazine）",
+    "动画制作": "WIT Studio / MAPPA",
+    "首播": "2013-04-07（日本）",
+    "类型": "黑暗奇幻 / 动作",
+    "主角": "艾伦·耶格尔",
+    "话数": "漫画全 139 话",
+    "地区": "日本"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "japanese anime character illustration",
+    "category": "people",
+    "matchTags": [
+      "调查兵团",
+      "谏山创",
+      "黑暗奇幻",
+      "attack"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-attack-on-titan/content.md"
+}

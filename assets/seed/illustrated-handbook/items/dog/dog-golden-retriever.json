@@ -1,0 +1,38 @@
+{
+  "id": "4c6bb0d3-c3b3-4bae-9bfe-e87becfd8c79",
+  "slug": "dog-golden-retriever",
+  "subCategoryId": "dog-americas",
+  "name": "金毛寻回犬",
+  "summary": "19 世纪苏格兰选育的寻回犬，金色被毛、性格温和，常担任导盲犬与家庭犬。",
+  "tags": [
+    "家庭犬",
+    "导盲",
+    "美洲",
+    "寻回犬"
+  ],
+  "specs": {
+    "分类": "美洲犬种",
+    "育成地": "苏格兰（后流行于北美）",
+    "体重": "25–34 kg",
+    "寿命": "10–12 年",
+    "被毛": "中长、金色系",
+    "工作": "寻回、导盲、治疗",
+    "性格": "温和、忠诚、爱玩"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "寻回犬",
+      "家庭犬",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-golden-retriever/content.md"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "9f80b91b-f82d-4ba7-86f4-6fc8aeb58e4e",
+  "slug": "plant-caladium",
+  "subCategoryId": "plant-aroid",
+  "name": "彩叶芋 Caladium",
+  "summary": "块茎季性观叶，夏季叶色鲜艳冬季休眠。",
+  "tags": [
+    "观叶",
+    "热植",
+    "室内",
+    "天南星科"
+  ],
+  "specs": {
+    "分类": "天南星科",
+    "光照": "半阴",
+    "温度": "温暖",
+    "浇水": "休眠停肥少水",
+    "湿度": "中至高",
+    "繁殖": "扦插 / 分株",
+    "注意": "忌长期积水"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Caladium houseplant",
+    "matchTags": [
+      "天南星科",
+      "caladium"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/plant/plant-caladium/content.md"
+}

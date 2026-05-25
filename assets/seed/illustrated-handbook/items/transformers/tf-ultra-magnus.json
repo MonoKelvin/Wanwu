@@ -1,0 +1,29 @@
+{
+  "id": "d86badbf-147f-4390-a75b-406de3659e2d",
+  "slug": "tf-ultra-magnus",
+  "subCategoryId": "tf-g1",
+  "name": "通天晓 Ultra Magnus",
+  "summary": "城市指挥官，集装箱卡车变形，秩序与规章象征。",
+  "tags": [
+    "汽车人",
+    "指挥官",
+    "变形",
+    "Hasbro"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "matchTags": [
+      "汽车人",
+      "hasbro",
+      "指挥官",
+      "ultra"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/tf-ultra-magnus/content.md"
+}

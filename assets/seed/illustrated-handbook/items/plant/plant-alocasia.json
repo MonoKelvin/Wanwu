@@ -1,0 +1,35 @@
+{
+  "id": "26f8d5f8-4a66-414b-a86d-8234f69e4da6",
+  "slug": "plant-alocasia",
+  "subCategoryId": "plant-aroid",
+  "name": "海芋 Alocasia",
+  "summary": "大象耳大型叶，块茎贮藏，品种纹理丰富。",
+  "tags": [
+    "观叶",
+    "热植",
+    "室内",
+    "天南星科"
+  ],
+  "specs": {
+    "分类": "天南星科",
+    "光照": "耐阴忌暴晒",
+    "温度": "20–30°C",
+    "浇水": "冬季减少浇水",
+    "湿度": "中至高",
+    "繁殖": "扦插 / 分株",
+    "注意": "忌长期积水"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Alocasia houseplant",
+    "matchTags": [
+      "天南星科",
+      "alocasia"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/plant/plant-alocasia/content.md"
+}

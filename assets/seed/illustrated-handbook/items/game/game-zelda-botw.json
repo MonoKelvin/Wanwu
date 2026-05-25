@@ -1,0 +1,30 @@
+{
+  "id": "e2b6e635-a1a3-4acd-93ac-bc707c11f78e",
+  "slug": "game-zelda-botw",
+  "subCategoryId": "game-action",
+  "name": "塞尔达 旷野之息",
+  "summary": "《塞尔达传说 旷野之息》是任天堂企划制作本部开发、 Monolith Soft 协力开发的动作冒险游戏，为《 塞尔达传说 》主系列的第19作，于2017年3月3日在 Wii U 、 Nintendo Switch 上发售。",
+  "tags": [
+    "塞尔达传说 旷野之息",
+    "ゼルダの伝説 ブレス オブ ザ ワイルド"
+  ],
+  "specs": {
+    "开发商": "任天堂 EPD",
+    "首发": "2017年3月3日",
+    "平台": "Switch / Wii U",
+    "类型": "开放世界动作冒险",
+    "主角": "林克",
+    "舞台": "海拉鲁大陆",
+    "荣誉": "TGA 2017 年度最佳"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "action adventure video game screenshot",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6
+  },
+  "contentFile": "illustrated-handbook/game/game-zelda-botw/content.md"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "8a2c6932-55fb-476a-b8ac-259698322894",
+  "slug": "illustration-klimt-kiss",
+  "subCategoryId": "ill-digital",
+  "name": "吻 The Kiss",
+  "summary": "克里姆特金箔装饰与新艺术风格。",
+  "tags": [
+    "艺术史",
+    "新艺术",
+    "克里姆特",
+    "名画"
+  ],
+  "specs": {
+    "艺术家": "克里姆特",
+    "年代": "1907",
+    "流派": "新艺术",
+    "收藏": "贝尔维德宫"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "The Kiss digital illustration artwork",
+    "matchTags": [
+      "艺术史",
+      "新艺术",
+      "克里姆特",
+      "the"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/illustration/illustration-klimt-kiss/content.md"
+}

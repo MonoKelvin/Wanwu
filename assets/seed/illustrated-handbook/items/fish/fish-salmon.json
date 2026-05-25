@@ -1,0 +1,30 @@
+{
+  "id": "af6dc145-4aa2-4828-b65f-81c40402ab9e",
+  "slug": "fish-salmon",
+  "subCategoryId": "fish-food",
+  "name": "大西洋鲑",
+  "summary": "大马哈鱼是鲑形目鲑科太平洋鲑属鱼类， [10-11 ] 又名 麻哈鱼 、马哈鱼、鲑鱼。",
+  "tags": [
+    "Oncorhynchus keta",
+    "大马哈鱼"
+  ],
+  "specs": {
+    "中文名": "鲑鱼（三文鱼）",
+    "分类": "鲑科",
+    "习性": "溯河产卵",
+    "分布": "北太平洋、大西洋北部",
+    "经济": "重要食用鱼与养殖品种"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "fish aquarium",
+    "category": "animals",
+    "matchTags": [
+      "fish"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/fish/fish-salmon/content.md"
+}

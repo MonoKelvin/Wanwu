@@ -1,0 +1,34 @@
+{
+  "id": "ca62866d-9f06-4c45-bf52-9714df17e173",
+  "slug": "motorcycle-harley-street",
+  "subCategoryId": "moto-america",
+  "name": "哈雷戴维森 Street 750",
+  "summary": "美国哈雷入门级街车，V 型双缸，面向城市通勤与新手骑士的「黑色星期五」系列。",
+  "tags": [
+    "哈雷",
+    "巡航",
+    "V缸",
+    "美式"
+  ],
+  "specs": {
+    "首发年份": "2014",
+    "厂商": "Harley-Davidson",
+    "排量": "749 cc",
+    "发动机": "水冷 V 双缸",
+    "最大功率": "约 53 hp",
+    "车型": "街车",
+    "产地": "印度 / 美国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Street 750 motorcycle",
+    "category": "transportation",
+    "matchTags": [
+      "street"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/motorcycle-harley-street/content.md"
+}

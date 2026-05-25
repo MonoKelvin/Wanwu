@@ -1,0 +1,31 @@
+{
+  "id": "61c2e4af-b7ed-4e28-be73-d4a1de7cd808",
+  "slug": "interior-onsen-ryokan",
+  "subCategoryId": "int-zen",
+  "name": "温泉旅馆",
+  "summary": "露天风吕、木浴桶与浴衣体验。",
+  "tags": [
+    "禅意",
+    "日式",
+    "旅馆",
+    "温泉"
+  ],
+  "specs": {
+    "分类": "日式禅意",
+    "元素": "温泉",
+    "空间": "旅馆",
+    "材质": "木、竹、石、纸",
+    "原则": "留白、自然",
+    "场景": "茶、宿、庭"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/interior/interior-onsen-ryokan/content.md"
+}

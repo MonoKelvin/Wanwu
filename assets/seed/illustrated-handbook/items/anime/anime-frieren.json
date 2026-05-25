@@ -1,0 +1,33 @@
+{
+  "id": "430c9263-b146-44d1-903c-01b741003faf",
+  "slug": "anime-frieren",
+  "subCategoryId": "anime-isekai",
+  "name": "葬送的芙莉莲",
+  "summary": "日本电视动画片系列《葬送的芙莉莲》改编自山田钟人负责故事、阿部司佐负责作画的同名漫画作品，由东宝动画出品，MADHOUSE负责制作 。",
+  "tags": [
+    "奇幻冒险",
+    "日本",
+    "剧情",
+    "奇幻"
+  ],
+  "specs": {
+    "原作": "山田钟人（作画：阿部司）",
+    "连载": "2020–（周刊少年Sunday）",
+    "动画制作": "MADHOUSE",
+    "首播": "2023-09-29（日本）",
+    "话数": "动画 28 集（第一季）",
+    "主角": "芙莉莲",
+    "类型": "奇幻 / 公路片",
+    "地区": "日本"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "fantasy anime landscape illustration",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-frieren/content.md"
+}

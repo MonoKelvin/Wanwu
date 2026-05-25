@@ -1,0 +1,34 @@
+{
+  "id": "d06c7021-477f-4007-952a-753744803a11",
+  "slug": "hero-cyborg-dc",
+  "subCategoryId": "hero-dc-film",
+  "name": "钢骨 Cyborg",
+  "summary": "维克多·斯通半人半机械，母盒科技赋予联网与能量炮能力。",
+  "tags": [
+    "DC",
+    "维克多",
+    "正义联盟",
+    "机械"
+  ],
+  "specs": {
+    "宇宙": "DC",
+    "首次登场": "1980",
+    "本名": "维克多·斯通",
+    "能力": "母盒科技",
+    "团队": "少年泰坦/正义联盟"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Cyborg action figure toy collectible",
+    "matchTags": [
+      "正义联盟",
+      "维克多",
+      "cyborg"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-cyborg-dc/content.md"
+}

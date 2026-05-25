@@ -1,0 +1,34 @@
+{
+  "id": "d4b21a1c-7868-42cd-a2a0-0fbee67f0f0b",
+  "slug": "history-dazu-rock-carvings",
+  "subCategoryId": "hist-world",
+  "name": "大足石刻",
+  "summary": "唐宋摩崖造像，佛教艺术巅峰之一。",
+  "tags": [
+    "世界遗产",
+    "唐至宋",
+    "重庆",
+    "中国"
+  ],
+  "specs": {
+    "分类": "中国史迹",
+    "地点": "重庆",
+    "时代": "唐至宋",
+    "地位": "世界遗产",
+    "类型": "建筑 / 石窟 / 古城",
+    "保护": "国家级文保"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "historic landmark architecture",
+    "matchTags": [
+      "世界遗产",
+      "唐至宋"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/history/history-dazu-rock-carvings/content.md"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "9b3f894f-a454-4723-b083-85bc7a4a200f",
+  "slug": "supercar-mclaren-senna",
+  "subCategoryId": "car-britain",
+  "name": "迈凯伦 Senna",
+  "summary": "以塞纳命名，900kg 级下压力赛道机器。",
+  "tags": [
+    "超跑",
+    "GT",
+    "英国",
+    "McLaren"
+  ],
+  "specs": {
+    "首发年份": "2018",
+    "厂商": "McLaren",
+    "最大功率": "800 hp",
+    "产量": "500 辆",
+    "定位": "赛道取向",
+    "产地": "英国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Senna supercar",
+    "matchTags": [
+      "mclaren",
+      "senna"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/supercar/supercar-mclaren-senna/content.md"
+}

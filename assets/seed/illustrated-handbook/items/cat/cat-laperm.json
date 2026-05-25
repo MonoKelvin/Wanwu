@@ -1,0 +1,37 @@
+{
+  "id": "9254b2e2-6815-4aba-afaa-381553789099",
+  "slug": "cat-laperm",
+  "subCategoryId": "cat-exotic",
+  "name": "拉邦猫 LaPerm",
+  "summary": "俄勒冈卷毛突变，被毛卷曲可变化，性格粘人好奇，掉毛相对较少。",
+  "tags": [
+    "农场起源",
+    "粘人",
+    "卷毛",
+    "美洲"
+  ],
+  "specs": {
+    "分类": "美洲品种",
+    "原产地": "美国俄勒冈",
+    "体重": "2.5–5.5 kg",
+    "寿命": "10–15 年",
+    "被毛": "卷曲可变",
+    "性格": "粘人、好奇"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "LaPerm cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "农场起源",
+      "laperm",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-laperm/content.md"
+}

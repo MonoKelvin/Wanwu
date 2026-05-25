@@ -1,0 +1,34 @@
+{
+  "id": "7d51afee-2f18-4def-ac72-0ac9bf0682fb",
+  "slug": "hero-batman-dc",
+  "subCategoryId": "hero-dc",
+  "name": "蝙蝠侠 Batman",
+  "summary": "DC 漫画「黑暗骑士」，布鲁斯·韦恩以财富、智谋与装备打击哥谭犯罪。",
+  "tags": [
+    "黑暗骑士",
+    "DC",
+    "侦探",
+    "哥谭"
+  ],
+  "specs": {
+    "宇宙": "DC 漫画",
+    "首次登场": "1939",
+    "本名": "布鲁斯·韦恩 Bruce Wayne",
+    "基地": "哥谭市 Gotham",
+    "装备": "蝙蝠车、蝙蝠镖、装甲",
+    "所属": "正义联盟"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Batman action figure toy collectible",
+    "category": "people",
+    "matchTags": [
+      "黑暗骑士",
+      "batman"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-batman-dc/content.md"
+}

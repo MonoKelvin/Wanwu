@@ -1,0 +1,31 @@
+{
+  "id": "a2165fc5-64ef-469f-945b-0c58cee95cb0",
+  "slug": "interior-coastal",
+  "subCategoryId": "int-nordic",
+  "name": "海岸风",
+  "summary": "蓝白条纹、麻绳与浅色木地板海滨度假感。",
+  "tags": [
+    "家装",
+    "度假",
+    "北欧",
+    "海岸"
+  ],
+  "specs": {
+    "分类": "北欧风格",
+    "风格": "海岸",
+    "空间": "度假",
+    "材质": "木、棉麻、羊毛",
+    "光线": "重视自然光",
+    "品牌": "IKEA / Hay 等"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/interior/interior-coastal/content.md"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "c5e260ae-2b83-423f-a133-5b662af1dafe",
+  "slug": "cat-japanese-bobtail-longhair",
+  "subCategoryId": "cat-long-hair",
+  "name": "日本短尾猫（长毛型）",
+  "summary": "日本短尾的长毛表现，丝质被毛、短尾，常参与传统猫绘与招猫形象。",
+  "tags": [
+    "三花",
+    "日本",
+    "短尾",
+    "长毛"
+  ],
+  "specs": {
+    "分类": "日本品种",
+    "原产地": "日本",
+    "体重": "2.5–5.5 kg",
+    "寿命": "15–18 年",
+    "被毛": "长毛丝质",
+    "性格": "活泼、亲人"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-japanese-bobtail-longhair/content.md"
+}

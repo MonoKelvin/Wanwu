@@ -1,0 +1,36 @@
+{
+  "id": "2abaa5e6-4f5b-4af2-bc4a-8fbe364a1ba0",
+  "slug": "movie-pulp-fiction",
+  "subCategoryId": "movie-action",
+  "name": "低俗小说 Pulp Fiction",
+  "summary": "塔伦蒂诺 1994 年非线性犯罪片：洛杉矶黑帮世界多线交叉，戛纳金棕榈与流行文化符号。",
+  "tags": [
+    "犯罪喜剧",
+    "电影",
+    "动作",
+    "1994"
+  ],
+  "specs": {
+    "导演": "昆汀·塔伦蒂诺",
+    "编剧": "昆汀·塔伦蒂诺、罗杰·阿瓦里",
+    "上映": "1994-10-14（美国）",
+    "片长": "约 154 分钟",
+    "国家": "美国",
+    "类型": "犯罪 / 剧情",
+    "主演": "约翰·特拉沃尔塔、乌玛·瑟曼",
+    "主要荣誉": "奥斯卡最佳原创剧本、戛纳金棕榈"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Pulp Fiction cinema film still",
+    "matchTags": [
+      "犯罪喜剧",
+      "pulp"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/movie/movie-pulp-fiction/content.md"
+}

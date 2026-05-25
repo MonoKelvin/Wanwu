@@ -1,0 +1,28 @@
+{
+  "id": "21c4e1a3-18cf-462e-93e5-d7cc621eb690",
+  "slug": "tf-laserbeak",
+  "subCategoryId": "tf-decepticon",
+  "name": "激光鸟 Laserbeak",
+  "summary": "声波磁带，鸟形侦察与暗杀。",
+  "tags": [
+    "变形",
+    "霸天虎",
+    "反派",
+    "磁带战士"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "matchTags": [
+      "霸天虎",
+      "磁带战士",
+      "laserbeak"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/tf-laserbeak/content.md"
+}

@@ -2,6 +2,7 @@
 import { existsSync } from 'fs'
 import { join } from 'path'
 import { resolveWanwuPath } from '../data/paths'
+import { ILLUSTRATED_HANDBOOK_MEDIA_DIR } from '../library/paths'
 import { resolveLibraryMediaAbsolute } from '../media/library'
 
 function normalizeRel(path: string): string {
@@ -13,7 +14,7 @@ export function resolveWanwuMediaAbsolute(relativePath: string): string | null {
   const rel = normalizeRel(relativePath)
   if (!rel) return null
 
-  if (rel.startsWith('library/')) {
+  if (rel.startsWith(`${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/`)) {
     return resolveLibraryMediaAbsolute(rel)
   }
 

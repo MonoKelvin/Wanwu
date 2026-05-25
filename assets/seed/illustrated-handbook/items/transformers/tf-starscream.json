@@ -1,0 +1,28 @@
+{
+  "id": "9777a81e-6d8c-4ae3-a0f5-d8c0b2f592c6",
+  "slug": "tf-starscream",
+  "subCategoryId": "tf-decepticon",
+  "name": "红蜘蛛 Starscream",
+  "summary": "霸天虎空军司令，F-15 变形，野心勃勃总想取代威震天。",
+  "tags": [
+    "空军司令",
+    "变形",
+    "霸天虎",
+    "反派"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "matchTags": [
+      "霸天虎",
+      "空军司令",
+      "starscream"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/tf-starscream/content.md"
+}

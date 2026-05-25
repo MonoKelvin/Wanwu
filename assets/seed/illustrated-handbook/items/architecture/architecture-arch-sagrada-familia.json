@@ -1,0 +1,32 @@
+{
+  "id": "e8633956-7c2f-4404-ae87-85ff069f6b02",
+  "slug": "architecture-arch-sagrada-familia",
+  "subCategoryId": "arch-religious",
+  "name": "圣家堂",
+  "summary": "圣家族大教堂（加泰罗尼亚语：Basílica i Temple Expiatori de la Sagrada Família），又译作神圣家族大教堂，简称圣家堂（Sagrada Família），是位于 西班牙 加泰罗尼亚 巴塞罗那 的一座罗马 天主教 大型教堂，由西班牙建筑师 安东尼奥·高迪 （1852~1926年",
+  "tags": [
+    "圣家族大教堂",
+    "Basílica i Temple Expiatori de la Sagrada Família",
+    "西班牙加泰罗尼亚巴塞罗那市艾桑博菜区"
+  ],
+  "specs": {
+    "中文名": "圣家族大教堂",
+    "外文名": "Basílica i Temple Expiatori de la Sagrada Família",
+    "地理位置": "西班牙加泰罗尼亚巴塞罗那市艾桑博菜区",
+    "开放时间": "9:00~19:00（月份不同有变化）",
+    "别 名": "神圣家族大教堂 、 圣家堂（简称）",
+    "宗 教": "罗马天主教",
+    "教 区": "天主教巴塞罗那总教区",
+    "现 状": "开放/未完工"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "landmark architecture",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/architecture/architecture-arch-sagrada-familia/content.md"
+}

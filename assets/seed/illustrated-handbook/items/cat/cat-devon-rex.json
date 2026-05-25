@@ -1,0 +1,36 @@
+{
+  "id": "0952e396-8a8e-48a6-896b-bbaf63d5f954",
+  "slug": "cat-devon-rex",
+  "subCategoryId": "cat-exotic",
+  "name": "德文卷毛猫 Devon Rex",
+  "summary": "英国德文突变卷毛、大耳、短被毛，性格顽皮像「小精灵」。",
+  "tags": [
+    "卷毛",
+    "短毛",
+    "欧洲",
+    "英国"
+  ],
+  "specs": {
+    "原产地": "英国德文郡",
+    "体重": "2.5–4 kg",
+    "寿命": "9–15 年",
+    "被毛": "短而卷曲疏松",
+    "性格": "顽皮、亲人、精力充沛",
+    "识别特征": "特大耳、精灵脸、卷毛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Devon Rex cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "devon",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-devon-rex/content.md"
+}

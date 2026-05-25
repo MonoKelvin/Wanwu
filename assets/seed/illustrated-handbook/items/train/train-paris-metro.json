@@ -1,0 +1,29 @@
+{
+  "id": "fd9e02cc-103e-4b01-846f-1b9e89cf9607",
+  "slug": "train-paris-metro",
+  "subCategoryId": "train-metro",
+  "name": "巴黎地铁",
+  "summary": "巴黎地铁（法语：Métro de Paris）是 法国 巴黎的地下轨道交通系统之一，于1900年开始运营。",
+  "tags": [
+    "巴黎地铁",
+    "1900年",
+    "Métro de Paris （法） Paris Metro （英）"
+  ],
+  "specs": {
+    "名称": "巴黎地铁",
+    "开通": "1900年",
+    "线路": "16条主线等",
+    "标志": "Art Nouveau 入口（吉马尔设计）",
+    "规模": "欧洲主要地铁系统之一"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "train railway",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/train/train-paris-metro/content.md"
+}

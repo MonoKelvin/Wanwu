@@ -1,0 +1,30 @@
+{
+  "id": "3a12d25e-9cd8-4413-8cf3-c33ef4d44ee6",
+  "slug": "bird-macaw",
+  "subCategoryId": "bird-tropical",
+  "name": "金刚鹦鹉",
+  "summary": "热带大型鹦鹉。",
+  "tags": [
+    "金刚"
+  ],
+  "specs": {
+    "分类": "鸟类",
+    "代表": "金刚鹦鹉",
+    "习性": "热带大型鹦鹉。",
+    "分布": "因种而异",
+    "保护": "查阅 IUCN 红色名录"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "macaw bird wildlife photo",
+    "category": "animals",
+    "matchTags": [
+      "bird",
+      "wildlife"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/bird/bird-macaw/content.md"
+}

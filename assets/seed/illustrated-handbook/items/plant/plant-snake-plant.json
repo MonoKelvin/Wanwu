@@ -1,0 +1,35 @@
+{
+  "id": "a88548f7-dbdf-4d8b-aca6-34a2e5a0d12e",
+  "slug": "plant-snake-plant",
+  "subCategoryId": "plant-succulent",
+  "name": "虎尾兰 Sansevieria",
+  "summary": "百合科虎尾兰属，耐旱耐阴，叶片直立剑形，新手友好空气净化绿植。",
+  "tags": [
+    "多肉",
+    "耐旱",
+    "室内",
+    "空气净化"
+  ],
+  "specs": {
+    "分类": "多肉与仙人掌",
+    "科属": "天门冬科 Dracaena（原 Sansevieria）",
+    "原产地": "西非",
+    "浇水": "干透浇透、冬季控水",
+    "光照": "散射光至明亮",
+    "繁殖": "分株、叶插",
+    "特点": "耐阴、耐旱"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Sansevieria houseplant",
+    "matchTags": [
+      "空气净化",
+      "sansevieria"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/plant/plant-snake-plant/content.md"
+}

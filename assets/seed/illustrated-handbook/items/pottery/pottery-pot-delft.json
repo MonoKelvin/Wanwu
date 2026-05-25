@@ -1,0 +1,21 @@
+{
+  "id": "07833da8-26e8-48be-b736-5785a4a9986f",
+  "slug": "pottery-pot-delft",
+  "subCategoryId": "pot-europe",
+  "name": "代尔夫特蓝陶",
+  "summary": "荷兰陶瓷。",
+  "tags": [],
+  "specs": {
+    "概述": "荷兰陶瓷。"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "ceramic pottery",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/pottery/pottery-pot-delft/content.md"
+}

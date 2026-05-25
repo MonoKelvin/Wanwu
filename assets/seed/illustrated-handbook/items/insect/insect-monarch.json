@@ -1,0 +1,35 @@
+{
+  "id": "07cb3a88-d7d9-4300-adf0-c8354552abba",
+  "slug": "insect-monarch",
+  "subCategoryId": "insect-butterfly",
+  "name": "帝王蝶",
+  "summary": "迁徙奇迹，美洲大迁徙蝴蝶",
+  "tags": [
+    "迁徙",
+    "蝴蝶",
+    "黑脉金斑蝶",
+    "帝王蝶"
+  ],
+  "specs": {
+    "中文名": "帝王蝶",
+    "分类": "蛱蝶科",
+    "迁徙": "北美长距离迁徙",
+    "幼虫": "取食马利筋属植物",
+    "保护": "栖息地减少威胁"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "monarch butterfly orange",
+    "category": "animals",
+    "matchTags": [
+      "butterfly",
+      "monarch"
+    ],
+    "requiredTags": [
+      "insect"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/insect/insect-monarch/content.md"
+}

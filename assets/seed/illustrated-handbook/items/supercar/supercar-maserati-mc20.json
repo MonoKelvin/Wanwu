@@ -1,0 +1,35 @@
+{
+  "id": "fc7cf900-78d4-46f9-889c-23a5455063fb",
+  "slug": "supercar-maserati-mc20",
+  "subCategoryId": "car-italy",
+  "name": "玛莎拉蒂 MC20",
+  "summary": "海神发动机回归超跑，蝴蝶门与中置布局重塑品牌性能形象。",
+  "tags": [
+    "Maserati",
+    "意大利",
+    "超跑",
+    "V8/V12"
+  ],
+  "specs": {
+    "首发年份": "2020",
+    "厂商": "Maserati",
+    "发动机": "V6 双涡轮",
+    "最大功率": "630 hp",
+    "产地": "意大利"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "maserati sports car luxury",
+    "minMatchScore": 2,
+    "matchTags": [
+      "意大利",
+      "maserati",
+      "v8/v12",
+      "mc20"
+    ],
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/supercar/supercar-maserati-mc20/content.md"
+}

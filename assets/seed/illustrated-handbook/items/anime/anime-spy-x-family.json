@@ -1,0 +1,35 @@
+{
+  "id": "4f9a6081-b2c0-46e4-83c3-4383c44efe88",
+  "slug": "anime-spy-x-family",
+  "subCategoryId": "anime-slice",
+  "name": "间谍过家家",
+  "summary": "电视动画片系列《间谍×过家家》改编自 远藤达哉 著作的同名漫画作品，于2021年10月31日宣布制作决定的消息，该系列由 WIT STUDIO 、 CLOVERWORKS 负责制作 。",
+  "tags": [
+    "日本",
+    "热血",
+    "少年向",
+    "2022 动画"
+  ],
+  "specs": {
+    "原作": "远藤达哉",
+    "连载": "2019–（少年Magazine+）",
+    "动画制作": "WIT Studio / CloverWorks",
+    "首播": "2022-04-09（日本）",
+    "主角": "安妮亚·福杰",
+    "类型": "喜剧 / 间谍",
+    "地区": "日本",
+    "单行本": "连载中"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cozy anime countryside illustration",
+    "matchTags": [
+      "少年漫"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-spy-x-family/content.md"
+}

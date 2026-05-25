@@ -1,0 +1,37 @@
+{
+  "id": "a44243d5-9fef-44f5-977e-636d76253dd3",
+  "slug": "dog-tibetan-mastiff",
+  "subCategoryId": "dog-working",
+  "name": "藏獒",
+  "summary": "西藏大型护卫犬，厚毛、体格巨大，传统护卫羊群与院落。",
+  "tags": [
+    "巨型",
+    "西藏",
+    "护卫",
+    "藏獒"
+  ],
+  "specs": {
+    "分类": "护卫犬",
+    "原产地": "西藏",
+    "肩高": "66–76 cm",
+    "体重": "45–70 kg",
+    "被毛": "厚双层",
+    "寿命": "10–12 年",
+    "特点": "夜行警觉",
+    "性格": "独立、领地性强"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-tibetan-mastiff/content.md"
+}

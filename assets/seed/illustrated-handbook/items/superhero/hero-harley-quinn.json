@@ -1,0 +1,33 @@
+{
+  "id": "2022852c-a82b-46c2-ab14-c5b4a68d2dae",
+  "slug": "hero-harley-quinn",
+  "subCategoryId": "hero-dc",
+  "name": "哈莉·奎茵 Harley Quinn",
+  "summary": "前精神病医生爱上小丑后成为反英雄，棒球棍与幽默暴力风格。",
+  "tags": [
+    "DC",
+    "哈莉",
+    "反英雄",
+    "小丑"
+  ],
+  "specs": {
+    "宇宙": "DC",
+    "首次登场": "1992",
+    "身份": "精神病医生/反英雄",
+    "武器": "球棒、枪械",
+    "关联": "小丑、毒藤女"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Harley Quinn action figure toy collectible",
+    "matchTags": [
+      "反英雄",
+      "harley"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-harley-quinn/content.md"
+}

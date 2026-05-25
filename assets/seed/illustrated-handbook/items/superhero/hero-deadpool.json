@@ -1,0 +1,31 @@
+{
+  "id": "140809fa-c86a-479b-bd73-7e08ccb2b1f7",
+  "slug": "hero-deadpool",
+  "subCategoryId": "hero-marvel-mcu",
+  "name": "死侍 Deadpool",
+  "summary": "韦德·威尔逊再生能力与打破第四墙的反英雄。",
+  "tags": [
+    "再生",
+    "漫威",
+    "反英雄"
+  ],
+  "specs": {
+    "宇宙": "漫威 Marvel",
+    "首次登场": "1991",
+    "本名": "韦德·威尔逊",
+    "MCU饰演": "瑞安·雷诺兹"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Deadpool action figure toy collectible",
+    "matchTags": [
+      "反英雄",
+      "deadpool"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-deadpool/content.md"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "9637960f-d5e6-467d-94c4-4a8f4a27a10f",
+  "slug": "plant-hoya",
+  "subCategoryId": "plant-succulent",
+  "name": "球兰 Hoya",
+  "summary": "蜡质叶与伞形花序，花香浓郁需充足光开花。",
+  "tags": [
+    "观叶",
+    "热植",
+    "室内",
+    "天南星科"
+  ],
+  "specs": {
+    "分类": "天南星科",
+    "光照": "明亮光",
+    "温度": "多肉状叶",
+    "浇水": "控水促花",
+    "湿度": "中至高",
+    "繁殖": "扦插 / 分株",
+    "注意": "忌长期积水"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Hoya houseplant",
+    "matchTags": [
+      "天南星科",
+      "hoya"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/plant/plant-hoya/content.md"
+}

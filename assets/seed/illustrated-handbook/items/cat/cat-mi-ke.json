@@ -1,0 +1,35 @@
+{
+  "id": "c02df2f5-c4e7-4c6c-8909-f8a0c390a7ed",
+  "slug": "cat-mi-ke",
+  "subCategoryId": "cat-japan",
+  "name": "三毛猫（日本文化）",
+  "summary": "白橘黑三色短尾猫在日本文化中象征幸运，与招猫、短尾猫形象紧密相连。",
+  "tags": [
+    "日本",
+    "三毛",
+    "短尾",
+    "吉祥"
+  ],
+  "specs": {
+    "分类": "日本品种",
+    "类型": "毛色+文化型",
+    "毛色": "白橘黑",
+    "文化": "招财、船猫",
+    "关联": "日本短尾",
+    "性别": "多为雌性"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-mi-ke/content.md"
+}

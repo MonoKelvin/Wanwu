@@ -1,0 +1,32 @@
+{
+  "id": "b4a4159b-4d08-4779-8a7f-b56322323e6a",
+  "slug": "ill-blender-3d",
+  "subCategoryId": "ill-portrait",
+  "name": "Blender 3D 插画",
+  "summary": "三渲二或写实渲染的数字艺术。",
+  "tags": [
+    "Blender",
+    "插画",
+    "数字绘画",
+    "3D"
+  ],
+  "specs": {
+    "软件": "Blender",
+    "授权": "开源",
+    "用途": "3D/三渲二",
+    "渲染": "Cycles/Eevee"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Blender 3D digital illustration artwork",
+    "matchTags": [
+      "数字绘画",
+      "blender"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/illustration/ill-blender-3d/content.md"
+}

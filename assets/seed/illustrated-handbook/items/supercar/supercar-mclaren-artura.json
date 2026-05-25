@@ -1,0 +1,33 @@
+{
+  "id": "c32c9bd5-1265-40df-ac77-fb664f853fe4",
+  "slug": "supercar-mclaren-artura",
+  "subCategoryId": "car-britain",
+  "name": "迈凯伦 Artura",
+  "summary": "混动 V6 新平台，英国超跑电气化转折点。",
+  "tags": [
+    "超跑",
+    "GT",
+    "英国",
+    "McLaren"
+  ],
+  "specs": {
+    "首发年份": "2021",
+    "厂商": "McLaren",
+    "动力": "V6 混动",
+    "最大功率": "680 hp",
+    "产地": "英国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Artura supercar",
+    "matchTags": [
+      "mclaren",
+      "artura"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/supercar/supercar-mclaren-artura/content.md"
+}

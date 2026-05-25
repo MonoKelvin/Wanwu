@@ -1,0 +1,35 @@
+{
+  "id": "5f1b1399-6164-47a5-9d12-1fc8e2055755",
+  "slug": "cat-dragon-li",
+  "subCategoryId": "cat-short-hair",
+  "name": "中华狸花猫",
+  "summary": "中国本土自然猫种，狸花纹路、强健独立，被 CFA 以「Chinese Li Hua」名称认可。",
+  "tags": [
+    "短毛",
+    "狸花",
+    "本土",
+    "中国"
+  ],
+  "specs": {
+    "原产地": "中国",
+    "体重": "3.5–6 kg",
+    "寿命": "12–16 年",
+    "被毛": "短密，棕狸纹最常见",
+    "性格": "独立、聪明、活泼",
+    "识别特征": "额头 M 纹、鱼骨虎斑"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-dragon-li/content.md"
+}

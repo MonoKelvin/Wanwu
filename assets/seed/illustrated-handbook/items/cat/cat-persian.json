@@ -1,0 +1,37 @@
+{
+  "id": "e3333b68-ba23-4ed2-8179-a2fc19cc80fa",
+  "slug": "cat-persian",
+  "subCategoryId": "cat-long-hair",
+  "name": "波斯猫 Persian",
+  "summary": "长毛扁鼻品种，被毛丰厚华丽，性格安静，需每日梳理。",
+  "tags": [
+    "室内猫",
+    "扁脸",
+    "欧洲",
+    "长毛"
+  ],
+  "specs": {
+    "原产地": "伊朗/英国选育",
+    "体重": "3–6 kg",
+    "寿命": "12–17 年",
+    "被毛": "长毛、需每日梳理",
+    "性格": "安静、温和",
+    "识别特征": "扁脸、圆眼、厚毛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Persian cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "室内猫",
+      "persian",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-persian/content.md"
+}

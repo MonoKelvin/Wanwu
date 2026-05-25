@@ -1,0 +1,27 @@
+{
+  "id": "48a36efe-2f14-4288-913f-a16d50d18a34",
+  "slug": "ui-design-tailwind-docs",
+  "subCategoryId": "ui-design-tool",
+  "name": "Tailwind CSS",
+  "summary": "原子化 CSS 框架文档风。",
+  "tags": [],
+  "specs": {
+    "分类": "开发者文档 UI",
+    "产品": "Tailwind CSS 文档",
+    "特点": "示例驱动、Copy class",
+    "工具": "Tailwind Play",
+    "影响": "DX 文档站点范本"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Tailwind CSS design system ui",
+    "category": "all",
+    "matchTags": [
+      "tailwind"
+    ],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-design-tailwind-docs/content.md"
+}

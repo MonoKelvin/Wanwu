@@ -1,0 +1,31 @@
+{
+  "id": "cd5c12ce-229b-4768-a3d8-16728b94769f",
+  "slug": "ill-light-novel-cover",
+  "subCategoryId": "ill-portrait",
+  "name": "轻小说封面",
+  "summary": "文库本封面构图与角色卖点表现。",
+  "tags": [
+    "文库",
+    "插画",
+    "数字绘画",
+    "出版"
+  ],
+  "specs": {
+    "类型": "书籍装帧",
+    "风格": "日系插画",
+    "受众": "ACG",
+    "尺寸": "文库标准"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "digital illustration artwork",
+    "matchTags": [
+      "数字绘画"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/illustration/ill-light-novel-cover/content.md"
+}

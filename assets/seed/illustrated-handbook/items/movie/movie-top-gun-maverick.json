@@ -1,0 +1,35 @@
+{
+  "id": "cc1ff3d6-bb7c-48f3-9ba3-8de3ab32e18b",
+  "slug": "movie-top-gun-maverick",
+  "subCategoryId": "movie-action",
+  "name": "壮志凌云 2：独行侠",
+  "summary": "克鲁斯 2022 年续集：独行侠训练飞行员执行超低空突袭，实拍航空场面票房大卖。",
+  "tags": [
+    "空战",
+    "电影",
+    "2022",
+    "动作"
+  ],
+  "specs": {
+    "导演": "约瑟夫·科辛斯基",
+    "编剧": "伊伦·克鲁格等",
+    "上映": "2022-05-27（美国）",
+    "片长": "约 131 分钟",
+    "国家": "美国",
+    "类型": "动作 / 剧情",
+    "主演": "汤姆·克鲁斯",
+    "主要荣誉": "奥斯卡最佳音效"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "2： cinema film still",
+    "matchTags": [
+      "约瑟夫·科辛斯基"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/movie/movie-top-gun-maverick/content.md"
+}

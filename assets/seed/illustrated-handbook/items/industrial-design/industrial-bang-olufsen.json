@@ -1,0 +1,33 @@
+{
+  "id": "8e9c1c13-246d-427d-ad74-069bbaed594e",
+  "slug": "industrial-bang-olufsen",
+  "subCategoryId": "id-product",
+  "name": "B&O 音响",
+  "summary": "丹麦雕塑感音响与铝材加工美学。",
+  "tags": [
+    "Bang & Olufsen",
+    "工业设计",
+    "经典",
+    "音频"
+  ],
+  "specs": {
+    "创立": "1925",
+    "总部": "丹麦",
+    "领域": "高端音响",
+    "特色": "铝工艺",
+    "代表": "Beolab 系列"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "B&O product design",
+    "matchTags": [
+      "工业设计",
+      "bang & olufsen"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-bang-olufsen/content.md"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "d819a1a0-966d-4c04-832a-52ff20a3c9fa",
+  "slug": "dog-american-staffordshire",
+  "subCategoryId": "dog-americas",
+  "name": "美国斯塔福郡梗",
+  "summary": "美国培育的梗犬力量型，肌肉结实，家庭饲养需社会化与法规了解。",
+  "tags": [
+    "伴侣",
+    "美国",
+    "梗犬",
+    "力量型"
+  ],
+  "specs": {
+    "原产地": "美国",
+    "体重": "18–30 kg",
+    "寿命": "12–16 年",
+    "被毛": "短毛，虎斑/纯色等",
+    "性格": "自信、亲人、精力充沛",
+    "识别特征": "宽头、方块体型、肌肉发达"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "力量型",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-american-staffordshire/content.md"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "fdc3764a-f8c9-4563-a46c-680dbabfcfe5",
+  "slug": "anime-made-in-abyss",
+  "subCategoryId": "anime-isekai",
+  "name": "来自深渊",
+  "summary": "电视动画片《来自深渊》改编自土笔章人原作的同名漫画作品，由 KINEMA CITRUS 负责制作。",
+  "tags": [
+    "奇幻冒险",
+    "日本",
+    "剧情",
+    "奇幻"
+  ],
+  "specs": {
+    "原作": "土笔章人",
+    "连载": "2012–（Web Comic Gamma）",
+    "动画制作": "Kinema Citrus",
+    "首播": "2017-07-07（日本）",
+    "主角": "莉可",
+    "类型": "黑暗奇幻 / 冒险",
+    "地区": "日本",
+    "话数": "多季 + 剧场版"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "fantasy anime landscape illustration",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-made-in-abyss/content.md"
+}

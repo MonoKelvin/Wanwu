@@ -1,0 +1,27 @@
+{
+  "id": "a7f5ed0b-3945-4014-bfa6-918e1204f1dd",
+  "slug": "plant-boston-fern",
+  "subCategoryId": "plant-fern",
+  "name": "波士顿蕨",
+  "summary": "室内经典蕨类。",
+  "tags": [
+    "蕨类"
+  ],
+  "specs": {
+    "分类": "观叶 / 多肉",
+    "光照": "明亮散射光",
+    "浇水": "见干见湿",
+    "湿度": "中等",
+    "繁殖": "扦插 / 分株"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "houseplant",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/plant/plant-boston-fern/content.md"
+}

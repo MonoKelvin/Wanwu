@@ -1,0 +1,34 @@
+{
+  "id": "958d22f2-8281-45ea-ac02-d1b88a5124d0",
+  "slug": "cat-japanese-domestic",
+  "subCategoryId": "cat-japan",
+  "name": "日本家猫（日本猫）",
+  "summary": "日本本土混血家猫总称，含短尾与非短尾，适应力强，地方保护倡议增多。",
+  "tags": [
+    "日本",
+    "家猫",
+    "本土",
+    "混血"
+  ],
+  "specs": {
+    "分类": "日本品种",
+    "类型": "本土家猫总称",
+    "分布": "日本全国",
+    "动保": "TNR、领养",
+    "文化": "猫岛、地域猫"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-japanese-domestic/content.md"
+}

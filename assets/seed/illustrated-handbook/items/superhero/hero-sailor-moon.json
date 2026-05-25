@@ -1,0 +1,34 @@
+{
+  "id": "6a087c39-a16a-4fe8-9c09-90562e9eda19",
+  "slug": "hero-sailor-moon",
+  "subCategoryId": "hero-anime",
+  "name": "水手月亮 Sailor Moon",
+  "summary": "武内直子魔法少女经典，月野兔变身对抗黑暗王国。",
+  "tags": [
+    "武内直子",
+    "日本",
+    "魔法少女",
+    "经典"
+  ],
+  "specs": {
+    "作品": "美少女战士",
+    "首次登场": "1991",
+    "作者": "武内直子",
+    "身份": "月亮公主",
+    "类型": "魔法少女"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Sailor Moon action figure toy collectible",
+    "matchTags": [
+      "魔法少女",
+      "武内直子",
+      "sailor"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-sailor-moon/content.md"
+}

@@ -4,13 +4,30 @@ import { getWanwuDataDirectory, readWanwuPathConfig } from '../data/paths'
 import { getBundledAssetsRoot } from '../core/assetsRoot'
 import { isElectronPackaged } from '../core/electronRuntime'
 
-/** 种子配置目录（仅开发/构建；正式安装包不含 seed，数据来自 library-data-pack.zip） */
+/** 图鉴种子根目录 assets/seed/illustrated-handbook */
+export function getIllustratedHandbookSeedRoot(): string {
+  return join(getBundledAssetsRoot(), 'seed', 'illustrated-handbook')
+}
+
+/** 图鉴配图目录名（zip / wanwu-media / 用户 resources 下的相对路径前缀） */
+export const ILLUSTRATED_HANDBOOK_MEDIA_DIR = 'illustrated-handbook'
+
+/** 仓库内图鉴配图根目录 assets/seed/illustrated-handbook/resources */
+export function getIllustratedHandbookResourcesRoot(): string {
+  return join(getIllustratedHandbookSeedRoot(), 'resources')
+}
+
+export function getIllustratedHandbookBundledMediaRoot(): string {
+  return getIllustratedHandbookResourcesRoot()
+}
+
+/** @deprecated 使用 getIllustratedHandbookSeedRoot */
 export function getLibrarySeedRoot(): string {
-  return join(getBundledAssetsRoot(), 'seed', 'library')
+  return getIllustratedHandbookSeedRoot()
 }
 
 export function getLibraryItemsDir(): string {
-  return join(getLibrarySeedRoot(), 'items')
+  return join(getIllustratedHandbookSeedRoot(), 'items')
 }
 
 function hasAnySeedItemJson(dir: string): boolean {
@@ -31,12 +48,12 @@ export function isBundledLibrarySeedAvailable(): boolean {
 }
 
 export function getLibraryCategoriesPath(): string {
-  return join(getLibrarySeedRoot(), 'categories.json')
+  return join(getIllustratedHandbookSeedRoot(), 'categories.json')
 }
 
 /** @deprecated 图鉴种子已改为 items 目录独立 JSON，不再使用 catalog.json */
 export function getLibraryCatalogPath(): string {
-  return join(getLibrarySeedRoot(), 'catalog.json')
+  return join(getIllustratedHandbookSeedRoot(), 'catalog.json')
 }
 
 export const LIBRARY_PACK_ZIP = 'library-data-pack.zip'

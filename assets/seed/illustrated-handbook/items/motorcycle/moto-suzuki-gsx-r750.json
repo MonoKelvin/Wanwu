@@ -1,0 +1,35 @@
+{
+  "id": "ef316a7c-e316-49e6-8d41-e828eb719f4f",
+  "slug": "moto-suzuki-gsx-r750",
+  "subCategoryId": "moto-japan",
+  "name": "铃木 GSX-R750",
+  "summary": "750 仿赛经典，赛道日热门。",
+  "tags": [
+    "摩托",
+    "仿赛",
+    "日本",
+    "Suzuki"
+  ],
+  "specs": {
+    "首发年份": "1985",
+    "厂商": "Suzuki",
+    "排量": "749 cc",
+    "发动机": "直列四缸",
+    "最大功率": "约 150 hp",
+    "车型": "跑车",
+    "产地": "日本"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "GSX-R750 motorcycle",
+    "matchTags": [
+      "suzuki",
+      "gsx"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/moto-suzuki-gsx-r750/content.md"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "87c13ea2-4081-4d39-8de3-37e18817b30d",
+  "slug": "cat-american-curl",
+  "subCategoryId": "cat-americas",
+  "name": "美国卷耳猫 American Curl",
+  "summary": "加州突变向后卷耳品种，楔形脸、被毛长短皆有，性格好奇友善。",
+  "tags": [
+    "卷耳",
+    "家庭猫",
+    "美洲",
+    "加州"
+  ],
+  "specs": {
+    "原产地": "美国加州",
+    "体重": "2.5–5 kg",
+    "寿命": "12–16 年",
+    "被毛": "短毛或长毛，丝滑",
+    "性格": "好奇、友善、活泼",
+    "识别特征": "耳廓向后卷曲，幼猫期渐成"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "American Curl cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "家庭猫",
+      "american",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-american-curl/content.md"
+}

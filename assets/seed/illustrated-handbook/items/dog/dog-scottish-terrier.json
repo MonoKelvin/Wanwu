@@ -1,0 +1,36 @@
+{
+  "id": "82c8bdfd-9cad-40ba-96d1-72c1ea21ba18",
+  "slug": "dog-scottish-terrier",
+  "subCategoryId": "dog-europe",
+  "name": "苏格兰梗",
+  "summary": "苏格兰小型硬毛梗，短腿刚毛、胡须造型，性格独立勇敢。",
+  "tags": [
+    "苏格兰",
+    "刚毛",
+    "小型",
+    "梗犬"
+  ],
+  "specs": {
+    "分类": "欧洲犬种",
+    "原产地": "苏格兰",
+    "体重": "8–10 kg",
+    "寿命": "11–13 年",
+    "被毛": "硬毛",
+    "性格": "独立、勇敢"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "苏格兰",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-scottish-terrier/content.md"
+}

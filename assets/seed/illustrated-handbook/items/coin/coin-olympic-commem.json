@@ -1,0 +1,30 @@
+{
+  "id": "91b7fe47-d690-4fea-b950-bf1e9ff002dd",
+  "slug": "coin-olympic-commem",
+  "subCategoryId": "coin-modern",
+  "name": "奥运纪念币",
+  "summary": "奥运会纪念币是以奥运为题材发行的法定货币，其历史可追溯至公元前420年的 古希腊 ，现代奥运会纪念币始于1951年 芬兰 为1952年赫尔辛基第15届奥运会发行的银质纪念币，分为1951年和1952年两个版本，正面为芬兰国名、面值及橄榄枝图案，背面为 奥运五环 和主办地名。",
+  "tags": [
+    "奥运",
+    "Olympic Games commemorative coin",
+    "奥运会纪念币",
+    "纪念性和世界性都很强的 项目"
+  ],
+  "specs": {
+    "类型": "奥林匹克纪念币",
+    "材质": "金/银/铜合金等",
+    "用途": "纪念奥运赛事",
+    "收藏": "题材与发行量影响价值",
+    "代表": "2008北京奥运纪念币等"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "coins currency collection macro",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/coin/coin-olympic-commem/content.md"
+}

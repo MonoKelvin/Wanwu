@@ -1,0 +1,31 @@
+{
+  "id": "59dae807-7935-471b-a879-e7d6086a6f6d",
+  "slug": "interior-engawa",
+  "subCategoryId": "int-zen",
+  "name": "缘侧",
+  "summary": "室内外过渡廊道，坐观庭景。",
+  "tags": [
+    "廊道",
+    "禅意",
+    "日式",
+    "缘侧"
+  ],
+  "specs": {
+    "分类": "日式禅意",
+    "元素": "缘侧",
+    "空间": "廊道",
+    "材质": "木、竹、石、纸",
+    "原则": "留白、自然",
+    "场景": "茶、宿、庭"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "matchTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/interior/interior-engawa/content.md"
+}

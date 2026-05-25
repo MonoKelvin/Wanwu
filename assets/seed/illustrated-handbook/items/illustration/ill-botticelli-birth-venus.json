@@ -1,0 +1,33 @@
+{
+  "id": "19e569fa-91c6-41a3-988a-71cd3ad61ef5",
+  "slug": "ill-botticelli-birth-venus",
+  "subCategoryId": "ill-classic",
+  "name": "维纳斯的诞生",
+  "summary": "波提切利贝壳与古典神话唯美。",
+  "tags": [
+    "艺术史",
+    "波提切利",
+    "文艺复兴",
+    "名画"
+  ],
+  "specs": {
+    "艺术家": "波提切利",
+    "年代": "约1485",
+    "收藏": "乌菲兹",
+    "主题": "神话"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "museum artwork",
+    "matchTags": [
+      "艺术史",
+      "文艺复兴",
+      "波提切利"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/illustration/ill-botticelli-birth-venus/content.md"
+}

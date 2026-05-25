@@ -1,12 +1,15 @@
 // 
-// 从 assets/seed/library/items 各 JSON 加载图鉴种子（不依赖 catalog.json）
+// 从 assets/seed/illustrated-handbook/items 各 JSON 加载图鉴种子（不依赖 catalog.json）
 // 
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs'
 import { join } from 'path'
-import { getBundledAssetsRoot } from '../core/assetsRoot'
-import { coverRelativePath, slugDirCandidates } from '../media/library'
+import { coverRelativePath, resolveLibraryMediaAbsolute, slugDirCandidates } from '../media/library'
 import { loadLibraryCategories } from './categories'
-import { getLibrarySeedRoot } from './paths'
+import {
+  getIllustratedHandbookBundledMediaRoot,
+  getLibrarySeedRoot,
+  ILLUSTRATED_HANDBOOK_MEDIA_DIR
+} from './paths'
 import type { LibraryCatalog, LibraryCatalogItem } from './seed'
 
 const LIBRARY_CATALOG_SCHEMA = 3
@@ -61,7 +64,7 @@ function walkSeedJsonFiles(dir: string, categoryId: string | null, out: Array<{ 
 
 function resolveMediaDir(categoryId: string, slug: string): string | null {
   for (const dirName of slugDirCandidates(categoryId, slug)) {
-    const abs = join(getBundledAssetsRoot(), 'library', categoryId, dirName)
+    const abs = join(getIllustratedHandbookBundledMediaRoot(), categoryId, dirName)
     if (existsSync(abs)) return dirName
   }
   return slugDirCandidates(categoryId, slug)[0] ?? slug
@@ -71,7 +74,7 @@ function discoverCoverRelative(categoryId: string, slug: string): string | null 
   for (const dirName of slugDirCandidates(categoryId, slug)) {
     for (const file of COVER_FILENAMES) {
       const rel = coverRelativePath(categoryId, dirName, file)
-      if (existsSync(join(getBundledAssetsRoot(), rel))) return rel
+      if (resolveLibraryMediaAbsolute(rel)) return rel
     }
   }
   return null
@@ -79,20 +82,20 @@ function discoverCoverRelative(categoryId: string, slug: string): string | null 
 
 function discoverGalleryRelatives(categoryId: string, slug: string): string[] {
   for (const dirName of slugDirCandidates(categoryId, slug)) {
-    const dirAbs = join(getBundledAssetsRoot(), 'library', categoryId, dirName)
+    const dirAbs = join(getIllustratedHandbookBundledMediaRoot(), categoryId, dirName)
     if (!existsSync(dirAbs)) continue
     const files = readdirSync(dirAbs)
       .filter((f) => GALLERY_PATTERN.test(f))
       .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
     if (files.length === 0) continue
-    return files.map((f) => `library/${categoryId}/${dirName}/${f}`)
+    return files.map((f) => `${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/${categoryId}/${dirName}/${f}`)
   }
   return []
 }
 
 function defaultContentFile(categoryId: string, slug: string): string {
   const dirName = resolveMediaDir(categoryId, slug) ?? slug
-  return `library/${categoryId}/${dirName}/content.md`
+  return `${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/${categoryId}/${dirName}/content.md`
 }
 
 function parseSeedItemFile(abs: string, categoryId: string): LibraryCatalogItem | null {

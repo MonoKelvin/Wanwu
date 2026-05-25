@@ -1,0 +1,35 @@
+{
+  "id": "63f77a7b-2ead-43ce-9a71-da940c232729",
+  "slug": "anime-chainsaw-man",
+  "subCategoryId": "anime-shonen",
+  "name": "链锯人",
+  "summary": "《链锯人》是由日本漫画家 藤本树 创作的漫画，漫画第一部于2018年12月3日至2020年12月14日在《 周刊少年Jump 》上连载 [105-106] ；漫画第二部转至网络平台 少年JUMP+ 连载，并于2022年7月13日至2026年3月25日连载 [107-108] 。",
+  "tags": [
+    "日本",
+    "热血",
+    "少年向",
+    "2022 动画"
+  ],
+  "specs": {
+    "原作": "藤本树",
+    "连载": "2018–（周刊少年Jump / Jump SQ+）",
+    "动画制作": "MAPPA",
+    "首播": "2022-10-12（日本）",
+    "主角": "电次",
+    "类型": "黑暗 / 动作",
+    "地区": "日本",
+    "单行本": "连载中"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "japanese anime character illustration",
+    "matchTags": [
+      "少年漫"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-chainsaw-man/content.md"
+}

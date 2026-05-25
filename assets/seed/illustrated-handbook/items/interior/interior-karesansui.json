@@ -1,0 +1,33 @@
+{
+  "id": "693c82bc-6618-4686-83d3-1ea5a838ec28",
+  "slug": "interior-karesansui",
+  "subCategoryId": "int-zen",
+  "name": "枯山水",
+  "summary": "白沙耙纹象征水流，石组为山岛的禅庭。",
+  "tags": [
+    "禅意",
+    "日式",
+    "枯山水",
+    "庭院"
+  ],
+  "specs": {
+    "分类": "日式禅意",
+    "元素": "枯山水",
+    "空间": "庭院",
+    "材质": "木、竹、石、纸",
+    "原则": "留白、自然",
+    "场景": "茶、宿、庭"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "matchTags": [
+      "枯山水"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/interior/interior-karesansui/content.md"
+}

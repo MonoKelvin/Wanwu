@@ -1,0 +1,21 @@
+{
+  "id": "ed65c150-26a9-4dd3-b546-45fc39265a6c",
+  "slug": "coffee-tea-ct-cafe-interior",
+  "subCategoryId": "ct-culture",
+  "name": "精品咖啡馆",
+  "summary": "第三波咖啡空间。",
+  "tags": [],
+  "specs": {
+    "概述": "第三波咖啡空间。"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "coffee shop interior cozy",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/coffee-tea/coffee-tea-ct-cafe-interior/content.md"
+}

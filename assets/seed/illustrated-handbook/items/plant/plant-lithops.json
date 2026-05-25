@@ -1,0 +1,34 @@
+{
+  "id": "765466e5-5e97-4518-a36a-5de4839a42f3",
+  "slug": "plant-lithops",
+  "subCategoryId": "plant-succulent",
+  "name": "生石花 Lithops",
+  "summary": "拟态「活石头」，休眠期极控水。",
+  "tags": [
+    "多肉",
+    "耐旱",
+    "室内",
+    "盆栽"
+  ],
+  "specs": {
+    "分类": "多肉植物",
+    "光照": "明亮直射至半日照",
+    "介质": "排水颗粒土",
+    "浇水": "干透再浇",
+    "繁殖": "叶插 / 砍头",
+    "注意": "冬季防低温积水",
+    "季节": "生长季春秋"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Lithops houseplant",
+    "matchTags": [
+      "lithops"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/plant/plant-lithops/content.md"
+}

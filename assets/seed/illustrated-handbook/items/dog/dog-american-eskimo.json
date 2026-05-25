@@ -1,0 +1,36 @@
+{
+  "id": "42adef74-2223-4589-9ed5-333f55ed5e3c",
+  "slug": "dog-american-eskimo",
+  "subCategoryId": "dog-americas",
+  "name": "美国爱斯基摩犬",
+  "summary": "德国白色尖耳斯皮茨在美国定名，非爱斯基摩血统，三尺寸。",
+  "tags": [
+    "尖耳",
+    "美国",
+    "斯皮茨",
+    "白色"
+  ],
+  "specs": {
+    "原产地": "美国（德国斯皮茨后裔）",
+    "体重": "2.5–18 kg（玩具/迷你/标准）",
+    "寿命": "13–15 年",
+    "被毛": "纯白双层长毛",
+    "性格": "警觉、活泼、亲人",
+    "识别特征": "白毛黑鼻、竖耳、卷尾"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "斯皮茨",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-american-eskimo/content.md"
+}

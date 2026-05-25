@@ -1,0 +1,35 @@
+{
+  "id": "086f4352-2a91-4d12-b3aa-e1c24cd91a8d",
+  "slug": "plant-syngonium",
+  "subCategoryId": "plant-aroid",
+  "name": "合果芋 Syngonium",
+  "summary": "箭形叶随龄裂变，粉色系品种网红。",
+  "tags": [
+    "观叶",
+    "热植",
+    "室内",
+    "天南星科"
+  ],
+  "specs": {
+    "分类": "天南星科",
+    "光照": "散射光",
+    "温度": "热带",
+    "浇水": "定期擦叶除尘",
+    "湿度": "中至高",
+    "繁殖": "扦插 / 分株",
+    "注意": "忌长期积水"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Syngonium houseplant",
+    "matchTags": [
+      "天南星科",
+      "syngonium"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/plant/plant-syngonium/content.md"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "7b0231e4-f419-4d3a-863e-36f0969ae24e",
+  "slug": "interior-japanese-zen",
+  "subCategoryId": "int-zen",
+  "name": "日式禅意和室",
+  "summary": "榻榻米、障子门与枯山水庭院意象，追求留白与季节感的东方居住美学。",
+  "tags": [
+    "禅意",
+    "侘寂",
+    "榻榻米",
+    "和室"
+  ],
+  "specs": {
+    "分类": "日式禅意",
+    "地面": "榻榻米",
+    "门窗": "障子拉门",
+    "审美": "侘寂 wabi-sabi",
+    "功能": "茶室 / 冥想 / 客室",
+    "延伸": "枯山水庭院",
+    "现代": "和洋折衷"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "interior design room",
+    "matchTags": [
+      "榻榻米"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/interior/interior-japanese-zen/content.md"
+}

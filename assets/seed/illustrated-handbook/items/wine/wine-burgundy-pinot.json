@@ -1,0 +1,23 @@
+{
+  "id": "309f7d4d-e194-48a9-a61f-2ce4b2f3f3bd",
+  "slug": "wine-burgundy-pinot",
+  "subCategoryId": "wine-red",
+  "name": "勃艮第黑皮诺",
+  "summary": "细腻风土表达红酒。",
+  "tags": [
+    "勃艮"
+  ],
+  "specs": {
+    "产区": "法国勃艮第"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "wine bottle glass vineyard",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/wine/wine-burgundy-pinot/content.md"
+}

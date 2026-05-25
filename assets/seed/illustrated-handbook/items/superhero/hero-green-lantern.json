@@ -1,0 +1,34 @@
+{
+  "id": "f9384694-9675-44bc-abce-a888a0489240",
+  "slug": "hero-green-lantern",
+  "subCategoryId": "hero-dc",
+  "name": "绿灯侠 Green Lantern",
+  "summary": "情感光谱之绿光军团成员，意志驱动戒指具现化万物。",
+  "tags": [
+    "意志",
+    "DC",
+    "戒指",
+    "绿灯军团"
+  ],
+  "specs": {
+    "宇宙": "DC",
+    "首次登场": "1959",
+    "代表": "哈尔·乔丹",
+    "能力": "绿灯戒指具象化",
+    "组织": "绿灯军团",
+    "弱点": "黄色恐惧（早期）"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Green Lantern action figure toy collectible",
+    "matchTags": [
+      "绿灯军团",
+      "green"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-green-lantern/content.md"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "47e918f3-12da-45bb-807e-cc5377849aca",
+  "slug": "cat-siamese",
+  "subCategoryId": "cat-short-hair",
+  "name": "暹罗猫 Siamese",
+  "summary": "泰国古老重点色品种，蓝眼、大耳、叫声独特，现代分传统与现代型。",
+  "tags": [
+    "东方",
+    "蓝眼",
+    "泰国",
+    "重点色"
+  ],
+  "specs": {
+    "原产地": "泰国",
+    "体重": "2.5–5.5 kg",
+    "寿命": "15–20 年",
+    "被毛": "短毛、重点色",
+    "性格": "外向、爱叫、黏人",
+    "识别特征": "蓝眼、大耳、色点"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Siamese cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "重点色",
+      "siamese",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-siamese/content.md"
+}

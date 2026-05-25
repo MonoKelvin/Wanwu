@@ -1,0 +1,32 @@
+{
+  "id": "cccfaa8d-6c93-426d-a9ff-7b228c00c241",
+  "slug": "industrial-eames-chair",
+  "subCategoryId": "id-furniture",
+  "name": "伊姆斯躺椅",
+  "summary": "Charles & Ray Eames 1956 年皮革模压胶合板经典。",
+  "tags": [
+    "设计",
+    "Herman Miller",
+    "家居",
+    "家具"
+  ],
+  "specs": {
+    "首发": "1956",
+    "设计师": "Charles & Ray Eames",
+    "品牌": "Herman Miller",
+    "材料": "胶合板 / 皮革",
+    "类型": "躺椅"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "product design",
+    "matchTags": [
+      "herman miller"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-eames-chair/content.md"
+}

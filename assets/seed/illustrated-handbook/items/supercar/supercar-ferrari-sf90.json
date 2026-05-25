@@ -1,0 +1,36 @@
+{
+  "id": "9eec7a69-49dc-4dda-955f-96e6686eda48",
+  "slug": "supercar-ferrari-sf90",
+  "subCategoryId": "car-italy",
+  "name": "法拉利 SF90 Stradale",
+  "summary": "马拉内罗插电混动旗舰，V8 双涡轮加三电机，千匹级性能。",
+  "tags": [
+    "V8/V12",
+    "意大利",
+    "超跑",
+    "Ferrari"
+  ],
+  "specs": {
+    "首发年份": "2019",
+    "厂商": "Ferrari",
+    "动力": "V8 PHEV",
+    "最大功率": "1000 cv",
+    "百公里加速": "2.5 s",
+    "产地": "意大利"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "SF90 Stradale supercar",
+    "matchTags": [
+      "意大利",
+      "ferrari",
+      "v8/v12",
+      "sf90"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/supercar/supercar-ferrari-sf90/content.md"
+}

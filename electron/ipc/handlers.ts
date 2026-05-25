@@ -20,6 +20,7 @@ import {
 import { getMainWindow, broadcastMaximizedState } from '../windowState'
 import type { DatabaseService } from '../services/core/database'
 import type { LibraryService } from '../services/library/service'
+import type { LinksService } from '../services/links/service'
 import type { RssService } from '../services/rss/service'
 import type { MediaService } from '../services/media/service'
 import {
@@ -48,6 +49,7 @@ import { DEFAULT_APP_SETTINGS } from '../../src/shared/types/settings'
 export interface AppServices {
   db: DatabaseService | null
   library: LibraryService | null
+  links: LinksService | null
   rss: RssService | null
   media: MediaService | null
 }
@@ -83,6 +85,43 @@ export function registerIpcHandlers(services: AppServices): void {
   ipcMain.handle('library:uploadItemImage', (_e, params: { itemId: string; filePath: string }) => {
     if (!services.library) throw new Error('库服务未就绪')
     return services.library.uploadItemImage(params.itemId, params.filePath)
+  })
+
+  ipcMain.handle('links:listFolders', () => services.links?.listFolders() ?? [])
+
+  ipcMain.handle('links:listBookmarks', (_e, params: { folderId: string; includeDeleted?: boolean }) => {
+    return services.links?.listBookmarks(params.folderId, { includeDeleted: params.includeDeleted }) ?? []
+  })
+
+  ipcMain.handle('links:sync', () => {
+    if (!services.links) throw new Error('链接服务未就绪')
+    return services.links.syncMerge()
+  })
+
+  ipcMain.handle('links:createBookmark', (_e, input: { folderId: string; title: string; url: string }) => {
+    if (!services.links) throw new Error('链接服务未就绪')
+    return services.links.createBookmark(input)
+  })
+
+  ipcMain.handle('links:updateBookmark', (_e, input: { id: string; title?: string; url?: string; folderId?: string }) => {
+    if (!services.links) throw new Error('链接服务未就绪')
+    return services.links.updateBookmark(input)
+  })
+
+  ipcMain.handle('links:softDeleteBookmark', (_e, id: string) => {
+    services.links?.softDeleteBookmark(id)
+  })
+
+  ipcMain.handle('links:restoreBookmark', (_e, id: string) => {
+    services.links?.restoreBookmark(id)
+  })
+
+  ipcMain.handle('links:permanentDeleteBookmark', (_e, id: string) => {
+    services.links?.permanentDeleteBookmark(id)
+  })
+
+  ipcMain.handle('links:probeUnreachable', (_e, ids: string[]) => {
+    return services.links?.probeUnreachable(ids) ?? {}
   })
 
   ipcMain.handle('rss:listGroups', () => services.rss?.listGroups() ?? [])

@@ -175,7 +175,7 @@ function clearLibraryPackPathConfigIfMatches(zipPath: string): void {
   }
 }
 
-/** 从 zip 解压图鉴配图到用户数据目录 resources/library */
+/** 从 zip 解压图鉴配图到用户数据目录 resources/illustrated-handbook */
 export async function ensureBundledLibraryMediaInstalled(
   zipPath: string,
   dataPath?: string
@@ -190,12 +190,12 @@ export async function ensureBundledLibraryMediaInstalled(
 
   try {
     await extract(zipPath, { dir: staging })
-    const libSrc = join(staging, 'library')
+    const libSrc = join(staging, 'illustrated-handbook')
     if (!existsSync(libSrc)) {
-      console.warn('[libraryPack] zip 内无 library/ 媒体目录，跳过配图解压')
+      console.warn('[libraryPack] zip 内无 illustrated-handbook/ 媒体目录，跳过配图解压')
       return 'no-pack'
     }
-    const libDest = join(resourcesRoot, 'library')
+    const libDest = join(resourcesRoot, 'illustrated-handbook')
     mkdirSync(libDest, { recursive: true })
     cpSync(libSrc, libDest, { recursive: true })
     writeFileSync(marker, `${new Date().toISOString()}\n`, 'utf-8')
@@ -272,7 +272,7 @@ export async function applyPendingLibraryPackZip(
     await applyBundledLibraryPack(basePath, zipPath, manifest)
     const mediaResult = await ensureBundledLibraryMediaInstalled(zipPath, basePath)
     if (mediaResult === 'no-pack') {
-      console.log('[libraryPack] 数据包无配图目录，未写入 resources/library')
+      console.log('[libraryPack] 数据包无配图目录，未写入 resources/illustrated-handbook')
     }
 
     if (!tryDeleteLibraryPackZip(zipPath)) {

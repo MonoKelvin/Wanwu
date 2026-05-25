@@ -1,0 +1,33 @@
+{
+  "id": "94b0e6d8-846f-4ab4-af44-b319b2ea2bf7",
+  "slug": "hero-nightwing-dc",
+  "subCategoryId": "hero-dc",
+  "name": "夜翼 Nightwing",
+  "summary": "迪克·格雷森脱离罗宾身份后的独立英雄，布鲁德海文守护者。",
+  "tags": [
+    "前罗宾",
+    "夜翼",
+    "DC",
+    "迪克"
+  ],
+  "specs": {
+    "宇宙": "DC",
+    "首次登场": "1984",
+    "本名": "迪克·格雷森",
+    "前身份": "罗宾",
+    "城市": "布鲁德海文"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Nightwing action figure toy collectible",
+    "matchTags": [
+      "前罗宾",
+      "nightwing"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-nightwing-dc/content.md"
+}

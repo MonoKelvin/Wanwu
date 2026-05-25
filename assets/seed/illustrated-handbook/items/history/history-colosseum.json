@@ -1,0 +1,35 @@
+{
+  "id": "2f47b26b-2997-4bda-b64f-459aa1ea8cd1",
+  "slug": "history-colosseum",
+  "subCategoryId": "hist-ancient",
+  "name": "罗马斗兽场",
+  "summary": "弗拉维王朝圆形竞技场，古罗马工程象征。",
+  "tags": [
+    "世界遗产",
+    "意大利",
+    "古代",
+    "公元 72–80"
+  ],
+  "specs": {
+    "分类": "世界史迹",
+    "地点": "意大利",
+    "时代": "公元 72–80",
+    "地位": "世界遗产",
+    "文明": "多元古代文明",
+    "保护": "UNESCO"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "colosseum rome",
+    "matchTags": [
+      "世界遗产",
+      "意大利",
+      "公元 72–80"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/history/history-colosseum/content.md"
+}

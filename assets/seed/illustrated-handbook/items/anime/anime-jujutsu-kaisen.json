@@ -1,0 +1,35 @@
+{
+  "id": "9238963f-6772-47ab-b0b0-5a11642b55de",
+  "slug": "anime-jujutsu-kaisen",
+  "subCategoryId": "anime-shonen",
+  "name": "咒术回战",
+  "summary": "电视动画片系列《咒术回战》，改编自 芥见下下 著作同名漫画作品，于2019年11月25日宣布电视动画化的消息 ，该系列由MAPPA负责制作。",
+  "tags": [
+    "日本",
+    "热血",
+    "2020 动画",
+    "少年向"
+  ],
+  "specs": {
+    "原作": "芥见下下",
+    "连载": "2018–（周刊少年Jump）",
+    "动画制作": "MAPPA",
+    "首播": "2020-10-03（日本）",
+    "主角": "虎杖悠仁",
+    "类型": "黑暗奇幻 / 战斗",
+    "地区": "日本",
+    "单行本": "连载中"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "japanese anime character illustration",
+    "matchTags": [
+      "少年漫"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-jujutsu-kaisen/content.md"
+}

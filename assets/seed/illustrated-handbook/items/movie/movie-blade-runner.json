@@ -1,0 +1,31 @@
+{
+  "id": "a6fdb27d-d2f7-40ae-8106-2492a1c11ab3",
+  "slug": "movie-blade-runner",
+  "subCategoryId": "movie-scifi",
+  "name": "银翼杀手",
+  "summary": "《银翼杀手》（Blade Runner）是由 雷德利·斯科特 执导， 菲利普·K·迪克 、 汉普顿·范彻 、 大卫·韦伯·皮普尔斯 编剧， 哈里森·福特 、 肖恩·杨 、 鲁特格尔·哈尔 、 达丽尔·汉纳 等主演的科幻片 。",
+  "tags": [
+    "Blade Runner",
+    "银翼杀手"
+  ],
+  "specs": {
+    "导演": "雷德利·斯科特",
+    "编剧": "汉普顿·范彻等",
+    "上映": "1982-06-25（美国）",
+    "片长": "约 117 分钟",
+    "国家": "美国",
+    "类型": "科幻 / 惊悚",
+    "主演": "哈里森·福特",
+    "主要荣誉": "奥斯卡最佳视觉效果等 2 项"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cyberpunk city night rain cinematic",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/movie/movie-blade-runner/content.md"
+}

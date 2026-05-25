@@ -1,0 +1,32 @@
+{
+  "id": "935f911a-c1c4-4b70-95fc-dc70d7d7264d",
+  "slug": "industrial-ikea-billy",
+  "subCategoryId": "id-furniture",
+  "name": "IKEA Billy 书柜",
+  "summary": "全球最畅销书柜之一，平价模块化。",
+  "tags": [
+    "IKEA",
+    "设计",
+    "家居",
+    "家具"
+  ],
+  "specs": {
+    "首发": "1979",
+    "品牌": "IKEA",
+    "设计师": "Gillis Lundgren",
+    "类型": "书柜",
+    "特色": "平板包装"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "IKEA Billy product design",
+    "matchTags": [
+      "ikea"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-ikea-billy/content.md"
+}

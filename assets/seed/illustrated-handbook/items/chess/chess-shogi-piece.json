@@ -1,0 +1,28 @@
+{
+  "id": "c1fc78f2-d879-42b4-b03c-9bcae29d9739",
+  "slug": "chess-shogi-piece",
+  "subCategoryId": "chess-shogi",
+  "name": "将棋驹",
+  "summary": "将棋 （しょうぎ，Shogi）又称 日本象棋 、 九九象棋 ，一般指 本将棋 （ほんしょうぎ），是日本的传统棋种之一 [4 ] 。",
+  "tags": [
+    "しょうぎ Shogi",
+    "将棋"
+  ],
+  "specs": {
+    "名称": "将棋",
+    "起源": "日本，源于古象棋",
+    "棋盘": "9×9",
+    "特色": "棋子可升级、被吃子可再投入",
+    "管理机构": "日本将棋联盟"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "shogi japanese chess board",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/chess/chess-shogi-piece/content.md"
+}

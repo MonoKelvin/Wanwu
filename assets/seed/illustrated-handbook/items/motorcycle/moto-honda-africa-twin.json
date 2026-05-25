@@ -1,0 +1,36 @@
+{
+  "id": "d5350dc8-9104-4b23-a3e4-0060b13297f2",
+  "slug": "moto-honda-africa-twin",
+  "subCategoryId": "moto-japan",
+  "name": "本田 Africa Twin",
+  "summary": "ADV 探险标杆，达喀尔血统。",
+  "tags": [
+    "摩托",
+    "Honda",
+    "ADV",
+    "日本"
+  ],
+  "specs": {
+    "首发年份": "2016",
+    "厂商": "Honda",
+    "排量": "1084 cc",
+    "发动机": "平行双缸",
+    "最大功率": "约 101 hp",
+    "车型": "冒险",
+    "产地": "日本"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Africa Twin motorcycle",
+    "matchTags": [
+      "honda",
+      "adv",
+      "africa"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/moto-honda-africa-twin/content.md"
+}

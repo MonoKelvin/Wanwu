@@ -1,0 +1,35 @@
+{
+  "id": "6ac82f6d-3b8d-4572-b2b3-363d62433533",
+  "slug": "ui-figma-design",
+  "subCategoryId": "ui-design-tool",
+  "name": "Figma 设计",
+  "summary": "协作式界面设计工具，组件与变体驱动设计系统。",
+  "tags": [
+    "UI",
+    "移动端",
+    "协作",
+    "Figma"
+  ],
+  "specs": {
+    "分类": "设计工具",
+    "首发": "2016",
+    "平台": "Web / Desktop",
+    "特点": "实时协作、组件变体",
+    "核心功能": "Dev Mode、Auto Layout",
+    "生态": "插件、FigJam",
+    "用户群": "产品、设计、开发"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "ui design software screen mockup",
+    "matchTags": [
+      "ui",
+      "design"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-figma-design/content.md"
+}

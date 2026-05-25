@@ -1,0 +1,27 @@
+{
+  "id": "92c54efb-e7e6-4444-9499-514b745adab0",
+  "slug": "pottery-pot-3d-print-clay",
+  "subCategoryId": "pot-modern",
+  "name": "3D 打印陶",
+  "summary": "D(大写);d( 小写 )，是 拉丁字母 和 英语字母 中的第4个字母，与 俄语字母 的Д同源于 希腊字母 Δ。",
+  "tags": [
+    "英文字母中的第4个字母",
+    "d"
+  ],
+  "specs": {
+    "工艺": "陶土 3D 打印",
+    "技术": "挤出式/光固化泥料",
+    "应用": "雕塑、建筑构件、定制器皿",
+    "优势": "复杂几何一体成型"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "D ceramic pottery",
+    "category": "all",
+    "matchTags": [],
+    "requiredTags": [],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/pottery/pottery-pot-3d-print-clay/content.md"
+}

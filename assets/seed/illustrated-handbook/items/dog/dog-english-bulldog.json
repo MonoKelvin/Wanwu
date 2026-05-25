@@ -1,0 +1,39 @@
+{
+  "id": "7d4a9122-8d78-4c3f-b9ce-056a504bb273",
+  "slug": "dog-english-bulldog",
+  "subCategoryId": "dog-toy",
+  "name": "英国斗牛犬",
+  "summary": "英国国犬形象，矮胖、皱面、步态/swagger，性格沉稳友善。",
+  "tags": [
+    "斗牛犬",
+    "国犬",
+    "伴侣犬",
+    "英国"
+  ],
+  "specs": {
+    "分类": "伴侣犬",
+    "原产地": "英国",
+    "体重": "23–25 kg",
+    "肩高": "31–40 cm",
+    "被毛": "短毛",
+    "寿命": "8–10 年",
+    "特点": "短鼻皱褶",
+    "性格": "温和、固执"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "斗牛犬",
+      "伴侣犬",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-english-bulldog/content.md"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "9457350c-b087-47b1-b577-4487d7c04052",
+  "slug": "industrial-braun-dieter-rams",
+  "subCategoryId": "id-product",
+  "name": "博朗 × 迪特·拉姆斯",
+  "summary": "「少，但更好」 ten principles 影响现代设计。",
+  "tags": [
+    "工业设计",
+    "家电",
+    "Braun",
+    "经典"
+  ],
+  "specs": {
+    "设计师": "Dieter Rams",
+    "品牌": "Braun",
+    "活跃": "1955–1995",
+    "代表作": "SK 4 / 606",
+    "理念": "少，但更好",
+    "国籍": "德国"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "× · product design",
+    "matchTags": [
+      "工业设计",
+      "braun"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/industrial-design/industrial-braun-dieter-rams/content.md"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "15386480-ba48-4178-8ad2-60c9846e463f",
+  "slug": "hero-martian-manhunter",
+  "subCategoryId": "hero-dc-film",
+  "name": "火星猎人 Martian Manhunter",
+  "summary": "荣恩·哈扎特，火星最后幸存者，变形、心灵感应与相位穿墙。",
+  "tags": [
+    "荣恩",
+    "DC",
+    "心灵感应",
+    "火星"
+  ],
+  "specs": {
+    "宇宙": "DC",
+    "首次登场": "1955",
+    "种族": "火星人",
+    "能力": "变形、心灵感应",
+    "弱点": "火焰"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Martian Manhunter action figure toy collectible",
+    "matchTags": [
+      "心灵感应",
+      "martian"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/superhero/hero-martian-manhunter/content.md"
+}

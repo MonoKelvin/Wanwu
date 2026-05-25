@@ -1,0 +1,27 @@
+{
+  "id": "ef2aa01b-6b02-450e-bc8b-c0eeef96fde0",
+  "slug": "tf-blackout",
+  "subCategoryId": "tf-decepticon",
+  "name": "眩晕 Blackout",
+  "summary": "直升机变形，电影版首个登场霸天虎。",
+  "tags": [
+    "变形",
+    "霸天虎",
+    "突袭",
+    "反派"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "matchTags": [
+      "霸天虎",
+      "blackout"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/tf-blackout/content.md"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "60e226d8-8cfe-488c-9d9e-68681482873d",
+  "slug": "motorcycle-suzuki-hayabusa",
+  "subCategoryId": "moto-japan",
+  "name": "铃木 Hayabusa",
+  "summary": "隼式极速传奇，直列四缸长途高速。",
+  "tags": [
+    "摩托",
+    "日本",
+    "极速传说",
+    "Suzuki"
+  ],
+  "specs": {
+    "首发年份": "1999",
+    "厂商": "Suzuki",
+    "排量": "1340 cc",
+    "发动机": "直列四缸",
+    "最大功率": "约 190 hp",
+    "车型": "运动旅行",
+    "产地": "日本"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Hayabusa motorcycle",
+    "matchTags": [
+      "suzuki",
+      "极速传说",
+      "hayabusa"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/motorcycle-suzuki-hayabusa/content.md"
+}

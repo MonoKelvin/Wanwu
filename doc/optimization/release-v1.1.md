@@ -27,7 +27,7 @@ v1.1 重点：**Windows 安装包**、**图鉴数据包独立分发**、**安装
 
 - 启动时按序发现 zip：`libraryPackPath` → 安装目录 → 数据目录（**不**自动扫描开发机 `assets/packed`）。
 - 解压成功删除 zip；失败保留并 Toast 提示。
-- 无 zip 时不创建 `resources/assets/library` 等配图解压目录。
+- 无 zip 时不创建 `resources/illustrated-handbook` 等配图解压目录。
 - 支持安装程序通过子进程 `--installer-import-library-pack` 导入（见 `electron/services/library/installerImport.ts`）。
 
 ## 主进程与构建

@@ -1,0 +1,33 @@
+{
+  "id": "a247c0e5-0105-4b40-9e99-ee49d058cfb7",
+  "slug": "history-summer-palace",
+  "subCategoryId": "hist-china",
+  "name": "颐和园",
+  "summary": "昆明湖与万寿山皇家园林。",
+  "tags": [
+    "世界遗产",
+    "清代",
+    "北京",
+    "中国"
+  ],
+  "specs": {
+    "分类": "中国史迹",
+    "地点": "北京",
+    "时代": "清代",
+    "地位": "世界遗产",
+    "类型": "建筑 / 石窟 / 古城",
+    "保护": "国家级文保"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "historic landmark architecture",
+    "matchTags": [
+      "世界遗产"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/history/history-summer-palace/content.md"
+}

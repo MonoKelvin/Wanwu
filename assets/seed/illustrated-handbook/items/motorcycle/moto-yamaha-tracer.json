@@ -1,0 +1,35 @@
+{
+  "id": "09d1ba6e-d55a-4b75-a4df-f405b2cb80c1",
+  "slug": "moto-yamaha-tracer",
+  "subCategoryId": "moto-japan",
+  "name": "雅马哈 Tracer 9",
+  "summary": "运动旅行三缸，长途舒适。",
+  "tags": [
+    "摩托",
+    "运动旅行",
+    "日本",
+    "Yamaha"
+  ],
+  "specs": {
+    "首发年份": "2021",
+    "厂商": "Yamaha",
+    "排量": "890 cc",
+    "发动机": "三缸",
+    "车型": "运动旅行",
+    "产地": "日本"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Tracer 9 motorcycle",
+    "matchTags": [
+      "yamaha",
+      "运动旅行",
+      "tracer"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/motorcycle/moto-yamaha-tracer/content.md"
+}

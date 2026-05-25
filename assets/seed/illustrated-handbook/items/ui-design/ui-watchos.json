@@ -1,0 +1,36 @@
+{
+  "id": "ed972299-f977-4d43-a5bf-14688d7184e2",
+  "slug": "ui-watchos",
+  "subCategoryId": "ui-design-tool",
+  "name": "watchOS 界面",
+  "summary": "圆形屏幕信息密度与并发症布局。",
+  "tags": [
+    "watchOS",
+    "UI",
+    "移动端",
+    "可穿戴"
+  ],
+  "specs": {
+    "分类": "可穿戴规范",
+    "发布方": "Apple",
+    "适用": "Apple Watch",
+    "原则": "一屏一事、glanceable",
+    "触控": "最小 44×44 pt",
+    "输入": "Digital Crown、触控",
+    "框架": "SwiftUI / WatchKit"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "watchOS design system ui",
+    "matchTags": [
+      "移动端",
+      "watchos",
+      "可穿戴"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/ui-design/ui-watchos/content.md"
+}

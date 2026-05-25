@@ -1,0 +1,34 @@
+{
+  "id": "17168975-27c9-46d1-8816-d432622fa08a",
+  "slug": "plant-crassula",
+  "subCategoryId": "plant-succulent",
+  "name": "青锁龙 Crassula",
+  "summary": "玉树属常见，玉树、钱串等品种多样。",
+  "tags": [
+    "多肉",
+    "耐旱",
+    "室内",
+    "盆栽"
+  ],
+  "specs": {
+    "分类": "多肉植物",
+    "光照": "明亮直射至半日照",
+    "介质": "排水颗粒土",
+    "浇水": "干透再浇",
+    "繁殖": "叶插 / 砍头",
+    "注意": "冬季防低温积水",
+    "季节": "生长季春秋"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Crassula houseplant",
+    "matchTags": [
+      "crassula"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/plant/plant-crassula/content.md"
+}

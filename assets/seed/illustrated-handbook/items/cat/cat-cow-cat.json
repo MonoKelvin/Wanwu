@@ -1,0 +1,36 @@
+{
+  "id": "a0538d48-2c24-476e-aa1b-3a7f6a570677",
+  "slug": "cat-cow-cat",
+  "subCategoryId": "cat-china",
+  "name": "奶牛猫（黑白花）",
+  "summary": "黑白相间家猫类型，性格常被认为活泼甚至「猫中二哈」，分布极广。",
+  "tags": [
+    "家猫",
+    "黑白",
+    "田园猫",
+    "中国"
+  ],
+  "specs": {
+    "分类": "中国品种",
+    "类型": "毛色型",
+    "毛色": "黑白双色",
+    "分布": "中国广泛",
+    "性格": "常活跃（个体差）",
+    "文化": "乌云盖雪等美名"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "田园猫",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-cow-cat/content.md"
+}

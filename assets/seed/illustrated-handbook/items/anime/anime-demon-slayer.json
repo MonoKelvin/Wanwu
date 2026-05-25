@@ -1,0 +1,38 @@
+{
+  "id": "ba213043-fcdf-4b83-8e6e-c33c3e95c7e1",
+  "slug": "anime-demon-slayer",
+  "subCategoryId": "anime-shonen",
+  "name": "鬼灭之刃 Kimetsu no Yaiba",
+  "summary": "《鬼灭之刃》是由日本漫画家 吾峠呼世晴 创作的漫画作品，于2016年2月15日至2020年5月18日在《 周刊少年Jump 》连载 ，全205话 。",
+  "tags": [
+    "少年热血",
+    "2016–2020",
+    "Jump",
+    "鬼杀队"
+  ],
+  "specs": {
+    "原作": "吾峠呼世晴",
+    "连载": "2016–2020（周刊少年Jump）",
+    "动画制作": "ufotable",
+    "首播": "2019-04-06（日本）",
+    "话数": "漫画 23 卷 / 动画多季",
+    "主角": "灶门炭治郎",
+    "类型": "黑暗奇幻 / 战斗",
+    "地区": "日本"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "japanese anime character illustration",
+    "category": "people",
+    "matchTags": [
+      "鬼杀队",
+      "jump",
+      "ufotable",
+      "kimetsu"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/anime/anime-demon-slayer/content.md"
+}

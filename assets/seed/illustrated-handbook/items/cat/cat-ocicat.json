@@ -1,0 +1,36 @@
+{
+  "id": "494c03ea-6d99-4234-9917-963ad0b458e9",
+  "slug": "cat-ocicat",
+  "subCategoryId": "cat-short-hair",
+  "name": "奥西猫 Ocicat",
+  "summary": "美国选育豹纹家猫（无野生豹猫血缘），斑点纹、肌肉型，性格外向犬系。",
+  "tags": [
+    "犬系",
+    "短毛",
+    "美洲",
+    "斑点"
+  ],
+  "specs": {
+    "分类": "美洲品种",
+    "育成地": "美国密歇根",
+    "体重": "3–6.5 kg",
+    "寿命": "12–18 年",
+    "纹色": "豹点斑",
+    "性格": "外向、聪明、可训练"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "Ocicat cat breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "ocicat",
+      "cat"
+    ],
+    "requiredTags": [
+      "cat"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/cat/cat-ocicat/content.md"
+}

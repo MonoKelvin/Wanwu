@@ -1,0 +1,23 @@
+{
+  "id": "9c29d544-4dfa-4ee4-8252-c3bab1d55643",
+  "slug": "dog-shiba",
+  "subCategoryId": "dog-working",
+  "name": "柴犬",
+  "summary": "日本网红伴侣犬。",
+  "tags": [],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-shiba/content.md"
+}

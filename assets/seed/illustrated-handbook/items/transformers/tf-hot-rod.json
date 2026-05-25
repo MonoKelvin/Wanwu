@@ -1,0 +1,29 @@
+{
+  "id": "21274db1-c959-4658-869a-4869698887a7",
+  "slug": "tf-hot-rod",
+  "subCategoryId": "tf-g1",
+  "name": "热破 Hot Rod",
+  "summary": "年轻战士，后继承擎天柱成为补天士。",
+  "tags": [
+    "汽车人",
+    "变形",
+    "领袖继承",
+    "Hasbro"
+  ],
+  "specs": {},
+  "media": {
+    "provider": "pixabay",
+    "query": "transformers robot toy action figure",
+    "matchTags": [
+      "汽车人",
+      "hasbro",
+      "领袖继承",
+      "hot"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 6,
+    "category": "all",
+    "requiredTags": []
+  },
+  "contentFile": "illustrated-handbook/transformers/tf-hot-rod/content.md"
+}

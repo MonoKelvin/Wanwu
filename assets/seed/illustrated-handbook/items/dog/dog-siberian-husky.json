@@ -1,0 +1,38 @@
+{
+  "id": "c42fb55c-e076-44d9-a829-b1fc73db61d0",
+  "slug": "dog-siberian-husky",
+  "subCategoryId": "dog-working",
+  "name": "西伯利亚哈士奇",
+  "summary": "西伯利亚雪橇犬，蓝眼或异色眼常见，精力旺盛，中等体型。",
+  "tags": [
+    "运动型",
+    "雪橇犬",
+    "西伯利亚",
+    "蓝眼"
+  ],
+  "specs": {
+    "分类": "亚洲犬种",
+    "原产地": "西伯利亚",
+    "体重": "16–27 kg",
+    "寿命": "12–14 年",
+    "特征": "蓝/异色眼常见",
+    "性格": "友善、精力充沛"
+  },
+  "media": {
+    "provider": "pixabay",
+    "query": "dog breed portrait",
+    "category": "animals",
+    "matchTags": [
+      "雪橇犬",
+      "西伯利亚",
+      "运动型",
+      "dog"
+    ],
+    "requiredTags": [
+      "dog"
+    ],
+    "minMatchScore": 2,
+    "imageCount": 5
+  },
+  "contentFile": "illustrated-handbook/dog/dog-siberian-husky/content.md"
+}
