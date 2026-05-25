@@ -100,3 +100,72 @@ async function closeWin() {
     </div>
   </header>
 </template>
+<style>
+.ww-titlebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  height: var(--ww-titlebar-height);
+  align-items: stretch;
+  pointer-events: none;
+  user-select: none;
+  background: transparent;
+}
+
+.ww-titlebar-drag {
+  min-width: 0;
+  flex: 1;
+  -webkit-app-region: drag;
+  app-region: drag;
+  pointer-events: auto;
+}
+
+.ww-titlebar-controls {
+  display: flex;
+  flex-shrink: 0;
+  align-items: stretch;
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+  pointer-events: auto;
+}
+
+.ww-win-btn {
+  display: inline-flex;
+  width: 2.5rem;
+  height: var(--ww-titlebar-height);
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ww-ink-muted);
+  cursor: pointer;
+  transition:
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    color var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-win-btn:hover:not(.ww-win-btn--close) {
+  background: var(--ww-list-hover-bg);
+  color: var(--ww-ink);
+}
+
+.ww-win-btn--close {
+  background: transparent;
+}
+
+.ww-win-btn--close:hover {
+  background: #c42b1c;
+  color: #fff;
+}
+
+.ww-win-icon {
+  display: block;
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+</style>

@@ -66,3 +66,28 @@ function confirm() {
     </template>
   </Dialog>
 </template>
+
+<style>
+.ww-rss-move-option {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.625rem;
+  text-align: left;
+  font-size: 0.8125rem;
+  color: var(--ww-ink);
+  background: transparent;
+  cursor: pointer;
+  transition: background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-rss-move-option:hover {
+  background: var(--ww-list-hover-bg);
+}
+
+.ww-rss-move-option.is-selected {
+  background: var(--ww-list-selected-bg);
+  font-weight: 500;
+}
+</style>

@@ -14,13 +14,19 @@ const api: WanwuApi = {
   links: {
     listFolders: () => ipcRenderer.invoke('links:listFolders'),
     listBookmarks: (params) => ipcRenderer.invoke('links:listBookmarks', params),
+    listAllBookmarks: () => ipcRenderer.invoke('links:listAllBookmarks'),
     sync: () => ipcRenderer.invoke('links:sync'),
     createBookmark: (input) => ipcRenderer.invoke('links:createBookmark', input),
     updateBookmark: (input) => ipcRenderer.invoke('links:updateBookmark', input),
     softDeleteBookmark: (id) => ipcRenderer.invoke('links:softDeleteBookmark', id),
     restoreBookmark: (id) => ipcRenderer.invoke('links:restoreBookmark', id),
     permanentDeleteBookmark: (id) => ipcRenderer.invoke('links:permanentDeleteBookmark', id),
-    probeUnreachable: (ids) => ipcRenderer.invoke('links:probeUnreachable', ids)
+    probeUnreachable: (ids) => ipcRenderer.invoke('links:probeUnreachable', ids),
+    onBookmarksFileChanged: (listener: () => void) => {
+      const handler = () => listener()
+      ipcRenderer.on('links:bookmarks-file-changed', handler)
+      return () => ipcRenderer.removeListener('links:bookmarks-file-changed', handler)
+    }
   },
   rss: {
     listGroups: () => ipcRenderer.invoke('rss:listGroups'),

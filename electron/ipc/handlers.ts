@@ -45,6 +45,7 @@ import {
   restoreDataBackup
 } from '../services/data/maintenance'
 import { DEFAULT_APP_SETTINGS } from '../../src/shared/types/settings'
+import { startEdgeBookmarksWatcher } from '../services/links/bookmarksWatcher'
 
 export interface AppServices {
   db: DatabaseService | null
@@ -92,6 +93,8 @@ export function registerIpcHandlers(services: AppServices): void {
   ipcMain.handle('links:listBookmarks', (_e, params: { folderId: string; includeDeleted?: boolean }) => {
     return services.links?.listBookmarks(params.folderId, { includeDeleted: params.includeDeleted }) ?? []
   })
+
+  ipcMain.handle('links:listAllBookmarks', () => services.links?.listAllBookmarks() ?? [])
 
   ipcMain.handle('links:sync', () => {
     if (!services.links) throw new Error('链接服务未就绪')
@@ -547,4 +550,6 @@ export function registerIpcHandlers(services: AppServices): void {
       return uploadTempShareFile(file.path, params.expire ?? '24h').finally(() => file.cleanup())
     }
   )
+
+  startEdgeBookmarksWatcher(() => getMainWindow())
 }

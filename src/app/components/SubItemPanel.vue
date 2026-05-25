@@ -21,3 +21,19 @@ const module = computed(() => route.meta.module as string)
     </div>
   </aside>
 </template>
+
+<style>
+.ww-rss-panel {
+  background: linear-gradient(180deg, var(--ww-panel) 0%, var(--ww-inset) 100%);
+  border-right: 1px solid var(--ww-border-subtle);
+  box-shadow: var(--ww-panel-edge-highlight);
+}
+
+.ww-section-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ww-ink-faint);
+}
+</style>

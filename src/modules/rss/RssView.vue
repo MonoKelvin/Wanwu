@@ -134,3 +134,52 @@ watch(
     </ModulePageLayout>
   </div>
 </template>
+
+<style>
+.ww-rss-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.ww-rss-load-more {
+  flex-shrink: 0;
+  padding: 0.75rem 0 0.25rem;
+  text-align: center;
+}
+
+.ww-rss-load-more__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--ww-glass-border);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--ww-ink-muted);
+  background: var(--ww-content);
+  cursor: pointer;
+  transition:
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    color var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-rss-load-more__btn:hover:not(:disabled) {
+  border-color: var(--ww-border-subtle);
+  color: var(--ww-ink);
+  background: var(--ww-inset);
+}
+
+.ww-rss-load-more__btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.ww-rss-load-more__hint {
+  margin: 0.375rem 0 0;
+  font-size: 0.6875rem;
+  color: var(--ww-ink-faint);
+}
+</style>
+

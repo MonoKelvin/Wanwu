@@ -134,3 +134,63 @@ function onError() {
     />
   </span>
 </template>
+
+<style>
+.ww-rss-async-thumb {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+.ww-rss-async-thumb__placeholder {
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--ww-ink-faint);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.ww-rss-async-thumb__placeholder-img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.ww-rss-icon--sm .ww-rss-async-thumb__placeholder {
+  font-size: 0.6875rem;
+}
+
+.ww-rss-async-thumb__img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.15s var(--ww-ease-out);
+}
+
+.ww-rss-async-thumb__img--loaded {
+  opacity: 1;
+}
+
+.ww-rss-async-thumb__img--cover {
+  object-fit: cover;
+}
+
+.ww-rss-async-thumb__img--contain {
+  object-fit: contain;
+  padding: 0.375rem;
+  background: var(--ww-elevated);
+}
+</style>

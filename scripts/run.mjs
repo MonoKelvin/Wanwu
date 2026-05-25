@@ -7,6 +7,7 @@
  *   node scripts/run.mjs sqlite electron  # 确保 better-sqlite3 匹配 Electron
  *   node scripts/run.mjs sqlite host        # 为系统 Node 重编（build 数据包前）
  *   node scripts/run.mjs sqlite rebuild [--force]
+ *   node scripts/run.mjs library-pack       # 用 Electron Node 生成图鉴包（与运行时 ABI 一致）
  *   node scripts/run.mjs renderer           # 开发态 renderer 回退包
  *   node scripts/run.mjs pack [opts]        # Windows 安装包（转发 pack/windows/pack.mjs）
  */
@@ -30,6 +31,7 @@ function usage() {
   sqlite electron       确保 better-sqlite3 可被 Electron 加载
   sqlite host           为当前系统 Node 重编 better-sqlite3
   sqlite rebuild        仅为 Electron 重编 better-sqlite3（可加 --force）
+  library-pack          生成图鉴数据包（走 Electron Node，避免与 host 重编冲突）
   renderer              若无 out/renderer 则先构建一次
   pack [opts]           Windows 安装包（--iscc= --skip-build --skip-library-pack）
 `)
@@ -78,16 +80,27 @@ function sqliteLoadsHost() {
   }
 }
 
-function cmdSqliteElectron() {
-  const electronPath = require('electron')
-  const env = { ELECTRON_RUN_AS_NODE: '1' }
-  if (sqliteLoadsInProcess(electronPath, env)) return
+function electronSqliteEnv() {
+  return { ELECTRON_RUN_AS_NODE: '1' }
+}
 
-  console.log('[万物] 正在为 Electron 重编 better-sqlite3…')
-  execFileSync(process.execPath, [self, 'sqlite', 'rebuild', '--force'], {
+function electronLoadsSqlite() {
+  return sqliteLoadsInProcess(require('electron'), electronSqliteEnv())
+}
+
+function cmdSqliteElectron() {
+  if (electronLoadsSqlite()) {
+    console.log('[万物] better-sqlite3 已匹配 Electron，跳过重编')
+    return
+  }
+
+  console.log('[万物] 正在为 Electron 重编 better-sqlite3...')
+  execFileSync(process.execPath, [self, 'sqlite', 'rebuild'], {
     cwd: root,
     stdio: 'inherit'
   })
+  const electronPath = require('electron')
+  const env = electronSqliteEnv()
   if (!sqliteLoadsInProcess(electronPath, env)) {
     console.error('[万物] better-sqlite3 仍无法被 Electron 加载，请执行: npm run rebuild')
     process.exit(1)
@@ -99,7 +112,7 @@ function cmdSqliteHost() {
     console.log(`[万物] better-sqlite3 已匹配 Node ${process.versions.node}`)
     return
   }
-  console.log(`[万物] 正在为 Node ${process.versions.node} 重编 better-sqlite3…`)
+  console.log(`[万物] 正在为 Node ${process.versions.node} 重编 better-sqlite3...`)
   execSync('npm rebuild better-sqlite3', { cwd: root, stdio: 'inherit', shell: true })
   if (!sqliteLoadsHost()) {
     console.error('[万物] better-sqlite3 重编后仍无法加载，请检查是否已安装 Visual Studio C++ 构建工具')
@@ -125,7 +138,11 @@ function runElectronRebuild(onlyModules, force) {
 
 function cmdSqliteRebuild() {
   const force = process.argv.includes('--force') || process.env.WANWU_FORCE_REBUILD === '1'
-  runElectronRebuild('better-sqlite3', force)
+  if (!force && electronLoadsSqlite()) {
+    console.log('[万物] better-sqlite3 已匹配 Electron，跳过重编')
+  } else {
+    runElectronRebuild('better-sqlite3', force)
+  }
   try {
     runElectronRebuild('electron-native-share', force)
   } catch {
@@ -136,10 +153,22 @@ function cmdSqliteRebuild() {
   }
 }
 
+function cmdLibraryPack() {
+  cmdSqliteElectron()
+  const electronPath = require('electron')
+  const tsxCli = join(dirname(require.resolve('tsx/package.json')), 'dist', 'cli.mjs')
+  const script = join(root, 'scripts', 'build-library-pack.ts')
+  execFileSync(electronPath, [tsxCli, script], {
+    cwd: root,
+    stdio: 'inherit',
+    env: { ...process.env, ...electronSqliteEnv() }
+  })
+}
+
 function cmdRenderer() {
   const html = join(root, 'out', 'renderer', 'index.html')
   if (existsSync(html)) return
-  console.log('[万物] 未找到 out/renderer，正在构建 renderer 备用包…')
+  console.log('[万物] 未找到 out/renderer，正在构建 renderer 备用包...')
   const r = spawnSync('npx', ['electron-vite', 'build'], {
     cwd: root,
     stdio: 'inherit',
@@ -167,6 +196,7 @@ else if (command === 'dev') cmdDev()
 else if (command === 'sqlite' && sub === 'electron') cmdSqliteElectron()
 else if (command === 'sqlite' && sub === 'host') cmdSqliteHost()
 else if (command === 'sqlite' && sub === 'rebuild') cmdSqliteRebuild()
+else if (command === 'library-pack') cmdLibraryPack()
 else if (command === 'renderer') cmdRenderer()
 else if (command === 'pack') cmdPack()
 else usage()

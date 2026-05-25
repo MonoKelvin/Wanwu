@@ -71,3 +71,232 @@ function isActive(id: ModuleId) {
     </div>
   </nav>
 </template>
+<style>
+.ww-module-nav {
+  display: flex;
+  flex-direction: column;
+  width: var(--ww-sidebar-width);
+  padding: 0 0.625rem;
+}
+
+.ww-module-nav--start {
+  padding-top: 0;
+}
+
+.ww-module-nav__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100%;
+  justify-content: flex-start;
+}
+
+.ww-module-nav__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  width: 100%;
+  align-items: center;
+}
+
+/* 居中：以整侧栏（含 titlebar 与 logo 上方区域）为基准垂直居中，logo 仍靠上 */
+.ww-module-nav--center .ww-module-nav__inner {
+  position: relative;
+}
+
+.ww-module-nav--center .ww-module-nav__group {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  flex: none;
+  transform: translateY(-50%);
+}
+
+.ww-module-nav__brand {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0 0 0.75rem;
+  margin-bottom: 0.25rem;
+  border: none;
+  background: transparent;
+  cursor: default;
+  user-select: none;
+}
+
+.ww-module-nav__brand-mark {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: 0.625rem;
+  box-shadow: var(--ww-rail-nav-active-shadow);
+}
+
+.ww-module-nav__brand-text {
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ww-ink-faint);
+}
+
+.ww-module-btn {
+  position: relative;
+  display: flex;
+  height: 3rem;
+  width: 3rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: var(--ww-ink-muted);
+  cursor: pointer;
+  transition:
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    color var(--ww-duration-fast) var(--ww-ease-out),
+    box-shadow var(--ww-duration-fast) var(--ww-ease-out),
+    transform var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-module-btn:active {
+  transform: scale(0.96);
+}
+
+.ww-module-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.ww-module-btn i {
+  font-size: 1.3125rem;
+}
+
+.ww-module-btn__icon {
+  transition:
+    color var(--ww-duration-fast) var(--ww-ease-out),
+    transform var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-module-btn:hover {
+  background: var(--ww-rail-nav-hover);
+  color: var(--ww-ink);
+}
+
+.ww-module-btn.is-active {
+  background: var(--ww-rail-nav-active-bg);
+  color: var(--ww-ink);
+  font-weight: 500;
+  box-shadow: var(--ww-rail-nav-active-shadow);
+}
+
+.ww-module-btn.is-active .ww-module-btn__icon,
+.ww-module-btn.is-active i {
+  color: var(--ww-ink);
+  transform: scale(1.04);
+}
+
+.ww-module-btn--labeled {
+  width: 3rem;
+  height: auto;
+  min-height: 3rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.25rem 0.4375rem;
+}
+
+.ww-module-btn__label {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.5625rem;
+  line-height: 1.15;
+  white-space: nowrap;
+  text-align: center;
+  color: var(--ww-ink-faint);
+  transition: color var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-module-btn:hover .ww-module-btn__label {
+  color: var(--ww-ink-muted);
+}
+
+.ww-module-btn.is-active .ww-module-btn__label {
+  color: var(--ww-ink);
+  font-weight: 600;
+}
+
+/* 二级导航 */
+.ww-nav-item {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.4375rem 0.625rem 0.4375rem 0.75rem;
+  text-align: left;
+  font-size: 0.8125rem;
+  color: var(--ww-ink);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background var(--ww-duration) var(--ww-ease-out),
+    color var(--ww-duration) var(--ww-ease-out);
+}
+
+.ww-nav-item:hover {
+  background: var(--ww-list-hover-bg);
+}
+
+.ww-nav-item.is-active {
+  background: var(--ww-list-selected-bg);
+  font-weight: 500;
+  color: var(--ww-ink);
+}
+
+.ww-nav-item:focus-visible {
+  outline: none;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.ww-nav-item i {
+  width: 1rem;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--ww-ink-faint);
+}
+
+.ww-nav-item.is-active i {
+  color: var(--ww-ink-muted);
+}
+
+.ww-feed-access-warn {
+  font-size: 0.75rem;
+  color: var(--ww-warn);
+  cursor: help;
+}
+
+/* 物品卡 */
+.ww-item-card {
+  background: var(--ww-elevated);
+  border: 1px solid var(--ww-border-subtle);
+  box-shadow: none;
+  transition:
+    transform var(--ww-duration) var(--ww-ease-out),
+    box-shadow var(--ww-duration) var(--ww-ease-out),
+    border-color var(--ww-duration) var(--ww-ease-out),
+    background var(--ww-duration) var(--ww-ease-out);
+}
+</style>

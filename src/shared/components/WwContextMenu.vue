@@ -126,3 +126,78 @@ defineExpose({ show, hide, showBelowAnchor, toggleAnchor })
     </div>
   </Teleport>
 </template>
+
+<style>
+/* 统一操作菜单（右键 / 锚点弹出，与图片区右上角菜单一致） */
+.ww-action-menu {
+  position: fixed;
+  z-index: 10050;
+  min-width: 10.5rem;
+  padding: 0.375rem;
+  border: none;
+  border-radius: 0.75rem;
+  background: var(--ww-glass-bg);
+  box-shadow: var(--ww-menu-shadow);
+}
+
+.ww-action-menu.ww-glass-blur {
+  border: none;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.ww-action-menu.ww-glass-blur::before {
+  border-radius: 0.75rem;
+  background: var(--ww-glass-bg-soft);
+  backdrop-filter: blur(var(--ww-blur-glass)) saturate(1.35);
+  -webkit-backdrop-filter: blur(var(--ww-blur-glass)) saturate(1.35);
+}
+
+.ww-action-menu__item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4375rem 0.5625rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  font-size: 0.75rem;
+  color: var(--ww-ink);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-action-menu__item .ww-icon {
+  flex-shrink: 0;
+  color: var(--ww-ink-muted);
+}
+
+.ww-action-menu__item:hover:not(:disabled):not(.is-disabled) {
+  background: var(--ww-action-menu-item-hover-bg);
+}
+
+.ww-action-menu__item.ww-page-toolbar-menu__item--active {
+  background: var(--ww-list-selected-bg);
+  font-weight: 500;
+}
+
+.ww-action-menu__item:disabled,
+.ww-action-menu__item.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ww-action-menu__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.ww-action-menu__sep {
+  margin: 0.25rem 0.375rem;
+  border: none;
+  border-top: 1px solid var(--ww-border-faint);
+}
+</style>

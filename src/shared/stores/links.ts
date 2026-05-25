@@ -1,7 +1,11 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { LinkBookmark, LinkFolder } from '@shared/types/links'
+import type { LinkBookmark, LinkFolder, LinksSyncResult } from '@shared/types/links'
 import type { CatalogNode } from '@library/types/catalog'
+import {
+  bookmarkMatchesQuery,
+  matchingFolderIdsForBookmarks
+} from '@features/library/links/linksSearch'
 
 export const EDGE_ROOT_FOLDER_ID = 'edge-microsoft'
 export const LINKS_RECYCLE_BIN_ID = 'links-recycle-bin'
@@ -20,11 +24,27 @@ function foldersToCatalog(folders: LinkFolder[]): CatalogNode[] {
 export const useLinksStore = defineStore('library-links', () => {
   const folders = ref<LinkFolder[]>([])
   const bookmarks = ref<LinkBookmark[]>([])
+  const allBookmarks = ref<LinkBookmark[]>([])
+  const searchQuery = ref('')
   const selectedFolderId = ref<string | null>(null)
   const loading = ref(false)
+  const globalSearchLoading = ref(false)
   const syncing = ref(false)
 
   const folderTree = computed<CatalogNode[]>(() => foldersToCatalog(folders.value))
+
+  const isGlobalSearch = computed(() => searchQuery.value.trim().length > 0)
+
+  const globalSearchMatches = computed(() => {
+    const q = searchQuery.value.trim()
+    if (!q) return []
+    return allBookmarks.value.filter((b) => bookmarkMatchesQuery(b, q))
+  })
+
+  const matchingFolderIds = computed(() => {
+    if (!isGlobalSearch.value) return null
+    return matchingFolderIdsForBookmarks(folders.value, globalSearchMatches.value)
+  })
 
   const selectedFolder = computed(() => {
     const id = selectedFolderId.value
@@ -49,6 +69,15 @@ export const useLinksStore = defineStore('library-links', () => {
     }
   }
 
+  async function loadAllBookmarks() {
+    globalSearchLoading.value = true
+    try {
+      allBookmarks.value = await window.wanwu.links.listAllBookmarks()
+    } finally {
+      globalSearchLoading.value = false
+    }
+  }
+
   async function loadBookmarks(folderId: string, options?: { includeDeleted?: boolean }) {
     loading.value = true
     try {
@@ -62,16 +91,27 @@ export const useLinksStore = defineStore('library-links', () => {
     }
   }
 
-  async function syncFromBrowser() {
+  async function setSearchQuery(query: string) {
+    searchQuery.value = query
+    if (query.trim()) {
+      await loadAllBookmarks()
+    }
+  }
+
+  async function syncFromBrowser(): Promise<LinksSyncResult> {
     syncing.value = true
     try {
-      await window.wanwu.links.sync()
+      const result = await window.wanwu.links.sync()
       await loadFolders()
+      if (isGlobalSearch.value) {
+        await loadAllBookmarks()
+      }
       if (selectedFolderId.value) {
         await loadBookmarks(selectedFolderId.value, {
           includeDeleted: selectedFolder.value?.isRecycleBin
         })
       }
+      return result
     } finally {
       syncing.value = false
     }
@@ -80,13 +120,21 @@ export const useLinksStore = defineStore('library-links', () => {
   return {
     folders,
     bookmarks,
+    allBookmarks,
+    searchQuery,
     folderTree,
     selectedFolderId,
     selectedFolder,
     loading,
+    globalSearchLoading,
     syncing,
+    isGlobalSearch,
+    globalSearchMatches,
+    matchingFolderIds,
     loadFolders,
     loadBookmarks,
+    loadAllBookmarks,
+    setSearchQuery,
     syncFromBrowser
   }
 })

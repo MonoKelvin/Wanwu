@@ -2,6 +2,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch, type Ref } from 'vue'
 import type { WwMenuItem } from '@shared/types/menu'
 import type { ImageViewerSlide } from '@shared/types/image-viewer'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
+import { POP_TIP_COPY_MESSAGES, usePopTip } from '@shared/composables/usePopTip'
 import { renderMarkdown } from '../utils/renderMarkdown'
 import { resolveImageViewerUrl } from '../utils/imageViewerUrl'
 import { enhanceMarkdownDom, type MarkdownImageMenuHandlers } from './enhanceMarkdownDom'
@@ -19,6 +20,7 @@ export function useMarkdownReader(
 ) {
   const interactive = options.interactive !== false
   const toast = useWanwuToast()
+  const popTip = usePopTip()
 
   const rootRef = ref<HTMLElement | null>(null)
   const menuTargetImg = ref<HTMLImageElement | null>(null)
@@ -71,8 +73,7 @@ export function useMarkdownReader(
 
   async function copyImageLink(url: string) {
     if (!url) return
-    await window.wanwu.shell.copyText(url)
-    toast.success('已复制图片链接')
+    await popTip.copyText(url, POP_TIP_COPY_MESSAGES.imageLink)
   }
 
   const imageMenuItems = computed((): WwMenuItem[] => {

@@ -585,3 +585,115 @@ async function removeGroup(groupId: string) {
     />
   </div>
 </template>
+
+<style>
+.ww-rss-sidebar {
+  min-height: 0;
+}
+
+.ww-rss-tree .ww-rss-icon--sm {
+  margin-inline-end: 0.125rem;
+}
+
+.ww-rss-icon--sm .ww-rss-async-thumb__img--contain,
+.ww-rss-icon--sm .ww-rss-async-thumb__placeholder-img {
+  padding: 0;
+  object-fit: contain;
+}
+
+.ww-rss-icon--md {
+  width: 100%;
+  height: 100%;
+}
+
+.ww-rss-tree .p-tree-node-icon {
+  display: none !important;
+}
+
+.ww-rss-tree .ww-rss-folder-icon {
+  flex-shrink: 0;
+  margin-inline-end: 0.125rem;
+  color: var(--ww-ink-faint);
+}
+
+
+.ww-rss-tree-label {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.ww-rss-tree-label__text {
+  min-width: 0;
+  flex: 1;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--ww-ink);
+}
+
+.ww-rss-tree .p-tree-node-content {
+  font-size: 0.8125rem;
+  color: var(--ww-ink);
+}
+
+.ww-rss-tree-badge {
+  flex-shrink: 0;
+}
+
+.ww-rss-tree-badge .p-badge,
+.ww-rss-tree-badge .p-badge.p-badge-circle,
+.ww-rss-tree-badge .p-badge.p-badge-sm {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0.6875rem !important;
+  width: auto !important;
+  height: 0.6875rem !important;
+  padding: 0 0.125rem !important;
+  font-size: 0.5rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  border-radius: 999px !important;
+  background: var(--ww-tag-bg) !important;
+  color: var(--ww-tag-fg) !important;
+  box-shadow: none !important;
+}
+
+.ww-rss-tree-action {
+  opacity: 0;
+  transition: opacity var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-rss-tree .p-tree-node-content:hover .ww-rss-tree-action,
+.ww-rss-tree-action:focus-visible {
+  opacity: 1;
+}
+
+.ww-rss-tree-warn {
+  font-size: 0.6875rem;
+  color: var(--ww-warn);
+  cursor: help;
+}
+
+.ww-rss-tree-status {
+  font-size: 0.625rem;
+  color: var(--ww-ink-faint);
+}
+
+.ww-rss-tree-recycle-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0;
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-rss-tree .p-tree-node-content:hover .ww-rss-tree-recycle-actions {
+  opacity: 1;
+}
+
+</style>

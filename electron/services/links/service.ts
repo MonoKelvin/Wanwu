@@ -140,6 +140,41 @@ export class LinksService {
     }))
   }
 
+  /** 全库链接（搜索用） */
+  listAllBookmarks(): LinkBookmark[] {
+    const rows = this.db
+      .prepare(
+        `SELECT id, folder_id, title, url, sort_order, deleted, source, external_id, user_created, unreachable
+         FROM link_bookmarks
+         ORDER BY sort_order, title`
+      )
+      .all() as Array<{
+      id: string
+      folder_id: string
+      title: string
+      url: string
+      sort_order: number
+      deleted: number
+      source: string
+      external_id: string | null
+      user_created: number
+      unreachable: number | null
+    }>
+
+    return rows.map((r) => ({
+      id: r.id,
+      folderId: r.folder_id,
+      title: r.title,
+      url: r.url,
+      sortOrder: r.sort_order,
+      deleted: r.deleted === 1,
+      source: r.source as LinkBookmark['source'],
+      externalId: r.external_id,
+      userCreated: r.user_created === 1,
+      unreachable: r.unreachable === null ? null : r.unreachable === 1
+    }))
+  }
+
   softDeleteBookmark(id: string): void {
     this.db
       .prepare(`UPDATE link_bookmarks SET deleted = 1, folder_id = ? WHERE id = ?`)

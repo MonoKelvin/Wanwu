@@ -609,3 +609,434 @@ onUnmounted(() => {
     </Transition>
   </Teleport>
 </template>
+
+<style>
+.ww-glass-chip {
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background: rgb(18 18 22 / 0.28);
+  backdrop-filter: blur(18px) saturate(1.25);
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  color: #fff;
+}
+
+
+.ww-image-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+.ww-image-viewer__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: rgb(8 8 10 / 0.35);
+}
+
+/* 默认即保持模糊（避免 enter-to 结束后回到 blur(0)） */
+.ww-image-viewer__blur {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: rgb(10 10 12 / 0.28);
+  backdrop-filter: blur(22px) saturate(1.15);
+  -webkit-backdrop-filter: blur(22px) saturate(1.15);
+}
+
+.ww-image-viewer__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: stretch;
+  pointer-events: none;
+}
+
+.ww-image-viewer__stage > .ww-image-viewer__viewport {
+  pointer-events: auto;
+}
+
+.ww-image-viewer__hud {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.ww-image-viewer__counter {
+  position: absolute;
+  top: var(--ww-viewer-inset);
+  left: var(--ww-viewer-inset);
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0 0.5625rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.88);
+  border-radius: 0.375rem;
+  pointer-events: auto;
+}
+
+.ww-image-viewer__top-actions {
+  position: absolute;
+  top: var(--ww-viewer-inset);
+  right: var(--ww-viewer-inset);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  pointer-events: auto;
+}
+
+.ww-image-viewer__close {
+  position: static;
+  flex-shrink: 0;
+}
+
+.ww-image-viewer__help {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.ww-image-viewer__help-trigger {
+  display: inline-flex;
+  cursor: default;
+}
+
+.ww-image-viewer__help-popover {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 10;
+  width: max-content;
+  min-width: 11.75rem;
+  max-width: 15.5rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.625rem;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(12 12 16 / 0.52);
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.04) inset,
+    0 16px 48px rgb(0 0 0 / 0.38);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(0.98);
+  transform-origin: top right;
+  transition:
+    opacity var(--ww-duration) var(--ww-ease-out),
+    transform var(--ww-duration) var(--ww-ease-out),
+    visibility var(--ww-duration) var(--ww-ease-out);
+  pointer-events: none;
+}
+
+.ww-image-viewer__help:hover .ww-image-viewer__help-popover,
+.ww-image-viewer__help:focus-within .ww-image-viewer__help-popover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.ww-image-viewer__help-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.5);
+}
+
+.ww-image-viewer__help-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ww-image-viewer__help-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.875rem;
+}
+
+.ww-image-viewer__help-keys {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.ww-image-viewer__help-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.375rem;
+  padding: 0.125rem 0.3125rem;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 0.25rem;
+  background: rgb(255 255 255 / 0.08);
+  font-family: inherit;
+  font-size: 0.625rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: rgb(255 255 255 / 0.92);
+}
+
+.ww-image-viewer__help-label {
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  color: rgb(255 255 255 / 0.76);
+  white-space: nowrap;
+}
+
+.ww-image-viewer .ww-image-viewer__btn.ww-glass-btn--icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background: rgb(18 18 22 / 0.32);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border-color: rgb(255 255 255 / 0.16);
+}
+
+.ww-image-viewer .ww-image-viewer__btn.ww-glass-btn--icon:hover {
+  background: rgb(18 18 22 / 0.48);
+}
+
+.ww-image-viewer .ww-image-viewer__btn.ww-glass-btn--icon .ww-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.ww-image-viewer .ww-image-viewer__nav-btn.ww-glass-btn--icon {
+  width: 1.625rem;
+  height: 2.5rem;
+  border-radius: 0.4375rem;
+}
+
+.ww-image-viewer__nav-zone {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  width: auto;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.ww-image-viewer__nav-zone--prev {
+  left: 0;
+  justify-content: flex-start;
+  padding-left: var(--ww-viewer-inset);
+}
+
+.ww-image-viewer__nav-zone--next {
+  right: 0;
+  justify-content: flex-end;
+  padding-right: var(--ww-viewer-inset);
+}
+
+.ww-image-viewer__nav {
+  flex-shrink: 0;
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateX(0);
+  transition:
+    opacity var(--ww-duration) var(--ww-ease-out),
+    transform var(--ww-duration) var(--ww-ease-out),
+    background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-image-viewer__nav-zone--prev .ww-image-viewer__nav {
+  transform: translateX(-4px);
+}
+
+.ww-image-viewer__nav-zone--next .ww-image-viewer__nav {
+  transform: translateX(4px);
+}
+
+.ww-image-viewer__nav.is-visible,
+.ww-image-viewer__nav:hover,
+.ww-image-viewer__nav:focus-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.ww-image-viewer__viewport {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: default;
+  touch-action: none;
+  pointer-events: auto;
+}
+
+.ww-image-viewer__transform {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  will-change: transform;
+  touch-action: none;
+}
+
+.ww-image-viewer__transform.is-zoomed {
+  cursor: grab;
+}
+
+.ww-image-viewer__transform.is-dragging,
+.ww-image-viewer__transform.is-wheel-animating {
+  cursor: grab;
+}
+
+.ww-image-viewer__transform.is-dragging {
+  cursor: grabbing;
+}
+
+.ww-image-viewer.is-panning .ww-image-viewer__viewport,
+.ww-image-viewer.is-panning .ww-image-viewer__transform {
+  cursor: grabbing !important;
+}
+
+.ww-image-viewer__img {
+  display: block;
+  max-width: 100dvw;
+  max-height: 100dvh;
+  object-fit: contain;
+  border-radius: 0;
+  box-shadow: none;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* 打开/关闭：遮罩淡入 + 模糊层动画（图片在 chrome 层保持清晰） */
+.ww-image-viewer-enter-active,
+.ww-image-viewer-leave-active {
+  transition: opacity var(--ww-duration-slow) var(--ww-ease-out-slow);
+}
+
+.ww-image-viewer-enter-active .ww-image-viewer__scrim,
+.ww-image-viewer-leave-active .ww-image-viewer__scrim {
+  transition: background-color var(--ww-duration-slow) var(--ww-ease-out-slow);
+}
+
+.ww-image-viewer-enter-active .ww-image-viewer__blur,
+.ww-image-viewer-leave-active .ww-image-viewer__blur {
+  transition:
+    backdrop-filter var(--ww-duration-slow) var(--ww-ease-out-slow),
+    -webkit-backdrop-filter var(--ww-duration-slow) var(--ww-ease-out-slow),
+    background-color var(--ww-duration-slow) var(--ww-ease-out-slow);
+}
+
+.ww-image-viewer-enter-active .ww-image-viewer__img,
+.ww-image-viewer-leave-active .ww-image-viewer__img {
+  transition:
+    opacity var(--ww-duration) var(--ww-ease-out),
+    transform var(--ww-duration) var(--ww-ease-out);
+}
+
+.ww-image-viewer-enter-from,
+.ww-image-viewer-leave-to {
+  opacity: 1;
+}
+
+.ww-image-viewer-enter-from .ww-image-viewer__scrim,
+.ww-image-viewer-leave-to .ww-image-viewer__scrim {
+  background: rgb(8 8 10 / 0);
+}
+
+.ww-image-viewer-enter-from .ww-image-viewer__blur,
+.ww-image-viewer-leave-to .ww-image-viewer__blur {
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
+  background: rgb(10 10 12 / 0);
+}
+
+.ww-image-viewer-enter-from .ww-image-viewer__hud {
+  opacity: 0;
+}
+
+.ww-image-viewer-enter-active .ww-image-viewer__hud {
+  transition: opacity var(--ww-duration) var(--ww-ease-out) 0.08s;
+}
+
+.ww-image-viewer-enter-to .ww-image-viewer__hud,
+.ww-image-viewer-leave-from .ww-image-viewer__hud {
+  opacity: 1;
+}
+
+.ww-image-viewer-leave-active .ww-image-viewer__hud {
+  transition: opacity var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-image-viewer-leave-to .ww-image-viewer__hud {
+  opacity: 0;
+}
+
+.ww-image-viewer-enter-from .ww-image-viewer__img,
+.ww-image-viewer-leave-to .ww-image-viewer__img {
+  opacity: 0;
+  transform: scale(0.97);
+}
+
+.ww-image-viewer-enter-to .ww-image-viewer__img,
+.ww-image-viewer-leave-from .ww-image-viewer__img {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ww-image-viewer-slide-enter-active,
+.ww-image-viewer-slide-leave-active {
+  transition:
+    opacity var(--ww-duration) var(--ww-ease-out),
+    transform var(--ww-duration) var(--ww-ease-out);
+}
+
+.ww-image-viewer-slide-enter-from {
+  opacity: 0;
+  transform: scale(0.98);
+}
+
+.ww-image-viewer-slide-leave-to {
+  opacity: 0;
+  transform: scale(1.01);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-image-viewer-enter-active .ww-image-viewer__blur,
+  .ww-image-viewer-leave-active .ww-image-viewer__blur {
+    transition: background-color var(--ww-duration) var(--ww-ease-out);
+  }
+
+  .ww-image-viewer-enter-from .ww-image-viewer__blur,
+  .ww-image-viewer-leave-to .ww-image-viewer__blur {
+    backdrop-filter: blur(22px) saturate(1.15);
+    -webkit-backdrop-filter: blur(22px) saturate(1.15);
+    background: rgb(10 10 12 / 0.28);
+  }
+
+  .ww-image-viewer__transform {
+    transition: none;
+  }
+
+  .ww-image-viewer__nav {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+</style>

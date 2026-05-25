@@ -49,3 +49,36 @@ const creditPrefix = computed(() => {
     </a>
   </p>
 </template>
+
+<style>
+.ww-unsplash-attribution {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.25em;
+  margin: 0;
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  color: var(--ww-ink-muted);
+}
+
+.ww-unsplash-attribution--compact {
+  font-size: 0.625rem;
+  line-height: 1.35;
+}
+
+.ww-unsplash-attribution__link {
+  color: var(--ww-ink);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.ww-unsplash-attribution__link:hover {
+  color: var(--ww-accent);
+  text-decoration: underline;
+}
+
+.ww-unsplash-attribution__link--brand {
+  font-weight: 600;
+}
+</style>

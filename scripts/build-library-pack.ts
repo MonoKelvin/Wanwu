@@ -1,7 +1,7 @@
 /**
  * 从 assets/seed/illustrated-handbook/items 各 JSON 生成预编译图鉴 SQLite 数据包
  *
- *   npm run build（第一步）
+ *   npm run build（经 run.mjs library-pack，使用 Electron Node）
  *
  * 产出: assets/packed/library-data-pack.zip（由 pack 单独复制到 release/ 分发，不打进安装包）
  */

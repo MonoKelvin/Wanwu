@@ -58,3 +58,34 @@ watch(
     </main>
   </div>
 </template>
+
+<style>
+.ww-item-detail-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--ww-content);
+}
+
+/* 物品详情浮层进入 / 离开 */
+.ww-item-detail-enter-active {
+  transition:
+    opacity var(--ww-duration-slow) var(--ww-ease-out-slow),
+    transform var(--ww-duration-slow) var(--ww-ease-out-slow);
+}
+
+.ww-item-detail-leave-active {
+  transition:
+    opacity var(--ww-duration) var(--ww-ease-out),
+    transform var(--ww-duration) var(--ww-ease-out);
+}
+
+.ww-item-detail-enter-from,
+.ww-item-detail-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+</style>

@@ -223,3 +223,11 @@ async function submit() {
     </template>
   </Dialog>
 </template>
+
+<style>
+.ww-rss-display-fieldset {
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+</style>

@@ -63,3 +63,27 @@ const sources = computed(() => {
     />
   </span>
 </template>
+
+<style>
+.ww-rss-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  background: var(--ww-inset);
+  color: var(--ww-ink-muted);
+}
+
+.ww-rss-icon--sm {
+  width: var(--ww-rss-feed-icon-size);
+  height: var(--ww-rss-feed-icon-size);
+  flex-shrink: 0;
+  border-radius: 0.25rem;
+}
+
+.ww-rss-icon--md {
+  width: 100%;
+  height: 100%;
+}
+</style>

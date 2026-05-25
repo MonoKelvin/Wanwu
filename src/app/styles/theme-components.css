@@ -11,25 +11,10 @@
   box-shadow: var(--ww-panel-edge-highlight);
 }
 
-.ww-empty-state__card {
-  background: var(--ww-glass-bg);
-  border-color: var(--ww-glass-border);
-}
-
-[data-theme='dark'] .ww-empty-state__art {
-  opacity: 0.88;
-}
-
-.ww-product-detail__toast {
+.ww-pop-tip {
   color: var(--ww-ink);
   border-color: var(--ww-glass-border);
   background: var(--ww-glass-bg-soft);
-}
-
-@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .ww-product-detail__toast {
-    background: var(--ww-glass-bg-soft);
-  }
 }
 
 .ww-product-detail__float-dock.ww-glass-blur::before {
@@ -89,25 +74,7 @@
   background: var(--ww-header-veil);
 }
 
-.ww-bg-editor__hint,
-.ww-bg-editor__help-popover {
-  background: var(--ww-glass-bg-soft);
-  border-color: var(--ww-glass-border);
-}
-
-.ww-bg-editor__icon-btn {
-  background: var(--ww-glass-bg);
-}
-
-.ww-bg-editor__icon-btn:hover,
-.ww-bg-editor__icon-btn:focus-visible {
-  background: var(--ww-glass-bg-soft);
-}
-
-.ww-bg-editor__crop-handle {
-  background: var(--ww-content);
-  border-color: var(--ww-ink);
-}
+/* 背景编辑器：组件内已用 --ww-glass-* / --ww-menu-panel-bg，深色由 theme-dark token 覆盖 */
 
 .ww-personal-profile__toolbar .p-button {
   background: var(--ww-glass-bg) !important;

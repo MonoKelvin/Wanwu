@@ -17,6 +17,7 @@ export interface WanwuApi {
   links: {
     listFolders: () => Promise<LinkFolder[]>
     listBookmarks: (params: { folderId: string; includeDeleted?: boolean }) => Promise<LinkBookmark[]>
+    listAllBookmarks: () => Promise<LinkBookmark[]>
     sync: () => Promise<LinksSyncResult>
     createBookmark: (input: { folderId: string; title: string; url: string }) => Promise<LinkBookmark>
     updateBookmark: (input: {
@@ -29,6 +30,7 @@ export interface WanwuApi {
     restoreBookmark: (id: string) => Promise<void>
     permanentDeleteBookmark: (id: string) => Promise<void>
     probeUnreachable: (ids: string[]) => Promise<Record<string, boolean>>
+    onBookmarksFileChanged: (listener: () => void) => () => void
   }
   rss: {
     listGroups: () => Promise<RssGroup[]>

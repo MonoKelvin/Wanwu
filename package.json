@@ -1,6 +1,6 @@
 {
     "name": "wanwu",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "type": "module",
     "description": "万物 - 事物收集与浏览桌面应用",
     "main": "out/main/index.js",
@@ -12,12 +12,12 @@
     },
     "scripts": {
         "dev": "node scripts/run.mjs dev && electron-vite dev",
-        "build": "node scripts/run.mjs sqlite host && tsx scripts/build-library-pack.ts && electron-vite build && node scripts/run.mjs sqlite rebuild --force",
-        "build:app": "node scripts/run.mjs sqlite host && electron-vite build && node scripts/run.mjs sqlite rebuild --force",
+        "build": "node scripts/run.mjs sqlite electron && node scripts/run.mjs library-pack && electron-vite build",
+        "build:app": "electron-vite build && node scripts/run.mjs sqlite electron",
         "pack": "node scripts/run.mjs pack",
         "logo:ico": "node scripts/generate-app-ico.mjs",
         "typecheck": "vue-tsc --noEmit -p tsconfig.web.json",
-        "postinstall": "node scripts/run.mjs sqlite rebuild",
+        "postinstall": "node scripts/run.mjs sqlite electron",
         "rebuild": "node scripts/run.mjs sqlite rebuild --force"
     },
     "dependencies": {
@@ -28,19 +28,13 @@
         "better-sqlite3": "^12.10.0",
         "electron-native-share": "^0.1.1",
         "extract-zip": "^2.0.1",
-        "gsap": "^3.15.0",
         "howler": "^2.2.4",
         "html2canvas": "^1.4.1",
-        "lygia": "^1.4.1",
         "marked": "^18.0.4",
         "pinia": "^3.0.4",
-        "postprocessing": "^6.39.1",
         "primevue": "^4.5.5",
         "rss-parser": "^3.13.0",
         "tailwindcss-primeui": "^0.6.1",
-        "three": "^0.184.0",
-        "three-gpu-pathtracer": "^0.0.24",
-        "three-mesh-bvh": "^0.9.0",
         "vue": "^3.5.34",
         "vue-router": "^5.0.7"
     },
@@ -48,7 +42,6 @@
         "@electron/rebuild": "^3.7.2",
         "@types/archiver": "^7.0.0",
         "@types/better-sqlite3": "^7.6.13",
-        "@types/three": "^0.184.0",
         "@vitejs/plugin-vue": "^6.0.7",
         "autoprefixer": "^10.5.0",
         "electron": "^39.8.10",
@@ -62,7 +55,6 @@
         "tsx": "^4.22.3",
         "typescript": "^6.0.3",
         "vite": "^7.3.3",
-        "vite-plugin-glsl": "^1.6.0",
         "vue-tsc": "^3.3.1"
     },
     "engines": {

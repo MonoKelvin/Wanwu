@@ -328,11 +328,53 @@
   color: var(--ww-ink-muted);
 }
 
+[data-theme='dark'] .ww-catalog-tree .p-tree-node-selected > .p-tree-node-content,
+[data-theme='dark'] .ww-catalog-tree .p-tree-node-content.p-tree-node-selected {
+  background: var(--ww-list-selected-bg) !important;
+  box-shadow: none !important;
+}
+
 [data-theme='dark'] .ww-library-tree .p-tree-node-selected .p-tree-node-content,
 [data-theme='dark'] .ww-library-tree .p-tree-node-content.p-tree-node-selected {
   background: var(--ww-elevated) !important;
   color: var(--ww-ink) !important;
   box-shadow: 0 0 0 1px var(--ww-border-subtle);
+}
+
+[data-theme='dark'] .ww-links-folder-panel {
+  background: color-mix(in srgb, var(--ww-bg) 92%, black);
+}
+
+[data-theme='dark'] .ww-link-card,
+[data-theme='dark'] .ww-links-bookmark-list__row {
+  background: var(--ww-panel);
+  border-color: var(--ww-border-subtle);
+}
+
+[data-theme='dark'] .ww-side-nav-panel {
+  background: var(--ww-elevated);
+  border-color: var(--ww-border-subtle);
+}
+
+[data-theme='dark'] .ww-side-nav-panel:hover {
+  box-shadow: 0 4px 18px rgb(0 0 0 / 0.22);
+}
+
+[data-theme='dark'] .ww-link-open-url:hover {
+  color: var(--ww-ink);
+}
+
+[data-theme='dark'] .ww-link-favicon__skeleton {
+  background: color-mix(in srgb, var(--ww-elevated) 88%, var(--ww-bg));
+}
+
+[data-theme='dark'] .ww-link-favicon__skeleton::after {
+  background: linear-gradient(
+    115deg,
+    transparent 38%,
+    color-mix(in srgb, var(--ww-ink) 14%, transparent) 50%,
+    transparent 62%
+  );
 }
 
 /* 标题栏窗口控制：默认透明，仅 hover 显底 */
