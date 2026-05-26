@@ -1,4 +1,4 @@
-import { EDGE_ROOT_FOLDER_ID } from '@shared/stores/links'
+import { defaultLinksEntryFolderId } from '@library/links/sources'
 
 const FOLDER_KEY = 'wanwu:links:last-folder-id'
 
@@ -9,7 +9,7 @@ export function readLastLinksFolderId(): string {
   } catch {
     /* ignore */
   }
-  return EDGE_ROOT_FOLDER_ID
+  return defaultLinksEntryFolderId()
 }
 
 export function writeLastLinksFolderId(folderId: string): void {

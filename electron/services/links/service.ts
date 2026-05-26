@@ -3,13 +3,20 @@ import { mkdirSync } from 'fs'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
 import type { LinkBookmark, LinkFolder, LinksSyncResult } from '../../../src/shared/types/links'
+import { LINKS_RECYCLE_BIN_ID, LOCAL_COLLECTIONS_ROOT_ID } from './constants'
+import { parseBrowserExternalPath } from './browser/parseExternalPath'
 import {
-  EDGE_ROOT_FOLDER_ID,
-  LINKS_RECYCLE_BIN_ID,
-  LOCAL_COLLECTIONS_ROOT_ID
-} from './constants'
-import { syncEdgeBookmarksIntoDb, parseEdgeExternalPath } from './edgeSync'
-import { syncBookmarksToEdgeFile } from './edgeWriteBack'
+  syncBrowserBookmarksIntoDb,
+  syncBrowserBookmarksToFile
+} from './browser/syncRouter'
+import {
+  DEFAULT_BROWSER_SOURCE_ID,
+  defaultBrowserRootFolderId,
+  getBrowserBookmarkProvider,
+  isBrowserBookmarkSourceId,
+  listBrowserBookmarkProviders,
+  listBrowserSourceStatus
+} from './browser/registry'
 import {
   checkLinkReachability,
   mapPool,
@@ -18,11 +25,8 @@ import {
 import { normalizeLinkUrl } from './linkUrl'
 import type { LinksProbeProgress, LinksProbeSummary } from '../../../src/shared/types/links'
 
-export {
-  EDGE_ROOT_FOLDER_ID,
-  LINKS_RECYCLE_BIN_ID,
-  LOCAL_COLLECTIONS_ROOT_ID
-} from './constants'
+export { LINKS_RECYCLE_BIN_ID, LOCAL_COLLECTIONS_ROOT_ID } from './constants'
+export { DEFAULT_BROWSER_SOURCE_ID, defaultBrowserRootFolderId } from './browser/registry'
 
 export class LinksService {
   private db: Database.Database
@@ -80,8 +84,18 @@ export class LinksService {
       INSERT OR IGNORE INTO link_folders (id, parent_id, name, sort_order, source, external_path, is_recycle_bin)
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `)
-    insert.run(EDGE_ROOT_FOLDER_ID, null, 'Microsoft Edge', 0, 'edge', 'bookmark_bar', 0)
-    insert.run(LOCAL_COLLECTIONS_ROOT_ID, null, '收藏夹', 1, 'local', null, 0)
+    for (const provider of listBrowserBookmarkProviders()) {
+      insert.run(
+        provider.rootFolderId,
+        null,
+        provider.displayName,
+        provider.sortOrder,
+        provider.id,
+        'bookmark_bar',
+        0
+      )
+    }
+    insert.run(LOCAL_COLLECTIONS_ROOT_ID, null, '收藏夹', 100, 'local', null, 0)
     this.db
       .prepare(`UPDATE link_folders SET name = '收藏夹' WHERE id = ?`)
       .run(LOCAL_COLLECTIONS_ROOT_ID)
@@ -117,11 +131,15 @@ export class LinksService {
       | undefined
   }
 
+  private isBrowserRootFolderId(folderId: string): boolean {
+    return listBrowserBookmarkProviders().some((p) => p.rootFolderId === folderId)
+  }
+
   private isLocalSubtreeFolderId(folderId: string): boolean {
     let current: string | null = folderId
     while (current) {
       if (current === LOCAL_COLLECTIONS_ROOT_ID) return true
-      if (current === LINKS_RECYCLE_BIN_ID || current === EDGE_ROOT_FOLDER_ID) return false
+      if (current === LINKS_RECYCLE_BIN_ID || this.isBrowserRootFolderId(current)) return false
       const row = this.getFolderRow(current)
       if (!row) return false
       current = row.parent_id
@@ -412,16 +430,30 @@ export class LinksService {
 
     let targetFolder = row.prev_folder_id
     if (!targetFolder && row.external_id) {
-      const path = parseEdgeExternalPath(row.external_id)
-      if (path) {
+      const sourceId = row.external_id.split(':')[0] ?? ''
+      const extPath = isBrowserBookmarkSourceId(sourceId)
+        ? parseBrowserExternalPath(sourceId, row.external_id)
+        : null
+      if (extPath) {
         const folder = this.db
-          .prepare(`SELECT id FROM link_folders WHERE external_path = ?`)
-          .get(path) as { id: string } | undefined
+          .prepare(`SELECT id FROM link_folders WHERE source = ? AND external_path = ?`)
+          .get(sourceId, extPath) as { id: string } | undefined
         if (folder) targetFolder = folder.id
+      }
+      if (!targetFolder) {
+        const provider = getBrowserBookmarkProvider(sourceId)
+        if (provider) targetFolder = provider.rootFolderId
       }
     }
     if (!targetFolder || targetFolder === LINKS_RECYCLE_BIN_ID) {
-      targetFolder = EDGE_ROOT_FOLDER_ID
+      const sourcePrefix = row.external_id?.split(':')[0] ?? ''
+      if (isBrowserBookmarkSourceId(sourcePrefix)) {
+        targetFolder =
+          getBrowserBookmarkProvider(sourcePrefix)?.rootFolderId ??
+          defaultBrowserRootFolderId()
+      } else {
+        targetFolder = LOCAL_COLLECTIONS_ROOT_ID
+      }
     }
 
     this.db
@@ -489,7 +521,7 @@ export class LinksService {
     )
   }
 
-  /** 仅更新软件内展示顺序，不写 Edge */
+  /** 仅更新软件内展示顺序，不写回浏览器收藏夹文件 */
   reorderBookmarks(folderId: string, orderedIds: string[]): void {
     const stmt = this.db.prepare(
       `UPDATE link_bookmarks SET sort_order = ? WHERE id = ? AND folder_id = ?`
@@ -500,18 +532,31 @@ export class LinksService {
     tx(orderedIds)
   }
 
-  syncFromEdge(): LinksSyncResult {
-    return syncEdgeBookmarksIntoDb(this.db)
+  listBrowserSources() {
+    return listBrowserSourceStatus()
   }
 
-  syncToEdge(): LinksSyncResult {
-    const push = syncBookmarksToEdgeFile(this.db)
-    if (push.failed > 0 && push.pushed + push.updated + push.removed === 0) {
+  syncFromBrowser(browserSourceId: string): LinksSyncResult {
+    const provider = getBrowserBookmarkProvider(browserSourceId)
+    if (!provider) throw new Error(`不支持的浏览器来源：${browserSourceId}`)
+    if (!provider.resolveBookmarksPath()) {
       throw new Error(
-        `无法写回 Edge：有 ${push.failed} 条链接在浏览器收藏夹中未找到对应项`
+        `未找到 ${provider.displayName} 收藏夹，请确认已安装该浏览器并使用过书签功能`
       )
     }
-    const pull = syncEdgeBookmarksIntoDb(this.db)
+    return syncBrowserBookmarksIntoDb(this.db, provider)
+  }
+
+  syncToBrowser(browserSourceId: string): LinksSyncResult {
+    const provider = getBrowserBookmarkProvider(browserSourceId)
+    if (!provider) throw new Error(`不支持的浏览器来源：${browserSourceId}`)
+    const push = syncBrowserBookmarksToFile(this.db, provider)
+    if (push.failed > 0 && push.pushed + push.updated + push.removed === 0) {
+      throw new Error(
+        `无法写回 ${provider.displayName}：有 ${push.failed} 条链接在浏览器收藏夹中未找到对应项`
+      )
+    }
+    const pull = syncBrowserBookmarksIntoDb(this.db, provider)
     return {
       added: pull.added,
       updated: pull.updated + push.updated,
@@ -521,11 +566,13 @@ export class LinksService {
     }
   }
 
-  /** 拉取 → 写回 Edge → 再拉取（串行，保证 external_id 与浏览器一致） */
-  syncMerge(): LinksSyncResult {
-    const pullBefore = this.syncFromEdge()
-    const push = syncBookmarksToEdgeFile(this.db)
-    const pullAfter = this.syncFromEdge()
+  /** 拉取 → 写回 → 再拉取（串行，保证 external_id 与浏览器一致） */
+  syncMerge(browserSourceId: string = DEFAULT_BROWSER_SOURCE_ID): LinksSyncResult {
+    const pullBefore = this.syncFromBrowser(browserSourceId)
+    const provider = getBrowserBookmarkProvider(browserSourceId)
+    if (!provider) throw new Error(`不支持的浏览器来源：${browserSourceId}`)
+    const push = syncBrowserBookmarksToFile(this.db, provider)
+    const pullAfter = this.syncFromBrowser(browserSourceId)
     return {
       added: pullBefore.added + pullAfter.added,
       updated: pullBefore.updated + pullAfter.updated + push.updated,

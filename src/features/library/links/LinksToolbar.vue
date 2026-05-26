@@ -20,10 +20,12 @@ const props = withDefaults(
     syncing?: boolean
     checkingLinks?: boolean
     canCreateFolder?: boolean
-    /** Edge 等从浏览器文件同步的来源才显示 */
+    /** 浏览器收藏夹来源才显示同步控件 */
     showBrowserSync?: boolean
+    /** 本机是否检测到该浏览器收藏夹文件 */
+    browserSyncAvailable?: boolean
   }>(),
-  { showBrowserSync: true }
+  { showBrowserSync: true, browserSyncAvailable: true }
 )
 
 const emit = defineEmits<{
@@ -52,13 +54,13 @@ const moreItems = computed((): WwMenuItem[] => {
         {
           label: '同步到软件',
           wwIcon: 'refresh-cw',
-          disabled: () => !!props.syncing,
+          disabled: () => !!props.syncing || !props.browserSyncAvailable,
           command: () => emit('syncFromBrowser')
         },
         {
           label: '同步到浏览器',
           wwIcon: 'share',
-          disabled: () => !!props.syncing,
+          disabled: () => !!props.syncing || !props.browserSyncAvailable,
           command: () => emit('syncToBrowser')
         },
         { separator: true }
@@ -95,7 +97,7 @@ function toggleMoreMenu(event: MouseEvent) {
     <div class="ww-page-toolbar__cluster ww-page-toolbar__cluster--nowrap">
       <WwViewModeToggle v-model="viewMode" aria-label="链接展示方式" />
       <WwLiveSyncButton
-        v-if="showBrowserSync"
+        v-if="showBrowserSync && browserSyncAvailable"
         v-model="liveSync"
         :syncing="syncing"
       />

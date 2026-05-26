@@ -50,7 +50,7 @@ const emit = defineEmits<{
           <WwIconButton
             icon="pencil"
             compact
-            aria-label="编辑"
+            ariaLabel="编辑"
             v-tooltip.bottom="'编辑'"
             @click="emit('edit', link)"
           />
@@ -58,14 +58,14 @@ const emit = defineEmits<{
             v-if="link.deleted"
             icon="rotate-ccw"
             compact
-            aria-label="恢复"
+            ariaLabel="恢复"
             v-tooltip.bottom="'恢复'"
             @click="emit('restore', link)"
           />
           <WwIconButton
             icon="trash-2"
             compact
-            aria-label="删除"
+            ariaLabel="删除"
             v-tooltip.bottom="link.deleted ? '彻底删除' : '删除'"
             @click="emit('delete', link)"
           />

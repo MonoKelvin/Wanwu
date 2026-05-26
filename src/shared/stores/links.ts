@@ -1,26 +1,44 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { findLinkFolder } from '@features/library/links/linksFolderTree'
-import type { LinkBookmark, LinkFolder, LinksSyncResult } from '@shared/types/links'
+import { browserBrandIconUrl } from '@library/links/browserBrandIcons'
+import {
+  browserSourceForFolderSource,
+  browserSourceForRootFolderId,
+  defaultLinksEntryFolderId
+} from '@library/links/sources'
+import type {
+  BrowserSourceStatus,
+  LinkBookmark,
+  LinkFolder,
+  LinksSyncResult
+} from '@shared/types/links'
 import type { CatalogNode } from '@library/types/catalog'
 import {
   bookmarkMatchesQuery,
   matchingFolderIdsForBookmarks
 } from '@features/library/links/linksSearch'
 
-export const EDGE_ROOT_FOLDER_ID = 'edge-microsoft'
 export const LINKS_RECYCLE_BIN_ID = 'links-recycle-bin'
 export const LOCAL_COLLECTIONS_ROOT_ID = 'local-collections'
 
 function foldersToCatalog(folders: LinkFolder[]): CatalogNode[] {
-  return folders.map((f) => ({
-    id: f.id,
-    name: f.name,
-    icon: f.isRecycleBin ? 'trash-2' : f.source === 'edge' ? 'globe' : 'folder',
-    leaf: !f.children?.length,
-    children: f.children?.length ? foldersToCatalog(f.children) : undefined,
-    meta: { isRecycleBin: f.isRecycleBin }
-  }))
+  return folders.map((f) => {
+    const browser =
+      browserSourceForRootFolderId(f.id) ?? browserSourceForFolderSource(f.source)
+    return {
+      id: f.id,
+      name: f.name,
+      icon:
+        browser ? undefined
+        : f.isRecycleBin ? 'trash-2'
+        : 'folder',
+      iconSrc: browser ? browserBrandIconUrl(browser.id) : undefined,
+      leaf: !f.children?.length,
+      children: f.children?.length ? foldersToCatalog(f.children) : undefined,
+      meta: { isRecycleBin: f.isRecycleBin }
+    }
+  })
 }
 
 export const useLinksStore = defineStore('library-links', () => {
@@ -33,6 +51,7 @@ export const useLinksStore = defineStore('library-links', () => {
   const globalSearchLoading = ref(false)
   const syncing = ref(false)
   const recycleBinCount = ref(0)
+  const browserSources = ref<BrowserSourceStatus[]>([])
 
   const folderTree = computed<CatalogNode[]>(() => foldersToCatalog(folders.value))
 
@@ -73,10 +92,22 @@ export const useLinksStore = defineStore('library-links', () => {
     recycleBinCount.value = list.length
   }
 
+  async function loadBrowserSources() {
+    browserSources.value = await window.wanwu.links.listBrowserSources()
+  }
+
+  function browserSourceStatus(id: string): BrowserSourceStatus | undefined {
+    return browserSources.value.find((s) => s.id === id)
+  }
+
+  function isBrowserSourceAvailable(id: string): boolean {
+    return browserSourceStatus(id)?.available === true
+  }
+
   async function loadFolders() {
     folders.value = await window.wanwu.links.listFolders()
     if (!selectedFolderId.value && folders.value.length) {
-      selectedFolderId.value = EDGE_ROOT_FOLDER_ID
+      selectedFolderId.value = defaultLinksEntryFolderId()
     }
     await refreshRecycleBinCount()
   }
@@ -142,10 +173,10 @@ export const useLinksStore = defineStore('library-links', () => {
     throw new Error('目录已写入，但未能读取新目录信息，请刷新后重试')
   }
 
-  async function syncFromBrowser(): Promise<LinksSyncResult> {
+  async function syncFromBrowser(browserSourceId: string): Promise<LinksSyncResult> {
     syncing.value = true
     try {
-      const result = await window.wanwu.links.syncFromBrowser()
+      const result = await window.wanwu.links.syncFromBrowser({ browserSourceId })
       await refreshAfterSync()
       return result
     } finally {
@@ -153,10 +184,10 @@ export const useLinksStore = defineStore('library-links', () => {
     }
   }
 
-  async function syncToBrowser(): Promise<LinksSyncResult> {
+  async function syncToBrowser(browserSourceId: string): Promise<LinksSyncResult> {
     syncing.value = true
     try {
-      const result = await window.wanwu.links.syncToBrowser()
+      const result = await window.wanwu.links.syncToBrowser({ browserSourceId })
       await refreshAfterSync()
       return result
     } finally {
@@ -195,6 +226,10 @@ export const useLinksStore = defineStore('library-links', () => {
     globalSearchLoading,
     syncing,
     recycleBinCount,
+    browserSources,
+    loadBrowserSources,
+    browserSourceStatus,
+    isBrowserSourceAvailable,
     isGlobalSearch,
     globalSearchMatches,
     matchingFolderIds,

@@ -31,7 +31,7 @@ watch([activeSrc, failed], async () => {
   await nextTick()
   const img = root.value?.querySelector('img.ww-link-favicon__img')
   if (img instanceof HTMLImageElement && img.complete && img.naturalWidth > 0) {
-    onLoad({ target: img } as Event)
+    onLoad({ target: img } as unknown as Event)
   }
 })
 </script>

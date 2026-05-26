@@ -1,11 +1,16 @@
 import type { TreeNode } from 'primevue/treenode'
-import { catalogToTreeNodes } from '@library/types/catalog'
+import { catalogToTreeNodes, type CatalogNode } from '@library/types/catalog'
+import { browserBrandIconUrl } from '@library/links/browserBrandIcons'
 import {
-  EDGE_ROOT_FOLDER_ID,
+  browserSourceForRootFolderId,
+  isBrowserRootFolderId,
+  LOCAL_COLLECTIONS_SOURCE
+} from '@library/links/sources'
+import {
   LINKS_RECYCLE_BIN_ID,
   LOCAL_COLLECTIONS_ROOT_ID
 } from '@shared/stores/links'
-import type { LinkFolder } from '@shared/types/links'
+import type { BrowserBookmarkSourceId, LinkFolder } from '@shared/types/links'
 
 export function findLinkFolder(
   folders: LinkFolder[],
@@ -24,12 +29,17 @@ export function findLinkFolder(
   return walk(folders)
 }
 
-export type LinksGroupKind = 'edge' | 'local' | 'recycle'
+export type LinksGroupKind = 'browser' | 'local' | 'recycle'
+
+export type LinksGroupRoot =
+  | { kind: 'recycle'; root: LinkFolder }
+  | { kind: 'local'; root: LinkFolder }
+  | { kind: 'browser'; root: LinkFolder; browserSourceId: BrowserBookmarkSourceId }
 
 export function resolveLinksGroupRoot(
   folders: LinkFolder[],
   folderId: string
-): { kind: LinksGroupKind; root: LinkFolder } | null {
+): LinksGroupRoot | null {
   if (folderId === LINKS_RECYCLE_BIN_ID) {
     const root = findLinkFolder(folders, LINKS_RECYCLE_BIN_ID)
     return root ? { kind: 'recycle', root } : null
@@ -46,10 +56,16 @@ export function resolveLinksGroupRoot(
     }
   }
 
-  const edgeRoot = findLinkFolder(folders, EDGE_ROOT_FOLDER_ID)
-  if (!edgeRoot) return null
-  if (folderId === EDGE_ROOT_FOLDER_ID) {
-    return { kind: 'edge', root: edgeRoot }
+  for (const folder of folders) {
+    if (!isBrowserRootFolderId(folder.id)) continue
+    const def = browserSourceForRootFolderId(folder.id)
+    if (!def) continue
+    if (folderId === folder.id) {
+      return { kind: 'browser', root: folder, browserSourceId: def.id }
+    }
+    if (isDescendantOf(folders, folderId, folder.id)) {
+      return { kind: 'browser', root: folder, browserSourceId: def.id }
+    }
   }
 
   const current = findLinkFolder(folders, folderId)
@@ -58,10 +74,6 @@ export function resolveLinksGroupRoot(
   if (current.isRecycleBin || current.id === LINKS_RECYCLE_BIN_ID) {
     const root = findLinkFolder(folders, LINKS_RECYCLE_BIN_ID)
     return root ? { kind: 'recycle', root } : null
-  }
-
-  if (isDescendantOf(folders, folderId, EDGE_ROOT_FOLDER_ID)) {
-    return { kind: 'edge', root: edgeRoot }
   }
 
   return null
@@ -77,7 +89,7 @@ function isDescendantOf(folders: LinkFolder[], folderId: string, ancestorId: str
   return false
 }
 
-function foldersToCatalogNodes(folders: LinkFolder[]) {
+function foldersToCatalogNodes(folders: LinkFolder[]): CatalogNode[] {
   return folders.map((f) => ({
     id: f.id,
     name: f.name,
@@ -87,17 +99,8 @@ function foldersToCatalogNodes(folders: LinkFolder[]) {
   }))
 }
 
-function sourceRootIcon(kind: LinksGroupKind): string {
-  if (kind === 'edge') return 'globe'
-  if (kind === 'local') return 'folder-plus'
-  return 'folder'
-}
-
-/** 工作区左侧目录：Edge 保留来源根；本地收藏直接展示子文件夹（无「我的收藏」分组行） */
-export function buildLinksWorkspaceFolderTree(group: {
-  kind: LinksGroupKind
-  root: LinkFolder
-}): TreeNode[] {
+/** 工作区左侧目录：浏览器来源根；本地收藏直接展示子文件夹 */
+export function buildLinksWorkspaceFolderTree(group: LinksGroupRoot): TreeNode[] {
   if (group.kind === 'recycle') return []
 
   const childNodes = catalogToTreeNodes(
@@ -109,7 +112,7 @@ export function buildLinksWorkspaceFolderTree(group: {
     return [
       {
         key: `src:${LOCAL_COLLECTIONS_ROOT_ID}`,
-        label: '收藏夹',
+        label: LOCAL_COLLECTIONS_SOURCE.name,
         icon: 'folder-open',
         selectable: true,
         children: childNodes.length ? childNodes : undefined
@@ -117,30 +120,31 @@ export function buildLinksWorkspaceFolderTree(group: {
     ]
   }
 
+  const browserDef =
+    group.kind === 'browser' ? browserSourceForRootFolderId(group.root.id) : undefined
+
   return [
     {
       key: `src:${group.root.id}`,
       label: group.root.name,
-      icon: sourceRootIcon(group.kind),
+      icon: undefined,
       selectable: true,
-      children: childNodes.length ? childNodes : undefined
+      children: childNodes.length ? childNodes : undefined,
+      data: browserDef ? { iconSrc: browserBrandIconUrl(browserDef.id) } : undefined
     }
   ]
 }
 
-export function buildGroupFolderTreeNodes(group: {
-  kind: LinksGroupKind
-  root: LinkFolder
-}): TreeNode[] {
+export function buildGroupFolderTreeNodes(group: LinksGroupRoot): TreeNode[] {
   return buildLinksWorkspaceFolderTree(group)
 }
 
 export function ancestorExpandedKeysForFolder(
-  group: { kind: LinksGroupKind; root: LinkFolder },
+  group: LinksGroupRoot,
   folderId: string
 ): Record<string, boolean> {
   const keys: Record<string, boolean> = {}
-  if ((group.kind === 'edge' || group.kind === 'local') && folderId !== group.root.id) {
+  if ((group.kind === 'browser' || group.kind === 'local') && folderId !== group.root.id) {
     keys[`src:${group.root.id}`] = true
   }
   if (folderId === group.root.id) return keys
@@ -161,11 +165,11 @@ export function ancestorExpandedKeysForFolder(
 }
 
 export function defaultExpandedKeysForFolder(
-  group: { kind: LinksGroupKind; root: LinkFolder },
+  group: LinksGroupRoot,
   folderId: string
 ): Record<string, boolean> {
   const keys: Record<string, boolean> = {}
-  if (group.kind === 'edge' || group.kind === 'local') {
+  if (group.kind === 'browser' || group.kind === 'local') {
     keys[`src:${group.root.id}`] = true
   }
   return { ...keys, ...ancestorExpandedKeysForFolder(group, folderId) }

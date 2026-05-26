@@ -15,8 +15,9 @@ const api: WanwuApi = {
     listFolders: () => ipcRenderer.invoke('links:listFolders'),
     listBookmarks: (params) => ipcRenderer.invoke('links:listBookmarks', params),
     listAllBookmarks: () => ipcRenderer.invoke('links:listAllBookmarks'),
-    syncFromBrowser: () => ipcRenderer.invoke('links:syncFromBrowser'),
-    syncToBrowser: () => ipcRenderer.invoke('links:syncToBrowser'),
+    listBrowserSources: () => ipcRenderer.invoke('links:listBrowserSources'),
+    syncFromBrowser: (params) => ipcRenderer.invoke('links:syncFromBrowser', params),
+    syncToBrowser: (params) => ipcRenderer.invoke('links:syncToBrowser', params),
     reorderBookmarks: (params) => ipcRenderer.invoke('links:reorderBookmarks', params),
     sync: () => ipcRenderer.invoke('links:sync'),
     createFolder: (input) => ipcRenderer.invoke('links:createFolder', input),
@@ -41,8 +42,8 @@ const api: WanwuApi = {
           if (progressChannel) ipcRenderer.removeListener(progressChannel, handler)
         })
     },
-    onBookmarksFileChanged: (listener: () => void) => {
-      const handler = () => listener()
+    onBookmarksFileChanged: (listener: (payload: { browserSourceId: string }) => void) => {
+      const handler = (_: unknown, payload: { browserSourceId: string }) => listener(payload)
       ipcRenderer.on('links:bookmarks-file-changed', handler)
       return () => ipcRenderer.removeListener('links:bookmarks-file-changed', handler)
     }

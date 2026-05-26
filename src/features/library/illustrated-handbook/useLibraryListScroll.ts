@@ -59,7 +59,7 @@ export function useLibraryListScroll(
       if (isItemDetailRoute(prev) && name !== 'item-detail') {
         save()
       }
-      if (isItemDetailRoute(prev) && routeCtx.isLibraryRoute.value) {
+      if (isItemDetailRoute(prev) && routeCtx.isHandbookRoute.value) {
         restore()
       }
     }

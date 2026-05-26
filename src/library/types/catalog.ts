@@ -5,7 +5,10 @@ export interface CatalogNode {
   id: string
   name: string
   parentId?: string | null
+  /** Lucide / WwIcon 名称 */
   icon?: string
+  /** 品牌 SVG（如 assets/icons/browser-*.svg） */
+  iconSrc?: string
   children?: CatalogNode[]
   /** 叶子节点：无子级或业务上作为可选终点 */
   leaf?: boolean
@@ -23,12 +26,13 @@ export function catalogToTreeNodes(
     const children = node.children?.length
       ? catalogToTreeNodes(node.children, keyForNode, key)
       : undefined
+    const hasChildren = !!children?.length
     return {
       key,
       label: node.name,
       icon: node.icon,
-      leaf: node.leaf ?? !children?.length,
-      children,
+      leaf: node.leaf ?? !hasChildren,
+      children: hasChildren ? children : undefined,
       data: node
     }
   })

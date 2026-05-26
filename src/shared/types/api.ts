@@ -3,6 +3,7 @@ import type { Category, Item, LibrarySearchHit } from './item'
 import type {
   LinkBookmark,
   LinkFolder,
+  BrowserSourceStatus,
   LinksProbeProgress,
   LinksProbeSummary,
   LinksSyncResult
@@ -24,8 +25,9 @@ export interface WanwuApi {
     listFolders: () => Promise<LinkFolder[]>
     listBookmarks: (params: { folderId: string; includeDeleted?: boolean }) => Promise<LinkBookmark[]>
     listAllBookmarks: () => Promise<LinkBookmark[]>
-    syncFromBrowser: () => Promise<LinksSyncResult>
-    syncToBrowser: () => Promise<LinksSyncResult>
+    listBrowserSources: () => Promise<BrowserSourceStatus[]>
+    syncFromBrowser: (params: { browserSourceId: string }) => Promise<LinksSyncResult>
+    syncToBrowser: (params: { browserSourceId: string }) => Promise<LinksSyncResult>
     reorderBookmarks: (params: { folderId: string; orderedIds: string[] }) => Promise<void>
     /** @deprecated 使用 syncFromBrowser / syncToBrowser */
     sync: () => Promise<LinksSyncResult>
@@ -45,7 +47,9 @@ export interface WanwuApi {
       ids: string[],
       onProgress?: (progress: LinksProbeProgress) => void
     ) => Promise<LinksProbeSummary>
-    onBookmarksFileChanged: (listener: () => void) => () => void
+    onBookmarksFileChanged: (
+      listener: (payload: { browserSourceId: string }) => void
+    ) => () => void
   }
   rss: {
     listGroups: () => Promise<RssGroup[]>

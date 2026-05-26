@@ -45,7 +45,7 @@ import {
   restoreDataBackup
 } from '../services/data/maintenance'
 import { DEFAULT_APP_SETTINGS } from '../../src/shared/types/settings'
-import { startEdgeBookmarksWatcher } from '../services/links/bookmarksWatcher'
+import { startBrowserBookmarksWatchers } from '../services/links/bookmarksWatcher'
 
 export interface AppServices {
   db: DatabaseService | null
@@ -96,15 +96,26 @@ export function registerIpcHandlers(services: AppServices): void {
 
   ipcMain.handle('links:listAllBookmarks', () => services.links?.listAllBookmarks() ?? [])
 
-  ipcMain.handle('links:syncFromBrowser', () => {
+  ipcMain.handle('links:listBrowserSources', () => {
     if (!services.links) throw new Error('链接服务未就绪')
-    return services.links.syncFromEdge()
+    return services.links.listBrowserSources()
   })
 
-  ipcMain.handle('links:syncToBrowser', () => {
-    if (!services.links) throw new Error('链接服务未就绪')
-    return services.links.syncToEdge()
-  })
+  ipcMain.handle(
+    'links:syncFromBrowser',
+    (_e, params: { browserSourceId: string }) => {
+      if (!services.links) throw new Error('链接服务未就绪')
+      return services.links.syncFromBrowser(params.browserSourceId)
+    }
+  )
+
+  ipcMain.handle(
+    'links:syncToBrowser',
+    (_e, params: { browserSourceId: string }) => {
+      if (!services.links) throw new Error('链接服务未就绪')
+      return services.links.syncToBrowser(params.browserSourceId)
+    }
+  )
 
   ipcMain.handle('links:reorderBookmarks', (_e, params: { folderId: string; orderedIds: string[] }) => {
     if (!services.links) throw new Error('链接服务未就绪')
@@ -597,5 +608,5 @@ export function registerIpcHandlers(services: AppServices): void {
     }
   )
 
-  startEdgeBookmarksWatcher(() => getMainWindow())
+  startBrowserBookmarksWatchers(() => getMainWindow())
 }

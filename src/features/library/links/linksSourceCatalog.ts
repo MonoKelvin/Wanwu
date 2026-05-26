@@ -1,13 +1,13 @@
 import type { CatalogNode } from '@library/types/catalog'
 import type { LinkFolder } from '@shared/types/links'
 import {
-  EDGE_ROOT_FOLDER_ID,
   LINKS_RECYCLE_BIN_ID,
   LOCAL_COLLECTIONS_ROOT_ID
 } from '@shared/stores/links'
+import { browserBrandIconUrl } from '@library/links/browserBrandIcons'
 import { LINK_BROWSER_SOURCES } from '@library/links/sources'
 
-/** 全库侧栏「链接」：浏览器来源 + 收藏夹树 + 回收站 */
+/** 全库侧栏「链接」：仅顶级来源（浏览器 / 收藏夹 / 回收站），不展开子文件夹 */
 export function buildLinksSourceCatalog(roots: LinkFolder[]): CatalogNode[] {
   const byId = new Map(roots.map((f) => [f.id, f]))
   const nodes: CatalogNode[] = []
@@ -18,32 +18,21 @@ export function buildLinksSourceCatalog(roots: LinkFolder[]): CatalogNode[] {
     nodes.push({
       id: folder.id,
       name: folder.name,
-      icon: src.icon,
+      iconSrc: browserBrandIconUrl(src.id),
       leaf: true,
       meta: { kind: 'browser-source', source: src.id }
     })
   }
 
-  const localRoot = byId.get(LOCAL_COLLECTIONS_ROOT_ID)
-  const localChildren = localRoot?.children ?? []
-
-  const mapLocalFolder = (f: LinkFolder): CatalogNode => ({
-    id: f.id,
-    name: f.name,
-    icon: 'folder',
-    leaf: !f.children?.length,
-    children: f.children?.length ? f.children.map(mapLocalFolder) : undefined,
-    meta: { kind: 'local-folder' }
-  })
-
-  nodes.push({
-    id: LOCAL_COLLECTIONS_ROOT_ID,
-    name: '收藏夹',
-    icon: 'folder-open',
-    leaf: !localChildren.length,
-    children: localChildren.length ? localChildren.map(mapLocalFolder) : undefined,
-    meta: { kind: 'local-root' }
-  })
+  if (byId.has(LOCAL_COLLECTIONS_ROOT_ID)) {
+    nodes.push({
+      id: LOCAL_COLLECTIONS_ROOT_ID,
+      name: '收藏夹',
+      icon: 'folder-open',
+      leaf: true,
+      meta: { kind: 'local-root' }
+    })
+  }
 
   const recycle = byId.get(LINKS_RECYCLE_BIN_ID)
   if (recycle) {

@@ -1,6 +1,6 @@
 import type { TreeNode } from 'primevue/treenode'
+import { isBrowserRootFolderId } from '@library/links/sources'
 import {
-  EDGE_ROOT_FOLDER_ID,
   LINKS_RECYCLE_BIN_ID,
   LOCAL_COLLECTIONS_ROOT_ID
 } from '@shared/stores/links'
@@ -26,9 +26,9 @@ export function collectAncestorFolderIds(folders: LinkFolder[], folderId: string
   return ids
 }
 
-export function isUnderEdgeRoot(folders: LinkFolder[], folderId: string): boolean {
+export function isUnderBrowserRoot(folders: LinkFolder[], folderId: string): boolean {
   if (folderId === LINKS_RECYCLE_BIN_ID) return false
-  return collectAncestorFolderIds(folders, folderId).includes(EDGE_ROOT_FOLDER_ID)
+  return collectAncestorFolderIds(folders, folderId).some((id) => isBrowserRootFolderId(id))
 }
 
 export function isUnderLocalRoot(folders: LinkFolder[], folderId: string): boolean {
@@ -79,7 +79,7 @@ export function filterTreeNodesByFolderIds(
   return walk(nodes)
 }
 
-/** 全库侧栏「链接」来源节点（Edge / 本地文件夹 / 回收站） */
+/** 全库侧栏「链接」来源节点（浏览器来源 / 本地 / 回收站） */
 export function filterLinksSourceTreeNodes(
   nodes: TreeNode[],
   folders: LinkFolder[],
@@ -87,18 +87,19 @@ export function filterLinksSourceTreeNodes(
 ): TreeNode[] {
   if (!matches.length) return []
 
-  const edgeHit = matches.some((b) => isUnderEdgeRoot(folders, b.folderId))
+  const browserHit = matches.some((b) => isUnderBrowserRoot(folders, b.folderId))
   const localHit = matches.some((b) => isUnderLocalRoot(folders, b.folderId))
   const recycleHit = matches.some((b) => b.folderId === LINKS_RECYCLE_BIN_ID)
 
   return nodes.filter((n) => {
     const key = String(n.key)
-    if (key === `ln:${EDGE_ROOT_FOLDER_ID}`) return edgeHit
     if (key === `ln:${LINKS_RECYCLE_BIN_ID}`) return recycleHit
     if (!key.startsWith('ln:')) return true
-    const folderId = key.slice(3)
-    if (folderId === LOCAL_COLLECTIONS_ROOT_ID) return localHit
-    if (isUnderLocalRoot(folders, folderId)) return localHit
+    const id = key.slice(3)
+    if (isBrowserRootFolderId(id)) return browserHit
+    if (id === LOCAL_COLLECTIONS_ROOT_ID) return localHit
+    if (isUnderLocalRoot(folders, id)) return localHit
+    if (isUnderBrowserRoot(folders, id)) return browserHit
     return true
   })
 }

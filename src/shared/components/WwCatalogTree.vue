@@ -8,6 +8,7 @@ import { usePersistedTreeExpanded } from '@shared/composables/usePersistedTreeEx
 import { filterTreeNodes } from '@library/catalog/filterTreeNodes'
 import { collectExpandableKeys } from '@library/utils/treeKeys'
 import type { WwIconName } from '@shared/icons/registry'
+
 const props = withDefaults(
   defineProps<{
     nodes: TreeNode[]
@@ -23,6 +24,10 @@ const props = withDefaults(
     expandAllBranches?: boolean
     defaultExpandedKeys?: Record<string, boolean>
     nodeBadge?: (node: TreeNode) => string | number | null | undefined
+    /** 单击可展开节点时切换展开/收起（不触发 select）；叶子节点仍走 select */
+    expandToggleOnSelect?: boolean
+    /** 仅对该 key 前缀的子节点显示 childIcon */
+    childIconKeyPrefix?: string
   }>(),
   {
     expandedStorageKey: '',
@@ -32,7 +37,9 @@ const props = withDefaults(
     showChildIcons: false,
     childIcon: 'folder',
     emptyLabel: '无匹配目录',
-    treeClass: ''
+    treeClass: '',
+    expandToggleOnSelect: true,
+    childIconKeyPrefix: ''
   }
 )
 
@@ -44,6 +51,8 @@ const emit = defineEmits<{
   select: [node: TreeNode]
   'update:selectionKeys': [keys: Record<string, boolean>]
   contextmenu: [event: MouseEvent, node: TreeNode]
+  nodeExpand: [node: TreeNode]
+  nodeCollapse: [node: TreeNode]
 }>()
 
 const internalPersisted = props.expandedStorageKey
@@ -116,15 +125,56 @@ function isMajorNode(node: TreeNode): boolean {
   return String(node.key).startsWith(prefix)
 }
 
+function nodeIconSrc(node: TreeNode): string | null {
+  const data = node.data as { iconSrc?: string } | undefined
+  const src = data?.iconSrc?.trim()
+  return src || null
+}
+
 function nodeIcon(node: TreeNode): WwIconName | null {
+  if (nodeIconSrc(node)) return null
   if (isMajorNode(node)) {
     return (node.icon as WwIconName) || 'folder'
   }
   if (!props.showChildIcons) return null
+  const prefix = props.childIconKeyPrefix
+  if (prefix && !String(node.key).startsWith(prefix)) return null
   return (node.icon as WwIconName) || props.childIcon
 }
 
+function isExpandableNode(node: TreeNode): boolean {
+  if (node.leaf === true) return false
+  if (node.children !== undefined) return true
+  return false
+}
+
+function toggleNodeExpanded(node: TreeNode) {
+  const key = String(node.key)
+  const next = { ...expandedKeys.value }
+  if (next[key]) {
+    delete next[key]
+    emit('nodeCollapse', node)
+  } else {
+    next[key] = true
+    emit('nodeExpand', node)
+  }
+  expandedKeys.value = next
+}
+
+function onTreeNodeExpand(node: TreeNode) {
+  emit('nodeExpand', node)
+}
+
+function onTreeNodeCollapse(node: TreeNode) {
+  emit('nodeCollapse', node)
+}
+
 function onNodeSelect(node: TreeNode) {
+  if ((node.data as { kind?: string } | undefined)?.kind === 'loading') return
+  if (props.expandToggleOnSelect && isExpandableNode(node)) {
+    toggleNodeExpanded(node)
+    return
+  }
   emit('select', node)
 }
 
@@ -146,18 +196,30 @@ function badgeForNode(node: TreeNode): string | number | null | undefined {
     selection-mode="single"
     :class="['ww-catalog-tree w-full border-0 bg-transparent p-0', treeClass]"
     @node-select="onNodeSelect"
+    @node-expand="onTreeNodeExpand"
+    @node-collapse="onTreeNodeCollapse"
   >
     <template #default="{ node }">
       <span
         class="ww-catalog-tree__label inline-flex min-w-0 items-center gap-0.5"
+        :class="{ 'ww-catalog-tree__label--loading': (node.data as { kind?: string })?.kind === 'loading' }"
         @contextmenu.prevent="onNodeContextMenu($event, node)"
       >
         <span
           class="ww-catalog-tree__label-main"
-          :class="{ 'gap-2': nodeIcon(node) }"
+          :class="{ 'gap-2': nodeIconSrc(node) || nodeIcon(node) }"
         >
+          <img
+            v-if="nodeIconSrc(node)"
+            :src="nodeIconSrc(node)!"
+            alt=""
+            class="ww-catalog-tree__brand-icon shrink-0"
+            width="18"
+            height="18"
+            aria-hidden="true"
+          />
           <WwIcon
-            v-if="nodeIcon(node)"
+            v-else-if="nodeIcon(node)"
             :name="nodeIcon(node)!"
             size="sm"
             class="shrink-0"
@@ -214,6 +276,13 @@ function badgeForNode(node: TreeNode): string | number | null | undefined {
   color: var(--ww-ink-muted);
 }
 
+/* 有子级（含未加载的占位 children: []）时始终显示展开箭头 */
+.ww-catalog-tree .p-tree-node:not(.p-tree-node-leaf) > .p-tree-node-content .p-tree-node-toggle-button {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .ww-library-tree .p-tree-node-toggle-button:hover {
   color: var(--ww-ink);
   background: var(--ww-list-hover-bg);
@@ -260,6 +329,14 @@ function badgeForNode(node: TreeNode): string | number | null | undefined {
   font-weight: 600;
 }
 
+.ww-catalog-tree__brand-icon,
+.ww-library-tree__brand-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .ww-catalog-tree__major-icon,
 .ww-library-tree__major-icon {
   color: var(--ww-accent);
@@ -275,6 +352,12 @@ function badgeForNode(node: TreeNode): string | number | null | undefined {
   flex: 1;
   align-items: center;
   gap: 0.375rem;
+}
+
+.ww-catalog-tree__label--loading {
+  opacity: 0.65;
+  font-size: 0.75rem;
+  cursor: default;
 }
 
 .ww-catalog-tree__label-main {

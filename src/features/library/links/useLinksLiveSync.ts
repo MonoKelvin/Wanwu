@@ -10,10 +10,11 @@ function readEnabled(): boolean {
   }
 }
 
-/** @param watchActive 为 false 时不监听浏览器收藏夹文件（如本地「收藏夹」） */
+/** @param watchActive 为 false 时不监听；browserSourceId 限定仅响应当前浏览器文件变更 */
 export function useLinksLiveSync(
   onSync: () => void | Promise<void>,
-  watchActive: MaybeRefOrGetter<boolean> = true
+  watchActive: MaybeRefOrGetter<boolean> = true,
+  browserSourceId: MaybeRefOrGetter<string | null> = null
 ) {
   const liveSyncEnabled = ref(readEnabled())
   let unsubscribe: (() => void) | null = null
@@ -30,13 +31,15 @@ export function useLinksLiveSync(
     unsubscribe?.()
     unsubscribe = null
     if (!liveSyncEnabled.value || !toValue(watchActive)) return
-    unsubscribe = window.wanwu.links.onBookmarksFileChanged(() => {
+    unsubscribe = window.wanwu.links.onBookmarksFileChanged((payload) => {
+      const activeId = toValue(browserSourceId)
+      if (activeId && payload.browserSourceId !== activeId) return
       void onSync()
     })
   }
 
   watch(
-    [liveSyncEnabled, () => toValue(watchActive)],
+    [liveSyncEnabled, () => toValue(watchActive), () => toValue(browserSourceId)],
     ([enabled]) => {
       persistEnabled(enabled)
       bindWatcher()

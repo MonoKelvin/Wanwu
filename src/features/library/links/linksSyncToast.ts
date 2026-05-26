@@ -6,7 +6,7 @@ export function formatLinksSyncDetail(result: LinksSyncResult): string {
   if (result.updated > 0) parts.push(`更新 ${result.updated}`)
   if (result.removed > 0) parts.push(`已移除 ${result.removed}`)
   if (result.skippedDeleted > 0) parts.push(`保留删除 ${result.skippedDeleted}`)
-  if (result.pushedToBrowser > 0) parts.push(`已写回 Edge ${result.pushedToBrowser}`)
+  if (result.pushedToBrowser > 0) parts.push(`已写回浏览器 ${result.pushedToBrowser}`)
   return parts.length ? parts.join('，') : '与本地一致，无变更'
 }
 

@@ -37,8 +37,8 @@ import {
   writeLinksSortMode,
   type LinksSortMode
 } from '@features/library/links/linksSort'
+import { isBrowserRootFolderId } from '@library/links/sources'
 import {
-  EDGE_ROOT_FOLDER_ID,
   LINKS_RECYCLE_BIN_ID,
   LOCAL_COLLECTIONS_ROOT_ID,
   useLinksStore
@@ -74,13 +74,30 @@ const canCreateFolder = computed(() => group.value?.kind === 'local')
 
 const group = computed(() => resolveLinksGroupRoot(store.folders, folderId.value))
 
-/** 仅从浏览器收藏夹文件同步的来源（如 Edge） */
-const showBrowserSync = computed(() => group.value?.kind === 'edge')
+const browserSourceId = computed(() =>
+  group.value?.kind === 'browser' ? group.value.browserSourceId : null
+)
+
+/** 当前目录属于浏览器收藏夹来源 */
+const showBrowserSync = computed(() => !!browserSourceId.value)
+
+const browserSourceAvailable = computed(() => {
+  const id = browserSourceId.value
+  return id ? store.isBrowserSourceAvailable(id) : false
+})
+
+const browserSyncActive = computed(
+  () => showBrowserSync.value && browserSourceAvailable.value
+)
 
 const headerSubtitle = computed(() => {
   if (isRecycleBin.value) return '回收站'
   const folder = store.selectedFolder
-  if (folder && folder.id !== EDGE_ROOT_FOLDER_ID && folder.id !== LOCAL_COLLECTIONS_ROOT_ID) {
+  if (
+    folder &&
+    !isBrowserRootFolderId(folder.id) &&
+    folder.id !== LOCAL_COLLECTIONS_ROOT_ID
+  ) {
     return folder.name
   }
   if (folder?.id === LOCAL_COLLECTIONS_ROOT_ID) return '收藏夹'
@@ -163,9 +180,27 @@ const {
 
 type SyncToastMode = 'none' | 'manual' | 'watch'
 
+function browserUnavailableDetail(): string {
+  const id = browserSourceId.value
+  const name = id ? (store.browserSourceStatus(id)?.displayName ?? '该浏览器') : '该浏览器'
+  return `未在本机找到 ${name} 的书签数据，请先安装并使用过书签功能`
+}
+
 async function runSyncFromBrowser(toastMode: SyncToastMode = 'none') {
   try {
-    const result = await store.syncFromBrowser()
+    if (!browserSourceId.value) return
+    if (!store.isBrowserSourceAvailable(browserSourceId.value)) {
+      if (toastMode !== 'none') {
+        toast.add({
+          severity: 'warn',
+          summary: '无法同步',
+          detail: browserUnavailableDetail(),
+          life: 5000
+        })
+      }
+      return
+    }
+    const result = await store.syncFromBrowser(browserSourceId.value)
     if (toastMode === 'manual') {
       toast.add({
         severity: 'success',
@@ -193,7 +228,17 @@ async function runSyncFromBrowser(toastMode: SyncToastMode = 'none') {
 
 async function runSyncToBrowser() {
   try {
-    const result = await store.syncToBrowser()
+    if (!browserSourceId.value) return
+    if (!store.isBrowserSourceAvailable(browserSourceId.value)) {
+      toast.add({
+        severity: 'warn',
+        summary: '无法写回',
+        detail: browserUnavailableDetail(),
+        life: 5000
+      })
+      return
+    }
+    const result = await store.syncToBrowser(browserSourceId.value)
     toast.add({
       severity: 'success',
       summary: '已写回浏览器',
@@ -204,7 +249,7 @@ async function runSyncToBrowser() {
     toast.add({
       severity: 'error',
       summary: '写回失败',
-      detail: e instanceof Error ? e.message : '无法写入 Edge 收藏夹',
+      detail: e instanceof Error ? e.message : '无法写入浏览器收藏夹',
       life: 5000
     })
   }
@@ -212,7 +257,8 @@ async function runSyncToBrowser() {
 
 const { liveSyncEnabled } = useLinksLiveSync(
   () => runSyncFromBrowser('watch'),
-  showBrowserSync
+  browserSyncActive,
+  browserSourceId
 )
 
 function copyLink(url: string) {
@@ -374,8 +420,9 @@ onMounted(async () => {
     await router.replace({ name: 'library-links', params: { folderId: id } })
   }
   writeLastLinksFolderId(id)
+  await store.loadBrowserSources()
   await store.loadFolders()
-  if (showBrowserSync.value) {
+  if (browserSyncActive.value) {
     await runSyncFromBrowser('none')
   }
   await reloadBookmarks()
@@ -403,6 +450,7 @@ watch(folderId, async (id) => {
               :checking-links="probingLinks"
               :can-create-folder="canCreateFolder"
               :show-browser-sync="showBrowserSync"
+              :browser-sync-available="browserSourceAvailable"
               @sync-from-browser="runSyncFromBrowser('manual')"
               @sync-to-browser="runSyncToBrowser"
               @add="onAdd"
@@ -452,7 +500,7 @@ watch(folderId, async (id) => {
                     '已删除的链接会显示在这里，可恢复或彻底删除。'
                   : group?.kind === 'local' ?
                     '可新建目录或添加链接。'
-                  : '当前文件夹下没有链接，可切换左侧目录或同步 Edge 收藏夹。'
+                  : '当前文件夹下没有链接，可切换左侧目录或从浏览器同步收藏夹。'
                 "
               />
 

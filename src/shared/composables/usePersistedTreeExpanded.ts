@@ -25,10 +25,16 @@ function writeStorage(key: string, value: Record<string, boolean>) {
 export function usePersistedTreeExpanded(storageKey: string) {
   const expandedKeys = ref<Record<string, boolean>>(readStorage(storageKey))
 
+  let writeTimer: ReturnType<typeof setTimeout> | null = null
+
   watch(
     expandedKeys,
     (keys) => {
-      writeStorage(storageKey, keys)
+      if (writeTimer) clearTimeout(writeTimer)
+      writeTimer = setTimeout(() => {
+        writeStorage(storageKey, keys)
+        writeTimer = null
+      }, 120)
     },
     { deep: true }
   )

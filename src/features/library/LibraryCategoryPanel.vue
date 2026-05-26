@@ -13,21 +13,20 @@ import { useLinksFolderDialogs } from '@features/library/links/useLinksFolderDia
 import type { CatalogNode } from '@library/types/catalog'
 import type { WwMenuItem } from '@shared/types/menu'
 import { isLibraryMajorId, type LibraryMajorId } from '@library/config/majors'
-import {
-  composeLibraryTree,
-  handbookCatalogFromCategories,
-  sectionTreeForMajor
-} from '@features/library/libraryCategoryTree'
+import { useLibraryCatalogTrees } from '@features/library/useLibraryCatalogTrees'
+import { isCatalogLoadingNodeKey } from '@features/library/libraryCategoryTree'
 import { useIllustratedHandbookStore } from '@shared/stores/illustratedHandbook'
 import { LINKS_RECYCLE_BIN_ID, LOCAL_COLLECTIONS_ROOT_ID, useLinksStore } from '@shared/stores/links'
-import { filterLinksSourceTreeNodes } from '@features/library/links/linksSearch'
 import { resolveLinksEntryTarget } from '@features/library/links/linksNavigation'
 import {
   defaultLinksCatalogExpanded,
   readLinksCatalogSelection,
   writeLinksCatalogSelection
 } from '@features/library/links/linksCatalogTreeMemory'
-import { filterTreeNodes } from '@library/catalog/filterTreeNodes'
+import {
+  readHandbookCatalogSelection,
+  writeHandbookCatalogSelection
+} from '@features/library/libraryCatalogTreeMemory'
 
 const EXPANDED_STORAGE_KEY = 'wanwu:library:category-tree-expanded'
 
@@ -65,48 +64,66 @@ const activeMajor = computed<LibraryMajorId | null>(() => {
   return null
 })
 
-const handbookCatalog = computed(() => handbookCatalogFromCategories(handbookStore.categories))
+const {
+  libraryTree,
+  expandAllBranches,
+  ensureMajorLoaded,
+  preloadAllMajors,
+  onCatalogNodeExpand
+} = useLibraryCatalogTrees({
+  categorySearch,
+  handbookStore,
+  linksStore
+})
 
-const sectionTree = computed(() => {
+const linksDefaultExpanded = computed(() => defaultLinksCatalogExpanded())
+
+function selectionFromRoute(): Record<string, boolean> | null {
   const major = activeMajor.value
-  if (!major) return []
-  return sectionTreeForMajor(major, {
-    handbookCategories: handbookCatalog.value,
-    linkSourceRoots: linksStore.folders
-  })
-})
+  if (!major) return null
 
-const sectionTreeFiltered = computed(() => {
-  let tree = sectionTree.value
-  if (activeMajor.value === 'links' && linksStore.isGlobalSearch) {
-    tree = filterLinksSourceTreeNodes(
-      tree,
-      linksStore.folders,
-      linksStore.globalSearchMatches
-    )
+  if (major === 'links') {
+    const folderId = route.params.folderId as string | undefined
+    if (folderId) return { [`ln:${folderId}`]: true }
+    return null
   }
-  return tree
-})
 
-const libraryTree = computed(() => {
-  let tree = composeLibraryTree(activeMajor.value, sectionTreeFiltered.value)
-  if (categorySearch.value.trim()) {
-    tree = filterTreeNodes(tree, categorySearch.value)
+  if (major === 'illustrated-handbook') {
+    const catId = route.params.catId as string | undefined
+    const subId = route.params.subId as string | undefined
+    if (!catId) return { 'major:illustrated-handbook': true }
+    return subId ?
+        { [`hb:${catId}::${subId}`]: true }
+      : { [`hb:${catId}`]: true }
   }
-  return tree
-})
 
-const expandAllLibraryBranches = computed(
-  () =>
-    activeMajor.value === 'links' &&
-    (linksStore.isGlobalSearch || !!categorySearch.value.trim())
-)
+  return { [`major:${major}`]: true }
+}
 
-const linksDefaultExpanded = computed(() =>
-  activeMajor.value === 'links' ? defaultLinksCatalogExpanded() : undefined
-)
+function persistedSelectionForMajor(major: LibraryMajorId): Record<string, boolean> {
+  if (major === 'links') return readLinksCatalogSelection()
+  if (major === 'illustrated-handbook') return readHandbookCatalogSelection()
+  return {}
+}
 
-const showLinksSourceIcons = computed(() => activeMajor.value === 'links')
+function keyExistsInTree(nodes: TreeNode[], key: string): boolean {
+  for (const node of nodes) {
+    if (String(node.key) === key) return true
+    if (node.children?.length && keyExistsInTree(node.children, key)) return true
+  }
+  return false
+}
+
+function resolveSelectionKeys(major: LibraryMajorId): Record<string, boolean> {
+  const fromRoute = selectionFromRoute()
+  if (fromRoute) return fromRoute
+
+  const saved = persistedSelectionForMajor(major)
+  const savedKey = Object.keys(saved).find((k) => saved[k])
+  if (savedKey && keyExistsInTree(libraryTree.value, savedKey)) return saved
+
+  return { [`major:${major}`]: true }
+}
 
 function syncSelectionFromRoute() {
   const major = activeMajor.value
@@ -115,45 +132,40 @@ function syncSelectionFromRoute() {
     return
   }
 
-  if (major === 'links') {
-    const folderId = route.params.folderId as string | undefined
-    selectionKeys.value = folderId
-      ? { [`ln:${folderId}`]: true }
-      : readLinksCatalogSelection()
-    if (folderId) writeLinksCatalogSelection(selectionKeys.value)
-    return
-  }
+  const keys = resolveSelectionKeys(major)
+  selectionKeys.value = keys
 
-  selectionKeys.value = { [`major:${major}`]: true }
-
-  if (major === 'illustrated-handbook') {
-    const catId = route.params.catId as string | undefined
-    const subId = route.params.subId as string | undefined
-    if (!catId) return
-    selectionKeys.value = subId
-      ? { [`hb:${catId}::${subId}`]: true }
-      : { [`hb:${catId}`]: true }
+  const fromRoute = selectionFromRoute()
+  if (fromRoute) {
+    if (major === 'links') writeLinksCatalogSelection(fromRoute)
+    else if (major === 'illustrated-handbook') writeHandbookCatalogSelection(fromRoute)
   }
 }
 
-async function loadForMajor(major: LibraryMajorId) {
-  if (major === 'illustrated-handbook') {
-    await handbookStore.loadCategories()
-  } else if (major === 'links') {
-    await linksStore.loadFolders()
-  }
-}
-
-onMounted(async () => {
-  if (activeMajor.value) await loadForMajor(activeMajor.value)
+watch(libraryTree, () => {
+  if (!activeMajor.value) return
+  const current = Object.keys(selectionKeys.value).find((k) => selectionKeys.value[k])
+  if (current && keyExistsInTree(libraryTree.value, current)) return
   syncSelectionFromRoute()
+})
+
+function persistSelection(keys: Record<string, boolean>) {
+  const major = activeMajor.value
+  if (major === 'links') writeLinksCatalogSelection(keys)
+  else if (major === 'illustrated-handbook') writeHandbookCatalogSelection(keys)
+}
+
+onMounted(() => {
+  preloadAllMajors()
+  syncSelectionFromRoute()
+  if (activeMajor.value) void ensureMajorLoaded(activeMajor.value)
 })
 
 watch(
   () => activeMajor.value,
-  async (major) => {
-    if (major) await loadForMajor(major)
+  (major) => {
     syncSelectionFromRoute()
+    if (major) void ensureMajorLoaded(major)
   }
 )
 
@@ -164,9 +176,7 @@ watch(
 
 watch(
   selectionKeys,
-  (keys) => {
-    if (activeMajor.value === 'links') writeLinksCatalogSelection(keys)
-  },
+  (keys) => persistSelection(keys),
   { deep: true }
 )
 
@@ -181,7 +191,6 @@ function navigateMajor(majorId: LibraryMajorId) {
 }
 
 function linksCatalogNodeBadge(node: TreeNode): number | undefined {
-  if (activeMajor.value !== 'links') return undefined
   if (String(node.key) !== `ln:${LINKS_RECYCLE_BIN_ID}`) return undefined
   return linksStore.recycleBinCount
 }
@@ -220,23 +229,21 @@ const linksFolderContextItems = computed((): WwMenuItem[] => {
 })
 
 function onLinksNodeContextMenu(event: MouseEvent, node: TreeNode) {
-  if (activeMajor.value !== 'links') return
   event.stopPropagation()
   const key = String(node.key)
-  if (!key.startsWith('ln:')) return
+  if (!key.startsWith('ln:') || isCatalogLoadingNodeKey(key)) return
 
   const kind = linksCatalogNodeKind(node)
-  if (kind !== 'local-root' && kind !== 'local-folder') return
+  if (kind !== 'local-root') return
 
-  const folderId = key.slice(3)
-  linksContextDeleteId.value = kind === 'local-folder' ? folderId : null
-  linksContextParentId.value =
-    kind === 'local-folder' ? folderId : LOCAL_COLLECTIONS_ROOT_ID
+  linksContextDeleteId.value = null
+  linksContextParentId.value = LOCAL_COLLECTIONS_ROOT_ID
   linksContextMenu.value?.show(event)
 }
 
 function onNodeSelect(node: TreeNode) {
   const key = String(node.key)
+  if (isCatalogLoadingNodeKey(key)) return
 
   if (key.startsWith('major:')) {
     navigateMajor(key.slice('major:'.length) as LibraryMajorId)
@@ -280,18 +287,19 @@ function onNodeSelect(node: TreeNode) {
         :expanded-storage-key="EXPANDED_STORAGE_KEY"
         v-model:selection-keys="selectionKeys"
         :search-query="categorySearch"
-        :expand-all-branches="expandAllLibraryBranches"
+        :expand-all-branches="expandAllBranches"
         :default-expanded-keys="linksDefaultExpanded"
         major-key-prefix="major:"
-        :show-child-icons="showLinksSourceIcons"
+        :show-child-icons="true"
+        child-icon-key-prefix="ln:"
         child-icon="folder"
         :node-badge="linksCatalogNodeBadge"
         tree-class="ww-catalog-tree--library-majors"
         @select="onNodeSelect"
         @contextmenu="onLinksNodeContextMenu"
+        @node-expand="onCatalogNodeExpand"
       />
       <WwContextMenu
-        v-if="activeMajor === 'links'"
         ref="linksContextMenu"
         v-model:open="linksContextMenuOpen"
         :model="linksFolderContextItems"

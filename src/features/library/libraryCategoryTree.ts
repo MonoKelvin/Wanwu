@@ -61,19 +61,51 @@ export function sectionTreeForMajor(
   return []
 }
 
-export function composeLibraryTree(
-  activeMajor: LibraryMajorId | null,
-  sectionTree: TreeNode[]
-): TreeNode[] {
-  const majors = buildMajorTreeNodes()
-  if (!activeMajor) return majors
+export type LibrarySectionTrees = Partial<Record<LibraryMajorId, TreeNode[]>>
 
-  return majors.map((n) => {
+const LOADING_NODE_SUFFIX = '::__loading'
+
+export function isCatalogLoadingNodeKey(key: string): boolean {
+  return key.endsWith(LOADING_NODE_SUFFIX)
+}
+
+/** 各大分类同时挂载子树，互不折叠顶替 */
+export function composeLibraryTree(
+  sectionTrees: LibrarySectionTrees,
+  options?: {
+    majorLoading?: Partial<Record<LibraryMajorId, boolean>>
+    majorLoaded?: Partial<Record<LibraryMajorId, boolean>>
+  }
+): TreeNode[] {
+  return buildMajorTreeNodes().map((n) => {
     const majorId = (n.data as { majorId: LibraryMajorId }).majorId
-    if (majorId !== activeMajor) return { ...n, children: undefined }
-    return {
-      ...n,
-      children: sectionTree.length ? sectionTree : undefined
+    const key = String(n.key)
+
+    if (options?.majorLoading?.[majorId]) {
+      return {
+        ...n,
+        leaf: false,
+        children: [
+          {
+            key: `${key}${LOADING_NODE_SUFFIX}`,
+            label: '加载中…',
+            leaf: true,
+            selectable: false,
+            data: { kind: 'loading' }
+          }
+        ]
+      }
     }
+
+    const section = sectionTrees[majorId]
+    if (section?.length) {
+      return { ...n, leaf: false, children: section }
+    }
+
+    if (options?.majorLoaded?.[majorId]) {
+      return { ...n, leaf: true }
+    }
+
+    return { ...n, leaf: false, children: [] }
   })
 }

@@ -33,7 +33,7 @@ const emit = defineEmits<{
         icon="pencil"
         compact
         icon-size="xs"
-        aria-label="编辑链接"
+        ariaLabel="编辑链接"
         v-tooltip.bottom="'编辑'"
         @click="emit('edit', bookmark)"
       />
@@ -42,7 +42,7 @@ const emit = defineEmits<{
         icon="rotate-ccw"
         compact
         icon-size="xs"
-        aria-label="恢复"
+        ariaLabel="恢复"
         v-tooltip.bottom="'恢复'"
         @click="emit('restore', bookmark)"
       />
@@ -50,7 +50,7 @@ const emit = defineEmits<{
         icon="trash-2"
         compact
         icon-size="xs"
-        :aria-label="bookmark.deleted ? '彻底删除' : '删除'"
+        :ariaLabel="bookmark.deleted ? '彻底删除' : '删除'"
         v-tooltip.bottom="bookmark.deleted ? '彻底删除' : '移至回收站'"
         @click="emit('delete', bookmark)"
       />

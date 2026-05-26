@@ -1,9 +1,14 @@
+/** 与 electron browser/registry 中 id 一致 */
+export type BrowserBookmarkSourceId = 'edge' | 'chrome' | 'firefox' | 'safari' | 'opera'
+
+export type LinkFolderSource = BrowserBookmarkSourceId | 'local' | 'system'
+
 export interface LinkFolder {
   id: string
   parentId: string | null
   name: string
   sortOrder: number
-  source: 'edge' | 'local' | 'system'
+  source: LinkFolderSource
   externalPath: string | null
   isRecycleBin: boolean
   children?: LinkFolder[]
@@ -16,7 +21,7 @@ export interface LinkBookmark {
   url: string
   sortOrder: number
   deleted: boolean
-  source: 'edge' | 'local'
+  source: BrowserBookmarkSourceId | 'local'
   externalId: string | null
   userCreated: boolean
   unreachable: boolean | null
@@ -34,6 +39,16 @@ export interface LinksProbeSummary {
   results: Record<string, boolean>
   invalidCount: number
   byIssue: Record<LinkReachabilityIssue, number>
+}
+
+export interface BrowserSourceStatus {
+  id: BrowserBookmarkSourceId
+  displayName: string
+  rootFolderId: string
+  engine: 'chromium' | 'firefox' | 'safari-plist'
+  available: boolean
+  supportsWriteBack: boolean
+  bookmarksPath: string | null
 }
 
 export interface LinksSyncResult {

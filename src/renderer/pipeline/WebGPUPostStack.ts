@@ -70,10 +70,12 @@ export class WebGPUPostStack {
     if (options.enableDoF) {
       const { dof } = await import('three/addons/tsl/display/DepthOfFieldNode.js')
       const viewZ = scenePass.getViewZNode()
-      dofFocus = uniform(options.dofFocusDistance ?? 7)
-      dofFocal = uniform(120)
-      dofBokeh = uniform(options.dofBokehScale ?? 2)
-      color = dof(color, viewZ, dofFocus, dofFocal, dofBokeh)
+      dofFocus = uniform(options.dofFocusDistance ?? 7) as unknown as UniformNode
+      dofFocal = uniform(120) as unknown as UniformNode
+      dofBokeh = uniform(options.dofBokehScale ?? 2) as unknown as UniformNode
+      color = (
+        dof as unknown as (colorNode: typeof color, ...args: unknown[]) => typeof color
+      )(color, viewZ, dofFocus, dofFocal, dofBokeh)
     }
 
     const bloomPass = bloom(
@@ -85,14 +87,14 @@ export class WebGPUPostStack {
     bloomPass.threshold.value = options.bloomLuminanceThreshold ?? 0
     bloomPass.strength.value = options.bloomIntensity ?? 1
 
-    let output = color.add(bloomPass)
+    let output = (color as unknown as { add: (node: unknown) => typeof color }).add(bloomPass)
 
     if (options.enableToneMapping !== false) {
       output = toneMapping(
         THREE.ACESFilmicToneMapping,
         uniform(options.exposure ?? 1),
         output
-      )
+      ) as unknown as typeof output
     }
 
     renderPipeline.outputNode = output
