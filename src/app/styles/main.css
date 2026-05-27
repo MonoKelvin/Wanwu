@@ -227,6 +227,16 @@ body {
   transition: background var(--ww-duration-fast) var(--ww-ease-out) !important;
 }
 
+/* Autocomplete 下拉面板（使用 CSS 变量以便各处自定义） */
+.p-autocomplete-overlay,
+.p-autocomplete-panel {
+  background: var(--ww-autocomplete-panel-bg, var(--ww-surface-float)) !important;
+  color: var(--ww-autocomplete-panel-fg, var(--ww-ink)) !important;
+  border-radius: var(--ww-autocomplete-panel-radius, 0.75rem) !important;
+  border: 1px solid var(--ww-autocomplete-panel-border, var(--ww-border-subtle)) !important;
+  box-shadow: var(--ww-autocomplete-panel-shadow, var(--ww-menu-shadow)) !important;
+}
+
 .p-autocomplete-option:not(.p-disabled):hover,
 .p-autocomplete-option.p-focus:not(.p-disabled),
 .p-select-option:not(.p-disabled):hover,
@@ -237,6 +247,14 @@ body {
 .p-multiselect-option.p-focus:not(.p-disabled) {
   background: var(--ww-list-hover-bg) !important;
   color: var(--ww-ink) !important;
+}
+
+/* 在玻璃背景的 Autocomplete 面板内，使用更实一点的 hover 颜色（透明度 0.9） */
+.p-autocomplete-overlay .p-autocomplete-option:not(.p-disabled):hover,
+.p-autocomplete-overlay .p-autocomplete-option.p-focus:not(.p-disabled),
+.p-autocomplete-panel .p-autocomplete-option:not(.p-disabled):hover,
+.p-autocomplete-panel .p-autocomplete-option.p-focus:not(.p-disabled) {
+  background: var(--ww-glass-hover-bg, var(--ww-list-hover-bg)) !important;
 }
 
 .p-autocomplete-option-selected,

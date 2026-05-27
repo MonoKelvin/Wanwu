@@ -76,7 +76,9 @@ const {
   linksStore
 })
 
-const linksDefaultExpanded = computed(() => defaultLinksCatalogExpanded())
+const linksDefaultExpanded = computed(() =>
+  activeMajor.value === 'links' ? defaultLinksCatalogExpanded() : {}
+)
 
 function selectionFromRoute(): Record<string, boolean> | null {
   const major = activeMajor.value
@@ -288,6 +290,7 @@ function onNodeSelect(node: TreeNode) {
         v-model:selection-keys="selectionKeys"
         :search-query="categorySearch"
         :expand-all-branches="expandAllBranches"
+        :expand-on-search="false"
         :default-expanded-keys="linksDefaultExpanded"
         major-key-prefix="major:"
         :show-child-icons="true"

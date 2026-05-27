@@ -54,8 +54,9 @@
   --ww-shadow-soft: 0 14px 36px -8px rgb(0 0 0 / 0.45), 0 6px 16px -6px rgb(0 0 0 / 0.35);
   --ww-shadow-card: 0 8px 24px -6px rgb(0 0 0 / 0.4), 0 0 0 1px rgb(255 255 255 / 0.04);
 
-  --ww-glass-bg: rgb(30 30 34 / 0.78);
-  --ww-glass-bg-soft: rgb(36 36 40 / 0.88);
+  --ww-glass-bg: rgb(30 30 34 / 0.8);
+  --ww-glass-bg-soft: rgb(36 36 40 / 0.85);
+  --ww-glass-hover-bg: rgb(30 30 34 / 0.9);
   --ww-glass-border: rgb(255 255 255 / 0.1);
   --ww-glass-border-dark: rgb(255 255 255 / 0.22);
   --ww-menu-shadow: 0 18px 44px -6px rgb(0 0 0 / 0.55), 0 8px 20px -4px rgb(0 0 0 / 0.4);

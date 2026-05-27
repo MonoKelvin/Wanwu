@@ -197,9 +197,9 @@ const artSrc = computed(() => EMPTY_ART[props.variant])
 }
 
 .ww-empty-state--compact .ww-empty-state__card {
-  width: auto;
+  width: 100%;
   height: auto;
-  max-width: none;
+  max-width: 100%;
   justify-content: center;
   padding: 0.75rem 0.625rem 0.625rem;
   background: transparent;

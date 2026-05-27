@@ -28,6 +28,8 @@ const props = withDefaults(
     expandToggleOnSelect?: boolean
     /** 仅对该 key 前缀的子节点显示 childIcon */
     childIconKeyPrefix?: string
+    /** 搜索时是否自动展开所有可见分支 */
+    expandOnSearch?: boolean
   }>(),
   {
     expandedStorageKey: '',
@@ -39,7 +41,8 @@ const props = withDefaults(
     emptyLabel: '无匹配目录',
     treeClass: '',
     expandToggleOnSelect: true,
-    childIconKeyPrefix: ''
+    childIconKeyPrefix: '',
+    expandOnSearch: true
   }
 )
 
@@ -112,7 +115,7 @@ const selectionModel = computed({
 
 watch([() => props.searchQuery, filteredNodes], () => {
   const q = props.searchQuery?.trim()
-  if (q) expandForSearch(filteredNodes.value)
+  if (q && props.expandOnSearch) expandForSearch(filteredNodes.value)
 })
 
 watch([() => props.expandAllBranches, filteredNodes], () => {
@@ -173,7 +176,6 @@ function onNodeSelect(node: TreeNode) {
   if ((node.data as { kind?: string } | undefined)?.kind === 'loading') return
   if (props.expandToggleOnSelect && isExpandableNode(node)) {
     toggleNodeExpanded(node)
-    return
   }
   emit('select', node)
 }

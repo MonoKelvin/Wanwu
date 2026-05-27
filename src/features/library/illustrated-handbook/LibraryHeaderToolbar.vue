@@ -65,55 +65,56 @@ function clearSearch() {
 
 <template>
   <div class="ww-page-toolbar" role="toolbar" aria-label="全库列表工具">
-    <IconField class="ww-field-search ww-page-toolbar__search">
-      <WwInputIcon name="search" />
-      <AutoComplete
-        v-model="listSearch"
-        :suggestions="suggestions"
-        option-label="name"
-        placeholder="搜索条目…"
-        class="ww-page-toolbar__autocomplete"
-        input-class="ww-page-toolbar__search-input"
-        aria-label="搜索条目"
-        :min-length="1"
-        :delay="0"
-        :show-empty-message="showSearchEmpty"
-        empty-search-message=""
-        @complete="emit('complete', $event)"
-        @item-select="emit('selectItem', $event.value)"
-      >
-        <template #option="{ option }">
-          <div class="ww-library-search__option">
-            <span class="ww-library-search__option-name">{{ option.name }}</span>
-            <p v-if="option.summary" class="ww-library-search__option-summary">
-              {{ option.summary }}
-            </p>
-          </div>
-        </template>
-        <template #empty>
-          <EmptyState
-            compact
-            variant="not-found"
-            code="404"
-            title="无匹配条目"
-            description="换个关键词试试"
-          />
-        </template>
-      </AutoComplete>
-    </IconField>
-
-    <div class="ww-page-toolbar__cluster">
-      <WwButton
+    <div class="ww-page-toolbar__search-wrap">
+      <IconField class="ww-field-search ww-page-toolbar__search">
+        <WwInputIcon name="search" />
+        <AutoComplete
+          v-model="listSearch"
+          :suggestions="suggestions"
+          option-label="name"
+          placeholder="搜索条目…"
+          class="ww-page-toolbar__autocomplete"
+          append-to="self"
+          input-class="ww-page-toolbar__search-input"
+          aria-label="搜索条目"
+          :min-length="1"
+          :delay="0"
+          :show-empty-message="showSearchEmpty"
+          empty-search-message=""
+          @complete="emit('complete', $event)"
+          @item-select="emit('selectItem', $event.value)"
+        >
+          <template #option="{ option }">
+            <div class="ww-library-search__option">
+              <span class="ww-library-search__option-name">{{ option.name }}</span>
+              <p v-if="option.summary" class="ww-library-search__option-summary">
+                {{ option.summary }}
+              </p>
+            </div>
+          </template>
+          <template #empty>
+            <EmptyState
+              compact
+              variant="not-found"
+              code="404"
+              title="无匹配条目"
+              description="换个关键词试试"
+            />
+          </template>
+        </AutoComplete>
+      </IconField>
+      <button
         v-if="listSearch"
         type="button"
-        icon="x"
-        size="small"
-        variant="text"
-        rounded
-        severity="secondary"
+        class="ww-page-toolbar__clear"
         aria-label="清除搜索"
         @click="clearSearch"
-      />
+      >
+        <WwIcon name="x" size="sm" />
+      </button>
+    </div>
+
+    <div class="ww-page-toolbar__cluster">
       <WwViewModeToggle v-model="viewMode" aria-label="展示方式" />
       <WwButton
         type="button"
@@ -155,23 +156,71 @@ function clearSearch() {
   --ww-toolbar-h: 2.125rem;
 
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
 }
 
+.ww-page-toolbar__search-wrap {
+  position: relative;
+  flex: 1 1 18.75rem;
+  width: 100%;
+  max-width: 18.75rem;
+  min-width: 0;
+}
+
 .ww-page-toolbar__search {
-  width: min(100%, 12.5rem);
-  min-width: 9rem;
+  width: 100%;
 }
 
 .ww-page-toolbar__autocomplete {
   width: 100%;
+  /* 图鉴页搜索下拉：通过 CSS 变量定制 Autocomplete 面板 */
+  --ww-autocomplete-panel-bg: var(--ww-glass-bg);
+  --ww-autocomplete-panel-fg: var(--ww-ink);
+  --ww-autocomplete-panel-radius: 0.75rem;
+  --ww-autocomplete-panel-border: var(--ww-border-subtle);
+  --ww-autocomplete-panel-shadow: var(--ww-menu-shadow);
+}
+
+.ww-page-toolbar__autocomplete .p-autocomplete-overlay,
+.ww-page-toolbar__autocomplete .p-autocomplete-panel {
+  left: auto !important;
+  right: 0;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  background: var(--ww-glass-bg);
+  backdrop-filter: blur(var(--ww-blur-glass)) saturate(1.15);
+}
+
+.ww-page-toolbar__autocomplete .p-autocomplete-option {
+  min-width: 0;
+  overflow: hidden;
 }
 
 .ww-page-toolbar__search-input {
   width: 100%;
+}
+
+.ww-page-toolbar__clear {
+  position: absolute;
+  inset-block: 0;
+  right: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ww-ink-muted);
+  cursor: pointer;
+}
+
+.ww-page-toolbar__clear:hover {
+  background: transparent;
+  color: var(--ww-ink);
 }
 
 /* 不显示 PrimeVue 默认空列表文案；保留带 .ww-empty-state 的自定义 #empty 插槽 */
@@ -190,15 +239,24 @@ function clearSearch() {
 .ww-library-search__option {
   display: flex;
   min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
   flex-direction: column;
   gap: 0.125rem;
   padding: 0.125rem 0;
 }
 
 .ww-library-search__option-name {
+  display: block;
+  width: 100%;
+  max-width: 100%;
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--ww-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ww-library-search__option-summary {
@@ -206,10 +264,12 @@ function clearSearch() {
   font-size: 0.6875rem;
   line-height: 1.35;
   color: var(--ww-ink-muted);
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ww-page-toolbar__cluster {

@@ -222,7 +222,6 @@ function onNodeSelect(node: TreeNode) {
       :show-child-icons="true"
       child-icon="folder"
       tree-class="ww-catalog-tree--folder-nav"
-      :expand-all-branches="!!matchingFolderIds"
       empty-label="暂无子目录；右键可新建"
       @select="onNodeSelect"
       @contextmenu="onContextMenu"
