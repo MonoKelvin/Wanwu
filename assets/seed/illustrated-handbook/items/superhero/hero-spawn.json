@@ -3,7 +3,7 @@
   "slug": "hero-spawn",
   "subCategoryId": "hero-indie",
   "name": "再生侠 Spawn",
-  "summary": "Image 漫画阿尔·西蒙斯死后与地狱契约重生，地狱斗篷与锁链的黑暗英雄。",
+  "summary": "Todd McFarlane 创作的 Image 黑暗英雄，地狱契约与哥特美学，创作者权益运动象征。",
   "tags": [
     "Image",
     "黑暗英雄",
@@ -11,11 +11,14 @@
     "地狱"
   ],
   "specs": {
-    "出版社": "Image",
-    "首次登场": "1992",
+    "首发年份": "1992",
+    "类型": "黑暗超级英雄",
     "创作者": "Todd McFarlane",
-    "能力": "地狱斗篷",
-    "主题": "复仇与救赎"
+    "发行方": "Image Comics",
+    "主角": "阿尔·西蒙斯",
+    "能力": "活体斗篷、地狱魔法",
+    "主题": "复仇与救赎",
+    "代表影视": "HBO 动画 / 2023 电影"
   },
   "media": {
     "provider": "pixabay",

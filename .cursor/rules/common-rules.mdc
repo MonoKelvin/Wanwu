@@ -1,6 +1,9 @@
 ---
 alwaysApply: true
 ---
+
+## 通用规则
+
 1. 请使用 /context7-mcp 获取最新的编程API和相关技术文档，通过 sequential-thinking mcp 来思考相关问题和解决方案，通过supermemory mcp 保留和使用上下文信息。
 2. 项目中需求、详细设计和计划等文档统一使用markdown格式，放到./doc目录下，按照目录下已有的文件命名
 3. 编码要求：符合设计原则、功能模块化、尽可能复用已有组件和逻辑

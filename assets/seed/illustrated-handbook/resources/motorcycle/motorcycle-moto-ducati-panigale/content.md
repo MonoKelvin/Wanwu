@@ -1,55 +1,43 @@
 # 杜卡迪 Panigale
 
-杜卡迪 Panigale 系列整体代表意式仿赛设计路线，从双缸 1199 演进至 V4 旗舰，是赛道基因与雕塑感车身的结合。
+Panigale 是杜卡迪 **旗舰仿赛车系** 的总称：从 1199 双缸到现行 V4 与 V2 平台，以 Desmodromic 气门、L 型双缸/V4 声浪与 WSBK 冠军血统，构成意大利超级跑车最具连续性的产品家族。
 
-![杜卡迪 Panigale](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Ducati_1199_Panigale_S.jpg/640px-Ducati_1199_Panigale_S.jpg)
-
-
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+![杜卡迪 Panigale 1199 S](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Ducati_1199_Panigale_S.jpg/640px-Ducati_1199_Panigale_S.jpg)
 
 ## 背景与历史
 
-2011 年 1199 以单摇臂与 Monobloc 刹车开创话题；随后 Panigale 1299、V4 迭代强化电控与空气动力学。杜卡迪通过 WSBK 与 MotoGP 技术转移巩固「赛车即商品」定位。
+Panigale 名称自 **2011 年 1199** 取代 1198 系列，以 Borgo Panigale 工厂街区命名。1199 采用 **Superquadro** 双缸与铝制单体车架，899、959 等小排量版本扩大受众。2018 年 **Panigale V4** 引入 MotoGP 衍生 V4 发动机，V2（955 cc）则延续双缸路线至 2020 年代。
 
-时间线梳理有助于理解该车/作品在技术与审美上的坐标：首发环境、竞品格局与法规背景，往往决定它能否成为「定义时代的符号」。
+Panigale 在 **WorldSBK** 中为多届制造商与车手冠军平台；1299 Superleggera、1199 Superleggera 等限量版本以碳纤维与 Öhlins 套件服务收藏家。Streetfighter V4 与 Diavel V4 均共享 Panigale 动力单元，扩展品牌运动形象。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 工程与设计
 
+家族涵盖 **V4 1103 cc（约 160–214 hp）** 与 **V2 955 cc（约 155 hp）** 两主线：V4 采用反向曲轴与侧挂排气，V2 维持 L 型双缸紧凑与轻量化。Desmodromic 气门、Marchesini 轮辋与 Brembo 制动是共性规格。
 
-## 工程与设计亮点
+单体车架/主梁车架依世代演变；整流罩空气动力学在 Panigale V4 上达到新高度。电控套件含 DTC EVO、DSC、wheelie control 与 data logging（Corse 版本）。
 
-系列涵盖 V2 与 V4 平台：V4 采用 Desmosedici Stradale，V2 维持 Superquadro 双缸高转特性。共通 Desmodromic 气门、Öhlins 避震与全套赛道电控。
+## 性能与体验
 
-若你关心驾驶或把玩体验，建议结合实拍评测、拆解视频与官方白皮书交叉验证；纸面参数与真实体感之间常有温度、噪音与调校差异。
+双缸 Panigale（959/1299/V2）以 **低扭爆发与弯道灵活性** 著称，适合山路与赛道日；V4 则拓展高转与直线性能。声浪是 Panigale 体验不可分割部分——双缸低频鼓点与 V4 高频 howl 风格迥异。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
-
+日常街道可用性因版本而异：V2 相对 V4 更易管理热与离合；Superleggera 则纯性能取向。维护需关注 Desmo 气门调隙服务间隔，成本高于日系仿赛。
 
 ## 文化地位与影响
 
-Panigale 是杜卡迪品牌核心，常出现在赛道日、意大利机车周与收藏级改装案例中。
+Panigale 是 **「意大利红色仿赛」** 当代化身，与 916/998 经典世代一脉相承。Museo Ducati 与 WSBK 营销使 Panigale 成为品牌图腾；社交平台上 Panigale 侧排气与单摇臂是最常见杜卡迪视觉符号。
 
-文化层面的讨论不必局限于车迷或粉圈：设计奖项、影视出镜、二手行情与社交话题，都是观察其影响力的窗口。
+对中国读者，理解 Panigale **家族而非单一车型** 有助于阅读杜卡迪产品线：V4 是旗舰，V2 是门槛更低的「小 Panigale」，限量 Superleggera 则连接收藏市场。
 
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
+入门 Panigale 可考虑 V2 而非 V4：功率略低但车重更轻、维护成本更可控，仍保留 Panigale 造型与 Desmo 血统。
 
 ## 冷知识
 
-- 「Panigale」读作意大利地名，非英语造词。
-- 单摇臂设计便于快速更换后轮赛道配件。
-- V4S 曾标配 Akrapovič 排气。
+- Panigale 1199 是最后一代主要 Superquadro 双缸旗舰。
+- Superleggera 限量版本大量使用碳纤维与镁合金。
+- Streetfighter V4 与 Panigale 共享 V4 发动机核心。
 
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
+## 参考与延伸阅读
 
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [杜卡迪 Panigale](https://www.ducati.com/ww/en/models/supersport/panigale)
-- [维基百科](https://en.wikipedia.org/wiki/Ducati_Panigale)
+- [Ducati Panigale 系列官方](https://www.ducati.com/)
+- [维基百科：Ducati Panigale](https://en.wikipedia.org/wiki/Ducati_Panigale)
+- [WorldSBK 杜卡迪历史](https://www.worldsbk.com/)

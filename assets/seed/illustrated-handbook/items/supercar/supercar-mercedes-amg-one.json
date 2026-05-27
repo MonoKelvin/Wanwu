@@ -3,28 +3,31 @@
   "slug": "supercar-mercedes-amg-one",
   "subCategoryId": "car-germany",
   "name": "奔驰 AMG ONE",
-  "summary": "F1 动力单元公路化，混动 V6 极限工程。",
+  "summary": "F1 混动动力单元公路化旗舰，限量 275 台。",
   "tags": [
     "德国",
     "超跑",
     "Mercedes-AMG",
-    "精密工程"
+    "混动",
+    "限量"
   ],
   "specs": {
     "首发年份": "2022",
     "厂商": "Mercedes-AMG",
-    "动力": "F1 V6 混动",
-    "最大功率": "1063 hp",
-    "产量": "275 辆",
-    "产地": "德国"
+    "发动机": "1.6 L V6 涡轮混动",
+    "系统功率": "1063 hp",
+    "驱动": "四驱",
+    "0-100 km/h": "约 2.9 s",
+    "极速": "352 km/h",
+    "产量": "275 辆"
   },
   "media": {
     "provider": "pixabay",
     "query": "AMG ONE supercar",
     "matchTags": [
       "mercedes-amg",
-      "精密工程",
-      "amg"
+      "amg",
+      "one"
     ],
     "minMatchScore": 2,
     "imageCount": 5,

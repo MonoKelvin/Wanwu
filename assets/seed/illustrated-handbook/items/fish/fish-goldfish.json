@@ -3,18 +3,19 @@
   "slug": "fish-goldfish",
   "subCategoryId": "fish-fresh",
   "name": "金鱼",
-  "summary": "金鱼（学名： Carassius auratus ‘ Gold Fish ’ ）是鲤形目、鲤科、鲫属多种人工培育鱼种的通称。",
+  "summary": "金鱼是由鲫鱼长期人工选育形成的观赏鱼类群，兼具文化与驯化研究价值。",
   "tags": [
-    "Carassius auratus ‘Gold Fish’",
-    "Gold fish",
+    "Carassius auratus",
+    "Goldfish",
     "金鱼"
   ],
   "specs": {
-    "中文名": "金鱼",
-    "分类": "鲤科鲫属观赏品系",
-    "起源": "中国宋代选育",
-    "栖息": "淡水水族箱/池塘",
-    "品种": "文种、龙种、蛋种等"
+    "物种来源": "鲫鱼（Carassius auratus）人工选育系",
+    "驯化起点": "中国古代观赏鱼培育传统",
+    "主要形态系": "草种、文种、龙种、蛋种",
+    "养护关键": "高排泄负荷需稳定过滤与换水",
+    "寿命潜力": "良好条件下可达10年以上",
+    "常见风险": "体型极端品系更易出现浮沉与应激问题"
   },
   "media": {
     "provider": "pixabay",

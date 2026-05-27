@@ -1,55 +1,27 @@
 # Kindle 电子书
 
-Amazon Kindle 以电子墨水、超长续航与无线购书重塑阅读产业，是数字出版的基础设施之一。
+Amazon Kindle 2007 年推出，以电子墨水屏、超长续航与一键购书生态改变阅读硬件形态。工业设计上，它刻意反 iPad：轻、哑、单手持握、无炫目背光（早期），把「像纸一样读」作为物理与视觉承诺。
 
-![Kindle Paperwhite](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Kindle_Paperwhite_4.jpg/640px-Kindle_Paperwhite_4.jpg)
+![Amazon Kindle 电子书阅读器](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Amazon_Kindle_3.jpg/640px-Amazon_Kindle_3.jpg)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+Kindle 由 Amazon Lab126 在美国研发，Industrial Design 团队强调 asymmetrical grip 与 page-turn 按键（早期型号）。产品线含入门 Kindle、Paperwhite、Signature、Scribe 与 Oasis。Amazon 通过 Kindle Store 绑定内容，硬件常接近成本价销售。2022 年后全系逐步 front-lit，仍保留 E Ink 核心。
 
-## 背景与历史
+## 设计亮点
 
-2007 年首代由 Lab126 设计；Paperwhite、Oasis 迭代提升屏幕与防水。Whispersync 跨设备同步进度。
+E Ink Carta 类屏反射环境光，户外可读；300 ppi 级分辨率让正文边缘清晰。塑料或铝背壳控制重量在 180–220 g 区间。Paperwhite 防水 IPX8，适合浴室与海滩。Scribe 加入 Wacom 级手写笔与 soft front light。UI 极简：主页、图书馆、商店，减少通知干扰。Whispersync 跨设备同步进度属系统层设计。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+单次充电 weeks 级续航（视亮度与 Wi-Fi）。翻页延迟低于 LCD，但动画与浏览器仍慢，不适合漫画彩色内容（Fire 平板另线）。字体、行距、暖光可调，夜间阅读比手机更护眼。官方套带磁吸唤醒与保护。中文书库依赖 Amazon.cn 与 send-to-kindle；越狱社区存在但非官方支持。
 
-## 工程与设计亮点
+## 文化影响
 
-E Ink Carta 屏减少眼疲劳；背光均匀导光。Oasis 人体工学握把与物理翻页键。
+Kindle 使「随身图书馆」成为现实，推动出版社 digitization 与 self-publishing。它影响 Kobo、文石等竞品形态。在社交媒体「digital minimalism」讨论中，Kindle 常作为「去手机阅读」工具出现。设计史角度，它证明专用设备在 general-purpose tablet 时代仍可凭单一体验存活。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
+## 参考与延伸阅读
 
-
-## 文化地位与影响
-
-改变出版商定价权（亚马逊-出版商争端）；旅行阅读标配。
-
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
-
-## 冷知识
-
-- 名称 Kindle 意为点燃（知识）。
-- 屏保可显示书封或自定义。
-- 部分型号支持 Audible 有声书。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**常见误区**：把影视、游戏或广告中的形象当作现实规格，容易高估性能或低估维护成本；把单一评测当作全体结论，也可能忽略地区差异与年款改款。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [Amazon Kindle](https://www.amazon.com/kindle)
-- [维基百科](https://en.wikipedia.org/wiki/Amazon_Kindle)
+- [Amazon Kindle 官方](https://www.amazon.com/kindle)
+- [维基百科：Amazon Kindle](https://en.wikipedia.org/wiki/Amazon_Kindle)
+- [Lab126 与 Kindle 起源报道](https://www.theverge.com/)

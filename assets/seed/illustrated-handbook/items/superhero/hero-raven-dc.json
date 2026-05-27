@@ -3,7 +3,7 @@
   "slug": "hero-raven-dc",
   "subCategoryId": "hero-other",
   "name": "渡鸦 Raven",
-  "summary": "阿泽拉特之女，掌控黑暗能量与情感的少年泰坦 mystic。",
+  "summary": "少年泰坦成员，三宫之女，半恶魔血统掌控黑暗能量与情感魔法。",
   "tags": [
     "渡鸦",
     "DC",
@@ -11,11 +11,14 @@
     "少年泰坦"
   ],
   "specs": {
-    "宇宙": "DC",
+    "宇宙": "DC 漫画",
     "首次登场": "1980",
-    "父亲": "Trigon",
-    "团队": "少年泰坦",
-    "能力": "黑暗魔法"
+    "本名": "Raven",
+    "血统": "三宫（Trigon）之女",
+    "能力": "传送、情感魔法、灵魂出窍",
+    "所属": "少年泰坦",
+    "代表动画": "《少年泰坦》2003",
+    "咒语": "Azarath Metrion Zinthos"
   },
   "media": {
     "provider": "pixabay",

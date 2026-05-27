@@ -1,32 +1,27 @@
 # shadcn/ui
 
-shadcn/ui 是 shadcn（Vercel）推广的 **可复制组件代码模式**——非传统 npm 包，而是通过 CLI 将基于 **Radix UI + Tailwind CSS** 的组件源码写入你的 repo，你拥有全部修改权。2023 年起爆火，成为 Next.js 生态默认 UI 起点之一。
+shadcn/ui 是 shadcn（Vercel）创建的 React UI 模式：非 npm 组件库，而是通过 CLI 将 Radix UI primitives + Tailwind CSS 源码复制到项目中，开发者完全拥有并可修改。2023 起与 Next.js App Router、Tailwind v4 深度整合，成为 modern web app 默认 UI 起点之一。
 
-![React 标志（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/320px-React-icon.svg.png)
+![shadcn/ui 与 Tailwind 生态](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tailwind_CSS_Logo.svg/640px-Tailwind_CSS_Logo.svg.png)
 
-![Tailwind CSS 标志（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tailwind_CSS_Logo.svg/320px-Tailwind_CSS_Logo.svg.png)
+## 设计师与品牌
 
-## 背景与历史
+shadcn 个人维护，MIT；站点 ui.shadcn.com。依赖 Radix UI、Tailwind、class-variance-authority（cva）、tailwind-merge（cn  helper）。Vercel v0 生成 code 常基于 shadcn 组件。Blocks 提供 dashboard、login、sidebar 完整 section。
 
-2023 年 3 月 shadcn 发布 ui.shadcn.com，主张「Open Code、Composition、Distribution」；组件包括 Button、Dialog、Data Table 等，样式用 Tailwind + CSS variables 实现 theme。与 **tweakcn、Magic UI** 等衍生生态共同构成「new default stack」：Next.js + shadcn + Vercel。2024 年扩展 blocks、charts 与 registry 自定义源。
+## 设计亮点
 
-## UX 原则与产品影响
+Copy-paste ownership：改 `components/ui/button.tsx` 无 fork upstream 负担。Variants：`buttonVariants({ variant: 'outline', size: 'sm' })` cva 类型安全。Theming：CSS variables `--primary`、`--radius` in globals.css；dark class toggle。Composition：Card、Dialog、Form（react-hook-form + zod）patterns 文档化。Charts 集成 Recharts；Sonner toast。Registry JSON 支持 monorepo `@workspace/ui`。
 
-- **所有权**：源码在项目中，无黑盒版本锁定；可任意改 a11y 与 branding。
-- **一致性**：`cn()` utility 合并 class；`components.json` 统一 alias 与 Tailwind 配置。
-- **Radix 行为**：Dialog、Dropdown 等交互层可靠，团队专注 visual polish。
-- **文档即营销**：站点本身即精美 demo，降低 adoption friction。
+## 使用体验
 
-shadcn/ui 改变了「装 dependency」习惯，转向 **vendor components into codebase**；企业需建立 internal registry 避免 20 个 fork 的 Button。
+Init：`npx shadcn@latest init` 选 Next/Vite/Remix。Add：`npx shadcn@latest add button dialog`。Tailwind v4 用 `@tailwindcss/vite`。Customize radius/spacing 改 theme 即可全局生效。Upgrade component：re-run add --overwrite 或 manual diff。Storybook 可选 wrap each ui component。
 
-## 冷知识
+## 文化影响
 
-- 「shadcn」是作者 Discord/Twitter handle，非公司品牌名。
-- `npx shadcn@latest init` 会检测 Next.js、Vite、Remix 等框架自动配置。
-- Data Table 基于 TanStack Table，是 admin UI 最难组件之一的社区标准答案。
+shadcn 改变「install MUI 即用」习惯，强调 design engineer ownership。GitHub star 与 Twitter 病毒传播；中国开发者社区大量中文 shadcn 教程。Critique：multiple project 难统一 update；defenders 称 business logic 本就该 local fork。
 
 ## 参考与延伸阅读
 
-- [shadcn/ui 官网](https://ui.shadcn.com/)
-- [shadcn/ui GitHub](https://github.com/shadcn-ui/ui)
-- [Radix UI](https://www.radix-ui.com/)
+- [shadcn/ui 文档](https://ui.shadcn.com/)
+- [GitHub：shadcn-ui/ui](https://github.com/shadcn-ui/ui)
+- [Radix UI Primitives](https://www.radix-ui.com/)

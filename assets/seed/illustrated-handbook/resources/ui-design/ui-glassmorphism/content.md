@@ -1,32 +1,27 @@
-# 玻璃拟态（Glassmorphism）
+# 玻璃拟态
 
-玻璃拟态是一种 UI 视觉风格，通过**半透明背景、背景模糊（backdrop-filter）与细边框高光**模拟磨砂玻璃层叠效果。它在 2020 年前后随 macOS Big Sur、Windows 11 与 iOS 控制中心的设计语言而广为人知，成为现代网页与 Dashboard 的常见装饰手法。
+玻璃拟态（Glassmorphism）是 2020 前后流行的 UI 视觉风格：半透明 frosted glass 面板、background blur、细 border 与 soft shadow，营造层次与深度。Apple macOS Big Sur、iOS 控制中心与 Windows 11 Acrylic 推动 mainstream；CSS 实现靠 `backdrop-filter: blur()` 与 alpha background。
 
-![Apple 标志（玻璃与半透明 UI 常见于 Apple 平台，维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/240px-Apple_logo_black.svg.png)
+![macOS Big Sur 玻璃质感界面](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/MacOS_Big_Sur_Desktop.png/640px-MacOS_Big_Sur_Desktop.png)
 
-![Microsoft 标志（Fluent Acrylic 材质，维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/320px-Microsoft_logo.svg.png)
+## 设计师与品牌
 
-## 背景与历史
+风格名 glassmorphism 由 UI 社区命名；Apple HIG materials、Microsoft Fluent Acrylic、Material You 动态色 surface 提供 system-level 参考。Figma 用 background blur layer + fill opacity 模拟。Tailwind：`backdrop-blur-md bg-white/30`。
 
-苹果在 iOS 7（2013）已大规模使用 blur 与 translucency；2020 年 UX 设计师 Michal Malewicz 等人将「Glassmorphism」作为 trend 命名并推广。CSS **`backdrop-filter: blur()`** 在 Chromium、Safari 普及后，前端无需 Canvas 即可实现高性能毛玻璃卡片。Material Design 3 与 Fluent Design 的「Acrylic」「Mica」材质，可视为系统化、可访问性更成熟的演进。
+## 设计亮点
 
-## UX 原则与产品影响
+Layer stack： vibrant wallpaper/gradient 底层 + blur 面板 + 1px white/20% stroke。Contrast 风险：blur 上 gray text 可能低于 WCAG；需 solid fallback。Performance：mobile `backdrop-filter` GPU 成本，Android 碎片化需测试。Dark mode：border 用 white/10 而非 gray shadow。Combine with subtle noise texture 减 banding。
 
-- **层级暗示**：半透明层让用户感知「浮在内容之上」的 modal、导航或侧边栏。
-- **性能注意**：大面积 blur 在低端 GPU 上可能掉帧，需限制 blur 半径与层数。
-- **对比度风险**：文字落在复杂背景上时，WCAG 对比度易不达标，需加 scrim（暗色遮罩）或 solid fallback。
-- **深色模式**：玻璃层在 dark UI 中常用低 opacity 白 + 细 border，避免「脏灰」感。
+## 使用体验
 
-玻璃拟态适合 hero 区、登录卡片与音乐播放器界面，但不适合数据密集型表格主体——可读性始终优先于炫技。
+适用：dashboard card、modal overlay、nav bar floating。不适用：长文阅读区、复杂 form（干扰 focus）。Progressive enhancement：不支持 blur 时 solid background。iOS 15+ UIBlurEffect；CSS `@supports (backdrop-filter)`。Design critique：2021 后滥用致「廉价 glass」；today 更克制，与 neumorphism 同样周期衰退。
 
-## 冷知识
+## 文化影响
 
-- Windows Vista 的 Aero Glass（2007）是早期桌面「玻璃」隐喻的先驱，但因性能与审美争议在 Win8 被削弱。
-- iOS 18 与 visionOS 进一步混合 glass 与 spatial depth，但 Web 端仍主要依赖 CSS blur。
-- 设计社区中 Figma 的 Background blur 效果与 CSS `backdrop-filter` 并非 1:1，交付时需开发侧微调。
+Glassmorphism 与 neumorphism 并列 2020 UI trend cycle 案例。Apple 生态美学外溢至 Dribbble landing page。开发者社区 debate「real usability vs dribbble bait」。Design system 将其收编为 semantic surface token（elevated-glass）而非 global style。
 
 ## 参考与延伸阅读
 
-- [MDN：backdrop-filter](https://developer.mozilla.org/zh-CN/docs/Web/CSS/backdrop-filter)
-- [UX Collective：Glassmorphism 讨论](https://uxdesign.cc/glassmorphism-in-user-interfaces-1f39bb1308c9)
 - [Apple HIG：Materials](https://developer.apple.com/design/human-interface-guidelines/materials)
+- [MDN：backdrop-filter](https://developer.mozilla.org/en-US/docs/Web/CSS/backdrop-filter)
+- [Fluent Acrylic material](https://learn.microsoft.com/en-us/windows/apps/design/style/acrylic)

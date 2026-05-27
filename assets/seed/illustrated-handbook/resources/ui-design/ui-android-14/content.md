@@ -1,32 +1,27 @@
 # Android 14 界面
 
-Android 14（Upside Down Cake）于 2023 年发布，延续 **Material You 动态取色** 与 **predictive back gesture** UI，并强化隐私指示器、partial photo access 与 per-app 语言设置。系统 UI 在 Quick Settings、锁屏 customizer 与 large screen 优化上进一步对齐 tablet 与 foldable。
+Android 14（API 34，内部代号 Upside Down Cake）2023 年发布，在 Material You 动态取色基础上强化隐私 UI、预测性返回手势与大屏/折叠适配。系统界面与 Google Pixel 首发体验，成为 OEM 定制 skin 的 baseline reference。
 
-![Android 标志（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Android_new_logo_2019.svg/320px-Android_new_logo_2019.svg.png)
+![Android 机器人标志](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Android_robot.svg/640px-Android_robot.svg.png)
 
-![Google 标志（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/320px-Google_2015_logo.svg.png)
+## 设计师与品牌
 
-## 背景与历史
+Google Android 团队维护 AOSP 与 Pixel UI；Samsung One UI、小米 HyperOS 等在 Android 14 上二次定制。Material Design 3（M3）提供 color scheme、typography 与 motion 规范。Android 14 主要面向 Pixel 8 系列及后续 OEM OTA。
 
-Android 14 开发代号 Upside Down Cake；2023 年 2 月 Developer Preview，10 月稳定版推送 Pixel，随后 OEM 适配。配合 **Material 3 Expressive** 预览与 **Health Connect** 集成，Settings 与 Permission 对话框视觉更统一。Google Play 政策同步要求 targetSdk 34 与 foreground service 类型声明，影响 App 内 notification 与 background UI。
+## 设计亮点
 
-## UX 原则与产品影响
+Predictive back：返回手势时预览上一屏 edge-to-edge 动画，要求 App 启用 OnBackPressedDispatcher 与 predictive back API。Privacy dashboard 与 per-app 权限指示器（相机/麦克风绿点）强化 trust UI。Regional preferences 支持摄氏/12h 等区域默认。App 默认 targetSdk 34 带来 partial photo access、foreground service 类型限制等 UX 影响。Tablet 与 foldable 多窗口 resize 改进。
 
-- **Predictive back**：用户侧滑返回时 preview 上一屏 peek，App 需实现 OnBackPressedCallback 动画。
-- **Themed icon**： monochrome icon + tint 与 wallpaper 协调，launcher 一致性提升。
-- **Regional preferences**：温度单位、首周日等 regional prefs 独立 API，减少 locale 硬编码 form。
-- **Large screen**：Android 14  discourage 强制 orientation；activity embedding 与 multi-window 引导。
+## 使用体验
 
-Android 14 界面变更相对 12/13 incremental，但 **privacy UX**（camera/mic indicator、select photos）已成用户 baseline expectation。
+开发者用 Activity embedding、WindowSizeClass 适配大屏；Compose Material3 组件对齐 M3 token。用户侧：设置中 per-app 语言、health connect 权限集中管理。Predictive back 在第三方 App 支持度仍参差，需测试 fragment 与 navigation component。OEM 皮肤可能延迟 6–12 个月推送 Android 14。
 
-## 冷知识
+## 文化影响
 
-- Upside Down Cake 得名来自 Android 版本甜点传统（公开代号时代结束于 10，内部仍保留）。
-- **Grammatical Inflection API** 支持性别化语言 UI string，服务全球化 polish。
-- Pixel Feature Drops 可在 mid-cycle 更新 System UI，不必等 major version。
+Android 14 延续「Google 定规范、OEM 定体验」格局；Material You 动态色影响 wallpaper-based branding 讨论。Privacy indicator 成为用户对 surveillance 焦虑的视觉锚点。对中国用户，国产 ROM 在 Android 14 上强调本地化服务与权限管控，与 AOSP 隐私 UI 形成对照案例。
 
 ## 参考与延伸阅读
 
-- [Android 14 行为变更（官方文档）](https://developer.android.com/about/versions/14/behavior-changes-14)
+- [Android 14 行为变更](https://developer.android.com/about/versions/14)
 - [Material Design 3](https://m3.material.io/)
-- [维基百科：Android 14](https://en.wikipedia.org/wiki/Android_14)
+- [Predictive back 指南](https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture)

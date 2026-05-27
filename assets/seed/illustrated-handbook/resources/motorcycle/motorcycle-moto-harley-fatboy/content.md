@@ -1,57 +1,41 @@
 # 哈雷 Fat Boy
 
-Fat Boy 是哈雷 Softail 家族的核心车型，强调低重心、宽胎与经典美式金属质感，适合城市巡航与公路展示。
+Fat Boy 隶属哈雷 **Softail 软尾巡航** 家族，以实心盘轮、宽胎与低 slung 轮廓成为 1990 年代美式巡航的视觉图腾；Milwaukee-Eight 大排量 V 双缸与 Reflex 电控则赋予这一经典造型现代公路能力。
 
-![哈雷 Fat Boy](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Harley-Davidson_Fat_Boy.jpg/640px-Harley-Davidson_Fat_Boy.jpg)
-
-
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+![哈雷 Fat Boy 114](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Harley-Davidson_Fat_Boy.jpg/640px-Harley-Davidson_Fat_Boy.jpg)
 
 ## 背景与历史
 
-自 1990 年诞生历经多次发动机升级，从 Twin Cam 演进至 Milwaukee-Eight；造型语言保持实心前轮与厚重油箱线条。
+FLSTF Fat Boy 1990 年问世，Designer Willie G. Davidson 用 **solid disc wheel** 与 massive tire 组合创造「金属圆盘滚动」印象。1991 年《终结者 2》电影使其全球知名。历经 Evolution、Twin Cam 至 **Milwaukee-Eight 114（1868 cc）** 动力迭代，Fat Boy 114 与 Fat Boy 114 Special 构成现行产品线。
 
-时间线梳理有助于理解该车/作品在技术与审美上的坐标：首发环境、竞品格局与法规背景，往往决定它能否成为「定义时代的符号」。
+Softail 隐藏式后减震维持硬尾外观；Fat Boy 与 Heritage Classic、Breakout 共享平台但风格各异。Special 版本增加 LED、Reflex 安全套件与更多定制漆水选项。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 工程与设计
 
+**Milwaukee-Eight 114 V 双缸** 约 **94 hp / 155 N·m**，六速、皮带传动。前后 **实心铸造轮** 不可装辐条内胎，是 Fat Boy 最独特工程选择——增重但强化视觉。整备质量约 297 kg，座高 675 mm。
 
-## 工程与设计亮点
+双 300 mm 前碟 ABS 制动；Digital 仪表与可选 RDRS（牵引力、引擎制动控制）。低重心 Softail 布局使 Fat Boy 在哈雷家族中 **掉头与低速平衡** 优于 Ultra Touring。
 
-现行 Milwaukee-Eight 114 约 122 ft-lb 扭矩；单碟轮造型、镀铬件可选。电子油门、巡航与防抱死为现代款标配。
+## 性能与体验
 
-若你关心驾驶或把玩体验，建议结合实拍评测、拆解视频与官方白皮书交叉验证；纸面参数与真实体感之间常有温度、噪音与调校差异。
+Fat Boy 定位 **风格优先的巡航**：低转速扭矩充沛，二档即可覆盖城市速度；宽胎直线稳定性好，倾角受 footpeg 与胎宽限制。Special 版悬挂略偏舒适，适合周末沿海公路。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
-
+维护遵循哈雷 Big Twin 周期；solid wheel 清洁与轮胎更换成本高于辐条轮。改装市场庞大——排気、握把与定制 paint 是常见项目。
 
 ## 文化地位与影响
 
-在定制彩绘、加长前叉与低音排气改装圈中人气极高。
+Fat Boy 是 **1990 年代哈雷设计高峰** 的象征，与 Dyna、Sportster 共同定义一代美式摩托审美。流行文化中除《终结者 2》，亦频繁出现在音乐 MV 与摄影作品中；「Fat Boy」一词甚至溢出到其他工业设计领域形容「矮胖造型」。
 
-文化层面的讨论不必局限于车迷或粉圈：设计奖项、影视出镜、二手行情与社交话题，都是观察其影响力的窗口。
-
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
+作为 Softail 子型号，Fat Boy 与独立条目 Fat Boy（harley-fat-boy）共享核心叙事，强调 **Milwaukee-Eight 时代的技术延续** 而非仅电影符号。
 
 ## 冷知识
 
-- Fat Boy 曾登上美国邮票与无数影视海报。
-- Softail 车架隐藏后避震，外观更「硬尾」。
-- 114 与 117 立方英寸版本因市场而异。
+- Fat Boy 114 与 Heritage Classic 共享 Softail 平台。
+- 实心盘轮无法安装传统辐条，轮胎更换需整体吊装。
+- Reflex RDRS 在 Special 版提供引擎制动与牵引力控制。
 
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
+## 参考与延伸阅读
 
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [哈雷 Fat Boy](https://www.harley-davidson.com/)
-- [维基百科](https://en.wikipedia.org/wiki/Harley-Davidson_Fat_Boy)
+- [Harley-Davidson Fat Boy 114](https://www.harley-davidson.com/)
+- [维基百科：Harley-Davidson Softail](https://en.wikipedia.org/wiki/Harley-Davidson_Softail)
+- [Milwaukee-Eight 发动机背景](https://en.wikipedia.org/wiki/Harley-Davidson_Milwaukee-Eight_engine)

@@ -3,18 +3,21 @@
   "slug": "hero-wolverine",
   "subCategoryId": "hero-other",
   "name": "金刚狼 Wolverine",
-  "summary": "罗根，艾德曼合金爪与再生能力，X 战警标志角色。",
+  "summary": "罗根，艾德曼合金骨骼与自愈因子，X 战警核心反英雄气质成员。",
   "tags": [
     "漫威",
     "变种人",
     "X战警"
   ],
   "specs": {
-    "宇宙": "漫威 Marvel",
+    "宇宙": "漫威",
     "首次登场": "1974",
-    "本名": "罗根",
-    "材料": "艾德曼合金",
-    "饰演": "休·杰克曼"
+    "本名": "罗根 / James Howlett",
+    "能力": "自愈、Adamantium 爪、感官强化",
+    "所属": "X 战警",
+    "创作者": "Len Wein / John Romita Sr.",
+    "MCU饰演": "休·杰克曼",
+    "代表篇章": "《暮狼归乡》"
   },
   "media": {
     "provider": "pixabay",

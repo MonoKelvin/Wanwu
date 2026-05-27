@@ -131,25 +131,7 @@ function clearSearch() {
   </div>
 </template>
 <style>
-/* 带搜索图标的输入框（侧栏分类、页头工具栏） */
-.ww-field-search {
-  width: 100%;
-}
-
-.ww-field-search .p-inputtext {
-  width: 100%;
-  font-size: 0.8125rem;
-  padding: 0.4375rem 0.625rem 0.4375rem 1.75rem;
-}
-
-.ww-field-search .p-iconfield .p-inputicon {
-  inset-block: 0;
-  display: flex;
-  align-items: center;
-  width: 1.75rem;
-  font-size: 0.8125rem;
-  color: var(--ww-ink-faint);
-}
+@import '../../core/styles/library-shared.css';
 
 /* 页面头工具栏（与 RSS 刷新按钮等同尺度） */
 .ww-page-toolbar {

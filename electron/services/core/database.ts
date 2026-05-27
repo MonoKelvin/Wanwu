@@ -8,6 +8,13 @@ import { join } from 'path'
 import { randomUUID } from 'crypto'
 import { LIBRARY_CATEGORIES, loadLibraryCategories } from '../library/categories'
 import { seedDefaultRssFeeds } from '../rss/defaults'
+import type {
+  NoteCreateInput,
+  NoteImage,
+  NoteItem,
+  NoteUpdateInput
+} from '../../../src/shared/types/notes'
+import type { AppSettings } from '../../../src/shared/types/settings'
 
 export const DEFAULT_FAVORITE_GROUP_ID = 'default'
 
@@ -83,6 +90,22 @@ export class DatabaseService {
         id INTEGER PRIMARY KEY CHECK (id = 1),
         json TEXT NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS notes (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        color TEXT NOT NULL,
+        pinned INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS note_images (
+        id TEXT PRIMARY KEY,
+        note_id TEXT NOT NULL,
+        relative_path TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_note_images_note_id ON note_images(note_id);
     `)
     this.ensureProfileMediaColumns()
     this.ensureFavoriteGroupsSchema()
@@ -123,7 +146,7 @@ export class DatabaseService {
     }
   }
 
-  updateAppSettings(settings: Record<string, unknown>): void {
+  updateAppSettings(settings: AppSettings): void {
     this.userDb
       .prepare(
         `INSERT INTO app_settings (id, json) VALUES (1, ?)
@@ -320,6 +343,206 @@ export class DatabaseService {
         backgroundConfig ? JSON.stringify(backgroundConfig) : null,
         new Date().toISOString()
       )
+  }
+
+  listNotes(): NoteItem[] {
+    const rows = this.userDb
+      .prepare(
+        `SELECT id, title, content, color, pinned, created_at, updated_at
+         FROM notes
+         ORDER BY pinned DESC, updated_at DESC`
+      )
+      .all() as Array<{
+      id: string
+      title: string
+      content: string
+      color: string
+      pinned: number
+      created_at: string
+      updated_at: string
+    }>
+    const images = this.userDb
+      .prepare(
+        `SELECT id, note_id, relative_path, created_at
+         FROM note_images
+         ORDER BY created_at ASC`
+      )
+      .all() as Array<{ id: string; note_id: string; relative_path: string; created_at: string }>
+    const imagesByNote = new Map<string, NoteImage[]>()
+    for (const img of images) {
+      const list = imagesByNote.get(img.note_id) ?? []
+      list.push({
+        id: img.id,
+        noteId: img.note_id,
+        relativePath: img.relative_path,
+        createdAt: img.created_at
+      })
+      imagesByNote.set(img.note_id, list)
+    }
+    return rows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      content: row.content,
+      color: this.normalizeNoteColor(row.color),
+      pinned: row.pinned === 1,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      images: imagesByNote.get(row.id) ?? []
+    }))
+  }
+
+  getNote(id: string): NoteItem | null {
+    const row = this.userDb
+      .prepare(
+        `SELECT id, title, content, color, pinned, created_at, updated_at
+         FROM notes
+         WHERE id = ?`
+      )
+      .get(id) as
+      | {
+          id: string
+          title: string
+          content: string
+          color: string
+          pinned: number
+          created_at: string
+          updated_at: string
+        }
+      | undefined
+    if (!row) return null
+    const images = this.userDb
+      .prepare(
+        `SELECT id, note_id, relative_path, created_at
+         FROM note_images
+         WHERE note_id = ?
+         ORDER BY created_at ASC`
+      )
+      .all(id) as Array<{ id: string; note_id: string; relative_path: string; created_at: string }>
+    return {
+      id: row.id,
+      title: row.title,
+      content: row.content,
+      color: this.normalizeNoteColor(row.color),
+      pinned: row.pinned === 1,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      images: images.map((img) => ({
+        id: img.id,
+        noteId: img.note_id,
+        relativePath: img.relative_path,
+        createdAt: img.created_at
+      }))
+    }
+  }
+
+  createNote(input?: NoteCreateInput): NoteItem {
+    const id = randomUUID()
+    const now = new Date().toISOString()
+    const title = input?.title?.trim() || '新建便笺'
+    const content = input?.content?.trim() || ''
+    const color = this.normalizeNoteColor(input?.color)
+    const pinned = input?.pinned ? 1 : 0
+    this.userDb
+      .prepare(
+        `INSERT INTO notes (id, title, content, color, pinned, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`
+      )
+      .run(id, title, content, color, pinned, now, now)
+    return this.getNote(id) as NoteItem
+  }
+
+  updateNote(input: NoteUpdateInput): NoteItem | null {
+    const current = this.getNote(input.id)
+    if (!current) return null
+    const now = new Date().toISOString()
+    const title = input.title?.trim() ?? current.title
+    const content = input.content ?? current.content
+    const color = this.normalizeNoteColor(input.color ?? current.color)
+    const pinned = input.pinned ?? current.pinned
+    this.userDb
+      .prepare(
+        `UPDATE notes
+         SET title = ?, content = ?, color = ?, pinned = ?, updated_at = ?
+         WHERE id = ?`
+      )
+      .run(title, content, color, pinned ? 1 : 0, now, input.id)
+    return this.getNote(input.id)
+  }
+
+  deleteNote(id: string): boolean {
+    const note = this.getNote(id)
+    if (!note) return false
+    this.userDb.prepare('DELETE FROM note_images WHERE note_id = ?').run(id)
+    this.userDb.prepare('DELETE FROM notes WHERE id = ?').run(id)
+    return true
+  }
+
+  addNoteImage(noteId: string, relativePath: string): NoteImage {
+    const note = this.getNote(noteId)
+    if (!note) {
+      throw new Error('便笺不存在')
+    }
+    const id = randomUUID()
+    const now = new Date().toISOString()
+    this.userDb
+      .prepare(
+        `INSERT INTO note_images (id, note_id, relative_path, created_at)
+         VALUES (?, ?, ?, ?)`
+      )
+      .run(id, noteId, relativePath, now)
+    this.userDb
+      .prepare('UPDATE notes SET updated_at = ? WHERE id = ?')
+      .run(now, noteId)
+    return {
+      id,
+      noteId,
+      relativePath,
+      createdAt: now
+    }
+  }
+
+  getNoteImage(imageId: string): NoteImage | null {
+    const row = this.userDb
+      .prepare(
+        `SELECT id, note_id, relative_path, created_at
+         FROM note_images
+         WHERE id = ?`
+      )
+      .get(imageId) as
+      | { id: string; note_id: string; relative_path: string; created_at: string }
+      | undefined
+    if (!row) return null
+    return {
+      id: row.id,
+      noteId: row.note_id,
+      relativePath: row.relative_path,
+      createdAt: row.created_at
+    }
+  }
+
+  removeNoteImage(imageId: string): boolean {
+    const image = this.getNoteImage(imageId)
+    if (!image) return false
+    this.userDb.prepare('DELETE FROM note_images WHERE id = ?').run(imageId)
+    this.userDb
+      .prepare('UPDATE notes SET updated_at = ? WHERE id = ?')
+      .run(new Date().toISOString(), image.noteId)
+    return true
+  }
+
+  private normalizeNoteColor(color: unknown): NoteItem['color'] {
+    const value = typeof color === 'string' ? color : ''
+    if (
+      value === 'yellow' ||
+      value === 'green' ||
+      value === 'blue' ||
+      value === 'pink' ||
+      value === 'purple' ||
+      value === 'gray'
+    ) {
+      return value
+    }
+    return 'yellow'
   }
 
   private ensureFavoriteGroupsSchema(): void {

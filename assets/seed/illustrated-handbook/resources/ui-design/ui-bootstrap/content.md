@@ -1,40 +1,27 @@
 # Bootstrap
 
-Bootstrap 是 Twitter（现 X）团队 2011 年开源的前端 UI 框架，由 Mark Otto 与 Jacob Thornton 在内部 Hack Week 项目中诞生。它以 **12 列栅格、预制组件与响应式断点** 降低了 Web 界面搭建门槛，长期是入门教程与企业后台的默认选择。
+Bootstrap 由 Twitter 前端 Mark Otto 与 Jacob Thornton 2011 年创建，是最广泛使用的 CSS/JS 前端框架之一。12 列 responsive grid、预制组件与 utility classes 降低 Web 原型与后台搭建门槛，v5.3 起内置 color modes（dark）与 RTL 支持。
 
-![Bootstrap 标志（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Bootstrap_logo.svg/320px-Bootstrap_logo.svg.png)
+![Bootstrap Logo](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Bootstrap_logo.svg/640px-Bootstrap_logo.svg.png)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+现由 Bootstrap Core Team 维护，MIT 许可；原 Twitter 开源项目。文档 bootstrap.dev 提供 examples 与 snippets。生态含 Bootstrap Icons、Bootswatch 主题、React-Bootstrap、Reactstrap、ng-bootstrap 等框架绑定。与 Tailwind 的 utility-first 形成路线对比。
 
-## 背景与历史
+## 设计亮点
 
-Bootstrap 原名 Twitter Blueprint，v2 引入响应式，v3 移动优先，v4 迁移 Sass 与 flexbox 栅格，v5 移除 jQuery 依赖并强化自定义 CSS 变量。尽管 Tailwind 等 utility-first 方案崛起，Bootstrap 仍通过 **Bootstrap Icons**、RTL 支持与官方 Themes 保持企业市场份额。
+Grid system 基于 flexbox：container → row → col-* breakpoint（xs–xxl）。组件含 navbar、modal、dropdown、carousel，依赖 Popper.js 定位。Sass 变量定制 primary color、spacing、border-radius。v5 移除 jQuery 依赖，纯 vanilla JS。Color modes 通过 data-bs-theme 切换 light/dark。Reboot 层 normalize 跨浏览器 baseline。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+CDN 一行引入即可原型；生产建议 npm + bundler tree-shake 未用 JS。Customization 通过 Sass maps 或 CSS variables（v5.2+）。学习曲线低，适合初学者与 internal tools。与 modern SPA 合用时，注意 global CSS 与 CSS modules 冲突。大型 design system 团队常从 Bootstrap 迁移到 Tailwind 或自建 token，但 Bootstrap 仍在 WordPress、admin template 市场占主导。
 
-## UX 原则与产品影响
+## 文化影响
 
-- **一致性**：Button、Modal、Navbar 等组件行为统一，适合快速 MVP 与内部工具。
-- **栅格系统**：`container` + `row` + `col-*` 模型 teaching 了整代开发者响应式思维。
-- **可访问性改进**：v5 起加强 focus 样式、ARIA 角色文档与 color contrast 工具类。
-- **定制**：Sass 变量覆盖主色、圆角、字体，可与 design system 部分对齐。
-
-Bootstrap 的产品 trade-off 是「看起来像 Bootstrap」的同质化；成熟团队常在其上深度定制或迁移至 headless + Tailwind 架构。
-
-## 冷知识
-
-- Bootstrap 名字来自「pull yourself up by your bootstraps」，寓意「白手起家搭界面」。
-- 早期 Bootstrap 与 jQuery 深度绑定，许多 legacy 后台至今仍是 `$.modal()` 调用栈。
-- Bootstrap 5.3 正式支持 **color modes**（浅色/深色/自动），追赶系统主题趋势。
-- Admin 模板市场（如 CoreUI、Tabler）大量 fork Bootstrap 结构，形成庞大衍生生态。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
+Bootstrap 定义 2010 年代「蓝色 navbar + jumbotron」Web 审美；大量 startup landing 基于其 examples 修改。它降低 Web 门槛，也引发「Bootstrap 脸」同质化批评。教育领域仍是 HTML/CSS 课程默认 stack。与 Tailwind 争论代表「组件语义 vs 原子 utility」两派 UI 架构哲学。
 
 ## 参考与延伸阅读
 
-- [Bootstrap 官网](https://getbootstrap.com/)
-- [Bootstrap GitHub](https://github.com/twbs/bootstrap)
-- [维基百科：Bootstrap (front-end framework)](https://en.wikipedia.org/wiki/Bootstrap_(front-end_framework))
+- [Bootstrap 5.3 文档](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+- [GitHub：twbs/bootstrap](https://github.com/twbs/bootstrap)
+- [Bootstrap Icons](https://icons.getbootstrap.com/)

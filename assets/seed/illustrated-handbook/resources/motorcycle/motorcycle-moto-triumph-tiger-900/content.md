@@ -1,55 +1,43 @@
 # Triumph Tiger 900
 
-Triumph Tiger 900 是中量级冒险摩托代表，以三缸声浪、英伦设计与多路况适应性吸引环球旅行者。
+Tiger 900 是凯旋 **三缸 ADV** 的中坚车型：888 cc 直列三缸继承 Speed Triple 引擎基因，在冒险旅行细分以独特声浪、轻量车架与 Rally / GT 多版本策略，对抗宝马 R 1250 GS 与 KTM 890 Adventure。
 
-![Triumph Tiger 900](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Triumph_Tiger_900_Rally_Pro.jpg/640px-Triumph_Tiger_900_Rally_Pro.jpg)
-
-
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+![Triumph Tiger 900 Rally Pro](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Triumph_Tiger_900_Rally_Pro.jpg/640px-Triumph_Tiger_900_Rally_Pro.jpg)
 
 ## 背景与历史
 
-Tiger 名称源于 1930 年代；900 系列取代 800，采用全新 888 cc 三缸平台。Rally Pro、GT Pro 分化越野与公路旅行取向。
+Tiger 名称可追溯至 **1930 年代** 凯旋越野传统；现代 Tiger 900 于 **2020 年** 取代 Tiger 800，排量从 800 cc 提升至 888 cc，车架与电子系统全面换新。Tiger 900 Rally Pro 面向越野比例更高用户，GT Pro 则强化公路旅行 comfort。
 
-时间线梳理有助于理解该车/作品在技术与审美上的坐标：首发环境、竞品格局与法规背景，往往决定它能否成为「定义时代的符号」。
+凯旋在 **英国 Hinckley** 设计、泰国生产，Tiger 900 与 Trident 660、Street Triple 共享部分供应链。Baja Aragon 等 rally raid 活动中，Tiger 900 Rally 版本参与厂商形象建设。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 工程与设计
 
+**888 cc 直列三缸** 约 **95 hp / 87 N·m**，120° 点火间隔带来 **辨识度极高的三缸声浪**——比双缸高亢、比四缸窄。六速变速箱，轴传动或链传动依版本（900 系列多为链传）。Marzocchi 或 Showa 长行程悬挂，Rally Pro 达 240 mm+ 行程。
 
-## 工程与设计亮点
+5 英寸 TFT、IMU 惯性测量、弯道 ABS 与 off-road Pro 模式（Rally）构成电控。整备质量约 192 kg（Rally Pro），在 ADV 中属较轻；座高 850–940 mm 可调（Rally Pro）。
 
-888 cc 直列三缸约 95 hp，TFT 仪表、弯道 ABS、牵引力与骑行模式；长行程避震、21 寸前轮（Rally）应对非铺装。
+## 性能与体验
 
-若你关心驾驶或把玩体验，建议结合实拍评测、拆解视频与官方白皮书交叉验证；纸面参数与真实体感之间常有温度、噪音与调校差异。
+Tiger 900 强项是 **公路动态与三缸个性**：GT Pro 长途 wind protection 与 ergonomics 优秀；Rally Pro 站立骑行时车把与 footpeg 位置合理，非铺装路面操控信心高于大型 GS。三缸低中扭线性，高转仍有「唱歌」感。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
-
+与 R 1250 GS 相比，Tiger 900 **更轻、更 nimble**，但绝对扭矩与 dealer 越野改装目录略逊。泰产品质在 2020 年代媒体评价中稳定；维护成本低于德式大型 ADV。
 
 ## 文化地位与影响
 
-英伦冒险文化与「Long Way」式摩旅纪录片常出现 Tiger 身影。
+Tiger 900 巩固凯旋 **「英式三缸 ADV」** 定位——与宝马拳击手、KTM 双缸形成声浪与性格差异。YouTube ADV 评测中，Tiger 900 Rally 常作为「非宝马首选」出现；《Long Way Up》等节目虽用哈雷 LiveWire，但 Tiger 系列仍是欧洲 ADV 社群热门。
 
-文化层面的讨论不必局限于车迷或粉圈：设计奖项、影视出镜、二手行情与社交话题，都是观察其影响力的窗口。
+对中国读者，Tiger 900 是 **中等排量 ADV 的三缸替代方案**，适合已熟悉日系 650 ADV、寻求升级与个性的用户。
 
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
+Tiger 900 GT Pro 与 Rally Pro 取向截然不同：前者适合公路长途，后者适合 gravel 与轻度越野，勿仅凭外观选车。
 
 ## 冷知识
 
-- 三缸发动机提供独特「排气和声」体验。
-- Tiger 900 Rally Pro 离地间隙显著高于 GT。
-- 凯旋在泰国生产部分冒险车款。
+- Tiger 900 三缸 120° 点火间隔造就独特排气节奏。
+- Rally Pro 座高可调范围超过 80 mm。
+- GT+ 版本可选雷达自适应巡航，属 ADV 品类少见配置。
 
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
+## 参考与延伸阅读
 
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [Triumph 官网](https://www.triumphmotorcycles.com/)
-- [维基百科：Tiger 900](https://en.wikipedia.org/wiki/Triumph_Tiger_900)
+- [Triumph Tiger 900 官方](https://www.triumphmotorcycles.com/)
+- [维基百科：Triumph Tiger 900](https://en.wikipedia.org/wiki/Triumph_Tiger_900)
+- [凯旋三缸发动机传统](https://www.triumphmotorcycles.com/)

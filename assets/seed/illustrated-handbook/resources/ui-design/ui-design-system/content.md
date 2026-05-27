@@ -1,39 +1,28 @@
-# 设计系统（Design System）
+# 设计系统
 
-设计系统（Design System）是产品团队共享的**视觉、交互与代码规范集合**，通常包含 Design Token、组件库、文档站点、Figma 库与贡献流程。它把「界面怎么做」从个人审美变成可版本化、可测试的组织资产，支撑多产品、多平台的一致体验。
+设计系统（Design System）是产品 UI 的可复用规范集合：design tokens（color、typography、spacing）、组件库、pattern 文档与 governance 流程。连接 Figma library 与 code（React/Vue）保证 design-dev 一致，Storybook 常作为 living documentation 载体。
 
-![Figma 标志（设计系统常用协作工具，维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Figma-logo.svg/320px-Figma-logo.svg.png)
+![设计系统组件库示意](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/640px-React-icon.svg.png)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+代表系统：Material Design（Google）、Fluent 2（Microsoft）、Apple HIG、Polaris（Shopify）、Carbon（IBM）、Atlassian Design System、Ant Design。方法论受 Brad Frost Atomic Design、Nathan Curtis 的 scaling design systems 影响。工具：Figma Variables、Tokens Studio、Style Dictionary 导出 multi-platform token。
 
-## 背景与历史
+## 设计亮点
 
-Brad Frost 2013 年提出 **Atomic Design**（原子→分子→ organism）为组件分层提供词汇；Google Material（2014）、Apple HIG、IBM Carbon、Salesforce Lightning 等推动大厂系统化。2010 年代中后期，Shopify Polaris、GitHub Primer、Atlassian Design System 开源，Storybook 成为文档载体；近年 Token Studio、Style Dictionary 等打通 Figma → code 管道。
+Token 三层：global → semantic → component。Component API：variant、size、disabled state 与 accessibility props。Documentation 含 do/don't、usage、content guidelines。Versioning semver；deprecation 路径。Theming：brand swap primary token 不改 component code。Composition over customization：slot、children pattern。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+Team 流程：design 更新 library → PR 到 code → Chromatic visual regression → release notes。Adoption 指标：import 率、duplicate UI audit。Starter：Storybook + Radix/shadcn 或 MUI。Monorepo（Nx/Turborepo）放 packages/ui。Onboarding workshop 降「野生 button」；lint rule 禁 hardcoded hex。
 
-## UX 原则与产品影响
+## 文化影响
 
-- **一致性**：用户跨 Web/App 认得出品牌与交互模式，降低学习成本。
-- **效率**：复用 Button、Input 而非每项目重画，设计—开发 handoff 缩短。
-- **质量**：集中修复 a11y bug、国际化与导航一次惠及全部产品。
-- **治理**：RFC、deprecation 策略与 semver 避免「野生 fork」失控。
-
-成熟设计系统不仅是 UI kit，还包含**内容语调、 motion 原则、数据可视化色板**与 usage do/don't。
-
-## 冷知识
-
-- 「设计系统」与「样式指南 Style Guide」常被混用；前者强调可运行代码与流程，后者偏静态 PDF。
-- 许多系统以 **「.design」域名** 对外发布（如 primer.style、polaris.shopify.com）。
-- 设计系统团队（DS team）常采用「联邦模型」：中心维护 core，各产品线贡献 domain 组件。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
+2016 年后 design system 从 big tech 扩散至 bank、telecom 数字化。Spotify Encore、GitHub Primer 开源影响 community。失败案例常因缺 governance、token 与 Figma 脱节。中国大厂（阿里 Ant、腾讯 TDesign、字节 Arco）均推 enterprise design system 平台化。
 
 ## 参考与延伸阅读
 
-- [Design Systems Repo](https://designsystemsrepo.com/)
-- [Brad Frost：Atomic Design](https://atomicdesign.bradfrost.com/)
-- [Nathan Curtis：Design Systems 文章集](https://medium.com/eightshapes-llc/tagged/design-systems)
+- [Material Design 3](https://m3.material.io/)
+- [Storybook 文档](https://storybook.js.org/docs)
+- [Design Tokens W3C Community Group](https://design-tokens.github.io/community-group/)
+- [Shopify Polaris](https://polaris.shopify.com/)

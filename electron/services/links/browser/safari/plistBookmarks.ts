@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'fs'
 import { homedir } from 'os'
 import { join } from 'path'
-import plist from 'plist'
+import { parse as parsePlist } from 'plist'
 
 export type SafariBookmarkNode = {
   name: string
@@ -83,7 +83,7 @@ export function safariBookmarksRoot(): SafariBookmarkNode | null {
 
   try {
     const buf = readFileSync(path)
-    const doc = plist.parse(buf)
+    const doc = parsePlist(buf.toString())
     if (!doc || typeof doc !== 'object' || Array.isArray(doc)) return null
     const children = (doc as Record<string, unknown>).Children
     if (!Array.isArray(children)) return null

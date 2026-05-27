@@ -1,55 +1,39 @@
 # 兰博基尼 Huracán
 
-Huracán 是 V10 入门超跑，兼顾日常与赛道，STO、Performante 等版本覆盖多样玩家。 下文从起源、工程与文化三方面展开，方便快速建立完整印象。
+Huracán 是兰博基尼在 Gallardo 之后推出的入门级中置超跑，以 5.2 升 V10 与全时四驱 LDVI 系统守住「日常可开的兰博基尼」定位；十年间 STO、Performante、Tecnica、Sterrato 等衍生版本把赛道、后驱与轻度越野玩法拆成清晰产品线，成为租赁体验、单一品牌赛与改装文化里能见度最高的现代牛牌之一。
 
-![兰博基尼 Huracán](https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Lamborghini_Huracan_LP_610-4_(16681138103).jpg/640px-Lamborghini_Huracan_LP_610-4_(16681138103).jpg)
-
-
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+![兰博基尼 Huracán LP 610-4](https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Lamborghini_Huracan_LP_610-4_%2816681138103%29.jpg/640px-Lamborghini_Huracan_LP_610-4_%2816681138103%29.jpg)
 
 ## 背景与历史
 
-2014 年取代 Gallardo；命名来自西班牙斗牛犬 Huracán。Tecnica、Sterrato 拓展越野与后驱玩法。
+2014 年日内瓦车展首发，名称来自西班牙斗牛犬「飓风」（Huracán），接替 Gallardo 成为圣亚加塔销量支柱。项目由时任 CEO Stephan Winkelmann 推动，目标是在保持品牌张扬造型的同时，改善人机工学与低速易驾性——回应 Gallardo 时代「难开」的口碑。
 
-量产与赛事版本常交替推出，限量策略既维持稀缺性，也测试市场对该车系品牌的忠诚度。许多车型在发布三五年后会出现中期改款或性能套件，以回应竞品与排放法规变化；收藏者则更关注「首发年款」「赛道版」与「导演/明星座驾」等叙事带来的溢价。
+2017 年 Performante 以 Nürburgring 北环量产车纪录话题引爆市场；2018 年 EVO 引入 LDVI 扭矩矢量；2021 年 STO 致敬 Super Trofeo 单一品牌赛；2022 年 Sterrato 抬高离地间隙、加宽轮拱，成为少数原厂「越野取向」超跑。2024 年 Huracán 逐步停产，为混动继任者让路，二手与赛道日存量仍极大。
 
-时间线梳理有助于理解该车/作品在技术与审美上的坐标：首发环境、竞品格局与法规背景，往往决定它能否成为「定义时代的符号」。
+## 工程与设计
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+**车身**采用铝合金与复合材料混合结构，线条由兰博基尼 Centro Stile 主导，六边形元素与 Y 型日行灯成为家族符号。Performante 与 STO 配备 **ALA 2.0**（Aerodinamica Lamborghini Attiva）主动气动：进气口开闭改变下压力与阻力，无需夸张固定大尾翼即可在赛道日获得可测增益。
 
+**动力**为奥迪系 5.2 L 自然进气 V10，早期 LP 610-4 约 610 cv，后期 EVO/STO 版本功率与响应标定更高；四驱版通过 LDVI 在前后轴间分配扭矩，后驱 Tecnica 则强调转向乐趣。七速双离合（LDF）与多种驾驶模式（Strada/Sport/Corsa 等）覆盖公路与赛道。
 
-## 工程与设计亮点
+**底盘**可选磁流变阻尼（MagneRide）；Sterrato 版本加大行程、全地形胎与 Rally 模式，展示同一平台的多场景工程延展。
 
-5.2 L V10 约 640 hp，LDVI 动态矢量；Sterrato 提高离地间隙与全地形胎。
+![兰博基尼 Huracán Performante](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Lamborghini_Hurac%C3%A1n_Performante_%281%29.jpg/640px-Lamborghini_Hurac%C3%A1n_Performante_%281%29.jpg)
 
-底盘调校、轮胎合作与电控标定往往由厂商运动部门与供应商联合完成，街车仍保留赛道验证的技术遗产。动力单元方面，自然吸气、涡轮增压与混动路线各有拥趸；车身材料从钢铝复合到碳纤维单体壳的演进，直接影响重心、安全与维修成本，也是讨论「是否值得」时的核心论据。
+## 性能与驾驶体验
 
-若你关心驾驶或把玩体验，建议结合实拍评测、拆解视频与官方白皮书交叉验证；纸面参数与真实体感之间常有温度、噪音与调校差异。
+媒体与车主普遍评价 Huracán「比 Aventador 更紧凑、更易上手」：视野与车身宽度仍属超跑范畴，但低速离合与转向沟通感优于上一代入门牛。Performante/STO 在赛道日提供明显下压力与制动信心；Sterrato 在 gravel 与湿滑路面展示罕见玩乐性，但极限仍远低于硬核拉力机器。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
-
+声浪是核心卖点：高转速 V10 的线性拉升与排气共振，构成租赁体验与短视频传播的主要素材。长期持有需关注双离合维护、前唇离地间隙与轮胎成本。
 
 ## 文化地位与影响
 
-租赁与赛道体验常见；改装排气文化活跃。
+Huracán 长期占据「入门超跑」心智：迪拜 租车广告、Super Trofeo 电视转播与《极限竞速》《极品飞车》等游戏皮肤，使非车迷也能辨认其楔形轮廓。中文社交语境中，它与「牛牌入门」「婚庆车队」「赛道体验日」强绑定，二手行情随停产预期波动。
 
-社交平台上短视频与游戏虚拟车型进一步放大其视觉符号，使非车迷也能辨认轮廓。影视植入、赛车游戏与玩具模型构成二次传播；在中文语境里，昵称、梗图与「Dream Car 清单」共同塑造了车型的社会认知，有时甚至比参数表更能决定话题热度。
-
-文化层面的讨论不必局限于车迷或粉圈：设计奖项、影视出镜、二手行情与社交话题，都是观察其影响力的窗口。
-
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
-
-## 冷知识
-
-- Huracán 在西班牙语意为「飓风」。
-- Performante 采用 ALA 主动气动。
-- STO 致敬 Super Trofeo 单一品牌赛。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
+对兰博基尼而言，Huracán 证明 V10 自然吸气在涡轮与混动时代仍可维持品牌辨识度，也为 Revuelto 之前的过渡产品矩阵提供现金流。
 
 ## 参考与延伸阅读
 
-- [Huracán](https://www.lamborghini.com/)
-- [维基百科](https://en.wikipedia.org/wiki/Lamborghini_Hurac%C3%A1n)
+- [Lamborghini Huracán — 官方车型页](https://www.lamborghini.com/en-en/models/huracan)
+- [维基百科：Lamborghini Huracán](https://zh.wikipedia.org/wiki/%E5%9D%A1%E5%9D%A1%E5%B0%BCHurac%C3%A1n)
+- [Super Trofeo — 单一品牌赛](https://www.lamborghini.com/en-en/motorsport)

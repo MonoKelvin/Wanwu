@@ -1,55 +1,27 @@
 # Herman Miller Aeron
 
-Herman Miller 是美国办公家具与设计品牌，以 Aeron、Eames 合作及现代办公生态著称。
+Herman Miller Aeron 是人体工学办公椅领域的标杆产品，1994 年由 Bill Stumpf 与 Don Chadwick 设计，以 Pellicle 织物网面、Kinemat 倾仰与 PostureFit 腰托体系服务长时间伏案工作者。它既是 B2B 采购标准项，也是流行文化中的「科技行业座椅符号」。
 
-![Herman Miller Aeron](https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Aeron_chair.jpg/640px-Aeron_chair.jpg)
+![Herman Miller Aeron 椅子](https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Aeron_chair.jpg/640px-Aeron_chair.jpg)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+Herman Miller 为美国高端办公家具与系统家具制造商，1905 年创立，总部 Zeeland 密歇根。Aeron 最初面向 dot-com 时代知识工作者，现包括 Remastered（2016）与 Onward 等迭代。品牌提供 12 年保修、翻新与回收计划，强调产品生命周期服务而非一次性消费。
 
-## 背景与历史
+## 设计亮点
 
-1905 年创立；与 Charles & Ray Eames、George Nelson 合作奠定现代设计地位。并购 Design Within Reach 等拓展零售。
+8Z Pellicle _suspend 网布分区支撑骨盆与肩胛，避免传统海绵塌陷。Harmonic 2 倾仰机构提供连续阻力曲线；Forward Tilt 支持伏案绘图模式。可选 PostureFit SL 骶骨支撑。框架使用 ocean-bound plastic 等再生材料（Remastered）。三种尺寸 A/B/C 覆盖第 5–95 百分位体型。无头枕标准版保持视觉简洁，头枕为后装配件。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+企业批量采购时常配人体工学培训，个人用户应花 15 分钟调节 seat height、arm height、tension。网面夏季透气优势明显；冬季可加坐垫。滚轮与地板类型需匹配。噪音低，适合开放办公室。与 Steelcase、Haworth 竞品相比，Aeron 偏 firmer support，偏好软包者需试坐。
 
-## 工程与设计亮点
+## 文化影响
 
-研究驱动的人体工学；Living Office 概念整合空间与家具系统。可持续与循环经济目标纳入 2030 战略。
+硅谷纪录片与播客中 Aeron 与 MacBook 并列为创业图腾。二手市场价格稳定，反映耐用与认知度。设计管理课程用它讨论「B2B 产品如何成为文化 icon」。在中国联合办公与外企，Aeron 仍是高端工位的默认参照物，推动本土人体工学椅品牌升级网面与倾仰技术。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
+## 参考与延伸阅读
 
-
-## 文化地位与影响
-
-硅谷总部、设计博物馆与纪录片常出现其家具；代表美国现代主义商业成功。
-
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
-
-## 冷知识
-
-- 原名 Star Furniture。
-- Eames Lounge 仍在密西根生产。
-- 赞助设计纪录片《Abstract》。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**常见误区**：把影视、游戏或广告中的形象当作现实规格，容易高估性能或低估维护成本；把单一评测当作全体结论，也可能忽略地区差异与年款改款。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [Herman Miller](https://www.hermanmiller.com/)
-- [维基百科](https://en.wikipedia.org/wiki/Herman_Miller)
+- [Herman Miller Aeron](https://www.hermanmiller.com/products/seating/office-chairs/aeron-chairs/)
+- [维基百科：Aeron chair](https://en.wikipedia.org/wiki/Aeron_chair)
+- [Fast Company：Aeron 25 年](https://www.fastcompany.com/)

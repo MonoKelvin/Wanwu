@@ -3,25 +3,32 @@
   "slug": "supercar-renault-5-turbo",
   "subCategoryId": "car-france",
   "name": "雷诺 5 Turbo",
-  "summary": "宽体后置拉力热掀背。",
+  "summary": "中置后驱宽体拉力 homologation 热掀背传奇。",
   "tags": [
     "法国",
-    "拉力"
+    "拉力",
+    "中置",
+    "Renault",
+    "经典"
   ],
   "specs": {
     "首发年份": "1980",
-    "厂商": "Renault",
-    "发动机": "涡轮四缸",
+    "厂商": "Renault Sport",
+    "发动机": "1.4 L 涡轮增压四缸",
+    "最大功率": "160 hp",
     "布局": "中置后驱",
-    "赛事": "Group B",
-    "产地": "法国"
+    "0-100 km/h": "约 6.6 s",
+    "产量": "约 4987 辆",
+    "赛事": "WRC / Group B"
   },
   "media": {
     "provider": "pixabay",
-    "query": "Turbo supercar",
+    "query": "Renault 5 Turbo classic",
     "category": "all",
     "matchTags": [
-      "turbo"
+      "renault",
+      "turbo",
+      "rally"
     ],
     "requiredTags": [],
     "minMatchScore": 2,

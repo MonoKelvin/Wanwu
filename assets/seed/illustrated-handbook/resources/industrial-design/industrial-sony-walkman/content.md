@@ -1,57 +1,27 @@
 # 索尼 Walkman
 
-索尼 Walkman 1979 年开创个人便携音乐品类，将「私人聆听」变为全球文化现象。
+Sony Walkman TPS-L2 1979 年发布，首次让 cassette 音乐可私密、移动聆听，开启 personal audio 时代。工业设计上，蓝色/silver 机身、orange 播放键与 lightweight headphones 成为 1980 年代全球 youth culture 符号。
 
-![索尼 Walkman TPS-L2](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Sony_Walkman_TPS-L2.jpg/640px-Sony_Walkman_TPS-L2.jpg)
+![Sony Walkman TPS-L2](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Sony_Walkman_TPS-L2.jpg/640px-Sony_Walkman_TPS-L2.jpg)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+Sony 东京，Walkman 项目由 Nobutoshi Kihara 等工程师推动，Masaru Ibuka 提出「想在飞机上听 opera」需求。品牌后续扩展 CD Walkman、MiniDisc、Network Walkman 至 today 数字版。Sony 设计中心（CID）长期负责 portable 产品线造型与 UX。
 
-## 背景与历史
+## 设计亮点
 
-TPS-L2 蓝色银盖双耳机插孔；1980–2000 年代迭代磁带、CD、MD。2010 年后高端数播 Walkman 复兴。
+TPS-L2 约 390 g，双 headphone jack 可两人同听（后取消）。Hotline 橙色键降低音量听外界。AA 电池驱动， cassette 机械 walk 稳定度为工程重点。1980 年代型号迭代 slim 化；Discman 继承 mobility 叙事。2000s Network Walkman 对抗 iPod；2010s 后聚焦 hi-res 与 Android 开放 app。WM1 系列 premium 面向 audiophile。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+Analog 时代需 flip tape、manual EQ； nostalgia 用户收藏 working 单元与 original 耳机。Digital Walkman 支持 LDAC、DSEE，续航数小时。Android 版可装 streaming app；纯音乐版 distraction-free。价格从 entry 到 WM1Z 万元级。与 smartphone 相比，专用播放器胜在 audio path 与 no notification。
 
-## 工程与设计亮点
+## 文化影响
 
-机械走带机构精密；后期数字版采用安卓与独立 DAC 芯片，金/铜镀层音频电路。
+「Walkman」曾成日语借词进入英语，象征日本 consumer electronics 黄金期。它改变 public space 礼仪：私人声场 vs 公共广播。iPod 继承 mobility 并 digitize；Walkman 品牌 today 在 niche 与 Sony 品牌 heritage 间平衡。设计博物馆常展 TPS-L2；对中国 80 后，它是改革开放后舶来文化记忆之一。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
+## 参考与延伸阅读
 
-
-## 文化地位与影响
-
-东京街头、健身与通勤文化符号；影响 iPod 与流媒体时代之前的音乐消费。
-
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
-
-## 冷知识
-
-- 首台 Walkman 公关用「不分享音乐」争议营销。
-- 名称 Walkman 进入牛津词典。
-- WM1 系列售价数千美元仍拥趸。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**常见误区**：把影视、游戏或广告中的形象当作现实规格，容易高估性能或低估维护成本；把单一评测当作全体结论，也可能忽略地区差异与年款改款。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [Sony Walkman](https://www.sony.com/)
-- [维基百科](https://en.wikipedia.org/wiki/Walkman)
+- [Sony Walkman 官方](https://www.sony.com/electronics/walkman)
+- [维基百科：Walkman](https://en.wikipedia.org/wiki/Walkman)
+- [Sony Design 历史](https://www.sony.com/en/SonyInfo/design/)

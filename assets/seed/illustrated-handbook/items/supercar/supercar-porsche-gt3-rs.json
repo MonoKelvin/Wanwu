@@ -3,28 +3,31 @@
   "slug": "supercar-porsche-gt3-rs",
   "subCategoryId": "car-germany",
   "name": "保时捷 911 GT3 RS",
-  "summary": "赛道化街车巅峰，大尾翼与 NA 高转魅力。",
+  "summary": "4.0 L 高转自然吸气赛道化街车巅峰。",
   "tags": [
-    "精密工程",
     "德国",
-    "超跑",
-    "Porsche"
+    "911",
+    "GT3",
+    "Porsche",
+    "赛道"
   ],
   "specs": {
     "首发年份": "2003",
+    "代表世代": "992 GT3 RS",
     "厂商": "Porsche",
-    "发动机": "4.0 自然吸气",
+    "发动机": "4.0 L 自然吸气水平六缸",
     "最大功率": "525 hp",
-    "定位": "赛道街车",
-    "产地": "德国"
+    "变速箱": "7 速 PDK",
+    "布局": "后置后驱",
+    "0-100 km/h": "约 3.2 s"
   },
   "media": {
     "provider": "pixabay",
-    "query": "GT3 RS supercar",
+    "query": "GT3 RS Porsche 911",
     "matchTags": [
       "porsche",
-      "精密工程",
-      "gt3"
+      "gt3",
+      "rs"
     ],
     "minMatchScore": 2,
     "imageCount": 5,

@@ -1,30 +1,28 @@
-# Vercel 设计美学
+# Vercel 设计
 
-Vercel 设计美学指 Vercel（Next.js 母公司）产品站与 Dashboard 的 **黑白极简 + 高对比 typography +  subtle gradient mesh** 视觉语言。它定义了 2020s **developer tool marketing** 范式，与 Linear、Raycast 等并列「 cool SaaS landing page」参考系。
+Vercel 设计指 Vercel 公司及其产品（vercel.com、Dashboard、v0、Next.js 营销页）的视觉语言：黑白高对比、Geist 字体、subtle gradient mesh、grid background 与 developer-first copy layout。2020 年代 influential devtool SaaS aesthetic 与 Linear、Raycast 并列。
 
-![Vercel 标志（维基共享资源，三角形 logo）](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Vercel_logo_black.svg/320px-Vercel_logo_black.svg.png)
+![Vercel Logo](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Vercel_logo_black.svg/640px-Vercel_logo_black.svg.png)
 
-## 背景与历史
+## 设计师与品牌
 
-Vercel 前身 Zeit（2015）即以极简 deploy UI 著称；2018 更名 Vercel，2020 年 Next.js 10 前后品牌全面刷新：Geist 字体、黑白 UI、grid background 与 glow CTA。Design 团队（含 Evil Rabbit 等）输出 **Geist UI**、**v0** AI UI generator 与 conference **Next.js Conf** stage visual。shadcn/ui 托管于 Vercel 生态，形成设计—框架闭环。
+Vercel Inc.，CEO Guillermo Rauch；Geist 字体 family（Sans、Mono）开源。设计团队与 Next.js marketing 紧密。产品：Deployments、Analytics、Speed Insights、v0 AI UI generator。竞品 Netlify、Cloudflare Pages 在 landing 上常借鉴其 minimal dev aesthetic。
 
-## UX 原则与产品影响
+## 设计亮点
 
-- **Developer credibility**：暗色 hero + monospace snippet 暗示「这是给工程师的产品」。
-- **Performance as design**：站点本身 LCP 极致，设计即 proof of Next.js 能力。
-- **Hierarchy through scale**：超大 display heading 与 tiny caption 对比，guide eye path。
-- **Deployment narrative**：Preview URL、commit comment 集成 UI，把 CI/CD 可视化。
+Typography：Geist Sans large display headline + Geist Mono code snippet。Color：black/white base，accent gradient blue-purple-orange mesh on dark hero。Grid：dot or line grid background 暗示 infrastructure。Component：terminal window mock、deployment timeline、status badge。Motion：scroll reveal subtle，respect reduced-motion。Dark default 在 developer audience 接受度高。
 
-Vercel 美学风险是 **homogenization**：大量 startup landing 复制 gradient grid，差异化需靠 motion 与 content。
+## 使用体验
 
-## 冷知识
+Landing：single CTA「Start Deploying」；social proof logo wall。Dashboard：project list、deployment log real-time。v0：prompt → React+Tailwind+shadcn code stream。Docs：sidebar nav + code group tab（npm/pnpm/yarn）。Brand asset 下载 Geist、logo SVG。Localization 次要，英文为主。
 
-- **Geist** 字体家族含 Sans 与 Mono，开源可自托管，替代 Inter + JetBrains Mono 组合。
-- v0.dev 生成 React + Tailwind 代码，反向影响 Vercel 官方 marketing component 形态。
-- Vercel 收购 Turborepo、Nuxt 合作等，Dashboard 需容纳 multi-framework 叙事而不乱。
+## 文化影响
+
+「Vercel/Linear landing」成为 indie hacker 模板；Framer 社区大量 clone。shadcn、Tailwind、Next.js triad 与 Vercel 生态绑定。v0 引发「AI 生成 UI 是否 homogenize design」讨论。中国开发者熟悉 Vercel 部署 Next.js，landing aesthetic 影响国内 devtool 官网（如 Supabase 风）。
 
 ## 参考与延伸阅读
 
 - [Vercel 官网](https://vercel.com/)
-- [Geist 设计系统](https://vercel.com/geist/introduction)
-- [Next.js 官网](https://nextjs.org/)
+- [Geist 字体](https://vercel.com/font)
+- [v0.dev](https://v0.dev/)
+- [Next.js 文档设计](https://nextjs.org/docs)

@@ -1,39 +1,27 @@
 # Radix UI
 
-Radix UI 是由 WorkOS 团队维护的 **React 无样式、可访问性优先** 组件原语（Primitives）库。它提供 Dialog、Dropdown、Tooltip、Accordion 等组件的**行为、焦点管理与 WAI-ARIA 语义**，而把视觉完全交给消费者——这正是 shadcn/ui、Park UI 等现代组件集的基础。
+Radix UI 是 WorkOS 维护的 React headless 组件原语库，提供 Dialog、DropdownMenu、Popover、Tooltip 等 accessibility 与 keyboard behavior，无内置样式。shadcn/ui、Park UI、Mantine 部分底层采用 Radix primitives，是 modern component stack 的关键层。
 
-![React 标志（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/320px-React-icon.svg.png)
+![Radix UI Logo](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/640px-React-icon.svg.png)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+WorkOS（原 Modulz 团队）维护；GitHub radix-ui/primitives。MIT 许可。与 React Aria（Adobe）、Headless UI（Tailwind Labs）并列 headless 方案。shadcn/ui 默认 `@radix-ui/react-*` 包组合 Tailwind 样式。
 
-## 背景与历史
+## 设计亮点
 
-Radix 前身 Modulz（设计工具公司）在 2020 年前后开源 Primitives，后团队转型 WorkOS 仍持续维护。与 Reach UI、Headless UI 同期，Radix 以**更细粒度组合 API**（如 `Dialog.Root` / `Trigger` / `Content`）与严格的 a11y 测试著称。2023 年起 shadcn/ui 爆火，Radix 成为默认交互层，npm 下载量激增。
+WAI-ARIA Authoring Practices 实现：focus trap in Dialog、roving tabindex in Menu、typeahead select。Compound components：`Dialog.Root`、`Trigger`、`Content`、`Close`。Portal 渲染 overlay 避免 z-index 与 overflow 问题。Unstyled：dev 完全控 CSS，适配 design token。Consistent API：`open`/`onOpenChange` controlled pattern。Positioning 用 Popper/Floating UI 逻辑内建。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+Install：`npm i @radix-ui/react-dialog`。Wrap custom button as Trigger；style Content with Tailwind `fixed inset-0 z-50`。Read docs 每 primitive anatomy。Upgrade major 读 migration；API 相对稳定。Test keyboard：Tab、Escape、Arrow keys。SSR：注意 id hydration，Next.js app router 兼容。
 
-## UX 原则与产品影响
+## 文化影响
 
-- **可访问性内置**：焦点陷阱、Esc 关闭、Portal 渲染、屏幕阅读器标签由库保证。
-- **无样式**：开发者用 Tailwind 或 CSS Modules 自由造型，避免「换肤 wars」。
-- **组合优于配置**：Compound Components 模式让复杂交互（嵌套 Menu、Context Menu）可声明式拼装。
-- **与 Design System 协同**：设计 Token + Radix 行为 + Storybook 文档，成为 headless 时代标准栈。
-
-Radix 降低了「自己写 Modal 焦点管理」的重复劳动，但也要求团队理解 WAI-ARIA 概念，否则易出现样式对但语义错的问题。
-
-## 冷知识
-
-- Radix 名称来自拉丁语「根、根源」，强调底层原语定位。
-- 每个 Primitive 附带 extensive 文档说明 keyboard interaction 与 aria 属性映射。
-- `@radix-ui/react-icons` 提供与组件风格一致的开源图标集。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
+Radix + Tailwind + shadcn 成为 2023–2025 React greenfield 默认 triad，替代部分 MUI/Chakra 全包 styled 方案。Design system 团队拆「behavior layer（Radix）+ theme layer（Tailwind）」职责。中文社区教程大量 shadcn 中文文档降低 adoption 门槛。
 
 ## 参考与延伸阅读
 
-- [Radix UI 官网](https://www.radix-ui.com/)
-- [Radix Primitives GitHub](https://github.com/radix-ui/primitives)
-- [WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/)
+- [Radix UI 文档](https://www.radix-ui.com/primitives)
+- [GitHub：radix-ui/primitives](https://github.com/radix-ui/primitives)
+- [shadcn/ui](https://ui.shadcn.com/)

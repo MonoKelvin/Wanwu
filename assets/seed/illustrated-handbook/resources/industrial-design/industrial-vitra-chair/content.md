@@ -1,57 +1,27 @@
 # Vitra 家具
 
-Vitra 是瑞士家具品牌，以授权生产 Eames、Panton、Bouroullec 等设计并运营设计博物馆闻名。
+Vitra 1950 年创立于瑞士 Weil am Rhein，以授权生产 Eames、Panton、Nelson、Aalto 等现代主义经典，并运营 Vitra Design Museum 与 Campus。它连接设计史与实际可购家具，是欧洲 high-end contract 与 residential 市场关键品牌。
 
-![Vitra 园区](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Panton_Chair.jpg/640px-Panton_Chair.jpg)
+![Vitra Campus 与家具](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Vitra_Design_Museum.jpg/640px-Vitra_Design_Museum.jpg)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+Willi Fehlbaum 1950 年创立，1957 年获 Eames 授权。Vitra 与 Herman Miller 分区授权：欧陆 vs 美洲。Rolf Fehlbaum 推动 Design Museum（1989，Frank Gehry 建筑）。产品线含 Office（ACX、Physix）、Home 与 Vitra Edition 限量。与 Jasper Morrison、Ronan & Erwan Bouroullec 等当代设计师合作。
 
-## 背景与历史
+## 设计亮点
 
-1950 年 Willi Fehlbaum 取得 Eames 欧洲许可；Weil am Rhein 园区含 Vitra Design Museum（盖里设计）。
+Vitra 强调 authentic：模具与材料按 archive 规格或设计师 heirs 监督。Panton Chair、Eames Lounge、Aluminium Group 等为 catalog core。Vitra Campus 含 Gehry、Hadid、Sanaa 等 architect 建 pavilion，本身为 design pilgrimage。Repair spare parts 与 fabric 选项丰富。Quality control 与 Herman Miller 互标杆。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+购买通过 authorized dealer，lead time  weeks。价格 premium，Eames Lounge 等为 investment piece。Office 线提供 showroom trial 与 ergonomic 配置。Delivery 含 white glove 组装。二手 Vitra 正版识别靠 label、serial 与 dealer 证书。博物馆 visit 独立门票，家具与 exhibition 分离。
 
-## 工程与设计亮点
+## 文化影响
 
-严格设计授权与质检；提供办公、家居与公共空间系统解决方案。
+Vitra Design Museum 展览（如 Alexander Girard、Braun）影响 global design discourse。Campus 成为 architecture tourism。对中国设计从业者，Vitra catalog 是 CAD block 与 mood board 常客。品牌代表「设计版权 + 博物馆 + 商业」三位一体模式，区别于 fast furniture。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
+## 参考与延伸阅读
 
-
-## 文化地位与影响
-
-设计师与建筑师朝圣之地；每年举办设计工作坊。
-
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
-
-## 冷知识
-
-- 园区含 Zaha Hadid 消防站等多座建筑。
-- 与 Herman Miller 分持 Eames 不同区域许可。
-- 瑞士制造+德国物流枢纽。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**常见误区**：把影视、游戏或广告中的形象当作现实规格，容易高估性能或低估维护成本；把单一评测当作全体结论，也可能忽略地区差异与年款改款。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [Vitra](https://www.vitra.com/)
-- [维基百科](https://en.wikipedia.org/wiki/Vitra)
+- [Vitra 官网](https://www.vitra.com/)
+- [Vitra Design Museum](https://www.design-museum.de/en/)
+- [维基百科：Vitra](https://en.wikipedia.org/wiki/Vitra_(furniture))

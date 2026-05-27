@@ -20,6 +20,7 @@ const MAJOR_IDS: LibraryMajorId[] = libraryMajorIds()
 
 function emptyMajorState() {
   return {
+    notes: false,
     'illustrated-handbook': false,
     links: false
   } as Record<LibraryMajorId, boolean>
@@ -32,6 +33,7 @@ export function useLibraryCatalogTrees(options: {
   linksStore: LinksStore
 }) {
   const sectionByMajor = reactive<Record<LibraryMajorId, TreeNode[]>>({
+    notes: [],
     'illustrated-handbook': [],
     links: []
   })
@@ -111,11 +113,13 @@ export function useLibraryCatalogTrees(options: {
   const libraryTree = computed(() => {
     let tree = composeLibraryTree(
       {
+        notes: sectionByMajor.notes,
         'illustrated-handbook': sectionByMajor['illustrated-handbook'],
         links: sectionByMajor.links
       },
       {
         majorLoading: {
+          notes: loadingMajor.notes,
           'illustrated-handbook': loadingMajor['illustrated-handbook'],
           links: loadingMajor.links
         },

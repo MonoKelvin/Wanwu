@@ -63,3 +63,47 @@
 ## 维护方式
 
 直接编辑 `assets/seed/illustrated-handbook/resources/{category}/{slug}/content.md` 与对应 `items/` 下 JSON，执行 `npm run build` 生成数据包。
+
+---
+
+## 品类附录
+
+以下六类模板对应 [`doc/plan/illustrated-handbook-content-refresh.md`](../plan/illustrated-handbook-content-refresh.md) 批次划分。每篇须删除跨品类模板句（如载具类出现「饲养体验」）。
+
+### A. 生物类（cat, dog, bird, fish, insect, plant, reptile）
+
+**结构：** 开篇 → 背景与历史 → 外观/形态 → 性格/习性 → 饲养/养护 → 文化与冷知识 → 参考
+
+**specs 建议键（≤8）：** 产地、体型、寿命、登记机构、毛色/羽色、体重范围、性格关键词、适养人群
+
+### B. 载具类（supercar, motorcycle, train, ship, aerospace）
+
+**结构：** 开篇 → 背景与历史 → 工程与设计 → 性能与体验 → 文化地位 → 参考
+
+**specs 建议键（≤8）：** 首发年份、厂商、动力形式、最大功率、极速/航程、产量、设计师、产地
+
+**必删：** 「饲养体验」「老人、幼儿、其他宠物」「预算与空间是否适合该主题」
+
+### C. 文娱 IP 类（anime, movie, game, superhero, transformers）
+
+**结构：** 开篇 → 创作背景 → 核心设定 → 影响与衍生 → 冷知识 → 参考
+
+**specs 建议键（≤8）：** 首发年份、类型、创作者/导演、发行方、主要角色、平台/载体、语言、获奖
+
+### D. 设计/器物类（industrial-design, camera, watch, footwear, jewelry, ui-design, music-inst, chess, coin, pottery, sport）
+
+**结构：** 开篇 → 设计师与品牌 → 设计亮点 → 使用体验 → 文化影响 → 参考
+
+**specs 建议键（≤8）：** 设计师、首发年份、材质、尺寸/规格、产地、价格区间、获奖、版本
+
+### E. 建筑/遗产/空间类（history, architecture, interior）
+
+**结构：** 开篇 → 历史背景 → 建筑/空间特征 → 文化与保护 → 冷知识 → 参考
+
+**specs 建议键（≤8）：** 建造年代、位置、风格、面积/高度、列入遗产年份、设计者、主要材料、现状
+
+### F. 饮食/生活类（food, wine, coffee-tea）
+
+**结构：** 开篇 → 起源与传播 → 工艺/配方 → 品鉴/体验 → 文化符号 → 参考
+
+**specs 建议键（≤8）：** 起源地、主要原料、工艺、酒精度/烘焙度、适饮温度、搭配、等级、代表产区

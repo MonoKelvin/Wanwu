@@ -1,30 +1,27 @@
 # 响应式栅格
 
-响应式栅格（Responsive Grid）是 Web 布局核心：通过 **断点（breakpoints）、流式列宽与 gap**，让界面在手机、平板与桌面间优雅 reflow。CSS **Grid** 与 **Flexbox** 取代 float 时代后，**容器查询（container queries）** 进一步让组件根据父容器而非 viewport 适配。
+响应式栅格（Responsive Grid）是 Web 布局基础：Ethan Marcotte 2010 年提出 responsive web design，结合 fluid grid、flexible media 与 media queries。今日 CSS Grid、Flexbox 与 Container Queries 构成 modern layout stack，Breakpoint 常用 640/768/1024/1280 px（Tailwind 默认）。
 
-![HTML5 标志（Web 布局基础，维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/320px-HTML5_logo_and_wordmark.svg.png)
+![响应式网页布局示意](https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/CSS3_logo_and_wordmark.svg/640px-CSS3_logo_and_wordmark.svg.png)
 
-## 背景与历史
+## 设计师与品牌
 
-Ethan Marcotte 2010 年提出 Responsive Web Design 概念；Bootstrap 12 列栅格教育了一代人。2017 年 CSS Grid Layout 主流化；2023 年 `@container` 在 Chromium、Safari 普及，组件库开始提供 `container-type` 工具类。Tailwind、Bootstrap 5、Material Web 均内置 responsive prefix 与 grid template API。
+W3C CSS Grid Layout、Flexbox 规范；Bootstrap 12-column、Material Design responsive layout guidelines。Tailwind `sm/md/lg/xl/2xl` breakpoint。Figma Auto Layout + constraints 模拟 reflow。
 
-## UX 原则与产品影响
+## 设计亮点
 
-- **移动优先**：默认单列，progressive enhancement 至 multi-column。
-- **内容优先级**：`order` 与 grid area 可在窄屏隐藏 sidebar、提升 main CTA。
-- **触控 vs 鼠标**：断点不仅是宽度，也影响 hover 态是否可用、target size。
-- **性能**：避免 layout thrashing；Grid 子项 `minmax(0, 1fr)` 防止 overflow 经典 bug。
+Mobile-first：base style 小屏，`min-width` query 逐级增强。Grid：`grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))` 自适应 card。Flex：`flex-wrap` + `gap` 替代 float。Container Queries `@container (min-width: 400px)` 组件级响应，解耦 viewport。Aspect-ratio、clamp() typography  fluid scale。Avoid horizontal scroll；touch target 44px。
 
-Dashboard 常用 **12/16 列** 设计稿对齐 dev grid；marketing 页常用 asymmetric grid 讲故事。
+## 使用体验
 
-## 冷知识
+Design handoff 标注 breakpoint behavior 非仅 desktop 稿。DevTools device mode test rotation。Real device 测 iOS Safari 100vh、address bar issue。Tailwind：`grid-cols-1 md:grid-cols-2 lg:grid-cols-3`。Print stylesheet 别忘。Performance：responsive image `srcset` + `sizes`。
 
-- `fr` 单位读作 fraction，Grid 的灵魂；`1fr 1fr` 不等于 `50% 50%`（gap 与 min-content 影响）。
-- **Subgrid**（CSS Subgrid）让 nested grid 对齐父 grid track，卡片列表对齐神器。
-- Figma Auto Layout 与 CSS Flexbox  mental model 高度同构，handoff 时应对应 padding/gap token。
+## 文化影响
+
+Responsive 从 best practice 变为 baseline；Google mobile-first indexing 强化 SEO 需求。Container Queries 2023+ browser 全面支持开启 component-driven era。中国移动端 traffic 占比高，many site 直接 mobile-only design desktop 次要。
 
 ## 参考与延伸阅读
 
-- [MDN：CSS Grid Layout](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_grid_layout)
-- [MDN：CSS 容器查询](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_containment/Container_queries)
-- [Ethan Marcotte：Responsive Web Design（2010）](https://alistapart.com/article/responsive-web-design/)
+- [MDN：CSS Grid](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout)
+- [MDN：Container queries](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries)
+- [Ethan Marcotte：Responsive Web Design](https://alistapart.com/article/responsive-web-design/)

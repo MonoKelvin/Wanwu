@@ -1,39 +1,35 @@
 # 莱昂纳多（忍者神龟）
 
-莱昂纳多（Leonardo）是忍者神龟队长：戴蓝色眼罩、双刀，恪守忍者纪律与师父斯普林特教导，在兄弟性格冲突中承担领导责任。
+莱昂纳多（Leonardo）是忍者神龟四兄弟中的队长：戴蓝色眼罩，使用双 ninjaken，性格 disciplined、责任感强，在拉斐尔的叛逆与米开朗基罗的散漫之间承担领导与调解角色。名字来自 Leonardo da Vinci，与兄弟（拉斐尔、米开朗基罗、多纳泰罗）共同构成 Renaissance 艺术家命名体系。
 
-忍者神龟队长以纪律与双刀领导四兄弟。 以下从起源、代表故事、文化影响与冷知识入手，帮助在百科条目之外建立可核对、可延伸阅读的理解框架。
+![莱昂纳多（忍者神龟，维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/4/4f/Leonardo_%28Teenage_Mutant_Ninja_Turtles%29.jpg)
 
-![莱昂纳多](https://upload.wikimedia.org/wikipedia/commons/4/4f/Leonardo_%28Teenage_Mutant_Ninja_Turtles%29.jpg)
+## 创作背景
 
-## 背景与历史
+1984 年 Kevin Eastman 与 Peter Laird 在 Mirage Studios 自费出版黑白漫画，最初 parody Frank Miller《Ronin》与 Daredevil 的 ninja 元素。1987 年 Playmates 玩具驱动 Fred Wolf 动画，将 TMNT 推向全球儿童文化；1990 年 Steve Barron 真人电影以 Jim Henson's Creature Shop 木偶实现 iconic 造型。2023 年 Seth Rogen 参与《变种大乱斗》 CGI 电影回归合家欢路线。
 
-1984 年 Kevin Eastman & Peter Laird 独立漫画；1987 动画推向大众。剑术、战术、领导力；拉斐尔、米开朗基罗、多纳泰罗为兄弟。
+## 核心设定
 
-莱昂纳多在流行文化中的位置，往往由一次次连载重启与跨媒体改编共同塑造。1984 年前后的主创（Eastman / Laird）将时代情绪写进起源：身份、创伤与责任并置，使读者在动作场面之外仍能感到伦理张力。不同版本（主宇宙、平行线、电影线）会改写细节，但核心矛盾——力量与选择、个人与共同体——保持稳定，这也是角色长期具有讨论度的原因。
+Leonardo 受 rat sensei Splinter（滨户须卫门）训练，精通 ninjutsu 与 team tactics。与 Raphael 的 conflict 是系列 recurring 主题—— Leo 强调纪律， Raph 强调 aggression。武器双刀象征 precision 与 defense；在 multiple 版本中，Leo 曾短暂离开 team 或承担 heavier leadership burden（如 2003 动画、2012 动画）。
 
-## 经典故事
+## 影响与衍生
 
-- **1990 真人电影**：木偶特效经典。
-- **《忍者神龟：变种大乱斗》2023**：合家欢回归。
-- **《蝙蝠侠大战忍者神龟》**：跨界联动。
+- **1990 真人电影**： 木偶特效与 Judith Hoag / Elias Koteas 人类角色经典。
+- **2003 / 2012 动画**： 不同 tone 的 Leo leader arc。
+- **《蝙蝠侠大战忍者神龟》**： DC crossover 漫画与动画。
+- **《变种大乱斗》2023**： Jackie Chan 配音 Splinter， Leo 仍为核心 POV。
 
-纵览莱昂纳多相关长篇与限定系列，经典故事弧常把「击败反派」与「自我怀疑、关系破裂、政治抉择」绑在一起：胜利之后仍要支付代价，才是成人向超级英雄叙事的关键。影视改编往往从漫画中择取最具视觉张力或社会共鸣的章节（内战、身份危机、宇宙级事件），再压缩为两小时的情感曲线；游戏与动画则补足漫画未充分展开的角色互动。对读者而言，按主题（起源、堕落、重生、传承）串读比按出版时间线更易把握人物成长。
-
-## 文化影响
-
-四色眼罩英雄团队模板；披萨、滑板、地下巢穴成为 80-90 流行符号。
-
-莱昂纳多的商业周边覆盖玩具、服装、游戏与主题乐园，但更深的影响在于叙事原型：后来者会借用其视觉符号、团队结构或道德困境创作新 IP。媒体与学界也常以该角色讨论暴力分级、少数群体代表、品牌政治化或「英雄产业」讽刺等议题。粉丝文化中的 cosplay、同人、梗图与配音梗（如动画版经典声线）进一步把角色从纸面推向社群记忆，形成跨越世代的共同语言。
+四色眼罩 + 武器 differentiation 成为 team hero 模板（后被 Power Rangers 等借鉴）。「Cowabunga」「Pizza」与 sewer lair 成为 80–90  pop 符号；2020 年代 retro nostalgia 推动 IP 持续 revitalization。
 
 ## 冷知识
 
-- 名字来自达芬奇。
-- 与拉斐尔争吵为剧情常客。
-- 武器为忍者双刀 ninjaken。
+- 四兄弟名字均来自 Italian Renaissance 艺术家，非忍者传统。
+- Leo 在 Mirage 原版 comic 中 occasionally 杀死 Shredder，比动画 darker。
+- 蓝色眼罩颜色在 1987 动画中固定，便于玩具与 viewer 区分。
+- Splinter 原名 Hamato Yoshi，部分版本与 Shredder 有 feud backstory。
 
 ## 参考与延伸阅读
 
-- [百度百科](https://baike.baidu.com/item/%E5%BF%8D%E8%80%85%E7%A5%9E%E9%BE%9F)
-- [维基](https://zh.wikipedia.org/wiki/%E5%BF%8D%E8%80%85%E7%A5%9E%E9%BE%9F)
-- [官方](https://www.teenagemutantninjaturtles.com)
+- [百度百科：忍者神龟](https://baike.baidu.com/item/%E5%BF%8D%E8%80%85%E7%A5%9E%E9%BE%9F)
+- [维基百科（中文）](https://zh.wikipedia.org/wiki/%E5%BF%8D%E8%80%85%E7%A5%9E%E9%BE%9F)
+- [TMNT 官方站点](https://www.teenagemutantninjaturtles.com)

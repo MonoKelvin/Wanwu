@@ -1,9 +1,9 @@
 {
   "id": "8355ffa4-f34a-4194-8a06-f8a55a4d59c7",
   "slug": "supercar-jaguar-f-type",
-  "subCategoryId": "car-italy",
+  "subCategoryId": "car-britain",
   "name": "捷豹 F-Type",
-  "summary": "英伦声浪代表，敞篷与轿跑多形态。",
+  "summary": "2013–2024 英伦跑车复兴之作，V8 声浪为灵魂。",
   "tags": [
     "Jaguar",
     "超跑",
@@ -13,8 +13,10 @@
   "specs": {
     "首发年份": "2013",
     "厂商": "Jaguar",
-    "发动机": "V8 / 四缸",
-    "车型": "跑车",
+    "发动机": "V8 机械增压 / 四缸",
+    "最大功率": "575 hp（SVR）",
+    "车身": "铝制",
+    "停产年份": "2024",
     "产地": "英国"
   },
   "media": {

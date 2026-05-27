@@ -568,6 +568,8 @@ watch(folderId, async (id) => {
   </div>
 </template>
 <style>
+@import '../../core/styles/library-shared.css';
+
 .ww-links-workspace {
   min-height: 12rem;
 }
@@ -609,36 +611,6 @@ watch(folderId, async (id) => {
 }
 
 .ww-links-card-grid {
-  grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr));
-}
-
-.ww-library-grid-wrap {
-  padding-bottom: 1.5rem;
-}
-
-.ww-library-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-@keyframes ww-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.ww-library-grid.ww-stagger-children > * {
-  animation: ww-fade-up var(--ww-duration-slow) var(--ww-ease-out-slow) backwards;
-  animation-delay: calc(var(--ww-stagger, 0) * 48ms);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ww-library-grid.ww-stagger-children > * { animation: none; }
+  grid-template-columns: repeat(auto-fill, minmax(16.5rem, 1fr));
 }
 </style>

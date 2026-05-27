@@ -3,7 +3,7 @@
   "slug": "supercar-bentley-batur",
   "subCategoryId": "car-britain",
   "name": "宾利 Batur",
-  "summary": "W12 绝版奢华轿跑，Mulliner 定制限量。",
+  "summary": "Mulliner 限量 W12 双门轿跑，全球 18 辆，燃油旗舰谢幕之作。",
   "tags": [
     "Bentley",
     "超跑",
@@ -13,8 +13,10 @@
   "specs": {
     "首发年份": "2022",
     "厂商": "Bentley",
-    "发动机": "W12",
+    "动力形式": "6.0 W12 双涡轮",
     "最大功率": "750 hp",
+    "0-100 km/h": "约 3.4 秒",
+    "极速": "335 km/h",
     "产量": "18 辆",
     "产地": "英国"
   },

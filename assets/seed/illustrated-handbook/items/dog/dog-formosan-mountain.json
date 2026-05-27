@@ -14,13 +14,14 @@
     "分类": "亚洲犬种",
     "原产地": "台湾",
     "体重": "12–18 kg",
-    "寿命": "10–12 年",
-    "状态": "保种中",
-    "性格": "忠诚、敏捷"
+    "肩高": "43–50 cm",
+    "寿命": "10–14 年",
+    "识别特征": "三角立耳、精瘦肌肉",
+    "性格": "忠诚、机警、敏捷"
   },
   "media": {
     "provider": "pixabay",
-    "query": "/ dog breed portrait",
+    "query": "dog breed portrait",
     "category": "animals",
     "matchTags": [
       "dog"

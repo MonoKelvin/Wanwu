@@ -1,57 +1,27 @@
 # Smeg 冰箱
 
-Smeg FAB 系列复古冰箱将 1950 年代圆润造型与现代制冷技术结合，是厨房中的「色彩雕塑」。
+Smeg FAB 系列复古冰箱将 1950 年代 American diner 曲线与当代制冷技术结合，成为厨房「色彩雕塑」。圆润 chrome handle、bold 单色 enamel 与 compact footprint，使其在 Pinterest 厨房与精品公寓中高度出镜。
 
-![Smeg 复古冰箱](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Smeg_refrigerator.jpg/640px-Smeg_refrigerator.jpg)
+![Smeg FAB 复古冰箱](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Smeg_refrigerator.jpg/640px-Smeg_refrigerator.jpg)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+Smeg 1948 年创立于意大利 Reggio Emilia，FAB 系列 1990 年代由 Studio Smeg 与 external designers 塑造 retro 语言。总部仍在意北部，强调 Made in Italy。产品线除 FAB 还有 minimalist Linea、professional Victoria。与 Dolce & Gabbana、Disney 等联名推 limited edition。
 
-## 背景与历史
+## 设计亮点
 
-意大利 Smeg 1950 年代成立；FAB28 等型号成为设计图标。与 Dolce & Gabbana 等联名涂装。
+FAB 单门与双门版本，表面 powder-coated steel，多色 RAL 级选择（粉、薄荷、奶油、国旗红）。Chrome 装饰条与 brand script logo 强化 retro。内部仍用 modern compressor 与 No Frost（视型号）；energy label 因市场而异。Left/right hinge 可选。Mini bar 尺寸适合 studio。与 standard 白色家电相比，同容积价格显著更高。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+制冷性能满足日常，非 professional chef 级容量。单门 FAB28 适合 1–2 人；FAB50 适合家庭。噪音 modern 标准可接受。清洁 enamel 避免 abrasive。购买决策常 80% 外观、20% 功能——需预留 kitchen color palette 协调。Delivery 需测量 doorway，机身 curve 比方型略占视觉空间。
 
-## 工程与设计亮点
+## 文化影响
 
-无霜制冷、多温区；外观烤漆工艺复杂。体积适中适合公寓厨房点缀。
+Smeg 定义「retro appliance」品类，推动 Big Chill、Chorma 等竞品。出现在美食摄影、Airbnb  listing 与 luxury rental。它证明 white goods 可通过 styling 获得 fashion-like premium。在中国社交媒体「ins 风厨房」中，Smeg 与小家电（吐司机、水壶）组成品牌套装；设计教育用它讨论 nostalgia marketing 与 form over spec 策略。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
+## 参考与延伸阅读
 
-
-## 文化地位与影响
-
-影视布景与高端公寓展示常见；比实际功能更具视觉消费属性。
-
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
-
-## 冷知识
-
-- FAB 意为 Fabbrica Appliances Brand。
-- 联名款售价可达普通款数倍。
-- 也生产烤箱、水壶等 retro 线。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**常见误区**：把影视、游戏或广告中的形象当作现实规格，容易高估性能或低估维护成本；把单一评测当作全体结论，也可能忽略地区差异与年款改款。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [Smeg](https://www.smeg.com/)
-- [维基百科](https://en.wikipedia.org/wiki/Smeg_(appliances))
+- [Smeg FAB 系列官方](https://www.smeg.com/products/fab)
+- [维基百科：Smeg (appliances)](https://en.wikipedia.org/wiki/Smeg_(appliances))
+- [Smeg 设计故事](https://www.smeg.com/news/design)

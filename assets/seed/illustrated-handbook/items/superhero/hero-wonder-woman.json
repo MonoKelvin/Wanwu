@@ -3,7 +3,7 @@
   "slug": "hero-wonder-woman",
   "subCategoryId": "hero-dc",
   "name": "神奇女侠 Wonder Woman",
-  "summary": "DC 亚马逊公主戴安娜，真理套索与神力护腕，女性超级英雄代表之一。",
+  "summary": "DC 亚马逊公主戴安娜，真理套索与神力护腕，女性超级英雄与和平主义象征。",
   "tags": [
     "盖尔加朵",
     "DC",
@@ -13,10 +13,12 @@
   "specs": {
     "宇宙": "DC 漫画",
     "首次登场": "1941",
+    "本名": "戴安娜·普林斯",
+    "种族": "亚马逊人",
+    "装备": "真理套索、神力护腕",
     "创作者": "William Moulton Marston",
-    "本名": "戴安娜·普林斯 Diana Prince",
-    "装备": "真理套索、护腕、神剑",
-    "所属": "正义联盟"
+    "所属": "正义联盟",
+    "代表影视": "盖尔·加朵版"
   },
   "media": {
     "provider": "pixabay",

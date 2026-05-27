@@ -33,6 +33,14 @@ const illustratedHandbookModule: LibrarySubmoduleConfig = {
   }
 }
 
+const notesModule: LibrarySubmoduleConfig = {
+  id: 'notes',
+  routeName: 'library-notes',
+  buildSectionTree() {
+    return []
+  }
+}
+
 const linksModule: LibrarySubmoduleConfig = {
   id: 'links',
   routeName: 'library-links',
@@ -47,7 +55,11 @@ const linksModule: LibrarySubmoduleConfig = {
   }
 }
 
-export const LIBRARY_SUBMODULES: LibrarySubmoduleConfig[] = [illustratedHandbookModule, linksModule]
+export const LIBRARY_SUBMODULES: LibrarySubmoduleConfig[] = [
+  notesModule,
+  linksModule,
+  illustratedHandbookModule
+]
 
 export function librarySubmoduleById(id: LibraryMajorId): LibrarySubmoduleConfig | undefined {
   return LIBRARY_SUBMODULES.find((m) => m.id === id)

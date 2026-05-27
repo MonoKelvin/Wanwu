@@ -3,7 +3,7 @@
   "slug": "supercar-alfa-romeo-33",
   "subCategoryId": "car-italy",
   "name": "阿尔法·罗密欧 33 Stradale",
-  "summary": "品牌旗舰超跑复兴，限量手工，融合意大利设计史与未来动力。",
+  "summary": "1967 年全铝蝶门 V8 街车，仅 18 辆，被誉为最美超跑之一。",
   "tags": [
     "Alfa Romeo",
     "意大利",
@@ -13,10 +13,12 @@
   "specs": {
     "首发年份": "1967",
     "厂商": "Alfa Romeo",
-    "发动机": "V8",
+    "动力形式": "2.0 L V8 自然吸气",
+    "最大功率": "约 230 hp",
+    "整备质量": "约 700 kg",
+    "极速": "约 260 km/h",
     "产量": "18 辆",
-    "设计师": "Franco Scaglione",
-    "产地": "意大利"
+    "设计师": "Franco Scaglione"
   },
   "media": {
     "provider": "pixabay",

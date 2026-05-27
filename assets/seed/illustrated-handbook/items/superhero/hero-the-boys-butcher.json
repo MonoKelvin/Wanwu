@@ -3,7 +3,7 @@
   "slug": "hero-the-boys-butcher",
   "subCategoryId": "hero-other",
   "name": "屠夫 Billy Butcher",
-  "summary": "《黑袍纠察队》领袖，痛恨超级英雄，冷酷复仇驱动纠察队。",
+  "summary": "Garth Ennis《黑袍纠察队》领袖，以阴谋与暴力对抗腐败超级英雄产业。",
   "tags": [
     "领袖",
     "人类",
@@ -11,11 +11,14 @@
     "黑袍纠察队"
   ],
   "specs": {
-    "作品": "黑袍纠察队",
-    "身份": "纠察队领袖",
-    "目标": "对抗腐败英雄",
-    "特点": "阴谋、暴力",
-    "首播": "2019"
+    "首发年份": "2006",
+    "类型": "反超级英雄 / 讽刺",
+    "创作者": "Garth Ennis / Darick Robertson",
+    "载体": "漫画 / Prime Video 剧集",
+    "主角": "比利·布彻",
+    "对手": "祖国人",
+    "主题": "名人崇拜与 corporate 英雄",
+    "口头禅": "Diabolical"
   },
   "media": {
     "provider": "pixabay",

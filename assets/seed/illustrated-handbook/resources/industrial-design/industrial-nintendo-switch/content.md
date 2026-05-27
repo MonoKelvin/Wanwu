@@ -1,55 +1,27 @@
 # 任天堂 Switch
 
-Nintendo Switch 混合主机设计实现掌机/台式无缝切换，Joy-Con 分离控制器改变多人游戏场景。
+Nintendo Switch 2017 年发布，以 hybrid 主机概念统一家用 TV 与 portable 掌机场景。Joy-Con 可拆卸控制器、Rail 滑轨与 tablet-like 6.2 英寸屏幕，让硬件形态本身成为玩法与社交的一部分，全球销量逾 1.4 亿台（截至 2024 年 Nintendo 财报）。
 
-![Nintendo Switch](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Nintendo-Switch-wJoyCons-BlRd-Standing-FL.jpg/640px-Nintendo-Switch-wJoyCons-BlRd-Standing-FL.jpg)
+![Nintendo Switch 主机与 Joy-Con](https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Nintendo_Switch_console.png/640px-Nintendo_Switch_console.png)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+任天堂 Kyoto 总部，硬件设计由内部团队完成；Switch 工业设计与 UX 强调 family-friendly 与 durability。OLED 版 2021 升级屏幕；Switch Lite 砍掉 TV 模式服务纯掌机用户。2025 年 Switch 2 延续 hybrid 思路（发布信息以官方为准）。任天堂软件 IP（Mario、Zelda）与硬件形态深度绑定。
 
-## 背景与历史
+## 设计亮点
 
-2017 年发售，由 Yoko Tanaka 等设计；OLED 版与 Lite 版拓展形态。销量超 1.4 亿台（2024）。
+Joy-Con 含 HD Rumble、IR 摄像头与 motion，可双人 instant share。Rail 机械接口兼数据传输与供电，精度影响 dock 与握把体验。Kickstand 多档可调（OLED 版 wider）。Dock 隐藏线缆，TV 模式 1080p 输出。Joy-Con drift 为已知硬件争议，任天堂提供维修与改良。配色丰富：Neon、Animal Crossing 限定等强化 collectibility。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+开机即玩，sleep 恢复快，适合碎片化游戏。TV 模式 family 共享；掌机模式地铁/床卧可用。Joy-Con 分离给 Mario Party 等 party game；Pro Controller 改善 ergonomics。电池 4.5–9 小时视游戏而定。存储 microSD 可扩展。在线需 Nintendo Switch Online 订阅玩经典 ROM 与联机。
 
-## 工程与设计亮点
+## 文化影响
 
-定制 NVIDIA Tegra X1；导轨锁定 Joy-Con，Kickstand 支撑桌面模式。Lite 不可拆卸手柄更便携。
+Switch 拯救 Wii U 后低迷主机局面，定义 2010 年代末「social hybrid gaming」。Animal Crossing: New Horizons 在疫情期间成为 social space。硬件 visible 乐趣（拆 Joy-Con）影响 marketing 与 memes。对工业设计，Switch 展示「modular play」如何比 spec sheet 更驱动购买；也引发关于 drift 与 repair 的 consumer rights 讨论。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
+## 参考与延伸阅读
 
-
-## 文化地位与影响
-
-《塞尔达》《马里奥》带动全家游玩；疫情期健身环大卖。
-
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
-
-## 冷知识
-
-- 原型曾称 NX。
-- Joy-Con 漂移成硬件争议。
-- 配色联名涵盖动森、宝可梦等。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**常见误区**：把影视、游戏或广告中的形象当作现实规格，容易高估性能或低估维护成本；把单一评测当作全体结论，也可能忽略地区差异与年款改款。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [Nintendo Switch](https://www.nintendo.com/)
-- [维基百科](https://en.wikipedia.org/wiki/Nintendo_Switch)
+- [Nintendo Switch 官方](https://www.nintendo.com/switch/)
+- [维基百科：Nintendo Switch](https://zh.wikipedia.org/wiki/Nintendo_Switch)
+- [任天堂 IR 硬件销量](https://www.nintendo.co.jp/ir/en/)

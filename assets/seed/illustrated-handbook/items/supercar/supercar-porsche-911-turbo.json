@@ -3,21 +3,31 @@
   "slug": "supercar-porsche-911-turbo",
   "subCategoryId": "car-germany",
   "name": "保时捷 911 Turbo",
-  "summary": "后置涡轮经典。",
-  "tags": [],
+  "summary": "双涡轮水平对置四驱，911 性能谱系全能旗舰。",
+  "tags": [
+    "德国",
+    "911",
+    "Turbo",
+    "保时捷",
+    "四驱"
+  ],
   "specs": {
     "首发年份": "1975",
+    "代表世代": "992 Turbo S",
     "厂商": "Porsche",
-    "发动机": "双涡轮六缸",
-    "最大功率": "约 650 hp",
-    "驱动": "四驱",
+    "发动机": "3.8 L 水平六缸双涡轮",
+    "最大功率": "650 hp",
+    "驱动": "全时四驱",
+    "0-100 km/h": "2.7 s",
     "产地": "德国"
   },
   "media": {
     "provider": "pixabay",
-    "query": "Turbo supercar",
+    "query": "911 Turbo Porsche",
     "category": "all",
     "matchTags": [
+      "porsche",
+      "911",
       "turbo"
     ],
     "requiredTags": [],

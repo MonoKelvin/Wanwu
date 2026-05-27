@@ -3,7 +3,7 @@
   "slug": "supercar-aston-martin-db11",
   "subCategoryId": "car-britain",
   "name": "阿斯顿·马丁 DB11",
-  "summary": "英伦 GT 旗舰，V12 与 V8 传承詹姆斯·邦德气质。",
+  "summary": "2016 英伦 GT 旗舰，V12 与 AMG V8 并存，DB 系列现代复兴之作。",
   "tags": [
     "Aston Martin",
     "超跑",
@@ -13,7 +13,9 @@
   "specs": {
     "首发年份": "2016",
     "厂商": "Aston Martin",
-    "发动机": "V12 / V8",
+    "动力形式": "5.2 V12 双涡轮 / 4.0 V8 双涡轮",
+    "最大功率": "约 630 hp",
+    "极速": "约 322 km/h",
     "车型": "GT",
     "产地": "英国"
   },

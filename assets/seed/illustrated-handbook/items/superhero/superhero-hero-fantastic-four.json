@@ -3,16 +3,19 @@
   "slug": "superhero-hero-fantastic-four",
   "subCategoryId": "hero-other",
   "name": "神奇四侠",
-  "summary": "漫威第一家庭。",
+  "summary": "漫威第一家庭，太空辐射赋予四人超能力，科学探索与家庭羁绊。",
   "tags": [
     "漫威"
   ],
   "specs": {
     "宇宙": "漫威",
     "首次登场": "1961",
-    "成员": "四人组",
+    "类型": "超级英雄团队",
+    "创作者": "Stan Lee / Jack Kirby",
+    "成员": "神奇先生、隐形女、霹雳火、石头人",
     "基地": "巴克斯特大厦",
-    "宿敌": "毁灭博士"
+    "宿敌": "毁灭博士",
+    "特点": "公开身份、科学冒险"
   },
   "media": {
     "provider": "pixabay",

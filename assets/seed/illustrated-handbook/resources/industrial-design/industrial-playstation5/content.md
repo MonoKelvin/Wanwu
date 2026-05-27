@@ -1,55 +1,27 @@
 # PlayStation 5
 
-PlayStation 5 由 Yujin Morisawa 设计，白色弧线侧板与散热鳍片造型打破传统「黑箱」游戏机美学。
+Sony PlayStation 5 2020 年发布，由设计师 Yujin Morisawa 主导外形：白色双翼曲线外壳包裹黑色中央 core，打破传统「黑盒子」主机美学。DualSense 手柄加入 haptic feedback 与 adaptive triggers，把触觉设计提升到新一代主机核心卖点。
 
-![PlayStation 5](https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/PlayStation_5_and_DualSense_with_transparent_background.png/640px-PlayStation_5_and_DualSense_with_transparent_background.png)
+![PlayStation 5 主机与 DualSense 手柄](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/PlayStation_5_and_DualSense_with_transparent_background.png/640px-PlayStation_5_and_DualSense_with_transparent_background.png)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+Sony Interactive Entertainment 东京与 San Mateo 协作开发。Morisawa 访谈称灵感来自「流动与空气」。PS5 分 Digital Edition 与 Ultra HD Blu-ray 版；2023 年 Slim 缩小体积。AMD Zen 2 + RDNA 2 定制 SoC，SSD 架构改变 load time 体验。Sony 强调 3D Audio Tempest Engine。
 
-## 背景与历史
+## 设计亮点
 
-2020 年 11 月发售；标准版含光驱，Digital Edition 更简洁。DualSense 手柄触觉反馈同步革新。
+立式与横放双取向，专用底座需切换（Slim 改进）。巨大散热 fin 与 fan curve 管理 120W 级 SoC，早期版 fan noise 受讨论。DualSense 微操振动模拟弓弦、路面等；内置 mic 与 create button 服务 streaming。White plates 可更换第三方 cover。UI 基于 PlayStation OS，focus 卡片式切换游戏。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+SSD 使《瑞奇与叮当》等 first-party 几乎无 load。DualSense 在《地平线》《GT7》中增强 immersion；PC 版部分游戏亦支持。体积大，需预留通风空间。Exclusive 向 PC 移植增加平台选择。PS Plus 提供 classic catalog。Rest mode 下载更新方便。
 
-## 工程与设计亮点
+## 文化影响
 
-定制 AMD APU，液金导热（部分批次）；可拆卸侧板便于清洁与定制。SSD 超高速加载。
+PS5 首发缺货与 scalper 成为 2020–2021 全球 meme。外形 divisive：建筑感 vs「路由器」。White/black 语言影响第三方配件与 desk setup 摄影。DualSense 推动 Xbox 与第三方 pad 改进 haptics。工业设计课程用 PS5 讨论「bold form in conservative category」与 cooling-as-aesthetic 诚实性。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
+## 参考与延伸阅读
 
-
-## 文化地位与影响
-
-疫情期间「一机难求」成为社会现象；竖放造型引发家居摆放讨论。
-
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
-
-## 冷知识
-
-- 设计灵感含流体与建筑曲线。
-- 黑色款 Slim 版后改为可拆光驱。
-- 风扇噪音曾是早期评测焦点。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**常见误区**：把影视、游戏或广告中的形象当作现实规格，容易高估性能或低估维护成本；把单一评测当作全体结论，也可能忽略地区差异与年款改款。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [PlayStation](https://www.playstation.com/)
-- [维基百科](https://en.wikipedia.org/wiki/PlayStation_5)
+- [PlayStation 5 官方](https://www.playstation.com/ps5/)
+- [维基百科：PlayStation 5](https://zh.wikipedia.org/wiki/PlayStation_5)
+- [WIRED：Yujin Morisawa PS5 设计访谈](https://www.wired.com/)

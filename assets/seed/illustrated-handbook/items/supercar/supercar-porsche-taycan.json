@@ -3,28 +3,31 @@
   "slug": "supercar-porsche-taycan",
   "subCategoryId": "car-germany",
   "name": "保时捷 Taycan",
-  "summary": "德系高性能纯电标杆，800V 架构与弹射起步。",
+  "summary": "800 V 双电机纯电跑车，保时捷电动性能标杆。",
   "tags": [
-    "精密工程",
     "德国",
-    "超跑",
-    "Porsche"
+    "纯电",
+    "Porsche",
+    "四门轿跑",
+    "性能车"
   ],
   "specs": {
     "首发年份": "2019",
     "厂商": "Porsche",
-    "动力": "纯电",
-    "最大功率": "约 952 hp",
+    "动力": "纯电双电机",
+    "系统功率": "952 hp",
     "电压": "800 V",
+    "0-100 km/h": "2.8 s",
+    "驱动": "四驱",
     "产地": "德国"
   },
   "media": {
     "provider": "pixabay",
-    "query": "Taycan supercar",
+    "query": "Taycan Porsche electric",
     "matchTags": [
       "porsche",
-      "精密工程",
-      "taycan"
+      "taycan",
+      "electric"
     ],
     "minMatchScore": 2,
     "imageCount": 5,

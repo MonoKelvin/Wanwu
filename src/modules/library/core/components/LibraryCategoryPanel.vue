@@ -183,6 +183,10 @@ watch(
 )
 
 function navigateMajor(majorId: LibraryMajorId) {
+  if (majorId === 'notes') {
+    void router.push({ name: 'library-notes' })
+    return
+  }
   if (majorId === 'illustrated-handbook') {
     void router.push({ name: 'library-illustrated-handbook' })
     return
@@ -325,22 +329,5 @@ function onNodeSelect(node: TreeNode) {
 </template>
 
 <style>
-.ww-field-search {
-  width: 100%;
-}
-
-.ww-field-search .p-inputtext {
-  width: 100%;
-  font-size: 0.8125rem;
-  padding: 0.4375rem 0.625rem 0.4375rem 1.75rem;
-}
-
-.ww-field-search .p-iconfield .p-inputicon {
-  inset-block: 0;
-  display: flex;
-  align-items: center;
-  width: 1.75rem;
-  font-size: 0.8125rem;
-  color: var(--ww-ink-faint);
-}
+@import '../styles/library-shared.css';
 </style>

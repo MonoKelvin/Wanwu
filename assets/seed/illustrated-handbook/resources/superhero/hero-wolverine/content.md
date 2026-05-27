@@ -1,36 +1,32 @@
 # 金刚狼
 
-金刚狼（Wolverine）是漫威最标志性的反英雄气质英雄：加拿大变种人罗根拥有艾德曼合金骨骼、自愈因子与野兽感官，曾参与 Weapon X 计划，身为 X 战警核心却常独行。
+金刚狼（Wolverine）即罗根（Logan），是漫威最具「反英雄气质」的主流角色之一：加拿大变种人拥有自愈因子、野兽感官与 bone claws（后覆 Adamantium），曾遭 Weapon X 实验洗脑，作为 X 战警 core 成员却常 lone wolf 行事。Hugh Jackman 2000–2017 年（及 2024《死侍3》）演绎，成为影史最长续同一 superhero 纪录之一。
 
-罗根的自愈与艾德曼骨骼塑造反英雄气质。 以下从起源、代表故事、文化影响与冷知识入手，帮助在百科条目之外建立可核对、可延伸阅读的理解框架。
+![《无敌浩克》第 180 期封面（金刚狼首次登场，维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/4/4f/Incredible_Hulk_180.jpg)
 
-![《无敌浩克》第 180 期封面（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/4/4f/Incredible_Hulk_180.jpg)
+## 创作背景
 
-## 背景与历史
+1974 年 Len Wein 与 John Romita Sr. 在《无敌浩克》第 180 期首次亮相；1982 年 Chris Claremont 与 Frank Miller《Limited Series》深化人气，确立 Japan yakuza 线与 berserker rage。2000 年 Bryan Singer《X 战警》由 Hugh Jackman 饰演；2017 年《罗根》以 western 风格收束 character arc；2024 年《死侍与金刚狼》回归 MCU 时间线。
 
-1974 年《无敌浩克》第 180 期首次登场，1982 年《限量系列》深化人气（Chris Claremont / Frank Miller）。爪击、格斗大师、百年记忆；情感与暴力并存。
+## 核心设定
 
-金刚狼在流行文化中的位置，往往由一次次连载重启与跨媒体改编共同塑造。1974 年前后的主创（Len Wein 等）将时代情绪写进起源：身份、创伤与责任并置，使读者在动作场面之外仍能感到伦理张力。不同版本（主宇宙、平行线、电影线）会改写细节，但核心矛盾——力量与选择、个人与共同体——保持稳定，这也是角色长期具有讨论度的原因。
+罗根的自愈能力延缓 aging，Weapon X 将 Adamantium 注入 skeleton 与 claws，形成 nearly indestructible 战斗形态。性格 gruff、 cigar-chomping、 short temper，与 Cyclops、Jean Grey、Storm 等 X 成员形成 team dynamic tension。经典 yellow-blue 制服后改为 brown leather biker look；「I'm the best there is at what I do, but what I do isn't very nice」是 signature 台词。
 
-## 经典故事
+## 影响与衍生
 
-- **《金刚狼：武器 X》**：实验 TORTURE 与身份破碎。
-- **《暮狼归乡》**：老年罗根末世公路叙事。
-- **《X 战警：天启》/ 《罗根》**：影视将角色悲剧性推至高峰。
+- **《金刚狼：武器 X》**： Barry Windsor-Smith 揭示 experiment torture 与 memory wipe。
+- **《暮狼归乡》**： Mark Millar 老年 Logan 末世公路 narrative，影响《罗根》电影。
+- **《X 战警》动画 1992**： 定义一代观众对 Wolverine 的 voice 与 team 关系认知。
+- **《金刚狼3：殊死一战》**： 2017  farewell 与 Laura (X-23) 传承。
 
-纵览金刚狼相关长篇与限定系列，经典故事弧常把「击败反派」与「自我怀疑、关系破裂、政治抉择」绑在一起：胜利之后仍要支付代价，才是成人向超级英雄叙事的关键。影视改编往往从漫画中择取最具视觉张力或社会共鸣的章节（内战、身份危机、宇宙级事件），再压缩为两小时的情感曲线；游戏与动画则补足漫画未充分展开的角色互动。对读者而言，按主题（起源、堕落、重生、传承）串读比按出版时间线更易把握人物成长。
-
-## 文化影响
-
-「最酷的英雄」形象带动 90 年代漫画暴力美学； Hugh Jackman 二十年演绎成为影史特例。
-
-金刚狼的商业周边覆盖玩具、服装、游戏与主题乐园，但更深的影响在于叙事原型：后来者会借用其视觉符号、团队结构或道德困境创作新 IP。媒体与学界也常以该角色讨论暴力分级、少数群体代表、品牌政治化或「英雄产业」讽刺等议题。粉丝文化中的 cosplay、同人、梗图与配音梗（如动画版经典声线）进一步把角色从纸面推向社群记忆，形成跨越世代的共同语言。
+Wolverine 带动 90 年代 comic「极端」暴力美学与 anti-hero boom；X-23、Daken 等 offspring 扩展 family mythos。Jackman 演绎使 character 超越 comic fan 圈层，成为 global pop icon。
 
 ## 冷知识
 
-- 最初设计为「巨型黄鼠狼」式变种人。
-- 经典黄蓝制服后改为棕色皮衣造型。
-- 「I'm the best there is at what I do」为招牌台词。
+- 最初设计为「带 claws 的 mutate 黄鼠狼式 villain」，后改为 hero。
+- Wolverine 名字来自 Wisconsin 一种 ferocious mustelid。
+- 1982 miniseries 日本 setting 由 Claremont 与 Miller 共同完成。
+- Jackman 最初 audition 被认为「太高」，仍获 cast 并塑造 twenty 年 career。
 
 ## 参考与延伸阅读
 

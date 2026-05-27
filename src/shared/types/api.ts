@@ -10,6 +10,7 @@ import type {
 } from './links'
 import type { AppSettings } from './settings'
 import type { RssEntry, RssFeed, RssFeedInput, RssFeedUpdate, RssGroup } from './rss'
+import type { NoteCreateInput, NoteImage, NoteItem, NoteUpdateInput } from './notes'
 
 export interface WanwuApi {
   library: {
@@ -71,6 +72,14 @@ export interface WanwuApi {
       limit?: number,
       offset?: number
     ) => Promise<{ items: RssEntry[]; total: number }>
+  }
+  notes: {
+    listNotes: () => Promise<NoteItem[]>
+    createNote: (input?: NoteCreateInput) => Promise<NoteItem>
+    updateNote: (input: NoteUpdateInput) => Promise<NoteItem | null>
+    deleteNote: (id: string) => Promise<boolean>
+    addImage: (params: { noteId: string; filePath: string }) => Promise<NoteImage>
+    removeImage: (imageId: string) => Promise<boolean>
   }
   user: {
     getProfile: () => Promise<{

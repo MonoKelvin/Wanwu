@@ -1,57 +1,27 @@
 # iRobot Roomba
 
-iRobot Roomba 将自主导航扫地机器人普及到家庭，随机碰撞到视觉+激光导航技术不断演进。
+Roomba 2002 年由 iRobot 推出，是家用自主扫地机器人普及者。圆形 low-profile 机身、bounce-and-navigate 与后来的 vSLAM、LiDAR 导航，把「设定后离开」的清洁方式带入 mainstream，定义 robot vacuum 品类形态语言。
 
-![Roomba](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/IRobot_Roomba_original.jpg/640px-IRobot_Roomba_original.jpg)
+![iRobot Roomba 扫地机器人](https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/IRobot_Roomba.jpg/640px-IRobot_Roomba.jpg)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+iRobot 1990 年由 MIT 校友创立，早期做军用与探索机器人。Roomba 消费线后扩展 Braava 擦地、Terra 割草。2024 年 Amazon 收购 iRobot 交易受监管影响（以最新公告为准）。竞品含 Roborock、Ecovacs、Dyson。Roomba 系列从 600 到 s9+、j7+，加 Auto-Empty 基座。
 
-## 背景与历史
+## 设计亮点
 
-2002 年首代；2017 年收购竞争对手后面临中国品牌挑战。j7+ 识别避障宠物粪便成卖点。
+圆形直径约 33–35 cm，越障与 furniture 下穿行优化。Dual rubber brushes 减少毛发缠绕（j 系列）。j7 Front-facing camera 识别并避开线缆、宠物排泄物。Clean Base 自动集尘袋减少 30 天人工倒尘。App 设 no-go zone、schedule 与 room mapping。部分型号支持 Alexa/Google。模块化 battery 与 brush 可换延长寿命。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+首次 mapping run 需清空地面小物；日常 maintenance 清理 brush 与 filter。噪音中等，适合外出时运行。地毯与硬地 auto 调 suction。宠物家庭选 j7+ 等 AI 避障型号。复杂户型需 occasional 人工补扫角落。耗材：袋、filter、边刷。与 Roborock 相比，Roomba 软件保守但 brand trust 高。
 
-## 工程与设计亮点
+## 文化影响
 
-vSLAM / LiDAR 地图；Auto Empty 集尘站。边刷+滚刷+HEPA 过滤标准配置。
+Roomba 成为「智能家居入门」与 cat riding meme 文化符号。它推动中国供应链 robot vacuum 爆发并反向输出全球。设计史角度，Roomba 展示「behavior robotics」如何先于 humanoid 进入家庭——形态服从 task 而非拟人。iRobot 专利布局影响 industry litigation 与 innovation pace。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
+## 参考与延伸阅读
 
-
-## 文化地位与影响
-
-「宠物骑 Roomba」网络梗；智能家居清洁品类代名词。
-
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
-
-## 冷知识
-
-- 早期采用随机反弹算法。
-- 军用机器人技术转化民用。
-- 亚马逊曾拟收购 iRobot 受监管阻止。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**常见误区**：把影视、游戏或广告中的形象当作现实规格，容易高估性能或低估维护成本；把单一评测当作全体结论，也可能忽略地区差异与年款改款。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [iRobot](https://www.irobot.com/)
-- [维基百科](https://en.wikipedia.org/wiki/Roomba)
+- [iRobot Roomba 官方](https://www.irobot.com/roomba)
+- [维基百科：Roomba](https://en.wikipedia.org/wiki/Roomba)
+- [iRobot 公司历史](https://www.irobot.com/about-irobot)

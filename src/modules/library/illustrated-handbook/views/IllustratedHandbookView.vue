@@ -194,7 +194,7 @@ const playListStagger = ref(false)
   <div ref="pageRoot" class="flex h-full min-h-0 flex-col overflow-hidden">
     <ModulePageLayout>
       <template #header>
-        <PageHeader title="图鉴" :subtitle="headerSubtitle">
+        <PageHeader title="图鉴" :subtitle="headerSubtitle" stacked-titles>
           <template v-if="hasCategory" #actions>
             <LibraryHeaderToolbar
               v-model:search="listSearch"
@@ -263,44 +263,9 @@ const playListStagger = ref(false)
 </template>
 
 <style>
-.ww-library-list-meta {
-  margin: 0 0 0.5rem;
-  padding-top: 0.25rem;
-  font-size: 0.75rem;
-  color: var(--ww-ink-muted);
-}
-
-.ww-library-grid-wrap {
-  padding-bottom: 1.5rem;
-}
-
-.ww-library-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-@keyframes ww-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.ww-library-grid.ww-stagger-children > * {
-  animation: ww-fade-up var(--ww-duration-slow) var(--ww-ease-out-slow) backwards;
-  animation-delay: calc(var(--ww-stagger, 0) * 48ms);
-}
+@import '../../core/styles/library-shared.css';
 
 .ww-library-grid:not(.ww-stagger-children) > * {
   animation: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ww-library-grid.ww-stagger-children > * { animation: none; }
 }
 </style>

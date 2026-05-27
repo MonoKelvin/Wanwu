@@ -23,6 +23,8 @@ import type { LibraryService } from '../services/library/service'
 import type { LinksService } from '../services/links/service'
 import type { RssService } from '../services/rss/service'
 import type { MediaService } from '../services/media/service'
+import type { NotesService } from '../services/notes/service'
+import type { UserDataGateway } from '../services/storage/userDataGateway'
 import {
   getDefaultWanwuPath,
   isCustomWanwuPath,
@@ -44,7 +46,7 @@ import {
   resetAppSettingsInDb,
   restoreDataBackup
 } from '../services/data/maintenance'
-import { DEFAULT_APP_SETTINGS } from '../../src/shared/types/settings'
+import { DEFAULT_APP_SETTINGS, type AppSettings } from '../../src/shared/types/settings'
 import { startBrowserBookmarksWatchers } from '../services/links/bookmarksWatcher'
 
 export interface AppServices {
@@ -53,6 +55,8 @@ export interface AppServices {
   links: LinksService | null
   rss: RssService | null
   media: MediaService | null
+  notes: NotesService | null
+  userData: UserDataGateway | null
 }
 
 export function registerIpcHandlers(services: AppServices): void {
@@ -249,12 +253,43 @@ export function registerIpcHandlers(services: AppServices): void {
     }
   )
 
+  ipcMain.handle('notes:list', () => services.notes?.listNotes() ?? [])
+
+  ipcMain.handle('notes:create', (_e, input: unknown) => {
+    if (!services.notes) throw new Error('便笺服务未就绪')
+    return services.notes.createNote(
+      input as Parameters<NonNullable<typeof services.notes>['createNote']>[0]
+    )
+  })
+
+  ipcMain.handle('notes:update', (_e, input: unknown) => {
+    if (!services.notes) throw new Error('便笺服务未就绪')
+    return services.notes.updateNote(
+      input as Parameters<NonNullable<typeof services.notes>['updateNote']>[0]
+    )
+  })
+
+  ipcMain.handle('notes:delete', (_e, id: string) => {
+    if (!services.notes) throw new Error('便笺服务未就绪')
+    return services.notes.deleteNote(id)
+  })
+
+  ipcMain.handle('notes:addImage', (_e, params: { noteId: string; filePath: string }) => {
+    if (!services.notes) throw new Error('便笺服务未就绪')
+    return services.notes.addImage(params.noteId, params.filePath)
+  })
+
+  ipcMain.handle('notes:removeImage', (_e, imageId: string) => {
+    if (!services.notes) throw new Error('便笺服务未就绪')
+    return services.notes.removeImage(imageId)
+  })
+
   ipcMain.handle('user:getProfile', () => {
-    return services.db?.getProfile()
+    return services.userData?.getProfile() ?? null
   })
 
   ipcMain.handle('user:updateProfile', (_e, profile: unknown) => {
-    return services.db?.updateProfile(
+    return services.userData?.updateProfile(
       profile as {
         nickname: string
         bio: string
@@ -270,20 +305,20 @@ export function registerIpcHandlers(services: AppServices): void {
     (_e, params: { kind: 'avatar' | 'background'; filePath: string }) => {
       if (!services.media || !services.db) throw new Error('服务未就绪')
       const relativePath = importProfileImage(services.media, params.kind, params.filePath)
-      const profile = services.db.getProfile()
+      const profile = services.userData?.getProfile()
       if (!profile) throw new Error('用户资料不存在')
 
       if (params.kind === 'avatar') {
         if (profile.avatarPath && profile.avatarPath !== relativePath) {
           removeProfileFile(services.media, profile.avatarPath)
         }
-        services.db.updateProfile({
+        services.userData?.updateProfile({
           nickname: profile.nickname,
           bio: profile.bio,
           avatarPath: relativePath
         })
       } else {
-        services.db.updateProfile({
+        services.userData?.updateProfile({
           nickname: profile.nickname,
           bio: profile.bio,
           backgroundPath: relativePath,
@@ -303,10 +338,10 @@ export function registerIpcHandlers(services: AppServices): void {
 
   ipcMain.handle('user:clearBackground', () => {
     if (!services.media || !services.db) return
-    const profile = services.db.getProfile()
+    const profile = services.userData?.getProfile()
     if (!profile?.backgroundPath) return
     removeProfileFile(services.media, profile.backgroundPath)
-    services.db.updateProfile({
+    services.userData?.updateProfile({
       nickname: profile.nickname,
       bio: profile.bio,
       backgroundPath: null,
@@ -425,6 +460,8 @@ export function registerIpcHandlers(services: AppServices): void {
       services.library = null
       services.rss = null
       services.media = null
+      services.notes = null
+      services.userData = null
 
       app.relaunch()
       app.exit(0)
@@ -433,21 +470,21 @@ export function registerIpcHandlers(services: AppServices): void {
   )
 
   ipcMain.handle('app:getSettings', () => {
-    return normalizeAppSettings(services.db?.getAppSettings() ?? {})
+    return normalizeAppSettings(services.userData?.getAppSettings() ?? {})
   })
 
   ipcMain.handle('app:updateSettings', (_e, settings: unknown) => {
-    const current = normalizeAppSettings(services.db?.getAppSettings() ?? {})
-    const next = mergeAppSettings(settings as Record<string, unknown>, current)
-    services.db?.updateAppSettings(next)
+    const current = normalizeAppSettings(services.userData?.getAppSettings() ?? {})
+    const next = mergeAppSettings(settings as Partial<AppSettings>, current)
+    services.userData?.updateAppSettings(next)
     applyRssAutoRefreshSchedule(services)
     return next
   })
 
   ipcMain.handle('app:patchSettings', (_e, patch: unknown) => {
-    const current = normalizeAppSettings(services.db?.getAppSettings() ?? {})
-    const next = mergeAppSettings(patch as Record<string, unknown>, current)
-    services.db?.updateAppSettings(next)
+    const current = normalizeAppSettings(services.userData?.getAppSettings() ?? {})
+    const next = mergeAppSettings(patch as Partial<AppSettings>, current)
+    services.userData?.updateAppSettings(next)
     applyRssAutoRefreshSchedule(services)
     return next
   })
@@ -465,6 +502,8 @@ export function registerIpcHandlers(services: AppServices): void {
       services.library = null
       services.rss = null
       services.media = null
+      services.notes = null
+      services.userData = null
     })
     if (result.ok) {
       app.relaunch()

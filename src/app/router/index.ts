@@ -22,6 +22,9 @@ const router = createRouter({
       redirect: (to) => {
         const cat = String(to.params.legacyCat ?? '')
         if (isLibraryMajorId(cat)) {
+          if (cat === 'notes') {
+            return { name: 'library-notes' }
+          }
           if (cat === 'links') {
             return {
               name: 'library-links',
@@ -50,7 +53,19 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: { name: 'library-illustrated-handbook' }
+          redirect: { name: 'library-notes' }
+        },
+        {
+          path: 'notes',
+          name: 'library-notes',
+          component: () => import('@modules/library/notes/views/NotesView.vue'),
+          meta: { module: 'library', major: 'notes', title: '便笺' }
+        },
+        {
+          path: 'links/:folderId?',
+          name: 'library-links',
+          component: () => import('@modules/library/links/views/LinksView.vue'),
+          meta: { module: 'library', major: 'links', title: '链接' }
         },
         {
           path: 'illustrated-handbook/:catId?/:subId?',
@@ -58,14 +73,12 @@ const router = createRouter({
           component: () =>
             import('@modules/library/illustrated-handbook/views/IllustratedHandbookView.vue'),
           meta: { module: 'library', major: 'illustrated-handbook', title: '图鉴' }
-        },
-        {
-          path: 'links/:folderId?',
-          name: 'library-links',
-          component: () => import('@modules/library/links/views/LinksView.vue'),
-          meta: { module: 'library', major: 'links', title: '链接' }
         }
       ]
+    },
+    {
+      path: '/notes',
+      redirect: { name: 'library-notes' }
     },
     {
       path: '/rss/:feedId?',

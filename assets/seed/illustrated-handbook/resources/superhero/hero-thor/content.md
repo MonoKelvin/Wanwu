@@ -1,38 +1,34 @@
 # 雷神
 
-雷神（Thor）源自北欧神话的漫威再创作：阿斯加德王子托尔因傲慢被贬地球，举起雷神之锤姆乔尔尼尔后学会谦逊，成为复仇者联盟中宇宙级战力。
+雷神（Thor）源自北欧神话的漫威再创作：阿斯加德王子托尔·奥丁森（Thor Odinson）因傲慢被父王奥丁贬至地球，学会谦逊后举起雷神之锤姆乔尔尼尔（Mjolnir），成为复仇者联盟中宇宙级战力。彩虹桥、阿斯加德金宫与「神族 vs 科学」冲突，是 Marvel cosmic 线的重要支柱。
 
-阿斯嘉德王子索尔把北欧神话与宇宙级事件带入漫威。 以下从起源、代表故事、文化影响与冷知识入手，帮助在百科条目之外建立可核对、可延伸阅读的理解框架。
-
-![《神秘之旅》第 83 期封面（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/9/9b/Journey_into_Mystery_83.jpg)
+![《神秘之旅》第 83 期封面（雷神首次登场，维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/9/9b/Journey_into_Mystery_83.jpg)
 
 ![雷神之锤标志（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/7/7e/Mjolnir.svg)
 
-## 背景与历史
+## 创作背景
 
-1962 年《神秘之旅》第 83 期登场（Stan Lee / Larry Lieber / Jack Kirby）。神族体质、雷电操控、飞行、风暴召唤；锤子认主且近乎不可摧毁。洛基、海拉、灭霸等构成神界与宇宙 saga。
+1962 年 Stan Lee、Larry Lieber 与 Jack Kirby 在《神秘之旅》第 83 期引入 Thor，Lee 希望创造「比 Hulk 更强」且具 Shakespearean 语言风格的 hero。60 年代起与 Loki、Hela、Surtur 等 Norse-inspired 角色构建 mythos；2011 年 MCU 由 Kenneth Branagh 执导首作，Chris Hemsworth 塑造 comedic-action 混合 tone；2017《雷神3》与 2019《复仇者联盟4》进一步 pivot 至 character-driven 叙事。
 
-雷神在流行文化中的位置，往往由一次次连载重启与跨媒体改编共同塑造。1962 年前后的主创（Stan Lee / Jack Kirby）将时代情绪写进起源：身份、创伤与责任并置，使读者在动作场面之外仍能感到伦理张力。不同版本（主宇宙、平行线、电影线）会改写细节，但核心矛盾——力量与选择、个人与共同体——保持稳定，这也是角色长期具有讨论度的原因。
+## 核心设定
 
-## 经典故事
+托尔拥有**神族体质、雷电操控、风暴召唤与 Mjolnir 认主**机制——「Whosoever holds this hammer, if he be worthy...」铭文是粉丝背诵名句。Donald Blake 医生身份是 classic secret identity；Jane Foster 在部分版本可举起 Mjolnir 成为 Thor。MCU 引入 Stormbreaker（风暴战斧）作为 Mjolnir 毁后替代；女雷神（Jane）在《雷神4》登场。
 
-- **《雷神：解散》**：打破阿斯加德神话格局。
-- **《诸神黄昏》相关篇章**：预言与轮回主题。
-- **MCU《雷神3/4》**：喜剧与悲剧基调转换讨论。
+## 影响与衍生
 
-纵览雷神相关长篇与限定系列，经典故事弧常把「击败反派」与「自我怀疑、关系破裂、政治抉择」绑在一起：胜利之后仍要支付代价，才是成人向超级英雄叙事的关键。影视改编往往从漫画中择取最具视觉张力或社会共鸣的章节（内战、身份危机、宇宙级事件），再压缩为两小时的情感曲线；游戏与动画则补足漫画未充分展开的角色互动。对读者而言，按主题（起源、堕落、重生、传承）串读比按出版时间线更易把握人物成长。
+- **《雷神：解散》**： 2000s 打破 Asgard 与 earth 连接，Ragnarok 主题。
+- **《雷神3：诸神黄昏》**： Taika Waititi 喜剧风格 + Sakaar 星球视觉。
+- **《无限战争 / 终局之战》**： Thor 的 grief 与「Fat Thor」引发 body image 讨论。
+- **漫画《Thor: God of Thunder》**： Aaron  run 探索 Gorr 屠神者，影响《雷神4》。
 
-## 文化影响
-
-将欧洲神话系统纳入美式超级英雄宇宙；彩虹桥、阿斯加德视觉在影视中成为科幻奇幻混合范本。
-
-雷神的商业周边覆盖玩具、服装、游戏与主题乐园，但更深的影响在于叙事原型：后来者会借用其视觉符号、团队结构或道德困境创作新 IP。媒体与学界也常以该角色讨论暴力分级、少数群体代表、品牌政治化或「英雄产业」讽刺等议题。粉丝文化中的 cosplay、同人、梗图与配音梗（如动画版经典声线）进一步把角色从纸面推向社群记忆，形成跨越世代的共同语言。
+Thor 将欧洲神话纳入美式 superhero 框架；彩虹桥与 Asgard 视觉在影视中成为 sci-fi/fantasy hybrid 范本。Hammer 认主机制被多次用于 moral test plot（如 Captain America 在 Endgame 举起 Mjolnir）。
 
 ## 冷知识
 
-- 唐尼·布莱克人类宿主为经典身份桥段。
-- 「Whosoever holds this hammer...」铭文为粉丝背诵名句。
-- 风暴战斧（Stormbreaker）为 MCU 原创热门装备。
+- Kirby 参考 Norse art 与 Wagner opera 设计 Asgard 视觉。
+- Beta Ray Bill 是第一个被认定「worthy」的外星 Thor。
+- MCU Stormbreaker 由 Rocket 与 Groot 参与锻造，partially 原创。
+- 「Another!」喝酒梗来自《复仇者联盟1》即兴台词，成为 meme。
 
 ## 参考与延伸阅读
 

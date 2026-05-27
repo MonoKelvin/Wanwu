@@ -1,53 +1,43 @@
 # 雅马哈 YZF-R1
 
-雅马哈 YZF-R1 是日系顶级仿赛的标杆车型，以高转四缸、MotoGP 下放技术和极致电控著称，长期统治 WSBK 与街道性能车话题。
+YZF-R1 是雅马哈 **旗舰仿赛** 与 MotoGP 技术下放的载体：998 cc 十字曲轴直列四缸、YZ-M 芯片级电控与 2015 年后定风翼演进，自 1998 年首发以来多次重新定义公升级跑车标准，与本田 CBR1000RR、川崎 ZX-10R 构成日系仿赛三强。
 
-![雅马哈 YZF-R1](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Yamaha_YZF-R1_2015.jpg/640px-Yamaha_YZF-R1_2015.jpg)
-
-
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+![雅马哈 YZF-R1 2015](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Yamaha_YZF-R1_2015.jpg/640px-Yamaha_YZF-R1_2015.jpg)
 
 ## 背景与历史
 
-1998 年首款 R1 以「干重 177 kg + 150 hp」打破公升级仿赛规则；此后历经十字曲轴（2009）、欧五排放与第四代 M 版（2020+）。R1 与 GYTR 赛道套件、厂队涂装共同构成雅马哈性能形象。
+1998 年 **初代 R1** 以 1000 cc 级功率与仅 177 kg 干重震惊业界，「 litre bike 革命」标志之一。2009 年 **十字曲轴（crossplane crank）** 引入 MotoGP 概念，改善牵引与声浪。2015 年 **YZF-R1M** 加入 Öhlins 电子悬挂与通信模块；2020 年小改款强化 aerodynamics 与 emissions。
 
-时间线梳理有助于理解该车/作品在技术与审美上的坐标：首发环境、竞品格局与法规背景，往往决定它能否成为「定义时代的符号」。
+R1 在 **WSBK、AMA** 等赛事中作为厂商平台；R1M 限量供应赛道数据采集。MT-10 naked 与 Tracer 系列均衍生自 R1 发动机架构。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 工程与设计
 
+**998 cc 十字曲轴直列四缸** 约 **200 hp / 113 N·m**，六速，滑动离合。Crossplane 曲轴使 firing interval 不均匀，模拟 V4 牵引特性。 **6 轴 IMU** 驱动 lift control、slide control、launch control 与 quick shifter。
 
-## 工程与设计亮点
+铝制 Deltabox 车架、镁合金副车架与轻量化副车架（部分年款）；2020+ 定风翼增强高速稳定性。整备质量约 201 kg；R1M 配备 Öhlins 电子 suspension 与 carbon  bodywork。
 
-现行款搭载 998 cc 直列四缸十字曲轴发动机，约 200 hp；配备六轴 IMU、Slide Control、Launch Control 与 Quick Shift。Deltabox 车架与侧挂排气优化重心，Ohlins 电子避震（高配）强化赛道日表现。
+## 性能与体验
 
-若你关心驾驶或把玩体验，建议结合实拍评测、拆解视频与官方白皮书交叉验证；纸面参数与真实体感之间常有温度、噪音与调校差异。
+R1 以 **弯道精度与电控深度** 著称：Crossplane 出弯 traction 自然，IMU 系统学习曲线较陡但上限高。街道模式温和，Track 模式 aggressive。Quick shifter 响应快；制动与 front-end feel 为媒体长期好评点。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
-
+维护与轮胎成本属公升级正常水平；热管理在拥堵中需注意。与 ZX-10R 相比，R1 **声浪与出弯个性** 更突出；与 S 1000 RR 相比，电控 UI 与 suspension 调校风格不同。
 
 ## 文化地位与影响
 
-R1 是「日系四缸仿赛」代名词，与本田 CBR1000RR-R、川崎 ZX-10R 形成三国争霸；影视与赛道日文化中常见「十字曲轴排气声」辨识标签。
+R1 是 **MotoGP 民用化叙事** 的核心车型——「Rossi 时代」雅马哈营销与 R1 紧密绑定。游戏《RIDE》《MotoGP》默认车辆常含 R1；影视中 blue/white 雅马哈涂装识别度高。
 
-文化层面的讨论不必局限于车迷或粉圈：设计奖项、影视出镜、二手行情与社交话题，都是观察其影响力的窗口。
+对中国读者，R1 代表 **日系仿赛技术巅峰之一**，十字曲轴是理解 2010 年代性能摩托的关键概念。
 
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
+R1 与 R1M 差价主要体现在 Öhlins 电子悬挂与通信模块；赛道日玩家常认为 R1M 物有所值，街道用户则 R1 已足够。
 
 ## 冷知识
 
-- 十字曲轴设计为减少惯性扭矩，提升弯道开油稳定性。
-- WSBK 厂队版常测试未来市售电控策略。
-- M 版采用碳纤维整流罩与 Öhlins 全可调悬挂。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
+- 1998 年初代 R1 干重仅 177 kg，开创公升级轻量化竞赛。
+- Crossplane 曲轴点火间隔模拟 V4 牵引特性。
+- R1M 可选通信模块记录赛道数据。
 
 ## 参考与延伸阅读
 
-- [雅马哈摩托官网](https://www.yamaha-motor.com.cn/)
-- [维基百科：YZF-R1](https://en.wikipedia.org/wiki/Yamaha_YZF-R1)
+- [Yamaha YZF-R1 官方](https://www.yamaha-motor.com/)
+- [维基百科：Yamaha YZF-R1](https://en.wikipedia.org/wiki/Yamaha_YZF-R1)
+- [Crossplane 技术说明](https://www.yamaha-motor.com/)

@@ -9,12 +9,10 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "ignoreDeprecations": "6.0",
     "types": ["node"],
-    "baseUrl": ".",
     "paths": {
-      "@electron/*": ["electron/*"],
-      "@shared/*": ["src/shared/*"]
+      "@electron/*": ["./electron/*"],
+      "@shared/*": ["./src/shared/*"]
     }
   },
   "include": [

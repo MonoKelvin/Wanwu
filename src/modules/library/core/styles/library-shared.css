@@ -1,0 +1,57 @@
+.ww-field-search {
+  width: 100%;
+}
+
+.ww-field-search .p-inputtext {
+  width: 100%;
+  font-size: 0.8125rem;
+  padding: 0.4375rem 0.625rem 0.4375rem 1.75rem;
+}
+
+.ww-field-search .p-iconfield .p-inputicon {
+  inset-block: 0;
+  display: flex;
+  align-items: center;
+  width: 1.75rem;
+  font-size: 0.8125rem;
+  color: var(--ww-ink-faint);
+}
+
+.ww-library-grid-wrap {
+  padding-bottom: 1.5rem;
+}
+
+.ww-library-list-meta {
+  margin: 0 0 0.5rem;
+  padding-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--ww-ink-muted);
+}
+
+.ww-library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+@keyframes ww-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ww-library-grid.ww-stagger-children > * {
+  animation: ww-fade-up var(--ww-duration-slow) var(--ww-ease-out-slow) backwards;
+  animation-delay: calc(var(--ww-stagger, 0) * 42ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-library-grid.ww-stagger-children > * {
+    animation: none;
+  }
+}

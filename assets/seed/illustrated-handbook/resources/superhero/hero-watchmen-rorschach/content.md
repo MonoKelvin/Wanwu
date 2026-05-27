@@ -1,47 +1,35 @@
 # 罗夏
 
-罗夏（Rorschach）是《守望者》道德绝对主义者：沃尔特·科瓦奇戴流动墨迹面具，以私刑打击犯罪，拒绝妥协导致悲剧结局，象征冷战焦虑。
+罗夏（Rorschach）是 Alan Moore 与 Dave Gibbons 1986 年限定系列《守望者》（Watchmen）中的核心角色之一：本名沃尔特·科瓦奇（Walter Kovacs），戴流动墨迹面具以私刑打击哥谭式犯罪，坚持黑白道德 absolutism，拒绝妥协，最终走向悲剧结局。他是冷战焦虑、水门事件后 public trust 崩塌的文学化投射。
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+![《守望者》合集封面（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/5/5f/Watchmen_cover.jpg)
 
-《守望者》道德绝对主义者在冷战焦虑中拒绝妥协。 以下从起源、代表故事、文化影响与冷知识入手，帮助在百科条目之外建立可核对、可延伸阅读的理解框架。
+## 创作背景
 
-![守望者封面](https://upload.wikimedia.org/wikipedia/commons/5/5f/Watchmen_cover.jpg)
+《守望者》1986–1987 年由 DC 出版，Moore 将 Charlton Comics 角色 analog 改写为 original cast，Rorschach 对应 The Question / Mr. A 的 vigilante 传统。Dave Gibbons 九宫格对称构图与 Rorschach _journal 叙事成为 comic craft 教科书。2009 年 Zack Snyder 电影忠实还原 multiple 分镜；2019 年 HBO 限定剧《守望者》以 Tulsa 种族屠杀 legacy 续写，未直接聚焦 Rorschach 但回应其 ideology 遗产。
 
-## 背景与历史
+## 核心设定
 
-Alan Moore & Dave Gibbons 1986 年限定系列。无超能力，格斗与侦探；面具墨迹随情绪「变化」为心理隐喻。
+Rorschach **无超能力**，依赖格斗、侦探技巧与 psychological intimidation。面具 inkblot 随「热力」变化，象征 mutable identity 与 Rorschach test 心理学隐喻。其 journal 贯穿全系列，提供 unreliable narrator 视角；对 Comedian 之死调查，逐步揭示 Adrian Veidt 的「拯救人类」阴谋。名言「Humanity is dead / 人性早已堕落」与 refusal to compromise 定义 character arc。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 影响与衍生
 
-罗夏在流行文化中的位置，往往由一次次连载重启与跨媒体改编共同塑造。1986 年前后的主创（Moore / Gibbons）将时代情绪写进起源：身份、创伤与责任并置，使读者在动作场面之外仍能感到伦理张力。不同版本（主宇宙、平行线、电影线）会改写细节，但核心矛盾——力量与选择、个人与共同体——保持稳定，这也是角色长期具有讨论度的原因。
+- **《守望者》12 期主线**： 1987 Hugo 奖「Other Forms」类别，comic 首次获 major literary award。
+- **2009 Snyder 电影**： Jackie Earle Haley 饰演 Rorschach， prison 场景高度还原漫画。
+- **HBO 2019 续集**： 探讨 Rorschach ideology 被 white supremacist 误用，引发 meta 讨论。
+- **《Before Watchmen》**： DC 2012 前传系列（Moore 未参与，争议较大）。
 
-## 经典故事
-
-- **2009 电影**：Zack Snyder 忠实漫画分镜。
-- **HBO《守望者》续集**：种族与历史延伸。
-- **「谁监视守望者」**主题影响哲学课讨论。
-
-按时间线补番可减少信息过载；关键转折集往往集中解释世界观规则。
-
-纵览罗夏相关长篇与限定系列，经典故事弧常把「击败反派」与「自我怀疑、关系破裂、政治抉择」绑在一起：胜利之后仍要支付代价，才是成人向超级英雄叙事的关键。影视改编往往从漫画中择取最具视觉张力或社会共鸣的章节（内战、身份危机、宇宙级事件），再压缩为两小时的情感曲线；游戏与动画则补足漫画未充分展开的角色互动。对读者而言，按主题（起源、堕落、重生、传承）串读比按出版时间线更易把握人物成长。
-
-## 文化影响
-
-解构超级英雄「正义」概念；日记体叙事与九宫格构图成教科书案例。
-
-周边、联名与二次创作会延长 IP 寿命，也是观察其跨圈层影响力的窗口。
-
-罗夏的商业周边覆盖玩具、服装、游戏与主题乐园，但更深的影响在于叙事原型：后来者会借用其视觉符号、团队结构或道德困境创作新 IP。媒体与学界也常以该角色讨论暴力分级、少数群体代表、品牌政治化或「英雄产业」讽刺等议题。粉丝文化中的 cosplay、同人、梗图与配音梗（如动画版经典声线）进一步把角色从纸面推向社群记忆，形成跨越世代的共同语言。
+Rorschach 解构「 vigilante hero 必为正义」假设；其 mask 设计灵感部分来自 Kitty Genovese 案件与 Moore 对 urban apathy 的观察。作品「Who watches the watchmen?」成为 political philosophy 常用引文。
 
 ## 冷知识
 
-- 「人性早已堕落」名言。
-- 面具由 Kitty Genovese 案件灵感。
-- 罗夏测试源自心理学墨迹测验。
+- 角色名直接来自 Hermann Rorschach 墨迹测验。
+- Moore 称 Rorschach 是其 personal  favorite 但「不可效仿」角色。
+- 面具 blots 在 Gibbons 原稿中每格 manually 不同。
+- HBO 剧集中 Seventh Kavalry 误读 Rorschach journal，形成 deliberate 讽刺。
 
 ## 参考与延伸阅读
 
-- [百度百科](https://baike.baidu.com/item/%E5%AE%88%E6%9C%9B%E8%80%85)
-- [维基：罗夏](https://zh.wikipedia.org/wiki/%E7%BD%97%E5%A4%8F)
-- [DC 官方](https://www.dc.com/graphic-novels/watchmen)
+- [百度百科：守望者](https://baike.baidu.com/item/%E5%AE%88%E6%9C%9B%E8%80%85)
+- [维基百科：罗夏 (漫画)](https://zh.wikipedia.org/wiki/%E7%BD%97%E5%A4%8F)
+- [DC 官方：Watchmen](https://www.dc.com/graphic-novels/watchmen)

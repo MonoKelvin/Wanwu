@@ -1,32 +1,27 @@
 # Material Design 3
 
-Material Design 3（M3）是 Google 于 2021 年 Google I/O 发布的第三代跨平台设计系统，随 Android 12 的 **Material You** 动态取色一同亮相。它从「纸墨隐喻」转向更个性化、更情感化的表达，覆盖 Android、Flutter、Web（Material Web）与 Wear OS。
+Material Design 3（M3，代号 Material You）2021 年随 Android 12 发布，强调 dynamic color 从 wallpaper 提取、personalization 与大圆角 tactile UI。Google 用 Material Theme Builder 与 Compose Material3 库将 token 落到 Android、Flutter 与 Web（Material Web Components）。
 
-![Google 标志（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/320px-Google_2015_logo.svg.png)
+![Material Design Logo](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_Material_Design_logo.svg/640px-Google_Material_Design_logo.svg.png)
 
-![Android 标志（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Android_new_logo_2019.svg/320px-Android_new_logo_2019.svg.png)
+## 设计师与品牌
 
-## 背景与历史
+Google Design 团队维护；Material.io 文档与 Figma M3 kit。Jetpack Compose `androidx.compose.material3` 为一等公民。Flutter `ThemeData` useMaterial3。Web `@material/web` components 持续演进。Pixel 手机首发 dynamic color，OEM 可选是否跟随。
 
-2014 年 Google 发布首版 Material Design，统一 Android 与 Web 视觉语言；2018 年 M2 强化密度与深色主题。M3 的核心跃迁是 **动态配色（Dynamic Color）**：从壁纸提取主色、次色与中性色，生成整套主题，让系统 UI 与用户个人审美对齐。更大圆角、强调排版层级、状态层（State Layers）与 motion 规范，则让组件在触控与无障碍场景下更可预测。
+## 设计亮点
 
-## UX 原则与产品影响
+Color：seed color → HCT 算法生成 light/dark scheme；primary、secondary、tertiary、error roles。Typography：Display/Headline/Title/Body/Label scale。Shape：corner small/medium/large/extra-large。Elevation：tonal surface 替代 heavy shadow。Components：FAB extended、NavigationBar、NavigationRail、SearchBar M3 refresh。Motion：emphasized easing shared axis transition。
 
-- **个性化**：Monet 算法驱动的取色，提升品牌 App 与系统 UI 的亲和感。
-- **无障碍**：对比度、触控目标与 TalkBack 语义在组件规范中内置。
-- **跨端一致**：同一 Design Token 可流向 Compose、Flutter 与 CSS Custom Properties。
-- **设计—开发对齐**：官方 Figma M3 Design Kit 与 Material Theme Builder 降低落地摩擦。
+## 使用体验
 
-M3 深刻影响了 Android 厂商定制 UI 的配色思路，也推动 Web 端 CSS `color-mix`、Design Token 管道成为团队标配。
+Android：`dynamicLightColorScheme(context)` 读取 wallpaper。Compose：`MaterialTheme { Surface { ... } }`。Custom brand：override ColorScheme 保留 algorithm。Design QA：对比 OEM 魔改 ROM 是否破坏 token。Accessibility：check contrast with Material Theme Builder accessibility tab。
 
-## 冷知识
+## 文化影响
 
-- Material You 名称强调「为你定制」，壁纸取色在 Pixel 上首发，后扩展至更多设备。
-- M3 的 **Tonal Spot**、**Vibrant** 等配色方案名称，对应不同的色彩和谐算法。
-- Jetpack Compose 是 Android 上 M3 的官方实现路径，旧 View 体系仍可通过 Material Components 迁移。
+Material You 推动「personal OS aesthetic」叙事，与 Apple 统一 brand 对比。Dynamic color 影响 wallpaper app 与 theme engine 生态。中国 OEM（MIUI、ColorOS）借鉴大圆角与 blur，但保留自有 icon 与广告 UI。M3 成为 Android 开发面试常考点。
 
 ## 参考与延伸阅读
 
 - [Material Design 3 官网](https://m3.material.io/)
-- [Android Developers：Material You](https://developer.android.com/develop/ui/views/theming/dynamic-colors)
-- [维基百科：Material Design](https://zh.wikipedia.org/wiki/Material_Design)
+- [Jetpack Compose Material3](https://developer.android.com/jetpack/compose/designsystems/material3)
+- [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/)

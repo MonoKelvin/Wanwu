@@ -43,6 +43,10 @@ export function sectionTreeForMajor(
     linkSourceRoots: LinkFolder[]
   }
 ): TreeNode[] {
+  if (major === 'notes') {
+    return []
+  }
+
   if (major === 'illustrated-handbook') {
     return catalogToTreeNodes(options.handbookCategories, (node, parentKey) => {
       if (parentKey) {

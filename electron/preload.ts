@@ -67,6 +67,14 @@ const api: WanwuApi = {
     listEntries: (feedId, limit, offset) =>
       ipcRenderer.invoke('rss:listEntries', { feedId, limit, offset })
   },
+  notes: {
+    listNotes: () => ipcRenderer.invoke('notes:list'),
+    createNote: (input) => ipcRenderer.invoke('notes:create', input),
+    updateNote: (input) => ipcRenderer.invoke('notes:update', input),
+    deleteNote: (id) => ipcRenderer.invoke('notes:delete', id),
+    addImage: (params) => ipcRenderer.invoke('notes:addImage', params),
+    removeImage: (imageId) => ipcRenderer.invoke('notes:removeImage', imageId)
+  },
   user: {
     getProfile: () => ipcRenderer.invoke('user:getProfile'),
     updateProfile: (profile) => ipcRenderer.invoke('user:updateProfile', profile),

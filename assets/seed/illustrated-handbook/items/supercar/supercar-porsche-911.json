@@ -3,24 +3,26 @@
   "slug": "supercar-porsche-911",
   "subCategoryId": "car-germany",
   "name": "保时捷 911",
-  "summary": "德国斯图加特标志性后置跑车，历经八代演进，以独特操控与日常可用性著称。",
+  "summary": "六十年后置水平对置跑车平台，现行 992 世代。",
   "tags": [
     "德国",
     "911",
     "后置",
-    "保时捷"
+    "保时捷",
+    "跑车"
   ],
   "specs": {
     "首发年份": "1964",
     "厂商": "Porsche",
     "发动机": "水平对置六缸",
-    "布局": "后置",
-    "代表世代": "992",
-    "产地": "德国"
+    "布局": "后置 / 后置四驱",
+    "现行车系": "992",
+    "产地": "德国斯图加特",
+    "代表车型": "Carrera / GT3 / Turbo"
   },
   "media": {
     "provider": "pixabay",
-    "query": "911 supercar",
+    "query": "911 Porsche supercar",
     "category": "transportation",
     "matchTags": [
       "保时捷",

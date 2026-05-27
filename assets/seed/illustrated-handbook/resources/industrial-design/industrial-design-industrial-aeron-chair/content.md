@@ -1,55 +1,27 @@
 # 赫曼米勒 Aeron
 
-Aeron 办公椅 1994 年颠覆「皮椅=高级」观念，网状 Pellicle 透气与人体工学调节成为硅谷办公室标配。
+Aeron 是 Herman Miller 与设计师 Bill Stumpf、Don Chadwick 于 1994 年发布的网面人体工学办公椅。它用 Pellicle 弹性织物替代海绵坐垫，解决长时间办公的散热与支撑问题，成为硅谷与创意行业最辨识的「工作椅符号」之一。2016 年推出 Remastered 版本，保留经典轮廓并更新倾仰机制与尺寸体系。
 
-![Aeron 办公椅](https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Aeron_chair.jpg/640px-Aeron_chair.jpg)
+![Herman Miller Aeron 办公椅](https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Aeron_chair.jpg/640px-Aeron_chair.jpg)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+Herman Miller 1905 年创立于美国密歇根，以 Eames、Nelson 等合作闻名。Stumpf 曾设计 Equa 椅，Aeron 是其与 Chadwick 对「久坐健康」问题的深化。品牌通过尺寸 A/B/C 覆盖不同体型，并提供 PostureFit SL 腰托、Forward Tilt 等选项。Aeron 纳入 Herman Miller 12 年保修体系，Mesh 材料可更换，体现高端 B2B 家具的长期服务逻辑。
 
-## 背景与历史
+## 设计亮点
 
-Herman Miller 与 Bill Stumpf、Don Chadwick 开发；2016 年 Remastered 升级材料和机构。长期名列 MoMA 永久收藏。
+Pellicle 网布按区域编织不同张力，坐骨与骶骨区支撑更强，边缘更软以避免压迫。Kinemat 倾仰让椅背与座椅联动，保持腰椎曲线；Harmonic 2 倾仰器提供 smoother 阻力曲线。无海绵设计减少热量积聚，对空调不稳定的开放式办公室尤为重要。框架使用可回收材料，Remastered 版提升 Alt 调节范围与 8Z Pellicle 配色。整椅几乎无视觉「豪华填充」，却以 biomechanics 数据支撑形态。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+新用户需 1–2 周适应网面触感，习惯后会感到透气与支撑优于传统海绵椅。调节项包括座椅高度、倾仰张力、臂高与 optional 腰托；正确设置后可在 8 小时编程或设计工作中显著降低腰背疲劳。B 尺寸适合多数亚洲与欧美中等体型。滚轮在硬木与地毯需选配不同脚轮。二手市场活跃，但需辨别年代与机构磨损；官方翻新渠道提供质保。
 
-## 工程与设计亮点
+## 文化影响
 
-Pellicle 弹性织物分散压力；PostureFit SL 腰托、Harmonic 倾仰机构。大中小三种尺码而非单一尺寸。
+Aeron 出现在《广告狂人》等影视与无数科技纪录片中，象征 1990 年代知识工作崛起。Dot-com 泡沫时期「每人一把 Aeron」成为创业文化梗。其设计影响后续 Steelcase Gesture、Humanscale Diffrient 等竞品对网面与倾仰的研究。在可持续讨论中，Aeron 因可维修、长寿命与品牌回收计划常被列为「买贵但用久」的家具策略范例。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
+## 参考与延伸阅读
 
-
-## 文化地位与影响
-
-互联网泡沫与科技创业文化符号；二手市场流通率极高。
-
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
-
-## 冷知识
-
-- 早期因「不像老板椅」销售受阻。
-- 曾出现在《辛普森一家》调侃。
-- 使用海洋塑料再生材料于新版本。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**常见误区**：把影视、游戏或广告中的形象当作现实规格，容易高估性能或低估维护成本；把单一评测当作全体结论，也可能忽略地区差异与年款改款。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [Herman Miller Aeron](https://www.hermanmiller.com/)
-- [维基百科](https://en.wikipedia.org/wiki/Aeron_chair)
+- [Herman Miller Aeron 官方页](https://www.hermanmiller.com/products/seating/office-chairs/aeron-chairs/)
+- [维基百科：Aeron chair](https://en.wikipedia.org/wiki/Aeron_chair)
+- [Design Within Reach：Aeron 历史](https://www.dwr.com/)

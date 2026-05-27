@@ -1,46 +1,33 @@
-# 绿箭侠（经典）
+# 绿箭侠
 
-绿箭侠是 DC 街头级英雄代表：奥利弗·奎恩以财富与箭袋对抗星城犯罪，强调社会不平等与「义箭」象征，与正义联盟及少年团队多次联动。
+绿箭侠（Green Arrow）即 Oliver Queen，是 DC 街头级英雄代表：亿万富翁 playboy 流落荒岛后习得 archery 与 survival 技能，回归后以绿箭身份守护 Star City，强调社会不平等、corporate corruption 与「义箭」symbolism。与 Black Canary、Red Arrow（Roy Harper）构成「Arrow family」叙事线。
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+## 创作背景
 
-星城义箭长期聚焦社会不平等与箭族家庭线。 以下从起源、代表故事、文化影响与冷知识入手，帮助在百科条目之外建立可核对、可延伸阅读的理解框架。
-## 背景与历史
+1941 年 Mort Weisinger 与 George Papp 在《More Fun Comics》第 73 期创造 Green Arrow，初期为 Batman analog（rich playboy + sidekick + arrow-themed gadgets）。70 年代 Dennis O'Neil 与 Neal Adams 将其转向 social justice（如 drug abuse、 poverty）；2001 年 Mike Grell《Green Arrow: The Longbow Hunters》引入 mature tone。2012–2020 年 CW《Arrow》由 Stephen Amell 主演，启动 Arrowverse 跨剧联动。
 
-黄金 age 登场后经历多次重启；与黑金丝雀、红箭（罗伊·哈珀）构成「箭族」家庭线。
+## 核心设定
 
-此外，绿箭侠（经典）的粉丝常通过动画、游戏与小说延伸作补全世界观；按篇章主题选读比逐本编号更易入门。
+Oliver **无超能力**，依赖 precision archery 与 trick arrows（net、 explosive、 grappling 等）。与 Batman 不同，Green Arrow 常 explicit 表达 political opinion（ liberal / progressive 形象在 modern canon 中稳定）。Roy Harper 从 Speedy 到 Red Arrow 的 drug abuse 故事线（《Snowbirds Don't Fly》）是 comic 史重要 public service narrative；与 Dinah Lance（Black Canary） romance 为 core relationship。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 影响与衍生
 
-绿箭侠（经典）在流行文化中的位置，往往由一次次连载重启与跨媒体改编共同塑造。1941 年前后的主创（Mort Weisinger 等）将时代情绪写进起源：身份、创伤与责任并置，使读者在动作场面之外仍能感到伦理张力。不同版本（主宇宙、平行线、电影线）会改写细节，但核心矛盾——力量与选择、个人与共同体——保持稳定，这也是角色长期具有讨论度的原因。
+- **《绿灯长弓》1970**： Green Lantern / Green Arrow 公路 trip，讨论 racism 与 poverty。
+- **CW《Arrow》8 季**： 启动 Flash、Legends 等 Arrowverse，Amell 版 Oliver 牺牲成 legend。
+- **《不义联盟》游戏**： alternate evil Oliver 形象。
+- **《绿箭侠：重生》2016**： Rebirth 系列 modern 星城 corruption 叙事。
 
-## 经典故事
-
-- **《绿灯长弓》**：跨城市公路叙事。
-- **Arrowverse 交叉事件**：与闪电侠、超女联动。
-- **《不义联盟》游戏**：黑暗奥利弗形象。
-
-按时间线补番可减少信息过载；关键转折集往往集中解释世界观规则。
-
-纵览绿箭侠（经典）相关长篇与限定系列，经典故事弧常把「击败反派」与「自我怀疑、关系破裂、政治抉择」绑在一起：胜利之后仍要支付代价，才是成人向超级英雄叙事的关键。影视改编往往从漫画中择取最具视觉张力或社会共鸣的章节（内战、身份危机、宇宙级事件），再压缩为两小时的情感曲线；游戏与动画则补足漫画未充分展开的角色互动。对读者而言，按主题（起源、堕落、重生、传承）串读比按出版时间线更易把握人物成长。
-
-## 文化影响
-
-将超级英雄与政治评论结合的先驱之一；精准射击设定影响后续远程英雄设计。
-
-周边、联名与二次创作会延长 IP 寿命，也是观察其跨圈层影响力的窗口。
-
-绿箭侠（经典）的商业周边覆盖玩具、服装、游戏与主题乐园，但更深的影响在于叙事原型：后来者会借用其视觉符号、团队结构或道德困境创作新 IP。媒体与学界也常以该角色讨论暴力分级、少数群体代表、品牌政治化或「英雄产业」讽刺等议题。粉丝文化中的 cosplay、同人、梗图与配音梗（如动画版经典声线）进一步把角色从纸面推向社群记忆，形成跨越世代的共同语言。
+Green Arrow 将 superhero 与 political commentary 结合的先驱之一；trick arrow 设定影响 Hawkeye 等 remote weapon hero。CW 剧使 character 在 2010 年代 television 中成为 primary DC hero exposure。
 
 ## 冷知识
 
-- 罗伊·哈珀「红箭」曾为滥用药物故事线。
-- 星城腐败常映射现实城市问题。
-- CW 剧推动绿箭成为电视主英雄。
+- 早期 Green Arrow 有 Arrowcar、Arrowplane 等 Batman-style vehicles，后逐渐废弃。
+- 「You have failed this city」为 CW 剧原创台词，成为 meme。
+- Oliver 在《危机 on Infinite Earths》剧集中 multiverse 牺牲，联动 comic event。
+- Connor Hawke 为 Oliver 之子，亦曾担任 Green Arrow。
 
 ## 参考与延伸阅读
 
-- [百度百科](https://baike.baidu.com/item/%E7%BB%BF%E7%AE%AD%E4%BE%A0)
-- [DC 官方](https://www.dc.com/characters/green-arrow)
-- [维基百科](https://zh.wikipedia.org/wiki/%E7%BB%BF%E7%AE%AD%E4%BE%A0)
+- [百度百科：绿箭侠](https://baike.baidu.com/item/%E7%BB%BF%E7%AE%AD%E4%BE%A0)
+- [DC 官方：Green Arrow](https://www.dc.com/characters/green-arrow)
+- [维基百科（中文）](https://zh.wikipedia.org/wiki/%E7%BB%BF%E7%AE%AD%E4%BE%A0)

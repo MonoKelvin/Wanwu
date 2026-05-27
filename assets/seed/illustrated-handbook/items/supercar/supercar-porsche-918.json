@@ -3,27 +3,30 @@
   "slug": "supercar-porsche-918",
   "subCategoryId": "car-germany",
   "name": "保时捷 918 Spyder",
-  "summary": "插电混动超跑三杰之一，纽北纪录创造者。",
+  "summary": "混动三杰之一，887 hp 插电 V8 限量 918 台。",
   "tags": [
-    "精密工程",
     "德国",
     "超跑",
-    "Porsche"
+    "混动",
+    "Porsche",
+    "限量"
   ],
   "specs": {
     "首发年份": "2013",
     "厂商": "Porsche",
-    "动力": "V8 混动",
-    "最大功率": "887 hp",
-    "产量": "918 辆",
-    "产地": "德国"
+    "动力": "4.6 L V8 + 双电机",
+    "系统功率": "887 hp",
+    "0-100 km/h": "2.6 s",
+    "极速": "345 km/h",
+    "纽北圈速": "6:57",
+    "产量": "918 辆"
   },
   "media": {
     "provider": "pixabay",
-    "query": "Spyder supercar",
+    "query": "918 Spyder Porsche",
     "matchTags": [
       "porsche",
-      "精密工程",
+      "918",
       "spyder"
     ],
     "minMatchScore": 2,

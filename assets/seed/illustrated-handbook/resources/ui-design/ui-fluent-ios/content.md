@@ -1,35 +1,27 @@
-# Fluent Design 与 iOS 风格对照
+# Fluent / iOS 风格
 
-Microsoft **Fluent Design System** 与 Apple **Human Interface Guidelines** 代表两大桌面/移动生态的 official 设计语言。对比二者有助于产品团队在跨平台开发（React Native、Flutter、.NET MAUI）时理解：**同一功能在不同平台应「 feels native」而非 pixel-identical**。
+Fluent Design System（Microsoft）与 Apple Human Interface Guidelines（HIG）代表两大平台原生 UI 范式：Fluent 强调 acrylic 材质、Reveal highlight 与 depth；iOS HIG 强调 clarity、deference、depth 与 San Francisco 字体、large title 导航。跨平台产品常需在二者间做映射而非像素复制。
 
-![Microsoft 标志（Fluent Design，维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/320px-Microsoft_logo.svg.png)
+![Apple 与 Microsoft 设计标志并列](https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/640px-Apple_logo_black.svg.png)
 
-![Apple 标志（iOS HIG，维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/240px-Apple_logo_black.svg.png)
+## 设计师与品牌
 
-## 背景与历史
+Microsoft Fluent 2（2022+）统一 Windows、Office、Teams、Xbox。Apple HIG 随 iOS 17/18、visionOS 扩展 spatial UI。Material Design 常作 Android 第三方参照。React Native、Flutter、.NET MAUI 提供 platform-adaptive widget。
 
-Fluent 2017 年随 Windows 10 Fall Creators Update 发布，强调 Light、Depth、Motion、Material、Scale 五要素；Acrylic 材质与 Reveal highlight 成为 Windows 11 视觉 signature。Apple HIG 则长期强调 clarity 与 content-first。Office、Teams、Outlook mobile 等 Microsoft 产品需在 iOS 上遵循 HIG，在 Windows 上遵循 Fluent，形成鲜明 **platform-adaptive** 案例库。
+## 设计亮点
 
-## UX 原则与产品影响
+Fluent：Mica/Acrylic 背景、rounded corner 8px scale、Segoe UI Variable。NavigationView、CommandBar 模式。iOS：UITabBar、UINavigationBar large title→inline collapse、SF Symbols multi-weight。Safe area、Dynamic Type、Vibrancy label。Both 强调 motion 有意义；Fluent Reveal vs iOS subtle fade。Dark mode semantic color 各自体系不可硬套 hex。
 
-| 维度 | Fluent（Windows） | iOS HIG |
-|------|-------------------|---------|
-| 导航 | NavigationView / Pivot | Tab Bar + Navigation Stack |
-| 材质 | Acrylic / Mica | Blur + Vibrancy |
-| 触控反馈 | Reveal / Hover | Highlight + Haptics |
-|  typography | Segoe UI Variable | San Francisco |
-| 对话框 | ContentDialog | Sheet / Alert |
+## 使用体验
 
-跨平台团队常维护 **platform-specific component wrappers**，共享 business logic 但 swap 视觉与交互细节，避免「 Android 套 iOS 皮」的 uncanny valley。
+Cross-platform app 用 platform detection 切换 component（Settings on iOS vs Windows）。Design token 抽象 layer color、spacing，platform file 实现细节。TestFlight 与 Windows Insider 分别验证。Accessibility：VoiceOver rotor vs Narrator landmark。Documentation 常读 Apple HIG 与 Fluent 2 docs 并排对照 tab pattern、settings layout。
 
-## 冷知识
+## 文化影响
 
-- Fluent 图标系统（Segoe Fluent Icons）与 SF Symbols 均支持可变字重，但 licensing 不同。
-- Windows 11 圆角窗口与居中 Taskbar 借鉴了部分 mobile aesthetic，Fluent 与 HIG 边界在模糊。
-- Xbox UI 也属 Fluent 家族，强调 ten-foot UI 与 gamepad 焦点导航。
+「iOS clone」Android 时代结束，用户期望 platform-native feel。Microsoft Fluent 从 Windows 8 metro 演进至 today  softer Mica。Apple visionOS 引入 eye/hand UI 新章节。Enterprise app 在 BYOD 环境必须 fluent+iOS 双精通，design system 多维护 platform theme package。
 
 ## 参考与延伸阅读
 
-- [Microsoft Fluent Design](https://fluent2.microsoft.design/)
 - [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
-- [Material Design：Platform adaptation](https://m3.material.io/foundations/adaptation)
+- [Fluent 2 Design System](https://fluent2.microsoft.design/)
+- [SF Symbols](https://developer.apple.com/sf-symbols/)

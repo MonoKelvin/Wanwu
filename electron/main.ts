@@ -19,6 +19,9 @@ import { LibraryService } from './services/library/service'
 import { LinksService } from './services/links/service'
 import { RssService } from './services/rss/service'
 import { MediaService } from './services/media/service'
+import { NotesService } from './services/notes/service'
+import { SqliteNotesStorage } from './services/notes/storage'
+import { SqliteUserDataGateway, type UserDataGateway } from './services/storage/userDataGateway'
 import { resolveWanwuPath } from './services/data/paths'
 import { applyRssAutoRefreshSchedule } from './services/rss/scheduler'
 import { runStartupLibrarySeed } from './services/library/seed'
@@ -89,7 +92,9 @@ const services = {
   library: null as LibraryService | null,
   links: null as LinksService | null,
   rss: null as RssService | null,
-  media: null as MediaService | null
+  media: null as MediaService | null,
+  notes: null as NotesService | null,
+  userData: null as UserDataGateway | null
 }
 
 async function loadDevRenderer(win: BrowserWindow, urls: string[]): Promise<void> {
@@ -205,6 +210,8 @@ async function initServices(): Promise<void> {
   services.links = new LinksService(userData)
   services.rss = new RssService(services.db)
   services.media = new MediaService(userData)
+  services.userData = new SqliteUserDataGateway(services.db)
+  services.notes = new NotesService(new SqliteNotesStorage(services.userData, userData))
   registerIpcHandlers(services)
   applyRssAutoRefreshSchedule(services)
 }

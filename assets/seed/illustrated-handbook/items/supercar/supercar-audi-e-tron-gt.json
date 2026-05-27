@@ -3,7 +3,7 @@
   "slug": "supercar-audi-e-tron-gt",
   "subCategoryId": "car-germany",
   "name": "奥迪 e-tron GT",
-  "summary": "与 Taycan 同平台电动 GT，quattro 与优雅轿跑线条。",
+  "summary": "与 Taycan 共享 J1 平台的纯电四门 GT，RS 版约 646 hp。",
   "tags": [
     "精密工程",
     "德国",
@@ -13,8 +13,10 @@
   "specs": {
     "首发年份": "2021",
     "厂商": "Audi",
-    "动力": "纯电",
+    "动力形式": "纯电双电机 quattro",
     "最大功率": "646 hp",
+    "电池容量": "93.4 kWh",
+    "0-100 km/h": "约 3.3 秒",
     "平台": "J1",
     "产地": "德国"
   },

@@ -1,57 +1,27 @@
 # Nespresso 咖啡机
 
-Nespresso 胶囊咖啡系统以铝胶囊、高压萃取与品牌精品店体验重塑家庭咖啡消费。
+Nespresso 是 Nestlé 旗下胶囊咖啡系统，1986 年面向办公市场，后进入家用。工业设计上，各代 Vertuo、Original 机型以 compact footprint、 lever 或 one-touch 操作与 premium 材质（Inissia 塑料到 Creatista 不锈钢）建立「厨房小家电中的奢侈品」定位。
 
-![Nespresso 胶囊](https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Nespresso_capsules.jpg/640px-Nespresso_capsules.jpg)
+![Nespresso 胶囊咖啡机](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Nespresso_Machine.jpg/640px-Nespresso_Machine.jpg)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+Nespresso 与 Eric Favre 发明胶囊萃取概念；近年与 De'Longhi、Breville、Sage 等合作生产机器，并与 Apple 前设计团队有关联的联名款。George Clooney 广告强化 lifestyle。Vertuo 线采用 centrifusion 读取胶囊条码，Original 线维持 19 bar 高压经典。胶囊铝壳回收计划 Nespresso 在多国推广。
 
-## 背景与历史
+## 设计亮点
 
-1986 年雀巢推出；George Clooney 广告提升奢华感。Vertuo 离心技术拓展美式市场。
+Original 系列 19 bar 泵压、25 秒 espressos 标准化；胶囊刺穿 simultaneous 注水密封萃取，减少 skill barrier。Creatista Pro 与 Breville 合作加入 steam wand 与 touch screen barista 控制。Vertuo 离心技术适配大杯 coffee，胶囊尺寸与 Original 不互通。机身色彩年度更新，部分采用 chrome 与 matte 双 finish。水箱、胶囊仓 hidden 在 compact 体积内。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+预热 15–25 秒，一键出杯；口味一致性高但 customization 低于 semi-auto 机。胶囊成本高于豆机，胜在便利与 cleanup。Creatista 可打奶泡做 latte art。Vertuo 适合美式大杯用户；Original 适合 espresso purist。需定期 descaling 与 rinse。第三方 compatible 胶囊存在，官方强调原厂品质与 machine warranty。
 
-## 工程与设计亮点
+## 文化影响
 
-19 bar 泵压萃取；胶囊铝壳保鲜。专业机 Pro 系列面向小型办公室。
+Nespresso 推动 capsule 浪费与铝回收讨论，也定义 office pantry 标准。设计奖项与 Milan Salone 展示强化 premium 小家电形象。竞品 Keurig、illy 采用不同 capsule 标准，形成 lock-in 生态战争。在中国都市白领厨房，Nespresso 常作为「第一台咖啡机」与社交话题；对工业设计，它是「razor-blade 商业模式 + 紧凑造型」经典案例。
 
-若你关心技术细节，可结合官方白皮书、拆解视频与第三方评测交叉验证，纸面参数与实测常有温度、噪音或耐久差异。
+## 参考与延伸阅读
 
-
-## 文化地位与影响
-
-胶囊环保争议与回收计划并存；第三方兼容胶囊法律战多年。
-
-媒体报道、二手行情与社交话题会影响公众认知，有时比参数表更能解释「它为何经典」。
-
-
-## 冷知识
-
-- 名称 Nespresso 为 Nestlé + Espresso。
-- 限量版胶囊配色常秒罄。
-- 与皮克斯《雀巢阴谋》无关但常被调侃。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
-
-
-
-**延伸阅读建议**：可对照中文百科梳理时间线，再结合 1–2 条权威访谈或官方页面核对细节；若用于图鉴展示，请以可访问的图片授权与事实核查为准。
-
-
-
-**常见误区**：把影视、游戏或广告中的形象当作现实规格，容易高估性能或低估维护成本；把单一评测当作全体结论，也可能忽略地区差异与年款改款。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。
-
-**适合谁读**：若你正在做选购、收藏或文化入门，建议把「参数表」与「长期使用体验」分开看待——前者便于对比，后者决定日常是否顺手。可收藏本页链接，结合图鉴中的规格卡片一起查看。
-
-**阅读提示**：条目信息会随版本、地区与年份更新；若你发现与最新官方资料不符，欢迎以百科与制造商页面为准进行核对。图鉴用途请优先使用境内可稳定打开的图片直链，并避免将未证实传闻写作定论。## 参考与延伸阅读
-
-- [Nespresso](https://www.nespresso.com/)
-- [维基百科](https://en.wikipedia.org/wiki/Nespresso)
+- [Nespresso 官网](https://www.nespresso.com/)
+- [维基百科：Nespresso](https://en.wikipedia.org/wiki/Nespresso)
+- [Nestlé Nespresso 可持续发展](https://www.nestle.com/brands/coffee/nespresso)

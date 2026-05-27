@@ -1,39 +1,27 @@
-# Notion 风格界面
+# Notion 风格
 
-「Notion 风格」指借鉴 Notion 的**块编辑、中性色生产力美学**——大量留白、细边框表格、低饱和 icon、Inter 系字体与 subtle hover 态。它已成为 SaaS 文档、wiki 与轻量 CRM 的常见视觉 shorthand，代表「工具感」而非「消费娱乐感」。
+Notion 风格指受 Notion 影响的 productivity UI 美学：高 whitespace、灰阶 typography hierarchy、block-based content、sidebar tree 导航与 subtle border card。代表产品含 Notion 本身、Craft、AppFlowy 及部分 SaaS docs 模块。
 
-![Notion 标志（维基共享资源）](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/320px-Notion-logo.svg.png)
+![Notion 风格文档界面](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/640px-Notion-logo.svg.png)
 
+## 设计师与品牌
 
-从读者角度，把「标准书描述」与「真实饲养体验」对照着看，更容易判断自己是否适合该主题：时间投入、预算、空间与家庭成员（老人、幼儿、其他宠物）都会改变答案。以下内容在常识基础上稍作延展，便于形成 3–5 分钟可读完的完整印象。
+Notion Labs 定义 category；开源 clone AppFlowy、AFFiNE 延续 visual language。Tailwind UI、Catalyst 模板含 similar doc layout。Font stack 常用 inter、system-ui；icon 线性 stroke 1.5px。
 
-## 背景与历史
+## 设计亮点
 
-Notion 2018–2020 年设计迭代确立当前语言：sidebar 树 + 全宽 canvas + floating toolbar。随后 **Coda、Affine、AppFlowy、飞书文档** 等不同程度采用类似 layout；Tailwind 社区出现大量 Notion clone UI kit。该风格与 **Linear、Vercel** 等 developer-tool aesthetic 共同定义了 2020s B2B SaaS 界面 wave。
+Canvas：max-width ~900px centered column，title 40px+ bold。Sidebar：240px fixed，hover reveal on mobile。Block hover 显示 ⋮⋮ handle 与 + insert。Database card view 缩略 cover image + property pill。Color accent 极少，靠 weight 与 spacing 分区。Dark mode 背景 #191919 非纯黑。Minimal icon：emoji cover 个性化。
 
-时间线与地域背景有助于理解它为何在特定年代走红，以及今日在收藏、实用或文化象征中的位置。
+## 使用体验
 
+Replication：CSS grid sidebar + main；TipTap/ProseMirror editor 实现 block。Slash menu `@tiptap/suggestion`。Performance 大 doc virtualize block list。Localization CJK 行高需 +0.1。Brand 差异化：在 Notion 骨架上加 accent color、custom font 避免 generic。
 
-## UX 原则与产品影响
+## 文化影响
 
-- **块模型 UI**：`/ command`、drag handle、turn into… 菜单成为用户心智模型。
-- **中性色主导**：背景 `#fff` / `#191919`，accent 仅用于 link 与 primary CTA，减少 distraction。
-- **Database-as-UI**：看板、表格、日历视图切换是核心 complexity，需统一 filter/sort UX。
-- **协作暗示**：avatar stack、live cursor、comment bubble 嵌入块旁，而非独立 chat 窗口。
-
-模仿 Notion 风格易流于 surface mimicry；真正难点是 **block CRDT 同步** 与深层 page graph 性能。
-
-## 冷知识
-
-- Notion 早期使用定制 serif 标题字体，后改为更 tool-like 的无衬线体系。
-- 「Notion-like」在 Product Hunt 上是高频 tag，也引发关于 design homogenization 的讨论。
-- 开源 clone「AppFlowy」用 Rust + Flutter 复刻块模型，说明风格背后是数据结构而非 CSS。
-
-趣闻应可核对来源；若仅流传于社群梗，建议标注为「说法之一」以免误作史实。
-
+「Notion aesthetic」渗透 indie SaaS landing 与 YC demo day slide。批评：convergence 致 boring sameness；辩护：readability 优先。中国语雀、飞书知识库在信息架构借鉴 block，视觉保留本土 enterprise 色。UI trend 周期或向 richer visual（Linear bold color）摆动。
 
 ## 参考与延伸阅读
 
-- [Notion 官网](https://www.notion.so/)
-- [Affine 开源知识库](https://affine.pro/)
-- [UI Trends：Productivity SaaS 界面分析](https://www.nngroup.com/articles/)
+- [Notion 官方](https://www.notion.so/)
+- [AppFlowy 开源](https://appflowy.io/)
+- [TipTap Editor](https://tiptap.dev/)
