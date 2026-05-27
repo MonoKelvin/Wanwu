@@ -1,23 +1,23 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { findLinkFolder } from '@features/library/links/linksFolderTree'
-import { browserBrandIconUrl } from '@library/links/browserBrandIcons'
+import { findLinkFolder } from '@modules/library/links/lib/linksFolderTree'
+import { browserBrandIconUrl } from '@modules/library/links/domain/browserBrandIcons'
 import {
   browserSourceForFolderSource,
   browserSourceForRootFolderId,
   defaultLinksEntryFolderId
-} from '@library/links/sources'
+} from '@modules/library/links/domain/sources'
 import type {
   BrowserSourceStatus,
   LinkBookmark,
   LinkFolder,
   LinksSyncResult
 } from '@shared/types/links'
-import type { CatalogNode } from '@library/types/catalog'
+import type { CatalogNode } from '@modules/library/core/types/catalog'
 import {
   bookmarkMatchesQuery,
   matchingFolderIdsForBookmarks
-} from '@features/library/links/linksSearch'
+} from '@modules/library/links/lib/linksSearch'
 
 export const LINKS_RECYCLE_BIN_ID = 'links-recycle-bin'
 export const LOCAL_COLLECTIONS_ROOT_ID = 'local-collections'

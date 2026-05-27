@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import ModuleSidebar from '@app/components/ModuleSidebar.vue'
@@ -7,7 +7,7 @@ import { useRouteModule } from '@app/composables/useRouteModule'
 import { useShellModule } from '@app/composables/useShellModule'
 import { MODULE_KEEP_ALIVE } from '@app/config/modules'
 import { moduleViewComponent } from '@app/shell/moduleShell'
-import ItemDetailView from '@features/item/ItemDetailView.vue'
+import ItemDetailView from '@modules/item/ItemDetailView.vue'
 import { useAppStore } from '@shared/stores/app'
 import { useSettingsStore } from '@shared/stores/settings'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'

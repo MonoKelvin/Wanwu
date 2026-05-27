@@ -34,13 +34,13 @@ declare module '@renderer/*/*.vue' {
   export default component
 }
 
-declare module '@features/*.vue' {
+declare module '@library/*.vue' {
   import type { DefineComponent } from 'vue'
   const component: DefineComponent<object, object, unknown>
   export default component
 }
 
-declare module '@features/*/*.vue' {
+declare module '@library/*/*.vue' {
   import type { DefineComponent } from 'vue'
   const component: DefineComponent<object, object, unknown>
   export default component

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 defineOptions({ name: 'RssView' })
 
 import { computed, onMounted, ref, watch } from 'vue'
@@ -12,7 +12,7 @@ import { DEFAULT_RSS_DISPLAY } from '@shared/types/rss'
 import ModulePageLayout from '@app/components/ModulePageLayout.vue'
 import PageHeader from '@app/components/PageHeader.vue'
 import EmptyState from '@app/components/EmptyState.vue'
-import RssEntryCard from '@features/rss/RssEntryCard.vue'
+import RssEntryCard from '@modules/rss/RssEntryCard.vue'
 
 const route = useRoute()
 const rssStore = useRssStore()

@@ -1,8 +1,8 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+﻿import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupModulePathMemory } from '@app/router/moduleMemory'
 import { useSettingsStore } from '@shared/stores/settings'
 import { resolveStartupPath } from '@shared/utils/startupModule'
-import { isLibraryMajorId } from '@library/config/majors'
+import { isLibraryMajorId } from '@modules/library/core/config/majors'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -56,13 +56,13 @@ const router = createRouter({
           path: 'illustrated-handbook/:catId?/:subId?',
           name: 'library-illustrated-handbook',
           component: () =>
-            import('@modules/library/illustrated-handbook/IllustratedHandbookView.vue'),
+            import('@modules/library/illustrated-handbook/views/IllustratedHandbookView.vue'),
           meta: { module: 'library', major: 'illustrated-handbook', title: '图鉴' }
         },
         {
           path: 'links/:folderId?',
           name: 'library-links',
-          component: () => import('@modules/library/links/LinksView.vue'),
+          component: () => import('@modules/library/links/views/LinksView.vue'),
           meta: { module: 'library', major: 'links', title: '链接' }
         }
       ]
@@ -94,7 +94,7 @@ const router = createRouter({
     {
       path: '/item/:source/:id',
       name: 'item-detail',
-      component: () => import('@features/item/ItemDetailView.vue'),
+      component: () => import('@modules/item/ItemDetailView.vue'),
       meta: { fullscreen: true }
     }
   ]

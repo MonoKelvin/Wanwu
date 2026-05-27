@@ -1,16 +1,16 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 defineOptions({ name: 'SettingsView' })
 
 import { computed, onMounted, ref } from 'vue'
 import { useSettingsStore } from '@shared/stores/settings'
-import DataMigrateDialog from '@features/settings/DataMigrateDialog.vue'
+import DataMigrateDialog from '@modules/settings/DataMigrateDialog.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
-import SettingsAppSection from '@features/settings/sections/SettingsAppSection.vue'
-import SettingsRssSection from '@features/settings/sections/SettingsRssSection.vue'
-import SettingsDataSection from '@features/settings/sections/SettingsDataSection.vue'
-import SettingsAboutSection from '@features/settings/sections/SettingsAboutSection.vue'
-import { SETTINGS_NAV_ITEMS } from '@features/settings/sections/settingsNav'
-import type { SettingsSection } from '@features/settings/sections/types'
+import SettingsAppSection from '@modules/settings/sections/SettingsAppSection.vue'
+import SettingsRssSection from '@modules/settings/sections/SettingsRssSection.vue'
+import SettingsDataSection from '@modules/settings/sections/SettingsDataSection.vue'
+import SettingsAboutSection from '@modules/settings/sections/SettingsAboutSection.vue'
+import { SETTINGS_NAV_ITEMS } from '@modules/settings/sections/settingsNav'
+import type { SettingsSection } from '@modules/settings/sections/types'
 
 const settingsStore = useSettingsStore()
 

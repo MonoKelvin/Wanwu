@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 defineOptions({ name: 'PersonalView' })
 
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
@@ -10,8 +10,8 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import ModulePageLayout from '@app/components/ModulePageLayout.vue'
 import PageHeader from '@app/components/PageHeader.vue'
 import EmptyState from '@app/components/EmptyState.vue'
-import FavoriteCard from '@features/personal/FavoriteCard.vue'
-import PersonalBackgroundEditor from '@features/personal/PersonalBackgroundEditor.vue'
+import FavoriteCard from '@modules/personal/FavoriteCard.vue'
+import PersonalBackgroundEditor from '@modules/personal/PersonalBackgroundEditor.vue'
 import ImageViewer from '@shared/components/ImageViewer.vue'
 import type { ImageViewerSlide } from '@shared/types/image-viewer'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'

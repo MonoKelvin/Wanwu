@@ -1,8 +1,8 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import LibraryCategoryPanel from '@features/library/LibraryCategoryPanel.vue'
-import RssSidebar from '@features/rss/RssSidebar.vue'
+import LibraryCategoryPanel from '@modules/library/core/components/LibraryCategoryPanel.vue'
+import RssSidebar from '@modules/rss/RssSidebar.vue'
 
 const route = useRoute()
 const module = computed(() => route.meta.module as string)

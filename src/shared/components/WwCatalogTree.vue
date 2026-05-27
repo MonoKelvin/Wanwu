@@ -1,12 +1,12 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import Tree from 'primevue/tree'
 import type { TreeNode } from 'primevue/treenode'
 import Badge from 'primevue/badge'
 import WwIcon from '@shared/components/WwIcon.vue'
 import { usePersistedTreeExpanded } from '@shared/composables/usePersistedTreeExpanded'
-import { filterTreeNodes } from '@library/catalog/filterTreeNodes'
-import { collectExpandableKeys } from '@library/utils/treeKeys'
+import { filterTreeNodes } from '@modules/library/core/catalog/filterTreeNodes'
+import { collectExpandableKeys } from '@modules/library/core/utils/treeKeys'
 import type { WwIconName } from '@shared/icons/registry'
 
 const props = withDefaults(

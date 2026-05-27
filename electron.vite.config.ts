@@ -55,9 +55,9 @@ export default defineConfig({
         '@': resolve(__dirname, 'src'),
         '@app': resolve(__dirname, 'src/app'),
         '@modules': resolve(__dirname, 'src/modules'),
-        '@library': resolve(__dirname, 'src/library'),
+        '@library': resolve(__dirname, 'src/modules/library/core'),
         '@renderer': resolve(__dirname, 'src/renderer'),
-        '@features': resolve(__dirname, 'src/features'),
+        '@features': resolve(__dirname, 'src/modules'),
         ...sharedAlias,
         '@assets': resolve(__dirname, 'assets')
       }
