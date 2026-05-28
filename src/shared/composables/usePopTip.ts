@@ -5,6 +5,7 @@ import { useWanwuToast } from '@shared/composables/useWanwuToast'
 export const POP_TIP_COPY_MESSAGES = {
   link: '已复制链接',
   imageLink: '已复制图片链接',
+  image: '已复制图片',
   detail: '已复制详情',
   id: '已复制 ID'
 } as const

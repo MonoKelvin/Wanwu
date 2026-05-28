@@ -1,4 +1,4 @@
-﻿import { clipboard, dialog, shell } from 'electron'
+﻿import { clipboard, dialog, nativeImage, shell } from 'electron'
 import { randomUUID } from 'crypto'
 import { copyFileSync, existsSync, realpathSync, unlinkSync, writeFileSync } from 'fs'
 import { basename, dirname, extname, isAbsolute, join, normalize, resolve } from 'path'
@@ -136,6 +136,21 @@ export function copyTextToClipboard(text: string): void {
   clipboard.writeText(text)
 }
 
+export function copyImageToClipboard(
+  urlOrPath: string
+): { ok: boolean; error?: string } {
+  const abs = resolveMediaUrlToAbsolute(urlOrPath) ?? resolvePathOrMediaUrl(urlOrPath)
+  if (!abs || !existsSync(abs)) {
+    return { ok: false, error: 'not_found' }
+  }
+  const image = nativeImage.createFromPath(abs)
+  if (image.isEmpty()) {
+    return { ok: false, error: 'empty' }
+  }
+  clipboard.writeImage(image)
+  return { ok: true }
+}
+
 export async function pickImageFile(): Promise<{
   ok: boolean
   path?: string
@@ -206,6 +221,21 @@ export async function saveTextFile(
 
   writeFileSync(result.filePath, content, 'utf8')
   return { ok: true, path: result.filePath }
+}
+
+export function saveClipboardImageDataUrlToTemp(
+  dataUrl: string
+): { ok: boolean; path?: string; error?: string } {
+  const png = dataUrl.match(/^data:image\/png;base64,(.+)$/i)
+  const jpeg = dataUrl.match(/^data:image\/jpe?g;base64,(.+)$/i)
+  const webp = dataUrl.match(/^data:image\/webp;base64,(.+)$/i)
+  const gif = dataUrl.match(/^data:image\/gif;base64,(.+)$/i)
+  const match = png ?? jpeg ?? webp ?? gif
+  if (!match) return { ok: false, error: 'invalid_data_url' }
+  const ext = png ? 'png' : jpeg ? 'jpg' : webp ? 'webp' : 'gif'
+  const tempPath = join(tmpdir(), `wanwu-note-paste-${randomUUID()}.${ext}`)
+  writeFileSync(tempPath, Buffer.from(match[1], 'base64'))
+  return { ok: true, path: tempPath }
 }
 
 /** 大图查看器：远程图临时缓存路径，关闭查看器后释放 */

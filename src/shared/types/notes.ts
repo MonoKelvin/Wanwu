@@ -1,4 +1,13 @@
-export type NoteColor = 'yellow' | 'green' | 'blue' | 'pink' | 'purple' | 'gray'
+export type NoteColor =
+  | 'yellow'
+  | 'green'
+  | 'blue'
+  | 'pink'
+  | 'purple'
+  | 'gray'
+  | 'orange'
+  | 'teal'
+  | 'red'
 
 export interface NoteImage {
   id: string

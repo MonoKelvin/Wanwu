@@ -8,6 +8,7 @@ import { join } from 'path'
 import { randomUUID } from 'crypto'
 import { LIBRARY_CATEGORIES, loadLibraryCategories } from '../library/categories'
 import { seedDefaultRssFeeds } from '../rss/defaults'
+import { canonicalNoteBodyContent } from '@shared/notes/noteBodyContent'
 import type {
   NoteCreateInput,
   NoteImage,
@@ -438,8 +439,8 @@ export class DatabaseService {
   createNote(input?: NoteCreateInput): NoteItem {
     const id = randomUUID()
     const now = new Date().toISOString()
-    const title = input?.title?.trim() || '新建便笺'
-    const content = input?.content?.trim() || ''
+    const title = input?.title?.trim() ?? ''
+    const content = canonicalNoteBodyContent(input?.content ?? '')
     const color = this.normalizeNoteColor(input?.color)
     const pinned = input?.pinned ? 1 : 0
     this.userDb
@@ -456,7 +457,10 @@ export class DatabaseService {
     if (!current) return null
     const now = new Date().toISOString()
     const title = input.title?.trim() ?? current.title
-    const content = input.content ?? current.content
+    const content =
+      input.content !== undefined
+        ? canonicalNoteBodyContent(input.content)
+        : current.content
     const color = this.normalizeNoteColor(input.color ?? current.color)
     const pinned = input.pinned ?? current.pinned
     this.userDb
@@ -538,7 +542,10 @@ export class DatabaseService {
       value === 'blue' ||
       value === 'pink' ||
       value === 'purple' ||
-      value === 'gray'
+      value === 'gray' ||
+      value === 'orange' ||
+      value === 'teal' ||
+      value === 'red'
     ) {
       return value
     }

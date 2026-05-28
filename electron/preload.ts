@@ -129,9 +129,12 @@ const api: WanwuApi = {
     downloadFile: (params) => ipcRenderer.invoke('shell:downloadFile', params),
     showItemInFolder: (url) => ipcRenderer.invoke('shell:showItemInFolder', url),
     copyText: (text) => ipcRenderer.invoke('shell:copyText', text),
+    copyImage: (url) => ipcRenderer.invoke('shell:copyImage', url),
     pickImageFile: () => ipcRenderer.invoke('shell:pickImageFile'),
     savePngDataUrl: (params) => ipcRenderer.invoke('shell:savePngDataUrl', params),
     saveImageDataUrl: (params) => ipcRenderer.invoke('shell:saveImageDataUrl', params),
+    saveClipboardImageDataUrlToTemp: (params) =>
+      ipcRenderer.invoke('shell:saveClipboardImageDataUrlToTemp', params),
     saveTextFile: (params) => ipcRenderer.invoke('shell:saveTextFile', params),
     cacheImageForViewer: (url) => ipcRenderer.invoke('shell:cacheImageForViewer', url),
     releaseViewerImageCache: (cacheId) =>

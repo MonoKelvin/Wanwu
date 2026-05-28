@@ -1,12 +1,14 @@
 import { ipcMain, app, dialog, shell } from 'electron'
 import {
   cacheImageForViewer,
+  copyImageToClipboard,
   copyTextToClipboard,
   downloadMediaFile,
   openExternalUrl,
   pickImageFile,
   releaseViewerImageCache,
   saveImageDataUrl,
+  saveClipboardImageDataUrlToTemp,
   saveTextFile,
   savePngDataUrl,
   showMediaInFolder
@@ -572,6 +574,8 @@ export function registerIpcHandlers(services: AppServices): void {
     copyTextToClipboard(text)
   })
 
+  ipcMain.handle('shell:copyImage', (_e, url: string) => copyImageToClipboard(url))
+
   ipcMain.handle('shell:pickImageFile', () => pickImageFile())
 
   ipcMain.handle(
@@ -584,6 +588,11 @@ export function registerIpcHandlers(services: AppServices): void {
     'shell:saveImageDataUrl',
     (_e, params: { dataUrl: string; defaultName?: string }) =>
       saveImageDataUrl(params.dataUrl, params.defaultName)
+  )
+
+  ipcMain.handle(
+    'shell:saveClipboardImageDataUrlToTemp',
+    (_e, params: { dataUrl: string }) => saveClipboardImageDataUrlToTemp(params.dataUrl)
   )
 
   ipcMain.handle(

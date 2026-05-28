@@ -20,6 +20,8 @@
     "electron.vite.config.ts",
     "scripts/**/*",
     "src/shared/types/**/*",
-    "src/shared/constants/**/*"
-  ]
+    "src/shared/constants/**/*",
+    "src/shared/notes/**/*"
+  ],
+  "exclude": ["src/shared/types/menu.ts"]
 }

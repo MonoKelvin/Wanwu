@@ -43,7 +43,7 @@ const moreItems = computed((): WwMenuItem[] => {
   const sortItems: WwMenuItem[] = LINKS_SORT_OPTIONS.map((opt) => ({
     label: opt.label,
     wwIcon: opt.wwIcon,
-    class: sortMode.value === opt.value ? 'ww-page-toolbar-menu__item--active' : undefined,
+    checked: sortMode.value === opt.value,
     command: () => {
       sortMode.value = opt.value
     }

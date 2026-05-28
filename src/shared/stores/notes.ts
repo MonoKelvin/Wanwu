@@ -2,13 +2,24 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import type { NoteColor, NoteItem } from '@shared/types/notes'
 
-const NOTE_COLORS: NoteColor[] = ['yellow', 'green', 'blue', 'pink', 'purple', 'gray']
+const NOTE_COLORS: NoteColor[] = [
+  'yellow',
+  'green',
+  'blue',
+  'pink',
+  'purple',
+  'orange',
+  'teal',
+  'red',
+  'gray'
+]
 
 export const useNotesStore = defineStore('notes', () => {
   const notes = ref<NoteItem[]>([])
   const selectedNoteId = ref<string | null>(null)
   const loading = ref(false)
   const saving = ref(false)
+  const savingOps = ref(0)
 
   const selectedNote = computed(() => notes.value.find((n) => n.id === selectedNoteId.value) ?? null)
 
@@ -32,6 +43,7 @@ export const useNotesStore = defineStore('notes', () => {
   }
 
   async function updateNote(id: string, patch: Partial<Pick<NoteItem, 'title' | 'content' | 'pinned' | 'color'>>) {
+    savingOps.value += 1
     saving.value = true
     try {
       const updated = await window.wanwu.notes.updateNote({
@@ -39,10 +51,14 @@ export const useNotesStore = defineStore('notes', () => {
         ...patch
       })
       if (!updated) return null
-      notes.value = notes.value.map((note) => (note.id === id ? updated : note))
+      const idx = notes.value.findIndex((note) => note.id === id)
+      if (idx !== -1) {
+        notes.value[idx] = updated
+      }
       return updated
     } finally {
-      saving.value = false
+      savingOps.value = Math.max(0, savingOps.value - 1)
+      saving.value = savingOps.value > 0
     }
   }
 

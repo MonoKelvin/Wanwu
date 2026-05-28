@@ -46,6 +46,9 @@ export class SqliteNotesStorage implements NotesStorage {
   }
 
   addImage(noteId: string, filePath: string): NoteImage {
+    if (!existsSync(filePath)) {
+      throw new Error('source_not_found')
+    }
     const ext = extname(filePath).toLowerCase() || '.png'
     const relativePath = this.copyToMedia(noteId, filePath, ext)
     return this.userData.addNoteImage(noteId, relativePath)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
-import type { WwMenuItem } from '@shared/types/menu'
+import { wwMenuItemHasCheckColumn, type WwMenuItem } from '@shared/types/menu'
 
 const props = defineProps<{
   model: WwMenuItem[]
@@ -119,6 +119,13 @@ defineExpose({ show, hide, showBelowAnchor, toggleAnchor })
           :disabled="itemDisabled(item)"
           @click="runItem(item, $event)"
         >
+          <span
+            v-if="wwMenuItemHasCheckColumn(item)"
+            class="ww-action-menu__check"
+            aria-hidden="true"
+          >
+            <WwIcon v-if="item.checked" name="check" size="sm" />
+          </span>
           <WwIcon v-if="item.wwIcon" :name="item.wwIcon" size="sm" />
           <span class="ww-action-menu__label">{{ item.label }}</span>
         </button>
@@ -168,6 +175,18 @@ defineExpose({ show, hide, showBelowAnchor, toggleAnchor })
   text-align: left;
   cursor: pointer;
   transition: background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-action-menu__check {
+  flex-shrink: 0;
+  display: flex;
+  width: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.ww-action-menu__check .ww-icon {
+  color: var(--ww-ink);
 }
 
 .ww-action-menu__item .ww-icon {

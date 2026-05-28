@@ -166,6 +166,7 @@ export interface WanwuApi {
     }) => Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }>
     showItemInFolder: (pathOrUrl: string) => Promise<{ ok: boolean; error?: string }>
     copyText: (text: string) => Promise<void>
+    copyImage: (url: string) => Promise<{ ok: boolean; error?: string }>
     pickImageFile: () => Promise<{ ok: boolean; path?: string; canceled?: boolean }>
     savePngDataUrl: (params: {
       dataUrl: string
@@ -175,6 +176,9 @@ export interface WanwuApi {
       dataUrl: string
       defaultName?: string
     }) => Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }>
+    saveClipboardImageDataUrlToTemp: (params: {
+      dataUrl: string
+    }) => Promise<{ ok: boolean; path?: string; error?: string }>
     saveTextFile: (params: {
       content: string
       defaultName?: string
