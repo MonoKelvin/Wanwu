@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import IconField from 'primevue/iconfield'
 import InputText from 'primevue/inputtext'
+import EmptyState from '@app/components/EmptyState.vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import WwInputIcon from '@shared/components/WwInputIcon.vue'
 import type { NoteItem } from '@shared/types/notes'
@@ -18,10 +19,15 @@ const searchQuery = defineModel<string>('searchQuery', { required: true })
 const props = withDefaults(
   defineProps<{
     notes: NoteItem[]
+    /** 由 useNotesBrowse.listNotes 提供；不传则侧栏自行过滤（兼容） */
+    visibleNotes?: NoteItem[] | null
+    searchNoMatch?: boolean
     selectedNoteId: string | null
     loading?: boolean
   }>(),
   {
+    visibleNotes: null,
+    searchNoMatch: false,
     loading: false
   }
 )
@@ -67,19 +73,12 @@ const sortedNotes = computed(() =>
 )
 
 const filteredNotes = computed(() => {
+  if (props.visibleNotes != null) return props.visibleNotes
   const q = searchQuery.value.trim()
-  let list = q
-    ? sortedNotes.value
-        .filter((entry) => noteMatchesQuery(entry.note.title, entry.note.content, q))
-        .map((entry) => entry.note)
-    : sortedNotes.value.map((entry) => entry.note)
-
-  const selectedId = props.selectedNoteId
-  if (selectedId && !list.some((note) => note.id === selectedId)) {
-    const selected = props.notes.find((note) => note.id === selectedId)
-    if (selected) list = [selected, ...list]
-  }
-  return list
+  if (!q) return sortedNotes.value.map((entry) => entry.note)
+  return sortedNotes.value
+    .filter((entry) => noteMatchesQuery(entry.note.title, entry.note.content, q))
+    .map((entry) => entry.note)
 })
 
 const displayNotes = computed(() => {
@@ -102,10 +101,9 @@ const listMeta = computed(() => {
 })
 
 const emptyHint = computed(() => {
-  if (props.loading) return ''
+  if (props.loading || props.searchNoMatch) return ''
   if (props.notes.length === 0) return '还没有便笺'
-  if (searchQuery.value.trim()) return '没有匹配的便笺'
-  return '还没有便笺'
+  return ''
 })
 
 function formatRelativeTime(iso: string): string {
@@ -227,6 +225,14 @@ onBeforeUnmount(() => {
         </button>
       </template>
 
+      <EmptyState
+        v-else-if="searchNoMatch"
+        class="ww-notes-search-empty"
+        variant="empty"
+        title="没有匹配的便笺"
+        description="试试缩短或更换关键词"
+      />
+
       <p v-else class="ww-notes-sidebar__hint">{{ emptyHint }}</p>
     </div>
     <WwContextMenu ref="menuRef" :model="menuItems" />
@@ -291,6 +297,18 @@ onBeforeUnmount(() => {
   font-size: 0.75rem;
   color: var(--ww-ink-faint);
   text-align: center;
+}
+
+.ww-notes-search-empty {
+  flex: 1;
+  min-height: 0;
+  justify-content: center;
+  padding: 1rem 0.5rem 2rem;
+}
+
+.ww-notes-search-empty :deep(.ww-empty-state__card) {
+  width: 100%;
+  max-width: none;
 }
 
 .ww-notes-item {

@@ -40,4 +40,6 @@ export interface NoteUpdateInput {
   content?: string
   color?: NoteColor
   pinned?: boolean
+  /** 默认 true；切换便笺时静默保存可设为 false，避免 updatedAt 变化导致列表重排 */
+  touchUpdatedAt?: boolean
 }

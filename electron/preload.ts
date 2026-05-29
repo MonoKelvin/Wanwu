@@ -105,6 +105,7 @@ const api: WanwuApi = {
       getBatchState: () => ipcRenderer.invoke('notes:popout:getBatchState'),
       toggleAllVisibility: () => ipcRenderer.invoke('notes:popout:toggleAllVisibility'),
       restore: () => ipcRenderer.invoke('notes:popout:restore'),
+      rendererReady: () => ipcRenderer.send('notes:popout:renderer-ready'),
       saveScroll: (params) => ipcRenderer.invoke('notes:popout:saveScroll', params),
       closeCurrent: (scrollTop) => ipcRenderer.invoke('notes:popout:closeCurrent', scrollTop),
       toggleAlwaysOnTop: (noteId) =>
@@ -163,6 +164,11 @@ const api: WanwuApi = {
     getSettings: () => ipcRenderer.invoke('app:getSettings'),
     updateSettings: (settings: unknown) => ipcRenderer.invoke('app:updateSettings', settings),
     patchSettings: (patch: unknown) => ipcRenderer.invoke('app:patchSettings', patch),
+    onAppSettingsChanged: (listener: (settings: unknown) => void) => {
+      const handler = (_: unknown, settings: unknown) => listener(settings)
+      ipcRenderer.on('app:settings-changed', handler)
+      return () => ipcRenderer.removeListener('app:settings-changed', handler)
+    },
     createBackup: () => ipcRenderer.invoke('app:createBackup'),
     restoreBackup: () => ipcRenderer.invoke('app:restoreBackup'),
     clearCache: () => ipcRenderer.invoke('app:clearCache'),

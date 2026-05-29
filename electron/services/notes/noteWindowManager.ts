@@ -1,4 +1,12 @@
-import { app, BrowserWindow, nativeImage, screen, type Point, type Rectangle } from 'electron'
+import {
+  app,
+  BrowserWindow,
+  nativeImage,
+  screen,
+  type Point,
+  type Rectangle,
+  type WebContents
+} from 'electron'
 import { existsSync } from 'fs'
 import { join } from 'path'
 import type { NoteItem } from '../../../src/shared/types/notes'
@@ -28,6 +36,7 @@ interface PopoutEntry {
   win: BrowserWindow
   alwaysOnTop: boolean
   hidden: boolean
+  revealTimer?: ReturnType<typeof setTimeout>
 }
 
 const popouts = new Map<string, PopoutEntry>()
@@ -53,17 +62,17 @@ function popoutHash(noteId: string): string {
 }
 
 async function loadPopoutRenderer(win: BrowserWindow, noteId: string): Promise<void> {
-  const hash = popoutHash(noteId)
+  const hash = popoutHash(noteId).replace(/^\//, '')
   if (isDev() && process.env.ELECTRON_RENDERER_URL) {
     const base = process.env.ELECTRON_RENDERER_URL.replace(/\/$/, '')
-    await win.loadURL(`${base}/#${hash}`)
+    await win.loadURL(`${base}/#/${hash}`)
     return
   }
   const file = rendererIndexPath()
   if (!existsSync(file)) {
     throw new Error(`renderer not found: ${file}`)
   }
-  await win.loadFile(file, { hash })
+  await win.loadFile(file, { hash: `/${hash}` })
 }
 
 function cursorPopoutBounds(anchor?: Point): Rectangle {
@@ -228,6 +237,43 @@ function createPopoutOptions(
   }
 }
 
+const POPOUT_REVEAL_FALLBACK_MS = 12_000
+
+function clearPopoutRevealTimer(entry: PopoutEntry): void {
+  if (entry.revealTimer) {
+    clearTimeout(entry.revealTimer)
+    entry.revealTimer = undefined
+  }
+}
+
+function revealPopoutWindow(noteId: string): void {
+  const entry = popouts.get(noteId)
+  if (!entry || entry.win.isDestroyed() || entry.hidden) return
+  clearPopoutRevealTimer(entry)
+  if (!entry.win.isVisible()) {
+    entry.win.show()
+    restorePopoutScroll(noteId, entry.win)
+    syncSessionVisibilityState(noteId)
+    notifyPopoutState(noteId, true, true)
+  }
+}
+
+function schedulePopoutRevealFallback(noteId: string, entry: PopoutEntry): void {
+  clearPopoutRevealTimer(entry)
+  entry.revealTimer = setTimeout(() => {
+    revealPopoutWindow(noteId)
+  }, POPOUT_REVEAL_FALLBACK_MS)
+}
+
+/** 渲染进程便笺页就绪后再显示窗口，避免先闪主界面 */
+export function markNotePopoutRendererReady(sender: WebContents): void {
+  for (const [noteId, entry] of popouts) {
+    if (entry.win.isDestroyed() || entry.win.webContents !== sender) continue
+    revealPopoutWindow(noteId)
+    return
+  }
+}
+
 export function broadcastToAllWindows(channel: string, payload: unknown): void {
   for (const win of BrowserWindow.getAllWindows()) {
     if (!win.isDestroyed()) {
@@ -323,21 +369,15 @@ export function openNotePopout(
     if (current) persistEntryState(noteId, current)
   })
 
-  win.once('ready-to-show', () => {
-    if (!win.isDestroyed()) {
-      win.show()
-      restorePopoutScroll(noteId, win)
-      syncSessionVisibilityState(noteId)
-      notifyPopoutState(noteId, true, true)
-    }
-  })
+  schedulePopoutRevealFallback(noteId, entry)
 
   void loadPopoutRenderer(win, noteId).catch((err) => {
     console.error('[wanwu] note popout load failed', noteId, err)
-    if (!win.isDestroyed()) win.show()
+    if (!win.isDestroyed()) revealPopoutWindow(noteId)
   })
 
   win.on('closed', () => {
+    clearPopoutRevealTimer(entry)
     popouts.delete(noteId)
     notifyPopoutState(noteId, false, false)
   })

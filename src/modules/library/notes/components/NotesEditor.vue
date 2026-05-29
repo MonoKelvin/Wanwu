@@ -46,7 +46,7 @@ const props = withDefaults(
     variant: 'embedded',
     popoutAlwaysOnTop: false,
     popoutOpen: false,
-    popoutToggleLabel: '显示独立窗口'
+    popoutToggleLabel: '打开独立窗口'
   }
 )
 
@@ -63,6 +63,15 @@ const emit = defineEmits<{
 }>()
 
 const isPopout = computed(() => props.variant === 'popout')
+
+/** 正向为将要执行的操作；激活态为点击后的撤销/关闭 */
+const listPinActionLabel = computed(() =>
+  props.note.pinned ? '取消置顶' : '置顶到列表'
+)
+const windowTopActionLabel = computed(() =>
+  props.popoutAlwaysOnTop ? '取消窗口置顶' : '窗口置顶'
+)
+const popoutOpenActionLabel = computed(() => props.popoutToggleLabel)
 
 function noteMediaUrl(relativePath: string): string | null {
   return toWanwuMediaUrl(relativePath)
@@ -322,7 +331,7 @@ function syncToDraft() {
   syncToDraftFromEditor(editor.value, { force: true })
 }
 
-defineExpose({ syncToDraft })
+defineExpose({ syncToDraft, hydrateFromDraft: hydrateEditorFromDraft })
 
 async function hydrateEditorFromDraft() {
   await nextTick()
@@ -336,13 +345,24 @@ async function hydrateEditorFromDraft() {
   applyingRemote = false
 }
 
+/** 以 props.note（store）为准同步草稿并灌入 Tiptap，避免搜索场景下父级草稿时序问题 */
+function applyNoteToEditor(note: NoteItem) {
+  applyingRemote = true
+  draftTitle.value = note.title ?? ''
+  draftContent.value = canonicalNoteBodyContent(note.content ?? '')
+  void hydrateEditorFromDraft().finally(() => {
+    applyingRemote = false
+  })
+}
+
 watch(
   () => props.note.id,
   (id, prevId) => {
     if (prevId !== undefined && id === prevId) return
     refreshBodyPlaceholder()
-    void hydrateEditorFromDraft()
-  }
+    applyNoteToEditor(props.note)
+  },
+  { immediate: true }
 )
 
 watch(
@@ -559,9 +579,10 @@ onBeforeUnmount(() => {
             <WwIconButton
               :icon="note.pinned ? 'arrow-down-from-line' : 'arrow-up-to-line'"
               compact
+              class="ww-notes-icon-btn--note-accent"
               :class="{ 'ww-notes-icon-btn--on': note.pinned }"
-              :ariaLabel="note.pinned ? '取消列表置顶' : '列表置顶'"
-              v-tooltip.bottom="note.pinned ? '取消列表置顶' : '列表置顶'"
+              :ariaLabel="listPinActionLabel"
+              v-tooltip.bottom="listPinActionLabel"
               @click="emit('togglePinned')"
             />
             <WwIconButton
@@ -574,9 +595,10 @@ onBeforeUnmount(() => {
             <WwIconButton
               :icon="popoutAlwaysOnTop ? 'pin-off' : 'pin'"
               compact
+              class="ww-notes-icon-btn--note-accent"
               :class="{ 'ww-notes-icon-btn--on': popoutAlwaysOnTop }"
-              :ariaLabel="popoutAlwaysOnTop ? '取消窗口置顶' : '窗口置顶'"
-              v-tooltip.bottom="popoutAlwaysOnTop ? '取消窗口置顶' : '窗口置顶'"
+              :ariaLabel="windowTopActionLabel"
+              v-tooltip.bottom="windowTopActionLabel"
               @click="emit('togglePopoutAlwaysOnTop')"
             />
             <WwIconButton
@@ -605,19 +627,21 @@ onBeforeUnmount(() => {
           <div class="ww-notes-editor__actions">
             <span class="ww-notes-editor__meta">更新于 {{ updatedLabel }}</span>
             <WwIconButton
-              icon="app-window"
+              :icon="popoutOpen ? 'square-arrow-up-left' : 'external-link'"
               compact
+              class="ww-notes-icon-btn--note-accent"
               :class="{ 'ww-notes-icon-btn--on': popoutOpen }"
-              :ariaLabel="popoutToggleLabel"
-              v-tooltip.bottom="popoutToggleLabel"
+              :ariaLabel="popoutOpenActionLabel"
+              v-tooltip.bottom="popoutOpenActionLabel"
               @click="(event: MouseEvent) => emit('togglePopout', { x: event.screenX, y: event.screenY })"
             />
             <WwIconButton
               :icon="note.pinned ? 'arrow-down-from-line' : 'arrow-up-to-line'"
               compact
+              class="ww-notes-icon-btn--note-accent"
               :class="{ 'ww-notes-icon-btn--on': note.pinned }"
-              :ariaLabel="note.pinned ? '取消置顶' : '置顶'"
-              v-tooltip.bottom="note.pinned ? '取消置顶' : '置顶'"
+              :ariaLabel="listPinActionLabel"
+              v-tooltip.bottom="listPinActionLabel"
               @click="emit('togglePinned')"
             />
             <WwIconButton
@@ -979,8 +1003,14 @@ onBeforeUnmount(() => {
   text-overflow: ellipsis;
 }
 
-.ww-notes-icon-btn--on {
-  color: var(--ww-ink) !important;
+/* 列表置顶 / 独立窗口 / 窗口置顶：仅激活态使用便笺主题色 */
+:deep(.ww-notes-icon-btn--note-accent.ww-notes-icon-btn--on) {
+  color: var(--ww-notes-accent) !important;
+}
+
+:deep(.ww-notes-icon-btn--note-accent.ww-notes-icon-btn--on:hover:not(:disabled)) {
+  color: var(--ww-notes-accent) !important;
+  filter: brightness(0.92);
 }
 
 .ww-notes-editor__body {

@@ -166,6 +166,14 @@ export const useSettingsStore = defineStore('settings', () => {
     applySettingsToDocument(settings.value)
   }
 
+  /** 主进程或其它窗口修改设置后同步（含主题） */
+  function syncFromRemote(remote: Partial<AppSettings>) {
+    const snapshot = settings.value
+    const merged = normalizeSettings({ ...snapshot, ...remote })
+    settings.value = merged
+    applySettingsToDocument(merged)
+  }
+
   watch(
     settings,
     (v) => {
@@ -189,6 +197,7 @@ export const useSettingsStore = defineStore('settings', () => {
     setWindowStateMode,
     setColorScheme,
     setNotesPopoutRestore,
-    resetAll
+    resetAll,
+    syncFromRemote
   }
 })

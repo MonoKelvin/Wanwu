@@ -455,7 +455,8 @@ export class DatabaseService {
   updateNote(input: NoteUpdateInput): NoteItem | null {
     const current = this.getNote(input.id)
     if (!current) return null
-    const now = new Date().toISOString()
+    const touchUpdatedAt = input.touchUpdatedAt !== false
+    const now = touchUpdatedAt ? new Date().toISOString() : current.updatedAt
     const title = input.title?.trim() ?? current.title
     const content =
       input.content !== undefined

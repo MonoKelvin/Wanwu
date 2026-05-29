@@ -229,22 +229,26 @@ export function useNotesDraft(options: UseNotesDraftOptions) {
   }
 
   watch(
-    () => options.selected.value?.id,
-    (id) => {
-      activeNoteId = id ?? null
-      const note = options.selected.value
-      if (!note) {
+    () => options.selected.value,
+    (note, prev) => {
+      const id = note?.id ?? null
+      const prevId = prev?.id ?? null
+      activeNoteId = id
+      if (!id) {
         hydrating = false
         options.draftTitle.value = ''
         options.draftContent.value = ''
         baselineTitle = ''
         baselineContent = ''
+        draftRevision = 0
         return
       }
+      if (!note) return
+      if (id === prevId && note === prev) return
       loadDraftFromNote(note)
       finishHydrate()
     },
-    { immediate: true }
+    { immediate: true, flush: 'sync' }
   )
 
   /** 其他窗口落盘后同步草稿（当前无未保存编辑时） */

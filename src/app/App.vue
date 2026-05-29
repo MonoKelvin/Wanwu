@@ -13,11 +13,14 @@ import { useSettingsStore } from '@shared/stores/settings'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { useNotePopoutFocusSync } from '@modules/library/notes/lib/useNotePopoutFocusSync'
 import { tryRestoreNotePopouts } from '@modules/library/notes/lib/useNotePopoutAutoRestore'
+import { isNotePopoutHash } from '@app/utils/notePopoutEntry'
 
 const route = useRoute()
 const settingsStore = useSettingsStore()
 const toast = useWanwuToast()
+const bootAsNotePopout = isNotePopoutHash()
 const isNotePopout = computed(() => Boolean(route.meta.notePopout))
+const showPopoutShell = computed(() => isNotePopout.value || bootAsNotePopout)
 
 useNotePopoutFocusSync()
 
@@ -25,15 +28,28 @@ function showLibraryNotice(text: string) {
   toast.info(text, '图鉴数据', { life: 12_000 })
 }
 
-onUnmounted(window.wanwu.app.onStartupNotice(showLibraryNotice))
+let stopSettingsSync: (() => void) | null = null
+const stopStartupNotice = window.wanwu.app.onStartupNotice(showLibraryNotice)
+
+onUnmounted(() => {
+  stopSettingsSync?.()
+  stopSettingsSync = null
+  stopStartupNotice()
+})
 
 onMounted(async () => {
+  stopSettingsSync = window.wanwu.app.onAppSettingsChanged((remote) => {
+    settingsStore.syncFromRemote(remote)
+  })
+
   if (!settingsStore.loaded) await settingsStore.load()
-  if (!isNotePopout.value && settingsStore.settings.notesPopoutRestore === 'on-startup') {
+  if (!showPopoutShell.value && settingsStore.settings.notesPopoutRestore === 'on-startup') {
     await tryRestoreNotePopouts('on-startup')
   }
-  for (const text of await window.wanwu.app.getStartupNotices()) {
-    showLibraryNotice(text)
+  if (!showPopoutShell.value) {
+    for (const text of await window.wanwu.app.getStartupNotices()) {
+      showLibraryNotice(text)
+    }
   }
 })
 </script>
@@ -41,14 +57,14 @@ onMounted(async () => {
 <template>
   <div
     class="flex h-full flex-col overflow-hidden"
-    :class="isNotePopout ? 'ww-note-popout-shell' : 'ww-app bg-ww-canvas'"
+    :class="showPopoutShell ? 'ww-note-popout-shell' : 'ww-app bg-ww-canvas'"
   >
     <Toast position="bottom-right" class="ww-toast-stack">
       <template #message="{ message }">
         <WwToastMessage :message="message" />
       </template>
     </Toast>
-    <template v-if="isNotePopout">
+    <template v-if="showPopoutShell">
       <WwPopTipHost />
       <RouterView class="min-h-0 flex-1" />
     </template>

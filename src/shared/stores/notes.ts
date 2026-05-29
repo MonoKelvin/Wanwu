@@ -34,19 +34,17 @@ export const useNotesStore = defineStore('notes', () => {
 
   function mergeRemoteNote(note: NoteItem) {
     const idx = notes.value.findIndex((n) => n.id === note.id)
-    const rest = notes.value.filter((n) => n.id !== note.id)
     if (idx === -1) {
-      notes.value = [note, ...rest]
+      notes.value = [note, ...notes.value]
       return
     }
-    rest.splice(idx, 0, note)
-    notes.value = rest
+    notes.value[idx] = note
   }
 
   function removeRemoteNote(noteId: string) {
     notes.value = notes.value.filter((n) => n.id !== noteId)
     if (selectedNoteId.value === noteId) {
-      selectedNoteId.value = notes.value[0]?.id ?? null
+      selectedNoteId.value = null
     }
   }
 
@@ -72,8 +70,8 @@ export const useNotesStore = defineStore('notes', () => {
     loading.value = true
     try {
       notes.value = await window.wanwu.notes.listNotes()
-      if (!selectedNoteId.value || !notes.value.some((n) => n.id === selectedNoteId.value)) {
-        selectedNoteId.value = notes.value[0]?.id ?? null
+      if (selectedNoteId.value && !notes.value.some((n) => n.id === selectedNoteId.value)) {
+        selectedNoteId.value = null
       }
     } finally {
       loading.value = false
@@ -112,7 +110,7 @@ export const useNotesStore = defineStore('notes', () => {
     if (!ok) return false
     notes.value = notes.value.filter((n) => n.id !== id)
     if (selectedNoteId.value === id) {
-      selectedNoteId.value = notes.value[0]?.id ?? null
+      selectedNoteId.value = null
     }
     return true
   }

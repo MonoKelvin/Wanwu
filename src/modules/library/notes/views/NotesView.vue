@@ -1,14 +1,15 @@
 <script setup lang="ts">
 defineOptions({ name: 'LibraryNotesView' })
 
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import ModulePageLayout from '@app/components/ModulePageLayout.vue'
 import PageHeader from '@app/components/PageHeader.vue'
 import EmptyState from '@app/components/EmptyState.vue'
 import WwButton from '@shared/components/WwButton.vue'
 import { useNotePopout, type PopoutScreenAnchor } from '@modules/library/notes/lib/useNotePopout'
 import { useNotePopoutsBatch } from '@modules/library/notes/lib/useNotePopoutsBatch'
-import { tryRestoreNotePopouts, useNotePopoutAutoRestoreOnEnter } from '@modules/library/notes/lib/useNotePopoutAutoRestore'
+import { useNotePopoutAutoRestoreOnEnter } from '@modules/library/notes/lib/useNotePopoutAutoRestore'
+import { useNotesBrowse } from '@modules/library/notes/lib/useNotesBrowse'
 import { useNotesStore } from '@shared/stores/notes'
 import type { NoteColor } from '@shared/types/notes'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
@@ -48,21 +49,44 @@ const notesStore = useNotesStore()
 const toast = useWanwuToast()
 const confirm = useWanwuConfirm()
 
-const searchQuery = ref('')
+const browse = useNotesBrowse()
+const {
+  searchQuery,
+  notes,
+  selectedNoteId,
+  sidebarSelectedId,
+  loading,
+  listNotes,
+  isSearchActive,
+  isSearchNoMatch,
+  showRightPane,
+  showPickHint,
+  pickedInSearch,
+  markPickedInSearch,
+  loadNotes
+} = browse
+
 const draftTitle = ref('')
 const draftContent = ref('')
 const notesEditorRef = ref<InstanceType<typeof NotesEditor> | null>(null)
-const selected = computed(() => notesStore.selectedNote)
-const selectedId = computed(() => selected.value?.id ?? null)
-const { isPopoutOpen, popoutToggleLabel, togglePopout } = useNotePopout(selectedId)
-const { scopeCount, anyVisible, batchLabel, toggleAllPopouts } = useNotePopoutsBatch()
+
+/** 用 id + 列表解析，避免 store 数组更新瞬间 selectedNote 为 null 导致草稿被清空 */
+const editorNote = computed(() => {
+  const id = selectedNoteId.value
+  if (!id) return null
+  return notes.value.find((n) => n.id === id) ?? null
+})
+
+const { isPopoutOpen, popoutToggleLabel, togglePopout } = useNotePopout(selectedNoteId)
+const { scopeCount, batchLabel, toggleAllPopouts } = useNotePopoutsBatch()
 
 useNotePopoutAutoRestoreOnEnter()
+
 const headerSubtitle = computed(() => {
-  const total = notesStore.notes.length
-  if (notesStore.loading) return '正在加载便笺...'
+  const total = notes.value.length
+  if (loading.value) return '正在加载便笺...'
   if (total === 0) return '轻量记录，自动保存'
-  const pinnedCount = notesStore.notes.filter((item) => item.pinned).length
+  const pinnedCount = notes.value.filter((item) => item.pinned).length
   return `共 ${total} 条${pinnedCount > 0 ? `，置顶 ${pinnedCount} 条` : ''}`
 })
 
@@ -89,7 +113,7 @@ const {
   cancelSave,
   flushDraft
 } = useNotesDraft({
-  selected,
+  selected: editorNote,
   draftTitle,
   draftContent,
   beforePersist: () => {
@@ -105,24 +129,29 @@ const {
 
 onMounted(async () => {
   try {
-    await notesStore.loadAll()
-    if (!notesStore.selectedNoteId && notesStore.notes.length > 0) {
-      notesStore.setSelected(notesStore.notes[0].id)
-    }
+    await loadNotes()
   } catch {
     toast.error('加载便笺失败')
   }
 })
 
 async function selectNote(id: string) {
-  if (notesStore.selectedNoteId === id) return
-  const leavingId = notesStore.selectedNoteId
-  const leavingContent = draftContent.value
-  await flushDraft()
-  if (leavingId) {
-    await pruneUnreferencedNoteImages(leavingId, leavingContent)
+  if (selectedNoteId.value === id && (!isSearchActive.value || pickedInSearch.value)) {
+    return
   }
+
+  notesEditorRef.value?.syncToDraft()
+  const leavingId = selectedNoteId.value
+
+  if (leavingId && leavingId !== id) {
+    await flushDraft()
+  }
+
+  markPickedInSearch()
   notesStore.setSelected(id)
+
+  await nextTick()
+  notesEditorRef.value?.hydrateFromDraft?.()
 }
 
 const unregisterPopoutSelectHandler = registerNotePopoutSelectHandler((id) => selectNote(id))
@@ -137,23 +166,15 @@ onBeforeUnmount(async () => {
   }
 })
 
-watch(
-  () => [notesStore.loading, notesStore.notes.length, notesStore.selectedNoteId, selected.value?.id] as const,
-  ([loading, size, selectedId, selectedResolvedId]) => {
-    if (loading) return
-    if (size <= 0) return
-    if (selectedId && selectedResolvedId) return
-    notesStore.setSelected(notesStore.notes[0]?.id ?? null)
-  },
-  { immediate: true }
-)
-
 async function onTogglePopout(anchor?: PopoutScreenAnchor) {
   notesEditorRef.value?.syncToDraft()
   await togglePopout(undefined, anchor)
 }
 
 async function createNote() {
+  if (isSearchActive.value) return
+  notesEditorRef.value?.syncToDraft()
+  await flushDraft()
   try {
     await notesStore.createNote()
   } catch {
@@ -162,7 +183,7 @@ async function createNote() {
 }
 
 async function togglePinned() {
-  const note = selected.value
+  const note = editorNote.value
   if (!note) return
   try {
     await notesStore.updateNote(note.id, { pinned: !note.pinned })
@@ -172,7 +193,7 @@ async function togglePinned() {
 }
 
 async function setColor(color: NoteColor) {
-  const note = selected.value
+  const note = editorNote.value
   if (!note || note.color === color) return
   try {
     await notesStore.updateNote(note.id, { color })
@@ -182,7 +203,7 @@ async function setColor(color: NoteColor) {
 }
 
 async function removeCurrent() {
-  const note = selected.value
+  const note = editorNote.value
   if (!note) return
   const ok = await confirm.ask({
     header: '删除便笺',
@@ -216,7 +237,7 @@ async function removeById(noteId: string) {
 }
 
 async function pickImage() {
-  const note = selected.value
+  const note = editorNote.value
   if (!note) return
   const picked = await window.wanwu.shell.pickImageFile()
   if (!picked.ok || !picked.path) return
@@ -228,7 +249,7 @@ async function pickImage() {
 }
 
 async function insertImageByPath(filePath: string) {
-  const note = selected.value
+  const note = editorNote.value
   if (!note || !filePath) return
   try {
     await notesStore.addImage(note.id, filePath)
@@ -312,7 +333,15 @@ async function onSidebarAction(payload: {
                 :disabled="scopeCount <= 0"
                 @click="toggleAllPopouts"
               />
-              <WwButton icon="plus" size="small" label="新建" class="ww-notes-create-btn" @click="createNote" />
+              <WwButton
+                icon="plus"
+                size="small"
+                label="新建"
+                class="ww-notes-create-btn"
+                :disabled="isSearchActive"
+                v-tooltip.bottom="isSearchActive ? '搜索时请先清空关键词再新建' : undefined"
+                @click="createNote"
+              />
             </div>
           </template>
         </PageHeader>
@@ -321,39 +350,56 @@ async function onSidebarAction(payload: {
       <div class="ww-notes-workspace">
         <NotesSidebar
           v-model:searchQuery="searchQuery"
-          :notes="notesStore.notes"
-          :selected-note-id="notesStore.selectedNoteId"
-          :loading="notesStore.loading"
+          :notes="notes"
+          :visible-notes="listNotes"
+          :search-no-match="isSearchNoMatch"
+          :selected-note-id="sidebarSelectedId"
+          :loading="loading"
           @select="selectNote"
           @action="onSidebarAction"
         />
 
-        <NotesEditor
-          v-if="selected"
-          ref="notesEditorRef"
-          v-model:draftTitle="draftTitle"
-          v-model:draftContent="draftContent"
-          :note="selected"
-          :note-colors="NOTE_COLORS"
-          :color-labels="COLOR_LABELS"
-          :popout-open="isPopoutOpen"
-          :popout-toggle-label="popoutToggleLabel"
-          @flush="flushDraft"
-          @toggle-pinned="togglePinned"
-          @set-color="setColor"
-          @pick-image="pickImage"
-          @insert-image-by-path="insertImageByPath"
-          @remove-note="removeCurrent"
-          @toggle-popout="onTogglePopout"
-        />
+        <!-- 始终占 2fr 列；隐藏时用 visibility 占位，避免列表被撑满（勿用 v-if/v-show 卸掉整栏） -->
+        <div
+          class="ww-notes-pane ww-notes-pane--editor"
+          :class="{ 'ww-notes-pane--inactive': !showRightPane }"
+          :aria-hidden="!showRightPane"
+        >
+          <NotesEditor
+            v-if="editorNote"
+            ref="notesEditorRef"
+            v-model:draftTitle="draftTitle"
+            v-model:draftContent="draftContent"
+            :note="editorNote"
+            :note-colors="NOTE_COLORS"
+            :color-labels="COLOR_LABELS"
+            :popout-open="isPopoutOpen"
+            :popout-toggle-label="popoutToggleLabel"
+            @flush="flushDraft"
+            @toggle-pinned="togglePinned"
+            @set-color="setColor"
+            @pick-image="pickImage"
+            @insert-image-by-path="insertImageByPath"
+            @remove-note="removeCurrent"
+            @toggle-popout="onTogglePopout"
+          />
 
-        <EmptyState
-          v-else-if="!notesStore.loading"
-          class="ww-notes-empty"
-          variant="empty"
-          title="还没有便笺"
-          description="点击右上角「新建」创建您的第一条便笺吧"
-        />
+          <EmptyState
+            v-else-if="showPickHint"
+            class="ww-notes-empty ww-notes-empty--pick"
+            variant="empty"
+            title="选择便笺"
+            description="点击左侧便笺进行浏览或编辑"
+          />
+
+          <EmptyState
+            v-else-if="!loading && notes.length === 0"
+            class="ww-notes-empty"
+            variant="empty"
+            title="还没有便笺"
+            description="点击右上角「新建」创建第一条"
+          />
+        </div>
       </div>
     </ModulePageLayout>
   </div>
@@ -378,6 +424,23 @@ async function onSidebarAction(payload: {
 
 .ww-notes-workspace > * {
   min-width: 0;
+}
+
+.ww-notes-pane--editor {
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ww-notes-pane--inactive {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.ww-notes-pane--editor > :deep(.ww-notes-editor-wrap) {
+  flex: 1;
+  min-height: 0;
 }
 
 .ww-notes-save-hint {
@@ -469,13 +532,14 @@ async function onSidebarAction(payload: {
 }
 
 .ww-notes-empty {
-  grid-column: 1 / -1;
+  flex: 1;
+  min-height: 0;
   justify-content: center;
-  padding-bottom: clamp(3.5rem, 14vh, 8rem);
+  padding-bottom: clamp(2rem, 10vh, 5rem);
 }
 
-.ww-notes-empty :deep(.ww-empty-state__card) {
-  transform: translateY(calc(-1 * clamp(0.75rem, 5vh, 2.5rem)));
+.ww-notes-empty--pick :deep(.ww-empty-state__card) {
+  transform: translateY(calc(-1 * clamp(0.5rem, 4vh, 2rem)));
 }
 
 @media (max-width: 960px) {
@@ -483,6 +547,10 @@ async function onSidebarAction(payload: {
     grid-template-columns: 1fr;
     grid-template-rows: minmax(11rem, 14rem) minmax(0, 1fr);
     gap: 0.625rem;
+  }
+
+  .ww-notes-pane--inactive {
+    display: none;
   }
 }
 </style>

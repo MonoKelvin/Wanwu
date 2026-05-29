@@ -30,6 +30,7 @@ import {
   broadcastNoteChanged,
   broadcastNoteDeleted,
   broadcastNoteImageRemoved,
+  broadcastToAllWindows,
   closeAllNotePopouts,
   closeNotePopout,
   closeNotePopoutFromSender,
@@ -45,7 +46,8 @@ import {
   restoreNotePopoutsFromSession,
   toggleNotePopoutVisibility,
   toggleNotePopoutAlwaysOnTop,
-  getPopoutsBatchState
+  getPopoutsBatchState,
+  markNotePopoutRendererReady
 } from '../services/notes/noteWindowManager'
 import { getNotePopoutVisibilityOverride } from '../services/notes/notePopoutPersistence'
 import type { UserDataGateway } from '../services/storage/userDataGateway'
@@ -361,6 +363,10 @@ export function registerIpcHandlers(services: AppServices): void {
 
   ipcMain.handle('notes:popout:restore', () => restoreNotePopoutsFromSession())
 
+  ipcMain.on('notes:popout:renderer-ready', (event) => {
+    markNotePopoutRendererReady(event.sender)
+  })
+
   ipcMain.handle(
     'notes:popout:saveScroll',
     (_e, params: { noteId: string; scrollTop: number }) => {
@@ -578,6 +584,13 @@ export function registerIpcHandlers(services: AppServices): void {
     }
   )
 
+  function publishAppSettings(next: AppSettings): AppSettings {
+    services.userData?.updateAppSettings(next)
+    applyRssAutoRefreshSchedule(services)
+    broadcastToAllWindows('app:settings-changed', next)
+    return next
+  }
+
   ipcMain.handle('app:getSettings', () => {
     return normalizeAppSettings(services.userData?.getAppSettings() ?? {})
   })
@@ -585,17 +598,13 @@ export function registerIpcHandlers(services: AppServices): void {
   ipcMain.handle('app:updateSettings', (_e, settings: unknown) => {
     const current = normalizeAppSettings(services.userData?.getAppSettings() ?? {})
     const next = mergeAppSettings(settings as Partial<AppSettings>, current)
-    services.userData?.updateAppSettings(next)
-    applyRssAutoRefreshSchedule(services)
-    return next
+    return publishAppSettings(next)
   })
 
   ipcMain.handle('app:patchSettings', (_e, patch: unknown) => {
     const current = normalizeAppSettings(services.userData?.getAppSettings() ?? {})
     const next = mergeAppSettings(patch as Partial<AppSettings>, current)
-    services.userData?.updateAppSettings(next)
-    applyRssAutoRefreshSchedule(services)
-    return next
+    return publishAppSettings(next)
   })
 
   ipcMain.handle('app:createBackup', async () => {
@@ -628,8 +637,8 @@ export function registerIpcHandlers(services: AppServices): void {
 
   ipcMain.handle('app:resetSettings', () => {
     if (services.db) resetAppSettingsInDb(services.db)
-    applyRssAutoRefreshSchedule(services)
-    return normalizeAppSettings(DEFAULT_APP_SETTINGS)
+    const next = normalizeAppSettings(DEFAULT_APP_SETTINGS)
+    return publishAppSettings(next)
   })
 
   ipcMain.handle('app:exportDiagnostics', async () => {

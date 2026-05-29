@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineOptions({ name: 'NotePopoutView' })
 
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import NotesEditor from '@modules/library/notes/components/NotesEditor.vue'
 import { useNotesDraft } from '@modules/library/notes/lib/useNotesDraft'
@@ -95,6 +95,11 @@ const { flushDraft } = useNotesDraft({
   }
 })
 
+async function signalPopoutRendererReady() {
+  await nextTick()
+  window.wanwu.notes.popout.rendererReady()
+}
+
 onMounted(async () => {
   notesStore.bindRemoteSync()
   if (!notesStore.notes.length && !notesStore.loading) {
@@ -105,6 +110,7 @@ onMounted(async () => {
     }
   }
   await refreshState()
+  await signalPopoutRendererReady()
 })
 
 onBeforeUnmount(async () => {

@@ -12,10 +12,10 @@ export function useNotePopout(noteId: Ref<string | null | undefined>) {
   const userDismissed = ref(false)
 
   const popoutToggleLabel = computed(() => {
-    if (!isPopoutOpen.value) return '显示独立窗口'
-    if (isPopoutVisible.value) return '隐藏独立窗口'
-    if (userDismissed.value) return '显示独立窗口'
-    return '保持隐藏'
+    if (!isPopoutOpen.value) return '打开独立窗口'
+    if (isPopoutVisible.value) return '关闭独立窗口'
+    if (userDismissed.value) return '打开独立窗口'
+    return '显示独立窗口'
   })
 
   async function refreshUserDismissed(id: string) {

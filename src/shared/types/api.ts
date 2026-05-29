@@ -104,6 +104,7 @@ export interface WanwuApi {
       getBatchState: () => Promise<{ scopeCount: number; openCount: number; visibleCount: number }>
       toggleAllVisibility: () => Promise<{ scopeCount: number; openCount: number; visibleCount: number }>
       restore: () => Promise<{ restoredCount: number }>
+      rendererReady: () => void
       saveScroll: (params: { noteId: string; scrollTop: number }) => Promise<void>
       closeCurrent: (scrollTop?: number) => Promise<void>
       toggleAlwaysOnTop: (noteId: string) => Promise<{ alwaysOnTop: boolean }>
@@ -175,6 +176,7 @@ export interface WanwuApi {
     getSettings: () => Promise<AppSettings>
     updateSettings: (settings: AppSettings) => Promise<AppSettings>
     patchSettings: (patch: Partial<AppSettings>) => Promise<AppSettings>
+    onAppSettingsChanged: (listener: (settings: AppSettings) => void) => () => void
     createBackup: () => Promise<
       | { ok: true; path: string; bytes: number }
       | { ok: false; canceled?: boolean; error?: string }
