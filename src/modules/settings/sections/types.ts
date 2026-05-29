@@ -1,1 +1,1 @@
-export type SettingsSection = 'app' | 'rss' | 'data' | 'about'
+export type SettingsSection = 'app' | 'library' | 'rss' | 'data' | 'about'

@@ -2,8 +2,10 @@ import type { Component } from 'vue'
 import {
     AppWindow,
     ArrowDownAZ,
+    ArrowDownFromLine,
     ArrowLeft,
     ArrowRight,
+    ArrowUpToLine,
     BookOpen,
     Box,
     CalendarPlus,
@@ -72,7 +74,9 @@ export const WW_ICON_STROKE = 1.5
 export const wwIcons = {
     'app-window': AppWindow,
     'arrow-down-a-z': ArrowDownAZ,
+    'arrow-down-from-line': ArrowDownFromLine,
     'arrow-left': ArrowLeft,
+    'arrow-up-to-line': ArrowUpToLine,
     'arrow-right': ArrowRight,
     'book-open': BookOpen,
     box: Box,

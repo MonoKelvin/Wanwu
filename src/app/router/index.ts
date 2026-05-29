@@ -109,6 +109,12 @@ const router = createRouter({
       name: 'item-detail',
       component: () => import('@modules/item/ItemDetailView.vue'),
       meta: { fullscreen: true }
+    },
+    {
+      path: '/note-popout/:noteId',
+      name: 'note-popout',
+      component: () => import('@modules/library/notes/views/NotePopoutView.vue'),
+      meta: { notePopout: true }
     }
   ]
 })

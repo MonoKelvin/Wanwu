@@ -6,6 +6,7 @@ import { useSettingsStore } from '@shared/stores/settings'
 import DataMigrateDialog from '@modules/settings/DataMigrateDialog.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import SettingsAppSection from '@modules/settings/sections/SettingsAppSection.vue'
+import SettingsLibrarySection from '@modules/settings/sections/SettingsLibrarySection.vue'
 import SettingsRssSection from '@modules/settings/sections/SettingsRssSection.vue'
 import SettingsDataSection from '@modules/settings/sections/SettingsDataSection.vue'
 import SettingsAboutSection from '@modules/settings/sections/SettingsAboutSection.vue'
@@ -67,6 +68,7 @@ async function refreshPaths() {
 
       <div class="ww-settings-panel__body">
         <SettingsAppSection v-show="activeSection === 'app'" />
+        <SettingsLibrarySection v-show="activeSection === 'library'" />
         <SettingsRssSection v-show="activeSection === 'rss'" />
         <SettingsDataSection
           v-show="activeSection === 'data'"

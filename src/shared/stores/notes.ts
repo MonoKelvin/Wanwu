@@ -2,6 +2,15 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import type { NoteColor, NoteItem } from '@shared/types/notes'
 
+let remoteSyncBound = false
+let remoteSyncUnsubs: Array<() => void> = []
+
+function unbindRemoteSync() {
+  remoteSyncUnsubs.forEach((fn) => fn())
+  remoteSyncUnsubs = []
+  remoteSyncBound = false
+}
+
 const NOTE_COLORS: NoteColor[] = [
   'yellow',
   'green',
@@ -23,7 +32,43 @@ export const useNotesStore = defineStore('notes', () => {
 
   const selectedNote = computed(() => notes.value.find((n) => n.id === selectedNoteId.value) ?? null)
 
+  function mergeRemoteNote(note: NoteItem) {
+    const idx = notes.value.findIndex((n) => n.id === note.id)
+    const rest = notes.value.filter((n) => n.id !== note.id)
+    if (idx === -1) {
+      notes.value = [note, ...rest]
+      return
+    }
+    rest.splice(idx, 0, note)
+    notes.value = rest
+  }
+
+  function removeRemoteNote(noteId: string) {
+    notes.value = notes.value.filter((n) => n.id !== noteId)
+    if (selectedNoteId.value === noteId) {
+      selectedNoteId.value = notes.value[0]?.id ?? null
+    }
+  }
+
+  function removeRemoteImage(imageId: string) {
+    notes.value = notes.value.map((note) => ({
+      ...note,
+      images: note.images.filter((img) => img.id !== imageId)
+    }))
+  }
+
+  function bindRemoteSync() {
+    if (remoteSyncBound || typeof window === 'undefined' || !window.wanwu?.notes) return
+    remoteSyncBound = true
+    remoteSyncUnsubs = [
+      window.wanwu.notes.onChanged((note) => mergeRemoteNote(note)),
+      window.wanwu.notes.onDeleted((noteId) => removeRemoteNote(noteId)),
+      window.wanwu.notes.onImageRemoved((imageId) => removeRemoteImage(imageId))
+    ]
+  }
+
   async function loadAll() {
+    bindRemoteSync()
     loading.value = true
     try {
       notes.value = await window.wanwu.notes.listNotes()
@@ -37,7 +82,7 @@ export const useNotesStore = defineStore('notes', () => {
 
   async function createNote() {
     const created = await window.wanwu.notes.createNote({ color: 'yellow' })
-    notes.value = [created, ...notes.value]
+    mergeRemoteNote(created)
     selectedNoteId.value = created.id
     return created
   }
@@ -113,6 +158,16 @@ export const useNotesStore = defineStore('notes', () => {
     addImage,
     removeImage,
     setSelected,
-    nextColor
+    nextColor,
+    mergeRemoteNote,
+    removeRemoteNote,
+    bindRemoteSync,
+    unbindRemoteSync
   }
 })
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    unbindRemoteSync()
+  })
+}

@@ -12,7 +12,8 @@ import {
   type RssFetchLimit,
   type StartupModule,
   type ColorScheme,
-  type WindowStateMode
+  type WindowStateMode,
+  type NotesPopoutRestoreMode
 } from '../../../src/shared/types/settings'
 
 function normalizeRssFetchLimit(limit: unknown): RssFetchLimit {
@@ -42,6 +43,11 @@ function normalizeColorScheme(v: unknown): ColorScheme {
   return 'system'
 }
 
+function normalizeNotesPopoutRestore(v: unknown): NotesPopoutRestoreMode {
+  if (v === 'on-startup' || v === 'on-enter-notes' || v === 'never') return v
+  return 'on-enter-notes'
+}
+
 export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppSettings {
   const raw = (data && typeof data === 'object' ? data : {}) as Partial<AppSettings>
   return {
@@ -52,7 +58,8 @@ export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppS
     lastActiveModule: normalizeLastActiveModule(raw.lastActiveModule),
     rssAutoRefreshMinutes: normalizeRssAutoRefreshMinutes(raw.rssAutoRefreshMinutes),
     windowStateMode: normalizeWindowStateMode(raw.windowStateMode),
-    colorScheme: normalizeColorScheme(raw.colorScheme)
+    colorScheme: normalizeColorScheme(raw.colorScheme),
+    notesPopoutRestore: normalizeNotesPopoutRestore(raw.notesPopoutRestore)
   }
 }
 

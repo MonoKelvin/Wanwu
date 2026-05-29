@@ -20,6 +20,12 @@ import { LinksService } from './services/links/service'
 import { RssService } from './services/rss/service'
 import { MediaService } from './services/media/service'
 import { NotesService } from './services/notes/service'
+import {
+  attachMainWindowNotePopoutCleanup,
+  closeAllNotePopoutsForAppExit,
+  configureNotePopoutPersistence,
+  registerNotePopoutAppLifecycle
+} from './services/notes/noteWindowManager'
 import { SqliteNotesStorage } from './services/notes/storage'
 import { SqliteUserDataGateway, type UserDataGateway } from './services/storage/userDataGateway'
 import { resolveWanwuPath } from './services/data/paths'
@@ -152,6 +158,7 @@ function createWindow(): void {
   })
 
   setMainWindow(mainWindow)
+  attachMainWindowNotePopoutCleanup(mainWindow)
 
   attachWindowStatePersistence(mainWindow, {
     getBasePath: () => services.db?.getBasePath() ?? resolveWanwuPath(),
@@ -212,6 +219,7 @@ async function initServices(): Promise<void> {
   services.media = new MediaService(userData)
   services.userData = new SqliteUserDataGateway(services.db)
   services.notes = new NotesService(new SqliteNotesStorage(services.userData, userData))
+  configureNotePopoutPersistence(userData)
   registerIpcHandlers(services)
   applyRssAutoRefreshSchedule(services)
 }
@@ -275,6 +283,7 @@ app.whenReady().then(async () => {
     app.dock.setIcon(nativeImage.createFromPath(appIcon))
   }
 
+  registerNotePopoutAppLifecycle()
   createWindow()
 
   if (services.db) {
@@ -292,6 +301,7 @@ app.whenReady().then(async () => {
 })
 
 app.on('window-all-closed', () => {
+  closeAllNotePopoutsForAppExit()
   setMainWindow(null)
   services.db?.close()
   if (process.platform !== 'darwin') app.quit()

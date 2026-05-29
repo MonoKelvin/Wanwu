@@ -1,6 +1,7 @@
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
+import { rendererFullReloadInDev } from './scripts/vite-renderer-full-reload'
 // import glsl from 'vite-plugin-glsl'
 
 const sharedAlias = {
@@ -63,7 +64,8 @@ export default defineConfig({
       }
     },
     plugins: [
-      vue()
+      vue(),
+      rendererFullReloadInDev()
       // glsl({
       //   root: resolve(__dirname),
       //   include: ['**/*.glsl', '**/*.frag', '**/*.vert']

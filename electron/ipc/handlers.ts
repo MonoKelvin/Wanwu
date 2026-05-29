@@ -26,6 +26,28 @@ import type { LinksService } from '../services/links/service'
 import type { RssService } from '../services/rss/service'
 import type { MediaService } from '../services/media/service'
 import type { NotesService } from '../services/notes/service'
+import {
+  broadcastNoteChanged,
+  broadcastNoteDeleted,
+  broadcastNoteImageRemoved,
+  closeAllNotePopouts,
+  closeNotePopout,
+  closeNotePopoutFromSender,
+  getNotePopoutAlwaysOnTop,
+  hideNotePopout,
+  isNotePopoutOpen,
+  isNotePopoutVisible,
+  listOpenNotePopouts,
+  openNotePopout,
+  saveNotePopoutScroll,
+  showNotePopout,
+  toggleAllNotePopoutsVisibility,
+  restoreNotePopoutsFromSession,
+  toggleNotePopoutVisibility,
+  toggleNotePopoutAlwaysOnTop,
+  getPopoutsBatchState
+} from '../services/notes/noteWindowManager'
+import { getNotePopoutVisibilityOverride } from '../services/notes/notePopoutPersistence'
 import type { UserDataGateway } from '../services/storage/userDataGateway'
 import {
   getDefaultWanwuPath,
@@ -259,31 +281,116 @@ export function registerIpcHandlers(services: AppServices): void {
 
   ipcMain.handle('notes:create', (_e, input: unknown) => {
     if (!services.notes) throw new Error('便笺服务未就绪')
-    return services.notes.createNote(
+    const created = services.notes.createNote(
       input as Parameters<NonNullable<typeof services.notes>['createNote']>[0]
     )
+    broadcastNoteChanged(created)
+    return created
   })
 
   ipcMain.handle('notes:update', (_e, input: unknown) => {
     if (!services.notes) throw new Error('便笺服务未就绪')
-    return services.notes.updateNote(
+    const updated = services.notes.updateNote(
       input as Parameters<NonNullable<typeof services.notes>['updateNote']>[0]
     )
+    if (updated) broadcastNoteChanged(updated)
+    return updated
   })
 
   ipcMain.handle('notes:delete', (_e, id: string) => {
     if (!services.notes) throw new Error('便笺服务未就绪')
-    return services.notes.deleteNote(id)
+    const ok = services.notes.deleteNote(id)
+    if (ok) {
+      closeNotePopout(id)
+      broadcastNoteDeleted(id)
+    }
+    return ok
   })
 
   ipcMain.handle('notes:addImage', (_e, params: { noteId: string; filePath: string }) => {
     if (!services.notes) throw new Error('便笺服务未就绪')
-    return services.notes.addImage(params.noteId, params.filePath)
+    const image = services.notes.addImage(params.noteId, params.filePath)
+    const note = services.notes.listNotes().find((n) => n.id === params.noteId)
+    if (note) broadcastNoteChanged(note)
+    return image
   })
 
   ipcMain.handle('notes:removeImage', (_e, imageId: string) => {
     if (!services.notes) throw new Error('便笺服务未就绪')
-    return services.notes.removeImage(imageId)
+    const ok = services.notes.removeImage(imageId)
+    if (ok) broadcastNoteImageRemoved(imageId)
+    return ok
+  })
+
+  ipcMain.handle('notes:popout:open', (_e, noteId: string, anchor?: { x: number; y: number }) => {
+    openNotePopout(noteId, 'user', anchor)
+    return { open: true }
+  })
+
+  ipcMain.handle(
+    'notes:popout:toggle',
+    (_e, noteId: string, scrollTop?: number, anchor?: { x: number; y: number }) =>
+      toggleNotePopoutVisibility(noteId, scrollTop, anchor)
+  )
+
+  ipcMain.handle(
+    'notes:popout:toggleVisibility',
+    (_e, noteId: string, scrollTop?: number, anchor?: { x: number; y: number }) =>
+      toggleNotePopoutVisibility(noteId, scrollTop, anchor)
+  )
+
+  ipcMain.handle('notes:popout:hide', (_e, noteId: string, scrollTop?: number) => {
+    hideNotePopout(noteId, scrollTop)
+    return { open: true, visible: false }
+  })
+
+  ipcMain.handle('notes:popout:show', (_e, noteId: string) => {
+    showNotePopout(noteId)
+    return { open: true, visible: true }
+  })
+
+  ipcMain.handle('notes:popout:isOpen', (_e, noteId: string) => isNotePopoutOpen(noteId))
+
+  ipcMain.handle('notes:popout:isVisible', (_e, noteId: string) => isNotePopoutVisible(noteId))
+
+  ipcMain.handle('notes:popout:listOpen', () => listOpenNotePopouts())
+
+  ipcMain.handle('notes:popout:getBatchState', () => getPopoutsBatchState())
+
+  ipcMain.handle('notes:popout:toggleAllVisibility', () => toggleAllNotePopoutsVisibility())
+
+  ipcMain.handle('notes:popout:restore', () => restoreNotePopoutsFromSession())
+
+  ipcMain.handle(
+    'notes:popout:saveScroll',
+    (_e, params: { noteId: string; scrollTop: number }) => {
+      saveNotePopoutScroll(params.noteId, params.scrollTop)
+    }
+  )
+
+  ipcMain.handle('notes:popout:closeCurrent', (event, scrollTop?: number) => {
+    closeNotePopoutFromSender(event.sender.id, scrollTop)
+  })
+
+  ipcMain.handle('notes:popout:close', (_e, noteId: string, scrollTop?: number) => {
+    closeNotePopout(noteId, scrollTop)
+    return { open: false, visible: false }
+  })
+
+  ipcMain.handle('notes:popout:toggleAlwaysOnTop', (_e, noteId: string) =>
+    toggleNotePopoutAlwaysOnTop(noteId)
+  )
+
+  ipcMain.handle('notes:popout:getAlwaysOnTop', (_e, noteId: string) => ({
+    alwaysOnTop: getNotePopoutAlwaysOnTop(noteId)
+  }))
+
+  ipcMain.handle('notes:popout:getVisibilityOverride', (_e, noteId: string) => ({
+    visibilityOverride: getNotePopoutVisibilityOverride(noteId)
+  }))
+
+  ipcMain.handle('notes:popout:closeAll', () => {
+    closeAllNotePopouts()
   })
 
   ipcMain.handle('user:getProfile', () => {

@@ -48,6 +48,7 @@ watch(
         <KeepAlive :include="[...MODULE_KEEP_ALIVE]">
           <component
             :is="isItemDetail ? shellComponent : Component"
+            :key="shellModule"
             class="h-full min-h-0 flex flex-1 flex-col"
           />
         </KeepAlive>

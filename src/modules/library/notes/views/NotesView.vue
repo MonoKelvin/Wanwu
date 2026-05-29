@@ -6,6 +6,9 @@ import ModulePageLayout from '@app/components/ModulePageLayout.vue'
 import PageHeader from '@app/components/PageHeader.vue'
 import EmptyState from '@app/components/EmptyState.vue'
 import WwButton from '@shared/components/WwButton.vue'
+import { useNotePopout, type PopoutScreenAnchor } from '@modules/library/notes/lib/useNotePopout'
+import { useNotePopoutsBatch } from '@modules/library/notes/lib/useNotePopoutsBatch'
+import { tryRestoreNotePopouts, useNotePopoutAutoRestoreOnEnter } from '@modules/library/notes/lib/useNotePopoutAutoRestore'
 import { useNotesStore } from '@shared/stores/notes'
 import type { NoteColor } from '@shared/types/notes'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
@@ -13,6 +16,7 @@ import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import NotesSidebar from '@modules/library/notes/components/NotesSidebar.vue'
 import NotesEditor from '@modules/library/notes/components/NotesEditor.vue'
 import { useNotesDraft } from '@modules/library/notes/lib/useNotesDraft'
+import { registerNotePopoutSelectHandler } from '@modules/library/notes/lib/notePopoutFocusSync'
 import { normalizeNotePlainText } from '@modules/library/notes/lib/noteContentText'
 import { collectNoteImageIdsFromHtml } from '@modules/library/notes/lib/noteImageContent'
 import type { NoteItem } from '@shared/types/notes'
@@ -49,6 +53,11 @@ const draftTitle = ref('')
 const draftContent = ref('')
 const notesEditorRef = ref<InstanceType<typeof NotesEditor> | null>(null)
 const selected = computed(() => notesStore.selectedNote)
+const selectedId = computed(() => selected.value?.id ?? null)
+const { isPopoutOpen, popoutToggleLabel, togglePopout } = useNotePopout(selectedId)
+const { scopeCount, anyVisible, batchLabel, toggleAllPopouts } = useNotePopoutsBatch()
+
+useNotePopoutAutoRestoreOnEnter()
 const headerSubtitle = computed(() => {
   const total = notesStore.notes.length
   if (notesStore.loading) return '正在加载便笺...'
@@ -105,7 +114,21 @@ onMounted(async () => {
   }
 })
 
+async function selectNote(id: string) {
+  if (notesStore.selectedNoteId === id) return
+  const leavingId = notesStore.selectedNoteId
+  const leavingContent = draftContent.value
+  await flushDraft()
+  if (leavingId) {
+    await pruneUnreferencedNoteImages(leavingId, leavingContent)
+  }
+  notesStore.setSelected(id)
+}
+
+const unregisterPopoutSelectHandler = registerNotePopoutSelectHandler((id) => selectNote(id))
+
 onBeforeUnmount(async () => {
+  unregisterPopoutSelectHandler()
   const noteId = notesStore.selectedNoteId
   const content = draftContent.value
   await flushDraft()
@@ -125,23 +148,17 @@ watch(
   { immediate: true }
 )
 
+async function onTogglePopout(anchor?: PopoutScreenAnchor) {
+  notesEditorRef.value?.syncToDraft()
+  await togglePopout(undefined, anchor)
+}
+
 async function createNote() {
   try {
     await notesStore.createNote()
   } catch {
     toast.error('创建便笺失败')
   }
-}
-
-async function selectNote(id: string) {
-  if (notesStore.selectedNoteId === id) return
-  const leavingId = notesStore.selectedNoteId
-  const leavingContent = draftContent.value
-  await flushDraft()
-  if (leavingId) {
-    await pruneUnreferencedNoteImages(leavingId, leavingContent)
-  }
-  notesStore.setSelected(id)
 }
 
 async function togglePinned() {
@@ -263,30 +280,40 @@ async function onSidebarAction(payload: {
       <template #header>
         <PageHeader title="便笺" :subtitle="headerSubtitle" stacked-titles>
           <template #actions>
-            <span
-              v-if="saveUiVisible"
-              class="ww-notes-save-hint"
-              :class="`is-${saveUiState}`"
-              role="status"
-              aria-live="polite"
-            >
+            <div class="ww-notes-header-actions">
               <span
-                v-if="saveUiState === 'saving'"
-                class="ww-notes-save-hint__dot"
-                aria-hidden="true"
-              />
-              <span class="ww-notes-save-hint__text">{{ saveUiLabel }}</span>
-              <button
-                v-if="saveUiCancellable"
-                type="button"
-                class="ww-notes-save-hint__cancel"
-                aria-label="取消保存"
-                @click="cancelSave"
+                v-if="saveUiVisible"
+                class="ww-notes-save-hint"
+                :class="`is-${saveUiState}`"
+                role="status"
+                aria-live="polite"
               >
-                ×
-              </button>
-            </span>
-            <WwButton icon="plus" size="small" label="新建" class="ww-notes-create-btn" @click="createNote" />
+                <span
+                  v-if="saveUiState === 'saving'"
+                  class="ww-notes-save-hint__dot"
+                  aria-hidden="true"
+                />
+                <span class="ww-notes-save-hint__text">{{ saveUiLabel }}</span>
+                <button
+                  v-if="saveUiCancellable"
+                  type="button"
+                  class="ww-notes-save-hint__cancel"
+                  aria-label="取消保存"
+                  @click="cancelSave"
+                >
+                  ×
+                </button>
+              </span>
+              <WwButton
+                icon="layers"
+                size="small"
+                :label="batchLabel"
+                class="ww-notes-batch-popout-btn"
+                :disabled="scopeCount <= 0"
+                @click="toggleAllPopouts"
+              />
+              <WwButton icon="plus" size="small" label="新建" class="ww-notes-create-btn" @click="createNote" />
+            </div>
           </template>
         </PageHeader>
       </template>
@@ -309,12 +336,15 @@ async function onSidebarAction(payload: {
           :note="selected"
           :note-colors="NOTE_COLORS"
           :color-labels="COLOR_LABELS"
+          :popout-open="isPopoutOpen"
+          :popout-toggle-label="popoutToggleLabel"
           @flush="flushDraft"
           @toggle-pinned="togglePinned"
           @set-color="setColor"
           @pick-image="pickImage"
           @insert-image-by-path="insertImageByPath"
           @remove-note="removeCurrent"
+          @toggle-popout="onTogglePopout"
         />
 
         <EmptyState
@@ -322,10 +352,8 @@ async function onSidebarAction(payload: {
           class="ww-notes-empty"
           variant="empty"
           title="还没有便笺"
-          description="点击右上角「新建」，或先在左侧创建你的第一张便笺。"
-        >
-          <WwButton icon="plus" size="small" label="新建便笺" @click="createNote" />
-        </EmptyState>
+          description="点击右上角「新建」创建您的第一条便笺吧"
+        />
       </div>
     </ModulePageLayout>
   </div>
@@ -404,9 +432,30 @@ async function onSidebarAction(payload: {
   animation: ww-notes-pulse 1.2s ease-in-out infinite;
 }
 
-.ww-notes-layout :deep(.ww-notes-create-btn.p-button) {
+.ww-notes-header-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.ww-notes-layout :deep(.ww-notes-create-btn.p-button),
+.ww-notes-layout :deep(.ww-notes-batch-popout-btn.p-button) {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
   min-height: 1.8rem;
   padding-block: 0.2rem;
+}
+
+.ww-notes-layout :deep(.ww-notes-batch-popout-btn.p-button) {
+  white-space: nowrap;
+}
+
+.ww-notes-icon-btn--on {
+  color: var(--ww-ink) !important;
 }
 
 @keyframes ww-notes-pulse {
@@ -421,6 +470,12 @@ async function onSidebarAction(payload: {
 
 .ww-notes-empty {
   grid-column: 1 / -1;
+  justify-content: center;
+  padding-bottom: clamp(3.5rem, 14vh, 8rem);
+}
+
+.ww-notes-empty :deep(.ww-empty-state__card) {
+  transform: translateY(calc(-1 * clamp(0.75rem, 5vh, 2.5rem)));
 }
 
 @media (max-width: 960px) {

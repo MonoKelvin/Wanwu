@@ -5,6 +5,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import WwIconButton from '@shared/components/WwIconButton.vue'
+import NoteColorPicker from '@modules/library/notes/components/NoteColorPicker.vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import ImageViewer from '@shared/components/ImageViewer.vue'
 import type { NoteColor, NoteItem } from '@shared/types/notes'
@@ -31,11 +32,23 @@ const popTip = usePopTip()
 const draftTitle = defineModel<string>('draftTitle', { required: true })
 const draftContent = defineModel<string>('draftContent', { required: true })
 
-const props = defineProps<{
-  note: NoteItem
-  noteColors: NoteColor[]
-  colorLabels: Record<NoteColor, string>
-}>()
+const props = withDefaults(
+  defineProps<{
+    note: NoteItem
+    noteColors: NoteColor[]
+    colorLabels: Record<NoteColor, string>
+    variant?: 'embedded' | 'popout'
+    popoutAlwaysOnTop?: boolean
+    popoutOpen?: boolean
+    popoutToggleLabel?: string
+  }>(),
+  {
+    variant: 'embedded',
+    popoutAlwaysOnTop: false,
+    popoutOpen: false,
+    popoutToggleLabel: '显示独立窗口'
+  }
+)
 
 const emit = defineEmits<{
   flush: []
@@ -44,7 +57,12 @@ const emit = defineEmits<{
   pickImage: []
   insertImageByPath: [filePath: string]
   removeNote: []
+  closePopout: []
+  togglePopoutAlwaysOnTop: []
+  togglePopout: [anchor?: { x: number; y: number }]
 }>()
+
+const isPopout = computed(() => props.variant === 'popout')
 
 function noteMediaUrl(relativePath: string): string | null {
   return toWanwuMediaUrl(relativePath)
@@ -327,6 +345,16 @@ watch(
   }
 )
 
+watch(
+  () => props.note.updatedAt,
+  () => {
+    const storeContent = canonicalNoteBodyContent(props.note.content ?? '')
+    const draft = canonicalNoteBodyContent(draftContent.value)
+    if (storeContent !== draft) return
+    void hydrateEditorFromDraft()
+  }
+)
+
 /** 用稳定字符串作 watch 源，避免 store 每次 updateNote 替换数组引用导致误触发 */
 const noteImageIdsKey = computed(() =>
   props.note.images
@@ -509,47 +537,105 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section class="ww-notes-editor-wrap" aria-label="便笺编辑">
-    <article class="ww-notes-editor" :class="`is-${note.color}`">
-      <header class="ww-notes-editor__bar">
-        <div class="ww-notes-colors" role="group" aria-label="便笺颜色">
-          <button
-            v-for="c in noteColors"
-            :key="c"
-            type="button"
-            class="ww-notes-color"
-            :class="[`is-${c}`, { 'is-selected': note.color === c }]"
-            :aria-label="`${colorLabels[c]}${note.color === c ? '（当前）' : ''}`"
-            :aria-pressed="note.color === c"
-            @click="emit('setColor', c)"
+  <section
+    class="ww-notes-editor-wrap"
+    :class="{ 'ww-notes-editor-wrap--popout': isPopout }"
+    aria-label="便笺编辑"
+  >
+    <article class="ww-notes-editor" :class="[`is-${note.color}`, { 'is-popout': isPopout }]">
+      <header
+        class="ww-notes-editor__bar"
+        :class="{ 'ww-notes-editor__bar--popout': isPopout }"
+      >
+        <template v-if="isPopout">
+          <NoteColorPicker
+            class="ww-notes-editor__color-picker"
+            :model-value="note.color"
+            :colors="noteColors"
+            :labels="colorLabels"
+            @update:model-value="emit('setColor', $event)"
           />
-        </div>
+          <div class="ww-notes-editor__actions ww-notes-editor__actions--popout">
+            <WwIconButton
+              :icon="note.pinned ? 'arrow-down-from-line' : 'arrow-up-to-line'"
+              compact
+              :class="{ 'ww-notes-icon-btn--on': note.pinned }"
+              :ariaLabel="note.pinned ? '取消列表置顶' : '列表置顶'"
+              v-tooltip.bottom="note.pinned ? '取消列表置顶' : '列表置顶'"
+              @click="emit('togglePinned')"
+            />
+            <WwIconButton
+              icon="image"
+              compact
+              ariaLabel="添加图片"
+              v-tooltip.bottom="'添加图片'"
+              @click="handlePickImage"
+            />
+            <WwIconButton
+              :icon="popoutAlwaysOnTop ? 'pin-off' : 'pin'"
+              compact
+              :class="{ 'ww-notes-icon-btn--on': popoutAlwaysOnTop }"
+              :ariaLabel="popoutAlwaysOnTop ? '取消窗口置顶' : '窗口置顶'"
+              v-tooltip.bottom="popoutAlwaysOnTop ? '取消窗口置顶' : '窗口置顶'"
+              @click="emit('togglePopoutAlwaysOnTop')"
+            />
+            <WwIconButton
+              icon="x"
+              compact
+              ariaLabel="关闭独立窗口"
+              v-tooltip.bottom="'关闭'"
+              @click="emit('closePopout')"
+            />
+          </div>
+        </template>
+        <template v-else>
+          <div class="ww-notes-colors" role="group" aria-label="便笺颜色">
+            <button
+              v-for="c in noteColors"
+              :key="c"
+              type="button"
+              class="ww-notes-color"
+              :class="[`is-${c}`, { 'is-selected': note.color === c }]"
+              :aria-label="`${colorLabels[c]}${note.color === c ? '（当前）' : ''}`"
+              :aria-pressed="note.color === c"
+              @click="emit('setColor', c)"
+            />
+          </div>
 
-        <div class="ww-notes-editor__actions">
-          <span class="ww-notes-editor__meta">更新于 {{ updatedLabel }}</span>
-          <WwIconButton
-            :icon="note.pinned ? 'pin-off' : 'pin'"
-            compact
-            :class="{ 'ww-notes-icon-btn--on': note.pinned }"
-            :ariaLabel="note.pinned ? '取消置顶' : '置顶'"
-            v-tooltip.bottom="note.pinned ? '取消置顶' : '置顶'"
-            @click="emit('togglePinned')"
-          />
-          <WwIconButton
-            icon="image"
-            compact
-            ariaLabel="添加图片"
-            v-tooltip.bottom="'添加图片'"
-            @click="handlePickImage"
-          />
-          <WwIconButton
-            icon="trash-2"
-            compact
-            ariaLabel="删除便笺"
-            v-tooltip.bottom="'删除'"
-            @click="emit('removeNote')"
-          />
-        </div>
+          <div class="ww-notes-editor__actions">
+            <span class="ww-notes-editor__meta">更新于 {{ updatedLabel }}</span>
+            <WwIconButton
+              icon="app-window"
+              compact
+              :class="{ 'ww-notes-icon-btn--on': popoutOpen }"
+              :ariaLabel="popoutToggleLabel"
+              v-tooltip.bottom="popoutToggleLabel"
+              @click="(event: MouseEvent) => emit('togglePopout', { x: event.screenX, y: event.screenY })"
+            />
+            <WwIconButton
+              :icon="note.pinned ? 'arrow-down-from-line' : 'arrow-up-to-line'"
+              compact
+              :class="{ 'ww-notes-icon-btn--on': note.pinned }"
+              :ariaLabel="note.pinned ? '取消置顶' : '置顶'"
+              v-tooltip.bottom="note.pinned ? '取消置顶' : '置顶'"
+              @click="emit('togglePinned')"
+            />
+            <WwIconButton
+              icon="image"
+              compact
+              ariaLabel="添加图片"
+              v-tooltip.bottom="'添加图片'"
+              @click="handlePickImage"
+            />
+            <WwIconButton
+              icon="trash-2"
+              compact
+              ariaLabel="删除便笺"
+              v-tooltip.bottom="'删除'"
+              @click="emit('removeNote')"
+            />
+          </div>
+        </template>
       </header>
 
       <div class="ww-notes-editor__body">
@@ -567,8 +653,9 @@ onBeforeUnmount(() => {
           aria-label="便笺正文"
           @blur="emit('flush')"
         />
-        <div class="ww-notes-editor__foot">
-          <span>{{ contentStats }}</span>
+        <div class="ww-notes-editor__foot" :class="{ 'ww-notes-editor__foot--popout': isPopout }">
+          <span v-if="isPopout" class="ww-notes-editor__meta">更新于 {{ updatedLabel }}</span>
+          <span class="ww-notes-editor__stats">{{ contentStats }}</span>
         </div>
       </div>
     </article>
@@ -584,6 +671,12 @@ onBeforeUnmount(() => {
   min-height: 0;
   display: flex;
   flex: 1;
+}
+
+.ww-notes-editor-wrap--popout {
+  flex: 1;
+  height: 100%;
+  background: transparent;
 }
 
 .ww-notes-editor {
@@ -636,6 +729,73 @@ onBeforeUnmount(() => {
   --ww-notes-accent: #d84f4a;
 }
 
+.ww-notes-editor.is-popout {
+  --ww-notes-popout-pad-x: 0.75rem;
+  --ww-notes-popout-toolbar-pad-y: 0.1875rem;
+  --ww-notes-popout-text-inset: 0.125rem;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: color-mix(in oklab, var(--ww-content) 78%, var(--ww-notes-accent) 22%);
+}
+
+.ww-notes-editor.is-popout .ww-notes-editor__bar {
+  background: color-mix(in oklab, var(--ww-content) 78%, var(--ww-notes-accent) 22%);
+}
+
+.ww-notes-editor__bar--popout {
+  -webkit-app-region: drag;
+}
+
+.ww-notes-editor__bar--popout .ww-notes-editor__color-picker {
+  flex: 0 0 auto;
+  margin-right: auto;
+  -webkit-app-region: no-drag;
+}
+
+.ww-notes-editor__bar--popout .ww-notes-editor__actions--popout {
+  flex: 0 0 auto;
+  margin-left: auto;
+  -webkit-app-region: no-drag;
+}
+
+.ww-notes-editor.is-popout .ww-notes-editor__body {
+  padding: 0.625rem var(--ww-notes-popout-pad-x) 0.5rem;
+  gap: 0.375rem;
+  background: transparent;
+}
+
+.ww-notes-editor.is-popout .ww-notes-editor__title {
+  min-height: 1.5rem;
+  margin-top: 0.125rem;
+  padding: 0.125rem 0 0 var(--ww-notes-popout-text-inset);
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+.ww-notes-editor.is-popout .ww-notes-editor__content {
+  min-height: 9rem;
+  padding: 0.25rem 0 0 var(--ww-notes-popout-text-inset);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.ww-notes-editor__foot--popout {
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ww-notes-editor__foot--popout .ww-notes-editor__meta {
+  margin-right: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ww-notes-editor__stats {
+  flex-shrink: 0;
+}
+
 [data-theme='dark'] .ww-notes-editor.is-yellow {
   --ww-notes-accent: #e3b236;
 }
@@ -664,6 +824,14 @@ onBeforeUnmount(() => {
   --ww-notes-accent: #f58884;
 }
 
+[data-theme='dark'] .ww-notes-editor.is-popout {
+  background: color-mix(in oklab, var(--ww-content) 84%, var(--ww-notes-accent) 16%);
+}
+
+[data-theme='dark'] .ww-notes-editor.is-popout .ww-notes-editor__bar {
+  background: color-mix(in oklab, var(--ww-content) 84%, var(--ww-notes-accent) 16%);
+}
+
 .ww-notes-editor__bar {
   flex-shrink: 0;
   display: flex;
@@ -676,6 +844,18 @@ onBeforeUnmount(() => {
   min-width: 0;
   padding: 0.75rem 1.625rem;
   border-bottom: 1px solid var(--ww-border-subtle);
+}
+
+/* 独立窗口：覆盖上方通用工具栏间距，与正文区水平边距一致 */
+.ww-notes-editor.is-popout .ww-notes-editor__bar {
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  column-gap: 0;
+  row-gap: 0;
+  gap: 0.375rem;
+  min-height: 1.75rem;
+  padding: var(--ww-notes-popout-toolbar-pad-y) var(--ww-notes-popout-pad-x);
+  border-bottom: none;
 }
 
 .ww-notes-colors {

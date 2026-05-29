@@ -19,6 +19,9 @@ export type ColorScheme = 'light' | 'dark' | 'system'
 /** 实际应用到 DOM 的配色 */
 export type ResolvedColorScheme = 'light' | 'dark'
 
+/** 便笺独立窗口自动还原时机 */
+export type NotesPopoutRestoreMode = 'on-startup' | 'on-enter-notes' | 'never'
+
 export interface AppSettings {
   navAlign: NavAlign
   navDisplay: NavDisplay
@@ -28,6 +31,7 @@ export interface AppSettings {
   rssAutoRefreshMinutes: RssAutoRefreshMinutes
   windowStateMode: WindowStateMode
   colorScheme: ColorScheme
+  notesPopoutRestore: NotesPopoutRestoreMode
 }
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -38,7 +42,8 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   lastActiveModule: 'library',
   rssAutoRefreshMinutes: 0,
   windowStateMode: 'remember',
-  colorScheme: 'system'
+  colorScheme: 'system',
+  notesPopoutRestore: 'on-enter-notes'
 }
 
 export const COLOR_SCHEME_OPTIONS: Array<{ label: string; value: ColorScheme }> = [
@@ -60,6 +65,15 @@ export const RSS_AUTO_REFRESH_OPTIONS: Array<{ label: string; value: RssAutoRefr
   { label: '每 30 分钟', value: 30 },
   { label: '每 1 小时', value: 60 },
   { label: '每 2 小时', value: 120 }
+]
+
+export const NOTES_POPOUT_RESTORE_OPTIONS: Array<{
+  label: string
+  value: NotesPopoutRestoreMode
+}> = [
+  { label: '启动软件', value: 'on-startup' },
+  { label: '进入便笺', value: 'on-enter-notes' },
+  { label: '不自动还原', value: 'never' }
 ]
 
 /** 写入 localStorage 的键（重置设置时清除） */

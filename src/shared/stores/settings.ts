@@ -11,7 +11,8 @@ import {
   type RssAutoRefreshMinutes,
   type RssFetchLimit,
   type StartupModule,
-  type WindowStateMode
+  type WindowStateMode,
+  type NotesPopoutRestoreMode
 } from '@shared/types/settings'
 import { isModuleId } from '@app/config/modules'
 import { applyColorScheme, readStoredColorScheme, watchSystemColorScheme } from '@app/theme/applyTheme'
@@ -45,6 +46,13 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
     : data.colorScheme === 'system' ? 'system'
     : 'system'
 
+  const notesPopoutRestore: NotesPopoutRestoreMode =
+    data.notesPopoutRestore === 'on-startup' ||
+    data.notesPopoutRestore === 'on-enter-notes' ||
+    data.notesPopoutRestore === 'never'
+      ? data.notesPopoutRestore
+      : 'on-enter-notes'
+
   return {
     navAlign: data.navAlign === 'center' ? 'center' : 'start',
     navDisplay: data.navDisplay === 'both' ? 'both' : 'icon',
@@ -53,7 +61,8 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
     lastActiveModule,
     rssAutoRefreshMinutes,
     windowStateMode,
-    colorScheme
+    colorScheme,
+    notesPopoutRestore
   }
 }
 
@@ -146,6 +155,10 @@ export const useSettingsStore = defineStore('settings', () => {
     await save({ colorScheme })
   }
 
+  async function setNotesPopoutRestore(notesPopoutRestore: NotesPopoutRestoreMode) {
+    await save({ notesPopoutRestore })
+  }
+
   async function resetAll() {
     const defaults = await window.wanwu.app.resetSettings()
     settings.value = normalizeSettings(defaults)
@@ -175,6 +188,7 @@ export const useSettingsStore = defineStore('settings', () => {
     setRssAutoRefreshMinutes,
     setWindowStateMode,
     setColorScheme,
+    setNotesPopoutRestore,
     resetAll
   }
 })

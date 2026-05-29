@@ -7,6 +7,7 @@ export const SETTINGS_NAV_ITEMS: Array<{
   icon: WwIconName
 }> = [
   { id: 'app', label: '应用', icon: 'sliders-horizontal' },
+  { id: 'library', label: '全库', icon: 'book-open' },
   { id: 'rss', label: 'RSS', icon: 'globe' },
   { id: 'data', label: '数据与安全', icon: 'database' },
   { id: 'about', label: '关于', icon: 'sparkles' }

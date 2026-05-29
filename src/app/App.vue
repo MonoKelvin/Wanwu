@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog'
 import WwIcon from '@shared/components/WwIcon.vue'
@@ -10,9 +11,15 @@ import WwDismissibleConfirmHost from '@app/components/WwDismissibleConfirmHost.v
 import WwPopTipHost from '@shared/components/WwPopTipHost.vue'
 import { useSettingsStore } from '@shared/stores/settings'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
+import { useNotePopoutFocusSync } from '@modules/library/notes/lib/useNotePopoutFocusSync'
+import { tryRestoreNotePopouts } from '@modules/library/notes/lib/useNotePopoutAutoRestore'
 
+const route = useRoute()
 const settingsStore = useSettingsStore()
 const toast = useWanwuToast()
+const isNotePopout = computed(() => Boolean(route.meta.notePopout))
+
+useNotePopoutFocusSync()
 
 function showLibraryNotice(text: string) {
   toast.info(text, '图鉴数据', { life: 12_000 })
@@ -22,6 +29,9 @@ onUnmounted(window.wanwu.app.onStartupNotice(showLibraryNotice))
 
 onMounted(async () => {
   if (!settingsStore.loaded) await settingsStore.load()
+  if (!isNotePopout.value && settingsStore.settings.notesPopoutRestore === 'on-startup') {
+    await tryRestoreNotePopouts('on-startup')
+  }
   for (const text of await window.wanwu.app.getStartupNotices()) {
     showLibraryNotice(text)
   }
@@ -29,24 +39,33 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="ww-app flex h-full flex-col overflow-hidden bg-ww-canvas">
+  <div
+    class="flex h-full flex-col overflow-hidden"
+    :class="isNotePopout ? 'ww-note-popout-shell' : 'ww-app bg-ww-canvas'"
+  >
     <Toast position="bottom-right" class="ww-toast-stack">
       <template #message="{ message }">
         <WwToastMessage :message="message" />
       </template>
     </Toast>
-    <ConfirmDialog class="ww-confirm-dialog">
-      <template #message="slotProps">
-        <div class="ww-confirm-dialog__message">
-          <WwIcon name="triangle-alert" size="lg" class="ww-confirm-dialog__icon" />
-          <span>{{ slotProps.message.message }}</span>
-        </div>
-      </template>
-    </ConfirmDialog>
-    <WwDismissibleConfirmHost />
-    <WwPopTipHost />
-    <TitleBar />
-    <AppShell class="min-h-0 flex-1" />
+    <template v-if="isNotePopout">
+      <WwPopTipHost />
+      <RouterView class="min-h-0 flex-1" />
+    </template>
+    <template v-else>
+      <ConfirmDialog class="ww-confirm-dialog">
+        <template #message="slotProps">
+          <div class="ww-confirm-dialog__message">
+            <WwIcon name="triangle-alert" size="lg" class="ww-confirm-dialog__icon" />
+            <span>{{ slotProps.message.message }}</span>
+          </div>
+        </template>
+      </ConfirmDialog>
+      <WwDismissibleConfirmHost />
+      <WwPopTipHost />
+      <TitleBar />
+      <AppShell class="min-h-0 flex-1" />
+    </template>
   </div>
 </template>
 <style>

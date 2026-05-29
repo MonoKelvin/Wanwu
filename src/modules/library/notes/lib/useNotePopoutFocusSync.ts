@@ -1,0 +1,38 @@
+import { onMounted, onUnmounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useNotesStore } from '@shared/stores/notes'
+import { applyPopoutFocusSelection } from './notePopoutFocusSync'
+
+export function useNotePopoutFocusSync() {
+  const route = useRoute()
+  const router = useRouter()
+  const notesStore = useNotesStore()
+
+  if (route.meta.notePopout) return
+
+  let stopListener: (() => void) | null = null
+
+  onMounted(() => {
+    stopListener = window.wanwu.notes.popout.onPopoutFocused(async ({ noteId }) => {
+      try {
+        if (!notesStore.notes.length && !notesStore.loading) {
+          await notesStore.loadAll()
+        }
+      } catch {
+        return
+      }
+      if (!notesStore.notes.some((note) => note.id === noteId)) return
+
+      if (router.currentRoute.value.name !== 'library-notes') {
+        await router.push({ name: 'library-notes' })
+      }
+
+      await applyPopoutFocusSelection(noteId)
+    })
+  })
+
+  onUnmounted(() => {
+    stopListener?.()
+    stopListener = null
+  })
+}

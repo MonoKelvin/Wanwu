@@ -247,6 +247,17 @@ export function useNotesDraft(options: UseNotesDraftOptions) {
     { immediate: true }
   )
 
+  /** 其他窗口落盘后同步草稿（当前无未保存编辑时） */
+  watch(
+    () => options.selected.value?.updatedAt,
+    () => {
+      const note = options.selected.value
+      if (!note || hydrating || isDirty() || saveUiState.value === 'saving') return
+      loadDraftFromNote(note)
+      finishHydrate()
+    }
+  )
+
   watch([options.draftTitle, options.draftContent], () => {
     if (hydrating) return
     draftRevision += 1
