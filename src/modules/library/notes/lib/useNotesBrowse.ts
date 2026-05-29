@@ -41,16 +41,16 @@ export function useNotesBrowse() {
     return true
   })
 
-  /** 侧栏高亮：搜索中且尚未点选时不显示选中态 */
+  /** 侧栏高亮：搜索中且尚未点选时不显示选中态；无效 id 不高亮 */
   const sidebarSelectedId = computed(() => {
     if (isSearchActive.value && !pickedInSearch.value) return null
-    return selectedNoteId.value
+    return validNoteId(selectedNoteId.value)
   })
 
   const showPickHint = computed(
     () =>
       showRightPane.value &&
-      !selectedNoteId.value &&
+      !selectedNote.value &&
       !loading.value &&
       notes.value.length > 0
   )

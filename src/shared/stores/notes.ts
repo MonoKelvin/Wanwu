@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { NoteColor, NoteItem } from '@shared/types/notes'
+import { NOTE_COLORS } from '@shared/constants/noteColors'
+import type { NoteColor, NoteItem, NoteUpdateInput } from '@shared/types/notes'
 
 let remoteSyncBound = false
 let remoteSyncUnsubs: Array<() => void> = []
@@ -10,18 +11,6 @@ function unbindRemoteSync() {
   remoteSyncUnsubs = []
   remoteSyncBound = false
 }
-
-const NOTE_COLORS: NoteColor[] = [
-  'yellow',
-  'green',
-  'blue',
-  'pink',
-  'purple',
-  'orange',
-  'teal',
-  'red',
-  'gray'
-]
 
 export const useNotesStore = defineStore('notes', () => {
   const notes = ref<NoteItem[]>([])
@@ -85,7 +74,11 @@ export const useNotesStore = defineStore('notes', () => {
     return created
   }
 
-  async function updateNote(id: string, patch: Partial<Pick<NoteItem, 'title' | 'content' | 'pinned' | 'color'>>) {
+  async function updateNote(
+    id: string,
+    patch: Partial<Pick<NoteItem, 'title' | 'content' | 'pinned' | 'color'>> &
+      Pick<NoteUpdateInput, 'touchUpdatedAt'>
+  ) {
     savingOps.value += 1
     saving.value = true
     try {

@@ -10,7 +10,12 @@ interface UseNotesDraftOptions {
   draftContent: Ref<string>
   /** 落盘前从 Tiptap 同步最新 HTML，避免草稿与编辑器短暂不一致 */
   beforePersist?: () => void
-  persist: (noteId: string, title: string, content: string) => Promise<void>
+  persist: (
+    noteId: string,
+    title: string,
+    content: string,
+    options?: { touchUpdatedAt?: boolean }
+  ) => Promise<void>
   onPersistError?: () => void
 }
 
@@ -32,6 +37,8 @@ export function useNotesDraft(options: UseNotesDraftOptions) {
   let hydrating = false
   /** 每次用户编辑草稿递增，用于判断落盘期间是否又有新操作 */
   let draftRevision = 0
+  /** flushDraft 期间传给 persist 的选项（如切换便笺时静默保存） */
+  let flushPersistOptions: { touchUpdatedAt?: boolean } | undefined
 
   const saveUiLabel = computed(() => {
     if (saveUiState.value === 'saving') return '保存中'
@@ -112,6 +119,17 @@ export function useNotesDraft(options: UseNotesDraftOptions) {
     saveUiState.value = 'idle'
   }
 
+  function clearSavingUiIfQuiescent(noteId: string) {
+    if (saveUiState.value !== 'saving' && saveUiState.value !== 'timeout') return
+    if (options.selected.value?.id !== noteId && activeNoteId !== noteId) {
+      saveUiState.value = 'idle'
+      return
+    }
+    if (!needsPersist()) {
+      saveUiState.value = 'idle'
+    }
+  }
+
   /**
    * 异步落盘一次；仅当落盘期间草稿未再变时更新 baseline（以最后一次操作为准）。
    * @returns 是否已与 baseline 对齐（无更新的未保存编辑）
@@ -138,7 +156,7 @@ export function useNotesDraft(options: UseNotesDraftOptions) {
       const toSave = readDraftSnapshot()
       const { title, content } = toSave
 
-      await options.persist(noteId, title, content)
+      await options.persist(noteId, title, content, flushPersistOptions)
 
       if (revisionAtStart !== draftRevision) {
         return false
@@ -172,8 +190,12 @@ export function useNotesDraft(options: UseNotesDraftOptions) {
       return false
     } finally {
       clearSaveTimeoutTimer()
-      if (generation !== saveGeneration && saveUiState.value === 'saving') {
-        saveUiState.value = 'idle'
+      if (generation !== saveGeneration) {
+        if (saveUiState.value === 'saving') {
+          saveUiState.value = 'idle'
+        }
+      } else {
+        clearSavingUiIfQuiescent(noteId)
       }
     }
   }
@@ -196,6 +218,7 @@ export function useNotesDraft(options: UseNotesDraftOptions) {
         if (needsPersist() && guard >= 32) {
           scheduleDebouncedSave(noteId)
         }
+        clearSavingUiIfQuiescent(noteId)
       })
       .catch(() => {
         /* keep chain alive */
@@ -219,20 +242,23 @@ export function useNotesDraft(options: UseNotesDraftOptions) {
   }
 
   /** 切换便笺/离开页面前：等待队列排空（不阻塞日常输入） */
-  async function flushDraft() {
+  async function flushDraft(persistOptions?: { touchUpdatedAt?: boolean }) {
     clearDebounceTimer()
     const noteId = options.selected.value?.id
-    if (noteId && needsPersist()) {
-      await drainSavesForNote(noteId)
+    flushPersistOptions = persistOptions
+    try {
+      if (noteId && needsPersist()) {
+        await drainSavesForNote(noteId)
+      }
+      await saveChain
+    } finally {
+      flushPersistOptions = undefined
     }
-    await saveChain
   }
 
   watch(
-    () => options.selected.value,
-    (note, prev) => {
-      const id = note?.id ?? null
-      const prevId = prev?.id ?? null
+    () => options.selected.value?.id ?? null,
+    (id, prevId) => {
       activeNoteId = id
       if (!id) {
         hydrating = false
@@ -243,8 +269,9 @@ export function useNotesDraft(options: UseNotesDraftOptions) {
         draftRevision = 0
         return
       }
+      const note = options.selected.value
       if (!note) return
-      if (id === prevId && note === prev) return
+      if (id === prevId) return
       loadDraftFromNote(note)
       finishHydrate()
     },

@@ -10,33 +10,11 @@ import {
   readNoteEditorScrollTop,
   useNotePopoutScrollPersistence
 } from '@modules/library/notes/lib/useNotePopoutScroll'
-import { collectNoteImageIdsFromHtml } from '@modules/library/notes/lib/noteImageContent'
+import { pruneUnreferencedNoteImages } from '@modules/library/notes/app/pruneNoteImages'
+import { NOTE_COLORS, NOTE_COLOR_LABELS } from '@shared/constants/noteColors'
 import { useNotesStore } from '@shared/stores/notes'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import type { NoteColor } from '@shared/types/notes'
-
-const NOTE_COLORS: NoteColor[] = [
-  'yellow',
-  'green',
-  'blue',
-  'pink',
-  'purple',
-  'orange',
-  'teal',
-  'red',
-  'gray'
-]
-const COLOR_LABELS: Record<NoteColor, string> = {
-  yellow: '黄色',
-  green: '绿色',
-  blue: '蓝色',
-  pink: '粉色',
-  purple: '紫色',
-  gray: '灰色',
-  orange: '橙色',
-  teal: '青色',
-  red: '红色'
-}
 
 const route = useRoute()
 const notesStore = useNotesStore()
@@ -63,23 +41,6 @@ async function handleClosePopout() {
   await closeCurrentPopout(readNoteEditorScrollTop())
 }
 
-const IMAGE_PRUNE_GRACE_MS = 3000
-
-async function pruneUnreferencedNoteImages(contentHtml: string) {
-  const id = noteId.value
-  if (!id) return
-  const referenced = collectNoteImageIdsFromHtml(contentHtml)
-  const note = notesStore.notes.find((item) => item.id === id)
-  if (!note) return
-  const now = Date.now()
-  for (const image of [...note.images]) {
-    if (referenced.has(image.id)) continue
-    const age = now - new Date(image.createdAt).getTime()
-    if (!Number.isFinite(age) || age < IMAGE_PRUNE_GRACE_MS) continue
-    await notesStore.removeImage(image.id)
-  }
-}
-
 const { flushDraft } = useNotesDraft({
   selected,
   draftTitle,
@@ -87,8 +48,8 @@ const { flushDraft } = useNotesDraft({
   beforePersist: () => {
     notesEditorRef.value?.syncToDraft()
   },
-  persist: async (id, title, content) => {
-    await notesStore.updateNote(id, { title, content })
+  persist: async (id, title, content, options) => {
+    await notesStore.updateNote(id, { title, content, touchUpdatedAt: options?.touchUpdatedAt })
   },
   onPersistError: () => {
     toast.error('便笺保存失败，请稍后重试')
@@ -116,8 +77,11 @@ onMounted(async () => {
 onBeforeUnmount(async () => {
   const content = draftContent.value
   await flushDraft()
-  if (noteId.value) {
-    await pruneUnreferencedNoteImages(content)
+  const note = noteId.value ? notesStore.notes.find((item) => item.id === noteId.value) : null
+  if (note) {
+    await pruneUnreferencedNoteImages(note.images, content, (imageId) =>
+      notesStore.removeImage(imageId)
+    )
   }
 })
 
@@ -183,7 +147,7 @@ async function insertImageByPath(filePath: string) {
       v-model:draftContent="draftContent"
       :note="selected"
       :note-colors="NOTE_COLORS"
-      :color-labels="COLOR_LABELS"
+      :color-labels="NOTE_COLOR_LABELS"
       :popout-always-on-top="alwaysOnTop"
       @flush="flushDraft"
       @toggle-pinned="togglePinned"

@@ -10,6 +10,8 @@ import { useNotePopout, type PopoutScreenAnchor } from '@modules/library/notes/l
 import { useNotePopoutsBatch } from '@modules/library/notes/lib/useNotePopoutsBatch'
 import { useNotePopoutAutoRestoreOnEnter } from '@modules/library/notes/lib/useNotePopoutAutoRestore'
 import { useNotesBrowse } from '@modules/library/notes/lib/useNotesBrowse'
+import { NOTE_COLORS, NOTE_COLOR_LABELS } from '@shared/constants/noteColors'
+import { pruneUnreferencedNoteImages } from '@modules/library/notes/app/pruneNoteImages'
 import { useNotesStore } from '@shared/stores/notes'
 import type { NoteColor } from '@shared/types/notes'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
@@ -19,31 +21,7 @@ import NotesEditor from '@modules/library/notes/components/NotesEditor.vue'
 import { useNotesDraft } from '@modules/library/notes/lib/useNotesDraft'
 import { registerNotePopoutSelectHandler } from '@modules/library/notes/lib/notePopoutFocusSync'
 import { normalizeNotePlainText } from '@modules/library/notes/lib/noteContentText'
-import { collectNoteImageIdsFromHtml } from '@modules/library/notes/lib/noteImageContent'
 import type { NoteItem } from '@shared/types/notes'
-
-const NOTE_COLORS: NoteColor[] = [
-  'yellow',
-  'green',
-  'blue',
-  'pink',
-  'purple',
-  'orange',
-  'teal',
-  'red',
-  'gray'
-]
-const COLOR_LABELS: Record<NoteColor, string> = {
-  yellow: '黄色',
-  green: '绿色',
-  blue: '蓝色',
-  pink: '粉色',
-  purple: '紫色',
-  gray: '灰色',
-  orange: '橙色',
-  teal: '青色',
-  red: '红色'
-}
 
 const notesStore = useNotesStore()
 const toast = useWanwuToast()
@@ -90,21 +68,6 @@ const headerSubtitle = computed(() => {
   return `共 ${total} 条${pinnedCount > 0 ? `，置顶 ${pinnedCount} 条` : ''}`
 })
 
-const IMAGE_PRUNE_GRACE_MS = 3000
-
-async function pruneUnreferencedNoteImages(noteId: string, contentHtml: string) {
-  const referenced = collectNoteImageIdsFromHtml(contentHtml)
-  const note = notesStore.notes.find((item) => item.id === noteId)
-  if (!note) return
-  const now = Date.now()
-  for (const image of [...note.images]) {
-    if (referenced.has(image.id)) continue
-    const age = now - new Date(image.createdAt).getTime()
-    if (!Number.isFinite(age) || age < IMAGE_PRUNE_GRACE_MS) continue
-    await notesStore.removeImage(image.id)
-  }
-}
-
 const {
   saveUiState,
   saveUiLabel,
@@ -119,8 +82,8 @@ const {
   beforePersist: () => {
     notesEditorRef.value?.syncToDraft()
   },
-  persist: async (noteId, title, content) => {
-    await notesStore.updateNote(noteId, { title, content })
+  persist: async (noteId, title, content, options) => {
+    await notesStore.updateNote(noteId, { title, content, touchUpdatedAt: options?.touchUpdatedAt })
   },
   onPersistError: () => {
     toast.error('便笺保存失败，请稍后重试')
@@ -144,7 +107,14 @@ async function selectNote(id: string) {
   const leavingId = selectedNoteId.value
 
   if (leavingId && leavingId !== id) {
-    await flushDraft()
+    const leavingContent = draftContent.value
+    const leavingNote = notesStore.notes.find((item) => item.id === leavingId)
+    await flushDraft({ touchUpdatedAt: false })
+    if (leavingNote) {
+      await pruneUnreferencedNoteImages(leavingNote.images, leavingContent, (imageId) =>
+        notesStore.removeImage(imageId)
+      )
+    }
   }
 
   markPickedInSearch()
@@ -160,9 +130,12 @@ onBeforeUnmount(async () => {
   unregisterPopoutSelectHandler()
   const noteId = notesStore.selectedNoteId
   const content = draftContent.value
+  const note = noteId ? notesStore.notes.find((item) => item.id === noteId) : null
   await flushDraft()
-  if (noteId) {
-    await pruneUnreferencedNoteImages(noteId, content)
+  if (note) {
+    await pruneUnreferencedNoteImages(note.images, content, (imageId) =>
+      notesStore.removeImage(imageId)
+    )
   }
 })
 
@@ -372,7 +345,7 @@ async function onSidebarAction(payload: {
             v-model:draftContent="draftContent"
             :note="editorNote"
             :note-colors="NOTE_COLORS"
-            :color-labels="COLOR_LABELS"
+            :color-labels="NOTE_COLOR_LABELS"
             :popout-open="isPopoutOpen"
             :popout-toggle-label="popoutToggleLabel"
             @flush="flushDraft"
