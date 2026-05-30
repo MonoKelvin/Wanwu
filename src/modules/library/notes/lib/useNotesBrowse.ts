@@ -37,7 +37,11 @@ export function useNotesBrowse() {
   /** 是否展示右侧栏（空状态提示或编辑器） */
   const showRightPane = computed(() => {
     if (isSearchNoMatch.value) return false
-    if (isSearchActive.value && !pickedInSearch.value) return false
+    if (isSearchActive.value && !pickedInSearch.value) {
+      const id = validNoteId(selectedNoteId.value)
+      if (id && listNotes.value.some((note) => note.id === id)) return true
+      return false
+    }
     return true
   })
 

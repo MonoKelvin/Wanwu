@@ -1,6 +1,7 @@
 ﻿import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { NOTE_COLORS } from '@shared/constants/noteColors'
+import { sortNotesList } from '@modules/library/notes/lib/noteListOrder'
 import type { NoteColor, NoteItem, NoteUpdateInput } from '@shared/types/notes'
 
 let remoteSyncBound = false
@@ -30,11 +31,32 @@ export const useNotesStore = defineStore('notes', () => {
     notes.value[idx] = note
   }
 
-  function removeRemoteNote(noteId: string) {
+  function applyNoteRemoved(noteId: string) {
+    const sortedBefore = sortNotesList(notes.value)
+    const deleteIndex = sortedBefore.findIndex((n) => n.id === noteId)
+    if (deleteIndex === -1) return
+
+    const wasSelected = selectedNoteId.value === noteId
     notes.value = notes.value.filter((n) => n.id !== noteId)
-    if (selectedNoteId.value === noteId) {
+
+    if (wasSelected) {
+      if (notes.value.length === 0) {
+        selectedNoteId.value = null
+      } else {
+        const remaining = sortNotesList(notes.value)
+        const nextIndex = Math.min(deleteIndex, remaining.length - 1)
+        selectedNoteId.value = remaining[nextIndex]?.id ?? remaining[0]?.id ?? null
+      }
+      return
+    }
+
+    if (selectedNoteId.value && !notes.value.some((n) => n.id === selectedNoteId.value)) {
       selectedNoteId.value = null
     }
+  }
+
+  function removeRemoteNote(noteId: string) {
+    applyNoteRemoved(noteId)
   }
 
   function removeRemoteImage(imageId: string) {
@@ -101,10 +123,7 @@ export const useNotesStore = defineStore('notes', () => {
   async function deleteNote(id: string) {
     const ok = await window.wanwu.notes.deleteNote(id)
     if (!ok) return false
-    notes.value = notes.value.filter((n) => n.id !== id)
-    if (selectedNoteId.value === id) {
-      selectedNoteId.value = null
-    }
+    applyNoteRemoved(id)
     return true
   }
 

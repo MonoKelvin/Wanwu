@@ -1,7 +1,7 @@
 ﻿<script setup lang="ts">
 defineOptions({ name: 'LibraryNotesView' })
 
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ModulePageLayout from '@app/components/ModulePageLayout.vue'
 import PageHeader from '@app/components/PageHeader.vue'
 import EmptyState from '@app/components/EmptyState.vue'
@@ -48,12 +48,17 @@ const draftTitle = ref('')
 const draftContent = ref('')
 const notesEditorRef = ref<InstanceType<typeof NotesEditor> | null>(null)
 
+/** 列表从空变为非空时重建编辑器，避免 Tiptap 在 v-if 卸载后状态残留 */
+const editorSessionKey = ref(0)
+
 /** 用 id + 列表解析，避免 store 数组更新瞬间 selectedNote 为 null 导致草稿被清空 */
 const editorNote = computed(() => {
   const id = selectedNoteId.value
   if (!id) return null
   return notes.value.find((n) => n.id === id) ?? null
 })
+
+const showEditor = computed(() => Boolean(editorNote.value))
 
 const { isPopoutOpen, popoutToggleLabel, togglePopout } = useNotePopout(selectedNoteId)
 const { scopeCount, batchLabel, toggleAllPopouts } = useNotePopoutsBatch()
@@ -98,8 +103,20 @@ onMounted(async () => {
   }
 })
 
+watch(
+  () => notes.value.length,
+  (count, prevCount) => {
+    if (count === 0) {
+      editorSessionKey.value += 1
+    } else if ((prevCount ?? 0) === 0 && count > 0) {
+      editorSessionKey.value += 1
+    }
+  }
+)
+
 async function selectNote(id: string) {
-  if (selectedNoteId.value === id && (!isSearchActive.value || pickedInSearch.value)) {
+  const sameSelection = selectedNoteId.value === id
+  if (sameSelection && showEditor.value && (!isSearchActive.value || pickedInSearch.value)) {
     return
   }
 
@@ -118,8 +135,14 @@ async function selectNote(id: string) {
   }
 
   markPickedInSearch()
-  notesStore.setSelected(id)
 
+  // 选中 id 未变但编辑器已卸载（如删光后重建）时，需先清空再设回以触发草稿重载
+  if (sameSelection) {
+    notesStore.setSelected(null)
+    await nextTick()
+  }
+
+  notesStore.setSelected(id)
   await nextTick()
   notesEditorRef.value?.hydrateFromDraft?.()
 }
@@ -186,6 +209,10 @@ async function removeCurrent() {
   })
   if (!ok) return
   try {
+    if (selectedNoteId.value === note.id) {
+      notesEditorRef.value?.syncToDraft()
+      await flushDraft()
+    }
     await notesStore.deleteNote(note.id)
   } catch {
     toast.error('删除便笺失败')
@@ -203,6 +230,10 @@ async function removeById(noteId: string) {
   })
   if (!ok) return
   try {
+    if (selectedNoteId.value === noteId) {
+      notesEditorRef.value?.syncToDraft()
+      await flushDraft()
+    }
     await notesStore.deleteNote(noteId)
   } catch {
     toast.error('删除便笺失败')
@@ -339,7 +370,8 @@ async function onSidebarAction(payload: {
           :aria-hidden="!showRightPane"
         >
           <NotesEditor
-            v-if="editorNote"
+            v-if="showEditor"
+            :key="editorSessionKey"
             ref="notesEditorRef"
             v-model:draftTitle="draftTitle"
             v-model:draftContent="draftContent"

@@ -10,6 +10,7 @@ export function buildMajorTreeNodes(): TreeNode[] {
     label: m.name,
     icon: m.icon,
     selectable: true,
+    styleClass: 'ww-catalog-tree__major-row',
     children: undefined,
     data: { kind: 'major', majorId: m.id }
   }))

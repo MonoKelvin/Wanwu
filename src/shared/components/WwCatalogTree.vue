@@ -327,8 +327,19 @@ function badgeForNode(node: TreeNode): string | number | null | undefined {
   box-shadow: none !important;
 }
 
-.ww-library-tree--majors > .p-tree-root-children > .p-tree-node > .p-tree-node-content {
+.ww-library-tree--majors .p-tree-root-children > .p-tree-node > .p-tree-node-content {
   font-weight: 600;
+}
+
+/* 全库侧栏：顶级子模块（便笺 / 链接 / 图鉴）略高、字号略大 */
+.ww-catalog-tree--library-majors .p-tree-node-content.ww-catalog-tree__major-row {
+  min-height: 2.375rem;
+  padding-block: 0.5rem !important;
+  font-size: 0.875rem;
+}
+
+.ww-catalog-tree--library-majors .p-tree-node-content.ww-catalog-tree__major-row .ww-catalog-tree__major-text {
+  font-size: inherit;
 }
 
 .ww-catalog-tree__brand-icon,
