@@ -1,4 +1,4 @@
-import { openSqliteSnapshot } from '../sqliteSession'
+﻿import { openSqliteSnapshot } from '../sqliteSession'
 
 export type FirefoxBookmarkRow = {
   id: number

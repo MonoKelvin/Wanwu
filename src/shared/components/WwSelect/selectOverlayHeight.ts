@@ -1,4 +1,4 @@
-/** 下拉列表高度：按选项数估算，避免 Prime 默认 14rem 撑出空白 */
+﻿/** 下拉列表高度：按选项数估算，避免 Prime 默认 14rem 撑出空白 */
 
 export const SELECT_ROW_REM = 2
 export const SELECT_GAP_REM = 0.0625

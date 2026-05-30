@@ -1,4 +1,4 @@
-import { computed, ref, type MaybeRefOrGetter, toValue } from 'vue'
+﻿import { computed, ref, type MaybeRefOrGetter, toValue } from 'vue'
 
 /** 仅在文本被截断时展示 tooltip */
 export function useOverflowTooltip(text: MaybeRefOrGetter<string>) {

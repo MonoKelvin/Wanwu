@@ -1,4 +1,4 @@
-/** 分享导出（PNG/JPEG/HTML）与当前界面主题对齐 */
+﻿/** 分享导出（PNG/JPEG/HTML）与当前界面主题对齐 */
 
 export type ShareTheme = 'light' | 'dark'
 

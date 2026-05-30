@@ -1,4 +1,4 @@
-import type { NoteItem } from '@shared/types/notes'
+﻿import type { NoteItem } from '@shared/types/notes'
 
 /** 便笺列表排序：置顶优先，置顶内保持原序，其余按更新时间倒序 */
 export function sortNotesList(notes: readonly NoteItem[]): NoteItem[] {

@@ -1,0 +1,596 @@
+/**
+ * 云斋 · 装饰层（图案 / 弥散 / 纹理）
+ * 与 cloud-abode-site.css 叠加：保留网页排版，补回设计感
+ */
+
+.ww-ca-web {
+  --ca-accent-warm: var(--ca-accent);
+  --ca-glow-strength: 0.05;
+  --ca-diffuse-blur: 88px;
+}
+
+/* —— 模块内全屏氛围（背景视频 + 轻 scrim） —— */
+.ww-ca-web .ww-ca-ambient {
+  display: block;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ww-ca-web .ww-ca-ambient__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  filter: saturate(1.04) contrast(1.03) brightness(1.05) sepia(0.08);
+  transition: opacity 0.45s ease;
+}
+
+.ww-ca-web .ww-ca-ambient__video--switching {
+  opacity: 0.35;
+}
+
+.ww-ca-web .ww-ca-ambient__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(248 246 242 / 0.1) 0%,
+      transparent 38%,
+      rgb(248 246 242 / 0.08) 100%
+    );
+}
+
+.ww-ca-web .ww-ca-ambient__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  filter: url(#ww-ca-grain);
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-ambient__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 120% 90% at 50% 40%,
+    transparent 55%,
+    color-mix(in srgb, var(--ca-canvas) 12%, transparent) 100%
+  );
+  opacity: 0.28;
+}
+
+.ww-ca-web .ww-ca-ambient__line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--ca-accent-warm) 35%, var(--ca-hairline)),
+    transparent
+  );
+}
+
+.ww-ca-texture-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+.ww-ca-web .ww-ca-ambient__orb--1 {
+  top: -6%;
+  right: -4%;
+  width: min(38vw, 20rem);
+  height: min(38vw, 20rem);
+  background: color-mix(in srgb, var(--ca-accent-warm) 18%, var(--ca-canvas));
+}
+
+.ww-ca-web .ww-ca-ambient__orb--2 {
+  bottom: 8%;
+  left: -8%;
+  width: min(34vw, 16rem);
+  height: min(34vw, 16rem);
+  background: color-mix(in srgb, var(--ca-ink) 5%, var(--ca-band));
+  animation-delay: -8s;
+}
+
+.ww-ca-web .ww-ca-ambient__orb--3 {
+  opacity: calc(var(--ca-glow-strength) * 0.7);
+  animation-delay: -14s;
+}
+
+.ww-ca-web .ww-ca-ambient__grid {
+  opacity: 0.22;
+}
+
+.ww-ca-web .ww-ca-texture-layer--grain {
+  opacity: 0.04;
+  mix-blend-mode: multiply;
+  background-size: 200px 200px;
+}
+
+.ww-ca-web .ww-ca-texture-layer--dots {
+  opacity: 0.12;
+  background-size: 200px 200px;
+}
+
+@keyframes ww-ca-orb-drift {
+  to {
+    transform: translate(2%, -3%) scale(1.05);
+  }
+}
+
+/* —— 局部 mesh —— */
+.ww-ca-mesh-wash {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ww-ca-mesh-wash__blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(56px);
+  animation: ww-ca-mesh-blob 18s ease-in-out infinite alternate;
+}
+
+.ww-ca-mesh-wash__blob--a {
+  top: 10%;
+  right: 8%;
+  width: 55%;
+  height: 55%;
+  background: color-mix(in srgb, var(--ca-accent-warm) 16%, transparent);
+}
+
+.ww-ca-mesh-wash__blob--b {
+  bottom: 0;
+  left: 5%;
+  width: 45%;
+  height: 50%;
+  background: color-mix(in srgb, var(--ca-ink) 4%, transparent);
+  animation-delay: -6s;
+}
+
+.ww-ca-mesh-wash__blob--c {
+  top: 40%;
+  left: 35%;
+  width: 35%;
+  height: 35%;
+  background: color-mix(in srgb, var(--ca-canvas) 70%, transparent);
+  animation-delay: -11s;
+}
+
+.ww-ca-mesh-wash--hero .ww-ca-mesh-wash__blob--a {
+  opacity: 0.75;
+}
+
+.ww-ca-mesh-wash--banner .ww-ca-mesh-wash__blob {
+  filter: blur(48px);
+  opacity: 0.6;
+}
+
+@keyframes ww-ca-mesh-blob {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(-3%, 5%) scale(1.06);
+  }
+}
+
+/* —— CSS 图案 —— */
+.ww-ca-pattern {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ww-ca-pattern--dots {
+  opacity: 0.28;
+  background-image: radial-gradient(circle, var(--ca-hairline-strong) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.ww-ca-pattern--rings {
+  opacity: 0.18;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 58%, var(--ca-hairline) 59%, transparent 60%),
+    radial-gradient(circle at 50% 50%, transparent 38%, var(--ca-hairline) 39%, transparent 40%);
+}
+
+.ww-ca-pattern--cross {
+  opacity: 0.07;
+  background-image:
+    linear-gradient(var(--ca-ink) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ca-ink) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.ww-ca-pattern--arc {
+  opacity: 0.1;
+  background:
+    radial-gradient(circle at 0% 100%, transparent 58%, var(--ca-hairline) 59%, transparent 61%),
+    radial-gradient(circle at 100% 0%, transparent 68%, var(--ca-hairline) 69%, transparent 71%);
+}
+
+/* —— 首页 Hero 分栏 + 视觉区 —— */
+.ww-ca-web .ww-ca-editorial-hero--split {
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 2.75rem);
+  margin-bottom: var(--ca-section-gap);
+  padding-bottom: var(--ca-block-gap);
+  border-bottom: 1px solid var(--ca-hairline);
+}
+
+@media (min-width: 900px) {
+  .ww-ca-web .ww-ca-editorial-hero--split {
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: stretch;
+  }
+}
+
+.ww-ca-web .ww-ca-editorial-hero__visual {
+  position: relative;
+  min-height: min(36vh, 18rem);
+  overflow: hidden;
+  background: var(--ca-band);
+  border: 1px solid var(--ca-hairline);
+}
+
+.ww-ca-web .ww-ca-editorial-hero__frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(68%, 14rem);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--ca-accent-warm) 40%, var(--ca-hairline));
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: ww-ca-frame-pulse 14s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-editorial-hero__frame--outer {
+  width: min(84%, 17rem);
+  border-style: dashed;
+  opacity: 0.35;
+  animation-duration: 20s;
+  animation-direction: alternate-reverse;
+}
+
+.ww-ca-web .ww-ca-editorial-hero__arc {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  width: min(42%, 9rem);
+  height: auto;
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-editorial-hero__lottie {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.88;
+}
+
+@keyframes ww-ca-frame-pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.04);
+    opacity: 0.8;
+  }
+}
+
+.ww-ca-web .ww-ca-velvety-hero {
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 2.75rem);
+  margin-bottom: var(--ca-section-gap);
+  padding-bottom: var(--ca-block-gap);
+  border-bottom: 1px solid var(--ca-hairline);
+}
+
+@media (min-width: 900px) {
+  .ww-ca-web .ww-ca-velvety-hero {
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: stretch;
+  }
+}
+
+.ww-ca-web .ww-ca-velvety-hero__visual {
+  display: block;
+  position: relative;
+  min-height: min(36vh, 18rem);
+  overflow: hidden;
+  background: var(--ca-band);
+  border: 1px solid var(--ca-hairline);
+}
+
+.ww-ca-web .ww-ca-velvety-hero__decor {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  width: min(40%, 9rem);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-velvety-hero__frame {
+  display: block;
+}
+
+/* —— 页面标题 + 视觉侧栏 —— */
+.ww-ca-web .ww-ca-page-title--editorial {
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: var(--ca-block-gap);
+  padding-bottom: var(--ca-block-gap);
+  border-bottom: 1px solid var(--ca-hairline);
+}
+
+@media (min-width: 768px) {
+  .ww-ca-web .ww-ca-page-title--editorial {
+    grid-template-columns: 1fr min(28%, 14rem);
+    align-items: end;
+  }
+}
+
+.ww-ca-web .ww-ca-page-title__visual {
+  position: relative;
+  min-height: 8rem;
+  overflow: hidden;
+  background: var(--ca-band);
+  border: 1px solid var(--ca-hairline);
+}
+
+.ww-ca-web .ww-ca-page-title__corner {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* —— 信息带纹理 —— */
+.ww-ca-web .ww-ca-band {
+  position: relative;
+  overflow: hidden;
+}
+
+.ww-ca-web .ww-ca-band__texture {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  opacity: 0.14;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  z-index: 0;
+}
+
+.ww-ca-web .ww-ca-band__aurora {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.ww-ca-web .ww-ca-band__glow {
+  z-index: 0;
+}
+
+.ww-ca-web .ww-ca-band__primary,
+.ww-ca-web .ww-ca-band__stats {
+  position: relative;
+  z-index: 1;
+}
+
+/* —— Hero / 标题局部 grain —— */
+.ww-ca-web .ww-ca-editorial-hero__grain,
+.ww-ca-web .ww-ca-page-title__grain {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  opacity: 0.12;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ww-ca-mesh-wash--subtle .ww-ca-mesh-wash__blob {
+  filter: blur(40px);
+  opacity: 0.45;
+}
+
+.ww-ca-web .ww-ca-tool__name,
+.ww-ca-web .ww-ca-tool__desc,
+.ww-ca-web .ww-ca-tool__meta {
+  position: relative;
+  z-index: 1;
+}
+
+/* —— 分类：点阵 + 字形 —— */
+.ww-ca-web .ww-ca-cat-tile__pattern-img {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-cat-tile__glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-right: 0.35rem;
+  font-family: var(--ca-font-display);
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--ca-accent-warm) 75%, var(--ca-ink-faint));
+  opacity: 0.85;
+}
+
+.ww-ca-web .ww-ca-cat-tile {
+  position: relative;
+  overflow: hidden;
+}
+
+.ww-ca-web .ww-ca-cat-tile__glyph,
+.ww-ca-web .ww-ca-cat-tile__label {
+  position: relative;
+  z-index: 1;
+}
+
+/* —— 商品媒体纹理 —— */
+.ww-ca-web .ww-ca-product__media-texture {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  opacity: 0.1;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  z-index: 1;
+}
+
+.ww-ca-web .ww-ca-product__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 62%, color-mix(in srgb, var(--ca-ink) 5%, transparent));
+  opacity: 0.5;
+}
+
+.ww-ca-web .ww-ca-product__img,
+.ww-ca-web .ww-ca-product__glyph {
+  position: relative;
+  z-index: 0;
+}
+
+.ww-ca-web .ww-ca-product__pattern {
+  opacity: 0.08;
+}
+
+/* —— 区块标题饰线 —— */
+.ww-ca-web .ww-ca-section-center--decor {
+  position: relative;
+  padding-top: 0.25rem;
+}
+
+.ww-ca-web .ww-ca-section-center--decor::before {
+  content: '';
+  display: block;
+  width: 2rem;
+  height: 1px;
+  margin-bottom: 1rem;
+  background: linear-gradient(
+    90deg,
+    var(--ca-accent-warm),
+    color-mix(in srgb, var(--ca-accent-warm) 30%, transparent)
+  );
+}
+
+/* —— 页脚 —— */
+.ww-ca-web .ww-ca-web-footer {
+  position: relative;
+  overflow: hidden;
+}
+
+.ww-ca-web .ww-ca-web-footer__pattern-img {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-web-footer__brand {
+  position: relative;
+  z-index: 1;
+}
+
+/* —— 顶栏滚动态（与 site.css 一致） —— */
+.ww-ca-web .ww-ca-shell--scrolled {
+  background: var(--ca-glass-bg-strong);
+  backdrop-filter: blur(var(--ca-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ca-glass-blur));
+  border-bottom-color: var(--ca-hairline);
+}
+
+/* —— 筛选条 —— */
+.ww-ca-web .ww-ca-filter-bar--sticky {
+  background: var(--ca-glass-bg-strong);
+  backdrop-filter: blur(var(--ca-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ca-glass-blur));
+}
+
+/* —— 深色 —— */
+[data-theme='dark'] .ww-ca-web .ww-ca-ambient__scrim {
+  background:
+    linear-gradient(
+      180deg,
+      rgb(19 18 17 / 0.22) 0%,
+      transparent 38%,
+      rgb(19 18 17 / 0.18) 100%
+    );
+}
+
+[data-theme='dark'] .ww-ca-web .ww-ca-texture-layer--grain,
+[data-theme='dark'] .ww-ca-web .ww-ca-texture-layer--dots {
+  opacity: 0.08;
+  mix-blend-mode: screen;
+}
+
+[data-theme='dark'] .ww-ca-web .ww-ca-product__media-texture,
+[data-theme='dark'] .ww-ca-web .ww-ca-band__texture,
+[data-theme='dark'] .ww-ca-web .ww-ca-cat-tile__pattern-img {
+  opacity: 0.06;
+  mix-blend-mode: soft-light;
+}
+
+[data-theme='dark'] .ww-ca-web .ww-ca-editorial-hero__visual,
+[data-theme='dark'] .ww-ca-web .ww-ca-velvety-hero__visual,
+[data-theme='dark'] .ww-ca-web .ww-ca-page-title__visual {
+  background: color-mix(in srgb, var(--ca-band) 80%, #000);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-ca-web .ww-ca-ambient__video {
+    display: none;
+  }
+
+  .ww-ca-web .ww-ca-ambient__orb,
+  .ww-ca-mesh-wash__blob,
+  .ww-ca-web .ww-ca-editorial-hero__frame,
+  .ww-ca-web .ww-ca-velvety-hero__frame {
+    animation: none !important;
+  }
+}

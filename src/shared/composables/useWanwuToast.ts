@@ -1,4 +1,4 @@
-import { useToast } from 'primevue/usetoast'
+﻿import { useToast } from 'primevue/usetoast'
 import type { WanwuToastAction, WanwuToastMessagePayload, WanwuToastOptions } from '@shared/types/toast'
 
 const TOAST_LIFE = 4500

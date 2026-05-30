@@ -1,4 +1,4 @@
-/** Chromium 书签 external_id：{sourceId}:guid:{guid} 或 legacy 路径格式 */
+﻿/** Chromium 书签 external_id：{sourceId}:guid:{guid} 或 legacy 路径格式 */
 
 export function buildChromiumExternalId(
   sourceId: string,

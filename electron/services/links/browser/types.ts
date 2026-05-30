@@ -1,4 +1,4 @@
-/** 收藏夹存储引擎 */
+﻿/** 收藏夹存储引擎 */
 export type BrowserBookmarkEngine = 'chromium' | 'firefox' | 'safari-plist'
 
 /** 浏览器收藏夹同步提供方 */

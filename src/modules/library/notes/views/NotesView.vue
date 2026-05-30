@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 defineOptions({ name: 'LibraryNotesView' })
 
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'

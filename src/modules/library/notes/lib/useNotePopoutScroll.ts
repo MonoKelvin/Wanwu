@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted } from 'vue'
+﻿import { onBeforeUnmount, onMounted } from 'vue'
 
 const CONTENT_SELECTOR = '.ww-notes-editor__content'
 

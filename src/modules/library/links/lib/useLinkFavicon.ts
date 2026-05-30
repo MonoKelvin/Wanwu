@@ -1,4 +1,4 @@
-import { computed, ref, watch, type MaybeRefOrGetter, toValue } from 'vue'
+﻿import { computed, ref, watch, type MaybeRefOrGetter, toValue } from 'vue'
 import {
   isLikelyGenericFavicon,
   linkFaviconSources

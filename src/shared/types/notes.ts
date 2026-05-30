@@ -1,4 +1,4 @@
-export type NoteColor =
+﻿export type NoteColor =
   | 'yellow'
   | 'green'
   | 'blue'

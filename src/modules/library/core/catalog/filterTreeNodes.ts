@@ -1,4 +1,4 @@
-import type { TreeNode } from 'primevue/treenode'
+﻿import type { TreeNode } from 'primevue/treenode'
 
 /** 按标签过滤树，保留匹配节点及其祖先链 */
 export function filterTreeNodes(nodes: TreeNode[], query: string): TreeNode[] {

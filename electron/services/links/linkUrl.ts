@@ -1,4 +1,4 @@
-export function normalizeLinkUrl(raw: string): string {
+﻿export function normalizeLinkUrl(raw: string): string {
   const t = raw.trim()
   if (!t) throw new Error('链接地址不能为空')
   try {

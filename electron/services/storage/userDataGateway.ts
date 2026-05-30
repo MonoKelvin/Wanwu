@@ -1,4 +1,4 @@
-import type { DatabaseService } from '../core/database'
+﻿import type { DatabaseService } from '../core/database'
 import type { NoteCreateInput, NoteImage, NoteItem, NoteUpdateInput } from '../../../src/shared/types/notes'
 import type { AppSettings } from '../../../src/shared/types/settings'
 

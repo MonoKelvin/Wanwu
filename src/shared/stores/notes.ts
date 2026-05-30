@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { NOTE_COLORS } from '@shared/constants/noteColors'
 import type { NoteColor, NoteItem, NoteUpdateInput } from '@shared/types/notes'

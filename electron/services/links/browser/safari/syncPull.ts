@@ -1,4 +1,4 @@
-import type Database from 'better-sqlite3'
+﻿import type Database from 'better-sqlite3'
 import { randomUUID } from 'crypto'
 import type { LinksSyncResult } from '../../../../../src/shared/types/links'
 import { LINKS_RECYCLE_BIN_ID } from '../../constants'

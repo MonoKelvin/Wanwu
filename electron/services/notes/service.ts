@@ -1,4 +1,4 @@
-import type { NoteCreateInput, NoteItem, NoteUpdateInput } from '../../../src/shared/types/notes'
+﻿import type { NoteCreateInput, NoteItem, NoteUpdateInput } from '../../../src/shared/types/notes'
 import type { NotesStorage } from './storage'
 
 export class NotesService {

@@ -1,4 +1,4 @@
-import type { RenderQuality } from '../types/engine'
+﻿import type { RenderQuality } from '../types/engine'
 import { UnsignedByteType } from 'three'
 
 export interface QualitySettings {

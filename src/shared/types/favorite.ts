@@ -1,4 +1,4 @@
-import type { ItemSource } from './item'
+﻿import type { ItemSource } from './item'
 
 export interface FavoriteItemPreview {
   id: string

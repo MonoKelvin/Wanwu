@@ -1,4 +1,4 @@
-import type { MediaAttribution } from '@shared/types/unsplash'
+﻿import type { MediaAttribution } from '@shared/types/unsplash'
 
 /** 通用大图查看器幻灯片 */
 export interface ImageViewerSlide {

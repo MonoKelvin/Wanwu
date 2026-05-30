@@ -1,4 +1,4 @@
-import type { PlanarMeshReflector } from '../reflection/PlanarMeshReflector'
+﻿import type { PlanarMeshReflector } from '../reflection/PlanarMeshReflector'
 
 /**
  * 反射子系统 — 管理平面反射、SSR 等反射 pass 的每帧更新。

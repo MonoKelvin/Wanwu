@@ -1,4 +1,4 @@
-import { watch, type FSWatcher } from 'fs'
+﻿import { watch, type FSWatcher } from 'fs'
 import type { BrowserWindow } from 'electron'
 import { listBrowserBookmarkProviders } from './registry'
 

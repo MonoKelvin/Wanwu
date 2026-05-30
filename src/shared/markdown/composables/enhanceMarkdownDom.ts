@@ -1,4 +1,4 @@
-import { stripBlockquoteMarkerNodes } from '../utils/blockquoteMarkers'
+﻿import { stripBlockquoteMarkerNodes } from '../utils/blockquoteMarkers'
 
 const IMG_TOOLTIP_DELAY_MS = 300
 

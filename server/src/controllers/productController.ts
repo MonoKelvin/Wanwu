@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+﻿import { Request, Response } from 'express';
 import { ProductModel } from '../models/productModel.js';
 import type { ApiResponse } from '../types/product.js';
 

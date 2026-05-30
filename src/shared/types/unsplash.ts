@@ -1,4 +1,4 @@
-export type MediaAttributionSource = 'unsplash' | 'pixabay'
+﻿export type MediaAttributionSource = 'unsplash' | 'pixabay'
 
 /** 全库配图归属（Unsplash 须 UTM；Pixabay 建议标注作者） */
 export interface MediaAttribution {

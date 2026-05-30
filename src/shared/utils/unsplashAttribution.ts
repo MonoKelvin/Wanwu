@@ -1,4 +1,4 @@
-import type { MediaAttribution, MediaAttributionSource } from '@shared/types/unsplash'
+﻿import type { MediaAttribution, MediaAttributionSource } from '@shared/types/unsplash'
 
 export function mediaAttributionSource(
   value: MediaAttribution | null | undefined

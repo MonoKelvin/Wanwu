@@ -1,4 +1,4 @@
-import type { IRenderContext } from '../types/context'
+﻿import type { IRenderContext } from '../types/context'
 import type { RenderContextOptions } from './RenderContext'
 import { RenderContext } from './RenderContext'
 import { WebGPURenderContext } from './WebGPURenderContext'

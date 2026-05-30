@@ -1,4 +1,4 @@
-import type { ShareCardPalette } from './types'
+﻿import type { ShareCardPalette } from './types'
 
 function clamp(v: number, min: number, max: number) {
   return Math.min(max, Math.max(min, v))

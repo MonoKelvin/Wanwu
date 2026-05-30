@@ -1,4 +1,4 @@
-import { appLogoFor } from '@shared/assets/app-logo'
+﻿import { appLogoFor } from '@shared/assets/app-logo'
 import type { ColorScheme, ResolvedColorScheme } from '@shared/types/settings'
 
 function currentScheme(): ResolvedColorScheme {

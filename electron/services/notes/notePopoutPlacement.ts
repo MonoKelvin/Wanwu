@@ -1,4 +1,4 @@
-import { screen, type Point, type Rectangle } from 'electron'
+﻿import { screen, type Point, type Rectangle } from 'electron'
 
 const DEFAULT_WIDTH = 320
 const DEFAULT_HEIGHT = 360

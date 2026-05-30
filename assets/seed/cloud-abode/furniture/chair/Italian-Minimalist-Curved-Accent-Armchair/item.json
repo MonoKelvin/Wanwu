@@ -1,0 +1,30 @@
+{
+    "id": "9dfb987d-07b8-486f-9271-63a256018449",
+    "productName": "意式极简弧线单人休闲椅（设计师无扶手单椅）",
+    "size": {
+        "overallLength": 63,
+        "overallDepth": 61,
+        "overallHeight": 79,
+        "seatWidth": 53,
+        "seatDepth": 49,
+        "seatHeight": 44,
+        "backrestHeight": 34,
+        "unit": "厘米"
+    },
+    "material": {
+        "frame": "一体弯折哑光细金属框架",
+        "upholstery": "哑光麂皮绒/超纤皮二选一",
+        "filler": "45D高密度回弹海绵"
+    },
+    "chairLegDetail": "纤细隐形金属椅脚，反光柔和，无厚重落地阴影",
+    "weight": {
+        "netWeight": 7,
+        "weightUnit": "千克"
+    },
+    "loadParameter": {
+        "maxLoad": 180,
+        "loadUnit": "千克"
+    },
+    "styleCharacteristic": "流线圆弧造型，纯白拍摄背景，专业柔和产品打光，电商使用便于抠图",
+    "usageScene": "客厅角落、书房、样板房、展厅软装"
+}

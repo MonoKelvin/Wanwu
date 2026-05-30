@@ -1,4 +1,4 @@
-import Image from '@tiptap/extension-image'
+﻿import Image from '@tiptap/extension-image'
 import type { NodeViewProps } from '@tiptap/core'
 import { VueNodeViewRenderer } from '@tiptap/vue-3'
 import type { Component } from 'vue'

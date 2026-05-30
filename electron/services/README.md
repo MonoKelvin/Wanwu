@@ -12,6 +12,7 @@
 | `library/` | 图鉴种子入库、预编译数据包、条目 CRUD、Markdown 正文 |
 | `rss/` | 订阅 schema、拉取/探测、默认源、定时刷新 |
 | `app/` | 窗口状态持久化、加密预留 |
+| `cloud-abode/` | 云斋经济、商城、TODO、工具、独立 SQLite |
 
 ## 依赖方向
 

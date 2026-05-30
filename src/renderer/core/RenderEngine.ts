@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+﻿import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { configureSmoothOrbitControls, type SmoothOrbitHandle } from '../controls/configureOrbitControls'
 import { RENDERER_DEFAULTS, resolveRenderOptions } from '../config/rendererDefaults'

@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync } from 'fs'
+﻿import { existsSync, readFileSync, readdirSync } from 'fs'
 import { homedir } from 'os'
 import { join } from 'path'
 

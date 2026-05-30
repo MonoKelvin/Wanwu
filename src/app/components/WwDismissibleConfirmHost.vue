@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import Checkbox from 'primevue/checkbox'
 import WwDialogFooterButton from '@shared/components/WwDialogFooterButton.vue'
 import WwGlassDialog from '@shared/components/WwGlassDialog.vue'

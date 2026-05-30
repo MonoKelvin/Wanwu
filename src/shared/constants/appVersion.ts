@@ -1,4 +1,4 @@
-import packageJson from '../../../package.json'
+﻿import packageJson from '../../../package.json'
 
 /** 应用版本（唯一来源：根目录 package.json 的 version 字段） */
 export const APP_VERSION = packageJson.version

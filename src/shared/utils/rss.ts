@@ -1,4 +1,4 @@
-export function stripHtml(text: string): string {
+﻿export function stripHtml(text: string): string {
   return text
     .replace(/<[^>]*>/g, ' ')
     .replace(/&nbsp;/gi, ' ')

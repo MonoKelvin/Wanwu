@@ -1,4 +1,4 @@
-export type ShareCardFilterId =
+﻿export type ShareCardFilterId =
   | 'none'
   | 'blue'
   | 'vintage'

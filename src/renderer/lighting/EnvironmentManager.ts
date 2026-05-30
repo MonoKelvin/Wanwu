@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+﻿import * as THREE from 'three'
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
 import { bakePmremFromScene } from '../env/bakePmrem'
 import { DynamicEnvMixer, hdrToPmremEnv } from '../env/DynamicEnvMixer'

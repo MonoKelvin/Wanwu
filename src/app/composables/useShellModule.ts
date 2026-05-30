@@ -1,4 +1,4 @@
-import { computed } from 'vue'
+﻿import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { isModuleId, type ModuleId } from '@app/config/modules'
 import { shellModuleFromReturnPath } from '@app/shell/moduleShell'

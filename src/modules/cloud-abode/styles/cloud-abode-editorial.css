@@ -1,0 +1,623 @@
+/**
+ * 云斋 · 简约大气 + 毛玻璃（参考 Vantage / Whisper 等高端电商）
+ * 大留白 · 轻装饰 · 选择性 frosted glass · 克制动效
+ */
+
+.ww-ca-web {
+  --ca-glass-bg: color-mix(in srgb, var(--ca-surface) 68%, transparent);
+  --ca-glass-border: color-mix(in srgb, var(--ca-surface) 35%, var(--ca-border));
+  --ca-glass-blur: 18px;
+  --ca-glass-shadow: 0 1px 0 color-mix(in srgb, var(--ca-surface) 55%, transparent) inset,
+    0 12px 40px -16px rgb(0 0 0 / 0.1);
+  --ca-radius-md: 0.875rem;
+  --ca-radius-lg: 1.125rem;
+  --ca-radius-xl: 1.5rem;
+  --ca-page-max: 88rem;
+  --ca-shadow-soft: 0 8px 32px -20px rgb(0 0 0 / 0.12);
+  --ca-glow-strength: 0.05;
+}
+
+/* —— 毛玻璃工具类 —— */
+.ww-ca-glass,
+.ww-ca-web .ww-ca-glass-panel {
+  background: var(--ca-glass-bg);
+  backdrop-filter: blur(var(--ca-glass-blur)) saturate(1.22);
+  -webkit-backdrop-filter: blur(var(--ca-glass-blur)) saturate(1.22);
+  border: 1px solid var(--ca-glass-border);
+  box-shadow: var(--ca-glass-shadow);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .ww-ca-glass,
+  .ww-ca-web .ww-ca-glass-panel {
+    background: var(--ca-surface);
+  }
+}
+
+/* —— 背景：更克制 —— */
+.ww-ca-web .ww-ca-ambient {
+  opacity: 0.55;
+}
+
+.ww-ca-web .ww-ca-ambient__orb {
+  opacity: var(--ca-glow-strength);
+}
+
+.ww-ca-web .ww-ca-ambient__grid {
+  opacity: 0.18;
+}
+
+/* —— 顶栏毛玻璃 —— */
+.ww-ca-web .ww-ca-shell {
+  background: color-mix(in srgb, var(--ca-surface) 62%, transparent);
+  backdrop-filter: blur(22px) saturate(1.3);
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
+  border-bottom: 1px solid var(--ca-glass-border);
+}
+
+.ww-ca-web .ww-ca-shell--scrolled {
+  background: color-mix(in srgb, var(--ca-surface) 82%, transparent);
+  box-shadow: 0 8px 32px -20px rgb(0 0 0 / 0.12);
+}
+
+.ww-ca-web .ww-ca-shell__inner {
+  max-width: var(--ca-page-max);
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.ww-ca-web .ww-ca-shell__logo::before {
+  content: none;
+}
+
+.ww-ca-web .ww-ca-shell__tab--emphasis {
+  border: 1px solid var(--ca-glass-border);
+  border-radius: 999px;
+  background: var(--ca-glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.35rem 0.9rem;
+  text-decoration: none;
+}
+
+/* —— Hero：全宽大气排版 —— */
+.ww-ca-web .ww-ca-velvety-hero {
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  min-height: auto;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.ww-ca-web .ww-ca-velvety-hero__panel {
+  padding: clamp(2rem, 5vw, 3.5rem) 0;
+  border: none;
+}
+
+@media (min-width: 900px) {
+  .ww-ca-web .ww-ca-velvety-hero__panel {
+    padding-right: clamp(2rem, 4vw, 3rem);
+    border-right: none;
+  }
+}
+
+.ww-ca-web .ww-ca-velvety-hero__visual {
+  min-height: min(42vh, 22rem);
+  border-radius: var(--ca-radius-xl);
+  overflow: hidden;
+}
+
+.ww-ca-web .ww-ca-velvety-hero__frame,
+.ww-ca-web .ww-ca-velvety-hero__frame--outer,
+.ww-ca-web .ww-ca-velvety-hero__decor {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-velvety-hero__kicker::before {
+  content: none;
+}
+
+.ww-ca-web .ww-ca-velvety-hero__title {
+  font-size: clamp(2.75rem, 7.5vw, 4.5rem);
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+}
+
+.ww-ca-web .ww-ca-velvety-hero__desc {
+  max-width: 26rem;
+  font-size: var(--ca-text-lg);
+  line-height: 1.65;
+}
+
+.ww-ca-web .ww-ca-velvety-hero__panel::after {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-btn--primary {
+  border-radius: 999px;
+  letter-spacing: 0.06em;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.8rem 1.65rem;
+}
+
+.ww-ca-web .ww-ca-btn--ghost {
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  font-size: 0.8125rem;
+}
+
+/* —— 账户区：玻璃卡片 —— */
+.ww-ca-web .ww-ca-hero-row {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  border: none;
+}
+
+@media (min-width: 768px) {
+  .ww-ca-web .ww-ca-hero-row {
+    grid-template-columns: 1.25fr 1fr;
+    gap: 1.25rem;
+  }
+}
+
+.ww-ca-web .ww-ca-hero.ww-ca-glass,
+.ww-ca-web .ww-ca-hero.ww-glass-blur {
+  padding: clamp(1.75rem, 4vw, 2.25rem);
+  border-radius: var(--ca-radius-xl);
+  background: var(--ca-glass-bg);
+  backdrop-filter: blur(var(--ca-glass-blur)) saturate(1.22);
+  -webkit-backdrop-filter: blur(var(--ca-glass-blur)) saturate(1.22);
+  border: 1px solid var(--ca-glass-border);
+  box-shadow: var(--ca-glass-shadow);
+}
+
+.ww-ca-web .ww-ca-hero.ww-glass-blur::before {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-hero__balance {
+  font-family: var(--ca-font-serif);
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.ww-ca-web .ww-ca-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.ww-ca-web .ww-ca-stat.ww-ca-glass,
+.ww-ca-web .ww-ca-stat.ww-glass-blur {
+  padding: 1.15rem 1.2rem;
+  border-radius: var(--ca-radius-lg);
+  text-align: left;
+  border: 1px solid var(--ca-glass-border);
+  background: var(--ca-glass-bg);
+  backdrop-filter: blur(var(--ca-glass-blur)) saturate(1.18);
+  -webkit-backdrop-filter: blur(var(--ca-glass-blur)) saturate(1.18);
+  box-shadow: var(--ca-glass-shadow);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s var(--ww-ease-out);
+}
+
+.ww-ca-web .ww-ca-stat.ww-glass-blur::before,
+.ww-ca-web .ww-ca-stat::after {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-stat:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--ca-accent-warm) 35%, var(--ca-glass-border));
+}
+
+.ww-ca-web .ww-ca-stat__value {
+  font-family: var(--ca-font-serif);
+  font-size: 1.625rem;
+  font-weight: 400;
+}
+
+.ww-ca-web .ww-ca-stat__label {
+  font-size: var(--ca-text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ca-ink-faint);
+}
+
+/* —— 区块标题：极简 —— */
+.ww-ca-web .ww-ca-section-center {
+  margin-bottom: 2rem;
+  padding-top: 0;
+}
+
+.ww-ca-web .ww-ca-section-center::before {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-section-center__title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.03em;
+}
+
+.ww-ca-web .ww-ca-ornament-divider {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-section-center__eyebrow {
+  letter-spacing: 0.16em;
+}
+
+/* —— 商品卡：玻璃 + 悬停缩放 —— */
+.ww-ca-web .ww-ca-product.ww-ca-glass,
+.ww-ca-web .ww-ca-product.ww-glass-blur {
+  border-radius: var(--ca-radius-lg);
+  background: var(--ca-glass-bg);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  border: 1px solid var(--ca-glass-border);
+  box-shadow: var(--ca-glass-shadow);
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s var(--ww-ease-out),
+    box-shadow 0.35s var(--ww-ease-out);
+}
+
+.ww-ca-web .ww-ca-product.ww-glass-blur::before,
+.ww-ca-web .ww-ca-product__frame,
+.ww-ca-web .ww-ca-product__shine,
+.ww-ca-web .ww-ca-product__corner,
+.ww-ca-web .ww-ca-product__media-texture {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-product:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--ca-ink) 12%, var(--ca-glass-border));
+  box-shadow:
+    var(--ca-glass-shadow),
+    0 20px 48px -24px rgb(0 0 0 / 0.14);
+}
+
+.ww-ca-web .ww-ca-product__media {
+  margin: 0;
+  border-radius: 0;
+  aspect-ratio: 4 / 5;
+  background: var(--ca-paper);
+  overflow: hidden;
+}
+
+.ww-ca-web .ww-ca-product__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-ca-web .ww-ca-product:hover .ww-ca-product__img {
+  transform: scale(1.05);
+}
+
+.ww-ca-web .ww-ca-product__body {
+  padding: 1.1rem 1.2rem 1.25rem;
+  gap: 0.25rem;
+}
+
+.ww-ca-web .ww-ca-product__name {
+  font-family: var(--ca-font-serif);
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.ww-ca-web .ww-ca-product__price {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  margin-top: 0.35rem;
+}
+
+.ww-ca-web .ww-ca-product__tag {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-product-grid {
+  gap: 1.25rem;
+  background: transparent;
+  border: none;
+}
+
+.ww-ca-web .ww-ca-product-grid > * {
+  background: transparent;
+}
+
+/* —— 分类：轻量胶囊 —— */
+.ww-ca-web .ww-ca-cat-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 1.75rem;
+}
+
+.ww-ca-web .ww-ca-cat-tile {
+  flex: 0 0 auto;
+  min-height: auto;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--ca-radius-md);
+  background: var(--ca-glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--ca-glass-border);
+  flex-direction: row;
+  align-items: center;
+  gap: 0.65rem;
+  transition:
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s var(--ww-ease-out),
+    background 0.25s var(--ww-ease-out);
+}
+
+.ww-ca-web .ww-ca-cat-tile__pattern,
+.ww-ca-web .ww-ca-cat-tile__pattern-img,
+.ww-ca-web .ww-ca-cat-tile__index,
+.ww-ca-web .ww-ca-cat-tile__arrow {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-cat-tile__glyph {
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+.ww-ca-web .ww-ca-cat-tile__label {
+  font-size: var(--ca-text-sm);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.ww-ca-web .ww-ca-cat-tile:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--ca-ink) 15%, var(--ca-glass-border));
+}
+
+.ww-ca-web .ww-ca-cat-tile--active {
+  border-color: var(--ca-ink);
+  background: color-mix(in srgb, var(--ca-surface) 88%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ca-ink) 8%, transparent);
+}
+
+/* —— 商城横幅 —— */
+.ww-ca-web .ww-ca-aolt-banner,
+.ww-ca-web .ww-ca-page-banner {
+  border-radius: var(--ca-radius-xl);
+  border: 1px solid var(--ca-glass-border);
+  background: var(--ca-glass-bg);
+  backdrop-filter: blur(var(--ca-glass-blur)) saturate(1.2);
+  -webkit-backdrop-filter: blur(var(--ca-glass-blur)) saturate(1.2);
+  box-shadow: var(--ca-glass-shadow);
+  margin-bottom: clamp(2rem, 4vw, 2.75rem);
+}
+
+.ww-ca-web .ww-ca-aolt-banner__corner,
+.ww-ca-web .ww-ca-page-banner__corner,
+.ww-ca-web .ww-ca-page-banner__pattern {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-aolt-banner::before,
+.ww-ca-web .ww-ca-page-banner::after {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-aolt-banner__title,
+.ww-ca-web .ww-ca-page-banner__title {
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  letter-spacing: -0.04em;
+}
+
+.ww-ca-web .ww-ca-aolt-banner__sub,
+.ww-ca-web .ww-ca-page-banner__sub {
+  max-width: 24rem;
+  font-size: var(--ca-text-base);
+}
+
+/* —— 筛选条：粘性毛玻璃 —— */
+.ww-ca-web .ww-ca-filter-bar.ww-ca-glass,
+.ww-ca-web .ww-ca-filter-bar.ww-glass-blur {
+  padding: 0.75rem 1rem;
+  border-radius: var(--ca-radius-lg);
+  background: color-mix(in srgb, var(--ca-surface) 75%, transparent);
+  backdrop-filter: blur(20px) saturate(1.25);
+  -webkit-backdrop-filter: blur(20px) saturate(1.25);
+  border: 1px solid var(--ca-glass-border);
+  box-shadow: var(--ca-glass-shadow);
+}
+
+.ww-ca-web .ww-ca-filter-bar.ww-glass-blur::before {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-field {
+  background: color-mix(in srgb, var(--ca-surface) 55%, transparent);
+  border: 1px solid var(--ca-glass-border);
+  border-radius: 999px;
+}
+
+.ww-ca-web .ww-ca-field:focus {
+  border-color: color-mix(in srgb, var(--ca-ink) 25%, var(--ca-glass-border));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ca-accent-warm) 12%, transparent);
+}
+
+/* —— 列表行 —— */
+.ww-ca-web .ww-ca-row,
+.ww-ca-web .ww-ca-row.ww-glass-blur {
+  border-radius: var(--ca-radius-md);
+  border: 1px solid transparent;
+  border-bottom-color: var(--ca-border);
+  background: transparent;
+  transition:
+    background 0.3s var(--ww-ease-out),
+    border-color 0.3s var(--ww-ease-out),
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-ca-web .ww-ca-row:hover {
+  background: color-mix(in srgb, var(--ca-surface) 45%, transparent);
+  border-color: var(--ca-glass-border);
+  transform: translateX(2px);
+}
+
+.ww-ca-web .ww-ca-row::before,
+.ww-ca-web .ww-ca-row.ww-glass-blur::before {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-list {
+  border-top: 1px solid var(--ca-border);
+}
+
+/* —— 页脚 —— */
+.ww-ca-web .ww-ca-web-footer {
+  border-top: 1px solid var(--ca-border);
+  margin-top: clamp(3rem, 8vw, 5rem);
+}
+
+.ww-ca-web .ww-ca-web-footer::before {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-page--wide {
+  max-width: var(--ca-page-max);
+}
+
+/* —— 详情视觉区 —— */
+.ww-ca-web .ww-ca-detail-visual,
+.ww-ca-web .ww-ca-detail-visual.ww-glass-blur {
+  border-radius: var(--ca-radius-xl);
+  border: 1px solid var(--ca-glass-border);
+  background: var(--ca-glass-bg);
+  backdrop-filter: blur(var(--ca-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ca-glass-blur));
+  box-shadow: var(--ca-glass-shadow);
+}
+
+.ww-ca-web .ww-ca-detail-visual::before,
+.ww-ca-web .ww-ca-detail-visual.ww-glass-blur::before {
+  display: none;
+}
+
+/* —— 滚入动效 —— */
+.ww-ca-web .ww-ca-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.ww-ca-web .ww-ca-reveal--in {
+  opacity: 1;
+  transform: none;
+}
+
+.ww-ca-web .ww-ca-stagger > * {
+  animation: ww-ca-fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes ww-ca-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.ww-ca-web .ww-ca-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.ww-ca-web .ww-ca-stagger > *:nth-child(2) { animation-delay: 45ms; }
+.ww-ca-web .ww-ca-stagger > *:nth-child(3) { animation-delay: 90ms; }
+.ww-ca-web .ww-ca-stagger > *:nth-child(4) { animation-delay: 135ms; }
+.ww-ca-web .ww-ca-stagger > *:nth-child(5) { animation-delay: 180ms; }
+.ww-ca-web .ww-ca-stagger > *:nth-child(6) { animation-delay: 225ms; }
+.ww-ca-web .ww-ca-stagger > *:nth-child(7) { animation-delay: 270ms; }
+.ww-ca-web .ww-ca-stagger > *:nth-child(8) { animation-delay: 315ms; }
+.ww-ca-web .ww-ca-stagger > *:nth-child(9) { animation-delay: 360ms; }
+
+/* —— 深色模式 —— */
+[data-theme='dark'] .ww-ca-web {
+  --ca-glass-bg: color-mix(in srgb, var(--ca-surface) 58%, transparent);
+  --ca-glass-border: rgb(255 255 255 / 0.1);
+  --ca-glass-shadow: 0 1px 0 rgb(255 255 255 / 0.04) inset,
+    0 16px 48px -20px rgb(0 0 0 / 0.45);
+  --ca-bg: #111110;
+  --ca-paper: #1a1917;
+  --ca-surface: #1c1c1a;
+  --ca-surface-muted: #242422;
+  --ca-border: rgb(255 255 255 / 0.08);
+  --ca-border-strong: rgb(255 255 255 / 0.14);
+  --ca-ink: #f5f5f4;
+  --ca-ink-muted: #a8a8a3;
+  --ca-ink-faint: #73736e;
+  --ca-accent: #e8e6e1;
+  --ca-accent-hover: #d4d2cc;
+  --ca-accent-warm: #b89a52;
+  --ca-glow-strength: 0.04;
+}
+
+[data-theme='dark'] .ww-ca-web .ww-ca-shell {
+  background: color-mix(in srgb, var(--ca-surface) 72%, transparent);
+}
+
+[data-theme='dark'] .ww-ca-web .ww-ca-shell--scrolled {
+  background: color-mix(in srgb, var(--ca-surface) 88%, transparent);
+}
+
+/* —— 工具卡 —— */
+.ww-ca-web .ww-ca-tool.ww-ca-glass {
+  border-radius: var(--ca-radius-lg);
+  background: var(--ca-glass-bg);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  border: 1px solid var(--ca-glass-border);
+  box-shadow: var(--ca-glass-shadow);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s var(--ww-ease-out);
+}
+
+.ww-ca-web .ww-ca-tool.ww-ca-glass:hover,
+.ww-ca-web .ww-ca-tool.ww-ca-glass.ww-ca-tool--active {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--ca-ink) 12%, var(--ca-glass-border));
+}
+
+.ww-ca-web .ww-ca-tool::before {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-output {
+  border-radius: var(--ca-radius-lg);
+  background: var(--ca-glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--ca-glass-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-ca-web .ww-ca-stagger > *,
+  .ww-ca-web .ww-ca-reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .ww-ca-web .ww-ca-product:hover .ww-ca-product__img {
+    transform: none;
+  }
+}

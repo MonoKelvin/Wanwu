@@ -1,4 +1,4 @@
-/** 估算标签文本宽度（px，按 0.8125rem 字号） */
+﻿/** 估算标签文本宽度（px，按 0.8125rem 字号） */
 export function measureLabelPx(label: string): number {
   let w = 0
   for (const ch of label) {

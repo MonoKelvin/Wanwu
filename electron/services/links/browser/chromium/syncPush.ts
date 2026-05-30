@@ -1,4 +1,4 @@
-import type Database from 'better-sqlite3'
+﻿import type Database from 'better-sqlite3'
 import type { BrowserBookmarkProvider } from '../types'
 import { chromiumLookupKeys } from './externalId'
 import {

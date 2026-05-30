@@ -1,4 +1,4 @@
-/** 书签站点图标 URL（按优先级尝试） */
+﻿/** 书签站点图标 URL（按优先级尝试） */
 
 export function linkFaviconSources(pageUrl: string): string[] {
   try {

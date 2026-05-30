@@ -1,4 +1,4 @@
-import pool from '../config/database.js';
+﻿import pool from '../config/database.js';
 import type { Product } from '../types/product.js';
 
 export class ProductModel {

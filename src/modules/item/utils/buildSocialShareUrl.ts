@@ -1,4 +1,4 @@
-/** 微博 Web 分享（pic 需公网可访问的图片 URL） */
+﻿/** 微博 Web 分享（pic 需公网可访问的图片 URL） */
 export function buildWeiboShareUrl(params: { title: string; picUrl?: string; pageUrl?: string }) {
   const q = new URLSearchParams()
   q.set('title', params.title)

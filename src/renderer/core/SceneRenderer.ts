@@ -1,4 +1,4 @@
-import type { BloomEffect } from 'postprocessing'
+﻿import type { BloomEffect } from 'postprocessing'
 import * as THREE from 'three'
 import { RENDERER_DEFAULTS, resolveRenderOptions } from '../config/rendererDefaults'
 import { RenderEngine } from './RenderEngine'

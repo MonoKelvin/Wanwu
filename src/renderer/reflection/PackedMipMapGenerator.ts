@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+﻿import * as THREE from 'three'
 
 const PACK_VERT = /* glsl */ `
 varying vec2 vUv;

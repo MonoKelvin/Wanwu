@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import Tag from 'primevue/tag'
 import WwIcon from '@shared/components/WwIcon.vue'
 import type { Item } from '@shared/types/item'

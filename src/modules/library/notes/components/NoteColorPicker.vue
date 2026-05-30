@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onBeforeUnmount, ref } from 'vue'
 import type { NoteColor } from '@shared/types/notes'
 

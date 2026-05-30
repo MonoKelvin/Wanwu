@@ -1,4 +1,4 @@
-import type { SafariBookmarkNode } from './plistBookmarks'
+﻿import type { SafariBookmarkNode } from './plistBookmarks'
 
 export function buildSafariExternalId(node: SafariBookmarkNode, legacyPath: string): string {
   if (node.type === 'url' && node.url) {

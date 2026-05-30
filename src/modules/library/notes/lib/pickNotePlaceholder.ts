@@ -1,4 +1,4 @@
-import { NOTE_PLACEHOLDER_HINTS } from '@modules/library/notes/lib/notePlaceholderHints'
+﻿import { NOTE_PLACEHOLDER_HINTS } from '@modules/library/notes/lib/notePlaceholderHints'
 import type {
   NotePlaceholderHint,
   NotePlaceholderTimeSlot,

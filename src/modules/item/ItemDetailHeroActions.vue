@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, useTemplateRef } from 'vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import WwIcon from '@shared/components/WwIcon.vue'

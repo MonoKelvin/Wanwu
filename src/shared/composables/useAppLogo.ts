@@ -1,4 +1,4 @@
-import { computed } from 'vue'
+﻿import { computed } from 'vue'
 import { usePreferredColorScheme } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'

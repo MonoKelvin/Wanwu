@@ -11,6 +11,20 @@ import type {
 import type { AppSettings } from './settings'
 import type { RssEntry, RssFeed, RssFeedInput, RssFeedUpdate, RssGroup } from './rss'
 import type { NoteCreateInput, NoteImage, NoteItem, NoteUpdateInput } from './notes'
+import type {
+  CaCatalogListParams,
+  CaCheckoutInput,
+  CaDashboard,
+  CaInventoryItem,
+  CaLedgerEntry,
+  CaOrder,
+  CaProduct,
+  CaTodo,
+  CaToolInvokeResult,
+  CaToolManifest,
+  CaToolRewardStatus,
+  CaVirtualCard
+} from './cloud-abode'
 
 export interface WanwuApi {
   library: {
@@ -84,7 +98,10 @@ export interface WanwuApi {
     onDeleted: (listener: (noteId: string) => void) => () => void
     onImageRemoved: (listener: (imageId: string) => void) => () => void
     popout: {
-      open: (noteId: string) => Promise<{ open: boolean; visible: boolean }>
+      open: (
+        noteId: string,
+        anchor?: { x: number; y: number }
+      ) => Promise<{ open: boolean; visible: boolean }>
       close: (noteId: string, scrollTop?: number) => Promise<{ open: boolean; visible: boolean }>
       toggle: (
         noteId: string,
@@ -231,6 +248,36 @@ export interface WanwuApi {
       error?: string
     }>
     releaseViewerImageCache: (cacheId: number) => Promise<void>
+  }
+  cloudAbode: {
+    getDashboard: () => Promise<CaDashboard | null>
+    listLedger: (limit?: number) => Promise<CaLedgerEntry[]>
+    listProducts: (params?: CaCatalogListParams) => Promise<CaProduct[]>
+    getProduct: (id: string) => Promise<CaProduct | null>
+    isProductOwned: (productId: string) => Promise<boolean>
+    ownsVehicleSlug: (slug: string) => Promise<boolean>
+    listInventory: () => Promise<CaInventoryItem[]>
+    listCards: () => Promise<CaVirtualCard[]>
+    addCard: (input: { cardNumber: string; alias: string }) => Promise<CaVirtualCard>
+    setDefaultCard: (cardId: string) => Promise<void>
+    hasPaymentPassword: () => Promise<boolean>
+    setPaymentPassword: (password: string) => Promise<void>
+    checkout: (input: CaCheckoutInput) => Promise<CaOrder>
+    listTodos: () => Promise<CaTodo[]>
+    ensureDailyTodos: () => Promise<void>
+    createUserTodo: (input: {
+      title: string
+      description?: string
+      priority: 'high' | 'medium' | 'low'
+      dueDate?: string | null
+      rewardCents: number
+    }) => Promise<CaTodo>
+    completeTodo: (todoId: string) => Promise<{ todo: CaTodo; balanceCents: number }>
+    listTools: () => Promise<CaToolManifest[]>
+    getToolRewardStatus: (toolId: string) => Promise<CaToolRewardStatus>
+    invokeTool: (toolId: string) => Promise<CaToolInvokeResult>
+    saveVehicleCustomization: (slug: string, lifeJson: Record<string, unknown>) => Promise<void>
+    getVehicleCustomization: (slug: string) => Promise<Record<string, unknown> | null>
   }
   share: {
     canNativeShare: () => Promise<boolean>

@@ -1,4 +1,4 @@
-const HANDBOOK_SELECTION_KEY = 'wanwu:library:handbook-catalog-selection'
+﻿const HANDBOOK_SELECTION_KEY = 'wanwu:library:handbook-catalog-selection'
 
 function readJson(key: string): Record<string, boolean> {
   try {

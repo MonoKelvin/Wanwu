@@ -1,4 +1,4 @@
-import { Effect, EffectAttribute } from 'postprocessing'
+﻿import { Effect, EffectAttribute } from 'postprocessing'
 import { Uniform } from 'three'
 import type { Texture } from 'three'
 

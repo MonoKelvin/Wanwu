@@ -1,4 +1,4 @@
-import type { Item } from '@shared/types/item'
+﻿import type { Item } from '@shared/types/item'
 import { buildShareCardContent } from '../shareCard/buildShareCardContent'
 import { drawCoverImage, drawPlaceholder, loadImage } from '../shareCard/canvasUtils'
 import { extractPaletteFromCanvas } from '../shareCard/extractImagePalette'

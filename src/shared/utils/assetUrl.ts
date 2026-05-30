@@ -12,3 +12,9 @@ export function assetUrl(path: string): string {
   }
   return url
 }
+
+/** 云斋车型目录下资源（相对 items/{slug}/） */
+export function vehicleItemAssetUrl(slug: string, relativePath: string): string {
+  const rel = relativePath.replace(/\\/g, '/').replace(/^\//, '')
+  return assetUrl(`seed/cloud-abode/vehicles/items/${slug}/${rel}`)
+}

@@ -1,4 +1,4 @@
-import type { LinksSyncResult } from '@shared/types/links'
+﻿import type { LinksSyncResult } from '@shared/types/links'
 
 export function formatLinksSyncDetail(result: LinksSyncResult): string {
   const parts: string[] = []

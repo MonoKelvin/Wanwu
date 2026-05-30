@@ -1,4 +1,4 @@
-/** 从便笺正文 HTML 收集引用的图片 id（data-image-id） */
+﻿/** 从便笺正文 HTML 收集引用的图片 id（data-image-id） */
 export function collectNoteImageIdsFromHtml(html: string): Set<string> {
   const ids = new Set<string>()
   if (!html) return ids

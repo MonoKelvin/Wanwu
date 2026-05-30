@@ -1,4 +1,4 @@
-/** 无站点地址时的默认 RSS 图标（Iconify CDN） */
+﻿/** 无站点地址时的默认 RSS 图标（Iconify CDN） */
 export function defaultRssFeedIconUrl(): string {
   return 'https://api.iconify.design/mdi/rss-box.svg?color=%23888888'
 }

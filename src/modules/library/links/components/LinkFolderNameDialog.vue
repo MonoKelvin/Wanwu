@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref, watch } from 'vue'
 import InputText from 'primevue/inputtext'
 import WwGlassDialog from '@shared/components/WwGlassDialog.vue'

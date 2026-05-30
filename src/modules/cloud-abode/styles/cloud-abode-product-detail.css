@@ -1,0 +1,430 @@
+/**
+ * 云斋 · 商品详情（编辑式 PDP，参考高端家具电商排版）
+ */
+
+.ww-ca-pdp {
+  position: relative;
+  padding-bottom: clamp(2rem, 5vw, 3rem);
+}
+
+.ww-ca-pdp__back {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  padding: 0;
+  font-size: var(--ca-text-xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ca-ink-faint);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s var(--ww-ease-out);
+}
+
+.ww-ca-pdp__back:hover {
+  color: var(--ca-ink);
+}
+
+.ww-ca-pdp__grid {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3rem);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .ww-ca-pdp__grid {
+    grid-template-columns: minmax(16rem, 22vw) minmax(0, 1fr) minmax(11rem, 16vw);
+    gap: clamp(1.5rem, 3vw, 2.5rem) clamp(2rem, 4vw, 3.5rem);
+  }
+}
+
+/* —— 左栏信息 —— */
+.ww-ca-pdp__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+
+.ww-ca-pdp__series {
+  margin-bottom: 1rem;
+  font-size: var(--ca-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ca-ink-faint);
+}
+
+.ww-ca-pdp__title {
+  margin: 0 0 1.75rem;
+  font-family: var(--ca-font-sans);
+  font-size: clamp(1.35rem, 2.8vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ca-ink);
+}
+
+.ww-ca-pdp__title-light {
+  font-weight: 300;
+  color: var(--ca-ink-muted);
+}
+
+.ww-ca-pdp__title-kind {
+  display: block;
+  margin-top: 0.15em;
+  font-weight: 700;
+}
+
+.ww-ca-pdp__label {
+  margin: 0 0 0.65rem;
+  font-size: var(--ca-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ca-ink-faint);
+}
+
+.ww-ca-pdp__desc {
+  margin: 0 0 1.75rem;
+  max-width: 22rem;
+  font-size: var(--ca-text-sm);
+  line-height: var(--ca-leading-relaxed);
+  color: var(--ca-ink-muted);
+}
+
+.ww-ca-pdp__facts {
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--ca-border);
+}
+
+.ww-ca-pdp__fact {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.75rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--ca-border);
+  font-size: var(--ca-text-sm);
+}
+
+.ww-ca-pdp__fact dt {
+  margin: 0;
+  font-size: var(--ca-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ca-ink-faint);
+}
+
+.ww-ca-pdp__fact dd {
+  margin: 0;
+  color: var(--ca-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.ww-ca-pdp__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  margin-bottom: 2rem;
+  font-size: var(--ca-text-xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ww-ca-pdp__link {
+  padding: 0;
+  color: var(--ca-ink-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s var(--ww-ease-out);
+}
+
+.ww-ca-pdp__link:hover {
+  color: var(--ca-ink);
+}
+
+.ww-ca-pdp__link-sep {
+  color: var(--ca-ink-faint);
+  user-select: none;
+}
+
+.ww-ca-pdp__purchase {
+  margin-top: auto;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--ca-border-strong);
+}
+
+.ww-ca-pdp__price-label {
+  margin: 0 0 0.35rem;
+  font-size: var(--ca-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ca-ink-faint);
+}
+
+.ww-ca-pdp__price-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.ww-ca-pdp__price {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ca-ink);
+}
+
+.ww-ca-pdp__qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--ca-border-strong);
+}
+
+.ww-ca-pdp__qty-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--ca-ink-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.ww-ca-pdp__qty-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ww-ca-pdp__qty-btn:not(:disabled):hover {
+  color: var(--ca-ink);
+}
+
+.ww-ca-pdp__qty-val {
+  min-width: 2rem;
+  text-align: center;
+  font-size: var(--ca-text-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--ca-ink);
+}
+
+.ww-ca-pdp__buy {
+  display: block;
+  width: 100%;
+  max-width: 14rem;
+  padding: 0.9rem 1.5rem;
+  font-size: var(--ca-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ca-surface);
+  background: var(--ca-ink);
+  border: 1px solid var(--ca-ink);
+  cursor: pointer;
+  transition:
+    background 0.25s var(--ww-ease-out),
+    color 0.25s var(--ww-ease-out);
+}
+
+.ww-ca-pdp__buy:hover:not(:disabled) {
+  background: var(--ca-accent);
+  border-color: var(--ca-accent);
+}
+
+.ww-ca-pdp__buy:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ww-ca-pdp__balance {
+  margin: 0.75rem 0 0;
+  font-size: var(--ca-text-xs);
+  color: var(--ca-ink-faint);
+}
+
+.ww-ca-pdp__owned {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: var(--ca-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ca-accent);
+}
+
+/* —— 中央主图 —— */
+.ww-ca-pdp__stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(18rem, 42vh, 28rem);
+  padding: clamp(1rem, 3vw, 2rem);
+  background: var(--ca-paper);
+}
+
+.ww-ca-pdp__stage-img {
+  max-width: 100%;
+  max-height: min(52vh, 32rem);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 24px 48px rgb(0 0 0 / 0.08));
+}
+
+.ww-ca-pdp__stage-glyph {
+  font-family: var(--ca-font-serif);
+  font-size: clamp(4rem, 12vw, 8rem);
+  font-weight: 400;
+  line-height: 1;
+  color: color-mix(in srgb, var(--ca-ink) 12%, transparent);
+  user-select: none;
+}
+
+/* —— 右侧：引言 + 缩略图 + 翻页 —— */
+.ww-ca-pdp__aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+@media (max-width: 1023px) {
+  .ww-ca-pdp__aside {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+.ww-ca-pdp__quote {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.ww-ca-pdp__quote-mark {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: var(--ca-font-serif);
+  font-size: 2.5rem;
+  line-height: 1;
+  color: color-mix(in srgb, var(--ca-ink) 18%, transparent);
+}
+
+.ww-ca-pdp__quote-text {
+  margin: 0;
+  max-width: 14rem;
+  font-size: var(--ca-text-sm);
+  line-height: var(--ca-leading-relaxed);
+  color: var(--ca-ink-muted);
+}
+
+.ww-ca-pdp__thumb {
+  align-self: flex-end;
+  width: 5.5rem;
+  height: 7rem;
+  overflow: hidden;
+  border: 1px solid var(--ca-border);
+  background: var(--ca-surface-muted);
+}
+
+.ww-ca-pdp__thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.85;
+}
+
+.ww-ca-pdp__thumb-glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 1.5rem;
+  color: var(--ca-ink-faint);
+}
+
+.ww-ca-pdp__nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.ww-ca-pdp__index {
+  font-size: var(--ca-text-sm);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--ca-ink-muted);
+}
+
+.ww-ca-pdp__index-current {
+  font-weight: 600;
+  color: var(--ca-ink);
+}
+
+.ww-ca-pdp__arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ww-ca-pdp__arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  font-size: var(--ca-text-xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ca-ink-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s var(--ww-ease-out);
+}
+
+.ww-ca-pdp__arrow:hover:not(:disabled) {
+  color: var(--ca-ink);
+}
+
+.ww-ca-pdp__arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.ww-ca-pdp__arrow-icon {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+[data-theme='dark'] .ww-ca-pdp__buy {
+  color: var(--ca-bg);
+  background: var(--ca-ink);
+}
+
+[data-theme='dark'] .ww-ca-pdp__buy:hover:not(:disabled) {
+  color: var(--ca-ink);
+  background: var(--ca-accent);
+}

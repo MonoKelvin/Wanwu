@@ -1,4 +1,4 @@
-import type { IRenderContext } from '../types/context'
+﻿import type { IRenderContext } from '../types/context'
 import type { EnvironmentManager } from '../lighting/EnvironmentManager'
 import type { PostStack } from '../pipeline/PostStack'
 import type { WebGPUPostStack } from '../pipeline/WebGPUPostStack'

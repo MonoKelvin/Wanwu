@@ -1,4 +1,4 @@
-export type WanwuToastAction = {
+﻿export type WanwuToastAction = {
   label: string
   onClick: () => void | Promise<void>
 }

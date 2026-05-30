@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 defineOptions({ name: 'NotePopoutView' })
 
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'

@@ -1,4 +1,4 @@
-/** 一天中的时段，用于筛选「早安 / 晚安」类提示 */
+﻿/** 一天中的时段，用于筛选「早安 / 晚安」类提示 */
 export type NotePlaceholderTimeSlot =
   | 'morning'
   | 'forenoon'

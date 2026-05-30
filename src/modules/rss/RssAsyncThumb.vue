@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import type { WwIconName } from '@shared/icons/registry'

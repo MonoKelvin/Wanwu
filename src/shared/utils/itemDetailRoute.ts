@@ -1,4 +1,4 @@
-import { isModuleId, type ModuleId } from '@app/config/modules'
+﻿import { isModuleId, type ModuleId } from '@app/config/modules'
 
 /** 条目详情 `params.source` 对应左侧主模块（如全库条目为 `library`） */
 export function moduleIdForItemDetailSource(source: string | undefined): ModuleId | undefined {

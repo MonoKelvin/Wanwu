@@ -1,4 +1,4 @@
-import type { LinksProbeSummary } from '@shared/types/links'
+﻿import type { LinksProbeSummary } from '@shared/types/links'
 
 export function formatLinksProbeDetail(summary: LinksProbeSummary): string {
   if (summary.invalidCount === 0) {

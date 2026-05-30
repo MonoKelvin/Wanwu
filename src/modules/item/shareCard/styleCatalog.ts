@@ -1,4 +1,4 @@
-import type { ShareCardPalette } from './types'
+﻿import type { ShareCardPalette } from './types'
 import {
   DEFAULT_SHARE_CARD_FILTER,
   type ShareCardFilterId

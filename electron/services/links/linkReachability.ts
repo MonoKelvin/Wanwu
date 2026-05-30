@@ -1,4 +1,4 @@
-import { normalizeLinkUrl } from './linkUrl'
+﻿import { normalizeLinkUrl } from './linkUrl'
 
 export type LinkReachabilityIssue = 'invalid_syntax' | 'network' | 'http_status' | 'timeout'
 

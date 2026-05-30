@@ -42,7 +42,10 @@ watch(
   <div class="flex h-full w-full overflow-hidden bg-ww-canvas text-color">
     <ModuleSidebar />
     <SubItemPanel v-show="showSubPanel" class="shrink-0" />
-    <main class="relative flex min-w-0 flex-1 flex-col overflow-hidden bg-ww-content">
+    <main
+      class="relative flex min-w-0 flex-1 flex-col overflow-hidden"
+      :class="routeModule === 'cloud-abode' ? 'bg-transparent' : 'bg-ww-content'"
+    >
       <!-- 底层模块常驻 KeepAlive；物品详情用浮层，避免 out-in 闪白与列表重挂载 -->
       <RouterView v-slot="{ Component }">
         <KeepAlive :include="[...MODULE_KEEP_ALIVE]">

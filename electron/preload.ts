@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type { WanwuApi } from '../src/shared/types/api'
+import type { AppSettings } from '../src/shared/types/settings'
 
 const api: WanwuApi = {
   library: {
@@ -164,10 +165,12 @@ const api: WanwuApi = {
     getSettings: () => ipcRenderer.invoke('app:getSettings'),
     updateSettings: (settings: unknown) => ipcRenderer.invoke('app:updateSettings', settings),
     patchSettings: (patch: unknown) => ipcRenderer.invoke('app:patchSettings', patch),
-    onAppSettingsChanged: (listener: (settings: unknown) => void) => {
-      const handler = (_: unknown, settings: unknown) => listener(settings)
+    onAppSettingsChanged: (listener: (settings: AppSettings) => void) => {
+      const handler = (_: unknown, settings: AppSettings) => listener(settings)
       ipcRenderer.on('app:settings-changed', handler)
-      return () => ipcRenderer.removeListener('app:settings-changed', handler)
+      return () => {
+        ipcRenderer.removeListener('app:settings-changed', handler)
+      }
     },
     createBackup: () => ipcRenderer.invoke('app:createBackup'),
     restoreBackup: () => ipcRenderer.invoke('app:restoreBackup'),
@@ -202,6 +205,31 @@ const api: WanwuApi = {
     cacheImageForViewer: (url) => ipcRenderer.invoke('shell:cacheImageForViewer', url),
     releaseViewerImageCache: (cacheId) =>
       ipcRenderer.invoke('shell:releaseViewerImageCache', cacheId)
+  },
+  cloudAbode: {
+    getDashboard: () => ipcRenderer.invoke('cloud-abode:getDashboard'),
+    listLedger: (limit) => ipcRenderer.invoke('cloud-abode:listLedger', limit),
+    listProducts: (params) => ipcRenderer.invoke('cloud-abode:listProducts', params),
+    getProduct: (id) => ipcRenderer.invoke('cloud-abode:getProduct', id),
+    isProductOwned: (productId) => ipcRenderer.invoke('cloud-abode:isProductOwned', productId),
+    ownsVehicleSlug: (slug) => ipcRenderer.invoke('cloud-abode:ownsVehicleSlug', slug),
+    listInventory: () => ipcRenderer.invoke('cloud-abode:listInventory'),
+    listCards: () => ipcRenderer.invoke('cloud-abode:listCards'),
+    addCard: (input) => ipcRenderer.invoke('cloud-abode:addCard', input),
+    setDefaultCard: (cardId) => ipcRenderer.invoke('cloud-abode:setDefaultCard', cardId),
+    hasPaymentPassword: () => ipcRenderer.invoke('cloud-abode:hasPaymentPassword'),
+    setPaymentPassword: (password) => ipcRenderer.invoke('cloud-abode:setPaymentPassword', password),
+    checkout: (input) => ipcRenderer.invoke('cloud-abode:checkout', input),
+    listTodos: () => ipcRenderer.invoke('cloud-abode:listTodos'),
+    ensureDailyTodos: () => ipcRenderer.invoke('cloud-abode:ensureDailyTodos'),
+    createUserTodo: (input) => ipcRenderer.invoke('cloud-abode:createUserTodo', input),
+    completeTodo: (todoId) => ipcRenderer.invoke('cloud-abode:completeTodo', todoId),
+    listTools: () => ipcRenderer.invoke('cloud-abode:listTools'),
+    getToolRewardStatus: (toolId) => ipcRenderer.invoke('cloud-abode:getToolRewardStatus', toolId),
+    invokeTool: (toolId) => ipcRenderer.invoke('cloud-abode:invokeTool', toolId),
+    saveVehicleCustomization: (slug, lifeJson) =>
+      ipcRenderer.invoke('cloud-abode:saveVehicleCustomization', slug, lifeJson),
+    getVehicleCustomization: (slug) => ipcRenderer.invoke('cloud-abode:getVehicleCustomization', slug)
   },
   share: {
     canNativeShare: () => ipcRenderer.invoke('share:canNativeShare'),

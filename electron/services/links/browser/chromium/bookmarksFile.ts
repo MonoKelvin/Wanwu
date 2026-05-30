@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from 'crypto'
+﻿import { createHash, randomUUID } from 'crypto'
 import { existsSync, readdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'fs'
 import { join } from 'path'
 

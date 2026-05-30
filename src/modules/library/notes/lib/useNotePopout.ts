@@ -1,4 +1,4 @@
-import { computed, onBeforeUnmount, ref, watch, type Ref } from 'vue'
+﻿import { computed, onBeforeUnmount, ref, watch, type Ref } from 'vue'
 
 export interface PopoutScreenAnchor {
   x: number

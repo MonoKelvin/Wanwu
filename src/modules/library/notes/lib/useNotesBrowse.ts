@@ -1,4 +1,4 @@
-import { computed, ref, watch } from 'vue'
+﻿import { computed, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useNotesStore } from '@shared/stores/notes'
 import { noteMatchesQuery } from '@modules/library/notes/lib/noteContentText'

@@ -1,4 +1,4 @@
-import { onUnmounted, ref, watch, type Ref } from 'vue'
+﻿import { onUnmounted, ref, watch, type Ref } from 'vue'
 
 export const PARTICLE_COUNT = 9
 

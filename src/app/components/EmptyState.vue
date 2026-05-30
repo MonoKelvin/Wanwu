@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
 import emptyGhost from '@assets/icons/empty-ghost.svg'
 import emptyLibrary from '@assets/icons/empty-library.svg'

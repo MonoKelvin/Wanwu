@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { nextTick, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'

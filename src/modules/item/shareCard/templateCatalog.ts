@@ -1,4 +1,4 @@
-import type { ShareCardTemplateMeta } from './types'
+﻿import type { ShareCardTemplateMeta } from './types'
 
 export const SHARE_CARD_TEMPLATES: ShareCardTemplateMeta[] = [
   {

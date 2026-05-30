@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 /**
  * Markdown 阅读器：渲染、排版样式、图片/表格/链接增强与交互。
  * 样式见同目录 styles/，逻辑见 composables/。

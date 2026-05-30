@@ -1,1 +1,1 @@
-export type WwSelectSize = 'default' | 'narrow' | 'block'
+﻿export type WwSelectSize = 'default' | 'narrow' | 'block'

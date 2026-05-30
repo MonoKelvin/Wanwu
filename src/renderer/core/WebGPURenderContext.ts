@@ -1,4 +1,4 @@
-import type { WebGPURenderer } from 'three/webgpu'
+﻿import type { WebGPURenderer } from 'three/webgpu'
 import * as THREE from 'three'
 import { OffscreenGlBackend } from './OffscreenGlBackend'
 import type { IRenderContext, RenderCapabilities } from '../types/context'

@@ -1,4 +1,4 @@
-import type { PersonalBackgroundConfig, PersonalBackgroundCrop } from '@shared/types/profile'
+﻿import type { PersonalBackgroundConfig, PersonalBackgroundCrop } from '@shared/types/profile'
 import { DEFAULT_BACKGROUND_CONFIG } from '@shared/types/profile'
 
 /** 背景缩放范围（与编辑器滑块、滚轮一致） */

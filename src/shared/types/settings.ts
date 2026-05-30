@@ -1,4 +1,4 @@
-import type { ModuleId } from '@shared/constants/modules'
+﻿import type { ModuleId } from '@shared/constants/modules'
 
 export type NavAlign = 'center' | 'start'
 export type NavDisplay = 'icon' | 'both'

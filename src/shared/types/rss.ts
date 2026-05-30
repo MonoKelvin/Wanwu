@@ -1,4 +1,4 @@
-export const RSS_RECYCLE_GROUP_ID = '__recycle_bin__'
+﻿export const RSS_RECYCLE_GROUP_ID = '__recycle_bin__'
 export const RSS_DEFAULT_GROUP_ID = '__default__'
 export const RSS_GROUP_BLOG_ID = '__group_blog__'
 export const RSS_GROUP_TECH_ID = '__group_tech__'

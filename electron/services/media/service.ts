@@ -1,4 +1,4 @@
-import { mkdirSync } from 'fs'
+﻿import { mkdirSync } from 'fs'
 import { join } from 'path'
 
 export class MediaService {

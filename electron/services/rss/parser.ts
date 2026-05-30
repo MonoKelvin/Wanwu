@@ -1,4 +1,4 @@
-import Parser from 'rss-parser'
+﻿import Parser from 'rss-parser'
 
 export const RSS_USER_AGENT = 'Wanwu/1.0 (Desktop; +https://github.com/MonoKelvin/Wanwu)'
 

@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'fs'
+﻿import { existsSync, readFileSync } from 'fs'
 import { homedir } from 'os'
 import { join } from 'path'
 import { parse as parsePlist } from 'plist'

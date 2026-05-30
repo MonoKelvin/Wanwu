@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
 import WwCoverImage from '@shared/components/WwCoverImage.vue'
 import WwIcon from '@shared/components/WwIcon.vue'

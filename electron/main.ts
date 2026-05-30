@@ -33,6 +33,7 @@ import { applyRssAutoRefreshSchedule } from './services/rss/scheduler'
 import { runStartupLibrarySeed } from './services/library/seed'
 import { startLibraryBootstrap } from './services/library/pack'
 import { runInstallerLibraryPackImport } from './services/library/installerImport'
+import { CloudAbodeService } from './services/cloud-abode/service'
 
 const isDev = !app.isPackaged
 const INSTALLER_IMPORT_FLAG = '--installer-import-library-pack'
@@ -70,6 +71,8 @@ const MEDIA_MIME: Record<string, string> = {
   '.gltf': 'model/gltf+json',
   '.bin': 'application/octet-stream',
   '.mp3': 'audio/mpeg',
+  '.m3u8': 'application/vnd.apple.mpegurl',
+  '.ts': 'video/mp2t',
   '.md': 'text/markdown; charset=utf-8'
 }
 
@@ -100,7 +103,8 @@ const services = {
   rss: null as RssService | null,
   media: null as MediaService | null,
   notes: null as NotesService | null,
-  userData: null as UserDataGateway | null
+  userData: null as UserDataGateway | null,
+  cloudAbode: null as CloudAbodeService | null
 }
 
 async function loadDevRenderer(win: BrowserWindow, urls: string[]): Promise<void> {
@@ -219,6 +223,8 @@ async function initServices(): Promise<void> {
   services.media = new MediaService(userData)
   services.userData = new SqliteUserDataGateway(services.db)
   services.notes = new NotesService(new SqliteNotesStorage(services.userData, userData))
+  services.cloudAbode = new CloudAbodeService()
+  services.cloudAbode.open(userData)
   configureNotePopoutPersistence(userData)
   registerIpcHandlers(services)
   applyRssAutoRefreshSchedule(services)
@@ -260,7 +266,8 @@ app.whenReady().then(async () => {
       const headers: Record<string, string> = {
         'Content-Type': mediaMimeType(abs),
         'Cache-Control': 'private, max-age=3600',
-        'Content-Length': String(stat.size)
+        'Content-Length': String(stat.size),
+        'Access-Control-Allow-Origin': '*'
       }
       const stream = createReadStream(abs)
       const body = Readable.toWeb(stream) as ReadableStream<Uint8Array>

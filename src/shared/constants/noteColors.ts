@@ -1,4 +1,4 @@
-import type { NoteColor } from '@shared/types/notes'
+﻿import type { NoteColor } from '@shared/types/notes'
 
 /** 便笺颜色环序（与 store.nextColor 一致） */
 export const NOTE_COLORS: NoteColor[] = [

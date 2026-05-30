@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
 import { wwIcons, WW_ICON_STROKE, type WwIconName } from '@shared/icons/registry'
 

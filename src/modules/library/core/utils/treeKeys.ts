@@ -1,4 +1,4 @@
-import type { TreeNode } from 'primevue/treenode'
+﻿import type { TreeNode } from 'primevue/treenode'
 
 /** 收集树中所有可展开节点的 key，用于默认全部展开 */
 export function collectExpandableKeys(nodes: TreeNode[]): Record<string, boolean> {

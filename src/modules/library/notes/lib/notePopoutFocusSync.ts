@@ -1,4 +1,4 @@
-type NoteSelectHandler = (noteId: string) => void | Promise<void>
+﻿type NoteSelectHandler = (noteId: string) => void | Promise<void>
 
 let selectHandler: NoteSelectHandler | null = null
 

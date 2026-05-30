@@ -1,0 +1,519 @@
+/**
+ * 云斋 · 高级感 / 图案装饰层
+ */
+
+/* —— 角标 L 形 —— */
+.ww-ca-corner-accent {
+  position: absolute;
+  width: 1.75rem;
+  height: 1.75rem;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.ww-ca-corner-accent::before,
+.ww-ca-corner-accent::after {
+  content: '';
+  position: absolute;
+  background: color-mix(in srgb, var(--ca-accent-warm) 70%, var(--ca-ink));
+}
+
+.ww-ca-corner-accent--tl {
+  top: 1rem;
+  left: 1rem;
+}
+
+.ww-ca-corner-accent--tl::before {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+}
+
+.ww-ca-corner-accent--tl::after {
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+}
+
+.ww-ca-corner-accent--tr {
+  top: 1rem;
+  right: 1rem;
+}
+
+.ww-ca-corner-accent--tr::before {
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 1px;
+}
+
+.ww-ca-corner-accent--tr::after {
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+}
+
+.ww-ca-corner-accent--br {
+  bottom: 1rem;
+  right: 1rem;
+}
+
+.ww-ca-corner-accent--br::before {
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 1px;
+}
+
+.ww-ca-corner-accent--br::after {
+  bottom: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+}
+
+.ww-ca-corner-accent--bl {
+  bottom: 1rem;
+  left: 1rem;
+}
+
+.ww-ca-corner-accent--bl::before {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+}
+
+.ww-ca-corner-accent--bl::after {
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+}
+
+/* —— 区块分隔饰 —— */
+.ww-ca-ornament-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 2.5rem 0 2rem;
+}
+
+.ww-ca-ornament-divider__line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--ca-border-strong),
+    color-mix(in srgb, var(--ca-accent-warm) 40%, var(--ca-border-strong)),
+    var(--ca-border-strong),
+    transparent
+  );
+}
+
+.ww-ca-ornament-divider__mark {
+  display: grid;
+  place-items: center;
+  color: var(--ca-accent-warm);
+  opacity: 0.85;
+}
+
+.ww-ca-ornament-divider__label {
+  flex-shrink: 0;
+  font-size: var(--ca-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ca-ink-faint);
+}
+
+/* —— 区块标题饰线 —— */
+.ww-ca-web .ww-ca-section-center {
+  position: relative;
+  padding-top: 0.5rem;
+}
+
+.ww-ca-web .ww-ca-section-center::before {
+  content: '';
+  display: block;
+  width: 2.5rem;
+  height: 1px;
+  margin: 0 auto 1.25rem;
+  background: linear-gradient(90deg, transparent, var(--ca-accent-warm), transparent);
+}
+
+/* —— Hero 高级感 —— */
+.ww-ca-velvety-hero {
+  box-shadow:
+    var(--ca-shadow-soft),
+    inset 0 1px 0 color-mix(in srgb, var(--ca-surface) 80%, transparent);
+}
+
+.ww-ca-velvety-hero__panel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--ca-accent-warm) 35%,
+    color-mix(in srgb, var(--ca-accent-warm) 60%, var(--ca-ink)) 50%,
+    var(--ca-accent-warm) 65%,
+    transparent 100%
+  );
+  opacity: 0.75;
+}
+
+.ww-ca-velvety-hero__kicker::before {
+  content: '';
+  display: inline-block;
+  width: 0.35rem;
+  height: 0.35rem;
+  margin-right: 0.5rem;
+  border-radius: 50%;
+  background: var(--ca-accent-warm);
+  vertical-align: 0.15em;
+}
+
+/* —— 余额 / 统计高级卡 —— */
+.ww-ca-web .ww-ca-premium-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.ww-ca-web .ww-ca-premium-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 80% 60% at 100% 0%,
+    color-mix(in srgb, var(--ca-accent-warm) 12%, transparent),
+    transparent 55%
+  );
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-premium-card__shine {
+  position: absolute;
+  top: -50%;
+  left: -30%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    color-mix(in srgb, var(--ca-surface) 65%, transparent) 50%,
+    transparent 60%
+  );
+  transform: rotate(12deg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s var(--ww-ease-out);
+}
+
+.ww-ca-web .ww-ca-premium-card:hover .ww-ca-premium-card__shine {
+  opacity: 1;
+  animation: ww-ca-shine-sweep 1.2s var(--ww-ease-out);
+}
+
+@keyframes ww-ca-shine-sweep {
+  from {
+    transform: translateX(-20%) rotate(12deg);
+  }
+  to {
+    transform: translateX(120%) rotate(12deg);
+  }
+}
+
+.ww-ca-web .ww-ca-stat::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 1.1rem;
+  right: 1.1rem;
+  height: 2px;
+  background: linear-gradient(90deg, var(--ca-accent-warm), transparent);
+  opacity: 0;
+  transition: opacity 0.3s var(--ww-ease-out);
+}
+
+.ww-ca-web .ww-ca-stat {
+  position: relative;
+}
+
+.ww-ca-web .ww-ca-stat:hover::after {
+  opacity: 0.65;
+}
+
+/* —— 分类磁贴 —— */
+.ww-ca-web .ww-ca-cat-tile {
+  position: relative;
+  overflow: hidden;
+  min-height: 6.25rem;
+}
+
+.ww-ca-web .ww-ca-cat-tile__pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background:
+    radial-gradient(
+      circle at 88% 18%,
+      color-mix(in srgb, hsl(var(--ww-ca-cat-hue, 0) 12% 88%) 100%, transparent) 0%,
+      transparent 42%
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 8px,
+      color-mix(in srgb, var(--ca-ink) 3%, transparent) 8px,
+      color-mix(in srgb, var(--ca-ink) 3%, transparent) 9px
+    );
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-cat-tile__index {
+  position: relative;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: color-mix(in srgb, var(--ca-accent-warm) 80%, var(--ca-ink-faint));
+}
+
+.ww-ca-web .ww-ca-cat-tile__glyph,
+.ww-ca-web .ww-ca-cat-tile__label {
+  position: relative;
+  z-index: 1;
+}
+
+.ww-ca-web .ww-ca-cat-tile__arrow {
+  display: block;
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  font-size: 0.875rem;
+  color: var(--ca-ink-faint);
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.2s var(--ww-ease-out);
+}
+
+.ww-ca-web .ww-ca-cat-tile:hover .ww-ca-cat-tile__arrow {
+  transform: translateX(4px);
+  color: var(--ca-ink);
+}
+
+.ww-ca-web .ww-ca-cat-tile--active .ww-ca-cat-tile__pattern {
+  opacity: 0.7;
+}
+
+.ww-ca-web .ww-ca-cat-tile--active {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ca-accent-warm) 25%, transparent);
+}
+
+/* —— 商品卡 —— */
+.ww-ca-web .ww-ca-product {
+  position: relative;
+}
+
+.ww-ca-web .ww-ca-product__frame {
+  position: absolute;
+  inset: 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--ca-accent-warm) 22%, transparent);
+  border-radius: calc(var(--ca-radius-md) - 2px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s var(--ww-ease-out);
+  z-index: 2;
+}
+
+.ww-ca-web .ww-ca-product:hover .ww-ca-product__frame {
+  opacity: 0.4;
+}
+
+.ww-ca-web .ww-ca-product__shine {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.ww-ca-web .ww-ca-product__shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--ca-surface) 50%, transparent),
+    transparent
+  );
+  transition: none;
+}
+
+.ww-ca-web .ww-ca-product:hover .ww-ca-product__shine::after {
+  animation: ww-ca-product-shine 0.85s var(--ww-ease-out);
+}
+
+@keyframes ww-ca-product-shine {
+  to {
+    left: 150%;
+  }
+}
+
+.ww-ca-web .ww-ca-product__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, color-mix(in srgb, var(--ca-ink) 6%, transparent));
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.ww-ca-web .ww-ca-product__pattern {
+  background-image:
+    radial-gradient(circle at 25% 20%, color-mix(in srgb, var(--ca-accent-warm) 15%, transparent), transparent 50%),
+    repeating-conic-gradient(
+      from 0deg at 50% 50%,
+      color-mix(in srgb, var(--ca-ink) 4%, transparent) 0deg 15deg,
+      transparent 15deg 30deg
+    );
+  opacity: 0.45;
+}
+
+/* —— 快捷入口 —— */
+.ww-ca-web .ww-ca-quick-strip__item {
+  position: relative;
+  padding-left: 1.15rem;
+}
+
+.ww-ca-web .ww-ca-quick-strip__item::before {
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--ca-accent-warm);
+  transform: translateY(-50%);
+  opacity: 0.7;
+}
+
+.ww-ca-web .ww-ca-quick-strip__item:hover::before {
+  opacity: 1;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ca-accent-warm) 25%, transparent);
+}
+
+/* —— 顶栏 Logo —— */
+.ww-ca-web .ww-ca-shell__logo::before {
+  content: '◆';
+  margin-right: 0.45rem;
+  font-size: 0.5rem;
+  color: var(--ca-accent-warm);
+  vertical-align: 0.1em;
+}
+
+/* —— 页脚 —— */
+.ww-ca-web-footer {
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.ww-ca-web-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--ca-accent-warm),
+    transparent
+  );
+  opacity: 0.5;
+}
+
+.ww-ca-web-footer__pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* —— 列表行左侧金线 —— */
+.ww-ca-web .ww-ca-row {
+  position: relative;
+}
+
+.ww-ca-web .ww-ca-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.85rem;
+  bottom: 0.85rem;
+  width: 2px;
+  border-radius: 1px;
+  background: linear-gradient(180deg, var(--ca-accent-warm), transparent);
+  opacity: 0;
+  transition: opacity 0.25s var(--ww-ease-out);
+}
+
+.ww-ca-web .ww-ca-row:hover::before {
+  opacity: 0.85;
+}
+
+/* —— 横幅 / 子页 —— */
+.ww-ca-aolt-banner,
+.ww-ca-page-banner {
+  box-shadow: var(--ca-shadow-soft);
+}
+
+.ww-ca-page-banner::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 1.75rem;
+  right: 1.75rem;
+  height: 1px;
+  background: linear-gradient(90deg, var(--ca-accent-warm), transparent 70%);
+  opacity: 0.4;
+}
+
+/* —— 图案 cross / arc —— */
+.ww-ca-pattern--cross {
+  opacity: 0.08;
+  background-image:
+    linear-gradient(var(--ca-ink) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ca-ink) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: center;
+}
+
+.ww-ca-pattern--arc {
+  opacity: 0.12;
+  background:
+    radial-gradient(circle at 0% 100%, transparent 58%, var(--ca-border) 59%, transparent 61%),
+    radial-gradient(circle at 100% 0%, transparent 68%, var(--ca-border) 69%, transparent 71%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-ca-web .ww-ca-product:hover .ww-ca-product__shine::after,
+  .ww-ca-web .ww-ca-premium-card:hover .ww-ca-premium-card__shine {
+    animation: none;
+  }
+}

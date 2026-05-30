@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import WwDialogFooterButton from '@shared/components/WwDialogFooterButton.vue'

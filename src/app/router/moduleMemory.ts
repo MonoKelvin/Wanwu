@@ -1,4 +1,4 @@
-import type { Router } from 'vue-router'
+﻿import type { Router } from 'vue-router'
 import { isModuleId, type ModuleId } from '@app/config/modules'
 import { useAppStore } from '@shared/stores/app'
 import { shouldRememberItemDetailReturn } from '@app/composables/useItemDetailNavigation'

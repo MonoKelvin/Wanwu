@@ -1,4 +1,4 @@
-import type { Component } from 'vue'
+﻿import type { Component } from 'vue'
 import { isModuleId, type ModuleId } from '@app/config/modules'
 import CloudAbodeView from '@modules/cloud-abode/CloudAbodeView.vue'
 import LibraryShellView from '@modules/library/LibraryShellView.vue'

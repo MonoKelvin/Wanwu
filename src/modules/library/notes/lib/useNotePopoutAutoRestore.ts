@@ -1,4 +1,4 @@
-import { watch } from 'vue'
+﻿import { watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { LIBRARY_NOTES_ROUTE } from '@modules/library/notes/domain/noteRoutes'
 import { useSettingsStore } from '@shared/stores/settings'

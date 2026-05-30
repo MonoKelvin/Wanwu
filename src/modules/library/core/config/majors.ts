@@ -1,4 +1,4 @@
-/** 全库顶级大分类（侧栏树第一层） */
+﻿/** 全库顶级大分类（侧栏树第一层） */
 export const LIBRARY_MAJORS = [
   {
     id: 'notes',

@@ -1,4 +1,4 @@
-import type { NotePlaceholderHint } from '@modules/library/notes/lib/notePlaceholderTypes'
+﻿import type { NotePlaceholderHint } from '@modules/library/notes/lib/notePlaceholderTypes'
 
 /**
  * 便笺正文占位提示库。

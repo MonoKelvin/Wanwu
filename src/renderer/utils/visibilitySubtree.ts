@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+﻿import * as THREE from 'three'
 
 /** traverse 不包含根节点自身，反射/捕获隐藏须覆盖整棵子树 */
 export function forEachSubtreeObject(root: THREE.Object3D, fn: (obj: THREE.Object3D) => void): void {

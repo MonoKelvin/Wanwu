@@ -1,4 +1,4 @@
-{
+﻿{
   "appId": "com.monokelvin.wanwu",
   "productName": "Wanwu",
   "copyright": "Copyright © 2026 MonoStudio",
@@ -20,7 +20,8 @@
   ],
   "afterPack": "pack/windows/pack-lib.mjs",
   "extraResources": [
-    { "from": "assets/logo", "to": "assets/logo" }
+    { "from": "assets/logo", "to": "assets/logo" },
+    { "from": "assets/cloud-abode/video", "to": "assets/cloud-abode/video" }
   ],
   "forceCodeSigning": false,
   "win": {

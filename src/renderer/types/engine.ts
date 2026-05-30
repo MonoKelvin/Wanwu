@@ -1,4 +1,4 @@
-import type * as THREE from 'three'
+﻿import type * as THREE from 'three'
 
 /** 渲染质量档位 — 控制 DPR、MSAA、后期特效精度 */
 export type RenderQuality = 'high' | 'medium' | 'low'

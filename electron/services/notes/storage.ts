@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto'
+﻿import { randomUUID } from 'crypto'
 import { copyFileSync, existsSync, mkdirSync, rmSync } from 'fs'
 import { dirname, extname, join } from 'path'
 import type {

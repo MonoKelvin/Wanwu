@@ -1,1 +1,1 @@
-export { collectNoteImageIdsFromHtml } from '@shared/notes/noteBodyContent'
+﻿export { collectNoteImageIdsFromHtml } from '@shared/notes/noteBodyContent'

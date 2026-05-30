@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { NodeViewWrapper, nodeViewProps } from '@tiptap/vue-3'
 import { computed, inject } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'

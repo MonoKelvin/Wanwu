@@ -1,4 +1,4 @@
-/** 与 electron browser/registry 中 id 一致 */
+﻿/** 与 electron browser/registry 中 id 一致 */
 export type BrowserBookmarkSourceId = 'edge' | 'chrome' | 'firefox' | 'safari' | 'opera'
 
 export type LinkFolderSource = BrowserBookmarkSourceId | 'local' | 'system'

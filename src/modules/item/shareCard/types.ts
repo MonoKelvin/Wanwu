@@ -1,4 +1,4 @@
-export type ShareCardTemplateId =
+﻿export type ShareCardTemplateId =
   | 'classic'
   | 'center'
   | 'corner'

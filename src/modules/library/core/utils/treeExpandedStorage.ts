@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'wanwu:library:tree-expanded'
+﻿const STORAGE_KEY = 'wanwu:library:tree-expanded'
 
 export function loadTreeExpandedKeys(): Record<string, boolean> {
   try {

@@ -1,4 +1,4 @@
-const EXPANDED_KEY = 'wanwu:library:links-catalog-expanded'
+﻿const EXPANDED_KEY = 'wanwu:library:links-catalog-expanded'
 const SELECTION_KEY = 'wanwu:library:links-catalog-selection'
 
 function readJson(key: string): Record<string, boolean> {

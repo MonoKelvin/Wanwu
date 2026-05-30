@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+﻿import * as THREE from 'three'
 import type { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 export interface SmoothOrbitOptions {

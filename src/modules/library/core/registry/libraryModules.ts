@@ -1,4 +1,4 @@
-import type { TreeNode } from 'primevue/treenode'
+﻿import type { TreeNode } from 'primevue/treenode'
 import { LIBRARY_MAJORS, type LibraryMajorId } from '@modules/library/core/config/majors'
 import { handbookCatalogFromCategories, sectionTreeForMajor } from '@modules/library/core/composables/libraryCategoryTree'
 import type { useIllustratedHandbookStore } from '@shared/stores/illustratedHandbook'

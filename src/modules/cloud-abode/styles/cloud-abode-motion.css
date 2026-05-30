@@ -1,0 +1,249 @@
+/**
+ * 云斋 · 动效：Tab 指示器、路由栅格切换、滚动视差
+ */
+
+/* —— Tab 滑动指示器 —— */
+.ww-ca-web .ww-ca-shell__indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: var(--ca-ink-strong);
+  opacity: 0;
+  transform-origin: left center;
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-shell__indicator--ready {
+  opacity: 1;
+}
+
+.ww-ca-web .ww-ca-shell__tab {
+  transition:
+    color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s ease;
+}
+
+.ww-ca-web .ww-ca-shell__tab::after {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-shell__tab--active {
+  color: var(--ca-ink-strong);
+}
+
+/* —— 路由切换：栅格揭示 + 内容上浮 —— */
+.ww-ca-route-page {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ww-ca-route-page__view {
+  position: relative;
+  z-index: 1;
+}
+
+.ww-ca-route-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--ca-hairline) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--ca-hairline) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0;
+}
+
+.ww-ca-route-enter-active,
+.ww-ca-route-leave-active {
+  transition:
+    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-ca-route-leave-active {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.ww-ca-route-leave-to {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.995);
+}
+
+.ww-ca-route-enter-from {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.ww-ca-route-enter-active .ww-ca-route-grid {
+  animation: ww-ca-route-grid-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes ww-ca-route-grid-in {
+  0% {
+    opacity: 0.55;
+    clip-path: inset(0 0 100% 0);
+  }
+  45% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 0;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* —— 滚动视差 —— */
+.ww-ca-web .ww-ca-ambient__video,
+.ww-ca-web .ww-ca-ambient__scrim {
+  transform: translate3d(0, var(--ca-parallax-bg, 0px), 0) scale(1.06);
+  will-change: transform;
+}
+
+.ww-ca-web .ww-ca-ambient__grain,
+.ww-ca-web .ww-ca-ambient__vignette,
+.ww-ca-web .ww-ca-texture-layer {
+  transform: translate3d(0, calc(var(--ca-parallax-bg, 0px) * 0.65), 0);
+}
+
+.ww-ca-web .ww-ca-page__inner {
+  transform: translate3d(0, var(--ca-parallax-fg, 0px), 0);
+  will-change: transform;
+}
+
+.ww-ca-web .ww-ca-page-title {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  margin-top: -0.25rem;
+  padding-top: 0.35rem;
+  padding-bottom: 1.25rem;
+  background: linear-gradient(
+    180deg,
+    var(--ca-glass-bg-strong) 55%,
+    transparent 100%
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* —— 简约统计带 —— */
+.ww-ca-web .ww-ca-stat-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin-bottom: var(--ca-section-gap);
+  border-block: 1px solid var(--ca-hairline);
+}
+
+.ww-ca-web .ww-ca-stat-strip__item {
+  padding: clamp(1.25rem, 3vw, 1.75rem) clamp(1rem, 2.5vw, 1.5rem);
+  border-right: 1px solid var(--ca-hairline);
+}
+
+.ww-ca-web .ww-ca-stat-strip__item:last-child {
+  border-right: none;
+}
+
+.ww-ca-web .ww-ca-stat-strip--solo {
+  grid-template-columns: 1fr;
+}
+
+.ww-ca-web .ww-ca-stat-strip--solo .ww-ca-stat-strip__item {
+  border-right: none;
+}
+
+.ww-ca-web .ww-ca-stat-strip__label {
+  font-size: var(--ca-text-xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ca-ink-faint);
+}
+
+.ww-ca-web .ww-ca-stat-strip__value {
+  margin-top: 0.35rem;
+  font-family: var(--ca-font-display);
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--ca-ink-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.ww-ca-web .ww-ca-stat-strip__value--hero {
+  font-size: clamp(1.75rem, 4vw, 2.35rem);
+}
+
+/* —— 简约列表区块 —— */
+.ww-ca-web .ww-ca-minimal-section {
+  margin-bottom: var(--ca-section-gap);
+}
+
+.ww-ca-web .ww-ca-minimal-section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.ww-ca-web .ww-ca-minimal-section__title {
+  font-family: var(--ca-font-display);
+  font-size: var(--ca-text-lg);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--ca-ink-strong);
+}
+
+.ww-ca-web .ww-ca-inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0;
+  margin-bottom: var(--ca-block-gap);
+  border-bottom: 1px solid var(--ca-hairline);
+}
+
+.ww-ca-web .ww-ca-inline-form .ww-ca-field {
+  flex: 1;
+  min-width: 10rem;
+  border-bottom: none;
+}
+
+.ww-ca-web .ww-ca-inline-form .ww-ca-btn {
+  border: none;
+  border-left: 1px solid var(--ca-hairline);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-ca-web .ww-ca-shell__indicator,
+  .ww-ca-web .ww-ca-shell__tab,
+  .ww-ca-route-enter-active,
+  .ww-ca-route-leave-active {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .ww-ca-route-enter-active .ww-ca-route-grid {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+
+  .ww-ca-web .ww-ca-ambient__video,
+  .ww-ca-web .ww-ca-ambient__scrim,
+  .ww-ca-web .ww-ca-ambient__grain,
+  .ww-ca-web .ww-ca-ambient__vignette,
+  .ww-ca-web .ww-ca-texture-layer,
+  .ww-ca-web .ww-ca-page__inner {
+    transform: none !important;
+  }
+}

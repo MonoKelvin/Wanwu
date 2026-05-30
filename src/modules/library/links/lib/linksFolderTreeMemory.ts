@@ -1,4 +1,4 @@
-const SELECTION_KEY = 'wanwu:links:folder-tree-selection'
+﻿const SELECTION_KEY = 'wanwu:links:folder-tree-selection'
 
 function readJson(): Record<string, boolean> {
   try {

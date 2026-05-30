@@ -1,4 +1,4 @@
-/** 个人页背景图调节（相对路径存于 profiles.background_config JSON） */
+﻿/** 个人页背景图调节（相对路径存于 profiles.background_config JSON） */
 export interface PersonalBackgroundConfig {
   scale: number
   offsetX: number

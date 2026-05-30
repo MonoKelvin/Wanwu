@@ -1,4 +1,4 @@
-import type { LinkBookmark } from '@shared/types/links'
+﻿import type { LinkBookmark } from '@shared/types/links'
 
 /** 列表展示排序（仅影响软件内 sort_order，写回浏览器需手动「同步到浏览器」） */
 export type LinksSortMode = 'sync' | 'title' | 'time'

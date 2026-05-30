@@ -1,4 +1,4 @@
-import type { Item } from '@shared/types/item'
+﻿import type { Item } from '@shared/types/item'
 
 /** 复制用：名称、标签、规格、详细介绍（不含 ID） */
 export function buildItemCopyText(item: Item): string {

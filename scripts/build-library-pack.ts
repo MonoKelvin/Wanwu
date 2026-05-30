@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 从 assets/seed/illustrated-handbook/items 各 JSON 生成预编译图鉴 SQLite 数据包
  *
  *   npm run build（经 run.mjs library-pack，使用 Electron Node）

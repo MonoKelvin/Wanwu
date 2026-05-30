@@ -1,4 +1,4 @@
-/** 应用 Logo（assets/logo/icon-*.png，无 SVG） */
+﻿/** 应用 Logo（assets/logo/icon-*.png，无 SVG） */
 import { resolveColorScheme } from '@app/theme/applyTheme'
 import type { ColorScheme, ResolvedColorScheme } from '@shared/types/settings'
 

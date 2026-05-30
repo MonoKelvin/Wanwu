@@ -1,4 +1,4 @@
-import { onUnmounted, ref, toValue, watch, type MaybeRefOrGetter } from 'vue'
+﻿import { onUnmounted, ref, toValue, watch, type MaybeRefOrGetter } from 'vue'
 
 const STORAGE_KEY = 'wanwu:links:live-sync'
 

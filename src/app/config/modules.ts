@@ -1,5 +1,7 @@
-import type { WwIconName } from '@shared/icons/registry'
+﻿import type { WwIconName } from '@shared/icons/registry'
+import { CLOUD_ABODE_ENABLED } from '@shared/constants/modules'
 export {
+  CLOUD_ABODE_ENABLED,
   DEFAULT_MODULE_ID,
   isModuleId,
   MODULE_KEEP_ALIVE,
@@ -15,10 +17,14 @@ export interface ModuleNavItem {
 }
 
 /** 主模块导航（新增模块时在此维护，设置页启动项会同步） */
-export const MODULE_NAV_ITEMS = [
+const ALL_MODULE_NAV_ITEMS = [
   { id: 'library', label: '全库', icon: 'database', path: '/library' },
   { id: 'rss', label: 'RSS', icon: 'globe', path: '/rss' },
   { id: 'cloud-abode', label: '云斋', icon: 'cloud-abode', path: '/cloud-abode' },
   { id: 'personal', label: '个人', icon: 'user', path: '/personal' },
   { id: 'settings', label: '设置', icon: 'settings', path: '/settings' }
 ] as const satisfies readonly ModuleNavItem[]
+
+export const MODULE_NAV_ITEMS = ALL_MODULE_NAV_ITEMS.filter(
+  (item) => item.id !== 'cloud-abode' || CLOUD_ABODE_ENABLED
+)

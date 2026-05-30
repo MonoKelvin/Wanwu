@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from 'fs'
+﻿import { existsSync, readdirSync } from 'fs'
 import { join } from 'path'
 import { getWanwuResourcesDirectory } from '../data/paths'
 import {

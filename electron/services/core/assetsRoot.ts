@@ -1,4 +1,4 @@
-import { join } from 'path'
+﻿import { join } from 'path'
 
 /**
  * 捆绑资源根目录（开发：仓库 assets/；打包：resources/assets/）。

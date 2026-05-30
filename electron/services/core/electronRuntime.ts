@@ -1,4 +1,4 @@
-import { homedir } from 'os'
+﻿import { homedir } from 'os'
 import { join } from 'path'
 
 /** 与 package.json `name` 一致，决定 Electron userData 目录名 */

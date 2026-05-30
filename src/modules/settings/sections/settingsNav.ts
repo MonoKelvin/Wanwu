@@ -1,4 +1,4 @@
-import type { WwIconName } from '@shared/icons/registry'
+﻿import type { WwIconName } from '@shared/icons/registry'
 import type { SettingsSection } from './types'
 
 export const SETTINGS_NAV_ITEMS: Array<{

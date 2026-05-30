@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import type { ImageViewerSlide } from '@shared/types/image-viewer'

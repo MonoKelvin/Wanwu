@@ -1,4 +1,4 @@
-import type { Item } from 'rss-parser'
+﻿import type { Item } from 'rss-parser'
 
 const FAVICON_GOOGLE = (host: string) =>
   `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64`

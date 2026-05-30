@@ -1,0 +1,535 @@
+/**
+ * 云斋 · 动效与富图案层
+ */
+
+/* —— 全局：流动网格 —— */
+.ww-ca-web .ww-ca-ambient__grid--shift {
+  opacity: 0.14;
+  background-image:
+    linear-gradient(to right, var(--ca-hairline) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--ca-hairline) 1px, transparent 1px),
+    radial-gradient(circle, color-mix(in srgb, var(--ca-accent-warm) 35%, transparent) 0.5px, transparent 0.5px);
+  background-size: 56px 56px, 56px 56px, 22px 22px;
+  animation: ww-ca-grid-drift 48s linear infinite;
+}
+
+@keyframes ww-ca-grid-drift {
+  to {
+    background-position: 56px 56px, 56px 56px, 22px 22px;
+  }
+}
+
+.ww-ca-web .ww-ca-ambient__orb--3 {
+  top: 36%;
+  left: 44%;
+  width: min(26vw, 13rem);
+  height: min(26vw, 13rem);
+  background: color-mix(in srgb, var(--ca-accent-warm) 10%, var(--ca-canvas));
+}
+
+.ww-ca-web .ww-ca-ambient__beam {
+  position: absolute;
+  top: -20%;
+  left: -15%;
+  width: 55%;
+  height: 140%;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    color-mix(in srgb, var(--ca-accent-warm) 8%, transparent) 48%,
+    transparent 58%
+  );
+  transform: rotate(-8deg);
+  animation: ww-ca-beam-sweep 18s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes ww-ca-beam-sweep {
+  from {
+    transform: rotate(-8deg) translateX(-6%);
+    opacity: 0.35;
+  }
+  to {
+    transform: rotate(-8deg) translateX(10%);
+    opacity: 0.65;
+  }
+}
+
+/* —— 极光层 —— */
+.ww-ca-aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ww-ca-aurora__sheet {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(48px);
+  mix-blend-mode: multiply;
+  animation: ww-ca-aurora-float 20s ease-in-out infinite alternate;
+}
+
+.ww-ca-aurora__sheet--a {
+  top: -15%;
+  right: -10%;
+  width: 70%;
+  height: 55%;
+  background: color-mix(in srgb, var(--ca-accent-warm) 22%, transparent);
+}
+
+.ww-ca-aurora__sheet--b {
+  bottom: -20%;
+  left: -5%;
+  width: 60%;
+  height: 50%;
+  background: color-mix(in srgb, var(--ca-ink) 6%, transparent);
+  animation-delay: -7s;
+  animation-duration: 24s;
+}
+
+.ww-ca-aurora__sheet--c {
+  top: 30%;
+  left: 25%;
+  width: 45%;
+  height: 40%;
+  background: color-mix(in srgb, var(--ca-canvas) 90%, var(--ca-accent-warm));
+  opacity: 0.6;
+  animation-delay: -12s;
+  animation-duration: 16s;
+}
+
+.ww-ca-aurora--ambient .ww-ca-aurora__sheet {
+  filter: blur(72px);
+  opacity: 0.55;
+}
+
+.ww-ca-aurora--band .ww-ca-aurora__sheet {
+  filter: blur(40px);
+  opacity: 0.45;
+}
+
+.ww-ca-aurora--panel .ww-ca-aurora__sheet {
+  filter: blur(36px);
+}
+
+@keyframes ww-ca-aurora-float {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(-4%, 6%) scale(1.08);
+  }
+}
+
+/* —— 浮点粒子 —— */
+.ww-ca-fx-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ww-ca-fx-particles__dot {
+  position: absolute;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ca-accent-warm) 70%, var(--ca-ink-faint));
+  animation: ww-ca-particle-float ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+.ww-ca-fx-particles--rich .ww-ca-fx-particles__dot {
+  box-shadow: 0 0 8px color-mix(in srgb, var(--ca-accent-warm) 40%, transparent);
+}
+
+@keyframes ww-ca-particle-float {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate(-8px, -14px) scale(1.35);
+    opacity: 0.35;
+  }
+}
+
+/* —— 扫光线条 —— */
+.ww-ca-shimmer-line {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--ca-canvas) 55%, transparent),
+    transparent
+  );
+  pointer-events: none;
+  animation: ww-ca-shimmer-pass 7s ease-in-out infinite;
+}
+
+@keyframes ww-ca-shimmer-pass {
+  0%,
+  35% {
+    left: -100%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% {
+    left: 160%;
+    opacity: 0;
+  }
+}
+
+/* —— 视觉面板增强 —— */
+.ww-ca-web .ww-ca-editorial-hero__visual,
+.ww-ca-web .ww-ca-page-title__visual {
+  isolation: isolate;
+}
+
+.ww-ca-web .ww-ca-editorial-hero__visual::after,
+.ww-ca-web .ww-ca-page-title__visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 10px,
+    color-mix(in srgb, var(--ca-ink) 2.5%, transparent) 10px,
+    color-mix(in srgb, var(--ca-ink) 2.5%, transparent) 11px
+  );
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ww-ca-web .ww-ca-editorial-hero__arc {
+  animation: ww-ca-arc-breathe 10s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes ww-ca-arc-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.04);
+  }
+}
+
+/* —— 编辑滚动条 —— */
+.ww-ca-web .ww-ca-editorial-strip {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--ca-block-gap);
+  padding: 0.9rem 0;
+  border-block: 1px solid var(--ca-hairline);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.ww-ca-web .ww-ca-editorial-strip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ca-canvas) 55%, transparent) 0%,
+    transparent 22%,
+    transparent 78%,
+    color-mix(in srgb, var(--ca-canvas) 55%, transparent) 100%
+  );
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-editorial-strip__track {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  animation: ww-ca-marquee 38s linear infinite;
+}
+
+.ww-ca-web .ww-ca-editorial-strip__item {
+  flex-shrink: 0;
+  font-size: var(--ca-text-xs);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ca-ink-faint);
+  white-space: nowrap;
+}
+
+.ww-ca-web .ww-ca-editorial-strip__item::after {
+  content: '◆';
+  margin-left: 2.5rem;
+  font-size: 0.45rem;
+  vertical-align: 0.2em;
+  color: color-mix(in srgb, var(--ca-accent-warm) 80%, var(--ca-ink-faint));
+}
+
+.ww-ca-web .ww-ca-editorial-strip__item:last-child::after {
+  content: none;
+}
+
+@keyframes ww-ca-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* —— 商品卡扫光 —— */
+.ww-ca-web .ww-ca-product__shine {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.ww-ca-web .ww-ca-product__shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--ca-canvas) 45%, transparent),
+    transparent
+  );
+  transform: skewX(-12deg);
+}
+
+.ww-ca-web .ww-ca-product:hover .ww-ca-product__shine {
+  opacity: 1;
+}
+
+.ww-ca-web .ww-ca-product:hover .ww-ca-product__shine::after {
+  animation: ww-ca-product-shine 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes ww-ca-product-shine {
+  to {
+    left: 140%;
+  }
+}
+
+.ww-ca-web .ww-ca-product__media::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    color-mix(in srgb, var(--ca-accent-warm) 12%, transparent),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-product:hover .ww-ca-product__media::before {
+  opacity: 1;
+}
+
+/* —— 分类 Tab 激活光晕 —— */
+.ww-ca-web .ww-ca-cat-tile--active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.35rem;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--ca-accent-warm),
+    transparent
+  );
+  animation: ww-ca-tab-glow 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes ww-ca-tab-glow {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* —— 工具卡 —— */
+.ww-ca-web .ww-ca-tool {
+  position: relative;
+  overflow: hidden;
+}
+
+.ww-ca-web .ww-ca-tool::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 0;
+  background: linear-gradient(180deg, var(--ca-accent-warm), transparent);
+  transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-ca-web .ww-ca-tool:hover::after,
+.ww-ca-web .ww-ca-tool--active::after {
+  height: 100%;
+}
+
+.ww-ca-web .ww-ca-tool__mesh {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* —— 信息带 —— */
+.ww-ca-web .ww-ca-band__glow {
+  position: absolute;
+  top: -30%;
+  right: -10%;
+  width: 50%;
+  height: 80%;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--ca-accent-warm) 15%, transparent),
+    transparent 70%
+  );
+  animation: ww-ca-band-glow 12s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes ww-ca-band-glow {
+  to {
+    transform: translate(-5%, 8%) scale(1.08);
+    opacity: 0.85;
+  }
+}
+
+/* —— 区块标题 —— */
+.ww-ca-web .ww-ca-section-center--decor::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid color-mix(in srgb, var(--ca-accent-warm) 35%, transparent);
+  border-radius: 50%;
+  opacity: 0.35;
+  animation: ww-ca-section-ring 8s ease-in-out infinite;
+}
+
+.ww-ca-web .ww-ca-section-center--decor {
+  position: relative;
+}
+
+@keyframes ww-ca-section-ring {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.25;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.5;
+  }
+}
+
+/* —— 列表行 hover —— */
+.ww-ca-web .ww-ca-row {
+  position: relative;
+}
+
+.ww-ca-web .ww-ca-row::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--ca-accent-warm), transparent);
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-ca-web .ww-ca-row:hover::after {
+  width: 3rem;
+}
+
+/* —— 筛选条底纹 —— */
+.ww-ca-web .ww-ca-filter-bar--sticky::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 3px,
+    color-mix(in srgb, var(--ca-hairline) 40%, transparent) 3px,
+    color-mix(in srgb, var(--ca-hairline) 40%, transparent) 4px
+  );
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-filter-bar--sticky {
+  position: sticky;
+}
+
+.ww-ca-web .ww-ca-filter-bar .ww-ca-toolbar {
+  position: relative;
+  z-index: 1;
+}
+
+/* —— 深色 —— */
+[data-theme='dark'] .ww-ca-aurora__sheet {
+  mix-blend-mode: screen;
+  opacity: 0.35;
+}
+
+[data-theme='dark'] .ww-ca-fx-particles__dot {
+  background: color-mix(in srgb, var(--ca-accent-warm) 55%, var(--ca-ink-muted));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-ca-web .ww-ca-ambient__grid--shift,
+  .ww-ca-web .ww-ca-ambient__beam,
+  .ww-ca-aurora__sheet,
+  .ww-ca-fx-particles__dot,
+  .ww-ca-shimmer-line,
+  .ww-ca-web .ww-ca-editorial-strip__track,
+  .ww-ca-web .ww-ca-editorial-hero__arc,
+  .ww-ca-web .ww-ca-band__glow,
+  .ww-ca-web .ww-ca-section-center--decor::after {
+    animation: none !important;
+  }
+
+  .ww-ca-web .ww-ca-product:hover .ww-ca-product__shine::after {
+    animation: none;
+  }
+}

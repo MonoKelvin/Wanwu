@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+﻿import * as THREE from 'three'
 
 /** 修正 GLTF 贴图色彩空间、flipY 与 PBR 默认参数 */
 export function fixGltfMaterialTextures(root: THREE.Object3D): void {

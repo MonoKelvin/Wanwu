@@ -1,4 +1,4 @@
-// 
+﻿// 
 // 从 assets/seed/illustrated-handbook/items 各 JSON 加载图鉴种子（不依赖 catalog.json）
 // 
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs'

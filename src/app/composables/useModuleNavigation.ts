@@ -1,4 +1,4 @@
-import { useRouter } from 'vue-router'
+﻿import { useRouter } from 'vue-router'
 import type { ModuleId } from '@app/config/modules'
 import { useAppStore } from '@shared/stores/app'
 

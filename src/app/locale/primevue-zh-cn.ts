@@ -1,4 +1,4 @@
-/** PrimeVue 文案：空列表默认不显示文字（由各组件 #empty 插槽或页面空状态承担） */
+﻿/** PrimeVue 文案：空列表默认不显示文字（由各组件 #empty 插槽或页面空状态承担） */
 export const primeVueZhCn = {
   emptyMessage: '',
   emptySearchMessage: '',

@@ -1,4 +1,4 @@
-import type { RenderBackend } from '../types/engine'
+﻿import type { RenderBackend } from '../types/engine'
 
 /** 探测用最小 WebGPU 类型（DOM lib 未包含 GPU 接口） */
 interface GPUAdapterLike {

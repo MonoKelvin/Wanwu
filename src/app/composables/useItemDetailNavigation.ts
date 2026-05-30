@@ -1,4 +1,4 @@
-import { useRoute, useRouter } from 'vue-router'
+﻿import { useRoute, useRouter } from 'vue-router'
 import { isModuleId, modulePathById, type ModuleId } from '@app/config/modules'
 import { useAppStore } from '@shared/stores/app'
 import { isItemDetailRoute, moduleIdForItemDetailSource } from '@shared/utils/itemDetailRoute'

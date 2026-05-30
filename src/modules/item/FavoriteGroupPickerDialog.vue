@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { nextTick, ref, watch } from 'vue'
 import InputText from 'primevue/inputtext'
 import WwDialogFooterButton from '@shared/components/WwDialogFooterButton.vue'

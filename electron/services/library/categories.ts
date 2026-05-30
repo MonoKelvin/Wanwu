@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'fs'
+﻿import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import type Database from 'better-sqlite3'
 import { getLibrarySeedRoot } from './paths'

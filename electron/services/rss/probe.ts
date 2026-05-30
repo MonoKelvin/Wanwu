@@ -1,4 +1,4 @@
-import { createRssParser } from './parser'
+﻿import { createRssParser } from './parser'
 
 const PROBE_TIMEOUT_MS = 12_000
 const parser = createRssParser(PROBE_TIMEOUT_MS)

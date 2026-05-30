@@ -1,4 +1,4 @@
-import type * as THREE from 'three'
+﻿import type * as THREE from 'three'
 import type { IRenderContext } from '../types/context'
 
 export interface PathTracingOptions {

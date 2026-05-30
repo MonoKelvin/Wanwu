@@ -1,4 +1,5 @@
-import {
+﻿import {
+  CLOUD_ABODE_ENABLED,
   DEFAULT_MODULE_ID,
   isModuleId,
   modulePathById,
@@ -6,11 +7,18 @@ import {
 } from '@app/config/modules'
 import type { AppSettings, StartupModule } from '@shared/types/settings'
 
+function resolveEnabledModule(id: ModuleId): ModuleId {
+  if (id === 'cloud-abode' && !CLOUD_ABODE_ENABLED) return DEFAULT_MODULE_ID
+  return id
+}
+
 export function resolveStartupModule(settings: AppSettings): ModuleId {
   if (settings.startupModule === 'last') {
-    return isModuleId(settings.lastActiveModule) ? settings.lastActiveModule : DEFAULT_MODULE_ID
+    const last = isModuleId(settings.lastActiveModule) ? settings.lastActiveModule : DEFAULT_MODULE_ID
+    return resolveEnabledModule(last)
   }
-  return isModuleId(settings.startupModule) ? settings.startupModule : DEFAULT_MODULE_ID
+  const startup = isModuleId(settings.startupModule) ? settings.startupModule : DEFAULT_MODULE_ID
+  return resolveEnabledModule(startup)
 }
 
 export function resolveStartupPath(settings: AppSettings): string {

@@ -1,4 +1,4 @@
-import { setDocumentFavicon } from '@app/setDocumentFavicon'
+﻿import { setDocumentFavicon } from '@app/setDocumentFavicon'
 import type { ColorScheme, ResolvedColorScheme } from '@shared/types/settings'
 
 const STORAGE_KEY = 'wanwu.colorScheme'

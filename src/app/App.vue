@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Toast from 'primevue/toast'

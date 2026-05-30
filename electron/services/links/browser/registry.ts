@@ -1,4 +1,4 @@
-import { resolveChromiumBookmarksPath } from './chromium/bookmarksFile'
+﻿import { resolveChromiumBookmarksPath } from './chromium/bookmarksFile'
 import { resolveFirefoxPlacesPath } from './firefox/profile'
 import { getSafariBookmarksFilePath } from './safari/plistBookmarks'
 import type { BrowserBookmarkProvider, BrowserSourceStatus } from './types'

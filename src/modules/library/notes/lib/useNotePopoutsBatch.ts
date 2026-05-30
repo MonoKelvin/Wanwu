@@ -1,4 +1,4 @@
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+﻿import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 export function useNotePopoutsBatch() {
   const scopeCount = ref(0)

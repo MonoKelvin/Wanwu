@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+﻿import * as THREE from 'three'
 import type { RenderEngineOptions } from '../types/engine'
 
 /** 渲染器通用默认参数 */

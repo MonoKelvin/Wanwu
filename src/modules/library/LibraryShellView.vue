@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 defineOptions({ name: 'LibraryView' })
 
 import { RouterView, useRoute } from 'vue-router'

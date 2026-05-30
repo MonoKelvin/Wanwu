@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 为大图查看器解析可加载 URL：本地库直链，远程图经主进程临时缓存。
  */
 export async function resolveImageViewerUrl(

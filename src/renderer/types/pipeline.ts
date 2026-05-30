@@ -1,4 +1,4 @@
-import type { BloomEffect, DepthOfFieldEffect, SSAOEffect, SMAAEffect, ToneMappingEffect } from 'postprocessing'
+﻿import type { BloomEffect, DepthOfFieldEffect, SSAOEffect, SMAAEffect, ToneMappingEffect } from 'postprocessing'
 import type { EffectComposer } from 'postprocessing'
 import type { TemporalBlendEffect } from '../pipeline/effects/TemporalBlendEffect'
 

@@ -1,4 +1,4 @@
-import type { ShareCardStyle } from './styleCatalog'
+﻿import type { ShareCardStyle } from './styleCatalog'
 import { resolveShareCardStyle } from './styleCatalog'
 import type { ShareCardFilterId } from './imageFilters'
 import { canvasFilterCss } from './imageFilters'

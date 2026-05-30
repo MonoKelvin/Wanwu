@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import SelectButton from 'primevue/selectbutton'
 import { useSettingsStore } from '@shared/stores/settings'

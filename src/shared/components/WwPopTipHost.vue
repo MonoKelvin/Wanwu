@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { usePopTipMessage } from '@shared/composables/usePopTip'
 
 defineOptions({ name: 'WwPopTipHost' })

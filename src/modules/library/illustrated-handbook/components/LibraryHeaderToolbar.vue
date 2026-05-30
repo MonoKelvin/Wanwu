@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, ref } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
 import IconField from 'primevue/iconfield'

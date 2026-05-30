@@ -1,4 +1,4 @@
-import type { FirefoxBookmarkNode } from './placesTree'
+﻿import type { FirefoxBookmarkNode } from './placesTree'
 
 export function buildFirefoxExternalId(node: FirefoxBookmarkNode, legacyPath: string): string {
   if (node.guid?.trim()) return `firefox:guid:${node.guid.trim()}`

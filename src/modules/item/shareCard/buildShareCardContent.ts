@@ -1,4 +1,4 @@
-import type { Item } from '@shared/types/item'
+﻿import type { Item } from '@shared/types/item'
 import type { ShareCardContent } from './types'
 
 const SUMMARY_MAX_CHARS = 56

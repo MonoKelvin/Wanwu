@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from 'fs'
+﻿import { existsSync, readdirSync } from 'fs'
 import { dirname, join } from 'path'
 import { getWanwuDataDirectory, readWanwuPathConfig } from '../data/paths'
 import { getBundledAssetsRoot } from '../core/assetsRoot'

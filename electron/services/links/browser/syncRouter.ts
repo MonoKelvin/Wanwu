@@ -1,4 +1,4 @@
-import type Database from 'better-sqlite3'
+﻿import type Database from 'better-sqlite3'
 import type { LinksSyncResult } from '../../../../src/shared/types/links'
 import { syncChromiumBookmarksIntoDb } from './chromium/syncPull'
 import { syncChromiumBookmarksToFile } from './chromium/syncPush'

@@ -1,4 +1,4 @@
-import { createRequire } from 'module'
+﻿import { createRequire } from 'module'
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs'
 import { basename, join } from 'path'
 import { tmpdir } from 'os'

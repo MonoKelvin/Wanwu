@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 /** 模块页：页头在滚动区外，滚动条仅出现在页头下方的内容区。 */
 </script>
 

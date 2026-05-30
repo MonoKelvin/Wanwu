@@ -1,4 +1,4 @@
-import type { ShareCardFilterId } from './imageFilters'
+﻿import type { ShareCardFilterId } from './imageFilters'
 import { canvasFilterCss } from './imageFilters'
 import type { ShareCardContent, ShareCardPalette } from './types'
 import { FONT_STACK } from './types'

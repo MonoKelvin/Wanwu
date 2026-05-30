@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import WwButton from '@shared/components/WwButton.vue'
 import type { WwIconName } from '@shared/icons/registry'
 

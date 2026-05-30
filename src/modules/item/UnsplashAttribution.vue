@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
 import { isMediaAttribution, mediaAttributionSource } from '@shared/utils/unsplashAttribution'
 import type { MediaAttribution } from '@shared/types/unsplash'

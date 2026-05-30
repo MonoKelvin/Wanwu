@@ -1,4 +1,4 @@
-import { parseChromiumExternalPath } from './chromium/externalId'
+﻿import { parseChromiumExternalPath } from './chromium/externalId'
 import { parseFirefoxExternalPath } from './firefox/externalId'
 import { parseSafariExternalPath } from './safari/externalId'
 

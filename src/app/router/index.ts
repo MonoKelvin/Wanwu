@@ -1,8 +1,10 @@
-﻿import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupModulePathMemory } from '@app/router/moduleMemory'
+import { CLOUD_ABODE_ENABLED } from '@app/config/modules'
 import { useSettingsStore } from '@shared/stores/settings'
 import { resolveStartupPath } from '@shared/utils/startupModule'
 import { isLibraryMajorId } from '@modules/library/core/config/majors'
+import { cloudAbodeChildRoutes } from '@modules/cloud-abode/router'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -88,9 +90,14 @@ const router = createRouter({
     },
     {
       path: '/cloud-abode',
-      name: 'cloud-abode',
+      beforeEnter: () => {
+        if (!CLOUD_ABODE_ENABLED) {
+          return { path: '/library', replace: true }
+        }
+      },
       component: () => import('@modules/cloud-abode/CloudAbodeView.vue'),
-      meta: { module: 'cloud-abode', title: '云斋' }
+      meta: { module: 'cloud-abode', title: '云斋' },
+      children: cloudAbodeChildRoutes
     },
     {
       path: '/personal',

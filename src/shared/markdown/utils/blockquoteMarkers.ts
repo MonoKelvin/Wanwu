@@ -1,4 +1,4 @@
-/** 引用块末尾残留的 Markdown 引用符 `>`（含全角、实体） */
+﻿/** 引用块末尾残留的 Markdown 引用符 `>`（含全角、实体） */
 const LONE_MARKER_TEXT = /^(?:>|＞|&gt;)$/u
 const TRAILING_MARKER_TEXT = /[\s\u00a0]*(?:>|＞)\s*$/u
 

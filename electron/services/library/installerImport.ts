@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 安装程序在安装阶段调用：将 library-data-pack.zip 解压到用户数据目录。
  * 通过 Wanwu.exe --installer-import-library-pack "<dataDir>" ["<zipPath>"] 触发。
  */

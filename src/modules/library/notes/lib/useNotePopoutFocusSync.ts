@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted } from 'vue'
+﻿import { onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useNotesStore } from '@shared/stores/notes'
 import { LIBRARY_NOTES_ROUTE } from '@modules/library/notes/domain/noteRoutes'

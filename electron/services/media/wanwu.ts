@@ -1,6 +1,7 @@
-﻿/** wanwu-media:// 协议路径解析（用户媒体 + 图鉴静态资源） */
+/** wanwu-media:// 协议路径解析（用户媒体 + 图鉴静态资源 + 捆绑 seed） */
 import { existsSync } from 'fs'
 import { join } from 'path'
+import { getBundledAssetsRoot } from '../core/assetsRoot'
 import { resolveWanwuPath } from '../data/paths'
 import { ILLUSTRATED_HANDBOOK_MEDIA_DIR } from '../library/paths'
 import { resolveLibraryMediaAbsolute } from '../media/library'
@@ -16,6 +17,16 @@ export function resolveWanwuMediaAbsolute(relativePath: string): string | null {
 
   if (rel.startsWith(`${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/`)) {
     return resolveLibraryMediaAbsolute(rel)
+  }
+
+  if (rel.startsWith('seed/')) {
+    const bundled = join(getBundledAssetsRoot(), rel)
+    if (existsSync(bundled)) return bundled
+  }
+
+  if (rel.startsWith('cloud-abode/')) {
+    const bundled = join(getBundledAssetsRoot(), rel)
+    if (existsSync(bundled)) return bundled
   }
 
   const wanwuRoot = resolveWanwuPath()

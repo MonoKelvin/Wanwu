@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+﻿import * as THREE from 'three'
 
 /** 对物体下所有 Mesh 材质启用/关闭裁剪平面 */
 export function setObjectClipping(

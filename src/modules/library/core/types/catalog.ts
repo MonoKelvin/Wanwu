@@ -1,4 +1,4 @@
-import type { TreeNode } from 'primevue/treenode'
+﻿import type { TreeNode } from 'primevue/treenode'
 
 /** 通用目录节点（可多级） */
 export interface CatalogNode {

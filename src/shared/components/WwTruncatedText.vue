@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { useOverflowTooltip } from '@shared/composables/useOverflowTooltip'
 
 const props = withDefaults(

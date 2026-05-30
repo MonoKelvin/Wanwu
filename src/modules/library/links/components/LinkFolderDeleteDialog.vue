@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import Checkbox from 'primevue/checkbox'
 import WwGlassDialog from '@shared/components/WwGlassDialog.vue'

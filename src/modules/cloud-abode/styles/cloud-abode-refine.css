@@ -1,0 +1,272 @@
+/**
+ * 云斋 · 弥散光照 / 深浅色 / 顶栏安全区 / 动效收敛
+ */
+
+.ww-ca-web {
+  --ca-titlebar-safe: 7.75rem;
+  --ca-diffuse-blur: 100px;
+  --ca-glow-strength: 0.08;
+}
+
+/* —— 顶栏：为窗口控制按钮留白 —— */
+.ww-ca-web .ww-ca-shell__inner {
+  padding-right: max(var(--ca-page-pad-x), var(--ca-titlebar-safe));
+}
+
+.ww-ca-web .ww-ca-shell__actions {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-shell__tab--emphasis {
+  padding: 0.4rem 0.85rem;
+  margin-left: 0.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--ca-border-strong);
+  background: var(--ca-surface);
+}
+
+.ww-ca-web .ww-ca-shell__tab--emphasis::after {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-shell__tab--emphasis:hover {
+  border-color: var(--ca-ink);
+  color: var(--ca-ink);
+}
+
+/* —— 全局弥散背景（极弱，仅隐约可见） —— */
+.ww-ca-web .ww-ca-ambient__orb {
+  filter: blur(var(--ca-diffuse-blur));
+  opacity: var(--ca-glow-strength);
+}
+
+.ww-ca-web .ww-ca-ambient__orb--3 {
+  opacity: calc(var(--ca-glow-strength) * 0.65);
+}
+
+.ww-ca-web .ww-ca-ambient__grid {
+  opacity: 0.28;
+}
+
+.ww-ca-web .ww-ca-ambient__grain {
+  opacity: 0.55;
+}
+
+.ww-ca-web .ww-ca-mesh-wash__blob {
+  filter: blur(72px);
+  opacity: calc(var(--ca-glow-strength) + 0.02);
+}
+
+.ww-ca-mesh-wash--hero .ww-ca-mesh-wash__blob--a {
+  opacity: calc(var(--ca-glow-strength) + 0.04);
+}
+
+.ww-ca-mesh-wash--banner .ww-ca-mesh-wash__blob {
+  filter: blur(64px);
+  opacity: var(--ca-glow-strength);
+}
+
+/* PNG 纹理叠层 */
+.ww-ca-texture-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+}
+
+.ww-ca-texture-layer--dots {
+  background-size: 200px 200px;
+  opacity: 0.22;
+}
+
+.ww-ca-web .ww-ca-ambient .ww-ca-texture-layer--grain {
+  opacity: 0.18;
+  mix-blend-mode: soft-light;
+}
+
+/* —— 高级卡弥散（取代强 shine） —— */
+.ww-ca-web .ww-ca-premium-card::before {
+  background: radial-gradient(
+    ellipse 90% 70% at 92% 8%,
+    color-mix(in srgb, var(--ca-accent-warm) calc(var(--ca-glow-strength) * 100%), transparent),
+    transparent 62%
+  );
+}
+
+.ww-ca-web .ww-ca-premium-card__shine {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-product__shine {
+  display: none;
+}
+
+.ww-ca-web .ww-ca-product__media::after {
+  opacity: 0.22;
+  background: linear-gradient(
+    180deg,
+    transparent 62%,
+    color-mix(in srgb, var(--ca-ink) 4%, transparent)
+  );
+}
+
+.ww-ca-web .ww-ca-product:hover .ww-ca-product__frame {
+  opacity: 0.4;
+}
+
+.ww-ca-web .ww-ca-product__media-texture {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  opacity: 0.12;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+}
+
+.ww-ca-web .ww-ca-cat-tile__pattern-img {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.14;
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-cat-tile__pattern {
+  opacity: 0.2;
+}
+
+.ww-ca-web .ww-ca-velvety-hero__decor {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  width: min(40%, 10rem);
+  height: auto;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.ww-ca-web .ww-ca-page-banner__corner,
+.ww-ca-web .ww-ca-aolt-banner__corner {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 3rem;
+  height: 3rem;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.ww-ca-velvety-hero__panel::after {
+  opacity: 0.35;
+  height: 2px;
+}
+
+.ww-ca-web .ww-ca-stat:hover::after {
+  opacity: 0.25;
+}
+
+.ww-ca-web .ww-ca-row:hover::before {
+  opacity: 0.35;
+}
+
+.ww-ca-web .ww-ca-quick-strip__item::before {
+  opacity: 0.45;
+  box-shadow: none;
+}
+
+.ww-ca-web-footer__pattern-img {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+/* —— 过渡动效（统一、克制） —— */
+.ww-ca-web .ww-ca-btn,
+.ww-ca-web .ww-ca-cat-tile,
+.ww-ca-web .ww-ca-product,
+.ww-ca-web .ww-ca-row,
+.ww-ca-web .ww-ca-shell__tab {
+  transition-duration: 0.32s;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-ca-web .ww-ca-product:hover {
+  transform: translateY(-2px);
+}
+
+.ww-ca-web .ww-ca-cat-tile:hover {
+  transform: translateY(-2px);
+}
+
+/* —— 深色模式 —— */
+[data-theme='dark'] .ww-ca-web {
+  --ca-cream-warm: #121110;
+  --ca-bg: #0e0e0d;
+  --ca-surface: #1a1917;
+  --ca-surface-muted: #222120;
+  --ca-border: rgb(255 255 255 / 0.07);
+  --ca-border-strong: rgb(255 255 255 / 0.12);
+  --ca-ink: #f2f0eb;
+  --ca-ink-muted: #a8a6a0;
+  --ca-ink-faint: #6e6c67;
+  --ca-accent: #f2f0eb;
+  --ca-accent-hover: #d8d6d0;
+  --ca-accent-warm: #b89a52;
+  --ca-glow-strength: 0.06;
+  --ca-shadow: 0 24px 48px -28px rgb(0 0 0 / 0.55);
+  --ca-shadow-soft: 0 1px 0 rgb(255 255 255 / 0.04), 0 12px 32px -16px rgb(0 0 0 / 0.45);
+}
+
+[data-theme='dark'] .ww-ca-web .ww-ca-ambient__orb--1 {
+  background: color-mix(in srgb, var(--ca-accent-warm) 14%, var(--ca-surface));
+}
+
+[data-theme='dark'] .ww-ca-web .ww-ca-ambient__orb--2 {
+  background: color-mix(in srgb, var(--ca-ink) 4%, var(--ca-surface-muted));
+}
+
+[data-theme='dark'] .ww-ca-web .ww-ca-shell {
+  background: color-mix(in srgb, var(--ca-surface) 82%, transparent);
+  border-bottom-color: var(--ca-border);
+}
+
+[data-theme='dark'] .ww-ca-web .ww-ca-shell--scrolled {
+  background: color-mix(in srgb, var(--ca-surface) 94%, transparent);
+}
+
+[data-theme='dark'] .ww-ca-web .ww-ca-texture-layer,
+[data-theme='dark'] .ww-ca-web .ww-ca-texture-layer--dots {
+  opacity: 0.12;
+  mix-blend-mode: screen;
+}
+
+[data-theme='dark'] .ww-ca-web .ww-ca-product__media-texture,
+[data-theme='dark'] .ww-ca-web .ww-ca-cat-tile__pattern-img {
+  opacity: 0.08;
+  mix-blend-mode: soft-light;
+}
+
+[data-theme='dark'] .ww-ca-mesh-wash__blob--a {
+  background: color-mix(in srgb, var(--ca-accent-warm) 10%, transparent);
+}
+
+[data-theme='dark'] .ww-ca-web .ww-ca-filter-bar.ww-glass-blur {
+  background: color-mix(in srgb, var(--ca-surface) 88%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-ca-web .ww-ca-ambient__orb,
+  .ww-ca-mesh-wash__blob,
+  .ww-ca-editorial-strip__track,
+  .ww-ca-velvety-hero__frame {
+    animation: none !important;
+  }
+}

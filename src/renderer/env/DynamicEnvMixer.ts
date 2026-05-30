@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+﻿import * as THREE from 'three'
 
 const MIX_VERT = /* glsl */ `
 varying vec2 vUv;

@@ -1,4 +1,4 @@
-import type * as THREE from 'three'
+﻿import type * as THREE from 'three'
 import type { WebGPURenderer } from 'three/webgpu'
 import type { RenderQuality } from '../types/engine'
 import type { PostStackOptions } from '../types/pipeline'

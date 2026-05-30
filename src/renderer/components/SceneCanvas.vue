@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
 import * as THREE from 'three'
 import { SceneRenderer } from '../core/SceneRenderer'

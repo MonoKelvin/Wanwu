@@ -1,4 +1,4 @@
-import { useConfirm } from 'primevue/useconfirm'
+﻿import { useConfirm } from 'primevue/useconfirm'
 
 export interface WanwuConfirmOptions {
   header?: string

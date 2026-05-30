@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+﻿import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { dirname, join, normalize, resolve } from 'path'
 import { ELECTRON_USER_DATA_FOLDER, getElectronPath } from '../core/electronRuntime'
 

@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3'
+﻿import Database from 'better-sqlite3'
 import { copyFileSync, existsSync, mkdtempSync, rmSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'

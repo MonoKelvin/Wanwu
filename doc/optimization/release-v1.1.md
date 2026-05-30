@@ -41,13 +41,15 @@ v1.1 重点：**Windows 安装包**、**图鉴数据包独立分发**、**安装
 - **云斋**模块初版：侧栏入口、展车页、`scene-renderer`、自定义导航图标。
 - 云斋 3D 资源与 `item.json` 约定落地；README / 脚本说明精简。
 
-## 云斋（cloud-abode，WIP）
+## 云斋（cloud-abode，v1.1 核心闭环）
 
-- 侧栏新增 **云斋**，路由 `/cloud-abode/:slug?`；首车 `xiaomi-su7`（`items/xiaomi-su7/item.json`，id 为 UUID）。
-- 通用 3D：`src/modules/scene-renderer`（Three.js r170、OrbitControls、HDR/PMREM、GLTF）。
-- 展车：全屏画布、加载进度、底部 ColorBar 车身色；配置写入 `localStorage`。
-- 车型 `item.json` 仅含模型与定制；展厅/HDR/BGM 等共用资源由 `cloud-abode` 模块配置引用。
-- 云斋 3D 资源在 `assets/` 与 `showroomAssets.ts` 中维护；开发素材可参考 [su7-replica](https://github.com/alphardex/su7-replica)。
+- 侧栏 **云斋**，嵌套路由：`/cloud-abode`（首页）、`/cloud-abode/mall`、`/cloud-abode/showroom/:slug`、`/cloud-abode/todos`、`/cloud-abode/tools`、`/cloud-abode/wallet`、`/cloud-abode/inventory`。
+- 主进程 `CloudAbodeService` + 独立 SQLite（`{userData}/cloud-abode/database.sqlite`）；IPC 命名空间 `window.wanwu.cloudAbode`。
+- 虚拟货币：启动资金 500 元；账本、模拟银行卡、6 位支付密码（错 3 次锁 5 分钟）、商城结账。
+- 种子商品含 SU7（约 200 万）、沙发（约 300 元）等；购买后写入 `ca_inventory`，展车页显示「已拥有」并同步车身配置。
+- 每日系统 TODO、自定义待办、工具（冷笑话/脑筋急转弯/五十音/诗词/单词等）带每日奖励次数上限。
+- 3D 展车：`src/renderer` + `vehicles/CarShowroomView`；资源见 `assets/seed/cloud-abode/vehicles/` 与 `showroomAssets.ts`。
+- 开发计划详见 [cloud-abode-development-plan.md](../design/cloud-abode-development-plan.md)。
 
 ## v1.1.x 增量优化（文档与代码同步维护）
 

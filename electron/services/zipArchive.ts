@@ -1,4 +1,4 @@
-/**
+﻿/**
  * archiver v8 的 ZipArchive 包装（@types/archiver 仍为 v7，无 ZipArchive 命名导出类型）。
  */
 import { ZipArchive as ZipArchiveImpl } from 'archiver'
