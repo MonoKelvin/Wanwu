@@ -94,7 +94,7 @@ watch(open, (v) => {
 
 onUnmounted(unbindGlobal)
 
-defineExpose({ show, hide, showBelowAnchor, toggleAnchor })
+defineExpose({ show, hide, placeAt, showBelowAnchor, toggleAnchor })
 </script>
 
 <template>

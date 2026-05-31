@@ -50,3 +50,7 @@ const subLabel = computed(() => props.entry.item?.subCategoryName ?? null)
     </button>
   </article>
 </template>
+
+<style>
+@import './styles/favorite-card.css';
+</style>

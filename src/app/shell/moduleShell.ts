@@ -1,5 +1,6 @@
 ﻿import type { Component } from 'vue'
 import { isModuleId, type ModuleId } from '@app/config/modules'
+import { isItemDetailPath, moduleIdForItemDetailSource } from '@shared/utils/itemDetailRoute'
 import CloudAbodeView from '@modules/cloud-abode/CloudAbodeView.vue'
 import LibraryShellView from '@modules/library/LibraryShellView.vue'
 import PersonalView from '@modules/personal/PersonalView.vue'
@@ -20,7 +21,12 @@ function moduleIdFromPath(path: string): ModuleId | undefined {
 }
 
 export function shellModuleFromReturnPath(returnPath: string | null | undefined): ModuleId {
-  return moduleIdFromPath(returnPath ?? '') ?? 'library'
+  const path = returnPath ?? ''
+  if (isItemDetailPath(path)) {
+    const source = path.replace(/^#/, '').split('/')[2]
+    return moduleIdForItemDetailSource(source) ?? 'library'
+  }
+  return moduleIdFromPath(path) ?? 'library'
 }
 
 export function moduleViewComponent(id: ModuleId): Component {

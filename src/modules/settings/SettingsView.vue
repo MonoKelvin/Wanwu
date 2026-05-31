@@ -351,14 +351,6 @@ async function refreshPaths() {
   max-width: max-content;
 }
 
-.ww-settings-switch.p-toggleswitch {
-  flex-shrink: 0;
-}
-
-.ww-settings-switch.p-toggleswitch.p-disabled {
-  opacity: 0.55;
-}
-
 .ww-settings-row:not(:has(.ww-settings-row__control)) .ww-settings-row__label {
   flex: 1;
   max-width: none;

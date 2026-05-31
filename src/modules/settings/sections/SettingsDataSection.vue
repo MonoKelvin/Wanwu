@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
 import { ref } from 'vue'
-import ToggleSwitch from 'primevue/toggleswitch'
+import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import WwButton from '@shared/components/WwButton.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
@@ -124,9 +124,8 @@ async function openDataFolder() {
 
     <div class="ww-settings-group ww-settings-group--muted">
       <SettingsRow label="数据库加密" subtitle="即将支持">
-        <ToggleSwitch
+        <WwToggleSwitch
           v-model="dbEncryptionEnabled"
-          class="ww-settings-switch"
           disabled
           aria-label="数据库加密"
         />

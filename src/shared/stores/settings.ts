@@ -12,7 +12,8 @@ import {
   type RssFetchLimit,
   type StartupModule,
   type WindowStateMode,
-  type NotesPopoutRestoreMode
+  type NotesPopoutRestoreMode,
+  type CloseBehavior
 } from '@shared/types/settings'
 import { isModuleId } from '@app/config/modules'
 import { applyColorScheme, readStoredColorScheme, watchSystemColorScheme } from '@app/theme/applyTheme'
@@ -53,6 +54,12 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
       ? data.notesPopoutRestore
       : 'on-enter-notes'
 
+  const trayEnabled = data.trayEnabled !== false
+  const closeBehavior: CloseBehavior =
+    data.closeBehavior === 'tray' || data.closeBehavior === 'ask' ? data.closeBehavior : 'quit'
+  const dailyWidgetEnabled = data.dailyWidgetEnabled === true
+  const clipboardAssistEnabled = data.clipboardAssistEnabled === true
+
   return {
     navAlign: data.navAlign === 'center' ? 'center' : 'start',
     navDisplay: data.navDisplay === 'both' ? 'both' : 'icon',
@@ -62,7 +69,11 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
     rssAutoRefreshMinutes,
     windowStateMode,
     colorScheme,
-    notesPopoutRestore
+    notesPopoutRestore,
+    trayEnabled,
+    closeBehavior,
+    dailyWidgetEnabled,
+    clipboardAssistEnabled
   }
 }
 
@@ -91,6 +102,13 @@ export const useSettingsStore = defineStore('settings', () => {
     const storedScheme = readStoredColorScheme()
     if (storedScheme && storedScheme !== merged.colorScheme) {
       merged = { ...merged, colorScheme: storedScheme }
+    }
+    if (
+      (merged.closeBehavior === 'tray' || merged.closeBehavior === 'ask') &&
+      !merged.trayEnabled
+    ) {
+      merged = { ...merged, trayEnabled: true }
+      void window.wanwu.app.patchSettings({ trayEnabled: true })
     }
     settings.value = merged
     loaded.value = true
@@ -159,6 +177,26 @@ export const useSettingsStore = defineStore('settings', () => {
     await save({ notesPopoutRestore })
   }
 
+  async function setTrayEnabled(trayEnabled: boolean) {
+    await save({ trayEnabled })
+  }
+
+  async function setCloseBehavior(closeBehavior: CloseBehavior) {
+    const patch: Partial<AppSettings> = { closeBehavior }
+    if (closeBehavior === 'tray' || closeBehavior === 'ask') {
+      patch.trayEnabled = true
+    }
+    await save(patch)
+  }
+
+  async function setDailyWidgetEnabled(dailyWidgetEnabled: boolean) {
+    await save({ dailyWidgetEnabled })
+  }
+
+  async function setClipboardAssistEnabled(clipboardAssistEnabled: boolean) {
+    await save({ clipboardAssistEnabled })
+  }
+
   async function resetAll() {
     const defaults = await window.wanwu.app.resetSettings()
     settings.value = normalizeSettings(defaults)
@@ -197,6 +235,10 @@ export const useSettingsStore = defineStore('settings', () => {
     setWindowStateMode,
     setColorScheme,
     setNotesPopoutRestore,
+    setTrayEnabled,
+    setCloseBehavior,
+    setDailyWidgetEnabled,
+    setClipboardAssistEnabled,
     resetAll,
     syncFromRemote
   }

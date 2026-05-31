@@ -74,6 +74,14 @@ body {
   }
 }
 
+/* PrimeVue Dialog / Confirm：须高于全局搜索、图片查看器等全屏层 */
+.p-dialog-mask,
+body > div:has([role='alertdialog']),
+body > div:has(> .p-dialog.ww-confirm-dialog),
+body > div:has(> .p-dialog.ww-glass-dialog-root) {
+  z-index: var(--ww-z-dialog) !important;
+}
+
 /* 对话框：底部操作区布局 */
 .p-dialog .p-dialog-footer,
 .ww-glass-dialog__footer {

@@ -79,6 +79,26 @@ import type {
   CaCatalogListParams,
   CaCheckoutInput
 } from '../../src/shared/types/cloud-abode'
+import {
+  disposeQuickAccess,
+  getTrayStatusForIpc,
+  hideDailyWidget,
+  initQuickAccess,
+  openDailyInMain,
+  searchForIpc,
+  searchByKindForIpc,
+  showDailyWidget,
+  syncQuickAccessFromSettings,
+  executeTrayMenuAction,
+  getTrayMenuContextForIpc
+} from '../services/quickAccess/quickAccessManager'
+import { applyTrayMenuLayout, hideTrayMenuWindow } from '../services/quickAccess/trayMenuWindow'
+import type { TrayMenuAction } from '../../src/shared/types/trayMenu'
+import {
+  configureWindowClosePolicy,
+  handleMainWindowClose,
+  resolveClosePrompt
+} from '../services/app/windowClose'
 
 export interface AppServices {
   db: DatabaseService | null
@@ -593,6 +613,7 @@ export function registerIpcHandlers(services: AppServices): void {
   function publishAppSettings(next: AppSettings): AppSettings {
     services.userData?.updateAppSettings(next)
     applyRssAutoRefreshSchedule(services)
+    syncQuickAccessFromSettings()
     broadcastToAllWindows('app:settings-changed', next)
     return next
   }
@@ -679,8 +700,14 @@ export function registerIpcHandlers(services: AppServices): void {
     return getMainWindow()?.isMaximized() ?? false
   })
 
-  ipcMain.handle('window:close', () => {
-    getMainWindow()?.close()
+  ipcMain.handle('window:close', async () => {
+    const win = getMainWindow()
+    if (!win) return
+    await handleMainWindowClose(win)
+  })
+
+  ipcMain.handle('window:resolveClosePrompt', (_e, choice: 'tray' | 'quit' | 'cancel') => {
+    resolveClosePrompt(choice)
   })
 
   ipcMain.handle('shell:openExternal', (_e, url: string) => openExternalUrl(url))
@@ -870,5 +897,52 @@ export function registerIpcHandlers(services: AppServices): void {
     services.cloudAbode?.getVehicleCustomization(slug) ?? null
   )
 
+  ipcMain.handle('quick-access:search', async (_e, params: { query: string; limit?: number }) => {
+    return searchForIpc(params.query, params.limit)
+  })
+
+  ipcMain.handle(
+    'quick-access:searchByKind',
+    async (_e, params: { kind: import('../../src/shared/types/quickAccess').QuickAccessHitKind; query: string }) => {
+      return searchByKindForIpc(params.kind, params.query)
+    }
+  )
+
+  ipcMain.handle('quick-access:getDailyPick', async () => {
+    await waitForLibraryBootstrap()
+    return services.library?.pickDailyItem() ?? null
+  })
+
+  ipcMain.handle('quick-access:getTrayStatus', () => getTrayStatusForIpc())
+
+  ipcMain.handle('quick-access:showDailyWidget', () => showDailyWidget())
+
+  ipcMain.handle('quick-access:hideDailyWidget', () => {
+    hideDailyWidget()
+  })
+
+  ipcMain.handle('quick-access:openDailyInMain', () => {
+    openDailyInMain()
+  })
+
+  ipcMain.handle('quick-access:getTrayMenuContext', () => getTrayMenuContextForIpc())
+
+  ipcMain.handle('quick-access:trayMenuAction', (_e, action: TrayMenuAction) => {
+    executeTrayMenuAction(action)
+  })
+
+  ipcMain.handle('quick-access:hideTrayMenu', () => {
+    hideTrayMenuWindow()
+  })
+
+  ipcMain.handle(
+    'quick-access:reportTrayMenuLayout',
+    (_e, size: { width: number; height: number }) => {
+      applyTrayMenuLayout(size)
+    }
+  )
+
   startBrowserBookmarksWatchers(() => getMainWindow())
+  initQuickAccess(services)
+  configureWindowClosePolicy(services)
 }

@@ -34,6 +34,11 @@ import { runStartupLibrarySeed } from './services/library/seed'
 import { startLibraryBootstrap } from './services/library/pack'
 import { runInstallerLibraryPackImport } from './services/library/installerImport'
 import { CloudAbodeService } from './services/cloud-abode/service'
+import { disposeQuickAccess, focusMainWindow } from './services/quickAccess/quickAccessManager'
+import {
+  attachMainWindowCloseBehavior,
+  shouldKeepAppRunningAfterWindowClose
+} from './services/app/windowClose'
 
 const isDev = !app.isPackaged
 const INSTALLER_IMPORT_FLAG = '--installer-import-library-pack'
@@ -162,6 +167,7 @@ function createWindow(): void {
   })
 
   setMainWindow(mainWindow)
+  attachMainWindowCloseBehavior(mainWindow)
   attachMainWindowNotePopoutCleanup(mainWindow)
 
   attachWindowStatePersistence(mainWindow, {
@@ -172,7 +178,9 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     if (mainWindow) applyStartupWindowState(mainWindow, windowStateMode, basePath)
+    if (mainWindow?.isMinimized()) mainWindow.restore()
     mainWindow?.show()
+    mainWindow?.focus()
     broadcastMaximizedState()
   })
 
@@ -230,7 +238,18 @@ async function initServices(): Promise<void> {
   applyRssAutoRefreshSchedule(services)
 }
 
+const gotSingleInstanceLock = app.requestSingleInstanceLock()
+if (!gotSingleInstanceLock) {
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    focusMainWindow()
+  })
+}
+
 app.whenReady().then(async () => {
+  if (!gotSingleInstanceLock) return
+
   if (installerImportRequest) {
     try {
       const result = await runInstallerLibraryPackImport(
@@ -292,6 +311,7 @@ app.whenReady().then(async () => {
 
   registerNotePopoutAppLifecycle()
   createWindow()
+  focusMainWindow()
 
   if (services.db) {
     startLibraryBootstrap(services.db, () => runStartupLibrarySeed(services.db!))
@@ -307,8 +327,15 @@ app.whenReady().then(async () => {
   app.exit(1)
 })
 
+app.on('before-quit', () => {
+  disposeQuickAccess()
+})
+
 app.on('window-all-closed', () => {
   closeAllNotePopoutsForAppExit()
+  if (shouldKeepAppRunningAfterWindowClose()) {
+    return
+  }
   setMainWindow(null)
   services.db?.close()
   if (process.platform !== 'darwin') app.quit()

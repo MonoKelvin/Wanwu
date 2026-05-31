@@ -1,5 +1,5 @@
 ﻿/** 图鉴条目查询、收藏聚合、用户上传配图 */
-import { randomUUID } from 'crypto'
+import { createHash, randomUUID } from 'crypto'
 import type { DatabaseService } from '../core/database'
 import { loadLibraryCategories } from './seed'
 import { resolveItemCoverRelative, resolveMediaRelative, toLibraryMediaUrl } from '../media/library'
@@ -482,6 +482,59 @@ export class LibraryService {
       }
     }
     return hits.slice(0, limit)
+  }
+
+  /** 按日期种子稳定随机一条（今日一物） */
+  pickDailyItem(dateKey = new Date().toISOString().slice(0, 10)): {
+    id: string
+    name: string
+    summary: string | null
+    categoryId: string
+    categoryName: string
+    coverPath: string | null
+  } | null {
+    const catalog: Array<{
+      id: string
+      name: string
+      summary: string | null
+      categoryId: string
+      categoryName: string
+      coverPath: string | null
+    }> = []
+
+    for (const categoryId of this.db.listLibraryCategoryIds()) {
+      const libDb = this.db.getLibraryDb(categoryId)
+      if (!libDb) continue
+      const root = libDb
+        .prepare('SELECT name FROM categories WHERE parent_id IS NULL LIMIT 1')
+        .get() as { name: string } | undefined
+      const categoryName = root?.name ?? categoryId
+      const rows = libDb
+        .prepare(
+          `SELECT id, name, summary, cover_path FROM items ORDER BY id`
+        )
+        .all() as Array<{
+        id: string
+        name: string
+        summary: string | null
+        cover_path: string | null
+      }>
+      for (const r of rows) {
+        catalog.push({
+          id: r.id,
+          name: r.name,
+          summary: r.summary,
+          categoryId,
+          categoryName,
+          coverPath: r.cover_path
+        })
+      }
+    }
+
+    if (!catalog.length) return null
+    const hash = createHash('sha256').update(dateKey).digest()
+    const idx = hash.readUInt32BE(0) % catalog.length
+    return catalog[idx] ?? null
   }
 
   private rowToItem(libDb: import('better-sqlite3').Database, r: Record<string, unknown>): ItemDto {

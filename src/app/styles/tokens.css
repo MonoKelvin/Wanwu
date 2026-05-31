@@ -14,6 +14,12 @@
   --ww-toast-min-width: 14rem;
   --ww-toast-max-width: 20rem;
 
+  /* 全屏/模态叠层（数值越大越靠上） */
+  --ww-z-image-viewer: 9999;
+  --ww-z-command-palette: 10000;
+  --ww-z-context-menu: 10050;
+  --ww-z-dialog: 10100;
+
   /* 层次背景：中性灰阶，无彩色倾向 */
   --ww-canvas: #eaeaec;
   --ww-rail: #e2e2e5;
@@ -39,6 +45,14 @@
   --ww-tag-bg: #e4e4e8;
   --ww-tag-fg: var(--ww-ink-muted);
   --ww-tag-border: rgb(18 18 22 / 0.08);
+  /* 开关 WwToggleSwitch */
+  --ww-switch-track: #d8d8dc;
+  --ww-switch-track-hover: #c8c8ce;
+  --ww-switch-track-on: var(--ww-list-selected-accent);
+  --ww-switch-track-on-hover: var(--ww-accent-hover);
+  --ww-switch-thumb: #ffffff;
+  --ww-switch-thumb-on: #ffffff;
+  --ww-switch-thumb-shadow: 0 1px 3px rgb(18 18 22 / 0.18);
   /* 添加图片缩略图虚线框 */
   --ww-thumb-add-dash: rgb(18 18 22 / 0.24);
   /* 主模块侧栏（轨道上的浮起选中块） */

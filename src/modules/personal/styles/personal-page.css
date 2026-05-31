@@ -1,0 +1,111 @@
+﻿/* 个人模块 — 简约、轻边框、与全站灰阶一致 */
+.ww-personal {
+  position: relative;
+  background: var(--ww-content);
+}
+
+.ww-personal .ww-page-header {
+  border-bottom-color: var(--ww-border-faint);
+}
+
+.ww-personal.has-bg .ww-page-header {
+  background: var(--ww-header-veil);
+}
+
+.ww-personal.has-bg .ww-personal__scroll {
+  background: rgb(
+    var(--ww-scroll-veil-rgb) / calc((1 - var(--ww-personal-bg-opacity, 1)) * 0.48)
+  );
+}
+
+.ww-personal__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: calc(100% * var(--ww-personal-bg-scale, 1));
+  background-position: calc(50% + var(--ww-personal-bg-x, 0%)) calc(50% + var(--ww-personal-bg-y, 0%));
+  opacity: var(--ww-personal-bg-opacity, 1);
+  clip-path: var(--ww-personal-bg-clip, none);
+  -webkit-clip-path: var(--ww-personal-bg-clip, none);
+}
+
+.ww-personal.is-editing-bg .ww-personal__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ww-overlay-scrim);
+  pointer-events: none;
+}
+
+.ww-personal.is-editing-bg .ww-personal__scroll {
+  position: relative;
+  z-index: 1;
+}
+
+.ww-personal__ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ww-personal__pattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--ww-grid-dot) 1px, transparent 1px);
+  background-size: var(--ww-grid-size) var(--ww-grid-size);
+  mask-image: radial-gradient(ellipse 88% 72% at 50% 0%, black 8%, transparent 76%);
+  opacity: 0.7;
+}
+
+.ww-personal__ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(64px);
+  pointer-events: none;
+}
+
+.ww-personal__ambient-glow--warm {
+  top: -12%;
+  left: 8%;
+  width: min(26rem, 68vw);
+  height: min(16rem, 38vh);
+  background: radial-gradient(circle at center, rgb(18 18 22 / 0.035) 0%, transparent 72%);
+  opacity: 1;
+}
+
+.ww-personal__scroll {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+.ww-personal__scroll .ww-module-layout__body {
+  background: transparent;
+}
+
+.ww-personal.has-bg .ww-personal__pattern {
+  opacity: 0.35;
+}
+
+.ww-personal__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  box-sizing: border-box;
+  width: 50%;
+  margin-inline: auto;
+  padding: 1.125rem 0 2.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-personal__ambient-glow--warm {
+    animation: none;
+    transition: none;
+  }
+}
+

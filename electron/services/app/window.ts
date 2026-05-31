@@ -167,8 +167,6 @@ export function applyStartupWindowState(
 ): void {
   if (shouldRestoreMaximized(mode, basePath)) {
     win.maximize()
-  } else if (shouldRestoreMinimized(mode, basePath)) {
-    win.minimize()
   }
 }
 

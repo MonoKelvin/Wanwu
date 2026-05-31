@@ -1,0 +1,27 @@
+/**
+ * 托盘菜单独立小窗（Win11 等）：不透明紧贴窗，底色与菜单面板一致。
+ * 透明窗在 Windows 上常呈黑块，故不用 rgba 穿透。
+ */
+html.ww-tray-menu-root,
+html.ww-tray-menu-root body,
+html.ww-tray-menu-root #app {
+  height: auto !important;
+  min-height: 0 !important;
+  width: max-content !important;
+  max-height: none !important;
+  overflow: hidden;
+  background: var(--ww-elevated) !important;
+  background-color: var(--ww-elevated) !important;
+}
+
+html.ww-tray-menu-root .ww-tray-menu-app,
+html.ww-tray-menu-root .ww-note-popout-shell {
+  display: block !important;
+  height: auto !important;
+  min-height: 0 !important;
+  width: max-content !important;
+  max-height: none !important;
+  overflow: hidden;
+  background: var(--ww-elevated) !important;
+  flex: none !important;
+}

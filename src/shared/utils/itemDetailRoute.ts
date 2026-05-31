@@ -10,3 +10,9 @@ export function moduleIdForItemDetailSource(source: string | undefined): ModuleI
 export function isItemDetailRoute(routeName: string | symbol | null | undefined): boolean {
   return routeName === 'item-detail'
 }
+
+export function isItemDetailPath(path: string | null | undefined): boolean {
+  if (!path) return false
+  const normalized = path.replace(/^#/, '').split('?')[0] ?? ''
+  return normalized.startsWith('/item/')
+}

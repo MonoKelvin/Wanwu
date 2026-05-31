@@ -184,6 +184,13 @@ const api: WanwuApi = {
     toggleMaximize: () => ipcRenderer.invoke('window:toggleMaximize'),
     isMaximized: () => ipcRenderer.invoke('window:isMaximized'),
     close: () => ipcRenderer.invoke('window:close'),
+    resolveClosePrompt: (choice: 'tray' | 'quit' | 'cancel') =>
+      ipcRenderer.invoke('window:resolveClosePrompt', choice),
+    onClosePrompt: (listener: () => void) => {
+      const handler = () => listener()
+      ipcRenderer.on('window:close-prompt', handler)
+      return () => ipcRenderer.removeListener('window:close-prompt', handler)
+    },
     onMaximizedChange: (listener: (maximized: boolean) => void) => {
       const handler = (_event: unknown, maximized: boolean) => listener(maximized)
       ipcRenderer.on('window:maximized-changed', handler)
@@ -230,6 +237,41 @@ const api: WanwuApi = {
     saveVehicleCustomization: (slug, lifeJson) =>
       ipcRenderer.invoke('cloud-abode:saveVehicleCustomization', slug, lifeJson),
     getVehicleCustomization: (slug) => ipcRenderer.invoke('cloud-abode:getVehicleCustomization', slug)
+  },
+  quickAccess: {
+    search: (params) => ipcRenderer.invoke('quick-access:search', params),
+    searchByKind: (params) => ipcRenderer.invoke('quick-access:searchByKind', params),
+    getDailyPick: () => ipcRenderer.invoke('quick-access:getDailyPick'),
+    getTrayStatus: () => ipcRenderer.invoke('quick-access:getTrayStatus'),
+    showDailyWidget: () => ipcRenderer.invoke('quick-access:showDailyWidget'),
+    hideDailyWidget: () => ipcRenderer.invoke('quick-access:hideDailyWidget'),
+    openDailyInMain: () => ipcRenderer.invoke('quick-access:openDailyInMain'),
+    getTrayMenuContext: () => ipcRenderer.invoke('quick-access:getTrayMenuContext'),
+    trayMenuAction: (action) => ipcRenderer.invoke('quick-access:trayMenuAction', action),
+    hideTrayMenu: () => ipcRenderer.invoke('quick-access:hideTrayMenu'),
+    reportTrayMenuLayout: (size) => ipcRenderer.invoke('quick-access:reportTrayMenuLayout', size),
+    onTrayMenuShow: (listener) => {
+      const handler = () => listener()
+      ipcRenderer.on('tray-menu:show', handler)
+      return () => ipcRenderer.removeListener('tray-menu:show', handler)
+    },
+    onTogglePalette: (listener) => {
+      const handler = () => listener()
+      ipcRenderer.on('quick-access:toggle-palette', handler)
+      return () => ipcRenderer.removeListener('quick-access:toggle-palette', handler)
+    },
+    onOpenTarget: (listener) => {
+      const handler = (_: unknown, target: import('../src/shared/types/quickAccess').QuickAccessOpenTarget) =>
+        listener(target)
+      ipcRenderer.on('quick-access:open-target', handler)
+      return () => ipcRenderer.removeListener('quick-access:open-target', handler)
+    },
+    onClipboardMatches: (listener) => {
+      const handler = (_: unknown, payload: import('../src/shared/types/quickAccess').ClipboardAssistPayload) =>
+        listener(payload)
+      ipcRenderer.on('quick-access:clipboard-matches', handler)
+      return () => ipcRenderer.removeListener('quick-access:clipboard-matches', handler)
+    }
   },
   share: {
     canNativeShare: () => ipcRenderer.invoke('share:canNativeShare'),

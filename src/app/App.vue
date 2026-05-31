@@ -14,13 +14,47 @@ import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { useNotePopoutFocusSync } from '@modules/library/notes/lib/useNotePopoutFocusSync'
 import { tryRestoreNotePopouts } from '@modules/library/notes/lib/useNotePopoutAutoRestore'
 import { isNotePopoutHash } from '@app/utils/notePopoutEntry'
+import { isDailyWidgetHash } from '@app/utils/dailyWidgetEntry'
+import { isTrayMenuHash } from '@app/utils/trayMenuEntry'
+import CommandPalette from '@app/components/CommandPalette.vue'
+import CloseAppDialog from '@app/components/CloseAppDialog.vue'
+import { useCloseAppDialog } from '@app/composables/useCloseAppDialog'
+import { useQuickAccessHost } from '@app/composables/useQuickAccessHost'
 
 const route = useRoute()
 const settingsStore = useSettingsStore()
 const toast = useWanwuToast()
 const bootAsNotePopout = isNotePopoutHash()
+const bootAsDailyWidget = isDailyWidgetHash()
+const bootAsTrayMenu = isTrayMenuHash()
 const isNotePopout = computed(() => Boolean(route.meta.notePopout))
-const showPopoutShell = computed(() => isNotePopout.value || bootAsNotePopout)
+const isDailyWidget = computed(() => Boolean(route.meta.dailyWidget))
+const isTrayMenu = computed(() => Boolean(route.meta.trayMenu))
+const isTrayMenuPopout = computed(
+  () => isTrayMenu.value || bootAsTrayMenu
+)
+
+const showPopoutShell = computed(
+  () =>
+    isNotePopout.value ||
+    bootAsNotePopout ||
+    isDailyWidget.value ||
+    bootAsDailyWidget ||
+    isTrayMenuPopout.value
+)
+
+const appRootClass = computed(() => {
+  if (isTrayMenuPopout.value) return 'ww-tray-menu-app'
+  if (showPopoutShell.value) return 'ww-note-popout-shell'
+  return 'ww-app bg-ww-canvas'
+})
+const { paletteOpen } = useQuickAccessHost()
+const {
+  closeDialogVisible,
+  onCloseTray,
+  onCloseQuit,
+  onCloseCancel
+} = useCloseAppDialog()
 
 useNotePopoutFocusSync()
 
@@ -56,17 +90,24 @@ onMounted(async () => {
 
 <template>
   <div
-    class="flex h-full flex-col overflow-hidden"
-    :class="showPopoutShell ? 'ww-note-popout-shell' : 'ww-app bg-ww-canvas'"
+    class="flex flex-col"
+    :class="[
+      appRootClass,
+      isTrayMenuPopout ? '' : 'h-full overflow-hidden'
+    ]"
   >
-    <Toast position="bottom-right" class="ww-toast-stack">
+    <Toast
+      v-if="!isTrayMenu && !bootAsTrayMenu"
+      position="bottom-right"
+      class="ww-toast-stack"
+    >
       <template #message="{ message }">
         <WwToastMessage :message="message" />
       </template>
     </Toast>
     <template v-if="showPopoutShell">
-      <WwPopTipHost />
-      <RouterView class="min-h-0 flex-1" />
+      <WwPopTipHost v-if="!isTrayMenu && !bootAsTrayMenu" />
+      <RouterView :class="isTrayMenu || bootAsTrayMenu ? '' : 'min-h-0 flex-1'" />
     </template>
     <template v-else>
       <ConfirmDialog class="ww-confirm-dialog">
@@ -81,6 +122,13 @@ onMounted(async () => {
       <WwPopTipHost />
       <TitleBar />
       <AppShell class="min-h-0 flex-1" />
+      <CommandPalette v-model:open="paletteOpen" />
+      <CloseAppDialog
+        v-model:visible="closeDialogVisible"
+        @tray="onCloseTray"
+        @quit="onCloseQuit"
+        @cancel="onCloseCancel"
+      />
     </template>
   </div>
 </template>

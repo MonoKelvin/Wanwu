@@ -12,6 +12,14 @@ import type { AppSettings } from './settings'
 import type { RssEntry, RssFeed, RssFeedInput, RssFeedUpdate, RssGroup } from './rss'
 import type { NoteCreateInput, NoteImage, NoteItem, NoteUpdateInput } from './notes'
 import type {
+  ClipboardAssistPayload,
+  DailyPickPreview,
+  QuickAccessHit,
+  QuickAccessHitKind,
+  QuickAccessOpenTarget,
+  QuickAccessTrayStatus
+} from './quickAccess'
+import type {
   CaCatalogListParams,
   CaCheckoutInput,
   CaDashboard,
@@ -212,6 +220,8 @@ export interface WanwuApi {
     toggleMaximize: () => Promise<boolean>
     isMaximized: () => Promise<boolean>
     close: () => Promise<void>
+    resolveClosePrompt: (choice: 'tray' | 'quit' | 'cancel') => Promise<void>
+    onClosePrompt: (listener: () => void) => () => void
     onMaximizedChange: (listener: (maximized: boolean) => void) => () => void
   }
   shell: {
@@ -278,6 +288,26 @@ export interface WanwuApi {
     invokeTool: (toolId: string) => Promise<CaToolInvokeResult>
     saveVehicleCustomization: (slug: string, lifeJson: Record<string, unknown>) => Promise<void>
     getVehicleCustomization: (slug: string) => Promise<Record<string, unknown> | null>
+  }
+  quickAccess: {
+    search: (params: { query: string; limit?: number }) => Promise<QuickAccessHit[]>
+    searchByKind: (params: {
+      kind: QuickAccessHitKind
+      query: string
+    }) => Promise<QuickAccessHit[]>
+    getDailyPick: () => Promise<DailyPickPreview | null>
+    getTrayStatus: () => Promise<QuickAccessTrayStatus>
+    showDailyWidget: () => Promise<void>
+    hideDailyWidget: () => Promise<void>
+    openDailyInMain: () => Promise<void>
+    getTrayMenuContext: () => Promise<import('@shared/types/trayMenu').TrayMenuContext>
+    trayMenuAction: (action: import('@shared/types/trayMenu').TrayMenuAction) => Promise<void>
+    hideTrayMenu: () => Promise<void>
+    reportTrayMenuLayout: (size: { width: number; height: number }) => Promise<void>
+    onTrayMenuShow: (listener: () => void) => () => void
+    onTogglePalette: (listener: () => void) => () => void
+    onOpenTarget: (listener: (target: QuickAccessOpenTarget) => void) => () => void
+    onClipboardMatches: (listener: (payload: ClipboardAssistPayload) => void) => () => void
   }
   share: {
     canNativeShare: () => Promise<boolean>

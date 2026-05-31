@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import SelectButton from 'primevue/selectbutton'
+import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import { MODULE_NAV_ITEMS } from '@app/config/modules'
 import { useSettingsStore } from '@shared/stores/settings'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
@@ -14,6 +15,8 @@ import { resetAllDismissiblePrompts } from '@shared/utils/dismissiblePrompts'
 import {
   COLOR_SCHEME_OPTIONS,
   WINDOW_STATE_MODE_OPTIONS,
+  CLOSE_BEHAVIOR_OPTIONS,
+  type CloseBehavior,
   type ColorScheme,
   type NavAlign,
   type NavDisplay,
@@ -73,6 +76,40 @@ async function onWindowStateModeChange(v: unknown) {
 async function onColorSchemeChange(v: ColorScheme) {
   if (!v || v === settings.value.colorScheme) return
   await settingsStore.setColorScheme(v)
+}
+
+function closeBehaviorNeedsTray(): boolean {
+  const mode = settings.value.closeBehavior
+  return mode === 'tray' || mode === 'ask'
+}
+
+function closeBehaviorTrayHint(): string {
+  const mode = settings.value.closeBehavior
+  if (mode === 'tray') return '最小化到系统托盘'
+  if (mode === 'ask') return '每次询问'
+  return ''
+}
+
+async function onTrayEnabledChange(enabled: boolean) {
+  if (enabled === settings.value.trayEnabled) return
+  if (!enabled && closeBehaviorNeedsTray()) {
+    toast.info(
+      `请先将「关闭软件时」改为「直接关闭」，再关闭托盘图标。（当前为「${closeBehaviorTrayHint()}」）`
+    )
+    return
+  }
+  await settingsStore.setTrayEnabled(enabled)
+}
+
+async function onCloseBehaviorChange(v: unknown) {
+  const mode = v as CloseBehavior | null
+  if (!mode || mode === settings.value.closeBehavior) return
+  await settingsStore.setCloseBehavior(mode)
+}
+
+async function onClipboardAssistEnabledChange(enabled: boolean) {
+  if (enabled === settings.value.clipboardAssistEnabled) return
+  await settingsStore.setClipboardAssistEnabled(enabled)
 }
 </script>
 
@@ -136,6 +173,42 @@ async function onColorSchemeChange(v: ColorScheme) {
           @click="onResetDismissiblePrompts"
         />
       </SettingsRow>
+    </div>
+
+    <div class="ww-settings-group">
+      <h3 class="ww-settings-group__label">桌面增强</h3>
+      <SettingsRow label="关闭软件时" subtitle="点击窗口关闭按钮的行为">
+        <WwSelect
+          size="narrow"
+          :model-value="settings.closeBehavior"
+          :options="CLOSE_BEHAVIOR_OPTIONS"
+          option-label="label"
+          option-value="value"
+          placeholder="选择行为"
+          @update:model-value="onCloseBehaviorChange"
+        />
+      </SettingsRow>
+      <SettingsRow
+        label="系统托盘图标"
+        subtitle="在任务栏显示图标；双击可恢复主窗口。选择「最小化到托盘」或「每次询问」时会自动开启"
+      >
+        <WwToggleSwitch
+          :model-value="settings.trayEnabled"
+          aria-label="系统托盘图标"
+          @update:model-value="onTrayEnabledChange"
+        />
+      </SettingsRow>
+      <SettingsRow
+        label="剪贴板联想"
+        subtitle="复制文字后提示万物中可能相关的图鉴（默认关闭）"
+      >
+        <WwToggleSwitch
+          :model-value="settings.clipboardAssistEnabled"
+          aria-label="剪贴板联想"
+          @update:model-value="onClipboardAssistEnabledChange"
+        />
+      </SettingsRow>
+      <SettingsRow label="全局搜索" subtitle="Ctrl+Shift+P 唤起命令面板" />
     </div>
   </div>
 </template>

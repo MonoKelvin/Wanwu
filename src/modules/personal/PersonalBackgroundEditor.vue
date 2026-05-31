@@ -1,7 +1,7 @@
 ﻿<script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import Slider from 'primevue/slider'
-import ToggleSwitch from 'primevue/toggleswitch'
+import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import WwButton from '@shared/components/WwButton.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
@@ -1030,7 +1030,7 @@ const cropHandles: { corner: CropResizeHandle; class: string }[] = [
           subtitle="框选页面可见范围"
           class="ww-bg-editor__crop-row"
         >
-          <ToggleSwitch v-model="cropMode" class="ww-bg-editor__switch" />
+          <WwToggleSwitch v-model="cropMode" class="ww-bg-editor__switch" />
         </SettingsRow>
       </div>
 
@@ -1064,3 +1064,7 @@ const cropHandles: { corner: CropResizeHandle; class: string }[] = [
     </div>
   </div>
 </template>
+
+<style>
+@import './styles/personal-bg-editor.css';
+</style>

@@ -13,7 +13,8 @@ import {
   type StartupModule,
   type ColorScheme,
   type WindowStateMode,
-  type NotesPopoutRestoreMode
+  type NotesPopoutRestoreMode,
+  type CloseBehavior
 } from '../../../src/shared/types/settings'
 
 function normalizeRssFetchLimit(limit: unknown): RssFetchLimit {
@@ -48,6 +49,11 @@ function normalizeNotesPopoutRestore(v: unknown): NotesPopoutRestoreMode {
   return 'on-enter-notes'
 }
 
+function normalizeCloseBehavior(v: unknown): CloseBehavior {
+  if (v === 'tray' || v === 'ask') return v
+  return 'quit'
+}
+
 export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppSettings {
   const raw = (data && typeof data === 'object' ? data : {}) as Partial<AppSettings>
   return {
@@ -59,7 +65,11 @@ export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppS
     rssAutoRefreshMinutes: normalizeRssAutoRefreshMinutes(raw.rssAutoRefreshMinutes),
     windowStateMode: normalizeWindowStateMode(raw.windowStateMode),
     colorScheme: normalizeColorScheme(raw.colorScheme),
-    notesPopoutRestore: normalizeNotesPopoutRestore(raw.notesPopoutRestore)
+    notesPopoutRestore: normalizeNotesPopoutRestore(raw.notesPopoutRestore),
+    trayEnabled: raw.trayEnabled !== false,
+    closeBehavior: normalizeCloseBehavior(raw.closeBehavior),
+    dailyWidgetEnabled: raw.dailyWidgetEnabled === true,
+    clipboardAssistEnabled: raw.clipboardAssistEnabled === true
   }
 }
 

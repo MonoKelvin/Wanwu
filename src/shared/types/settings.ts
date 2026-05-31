@@ -22,6 +22,9 @@ export type ResolvedColorScheme = 'light' | 'dark'
 /** 便笺独立窗口自动还原时机 */
 export type NotesPopoutRestoreMode = 'on-startup' | 'on-enter-notes' | 'never'
 
+/** 点击关闭主窗口时的行为 */
+export type CloseBehavior = 'quit' | 'tray' | 'ask'
+
 export interface AppSettings {
   navAlign: NavAlign
   navDisplay: NavDisplay
@@ -32,6 +35,14 @@ export interface AppSettings {
   windowStateMode: WindowStateMode
   colorScheme: ColorScheme
   notesPopoutRestore: NotesPopoutRestoreMode
+  /** 在任务栏显示托盘图标 */
+  trayEnabled: boolean
+  /** 关闭主窗口时的行为 */
+  closeBehavior: CloseBehavior
+  /** 今日一物小浮窗 */
+  dailyWidgetEnabled: boolean
+  /** 剪贴板复制后联想图鉴条目 */
+  clipboardAssistEnabled: boolean
 }
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -43,7 +54,11 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   rssAutoRefreshMinutes: 0,
   windowStateMode: 'remember',
   colorScheme: 'system',
-  notesPopoutRestore: 'on-enter-notes'
+  notesPopoutRestore: 'on-enter-notes',
+  trayEnabled: true,
+  closeBehavior: 'quit',
+  dailyWidgetEnabled: false,
+  clipboardAssistEnabled: false
 }
 
 export const COLOR_SCHEME_OPTIONS: Array<{ label: string; value: ColorScheme }> = [
@@ -65,6 +80,12 @@ export const RSS_AUTO_REFRESH_OPTIONS: Array<{ label: string; value: RssAutoRefr
   { label: '每 30 分钟', value: 30 },
   { label: '每 1 小时', value: 60 },
   { label: '每 2 小时', value: 120 }
+]
+
+export const CLOSE_BEHAVIOR_OPTIONS: Array<{ label: string; value: CloseBehavior }> = [
+  { label: '直接关闭', value: 'quit' },
+  { label: '最小化到系统托盘', value: 'tray' },
+  { label: '每次询问', value: 'ask' }
 ]
 
 export const NOTES_POPOUT_RESTORE_OPTIONS: Array<{

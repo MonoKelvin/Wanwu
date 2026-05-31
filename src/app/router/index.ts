@@ -122,6 +122,18 @@ const router = createRouter({
       name: 'note-popout',
       component: () => import('@modules/library/notes/views/NotePopoutView.vue'),
       meta: { notePopout: true }
+    },
+    {
+      path: '/daily-widget',
+      name: 'daily-widget',
+      component: () => import('@modules/quick-access/DailyWidgetView.vue'),
+      meta: { dailyWidget: true }
+    },
+    {
+      path: '/tray-menu',
+      name: 'tray-menu',
+      component: () => import('@modules/quick-access/TrayMenuView.vue'),
+      meta: { trayMenu: true }
     }
   ]
 })

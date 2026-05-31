@@ -1,11 +1,26 @@
 ﻿import { useRoute, useRouter } from 'vue-router'
 import { isModuleId, modulePathById, type ModuleId } from '@app/config/modules'
 import { useAppStore } from '@shared/stores/app'
-import { isItemDetailRoute, moduleIdForItemDetailSource } from '@shared/utils/itemDetailRoute'
+import {
+  isItemDetailPath,
+  isItemDetailRoute,
+  moduleIdForItemDetailSource
+} from '@shared/utils/itemDetailRoute'
 
 export type ItemDetailParams = {
   source: string
   id: string
+}
+
+/** 详情页返回路径：不可为详情自身，否则返回无效（如日签/托盘直达） */
+function resolveModuleReturnPath(owner: ModuleId, candidate: string | null | undefined): string {
+  const store = useAppStore()
+  const fallback = modulePathById(owner)
+  if (!candidate || isItemDetailPath(candidate) || candidate === '') {
+    const remembered = store.pathForModule(owner)
+    return isItemDetailPath(remembered) ? fallback : remembered
+  }
+  return candidate
 }
 
 /** 打开 / 关闭物品详情：返回路径与浏览器历史栈、主导航切换解耦 */
@@ -14,19 +29,23 @@ export function useItemDetailNavigation() {
   const route = useRoute()
   const appStore = useAppStore()
 
-  function openItemDetail(params: ItemDetailParams, returnPath = route.fullPath) {
-    appStore.rememberItemDetailReturn(returnPath)
+  function openItemDetail(params: ItemDetailParams, returnPath?: string) {
+    const owner = moduleIdForItemDetailSource(params.source) ?? 'library'
+    const raw =
+      returnPath ??
+      (isItemDetailRoute(route.name) ? undefined : route.fullPath)
+    const resolved = resolveModuleReturnPath(owner, raw)
+    appStore.rememberItemDetailReturn(resolved)
     return router.push({ name: 'item-detail', params })
   }
 
   function backFromItemDetail() {
-    const owner = moduleIdForItemDetailSource(route.params.source as string | undefined)
-    const path =
-      appStore.itemDetailReturnPath ?? (owner ? modulePathById(owner) : null)
-    if (path) {
-      return router.replace(path)
+    const owner = moduleIdForItemDetailSource(route.params.source as string | undefined) ?? 'library'
+    let path = resolveModuleReturnPath(owner, appStore.itemDetailReturnPath)
+    if (path === route.fullPath) {
+      path = modulePathById(owner)
     }
-    return router.back()
+    return router.replace(path)
   }
 
   return { openItemDetail, backFromItemDetail }

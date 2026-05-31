@@ -8,9 +8,16 @@ import { WanwuPreset } from '@app/theme/preset'
 import { primeVueZhCn } from '@app/locale/primevue-zh-cn'
 import { applyColorScheme, readStoredColorScheme } from '@app/theme/applyTheme'
 import { isNotePopoutHash } from '@app/utils/notePopoutEntry'
+import { isTrayMenuHash } from '@app/utils/trayMenuEntry'
+
+if (isTrayMenuHash()) {
+  document.documentElement.classList.add('ww-tray-menu-root')
+}
+
 import '@app/styles/tokens.css'
 import '@app/styles/theme-dark.css'
 import '@app/styles/main.css'
+import '@app/styles/tray-menu-popout.css'
 import '@app/styles/form-fields.css'
 import '@app/styles/scrollbars.css'
 import '@app/styles/theme-components.css'
@@ -31,7 +38,7 @@ async function syncThemeBeforePaint(): Promise<void> {
 }
 
 async function bootstrap(): Promise<void> {
-  const bootPopout = isNotePopoutHash()
+  const bootPopout = isNotePopoutHash() || isTrayMenuHash()
   if (!bootPopout) {
     applyColorScheme(readStoredColorScheme() ?? 'system')
   }

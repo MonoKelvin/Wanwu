@@ -17,6 +17,13 @@
   --ww-accent: #e4e4e7;
   --ww-accent-hover: #fafafa;
   --ww-accent-soft: #27272a;
+  --ww-switch-track: #3f3f46;
+  --ww-switch-track-hover: #52525b;
+  --ww-switch-track-on: #f4f4f5;
+  --ww-switch-track-on-hover: #fafafa;
+  --ww-switch-thumb: #a1a1aa;
+  --ww-switch-thumb-on: #18181b;
+  --ww-switch-thumb-shadow: 0 1px 3px rgb(0 0 0 / 0.35);
 
   --ww-list-hover-bg: #252528;
   --ww-list-selected-bg: #2e2e32;
