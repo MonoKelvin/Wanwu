@@ -1,10 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupModulePathMemory } from '@app/router/moduleMemory'
-import { CLOUD_ABODE_ENABLED } from '@app/config/modules'
+// import { CLOUD_ABODE_ENABLED } from '@app/config/modules'
+// import { cloudAbodeChildRoutes } from '@modules/cloud-abode/router'
 import { useSettingsStore } from '@shared/stores/settings'
 import { resolveStartupPath } from '@shared/utils/startupModule'
 import { isLibraryMajorId } from '@modules/library/core/config/majors'
-import { cloudAbodeChildRoutes } from '@modules/cloud-abode/router'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -89,6 +89,78 @@ const router = createRouter({
       meta: { module: 'rss', title: 'RSS' }
     },
     {
+      path: '/music',
+      component: () => import('@modules/music/MusicView.vue'),
+      meta: { module: 'music', title: '音乐' },
+      children: [
+        { path: '', redirect: { name: 'music-discover' } },
+        {
+          path: 'discover',
+          name: 'music-discover',
+          component: () => import('@modules/music/views/MusicDiscoverView.vue'),
+          meta: { module: 'music', title: '发现' }
+        },
+        {
+          path: 'categories',
+          name: 'music-categories',
+          component: () => import('@modules/music/views/MusicCategoriesView.vue'),
+          meta: { module: 'music', title: '分类' }
+        },
+        {
+          path: 'mine',
+          name: 'music-mine',
+          component: () => import('@modules/music/views/MusicMineView.vue'),
+          meta: { module: 'music', title: '我的' }
+        },
+        { path: 'search', redirect: { name: 'music-discover' } },
+        { path: 'favorites', redirect: { name: 'music-mine', query: { tab: 'favorites' } } },
+        { path: 'history', redirect: { name: 'music-mine', query: { tab: 'history' } } },
+        {
+          path: 'mood/:categoryId',
+          name: 'music-mood',
+          component: () => import('@modules/music/views/MusicMoodPlaylistsView.vue'),
+          meta: { module: 'music', title: '分类' }
+        },
+        {
+          path: 'album/:browseId',
+          name: 'music-album',
+          component: () => import('@modules/music/views/MusicAlbumView.vue'),
+          meta: { module: 'music', title: '专辑' }
+        },
+        {
+          path: 'artist/:browseId',
+          name: 'music-artist',
+          component: () => import('@modules/music/views/MusicArtistView.vue'),
+          meta: { module: 'music', title: '歌手' }
+        },
+        {
+          path: 'playlist/:playlistId',
+          name: 'music-playlist',
+          component: () => import('@modules/music/views/MusicPlaylistView.vue'),
+          meta: { module: 'music', title: '歌单' }
+        },
+        {
+          path: 'daily',
+          name: 'music-daily',
+          component: () => import('@modules/music/views/MusicDailyView.vue'),
+          meta: { module: 'music', title: '日推', needLogin: true }
+        },
+        {
+          path: 'cloud',
+          name: 'music-cloud',
+          component: () => import('@modules/music/views/MusicCloudView.vue'),
+          meta: { module: 'music', title: '云盘', needLogin: true }
+        },
+        {
+          path: 'player',
+          name: 'music-player',
+          component: () => import('@modules/music/player/MusicPlayerPage.vue'),
+          meta: { module: 'music', title: '播放器', fullscreen: true }
+        }
+      ]
+    },
+    /* 云斋模块暂下线（GLSL 构建未就绪）
+    {
       path: '/cloud-abode',
       beforeEnter: () => {
         if (!CLOUD_ABODE_ENABLED) {
@@ -99,6 +171,7 @@ const router = createRouter({
       meta: { module: 'cloud-abode', title: '云斋' },
       children: cloudAbodeChildRoutes
     },
+    */
     {
       path: '/personal',
       name: 'personal',

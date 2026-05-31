@@ -1,6 +1,6 @@
 ﻿import { existsSync, readdirSync } from 'fs'
 import { join } from 'path'
-import { getWanwuResourcesDirectory } from '../data/paths'
+import { getWanwuPathLayout } from '../data/paths'
 import {
   getIllustratedHandbookBundledMediaRoot,
   ILLUSTRATED_HANDBOOK_MEDIA_DIR
@@ -8,7 +8,7 @@ import {
 
 /** 图鉴配图根目录（用户数据 resources） */
 export function getLibraryAssetsRoot(): string {
-  return getWanwuResourcesDirectory()
+  return getWanwuPathLayout().resources
 }
 
 function normalizeRel(path: string): string {
@@ -34,7 +34,7 @@ export function resolveLibraryMediaAbsolute(relativePath: string): string | null
   if (!inner) return null
 
   const user = resolveUnderRoot(
-    getWanwuResourcesDirectory(),
+    getWanwuPathLayout().resources,
     `${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/${inner}`
   )
   if (user) return user
@@ -81,7 +81,7 @@ export function slugDirCandidates(categoryId: string, slug: string): string[] {
 function libraryRootCandidates(categoryId: string): string[] {
   const roots: string[] = []
   const userCat = join(
-    getWanwuResourcesDirectory(),
+    getWanwuPathLayout().resources,
     ILLUSTRATED_HANDBOOK_MEDIA_DIR,
     categoryId
   )

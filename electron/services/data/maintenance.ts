@@ -7,6 +7,7 @@ import { join } from 'path'
 import { tmpdir } from 'os'
 import { randomUUID } from 'crypto'
 import { getMainWindow } from '../../windowState'
+import { getWanwuPathLayout, wanwuMusicCacheDir } from './paths'
 import { resolveExistingFilePath } from '../media/shell'
 import type { DatabaseService } from '../core/database'
 import type { RssService } from '../rss/service'
@@ -58,7 +59,7 @@ function zipDirectory(sourceDir: string, outPath: string): Promise<number> {
 }
 
 function validateBackupRoot(dir: string): boolean {
-  return existsSync(join(dir, 'db', 'user.sqlite'))
+  return existsSync(getWanwuPathLayout(dir).userDbFile)
 }
 
 export async function createDataBackup(wanwuPath: string): Promise<BackupResult> {
@@ -153,8 +154,9 @@ export async function restoreDataBackup(
 }
 
 export function clearCacheDirectory(wanwuPath: string): { ok: true; bytesFreed: number } {
-  const cacheDir = join(wanwuPath, 'cache')
   let bytesFreed = 0
+  const layout = getWanwuPathLayout(wanwuPath)
+  const cacheDirs = [layout.cache, wanwuMusicCacheDir(layout)]
 
   function measureDir(dir: string) {
     if (!existsSync(dir)) return
@@ -175,8 +177,10 @@ export function clearCacheDirectory(wanwuPath: string): { ok: true; bytesFreed: 
     }
   }
 
-  measureDir(cacheDir)
-  mkdirSync(cacheDir, { recursive: true })
+  for (const cacheDir of cacheDirs) {
+    measureDir(cacheDir)
+    mkdirSync(cacheDir, { recursive: true })
+  }
   return { ok: true, bytesFreed }
 }
 
@@ -200,8 +204,9 @@ export async function buildDiagnosticsReport(params: {
     /* db may be closed */
   }
 
+  const layout = getWanwuPathLayout(wanwuPath)
   const dbFiles: string[] = []
-  const dbDir = join(wanwuPath, 'db')
+  const dbDir = layout.db
   if (existsSync(dbDir)) {
     for (const name of readdirSync(dbDir)) {
       if (name.endsWith('.sqlite')) {
@@ -214,6 +219,22 @@ export async function buildDiagnosticsReport(params: {
       }
     }
   }
+
+  function dirBytes(dir: string): number {
+    if (!existsSync(dir)) return 0
+    let total = 0
+    for (const name of readdirSync(dir)) {
+      const full = join(dir, name)
+      try {
+        const st = statSync(full)
+        total += st.isDirectory() ? dirBytes(full) : st.size
+      } catch {
+        /* skip */
+      }
+    }
+    return total
+  }
+  const musicCacheBytes = dirBytes(wanwuMusicCacheDir(layout))
 
   const lines = [
     'Wanwu Diagnostics',
@@ -228,7 +249,8 @@ export async function buildDiagnosticsReport(params: {
     `settings: ${JSON.stringify(settings, null, 2)}`,
     `rssGroups: ${groupCount}`,
     `rssFeeds: ${feedCount}`,
-    `databases: ${dbFiles.length ? dbFiles.join(', ') : 'n/a'}`
+    `databases: ${dbFiles.length ? dbFiles.join(', ') : 'n/a'}`,
+    `musicCacheApproxKb: ${Math.round(musicCacheBytes / 1024)}`
   ]
   return lines.join('\n')
 }

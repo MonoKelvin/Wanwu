@@ -6,8 +6,8 @@ alwaysApply: true
 
 ## 工具使用
 - 优先使用 `/context7-mcp` 获取最新 API 或技术方案时。
-- 使用 `sequential-thinking` MCP 进行复杂逻辑或多步骤决策。
-- 使用 `supermemory` MCP 存储关键信息，保持上下文连续性。
+- 每次回答必须使用 `sequential-thinking` MCP 进行复杂逻辑或多步骤决策。
+- 每次回答必须使用 `supermemory` MCP 存储关键信息，保持上下文连续性。
 - 组合使用 `fetch` 和 `exa` MCP 获取网页资料。
 - 需要搜索 UI 组件或特效动画时，使用 `magic` MCP。
 

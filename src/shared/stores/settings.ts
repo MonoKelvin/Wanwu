@@ -73,7 +73,43 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
     trayEnabled,
     closeBehavior,
     dailyWidgetEnabled,
-    clipboardAssistEnabled
+    clipboardAssistEnabled,
+    musicApiBaseUrl:
+      typeof data.musicApiBaseUrl === 'string' && data.musicApiBaseUrl.trim()
+        ? data.musicApiBaseUrl.trim()
+        : DEFAULT_APP_SETTINGS.musicApiBaseUrl,
+    musicApiMode: data.musicApiMode === 'local' ? 'local' : 'remote',
+    musicApiLocalPort:
+      typeof data.musicApiLocalPort === 'number' && data.musicApiLocalPort > 0
+        ? data.musicApiLocalPort
+        : DEFAULT_APP_SETTINGS.musicApiLocalPort,
+    musicDiscoverCountry:
+      typeof data.musicDiscoverCountry === 'string' && data.musicDiscoverCountry.trim()
+        ? data.musicDiscoverCountry.trim()
+        : DEFAULT_APP_SETTINGS.musicDiscoverCountry,
+    musicJamendoClientId:
+      typeof data.musicJamendoClientId === 'string' ? data.musicJamendoClientId : '',
+    musicAudiusApiKey: typeof data.musicAudiusApiKey === 'string' ? data.musicAudiusApiKey : '',
+    musicPrimarySource:
+      data.musicPrimarySource === 'verome' ||
+      data.musicPrimarySource === 'kugou' ||
+      data.musicPrimarySource === 'netease'
+        ? data.musicPrimarySource
+        : DEFAULT_APP_SETTINGS.musicPrimarySource,
+    musicNeteasePort:
+      typeof data.musicNeteasePort === 'number' && data.musicNeteasePort > 0
+        ? data.musicNeteasePort
+        : DEFAULT_APP_SETTINGS.musicNeteasePort,
+    musicNeteaseRealIp:
+      typeof data.musicNeteaseRealIp === 'string' ? data.musicNeteaseRealIp : '',
+    musicNeteaseProxy: typeof data.musicNeteaseProxy === 'string' ? data.musicNeteaseProxy : '',
+    musicNeteaseQuality:
+      data.musicNeteaseQuality === 'higher' ||
+      data.musicNeteaseQuality === 'exhigh' ||
+      data.musicNeteaseQuality === 'lossless' ||
+      data.musicNeteaseQuality === 'hires'
+        ? data.musicNeteaseQuality
+        : DEFAULT_APP_SETTINGS.musicNeteaseQuality
   }
 }
 

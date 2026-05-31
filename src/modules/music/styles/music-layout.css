@@ -1,0 +1,156 @@
+/* 音乐模块页面布局对齐 */
+.ww-music-shell {
+  --ww-music-page-x: var(--ww-page-padding, 1.125rem);
+  --ww-music-input-radius: 0.4375rem;
+}
+
+.ww-music-shell .ww-music-top {
+  padding-inline: var(--ww-music-page-x);
+}
+
+.ww-music-shell .ww-music-tab-body,
+.ww-music-shell .ww-music-search-results {
+  padding-inline: var(--ww-music-page-x);
+}
+
+.ww-music-shell .ww-music-page-heading {
+  margin-bottom: var(--ww-music-section-gap, 1.25rem);
+}
+
+.ww-music-shell .ww-music-discover-tabs {
+  margin-bottom: var(--ww-music-section-gap, 1.25rem);
+}
+
+.ww-music-shell .ww-music-search-wrap {
+  max-width: min(100%, 16rem);
+}
+
+.ww-music-shell .ww-music-mine-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ww-music-shell .ww-music-mine-tabs-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.ww-music-shell .ww-music-mine-subtabs {
+  margin-left: auto;
+  margin-top: 0;
+}
+
+.ww-music-shell .ww-music-feature-hero {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+  padding: 1rem 1.125rem;
+  margin-bottom: var(--ww-music-section-gap, 1.25rem);
+  border-radius: var(--ww-music-panel-radius, 1.125rem);
+  border: 1px solid var(--ww-glass-border);
+  background: var(--ww-music-glass-panel);
+  box-shadow: var(--ww-shadow-card);
+}
+
+.ww-music-shell .ww-music-feature-hero__covers {
+  display: grid;
+  grid-template-columns: repeat(2, 2.75rem);
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.ww-music-shell .ww-music-feature-hero__cover {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--ww-music-inner-radius, 0.875rem);
+  overflow: hidden;
+  background: var(--ww-inset);
+}
+
+.ww-music-shell .ww-music-feature-hero__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ww-music-shell .ww-music-feature-hero__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ww-music-shell .ww-music-feature-hero__title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ww-ink);
+}
+
+.ww-music-shell .ww-music-feature-hero__sub {
+  margin: 0.3rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--ww-ink-muted);
+}
+
+.ww-music-shell .ww-music-discover-more-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 0.75rem;
+}
+
+.ww-music-shell .ww-music-discover-more-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px solid var(--ww-glass-border);
+  border-radius: var(--ww-music-inner-radius, 0.875rem);
+  background: var(--ww-music-glass-panel);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform var(--ww-duration-fast) var(--ww-ease-out),
+    border-color var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-music-shell .ww-music-discover-more-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--ww-ink) 12%, var(--ww-glass-border));
+}
+
+.ww-music-shell .ww-music-discover-more-card__title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ww-ink);
+}
+
+.ww-music-shell .ww-music-discover-more-card__desc {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--ww-ink-faint);
+}
+
+.ww-music-shell .ww-music-section-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  margin-bottom: 0.75rem;
+  border-radius: var(--ww-music-inner-radius, 0.875rem);
+  background: color-mix(in srgb, var(--ww-danger-text, #b91c1c) 8%, transparent);
+  font-size: 0.8125rem;
+  color: var(--ww-ink-muted);
+}

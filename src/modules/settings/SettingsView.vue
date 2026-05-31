@@ -8,6 +8,7 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import SettingsAppSection from '@modules/settings/sections/SettingsAppSection.vue'
 import SettingsLibrarySection from '@modules/settings/sections/SettingsLibrarySection.vue'
 import SettingsRssSection from '@modules/settings/sections/SettingsRssSection.vue'
+import SettingsMusicSection from '@modules/settings/sections/SettingsMusicSection.vue'
 import SettingsDataSection from '@modules/settings/sections/SettingsDataSection.vue'
 import SettingsAboutSection from '@modules/settings/sections/SettingsAboutSection.vue'
 import { SETTINGS_NAV_ITEMS } from '@modules/settings/sections/settingsNav'
@@ -70,6 +71,7 @@ async function refreshPaths() {
         <SettingsAppSection v-show="activeSection === 'app'" />
         <SettingsLibrarySection v-show="activeSection === 'library'" />
         <SettingsRssSection v-show="activeSection === 'rss'" />
+        <SettingsMusicSection v-show="activeSection === 'music'" />
         <SettingsDataSection
           v-show="activeSection === 'data'"
           :paths="paths"

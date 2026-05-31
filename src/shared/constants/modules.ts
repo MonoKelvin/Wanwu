@@ -1,5 +1,5 @@
 ﻿/** 主模块 ID（Electron 与渲染进程共用，勿依赖 UI 图标配置） */
-export const MODULE_IDS = ['library', 'rss', 'cloud-abode', 'personal', 'settings'] as const
+export const MODULE_IDS = ['library', 'rss', 'music', 'cloud-abode', 'personal', 'settings'] as const
 
 export type ModuleId = (typeof MODULE_IDS)[number]
 
@@ -11,6 +11,7 @@ export const DEFAULT_MODULE_ID: ModuleId = 'library'
 const MODULE_PATH_BY_ID: Record<ModuleId, string> = {
   library: '/library',
   rss: '/rss',
+  music: '/music',
   'cloud-abode': '/cloud-abode',
   personal: '/personal',
   settings: '/settings'
@@ -28,6 +29,7 @@ export function modulePathById(id: ModuleId): string {
 export const MODULE_KEEP_ALIVE = [
   'LibraryView',
   'RssView',
+  'MusicView',
   'CloudAbodeView',
   'PersonalView',
   'SettingsView'

@@ -24,6 +24,7 @@ import type { DatabaseService } from '../services/core/database'
 import type { LibraryService } from '../services/library/service'
 import type { LinksService } from '../services/links/service'
 import type { RssService } from '../services/rss/service'
+import type { MusicService } from '../services/music/service'
 import type { MediaService } from '../services/media/service'
 import type { NotesService } from '../services/notes/service'
 import {
@@ -59,6 +60,7 @@ import {
   validateMigrationTarget
 } from '../services/data/paths'
 import { migrateWanwuData } from '../services/data/migration'
+import { shutdownDataServices } from '../services/data/shutdown'
 import { consumeStartupNotices, waitForLibraryBootstrap } from '../services/library/pack'
 import { importProfileImage, removeProfileFile } from '../services/media/userProfile'
 import { toWanwuMediaUrl } from '../services/media/wanwu'
@@ -105,10 +107,11 @@ export interface AppServices {
   library: LibraryService | null
   links: LinksService | null
   rss: RssService | null
+  music: MusicService | null
   media: MediaService | null
   notes: NotesService | null
   userData: UserDataGateway | null
-  cloudAbode: CloudAbodeService | null
+  cloudAbode?: CloudAbodeService | null
 }
 
 export function registerIpcHandlers(services: AppServices): void {
@@ -303,6 +306,208 @@ export function registerIpcHandlers(services: AppServices): void {
     (_e, { feedId, limit, offset }: { feedId: string; limit?: number; offset?: number }) => {
       return services.rss?.listEntries(feedId, limit ?? 20, offset ?? 0) ?? { items: [], total: 0 }
     }
+  )
+
+  ipcMain.handle('music:resolveTrack', (_e, { track }: { track: import('../../src/shared/types/music').NormalizedTrack }) => {
+    return services.music?.resolveTrack(track) ?? track
+  })
+
+  ipcMain.handle('music:search', (_e, { q, filter }: { q: string; filter?: string }) => {
+    return services.music?.search(q, filter ?? 'songs') ?? { tracks: [], albums: [], artists: [] }
+  })
+
+  ipcMain.handle('music:getTrending', () => services.music?.getTrending() ?? { country: 'China', tracks: [] })
+
+  ipcMain.handle('music:getCharts', () => services.music?.getCharts() ?? { sections: [] })
+
+  ipcMain.handle('music:getMoods', () => services.music?.getMoods() ?? [])
+
+  ipcMain.handle('music:getMoodPlaylists', (_e, { categoryId }: { categoryId: string }) => {
+    return services.music?.getMoodPlaylists(categoryId) ?? []
+  })
+
+  ipcMain.handle('music:getPlaylistTracks', (_e, { playlistId }: { playlistId: string }) => {
+    return services.music?.getPlaylistTracks(playlistId) ?? []
+  })
+
+  ipcMain.handle('music:getForYou', () => services.music?.getForYouFromHistory() ?? [])
+
+  ipcMain.handle('music:getDiscoverFeed', () =>
+    services.music?.getDiscoverFeed() ?? {
+      forYou: [],
+      trending: [],
+      newReleases: [],
+      chartTracks: [],
+      chartPlaylists: []
+    }
+  )
+
+  ipcMain.handle(
+    'music:getDiscoverSection',
+    (_e, { section }: { section: import('../../src/shared/types/music').DiscoverSectionKey }) =>
+      services.music?.getDiscoverSection(section) ?? []
+  )
+
+  ipcMain.handle(
+    'music:refreshDiscoverSection',
+    (_e, { section }: { section: import('../../src/shared/types/music').DiscoverSectionKey }) =>
+      services.music?.refreshDiscoverSection(section) ?? []
+  )
+
+  ipcMain.handle('music:getAlbum', (_e, { browseId }: { browseId: string }) => {
+    return services.music?.getAlbum(browseId) ?? { album: null, tracks: [] }
+  })
+
+  ipcMain.handle('music:getArtist', (_e, { browseId }: { browseId: string }) => {
+    return (
+      services.music?.getArtist(browseId) ?? {
+        name: '',
+        tracks: [],
+        albums: []
+      }
+    )
+  })
+
+  ipcMain.handle('music:getProviderHealth', () => services.music?.getProviderHealth() ?? [])
+
+  ipcMain.handle(
+    'music:getLyrics',
+    (
+      _e,
+      payload: {
+        title: string
+        artist: string
+        provider?: import('../../src/shared/types/music').NormalizedTrack['provider']
+        videoId?: string
+        trackKey?: string
+      }
+    ) => {
+      const { title, artist, ...hint } = payload
+      return services.music?.getLyrics(title, artist, hint) ?? {}
+    }
+  )
+
+  ipcMain.handle('music:resolveStream', (_e, { track, useCache }: { track: import('../../src/shared/types/music').NormalizedTrack; useCache?: boolean }) => {
+    return services.music?.resolveStream(track, useCache !== false) ?? { url: '' }
+  })
+
+  ipcMain.handle('music:testConnection', () => services.music?.testConnection() ?? { ok: false, baseUrl: '', error: 'Music service unavailable' })
+
+  ipcMain.handle('music:getRadio', (_e, { videoId }: { videoId: string }) => {
+    return services.music?.getRadio(videoId) ?? []
+  })
+
+  ipcMain.handle('music:listFavorites', () => services.music?.listFavorites() ?? [])
+
+  ipcMain.handle('music:isFavorite', (_e, { trackKey }: { trackKey: string }) => {
+    return services.music?.isFavorite(trackKey) ?? false
+  })
+
+  ipcMain.handle('music:toggleFavorite', (_e, { track }: { track: import('../../src/shared/types/music').NormalizedTrack }) => {
+    return services.music?.toggleFavorite(track) ?? false
+  })
+
+  ipcMain.handle('music:listHistory', (_e, { limit }: { limit?: number }) => {
+    return services.music?.listHistory(limit ?? 50) ?? []
+  })
+
+  ipcMain.handle('music:appendHistory', (_e, { track }: { track: import('../../src/shared/types/music').NormalizedTrack }) => {
+    services.music?.appendHistory(track)
+  })
+
+  ipcMain.handle('music:clearHistory', () => {
+    services.music?.clearHistory()
+  })
+
+  ipcMain.handle('music:neteaseGetLoginStatus', () => services.music?.neteaseGetLoginStatus() ?? { loggedIn: false, loginType: 'none' })
+  ipcMain.handle('music:neteaseLoginQrKey', () => services.music?.neteaseLoginQrKey())
+  ipcMain.handle('music:neteaseLoginQrCheck', (_e, { key }: { key: string }) => services.music?.neteaseLoginQrCheck(key))
+  ipcMain.handle('music:neteaseSendCaptcha', (_e, { phone, countryCode }: { phone: string; countryCode?: number }) =>
+    services.music?.neteaseSendCaptcha(phone, countryCode)
+  )
+  ipcMain.handle(
+    'music:neteaseLoginPhone',
+    (_e, { phone, captcha, countryCode }: { phone: string; captcha: string; countryCode?: number }) =>
+      services.music?.neteaseLoginPhone(phone, captcha, countryCode)
+  )
+  ipcMain.handle('music:neteaseLoginCookie', (_e, { musicU }: { musicU: string }) =>
+    services.music?.neteaseLoginCookie(musicU)
+  )
+  ipcMain.handle('music:neteaseLogout', () => services.music?.neteaseLogout())
+  ipcMain.handle('music:neteaseRefreshLogin', () => services.music?.neteaseRefreshLogin())
+  ipcMain.handle('music:kugouGetLoginStatus', () =>
+    services.music?.kugouGetLoginStatus() ?? { loggedIn: false, loginType: 'none' }
+  )
+  ipcMain.handle('music:kugouLoginQrKey', () => services.music?.kugouLoginQrKey())
+  ipcMain.handle('music:kugouLoginQrCheck', (_e, { key }: { key: string }) => services.music?.kugouLoginQrCheck(key))
+  ipcMain.handle('music:kugouSendCaptcha', (_e, { phone, countryCode }: { phone: string; countryCode?: number }) =>
+    services.music?.kugouSendCaptcha(phone, countryCode)
+  )
+  ipcMain.handle(
+    'music:kugouLoginPhone',
+    (_e, { phone, captcha, countryCode }: { phone: string; captcha: string; countryCode?: number }) =>
+      services.music?.kugouLoginPhone(phone, captcha, countryCode)
+  )
+  ipcMain.handle('music:kugouLoginCookie', (_e, { token }: { token: string }) =>
+    services.music?.kugouLoginCookie(token)
+  )
+  ipcMain.handle('music:kugouLogout', () => services.music?.kugouLogout())
+  ipcMain.handle('music:kugouRefreshLogin', () => services.music?.kugouRefreshLogin())
+  ipcMain.handle('music:neteaseSearchHot', (_e, { limit }: { limit?: number }) =>
+    services.music?.neteaseSearchHot(limit) ?? []
+  )
+  ipcMain.handle('music:searchHot', (_e, { limit }: { limit?: number }) =>
+    services.music?.searchHot(limit) ?? []
+  )
+  ipcMain.handle('music:neteaseSearchSuggest', (_e, { keywords }: { keywords: string }) =>
+    services.music?.neteaseSearchSuggest(keywords) ?? []
+  )
+  ipcMain.handle('music:searchSuggest', (_e, { keywords }: { keywords: string }) =>
+    services.music?.searchSuggest(keywords) ?? []
+  )
+  ipcMain.handle('music:neteaseSearchDefault', () => services.music?.neteaseSearchDefault() ?? '')
+  ipcMain.handle('music:searchDefault', () => services.music?.searchDefault() ?? '')
+  ipcMain.handle('music:getDailyRecommend', () => services.music?.getDailyRecommend() ?? [])
+  ipcMain.handle('music:getPersonalFm', () => services.music?.getPersonalFm() ?? [])
+  ipcMain.handle('music:trashPersonalFm', (_e, { songId }: { songId: string }) => {
+    void services.music?.trashPersonalFm(songId)
+  })
+  ipcMain.handle('music:getNeteaseUserPlaylists', () => services.music?.getNeteaseUserPlaylists() ?? [])
+  ipcMain.handle('music:getNeteaseLikedTracks', (_e, { limit }: { limit?: number }) =>
+    services.music?.getNeteaseLikedTracks(limit) ?? []
+  )
+  ipcMain.handle('music:getNeteaseUserCloud', (_e, { limit }: { limit?: number }) =>
+    services.music?.getNeteaseUserCloud(limit) ?? []
+  )
+  ipcMain.handle('music:getNeteaseArtistList', (_e, { limit }: { limit?: number }) =>
+    services.music?.getNeteaseArtistList(limit) ?? []
+  )
+  ipcMain.handle('music:getNeteaseNewAlbums', (_e, { limit }: { limit?: number }) =>
+    services.music?.getNeteaseNewAlbums(limit) ?? []
+  )
+  ipcMain.handle('music:getPlatformSessionSnapshot', () =>
+    services.music?.getPlatformSessionSnapshot() ?? { platformId: 'kugou', loginType: 'none' }
+  )
+  ipcMain.handle('music:getPlatformLoginStatus', () =>
+    services.music?.getPlatformLoginStatus() ?? { loggedIn: false, loginType: 'none' }
+  )
+  ipcMain.handle('music:getPlatformUserProfile', () =>
+    services.music?.getPlatformUserProfile() ?? { platform: 'kugou', loggedIn: false }
+  )
+  ipcMain.handle('music:refreshPlatformLogin', () =>
+    services.music?.refreshPlatformLogin() ?? { loggedIn: false, loginType: 'none' }
+  )
+  ipcMain.handle('music:getPlatformUserPlaylists', () => services.music?.getPlatformUserPlaylists() ?? [])
+  ipcMain.handle('music:getPlatformLikedTracks', (_e, { limit }: { limit?: number }) =>
+    services.music?.getPlatformLikedTracks(limit) ?? []
+  )
+  ipcMain.handle('music:getPlatformUserCloud', (_e, { limit }: { limit?: number }) =>
+    services.music?.getPlatformUserCloud(limit) ?? []
+  )
+  ipcMain.handle(
+    'music:getPlatformSubscribed',
+    (_e, { kind, limit }: { kind: import('../../src/shared/types/music').MusicPlatformSubscribedKind; limit?: number }) =>
+      services.music?.getPlatformSubscribed(kind, limit) ?? []
   )
 
   ipcMain.handle('notes:list', () => services.notes?.listNotes() ?? [])
@@ -596,13 +801,7 @@ export function registerIpcHandlers(services: AppServices): void {
       })
       if (!result.ok) return result
 
-      services.db?.close()
-      services.db = null
-      services.library = null
-      services.rss = null
-      services.media = null
-      services.notes = null
-      services.userData = null
+      shutdownDataServices(services)
 
       app.relaunch()
       app.exit(0)
@@ -642,13 +841,7 @@ export function registerIpcHandlers(services: AppServices): void {
   ipcMain.handle('app:restoreBackup', async () => {
     const wanwuPath = services.db?.getBasePath() ?? resolveWanwuPath()
     const result = await restoreDataBackup(wanwuPath, () => {
-      services.db?.close()
-      services.db = null
-      services.library = null
-      services.rss = null
-      services.media = null
-      services.notes = null
-      services.userData = null
+      shutdownDataServices(services)
     })
     if (result.ok) {
       app.relaunch()

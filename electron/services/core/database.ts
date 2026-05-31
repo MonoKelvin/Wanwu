@@ -16,25 +16,31 @@ import type {
   NoteUpdateInput
 } from '../../../src/shared/types/notes'
 import type { AppSettings } from '../../../src/shared/types/settings'
+import {
+  ensureWanwuDataLayout,
+  getWanwuPathLayout,
+  libraryCategoryDbFile,
+  type WanwuPathLayout
+} from '../data/paths'
 
 export const DEFAULT_FAVORITE_GROUP_ID = 'default'
 
 export class DatabaseService {
+  private readonly layout: WanwuPathLayout
   private userDb: Database.Database
   private rssDb: Database.Database
   private libraryDbs = new Map<string, Database.Database>()
 
-  constructor(private readonly basePath: string) {
-    mkdirSync(join(basePath, 'db'), { recursive: true })
-    mkdirSync(join(basePath, 'media'), { recursive: true })
-    mkdirSync(join(basePath, 'cache'), { recursive: true })
+  constructor(basePath?: string) {
+    const root = ensureWanwuDataLayout(basePath)
+    this.layout = getWanwuPathLayout(root)
 
-    this.userDb = new Database(join(basePath, 'db', 'user.sqlite'))
-    this.rssDb = new Database(join(basePath, 'db', 'rss.sqlite'))
+    this.userDb = new Database(this.layout.userDbFile)
+    this.rssDb = new Database(this.layout.rssDbFile)
   }
 
   getBasePath(): string {
-    return this.basePath
+    return this.layout.root
   }
 
   async init(_options?: { skipLibrarySeed?: boolean }): Promise<void> {
@@ -45,7 +51,7 @@ export class DatabaseService {
 
   /** 各分类图鉴库 id（仅从已存在的 library_*.sqlite 发现） */
   listLibraryCategoryIds(): string[] {
-    const dbDir = join(this.basePath, 'db')
+    const dbDir = this.layout.db
     if (!existsSync(dbDir)) return []
     return readdirSync(dbDir)
       .filter((f) => f.startsWith('library_') && f.endsWith('.sqlite'))
@@ -182,7 +188,7 @@ export class DatabaseService {
   }
 
   private openLibraryDb(categoryId: string, categoryName: string): Database.Database {
-    const dbPath = join(this.basePath, 'db', `library_${categoryId}.sqlite`)
+    const dbPath = libraryCategoryDbFile(this.layout, categoryId)
     const db = new Database(dbPath)
     db.exec(`
       CREATE TABLE IF NOT EXISTS categories (
@@ -232,7 +238,7 @@ export class DatabaseService {
   }
 
   private openLibraryDbIfExists(categoryId: string): Database.Database | undefined {
-    const dbPath = join(this.basePath, 'db', `library_${categoryId}.sqlite`)
+    const dbPath = libraryCategoryDbFile(this.layout, categoryId)
     if (!existsSync(dbPath)) return undefined
     let db = this.libraryDbs.get(categoryId)
     if (!db) {
@@ -250,9 +256,9 @@ export class DatabaseService {
 
   /** 种子/图鉴包导入时创建或打开分类库 */
   createLibraryDbForImport(categoryId: string, categoryName?: string): Database.Database {
-    const dbPath = join(this.basePath, 'db', `library_${categoryId}.sqlite`)
+    const dbPath = libraryCategoryDbFile(this.layout, categoryId)
     if (!existsSync(dbPath)) {
-      mkdirSync(join(this.basePath, 'db'), { recursive: true })
+      mkdirSync(this.layout.db, { recursive: true })
     }
     let db = this.libraryDbs.get(categoryId)
     if (!db) {

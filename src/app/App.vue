@@ -33,6 +33,7 @@ const isTrayMenu = computed(() => Boolean(route.meta.trayMenu))
 const isTrayMenuPopout = computed(
   () => isTrayMenu.value || bootAsTrayMenu
 )
+const isFullscreenRoute = computed(() => Boolean(route.meta.fullscreen))
 
 const showPopoutShell = computed(
   () =>
@@ -120,7 +121,7 @@ onMounted(async () => {
       </ConfirmDialog>
       <WwDismissibleConfirmHost />
       <WwPopTipHost />
-      <TitleBar />
+      <TitleBar v-if="!isFullscreenRoute" />
       <AppShell class="min-h-0 flex-1" />
       <CommandPalette v-model:open="paletteOpen" />
       <CloseAppDialog

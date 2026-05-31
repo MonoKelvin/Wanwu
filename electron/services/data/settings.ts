@@ -69,7 +69,48 @@ export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppS
     trayEnabled: raw.trayEnabled !== false,
     closeBehavior: normalizeCloseBehavior(raw.closeBehavior),
     dailyWidgetEnabled: raw.dailyWidgetEnabled === true,
-    clipboardAssistEnabled: raw.clipboardAssistEnabled === true
+    clipboardAssistEnabled: raw.clipboardAssistEnabled === true,
+    musicApiBaseUrl:
+      typeof raw.musicApiBaseUrl === 'string' && raw.musicApiBaseUrl.trim()
+        ? raw.musicApiBaseUrl.trim()
+        : DEFAULT_APP_SETTINGS.musicApiBaseUrl,
+    musicApiMode: raw.musicApiMode === 'local' ? 'local' : 'remote',
+    musicApiLocalPort:
+      typeof raw.musicApiLocalPort === 'number' && raw.musicApiLocalPort > 0
+        ? raw.musicApiLocalPort
+        : DEFAULT_APP_SETTINGS.musicApiLocalPort,
+    musicDiscoverCountry:
+      typeof raw.musicDiscoverCountry === 'string' && raw.musicDiscoverCountry.trim()
+        ? raw.musicDiscoverCountry.trim()
+        : DEFAULT_APP_SETTINGS.musicDiscoverCountry,
+    musicJamendoClientId:
+      typeof raw.musicJamendoClientId === 'string' ? raw.musicJamendoClientId : '',
+    musicAudiusApiKey: typeof raw.musicAudiusApiKey === 'string' ? raw.musicAudiusApiKey : '',
+    musicPrimarySource:
+      raw.musicPrimarySource === 'verome' ||
+      raw.musicPrimarySource === 'kugou' ||
+      raw.musicPrimarySource === 'netease'
+        ? raw.musicPrimarySource
+        : DEFAULT_APP_SETTINGS.musicPrimarySource,
+    musicNeteasePort:
+      typeof raw.musicNeteasePort === 'number' && raw.musicNeteasePort > 0
+        ? raw.musicNeteasePort
+        : DEFAULT_APP_SETTINGS.musicNeteasePort,
+    musicNeteaseRealIp:
+      typeof raw.musicNeteaseRealIp === 'string' ? raw.musicNeteaseRealIp : '',
+    musicNeteaseProxy: typeof raw.musicNeteaseProxy === 'string' ? raw.musicNeteaseProxy : '',
+    musicNeteaseQuality:
+      raw.musicNeteaseQuality === 'standard' ||
+      raw.musicNeteaseQuality === 'higher' ||
+      raw.musicNeteaseQuality === 'exhigh' ||
+      raw.musicNeteaseQuality === 'lossless' ||
+      raw.musicNeteaseQuality === 'hires' ||
+      raw.musicNeteaseQuality === 'jyeffect' ||
+      raw.musicNeteaseQuality === 'sky' ||
+      raw.musicNeteaseQuality === 'dolby' ||
+      raw.musicNeteaseQuality === 'jymaster'
+        ? raw.musicNeteaseQuality
+        : DEFAULT_APP_SETTINGS.musicNeteaseQuality
   }
 }
 

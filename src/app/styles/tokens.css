@@ -73,6 +73,9 @@
   --ww-border-subtle: rgb(18 18 22 / 0.06);
   --ww-border-faint: rgb(18 18 22 / 0.05);
 
+  /* 圆角 */
+  --ww-radius-full: 999px;
+
   /* 动效 */
   --ww-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ww-ease-out-slow: cubic-bezier(0.16, 1, 0.3, 1);

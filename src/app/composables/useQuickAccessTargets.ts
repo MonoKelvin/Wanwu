@@ -3,6 +3,9 @@ import { useRouter } from 'vue-router'
 import { useItemDetailNavigation } from '@app/composables/useItemDetailNavigation'
 import { useNotesStore } from '@shared/stores/notes'
 import type { QuickAccessHit, QuickAccessOpenTarget } from '@shared/types/quickAccess'
+import type { NormalizedTrack } from '@shared/types/music'
+import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
+import { useMusicSearch } from '@modules/music/composables/useMusicSearch'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
 
 export function hitToOpenTarget(hit: QuickAccessHit): QuickAccessOpenTarget {
@@ -13,7 +16,13 @@ export function hitToOpenTarget(hit: QuickAccessHit): QuickAccessOpenTarget {
     itemId: hit.itemId,
     noteId: hit.noteId,
     linkUrl: hit.linkUrl,
-    feedId: hit.feedId
+    feedId: hit.feedId,
+    musicVideoId: hit.musicVideoId,
+    musicArtist: hit.musicArtist,
+    musicCoverUrl: hit.musicCoverUrl,
+    musicProvider: hit.musicProvider,
+    musicTrackKey: hit.musicTrackKey,
+    musicPayloadJson: hit.musicPayloadJson
   }
 }
 
@@ -79,6 +88,25 @@ export function useQuickAccessTargets() {
           await router.push({ name: 'rss', params: { feedId: target.feedId } })
         } else {
           await router.push({ name: 'rss' })
+        }
+        break
+      }
+      case 'music': {
+        let track: NormalizedTrack | null = null
+        if (target.musicPayloadJson) {
+          try {
+            track = JSON.parse(target.musicPayloadJson) as NormalizedTrack
+          } catch {
+            track = null
+          }
+        }
+        await router.push({ name: 'music-discover' })
+        await nextTick()
+        if (track) {
+          const player = useMusicPlayerStore()
+          void player.playTrack(track)
+        } else {
+          useMusicSearch().requestFocus()
         }
         break
       }

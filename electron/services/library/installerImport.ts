@@ -11,7 +11,7 @@ import {
   readManifestFromZip
 } from './pack'
 import { LIBRARY_PACK_ZIP } from './paths'
-import { patchWanwuPathConfig } from '../data/paths'
+import { ensureWanwuDataLayout, getWanwuPathLayout, patchWanwuPathConfig } from '../data/paths'
 
 export interface InstallerLibraryImportResult {
   ok: boolean
@@ -38,13 +38,10 @@ export async function runInstallerLibraryPackImport(
     return { ok: false, status: 'failed', message: '数据目录无效' }
   }
 
-  mkdirSync(dataPath, { recursive: true })
-  for (const sub of ['db', 'media', 'cache', 'resources']) {
-    mkdirSync(join(dataPath, sub), { recursive: true })
-  }
+  const layout = getWanwuPathLayout(ensureWanwuDataLayout(dataPath))
 
   const zipPath = normalize(
-    resolve((rawZipPath?.trim() || join(dataPath, LIBRARY_PACK_ZIP)).trim())
+    resolve((rawZipPath?.trim() || join(layout.root, LIBRARY_PACK_ZIP)).trim())
   )
 
   if (!existsSync(zipPath)) {

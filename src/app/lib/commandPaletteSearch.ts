@@ -5,6 +5,7 @@ export const PALETTE_KIND_ORDER: QuickAccessHitKind[] = [
   'note',
   'link',
   'rss',
+  'music',
   'favorite'
 ]
 

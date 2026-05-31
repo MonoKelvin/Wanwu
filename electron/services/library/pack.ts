@@ -7,7 +7,13 @@ import extract from 'extract-zip'
 import type { DatabaseService } from '../core/database'
 import { getMainWindow } from '../../windowState'
 import { getBundledAssetsRoot } from '../core/assetsRoot'
-import { getWanwuResourcesDirectory, patchWanwuPathConfig, readWanwuPathConfig } from '../data/paths'
+import {
+  getWanwuPathLayout,
+  getWanwuResourcesDirectory,
+  patchWanwuPathConfig,
+  readWanwuPathConfig,
+  wanwuDbMarkerFile
+} from '../data/paths'
 import {
   discoverLibraryPackZip,
   isBundledLibrarySeedAvailable,
@@ -61,7 +67,7 @@ function pushStartupNotice(message: string): void {
 }
 
 function packMarkerPath(basePath: string): string {
-  return join(basePath, 'db', LIBRARY_PACK_MARKER)
+  return wanwuDbMarkerFile(getWanwuPathLayout(basePath), LIBRARY_PACK_MARKER)
 }
 
 function readPackMarker(basePath: string): LibraryPackManifest | null {
@@ -75,7 +81,8 @@ function readPackMarker(basePath: string): LibraryPackManifest | null {
 }
 
 export function writePackMarker(basePath: string, manifest: LibraryPackManifest): void {
-  mkdirSync(join(basePath, 'db'), { recursive: true })
+  const layout = getWanwuPathLayout(basePath)
+  mkdirSync(layout.db, { recursive: true })
   writeFileSync(packMarkerPath(basePath), `${JSON.stringify(manifest, null, 2)}\n`, 'utf-8')
 }
 
@@ -125,7 +132,7 @@ function countLibrarySqliteFiles(dbDir: string): number {
 }
 
 function hasUsableLibraryDbs(basePath: string, expectedCount: number): boolean {
-  const dbDir = join(basePath, 'db')
+  const dbDir = getWanwuPathLayout(basePath).db
   if (countLibrarySqliteFiles(dbDir) < Math.max(1, expectedCount)) return false
   const marker = join(dbDir, CATALOG_IMPORT_MARKER)
   return existsSync(marker)
@@ -212,7 +219,7 @@ export async function applyBundledLibraryPack(
   zipPath: string,
   manifest: LibraryPackManifest
 ): Promise<void> {
-  const dbDir = join(basePath, 'db')
+  const dbDir = getWanwuPathLayout(basePath).db
   mkdirSync(dbDir, { recursive: true })
   const staging = join(dbDir, STAGING_DIR)
   rmSync(staging, { recursive: true, force: true })
@@ -256,7 +263,7 @@ export async function applyPendingLibraryPackZip(
     return 'skipped'
   }
 
-  const dbDir = join(basePath, 'db')
+  const dbDir = getWanwuPathLayout(basePath).db
   if (countLibrarySqliteFiles(dbDir) > 0 && existsSync(join(dbDir, CATALOG_IMPORT_MARKER))) {
     if (tryDeleteLibraryPackZip(zipPath)) {
       clearLibraryPackPathConfigIfMatches(zipPath)

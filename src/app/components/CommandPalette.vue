@@ -47,6 +47,7 @@ const KIND_META: Record<
   note: { label: '便笺', wwIcon: 'pencil' },
   link: { label: '链接', wwIcon: 'link' },
   rss: { label: 'RSS', wwIcon: 'inbox' },
+  music: { label: '音乐', wwIcon: 'disc-3' },
   favorite: { label: '收藏', wwIcon: 'heart' }
 }
 

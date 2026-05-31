@@ -43,6 +43,33 @@ export interface AppSettings {
   dailyWidgetEnabled: boolean
   /** 剪贴板复制后联想图鉴条目 */
   clipboardAssistEnabled: boolean
+  /** Verome API 根地址 */
+  musicApiBaseUrl: string
+  /** remote = 使用 musicApiBaseUrl；local = 127.0.0.1:musicApiLocalPort */
+  musicApiMode: 'remote' | 'local'
+  musicApiLocalPort: number
+  /** 发现页地区（Verome trending/charts） */
+  musicDiscoverCountry: string
+  /** 可选 Jamendo client_id */
+  musicJamendoClientId: string
+  /** 可选 Audius API Bearer（仅主进程） */
+  musicAudiusApiKey: string
+  /** 主音源：kugou | netease | verome */
+  musicPrimarySource: 'netease' | 'verome' | 'kugou'
+  /** 网易云内嵌 API 网关端口（预留） */
+  musicNeteasePort: number
+  musicNeteaseRealIp: string
+  musicNeteaseProxy: string
+  musicNeteaseQuality:
+    | 'standard'
+    | 'higher'
+    | 'exhigh'
+    | 'lossless'
+    | 'hires'
+    | 'jyeffect'
+    | 'sky'
+    | 'dolby'
+    | 'jymaster'
 }
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -58,7 +85,18 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   trayEnabled: true,
   closeBehavior: 'quit',
   dailyWidgetEnabled: false,
-  clipboardAssistEnabled: false
+  clipboardAssistEnabled: false,
+  musicApiBaseUrl: 'https://verome-api.deno.dev',
+  musicApiMode: 'remote',
+  musicApiLocalPort: 8000,
+  musicDiscoverCountry: 'China',
+  musicJamendoClientId: '',
+  musicAudiusApiKey: '',
+  musicPrimarySource: 'kugou',
+  musicNeteasePort: 25884,
+  musicNeteaseRealIp: '',
+  musicNeteaseProxy: '',
+  musicNeteaseQuality: 'exhigh'
 }
 
 export const COLOR_SCHEME_OPTIONS: Array<{ label: string; value: ColorScheme }> = [

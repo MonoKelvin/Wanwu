@@ -8,6 +8,7 @@ import { useShellModule } from '@app/composables/useShellModule'
 import { MODULE_KEEP_ALIVE } from '@app/config/modules'
 import { moduleViewComponent } from '@app/shell/moduleShell'
 import ItemDetailView from '@modules/item/ItemDetailView.vue'
+import MusicMiniBar from '@modules/music/player/MusicMiniBar.vue'
 import { useAppStore } from '@shared/stores/app'
 import { useSettingsStore } from '@shared/stores/settings'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
@@ -18,11 +19,13 @@ const shellModule = useShellModule()
 const shellComponent = computed(() => moduleViewComponent(shellModule.value))
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
+const isFullscreen = computed(() => !!route.meta.fullscreen)
+const showMusicBar = computed(() => routeModule.value === 'music' && !isFullscreen.value)
 
 const isItemDetail = computed(() => isItemDetailRoute(route.name))
 /** 物品详情为全屏内容区：不显示分类侧栏，避免与缓存的全库列表叠在一起 */
 const showSubPanel = computed(() => {
-  if (isItemDetail.value) return false
+  if (isItemDetail.value || isFullscreen.value) return false
   const mod = routeModule.value
   return mod === 'library' || mod === 'rss'
 })
@@ -40,7 +43,7 @@ watch(
 
 <template>
   <div class="flex h-full w-full overflow-hidden bg-ww-canvas text-color">
-    <ModuleSidebar />
+    <ModuleSidebar v-show="!isFullscreen" />
     <SubItemPanel v-show="showSubPanel" class="shrink-0" />
     <main
       class="relative flex min-w-0 flex-1 flex-col overflow-hidden"
@@ -59,6 +62,7 @@ watch(
       <Transition name="ww-item-detail">
         <ItemDetailView v-if="isItemDetail" class="ww-item-detail-layer" />
       </Transition>
+      <MusicMiniBar v-if="showMusicBar" />
     </main>
   </div>
 </template>

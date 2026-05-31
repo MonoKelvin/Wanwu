@@ -1,0 +1,315 @@
+/* 设置 · 音乐 — 圆角卡片、毛玻璃与 pill 控件 */
+.ww-music-settings {
+  --ww-music-settings-radius: 1.125rem;
+  --ww-music-settings-inner-radius: 0.875rem;
+}
+
+.ww-music-settings .ww-settings-group {
+  border-radius: var(--ww-music-settings-radius);
+  border-color: var(--ww-glass-border);
+  background: color-mix(in srgb, var(--ww-glass-bg-soft) 88%, var(--ww-elevated));
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  box-shadow: none;
+  animation: ww-music-settings-rise var(--ww-duration) var(--ww-ease-out) both;
+}
+
+.ww-music-settings .ww-settings-group:nth-child(1) {
+  animation-delay: 0.02s;
+}
+.ww-music-settings .ww-settings-group:nth-child(2) {
+  animation-delay: 0.06s;
+}
+.ww-music-settings .ww-settings-group:nth-child(3) {
+  animation-delay: 0.1s;
+}
+.ww-music-settings .ww-settings-group:nth-child(4) {
+  animation-delay: 0.14s;
+}
+.ww-music-settings .ww-settings-group:nth-child(5) {
+  animation-delay: 0.18s;
+}
+.ww-music-settings .ww-settings-group:nth-child(6) {
+  animation-delay: 0.22s;
+}
+
+@keyframes ww-music-settings-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ww-music-settings .ww-settings-group:hover {
+  box-shadow: var(--ww-shadow-soft);
+}
+
+.ww-music-settings .ww-settings-group--muted {
+  background: var(--ww-inset);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.ww-music-settings .ww-settings-group--muted:hover {
+  box-shadow: var(--ww-shadow-soft);
+}
+
+.ww-music-settings .ww-settings-group__label {
+  padding-top: 0.875rem;
+  letter-spacing: -0.01em;
+}
+
+/* pill 分段选择 */
+.ww-music-settings :deep(.ww-settings-segment.p-selectbutton) {
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ww-inset) 80%, transparent);
+}
+
+.ww-music-settings :deep(.ww-settings-segment.p-selectbutton .p-togglebutton) {
+  border-radius: 999px !important;
+  border-start-start-radius: 999px !important;
+  border-start-end-radius: 999px !important;
+  border-end-start-radius: 999px !important;
+  border-end-end-radius: 999px !important;
+  padding: 0.375rem 0.875rem !important;
+}
+
+.ww-music-settings :deep(.ww-settings-segment.p-selectbutton .p-togglebutton.p-togglebutton-checked),
+.ww-music-settings :deep(.ww-settings-segment.p-selectbutton .p-togglebutton[data-p-checked='true']) {
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--ww-ink) 10%, transparent) !important;
+}
+
+/* 输入框 */
+.ww-music-settings-field {
+  width: 100%;
+  min-width: 9rem;
+  max-width: 14rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--ww-border-subtle);
+  border-radius: 0.4375rem;
+  background: var(--ww-inset);
+  color: var(--ww-ink);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  transition:
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    box-shadow var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+[data-theme='dark'] .ww-music-settings-field {
+  background: var(--ww-list-hover-bg);
+}
+
+.ww-music-settings-field:hover {
+  border-color: color-mix(in srgb, var(--ww-ink) 10%, var(--ww-border-subtle));
+}
+
+.ww-music-settings-field:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--ww-ink) 14%, transparent);
+  background: var(--ww-field-bg-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ww-list-selected-ring) 60%, transparent);
+}
+
+.ww-music-settings-field--wide {
+  max-width: 22rem;
+}
+
+.ww-music-settings-field--medium {
+  max-width: 8rem;
+  min-width: 6rem;
+}
+
+.ww-music-settings-field--narrow {
+  max-width: 5.5rem;
+  min-width: 4.5rem;
+}
+
+.ww-music-settings-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.ww-music-settings-account {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.ww-music-settings-account__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  max-width: 16rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--ww-border-subtle);
+  background: color-mix(in srgb, var(--ww-content) 70%, transparent);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--ww-ink-muted);
+}
+
+.ww-music-settings-account__dot {
+  flex-shrink: 0;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 999px;
+  background: var(--ww-ink-faint);
+}
+
+.ww-music-settings-account__chip.is-online .ww-music-settings-account__dot {
+  background: var(--ww-toast-success);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ww-toast-success) 20%, transparent);
+}
+
+.ww-music-settings-account__chip.is-online {
+  color: var(--ww-ink);
+}
+
+.ww-music-settings-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.375rem;
+  max-width: 22rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ww-music-settings-tag {
+  padding: 0.2rem 0.625rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  background: color-mix(in srgb, var(--ww-ink) 5%, transparent);
+  color: var(--ww-ink-faint);
+  transition:
+    transform 0.15s var(--ww-ease-out),
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-music-settings-tag.is-on {
+  border-color: color-mix(in srgb, var(--ww-toast-success) 28%, transparent);
+  background: color-mix(in srgb, var(--ww-toast-success) 12%, transparent);
+  color: rgb(5 120 85);
+}
+
+[data-theme='dark'] .ww-music-settings-tag.is-on {
+  color: rgb(52 211 153);
+}
+
+.ww-music-settings-feedback {
+  margin: 0;
+  max-width: 18rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  text-align: right;
+  background: color-mix(in srgb, var(--ww-ink) 4%, transparent);
+}
+
+.ww-music-settings-feedback.is-ok {
+  color: var(--ww-toast-success);
+  background: color-mix(in srgb, var(--ww-toast-success) 10%, transparent);
+}
+
+.ww-music-settings-feedback.is-warn {
+  color: var(--ww-warn);
+  background: color-mix(in srgb, var(--ww-warn) 12%, transparent);
+}
+
+.ww-music-settings-feedback.is-error {
+  color: var(--ww-danger-text);
+  background: color-mix(in srgb, var(--ww-danger-text) 8%, transparent);
+}
+
+.ww-music-settings-oss {
+  margin: 0;
+  padding: 0.25rem 0.75rem 0.875rem;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ww-music-settings-oss__item {
+  padding: 0.65rem 0.875rem;
+  border-radius: var(--ww-music-settings-inner-radius);
+  border: 1px solid var(--ww-border-faint);
+  background: color-mix(in srgb, var(--ww-content) 55%, transparent);
+  transition:
+    transform var(--ww-duration-fast) var(--ww-ease-out),
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    box-shadow var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-music-settings-oss__item:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--ww-ink) 10%, var(--ww-border-subtle));
+  box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--ww-ink) 10%, transparent);
+}
+
+.ww-music-settings-oss__link {
+  color: var(--ww-ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.ww-music-settings-oss__link:hover {
+  color: var(--ww-accent-hover);
+}
+
+.ww-music-settings-oss__meta {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  color: var(--ww-ink-faint);
+}
+
+.ww-music-settings-disclaimer {
+  margin: 0 0.75rem 0.875rem;
+  padding: 0.875rem 1rem;
+  border-radius: var(--ww-music-settings-inner-radius);
+  border: 1px solid var(--ww-border-faint);
+  background: var(--ww-inset);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--ww-ink-muted);
+}
+
+.ww-music-settings-disclaimer p {
+  margin: 0 0 0.5rem;
+}
+
+.ww-music-settings-disclaimer ul {
+  margin: 0 0 0.75rem;
+  padding-left: 1.125rem;
+}
+
+.ww-music-settings-disclaimer li {
+  margin-bottom: 0.25rem;
+}
+
+.ww-music-settings-disclaimer__heading {
+  margin-top: 0.25rem !important;
+  font-weight: 600;
+  color: var(--ww-ink);
+}

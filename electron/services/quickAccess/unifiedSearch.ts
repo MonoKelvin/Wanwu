@@ -8,6 +8,7 @@ const KIND_LIMIT: Record<QuickAccessHitKind, number> = {
   note: 4,
   link: 4,
   rss: 4,
+  music: 6,
   favorite: 4
 }
 
@@ -16,8 +17,21 @@ const PALETTE_KIND_ORDER: QuickAccessHitKind[] = [
   'note',
   'link',
   'rss',
+  'music',
   'favorite'
 ]
+
+const PROVIDER_LABEL: Record<string, string> = {
+  netease: '网易云',
+  kugou: '酷狗',
+  verome: 'Verome',
+  jamendo: 'Jamendo',
+  audius: 'Audius',
+  itunes: 'iTunes',
+  musicbrainz: 'MusicBrainz',
+  kuwo: '酷我',
+  local: '本地'
+}
 
 function likeTerm(query: string): string {
   return `%${query.trim()}%`
@@ -173,8 +187,37 @@ export function searchFavoriteHits(services: AppServices, term: string): QuickAc
   return hits
 }
 
+export async function searchMusicHits(services: AppServices, term: string): Promise<QuickAccessHit[]> {
+  const hits: QuickAccessHit[] = []
+  const perKind = new Map<QuickAccessHitKind, number>()
+  if (!services.music) return hits
+
+  const tracks = await services.music.searchForQuickAccess(term, KIND_LIMIT.music)
+  for (const track of tracks) {
+    const sourceLabel = PROVIDER_LABEL[track.provider] ?? track.provider
+    pushHit(
+      hits,
+      {
+        kind: 'music',
+        id: track.trackKey,
+        title: track.title,
+        subtitle: `${track.artist} · ${sourceLabel}`,
+        musicVideoId: track.videoId,
+        musicArtist: track.artist,
+        musicCoverUrl: track.coverUrl,
+        musicProvider: track.provider,
+        musicTrackKey: track.trackKey,
+        musicPayloadJson: JSON.stringify(track)
+      },
+      'music',
+      perKind
+    )
+  }
+  return hits
+}
+
 const SEARCH_BY_KIND: Record<
-  QuickAccessHitKind,
+  Exclude<QuickAccessHitKind, 'music'>,
   (services: AppServices, term: string) => QuickAccessHit[]
 > = {
   library: searchLibraryHits,
@@ -184,13 +227,14 @@ const SEARCH_BY_KIND: Record<
   favorite: searchFavoriteHits
 }
 
-export function searchHitsByKind(
+export async function searchHitsByKind(
   services: AppServices,
   kind: QuickAccessHitKind,
   query: string
-): QuickAccessHit[] {
+): Promise<QuickAccessHit[]> {
   const term = query.trim()
   if (!term) return []
+  if (kind === 'music') return searchMusicHits(services, term)
   return SEARCH_BY_KIND[kind](services, term)
 }
 
@@ -206,9 +250,7 @@ export async function unifiedSearch(
   await waitForLibraryBootstrap()
 
   const chunks = await Promise.all(
-    PALETTE_KIND_ORDER.map((kind) =>
-      Promise.resolve().then(() => searchHitsByKind(services, kind, term))
-    )
+    PALETTE_KIND_ORDER.map((kind) => searchHitsByKind(services, kind, term))
   )
 
   const merged: QuickAccessHit[] = []

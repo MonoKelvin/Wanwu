@@ -1,0 +1,213 @@
+/* 音乐平台登录弹窗 — 简约布局 */
+.ww-music-login {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.ww-music-login__status {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--ww-music-inner-radius, 0.875rem);
+  border: 1px solid var(--ww-border-subtle);
+  background: var(--ww-inset);
+}
+
+.ww-music-login__status-dot {
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--ww-ink-faint);
+}
+
+.ww-music-login__status.is-online .ww-music-login__status-dot {
+  background: var(--ww-toast-success);
+}
+
+.ww-music-login__status-text {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--ww-ink-muted);
+}
+
+.ww-music-login__status-text strong {
+  font-weight: 600;
+  color: var(--ww-ink);
+}
+
+.ww-music-login__hint {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--ww-ink-faint);
+}
+
+.ww-music-login__tabs {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 0.2rem;
+  padding: 0.22rem;
+  border-radius: 999px;
+  border: 1px solid var(--ww-border-subtle);
+  background: var(--ww-inset);
+}
+
+.ww-music-login__tab {
+  padding: 0.4rem 0.9rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ww-ink-muted);
+  cursor: pointer;
+  transition:
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    color var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-music-login__tab:hover {
+  color: var(--ww-ink);
+}
+
+.ww-music-login__tab.is-active {
+  background: var(--ww-content);
+  color: var(--ww-ink);
+  font-weight: 600;
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--ww-ink) 8%, transparent);
+}
+
+.ww-music-login__panel {
+  animation: ww-music-login-panel-in var(--ww-duration-fast) var(--ww-ease-out) both;
+}
+
+@keyframes ww-music-login-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ww-music-login__qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.25rem 0;
+}
+
+.ww-music-login__qr-frame {
+  position: relative;
+  padding: 0.5rem;
+  border-radius: var(--ww-music-inner-radius, 0.875rem);
+  border: 1px solid var(--ww-border-subtle);
+  background: var(--ww-elevated);
+}
+
+.ww-music-login__qr-frame.is-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0.5rem;
+  border-radius: calc(var(--ww-music-inner-radius, 0.875rem) - 0.125rem);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ww-ink) 4%, transparent) 0%,
+    color-mix(in srgb, var(--ww-ink) 8%, transparent) 50%,
+    color-mix(in srgb, var(--ww-ink) 4%, transparent) 100%
+  );
+  background-size: 200% 100%;
+  animation: ww-music-login-shimmer 1.1s ease-in-out infinite;
+}
+
+@keyframes ww-music-login-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.ww-music-login__qr-img {
+  display: block;
+  width: 10rem;
+  height: 10rem;
+  border-radius: calc(var(--ww-music-inner-radius, 0.875rem) - 0.25rem);
+  object-fit: contain;
+}
+
+.ww-music-login__qr-empty {
+  margin: 0;
+  min-height: 10rem;
+  width: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8125rem;
+  color: var(--ww-ink-faint);
+}
+
+.ww-music-login__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.ww-music-login__row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.ww-music-login__field :deep(.p-inputtext) {
+  width: 100%;
+  padding: 0.55rem 0.875rem;
+  border-radius: 0.4375rem;
+  border: 1px solid var(--ww-border-subtle);
+  background: var(--ww-inset);
+  font-size: 0.8125rem;
+  color: var(--ww-ink);
+  transition:
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    box-shadow var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+[data-theme='dark'] .ww-music-login__field :deep(.p-inputtext) {
+  background: var(--ww-list-hover-bg);
+}
+
+.ww-music-login__field :deep(.p-inputtext:focus) {
+  outline: none;
+  border-color: color-mix(in srgb, var(--ww-ink) 16%, transparent);
+  box-shadow: var(--ww-focus-ring);
+}
+
+.ww-music-login__message {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.4375rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--ww-ink-muted);
+  background: color-mix(in srgb, var(--ww-ink) 5%, transparent);
+}
+
+.ww-music-login__message.is-success {
+  color: var(--ww-toast-success);
+  background: color-mix(in srgb, var(--ww-toast-success) 12%, transparent);
+}
+
+.ww-music-login__message.is-error {
+  color: var(--ww-danger-text);
+  background: color-mix(in srgb, var(--ww-danger-text) 10%, transparent);
+}

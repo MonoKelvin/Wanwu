@@ -1,6 +1,5 @@
 ﻿import Database from 'better-sqlite3'
-import { mkdirSync } from 'fs'
-import { join } from 'path'
+import { ensureWanwuDataLayout, getWanwuPathLayout } from '../data/paths'
 import { randomUUID } from 'crypto'
 import type { LinkBookmark, LinkFolder, LinksSyncResult } from '../../../src/shared/types/links'
 import { LINKS_RECYCLE_BIN_ID, LOCAL_COLLECTIONS_ROOT_ID } from './constants'
@@ -32,9 +31,9 @@ export class LinksService {
   private db: Database.Database
 
   constructor(private readonly basePath: string) {
-    mkdirSync(join(basePath, 'db'), { recursive: true })
-    const dbPath = join(basePath, 'db', 'library_links.sqlite')
-    this.db = new Database(dbPath)
+    const root = ensureWanwuDataLayout(basePath)
+    const layout = getWanwuPathLayout(root)
+    this.db = new Database(layout.linksDbFile)
     this.initSchema()
     this.migrateSchema()
     this.ensureSystemFolders()
@@ -628,5 +627,9 @@ export class LinksService {
 
     const invalidCount = Object.values(results).filter(Boolean).length
     return { results, invalidCount, byIssue }
+  }
+
+  close(): void {
+    this.db.close()
   }
 }

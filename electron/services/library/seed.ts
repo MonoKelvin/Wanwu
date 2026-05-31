@@ -13,6 +13,7 @@ import {
   type LibraryCategoriesFile,
   type LibraryCategoryDef
 } from './categories'
+import { getWanwuPathLayout, wanwuDbMarkerFile } from '../data/paths'
 import {
   computeSeedFingerprint,
   getSeedFingerprintToken,
@@ -88,7 +89,7 @@ export function getCatalogSeedToken(_catalog?: LibraryCatalog): string {
 }
 
 function catalogImportMarkerPath(basePath: string): string {
-  return join(basePath, 'db', CATALOG_IMPORT_MARKER)
+  return wanwuDbMarkerFile(getWanwuPathLayout(basePath), CATALOG_IMPORT_MARKER)
 }
 
 interface CatalogImportMarker {
@@ -501,8 +502,7 @@ function syncLibraryMediaFromCatalogIfNeeded(dbService: DatabaseService): void {
   const catalog = loadLibraryCatalog()
   if (!catalog?.items?.length) return
 
-  const basePath = dbService.getBasePath()
-  const marker = join(basePath, 'db', '.library-media-sync')
+  const marker = wanwuDbMarkerFile(getWanwuPathLayout(dbService.getBasePath()), '.library-media-sync')
   const token = `v${catalog.schema ?? 0}-${catalog.mediaConfigVersion ?? 0}`
   let last = ''
   if (existsSync(marker)) {

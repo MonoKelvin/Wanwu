@@ -91,17 +91,82 @@ export function getWanwuDataDirectory(): string {
 
 /** 用户数据目录下的资源目录（图鉴配图等） */
 export function getWanwuResourcesDirectory(): string {
-  return join(getWanwuDataDirectory(), 'resources')
+  return getWanwuPathLayout().resources
 }
 
-/** 当前生效的万物数据目录，并确保 db / media / cache / resources 子目录存在 */
-export function resolveWanwuPath(): string {
-  const target = getWanwuDataDirectory()
-  mkdirSync(target, { recursive: true })
-  for (const sub of ['db', 'media', 'cache', 'resources']) {
-    mkdirSync(join(target, sub), { recursive: true })
+/** 音乐缓存根目录（含 audio、covers） */
+export function wanwuMusicCacheDir(layout: WanwuPathLayout): string {
+  return join(layout.music, 'cache')
+}
+
+/** 分类图鉴 SQLite 文件路径 */
+export function libraryCategoryDbFile(layout: WanwuPathLayout, categoryId: string): string {
+  return join(layout.db, `library_${categoryId}.sqlite`)
+}
+
+/** db 目录下的标记文件（图鉴包版本等） */
+export function wanwuDbMarkerFile(layout: WanwuPathLayout, markerName: string): string {
+  return join(layout.db, markerName)
+}
+
+/** 万物数据根目录下的一级子目录（备份/迁移会整包复制 root） */
+export const WANWU_DATA_SUBDIRS = ['db', 'media', 'cache', 'resources', 'music'] as const
+
+/** 相对万物数据根的路径布局（所有落盘模块应通过此结构解析，勿写死其它根路径） */
+export interface WanwuPathLayout {
+  root: string
+  db: string
+  media: string
+  cache: string
+  resources: string
+  music: string
+  musicCacheAudio: string
+  musicCacheCovers: string
+  musicDbFile: string
+  userDbFile: string
+  rssDbFile: string
+  linksDbFile: string
+  notePopoutSessionsFile: string
+  windowStateFile: string
+  cloudAbodeDir: string
+}
+
+export function getWanwuPathLayout(basePath?: string): WanwuPathLayout {
+  const root = basePath ? normalize(resolve(basePath)) : getWanwuDataDirectory()
+  return {
+    root,
+    db: join(root, 'db'),
+    media: join(root, 'media'),
+    cache: join(root, 'cache'),
+    resources: join(root, 'resources'),
+    music: join(root, 'music'),
+    musicCacheAudio: join(root, 'music', 'cache', 'audio'),
+    musicCacheCovers: join(root, 'music', 'cache', 'covers'),
+    musicDbFile: join(root, 'db', 'music.sqlite'),
+    userDbFile: join(root, 'db', 'user.sqlite'),
+    rssDbFile: join(root, 'db', 'rss.sqlite'),
+    linksDbFile: join(root, 'db', 'library_links.sqlite'),
+    notePopoutSessionsFile: join(root, 'note-popout-sessions.json'),
+    windowStateFile: join(root, 'window-state.json'),
+    cloudAbodeDir: join(root, 'cloud-abode')
   }
-  return target
+}
+
+/** 确保万物数据目录及标准子目录存在（写文件前应使用 layout.root 或 resolveWanwuPath） */
+export function ensureWanwuDataLayout(basePath?: string): string {
+  const layout = getWanwuPathLayout(basePath)
+  mkdirSync(layout.root, { recursive: true })
+  for (const sub of WANWU_DATA_SUBDIRS) {
+    mkdirSync(join(layout.root, sub), { recursive: true })
+  }
+  mkdirSync(layout.musicCacheAudio, { recursive: true })
+  mkdirSync(layout.musicCacheCovers, { recursive: true })
+  return layout.root
+}
+
+/** 当前生效的万物数据目录（配置项 wanwu-path.json → wanwuPath） */
+export function resolveWanwuPath(): string {
+  return ensureWanwuDataLayout()
 }
 
 export function isCustomWanwuPath(): boolean {

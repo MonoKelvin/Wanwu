@@ -1,5 +1,6 @@
 import { mkdirSync } from 'fs'
 import { join } from 'path'
+import { ensureWanwuDataLayout, getWanwuPathLayout } from '../data/paths'
 import { randomUUID } from 'crypto'
 import Database from 'better-sqlite3'
 import type {
@@ -64,9 +65,10 @@ export class CloudAbodeService {
   private db: Database.Database | null = null
 
   open(userDataPath: string): void {
-    const dir = join(userDataPath, 'cloud-abode')
-    mkdirSync(dir, { recursive: true })
-    const dbPath = join(dir, 'database.sqlite')
+    const root = ensureWanwuDataLayout(userDataPath)
+    const layout = getWanwuPathLayout(root)
+    mkdirSync(layout.cloudAbodeDir, { recursive: true })
+    const dbPath = join(layout.cloudAbodeDir, 'database.sqlite')
     this.db = new Database(dbPath)
     this.db.pragma('journal_mode = WAL')
     initCloudAbodeSchema(this.db)
@@ -771,5 +773,12 @@ export class CloudAbodeService {
       .get(USER_ID, slug) as { life_json: string | null } | undefined
     if (!row?.life_json) return null
     return JSON.parse(row.life_json) as Record<string, unknown>
+  }
+
+  close(): void {
+    if (this.db) {
+      this.db.close()
+      this.db = null
+    }
   }
 }

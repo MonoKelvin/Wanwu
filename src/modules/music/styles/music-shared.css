@@ -1,0 +1,353 @@
+/* 音乐模块共享视觉 token */
+:root {
+  --ww-music-card-size: 11.5rem;
+  --ww-music-card-gap: 0.85rem;
+  --ww-music-cover-radius: 1.25rem;
+  --ww-music-card-radius: 1.375rem;
+  --ww-music-panel-radius: 1.125rem;
+  --ww-music-inner-radius: 0.875rem;
+  --ww-music-section-gap: 1.25rem;
+  --ww-music-control-gap: 0.5rem;
+  --ww-music-pill-radius: var(--ww-radius-full);
+  --ww-music-input-radius: 0.4375rem;
+  --ww-music-minibar-radius: 1rem;
+  --ww-music-minibar-inset: 0.875rem;
+  --ww-music-minibar-max-width: 44rem;
+  --ww-music-glass-panel: color-mix(in srgb, var(--ww-glass-bg-soft) 72%, var(--ww-content));
+  /* 播放条悬浮高度 + 边距，留给滚动内容底部留白（不在 shell 上垫纯色块） */
+  --ww-music-minibar-clearance: 6.5rem;
+}
+
+/* TabBar 已预留标题栏拖拽区，子页 PageHeader 不再重复顶距 */
+.ww-music-page .ww-page-header {
+  padding-top: 0.75rem;
+}
+
+.ww-music-tab-body {
+  flex: 1;
+  min-height: 0;
+  padding:
+    0.75rem
+    var(--ww-page-padding, 1.125rem)
+    calc(var(--ww-music-minibar-clearance) + var(--ww-page-padding, 1.125rem));
+  background: var(--ww-inset);
+}
+
+.ww-music-search-results {
+  flex: 1;
+  min-height: 0;
+  padding-bottom: calc(var(--ww-music-minibar-clearance) + var(--ww-page-padding, 1.125rem));
+}
+
+.ww-music-content-shell {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.ww-music-page-heading {
+  margin-bottom: 1.5rem;
+}
+
+.ww-music-page-heading__title {
+  margin: 0;
+  font-size: clamp(1.375rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ww-ink);
+  line-height: 1.15;
+}
+
+.ww-music-page-heading__sub {
+  margin: 0.35rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--ww-ink-faint);
+}
+
+.ww-music-nav-btn,
+.ww-music-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: none;
+  border-radius: var(--ww-radius-full);
+  background: transparent;
+  color: var(--ww-ink-muted);
+  cursor: pointer;
+  transition:
+    color 0.18s var(--ww-ease-out),
+    transform 0.15s var(--ww-ease-out);
+}
+
+.ww-music-nav-btn {
+  width: 2rem;
+  height: 2rem;
+}
+
+.ww-music-nav-btn:hover,
+.ww-music-icon-btn:hover {
+  color: var(--ww-ink);
+}
+
+.ww-music-nav-btn:active,
+.ww-music-icon-btn:active {
+  transform: scale(0.92);
+}
+
+.ww-music-segment {
+  display: inline-flex;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  border-radius: var(--ww-radius-full);
+  border: 1px solid var(--ww-border-subtle);
+  background: color-mix(in srgb, var(--ww-content) 70%, transparent);
+}
+
+.ww-music-segment__btn {
+  padding: 0.4rem 0.95rem;
+  border: none;
+  border-radius: var(--ww-radius-full);
+  background: transparent;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ww-ink-muted);
+  cursor: pointer;
+  transition:
+    background 0.2s var(--ww-ease-out),
+    color 0.2s var(--ww-ease-out);
+}
+
+.ww-music-segment__btn.is-active {
+  background: var(--ww-content);
+  color: var(--ww-ink);
+  font-weight: 600;
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--ww-ink) 8%, transparent);
+}
+
+.ww-music-track-panel {
+  border-radius: var(--ww-music-panel-radius);
+  border: 1px solid var(--ww-glass-border);
+  background: var(--ww-music-glass-panel);
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  overflow: hidden;
+  padding: 0.4rem;
+  box-shadow: var(--ww-shadow-card);
+}
+
+.ww-music-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--ww-ink);
+  letter-spacing: -0.01em;
+}
+
+.ww-music-section-sub {
+  font-size: 0.8125rem;
+  color: var(--ww-ink-faint);
+}
+
+.ww-music-text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ww-music-provider-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--ww-radius-full);
+  font-size: 0.625rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: color-mix(in srgb, var(--ww-accent) 12%, transparent);
+  color: var(--ww-accent);
+}
+
+
+.ww-music-scroll-row {
+  display: flex;
+  gap: var(--ww-music-card-gap);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.35rem;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+}
+.ww-music-scroll-row::-webkit-scrollbar {
+  display: none;
+}
+.ww-music-scroll-row.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+}
+
+.ww-music-card-item {
+  flex: 0 0 var(--ww-music-card-size);
+  width: var(--ww-music-card-size);
+  scroll-snap-align: start;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  user-select: none;
+}
+
+.ww-music-card-item__cover {
+  width: var(--ww-music-card-size);
+  height: var(--ww-music-card-size);
+  border-radius: var(--ww-music-cover-radius);
+  overflow: hidden;
+}
+
+.ww-music-card-item__title {
+  display: block;
+  margin-top: 0.55rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ww-ink);
+}
+
+.ww-music-card-item__sub {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.75rem;
+  color: var(--ww-ink-faint);
+}
+
+.ww-music-skeleton {
+  display: flex;
+  gap: var(--ww-music-card-gap);
+  overflow: hidden;
+}
+
+.ww-music-skeleton__card {
+  flex: 0 0 var(--ww-music-card-size);
+  height: calc(var(--ww-music-card-size) + 2.5rem);
+  border-radius: var(--ww-music-card-radius);
+  background: linear-gradient(
+    90deg,
+    var(--ww-surface-hover) 0%,
+    color-mix(in srgb, var(--ww-surface-hover) 60%, transparent) 50%,
+    var(--ww-surface-hover) 100%
+  );
+  background-size: 200% 100%;
+  animation: ww-music-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes ww-music-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.ww-music-error-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: var(--ww-music-pill-radius);
+  background: color-mix(in srgb, var(--ww-danger, #ef4444) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ww-danger, #ef4444) 25%, transparent);
+  font-size: 0.8125rem;
+  color: var(--ww-ink-muted);
+}
+
+.ww-music-carousel-wrap {
+  position: relative;
+  margin: 0 -0.25rem;
+  padding: 0 0.25rem;
+}
+
+.ww-music-carousel-wrap::before,
+.ww-music-carousel-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0.35rem;
+  width: 2rem;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.ww-music-carousel-wrap::before {
+  left: 0;
+  background: linear-gradient(to right, var(--ww-inset), transparent);
+}
+
+.ww-music-carousel-wrap::after {
+  right: 0;
+  background: linear-gradient(to left, var(--ww-inset), transparent);
+}
+
+.ww-music-mood-card {
+  position: relative;
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 0;
+  border: 1px solid var(--ww-glass-border);
+  border-radius: var(--ww-music-inner-radius);
+  background: var(--ww-music-glass-panel);
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+  box-shadow: var(--ww-shadow-card);
+  transition:
+    transform var(--ww-duration-fast) var(--ww-ease-out),
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    box-shadow var(--ww-duration-fast) var(--ww-ease-out);
+}
+.ww-music-mood-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--ww-ink) 12%, var(--ww-border-subtle));
+  box-shadow: 0 8px 18px color-mix(in srgb, black 16%, transparent);
+}
+.ww-music-mood-card__cover {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.ww-music-mood-card__cover :deep(.ww-music-cover),
+.ww-music-mood-card__cover :deep(.ww-music-cover__frame) {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+.ww-music-mood-card__cover :deep(.ww-music-cover__img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ww-music-mood-card__label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  padding: 1.35rem 0.55rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.25;
+  color: color-mix(in srgb, white 92%, transparent);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, black 18%, transparent) 42%,
+    color-mix(in srgb, black 58%, transparent) 100%
+  );
+}
+.ww-music-mood-card--no-cover .ww-music-mood-card__label {
+  padding: 0 0.55rem 0.55rem;
+  color: var(--ww-ink-muted);
+  background: none;
+}

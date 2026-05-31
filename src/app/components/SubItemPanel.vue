@@ -3,7 +3,6 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import LibraryCategoryPanel from '@modules/library/core/components/LibraryCategoryPanel.vue'
 import RssSidebar from '@modules/rss/RssSidebar.vue'
-
 const route = useRoute()
 const module = computed(() => route.meta.module as string)
 </script>
@@ -19,6 +18,7 @@ const module = computed(() => route.meta.module as string)
     <div v-show="module === 'rss'" class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
       <RssSidebar class="min-h-0 flex-1" />
     </div>
+
   </aside>
 </template>
 

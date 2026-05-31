@@ -1,0 +1,98 @@
+/* 音乐模块 shell 内 PrimeVue / 通用控件统一样式 */
+.ww-music-shell :deep(.p-selectbutton) {
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: var(--ww-music-pill-radius);
+  border: 1px solid var(--ww-glass-border);
+  background: color-mix(in srgb, var(--ww-inset) 80%, transparent);
+}
+
+.ww-music-shell :deep(.p-selectbutton .p-togglebutton) {
+  border-radius: var(--ww-music-pill-radius) !important;
+  border-start-start-radius: var(--ww-music-pill-radius) !important;
+  border-start-end-radius: var(--ww-music-pill-radius) !important;
+  border-end-start-radius: var(--ww-music-pill-radius) !important;
+  border-end-end-radius: var(--ww-music-pill-radius) !important;
+  padding: 0.375rem 0.875rem !important;
+  border: none !important;
+  background: transparent !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500;
+  color: var(--ww-ink-muted) !important;
+  box-shadow: none !important;
+}
+
+.ww-music-shell :deep(.p-selectbutton .p-togglebutton.p-togglebutton-checked) {
+  background: var(--ww-content) !important;
+  color: var(--ww-ink) !important;
+  font-weight: 600;
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--ww-ink) 8%, transparent) !important;
+}
+
+.ww-music-shell :deep(.p-inputtext) {
+  border-radius: var(--ww-music-input-radius, 0.4375rem);
+  background: var(--ww-field-bg);
+  border-color: var(--ww-border-subtle);
+}
+
+.ww-music-shell :deep(.p-inputtext:enabled:focus) {
+  background: var(--ww-field-bg-focus);
+  box-shadow: var(--ww-focus-ring);
+}
+
+.ww-music-shell .ww-music-search-panel {
+  border-radius: var(--ww-music-panel-radius);
+  border: 1px solid var(--ww-glass-border);
+  background: var(--ww-music-glass-panel);
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  box-shadow: var(--ww-shadow-soft);
+}
+
+.ww-music-shell .ww-music-search-panel__chip,
+.ww-music-shell .ww-music-search-panel__history-item {
+  border-radius: var(--ww-music-pill-radius);
+}
+
+.ww-music-shell .ww-music-section {
+  margin-bottom: var(--ww-music-section-gap);
+}
+
+.ww-music-shell .ww-music-section__head {
+  margin-bottom: 0.75rem;
+}
+
+.ww-music-shell .ww-music-search-results__tabs {
+  margin-bottom: var(--ww-music-section-gap);
+}
+
+.ww-music-shell .ww-track-row {
+  border-radius: var(--ww-music-inner-radius);
+}
+
+.ww-music-shell .ww-track-row__cover,
+.ww-music-shell .ww-track-row__cover :deep(.ww-music-cover__frame) {
+  border-radius: var(--ww-music-inner-radius);
+}
+
+.ww-music-shell .ww-music-minibar {
+  border-radius: var(--ww-music-minibar-radius);
+}
+
+.ww-music-shell .ww-music-minibar__body {
+  border-radius: var(--ww-music-minibar-radius) var(--ww-music-minibar-radius) 0 0;
+}
+
+.ww-music-shell .ww-music-minibar__cover,
+.ww-music-shell .ww-music-minibar__cover :deep(.ww-music-cover__frame),
+.ww-music-shell .ww-music-minibar__cover--empty {
+  border-radius: var(--ww-music-inner-radius);
+}
+
+.ww-music-shell .ww-music-categories-skeleton__card {
+  border-radius: var(--ww-music-inner-radius);
+}
+
+.ww-music-shell .ww-music-discover-playlist-skeleton .ww-music-skeleton__discover-cover {
+  border-radius: var(--ww-music-inner-radius);
+}

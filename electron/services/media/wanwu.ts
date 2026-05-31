@@ -2,7 +2,7 @@
 import { existsSync } from 'fs'
 import { join } from 'path'
 import { getBundledAssetsRoot } from '../core/assetsRoot'
-import { resolveWanwuPath } from '../data/paths'
+import { getWanwuPathLayout } from '../data/paths'
 import { ILLUSTRATED_HANDBOOK_MEDIA_DIR } from '../library/paths'
 import { resolveLibraryMediaAbsolute } from '../media/library'
 
@@ -29,17 +29,22 @@ export function resolveWanwuMediaAbsolute(relativePath: string): string | null {
     if (existsSync(bundled)) return bundled
   }
 
-  const wanwuRoot = resolveWanwuPath()
+  const layout = getWanwuPathLayout()
 
   if (rel.startsWith('user/')) {
-    const underMedia = join(wanwuRoot, 'media', rel)
+    const underMedia = join(layout.media, rel)
     if (existsSync(underMedia)) return underMedia
   }
 
-  const direct = join(wanwuRoot, rel)
+  if (rel.startsWith('music/')) {
+    const musicPath = join(layout.root, rel)
+    if (existsSync(musicPath)) return musicPath
+  }
+
+  const direct = join(layout.root, rel)
   if (existsSync(direct)) return direct
 
-  const underMedia = join(wanwuRoot, 'media', rel)
+  const underMedia = join(layout.media, rel)
   if (existsSync(underMedia)) return underMedia
 
   return resolveLibraryMediaAbsolute(rel)

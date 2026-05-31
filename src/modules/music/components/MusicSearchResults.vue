@@ -1,0 +1,275 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import SelectButton from 'primevue/selectbutton'
+import EmptyState from '@app/components/EmptyState.vue'
+import MusicChartList from '@modules/music/components/MusicChartList.vue'
+import MusicCoverRow from '@modules/music/components/MusicCoverRow.vue'
+import { useMusicSearch, type MusicSearchFilter } from '@modules/music/composables/useMusicSearch'
+import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
+import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
+import type { NormalizedTrack } from '@shared/types/music'
+import '@modules/music/styles/music-shared.css'
+
+const router = useRouter()
+const player = useMusicPlayerStore()
+const search = useMusicSearch()
+const { resolvePlaylistBrowseId } = useMusicPlatform()
+
+const filterOptions: Array<{ label: string; value: MusicSearchFilter }> = [
+  { label: '单曲', value: 'songs' },
+  { label: '专辑', value: 'albums' },
+  { label: '歌手', value: 'artists' },
+  { label: '歌单', value: 'playlists' }
+]
+
+function play(track: NormalizedTrack, _index: number) {
+  const list = search.result?.tracks ?? []
+  void player.playTrack(track, list.length ? list : [track])
+}
+
+function openAlbum(browseId: string) {
+  void router.push({ name: 'music-album', params: { browseId } })
+}
+
+function openArtist(browseId: string) {
+  void router.push({ name: 'music-artist', params: { browseId } })
+}
+
+function openPlaylist(playlistId: string) {
+  const browseId = resolvePlaylistBrowseId(playlistId)
+  if (!browseId) return
+  void router.push({ name: 'music-playlist', params: { playlistId: browseId } })
+}
+
+const hasSongResults = computed(() => (search.result?.tracks.length ?? 0) > 0)
+const hasAnyResults = computed(() => {
+  const r = search.result
+  if (!r) return false
+  return (
+    r.tracks.length > 0 ||
+    r.albums.length > 0 ||
+    r.artists.length > 0 ||
+    (r.playlists?.length ?? 0) > 0
+  )
+})
+</script>
+
+<template>
+  <div class="ww-music-search-results ww-scroll-main">
+    <div class="ww-music-content-shell">
+      <div v-if="search.submittedQuery" class="ww-music-search-results__tabs">
+        <SelectButton
+          :model-value="search.filter"
+          :options="filterOptions"
+          option-label="label"
+          option-value="value"
+          @update:model-value="(v) => search.setFilter(v as MusicSearchFilter)"
+        />
+      </div>
+      <div v-if="search.loading" class="ww-music-search-loading">
+        <div class="ww-music-search-loading__list ww-music-track-panel">
+          <div v-for="n in 8" :key="n" class="ww-music-search-loading__row">
+            <div class="ww-music-search-loading__rank" />
+            <div class="ww-music-search-loading__cover" />
+            <div class="ww-music-search-loading__lines">
+              <div class="ww-music-search-loading__line ww-music-search-loading__line--title" />
+              <div class="ww-music-search-loading__line ww-music-search-loading__line--sub" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-else-if="search.error" class="ww-music-error-bar">
+        <span>{{ search.error }}</span>
+        <button type="button" class="text-ww-accent" @click="search.search()">重试</button>
+      </div>
+
+      <template v-else-if="search.result">
+        <header v-if="hasAnyResults" class="ww-music-search-results__head">
+          <p class="ww-music-search-results__query">
+            「{{ search.submittedQuery }}」的搜索结果
+          </p>
+          <span v-if="hasSongResults" class="ww-music-search-results__count">
+            {{ search.result.tracks.length }} 首歌曲
+          </span>
+        </header>
+
+        <div v-if="!hasAnyResults" class="ww-music-search-results__empty-wrap">
+          <EmptyState
+            variant="not-found"
+            title="未找到结果"
+            description="换个关键词或切换分类试试。"
+          />
+        </div>
+
+        <section v-if="search.filter === 'songs' && hasSongResults" class="ww-music-search-results__section">
+          <h3 class="ww-music-section-title">歌曲</h3>
+          <MusicChartList
+            :tracks="search.result.tracks"
+            panel
+            show-provider
+            @play="play"
+          />
+        </section>
+
+        <section v-if="search.filter === 'albums' && search.result.albums.length" class="ww-music-search-results__section">
+          <h3 class="ww-music-section-title">专辑</h3>
+          <MusicCoverRow
+            :items="
+              search.result.albums.map((a) => ({
+                id: a.browseId,
+                title: a.title,
+                subtitle: a.artist,
+                coverUrl: a.coverUrl
+              }))
+            "
+            @select="(item) => openAlbum(item.id)"
+          />
+        </section>
+
+        <section v-if="search.filter === 'artists' && search.result.artists.length" class="ww-music-search-results__section">
+          <h3 class="ww-music-section-title">歌手</h3>
+          <MusicCoverRow
+            :items="
+              search.result.artists.map((a) => ({
+                id: a.browseId,
+                title: a.name,
+                coverUrl: a.coverUrl,
+                shape: 'circle' as const
+              }))
+            "
+            @select="(item) => openArtist(item.id)"
+          />
+        </section>
+
+        <section
+          v-if="search.filter === 'playlists' && (search.result.playlists?.length ?? 0)"
+          class="ww-music-search-results__section"
+        >
+          <h3 class="ww-music-section-title">歌单</h3>
+          <MusicCoverRow
+            :items="
+              (search.result.playlists ?? []).map((p) => ({
+                id: p.playlistId,
+                title: p.title,
+                subtitle: p.trackCount ? `${p.trackCount} 首` : undefined,
+                coverUrl: p.coverUrl
+              }))
+            "
+            @select="(item) => openPlaylist(item.id)"
+          />
+        </section>
+      </template>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.ww-music-search-loading {
+  min-height: min(40vh, 22rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.ww-music-search-loading__list {
+  margin-top: 0.25rem;
+  opacity: 0.72;
+}
+
+.ww-music-search-loading__row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.85rem;
+}
+
+.ww-music-search-loading__rank,
+.ww-music-search-loading__cover,
+.ww-music-search-loading__line {
+  border-radius: 999px;
+  background: linear-gradient(
+    115deg,
+    var(--ww-surface-hover) 0%,
+    color-mix(in srgb, var(--ww-surface-hover) 55%, transparent) 45%,
+    var(--ww-surface-hover) 90%
+  );
+  background-size: 200% 200%;
+  animation: ww-music-shimmer 1.2s ease-in-out infinite;
+}
+
+.ww-music-search-loading__rank {
+  width: 1.25rem;
+  height: 0.75rem;
+}
+
+.ww-music-search-loading__cover {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--ww-music-inner-radius, 0.875rem);
+  flex-shrink: 0;
+}
+
+.ww-music-search-loading__lines {
+  flex: 1;
+  min-width: 0;
+}
+
+.ww-music-search-loading__line {
+  height: 0.55rem;
+}
+
+.ww-music-search-loading__line--title {
+  width: 58%;
+}
+
+.ww-music-search-loading__line--sub {
+  width: 36%;
+  margin-top: 0.35rem;
+}
+
+.ww-music-search-results__tabs {
+  margin-bottom: 1rem;
+}
+
+.ww-music-search-results__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.ww-music-search-results__query {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ww-ink);
+}
+
+.ww-music-search-results__count {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--ww-ink-faint);
+}
+
+.ww-music-search-results__section {
+  margin-bottom: 1.75rem;
+}
+
+.ww-music-search-results__section .ww-music-section-title {
+  margin: 0 0 0.65rem;
+}
+
+.ww-music-search-results__empty-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 0 2rem;
+}
+
+.ww-music-search-results__empty-wrap :deep(.ww-empty-state) {
+  flex: none;
+  width: 100%;
+  padding: 1rem 0 0.5rem;
+}
+</style>

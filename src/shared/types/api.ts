@@ -10,6 +10,21 @@ import type {
 } from './links'
 import type { AppSettings } from './settings'
 import type { RssEntry, RssFeed, RssFeedInput, RssFeedUpdate, RssGroup } from './rss'
+import type {
+  MusicChartsPayload,
+  MusicConnectionTestResult,
+  MusicFavoriteRow,
+  MusicHistoryRow,
+  MusicLyricsResult,
+  MusicMoodCategory,
+  MusicMoodPlaylist,
+  MusicProviderHealth,
+  MusicArtistPayload,
+  MusicSearchResult,
+  MusicStreamResult,
+  MusicTrendingPayload,
+  NormalizedTrack
+} from './music'
 import type { NoteCreateInput, NoteImage, NoteItem, NoteUpdateInput } from './notes'
 import type {
   ClipboardAssistPayload,
@@ -308,6 +323,85 @@ export interface WanwuApi {
     onTogglePalette: (listener: () => void) => () => void
     onOpenTarget: (listener: (target: QuickAccessOpenTarget) => void) => () => void
     onClipboardMatches: (listener: (payload: ClipboardAssistPayload) => void) => () => void
+  }
+  music: {
+    search: (q: string, filter?: string) => Promise<MusicSearchResult>
+    resolveTrack: (track: NormalizedTrack) => Promise<NormalizedTrack>
+    getTrending: () => Promise<MusicTrendingPayload>
+    getCharts: () => Promise<MusicChartsPayload>
+    getMoods: () => Promise<MusicMoodCategory[]>
+    getMoodPlaylists: (categoryId: string) => Promise<MusicMoodPlaylist[]>
+    getPlaylistTracks: (playlistId: string) => Promise<NormalizedTrack[]>
+    getForYou: () => Promise<NormalizedTrack[]>
+    getDiscoverFeed: () => Promise<import('./music').MusicDiscoverFeed>
+    getDiscoverSection: <K extends import('./music').DiscoverSectionKey>(
+      section: K
+    ) => Promise<import('./music').MusicDiscoverFeed[K]>
+    refreshDiscoverSection: <K extends import('./music').DiscoverSectionKey>(
+      section: K
+    ) => Promise<import('./music').MusicDiscoverFeed[K]>
+    getAlbum: (browseId: string) => Promise<{ album: unknown; tracks: NormalizedTrack[] }>
+    getArtist: (browseId: string) => Promise<import('./music').MusicArtistPayload>
+    getProviderHealth: () => Promise<import('./music').MusicProviderHealth[]>
+    getLyrics: (
+      title: string,
+      artist: string,
+      hint?: Pick<import('@shared/types/music').NormalizedTrack, 'provider' | 'videoId' | 'trackKey'>
+    ) => Promise<MusicLyricsResult>
+    resolveStream: (track: NormalizedTrack, useCache?: boolean) => Promise<MusicStreamResult>
+    testConnection: () => Promise<MusicConnectionTestResult>
+    getRadio: (videoId: string) => Promise<NormalizedTrack[]>
+    listFavorites: () => Promise<MusicFavoriteRow[]>
+    isFavorite: (trackKey: string) => Promise<boolean>
+    toggleFavorite: (track: NormalizedTrack) => Promise<boolean>
+    listHistory: (limit?: number) => Promise<MusicHistoryRow[]>
+    appendHistory: (track: NormalizedTrack) => Promise<void>
+    clearHistory: () => Promise<void>
+    neteaseGetLoginStatus: () => Promise<import('./music').MusicNeteaseLoginStatus>
+    neteaseLoginQrKey: () => Promise<import('./music').MusicNeteaseQrLogin>
+    neteaseLoginQrCheck: (key: string) => Promise<{ status: number; message?: string; cookie?: string }>
+    neteaseSendCaptcha: (phone: string, countryCode?: number) => Promise<unknown>
+    neteaseLoginPhone: (phone: string, captcha: string, countryCode?: number) => Promise<unknown>
+    neteaseLoginCookie: (musicU: string) => Promise<import('./music').MusicNeteaseLoginStatus>
+    neteaseLogout: () => Promise<void>
+    neteaseRefreshLogin: () => Promise<import('./music').MusicNeteaseLoginStatus>
+    kugouGetLoginStatus: () => Promise<import('./music').MusicKugouLoginStatus>
+    kugouLoginQrKey: () => Promise<import('./music').MusicKugouQrLogin>
+    kugouLoginQrCheck: (key: string) => Promise<{ status: number; message?: string; cookie?: string }>
+    kugouSendCaptcha: (phone: string, countryCode?: number) => Promise<unknown>
+    kugouLoginPhone: (phone: string, captcha: string, countryCode?: number) => Promise<unknown>
+    kugouLoginCookie: (token: string) => Promise<import('./music').MusicKugouLoginStatus>
+    kugouLogout: () => Promise<void>
+    kugouRefreshLogin: () => Promise<import('./music').MusicKugouLoginStatus>
+    neteaseSearchHot: (limit?: number) => Promise<import('./music').MusicHotSearchEntry[]>
+    searchHot: (limit?: number) => Promise<import('./music').MusicHotSearchEntry[]>
+    neteaseSearchSuggest: (keywords: string) => Promise<Array<{ keyword: string; type?: string }>>
+    searchSuggest: (keywords: string) => Promise<Array<{ keyword: string; type?: string }>>
+    neteaseSearchDefault: () => Promise<string>
+    searchDefault: () => Promise<string>
+    getDailyRecommend: () => Promise<NormalizedTrack[]>
+    getPersonalFm: () => Promise<NormalizedTrack[]>
+    trashPersonalFm: (songId: string) => Promise<void>
+    getNeteaseUserPlaylists: () => Promise<
+      Array<{ id: string; title: string; coverUrl?: string; trackCount?: number; creatorName?: string }>
+    >
+    getNeteaseLikedTracks: (limit?: number) => Promise<NormalizedTrack[]>
+    getNeteaseUserCloud: (limit?: number) => Promise<NormalizedTrack[]>
+    getNeteaseArtistList: (limit?: number) => Promise<MusicSearchResult['artists']>
+    getNeteaseNewAlbums: (limit?: number) => Promise<MusicSearchResult['albums']>
+    getPlatformSessionSnapshot: () => Promise<import('./music').MusicPlatformSessionSnapshot>
+    getPlatformLoginStatus: () => Promise<import('./music').MusicNeteaseLoginStatus>
+    getPlatformUserProfile: () => Promise<import('./music').MusicPlatformUserProfile>
+    refreshPlatformLogin: () => Promise<import('./music').MusicNeteaseLoginStatus>
+    getPlatformUserPlaylists: () => Promise<
+      Array<{ id: string; title: string; coverUrl?: string; trackCount?: number; creatorName?: string }>
+    >
+    getPlatformLikedTracks: (limit?: number) => Promise<NormalizedTrack[]>
+    getPlatformUserCloud: (limit?: number) => Promise<NormalizedTrack[]>
+    getPlatformSubscribed: (
+      kind: import('./music').MusicPlatformSubscribedKind,
+      limit?: number
+    ) => Promise<import('./music').MusicPlatformSubscribedItem[]>
   }
   share: {
     canNativeShare: () => Promise<boolean>

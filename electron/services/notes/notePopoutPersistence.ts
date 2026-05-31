@@ -1,6 +1,7 @@
 ﻿import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { dirname } from 'path'
 import type { Rectangle } from 'electron'
+import { getWanwuPathLayout } from '../data/paths'
 
 /** 用户手动关闭/隐藏后，批量「显示全部」不再恢复 */
 export type NotePopoutVisibilityOverride = 'user-hidden'
@@ -22,14 +23,12 @@ interface NotePopoutStore {
   byNoteId: Record<string, NotePopoutSession>
 }
 
-const FILE_NAME = 'note-popout-sessions.json'
-
 let store: NotePopoutStore | null = null
-let dataDir: string | null = null
+let sessionsFile: string | null = null
 
 function filePath(): string {
-  if (!dataDir) throw new Error('note popout persistence not initialized')
-  return join(dataDir, FILE_NAME)
+  if (!sessionsFile) throw new Error('note popout persistence not initialized')
+  return sessionsFile
 }
 
 function defaultStore(): NotePopoutStore {
@@ -57,9 +56,9 @@ function loadStore(): NotePopoutStore {
 }
 
 function flushStore(): void {
-  if (!store || !dataDir) return
-  mkdirSync(dataDir, { recursive: true })
-  writeFileSync(filePath(), JSON.stringify(store, null, 2), 'utf-8')
+  if (!store || !sessionsFile) return
+  mkdirSync(dirname(sessionsFile), { recursive: true })
+  writeFileSync(sessionsFile, JSON.stringify(store, null, 2), 'utf-8')
 }
 
 function isValidBounds(bounds: Partial<Rectangle> | undefined): bounds is Rectangle {
@@ -75,7 +74,7 @@ function isValidBounds(bounds: Partial<Rectangle> | undefined): bounds is Rectan
 }
 
 export function initNotePopoutPersistence(basePath: string): void {
-  dataDir = basePath
+  sessionsFile = getWanwuPathLayout(basePath).notePopoutSessionsFile
   store = null
 }
 

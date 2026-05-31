@@ -1,6 +1,7 @@
 ﻿import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { dirname } from 'path'
 import { screen, type BrowserWindow, type Rectangle } from 'electron'
+import { getWanwuPathLayout } from '../data/paths'
 import { normalizeAppSettings } from '../data/settings'
 import type { WindowStateMode } from '../../../src/shared/types/settings'
 
@@ -19,7 +20,7 @@ export interface PersistedWindowState {
 }
 
 function stateFilePath(basePath: string): string {
-  return join(basePath, 'window-state.json')
+  return getWanwuPathLayout(basePath).windowStateFile
 }
 
 function readStateFile(basePath: string): PersistedWindowState | null {
@@ -54,8 +55,9 @@ function readStateFile(basePath: string): PersistedWindowState | null {
 }
 
 function writeStateFile(basePath: string, state: PersistedWindowState): void {
-  mkdirSync(basePath, { recursive: true })
-  writeFileSync(stateFilePath(basePath), JSON.stringify(state, null, 2), 'utf-8')
+  const file = stateFilePath(basePath)
+  mkdirSync(dirname(file), { recursive: true })
+  writeFileSync(file, JSON.stringify(state, null, 2), 'utf-8')
 }
 
 function defaultCenteredBounds(): Rectangle {

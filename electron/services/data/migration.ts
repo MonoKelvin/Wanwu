@@ -1,6 +1,5 @@
 ﻿import { cpSync, existsSync, mkdirSync, readdirSync } from 'fs'
-import { join } from 'path'
-import { validateMigrationTarget, writeWanwuPathConfig } from '../data/paths'
+import { getWanwuPathLayout, validateMigrationTarget, writeWanwuPathConfig } from '../data/paths'
 
 export type MigrateDataResult =
   | { ok: true; targetPath: string }
@@ -62,6 +61,10 @@ export function migrateWanwuData(
 }
 
 export function wanwuDataHasContent(wanwuPath: string): boolean {
-  const dbDir = join(wanwuPath, 'db')
-  return dirHasEntries(dbDir) || dirHasEntries(join(wanwuPath, 'media'))
+  const layout = getWanwuPathLayout(wanwuPath)
+  return (
+    dirHasEntries(layout.db) ||
+    dirHasEntries(layout.media) ||
+    dirHasEntries(layout.music)
+  )
 }

@@ -5,11 +5,13 @@ import CloudAbodeView from '@modules/cloud-abode/CloudAbodeView.vue'
 import LibraryShellView from '@modules/library/LibraryShellView.vue'
 import PersonalView from '@modules/personal/PersonalView.vue'
 import RssView from '@modules/rss/RssView.vue'
+import MusicView from '@modules/music/MusicView.vue'
 import SettingsView from '@modules/settings/SettingsView.vue'
 
 const MODULE_VIEW: Record<ModuleId, Component> = {
   library: LibraryShellView,
   rss: RssView,
+  music: MusicView,
   'cloud-abode': CloudAbodeView,
   personal: PersonalView,
   settings: SettingsView

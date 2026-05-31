@@ -7,8 +7,8 @@ const ALLOWED_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif'])
 
 export type ProfileMediaKind = 'avatar' | 'background'
 
-function profileDir(media: MediaService, kind: ProfileMediaKind): string {
-  const dir = join(media.resolvePath('media'), 'user', 'profile')
+function profileDir(media: MediaService, _kind: ProfileMediaKind): string {
+  const dir = media.resolveMediaPath('user/profile')
   mkdirSync(dir, { recursive: true })
   return dir
 }
@@ -34,7 +34,7 @@ export function importProfileImage(
 
 export function removeProfileFile(media: MediaService, relativePath: string | null | undefined): void {
   if (!relativePath?.trim()) return
-  const abs = join(media.resolvePath('media'), relativePath.replace(/^\/+/, ''))
+  const abs = media.resolveMediaPath(relativePath)
   if (existsSync(abs)) {
     try {
       unlinkSync(abs)

@@ -7,6 +7,7 @@ import type {
   NoteItem,
   NoteUpdateInput
 } from '../../../src/shared/types/notes'
+import { ensureWanwuDataLayout, getWanwuPathLayout, type WanwuPathLayout } from '../data/paths'
 import type { UserDataGateway } from '../storage/userDataGateway'
 
 export interface NotesStorage {
@@ -19,10 +20,15 @@ export interface NotesStorage {
 }
 
 export class SqliteNotesStorage implements NotesStorage {
+  private readonly layout: WanwuPathLayout
+
   constructor(
     private readonly userData: UserDataGateway,
-    private readonly basePath: string
-  ) {}
+    basePath?: string
+  ) {
+    const root = ensureWanwuDataLayout(basePath)
+    this.layout = getWanwuPathLayout(root)
+  }
 
   listNotes(): NoteItem[] {
     return this.userData.listNotes()
@@ -64,14 +70,14 @@ export class SqliteNotesStorage implements NotesStorage {
   private copyToMedia(noteId: string, sourceFilePath: string, ext: string): string {
     const relativeDir = join('notes', noteId)
     const relativePath = join(relativeDir, `${randomUUID()}${ext}`).replace(/\\/g, '/')
-    const targetPath = join(this.basePath, 'media', relativePath)
+    const targetPath = join(this.layout.media, relativePath)
     mkdirSync(dirname(targetPath), { recursive: true })
     copyFileSync(sourceFilePath, targetPath)
     return relativePath
   }
 
   private deleteMediaFile(relativePath: string): void {
-    const fullPath = join(this.basePath, 'media', relativePath)
+    const fullPath = join(this.layout.media, relativePath)
     if (existsSync(fullPath)) {
       rmSync(fullPath, { force: true })
     }

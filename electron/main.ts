@@ -18,6 +18,7 @@ import { DatabaseService } from './services/core/database'
 import { LibraryService } from './services/library/service'
 import { LinksService } from './services/links/service'
 import { RssService } from './services/rss/service'
+import { MusicService } from './services/music/service'
 import { MediaService } from './services/media/service'
 import { NotesService } from './services/notes/service'
 import {
@@ -33,7 +34,7 @@ import { applyRssAutoRefreshSchedule } from './services/rss/scheduler'
 import { runStartupLibrarySeed } from './services/library/seed'
 import { startLibraryBootstrap } from './services/library/pack'
 import { runInstallerLibraryPackImport } from './services/library/installerImport'
-import { CloudAbodeService } from './services/cloud-abode/service'
+// import { CloudAbodeService } from './services/cloud-abode/service'
 import { disposeQuickAccess, focusMainWindow } from './services/quickAccess/quickAccessManager'
 import {
   attachMainWindowCloseBehavior,
@@ -76,6 +77,10 @@ const MEDIA_MIME: Record<string, string> = {
   '.gltf': 'model/gltf+json',
   '.bin': 'application/octet-stream',
   '.mp3': 'audio/mpeg',
+  '.m4a': 'audio/mp4',
+  '.mp4': 'audio/mp4',
+  '.webm': 'audio/webm',
+  '.ogg': 'audio/ogg',
   '.m3u8': 'application/vnd.apple.mpegurl',
   '.ts': 'video/mp2t',
   '.md': 'text/markdown; charset=utf-8'
@@ -106,10 +111,11 @@ const services = {
   library: null as LibraryService | null,
   links: null as LinksService | null,
   rss: null as RssService | null,
+  music: null as MusicService | null,
   media: null as MediaService | null,
   notes: null as NotesService | null,
   userData: null as UserDataGateway | null,
-  cloudAbode: null as CloudAbodeService | null
+  cloudAbode: null
 }
 
 async function loadDevRenderer(win: BrowserWindow, urls: string[]): Promise<void> {
@@ -228,11 +234,13 @@ async function initServices(): Promise<void> {
   services.library = new LibraryService(services.db)
   services.links = new LinksService(userData)
   services.rss = new RssService(services.db)
+  services.music = new MusicService(services.db, userData)
   services.media = new MediaService(userData)
   services.userData = new SqliteUserDataGateway(services.db)
   services.notes = new NotesService(new SqliteNotesStorage(services.userData, userData))
-  services.cloudAbode = new CloudAbodeService()
-  services.cloudAbode.open(userData)
+  // 云斋暂下线（GLSL / 展厅 3D 未就绪）
+  // services.cloudAbode = new CloudAbodeService()
+  // services.cloudAbode.open(userData)
   configureNotePopoutPersistence(userData)
   registerIpcHandlers(services)
   applyRssAutoRefreshSchedule(services)

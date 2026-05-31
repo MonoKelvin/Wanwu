@@ -63,7 +63,9 @@ async function openDataFolder() {
       <div class="ww-settings-block ww-settings-block--inline">
         <div class="ww-settings-block__text">
           <p class="ww-settings-block__title">备份与维护</p>
-          <p class="ww-settings-block__subtitle">备份为 zip；恢复会覆盖数据并重启</p>
+          <p class="ww-settings-block__subtitle">
+            备份整包数据目录（含音乐库、缓存、图鉴库等）；恢复会覆盖并重启
+          </p>
         </div>
         <div class="ww-settings-block__actions ww-settings-block__actions--end">
           <WwButton
