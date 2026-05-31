@@ -85,7 +85,7 @@ const showLoginBanner = () =>
       <template v-if="activeTab === 'featured'">
         <div v-if="sectionError(discover.chartPlaylists)" class="ww-music-section-error">
           <span>{{ discover.chartPlaylists.error }}</span>
-          <button type="button" class="text-ww-accent" @click="retrySection('chartPlaylists')">重试</button>
+          <button type="button" class="ww-music-retry" @click="retrySection('chartPlaylists')">重试</button>
         </div>
         <MusicDiscoverSection
           title="精选歌单"
@@ -106,12 +106,12 @@ const showLoginBanner = () =>
             :cards="discover.chartPlaylists.data"
             @select="openPlaylist"
           />
-          <p v-else class="text-sm text-ww-ink-faint">暂无歌单数据</p>
+          <p v-else class="ww-music-state-hint">暂无歌单数据</p>
         </MusicDiscoverSection>
 
         <div v-if="sectionError(discover.chartTracks)" class="ww-music-section-error">
           <span>{{ discover.chartTracks.error }}</span>
-          <button type="button" class="text-ww-accent" @click="retrySection('chartTracks')">重试</button>
+          <button type="button" class="ww-music-retry" @click="retrySection('chartTracks')">重试</button>
         </div>
         <MusicDiscoverSection
           title="排行榜"
@@ -147,7 +147,7 @@ const showLoginBanner = () =>
           />
           <p
             v-if="discover.forYou.loaded && !discover.forYou.data.length && !discover.forYou.loading"
-            class="text-sm text-ww-ink-faint"
+            class="ww-music-state-hint"
           >
             暂无推荐，{{ showLoginBanner() ? '登录后刷新试试' : '稍后再试' }}。
           </p>
@@ -180,7 +180,7 @@ const showLoginBanner = () =>
           />
           <p
             v-if="discover.newReleases.loaded && !discover.newReleases.data.length"
-            class="text-sm text-ww-ink-faint"
+            class="ww-music-state-hint"
           >
             暂无新歌数据
           </p>

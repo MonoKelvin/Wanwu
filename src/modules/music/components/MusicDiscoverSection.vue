@@ -34,14 +34,15 @@ defineEmits<{ refresh: [] }>()
 
 <style scoped>
 .ww-music-section {
-  margin-bottom: var(--ww-music-section-gap, 1.25rem);
+  margin-bottom: var(--ww-music-section-gap);
 }
+
 .ww-music-section__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 0.85rem;
+  margin-bottom: var(--ww-music-section-head-gap);
 }
 .ww-music-section__title-row {
   display: flex;

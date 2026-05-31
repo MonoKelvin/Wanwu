@@ -94,10 +94,10 @@ function play(track: NormalizedTrack) {
 <template>
   <div class="ww-music-tab-body ww-scroll-main">
     <div class="ww-music-content-shell">
-      <p v-if="loading" class="text-sm text-ww-ink-faint">加载中…</p>
+      <p v-if="loading" class="ww-music-state-hint">加载中…</p>
       <div v-else-if="error" class="ww-music-error-bar">
         <span>{{ error }}</span>
-        <button type="button" class="text-ww-accent" @click="load">重试</button>
+        <button type="button" class="ww-music-retry" @click="load">重试</button>
       </div>
       <template v-else>
         <MusicAlbumHero

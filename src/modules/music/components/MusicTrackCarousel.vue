@@ -33,7 +33,7 @@ function onCardClick(track: NormalizedTrack, index: number) {
       </div>
     </div>
   </div>
-  <div v-else-if="!tracks.length" class="text-sm text-ww-ink-faint">暂无曲目</div>
+  <div v-else-if="!tracks.length" class="ww-music-state-hint">暂无曲目</div>
   <div v-else class="ww-music-track-carousel ww-music-carousel-wrap">
     <div ref="rowRef" class="ww-music-scroll-row">
       <div

@@ -304,12 +304,12 @@ onMounted(() => {
 
       <div class="ww-music-mine-toolbar">
         <div class="ww-music-mine-tabs-row">
-          <div class="ww-music-mine-tabs">
+          <div class="ww-music-pill-tabs">
             <button
               v-for="tab in platformTabs"
               :key="tab.id"
               type="button"
-              class="ww-music-mine-tab"
+              class="ww-music-pill-tabs__btn"
               :class="{ 'is-active': activeTab === tab.id }"
               @click="switchTab(tab.id)"
             >
@@ -318,10 +318,10 @@ onMounted(() => {
             </button>
           </div>
 
-          <div v-if="activeTab === 'local'" class="ww-music-mine-subtabs">
+          <div v-if="activeTab === 'local'" class="ww-music-subtabs">
             <button
               type="button"
-              class="ww-music-mine-subtab"
+              class="ww-music-subtabs__btn"
               :class="{ 'is-active': localSubTab === 'favorites' }"
               @click="switchLocalSub('favorites')"
             >
@@ -329,7 +329,7 @@ onMounted(() => {
             </button>
             <button
               type="button"
-              class="ww-music-mine-subtab"
+              class="ww-music-subtabs__btn"
               :class="{ 'is-active': localSubTab === 'history' }"
               @click="switchLocalSub('history')"
             >
@@ -337,12 +337,12 @@ onMounted(() => {
             </button>
           </div>
 
-          <div v-if="activeTab === 'collect'" class="ww-music-mine-subtabs">
+          <div v-if="activeTab === 'collect'" class="ww-music-subtabs">
             <button
               v-for="sub in collectSubTabs"
               :key="sub.id"
               type="button"
-              class="ww-music-mine-subtab"
+              class="ww-music-subtabs__btn"
               :class="{ 'is-active': collectSubTab === sub.id }"
               @click="switchCollectSub(sub.id)"
             >
@@ -366,7 +366,7 @@ onMounted(() => {
       <div class="ww-music-mine-panel">
         <!-- 本地 -->
         <template v-if="activeTab === 'local'">
-          <p v-if="loadingLocal" class="text-sm text-ww-ink-faint">加载中…</p>
+          <p v-if="loadingLocal" class="ww-music-state-hint">加载中…</p>
           <MusicChartList
             v-else-if="currentLocalTracks.length"
             :tracks="currentLocalTracks"
@@ -374,10 +374,10 @@ onMounted(() => {
             show-provider
             @play="(t) => play(t, currentLocalTracks)"
           />
-          <p v-else-if="localSubTab === 'favorites'" class="text-sm text-ww-ink-faint">
+          <p v-else-if="localSubTab === 'favorites'" class="ww-music-state-hint">
             还没有收藏，播放时点击心形即可收藏。
           </p>
-          <p v-else class="text-sm text-ww-ink-faint">暂无播放记录。</p>
+          <p v-else class="ww-music-state-hint">暂无播放记录。</p>
         </template>
 
         <!-- 需登录的平台 Tab -->
@@ -389,7 +389,7 @@ onMounted(() => {
         </template>
 
         <template v-else-if="activeTab === 'liked'">
-          <p v-if="loadingLiked" class="text-sm text-ww-ink-faint">加载喜欢…</p>
+          <p v-if="loadingLiked" class="ww-music-state-hint">加载喜欢…</p>
           <MusicChartList
             v-else-if="likedTracks.length"
             :tracks="likedTracks"
@@ -397,11 +397,11 @@ onMounted(() => {
             show-provider
             @play="(t) => play(t, likedTracks)"
           />
-          <p v-else class="text-sm text-ww-ink-faint">还没有喜欢的歌曲。</p>
+          <p v-else class="ww-music-state-hint">还没有喜欢的歌曲。</p>
         </template>
 
         <template v-else-if="activeTab === 'playlists'">
-          <p v-if="loadingPlaylists" class="text-sm text-ww-ink-faint">加载歌单…</p>
+          <p v-if="loadingPlaylists" class="ww-music-state-hint">加载歌单…</p>
           <template v-else-if="playlists.length">
             <div v-if="createdPlaylists.length" class="ww-music-mine-playlist-section">
               <p class="ww-music-mine-section-label">创建的歌单</p>
@@ -418,14 +418,14 @@ onMounted(() => {
               />
             </div>
           </template>
-          <p v-else class="text-sm text-ww-ink-faint">暂无歌单。</p>
+          <p v-else class="ww-music-state-hint">暂无歌单。</p>
         </template>
 
         <template v-else-if="activeTab === 'collect'">
-          <p v-if="unsupportedCollectMessage" class="text-sm text-ww-ink-faint">{{ unsupportedCollectMessage }}</p>
-          <p v-else-if="loadingCollect" class="text-sm text-ww-ink-faint">加载收藏…</p>
+          <p v-if="unsupportedCollectMessage" class="ww-music-state-hint">{{ unsupportedCollectMessage }}</p>
+          <p v-else-if="loadingCollect" class="ww-music-state-hint">加载收藏…</p>
           <MusicMineSubscribedGrid v-else-if="subscribedItems.length" :items="subscribedItems" />
-          <p v-else class="text-sm text-ww-ink-faint">暂无{{ collectSubTabs.find((t) => t.id === collectSubTab)?.label }}收藏。</p>
+          <p v-else class="ww-music-state-hint">暂无{{ collectSubTabs.find((t) => t.id === collectSubTab)?.label }}收藏。</p>
         </template>
 
         <template v-else-if="activeTab === 'cloud'">

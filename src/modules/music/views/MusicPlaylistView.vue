@@ -33,9 +33,9 @@ function play(track: NormalizedTrack) {
   <div class="ww-music-tab-body ww-scroll-main">
     <div class="ww-music-content-shell">
       <MusicPageHeading :title="title" subtitle="歌单" />
-      <p v-if="loading" class="text-sm text-ww-ink-faint">加载中…</p>
+      <p v-if="loading" class="ww-music-state-hint">加载中…</p>
       <MusicChartList v-else-if="tracks.length" :tracks="tracks" panel show-provider @play="play" />
-      <p v-else class="text-sm text-ww-ink-faint">歌单为空或无法加载。</p>
+      <p v-else class="ww-music-state-hint">歌单为空或无法加载。</p>
     </div>
   </div>
 </template>

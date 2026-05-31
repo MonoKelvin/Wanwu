@@ -153,6 +153,17 @@ export class MusicService {
       const src = this.getSettings().musicPrimarySource
       const platform = this.primaryPlatform()
       try {
+        if (src === 'kugou') {
+          const probe = await platform.cloudSearch('周杰伦', MusicSearchType.Song, 3)
+          const tracks = await platform.getNewSongs(3)
+          return {
+            ok: probe.tracks.length > 0 || tracks.length > 0,
+            baseUrl: `${src}://embedded`,
+            latencyMs: Date.now() - start,
+            trackCount: probe.tracks.length || tracks.length,
+            localModeFallback: false
+          }
+        }
         const hot = await platform.searchHot(1)
         return {
           ok: true,

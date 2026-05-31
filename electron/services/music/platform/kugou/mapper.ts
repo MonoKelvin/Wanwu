@@ -6,6 +6,7 @@ import type {
   NormalizedTrack
 } from '../../../../../src/shared/types/music'
 import { upgradeCoverUrl } from '../../../../../src/shared/utils/musicCoverUrl'
+import { parseKugouJsonBody } from './kugouResponse'
 import type { MusicPlaylistSummary, MusicToplistSummary } from '../types'
 import { MusicSearchType } from '../types'
 
@@ -28,9 +29,31 @@ function pickNumber(obj: Record<string, unknown>, ...keys: string[]): number | u
   return undefined
 }
 
+function pickHash(raw: Record<string, unknown>): string {
+  const direct = pickString(raw, 'hash', 'Hash', 'FileHash', 'file_hash')
+  if (direct) return direct.toLowerCase()
+  for (const key of ['128', '320', 'HQ', 'SQ', 'Flac', 'High']) {
+    const block = raw[key]
+    if (block && typeof block === 'object') {
+      const h = pickString(block as Record<string, unknown>, 'Hash', 'hash')
+      if (h) return h.toLowerCase()
+    }
+  }
+  return ''
+}
+
+function pickTitle(raw: Record<string, unknown>): string {
+  return (
+    pickString(raw, 'SongName', 'songname', 'song_name', 'OriSongName', 'name') ||
+    pickString(raw, 'filename', 'FileName') ||
+    ''
+  )
+}
+
 export function encodeKugouVideoId(raw: Record<string, unknown>): string {
-  const albumAudioId = pickNumber(raw, 'album_audio_id', 'albumAudioId', 'EMixSongID', 'MixSongID', 'mixsongid') ?? 0
-  const hash = pickString(raw, 'hash', 'Hash', 'FileHash', 'file_hash').toLowerCase()
+  const albumAudioId =
+    pickNumber(raw, 'album_audio_id', 'albumAudioId', 'EMixSongID', 'MixSongID', 'mixsongid', 'Audioid') ?? 0
+  const hash = pickHash(raw)
   const albumId = pickNumber(raw, 'album_id', 'albumId', 'AlbumID') ?? 0
   return `${albumAudioId}|${hash}|${albumId}`
 }
@@ -42,10 +65,10 @@ export function parseKugouVideoId(videoId: string): { albumAudioId: string; hash
 
 function pickCover(raw: Record<string, unknown>): string | undefined {
   const img =
-    pickString(raw, 'img', 'Img', 'album_img', 'AlbumImg', 'sizable_cover', 'pic') ||
+    pickString(raw, 'img', 'Img', 'album_img', 'AlbumImg', 'sizable_cover', 'pic', 'imgurl', 'flexible_cover') ||
     pickString(raw, 'Image', 'cover', 'Cover')
   if (!img) return undefined
-  const url = img.replace('http://', 'https://')
+  const url = img.replace('http://', 'https://').replace('{size}', '240')
   return upgradeCoverUrl(url, 'card')
 }
 
@@ -58,11 +81,11 @@ function mapArtistName(raw: Record<string, unknown>): string {
 }
 
 export function mapKugouSong(raw: Record<string, unknown>): NormalizedTrack | null {
-  const albumAudioId = pickNumber(raw, 'album_audio_id', 'albumAudioId', 'EMixSongID', 'MixSongID', 'mixsongid')
-  const hash = pickString(raw, 'hash', 'Hash', 'FileHash', 'file_hash')
+  const albumAudioId = pickNumber(raw, 'album_audio_id', 'albumAudioId', 'EMixSongID', 'MixSongID', 'mixsongid', 'Audioid')
+  const hash = pickHash(raw)
   if (!albumAudioId && !hash) return null
 
-  const title = pickString(raw, 'SongName', 'songname', 'song_name', 'filename', 'name')
+  const title = pickTitle(raw)
   if (!title) return null
 
   const albumId = pickNumber(raw, 'album_id', 'albumId', 'AlbumID')
@@ -96,18 +119,32 @@ function extractLists(body: Record<string, unknown>): unknown[] {
   if (Array.isArray(data)) return data
   if (data && typeof data === 'object') {
     const row = data as Record<string, unknown>
-    if (Array.isArray(row.lists)) return row.lists
-    if (Array.isArray(row.list)) return row.list
-    if (Array.isArray(row.songs)) return row.songs
-    if (Array.isArray(row.info)) return row.info
+    if (Array.isArray(row.songlist)) return row.songlist
+    if (Array.isArray(row.song_list)) return row.song_list
+    if (Array.isArray(row.special_list)) return row.special_list
+    if (Array.isArray(row.lists)) {
+      const first = row.lists[0] as Record<string, unknown> | undefined
+      if (first && Array.isArray(first.lists)) {
+        const nested: unknown[] = []
+        for (const sec of row.lists) {
+          const s = sec as Record<string, unknown>
+          if (s.type === 'song' || s.type == null) {
+            if (Array.isArray(s.lists)) nested.push(...s.lists)
+          }
+        }
+        if (nested.length) return nested
+      }
+      return row.lists
+    }
   }
   if (Array.isArray(body.lists)) return body.lists
   if (Array.isArray(body.list)) return body.list
+  if (Array.isArray(body.special_list)) return body.special_list
   return []
 }
 
 export function mapKugouSearchResult(body: unknown, type: MusicSearchType): MusicSearchResult {
-  const root = (body ?? {}) as Record<string, unknown>
+  const root = parseKugouJsonBody(body) as Record<string, unknown>
   const lists = extractLists(root)
   const mapped: MusicSearchResult = { tracks: [], albums: [], artists: [] }
 
@@ -163,15 +200,17 @@ export function parseBrowseId(browseId: string): { kind: string; id: string } | 
 }
 
 export function mapPlaylistSummary(raw: Record<string, unknown>): MusicPlaylistSummary | null {
-  const id = pickString(raw, 'global_collection_id', 'GlobalCollectionId', 'specialid')
-  const title = pickString(raw, 'specialname', 'SpecialName', 'name')
+  const id =
+    pickString(raw, 'global_collection_id', 'GlobalCollectionId', 'specialid', 'SpecialId') ||
+    (raw.specialid != null ? String(raw.specialid) : '')
+  const title = pickString(raw, 'specialname', 'SpecialName', 'name', 'title')
   if (!id || !title) return null
   return {
     id,
     title,
     coverUrl: pickCover(raw),
-    trackCount: pickNumber(raw, 'songcount', 'SongCount'),
-    creatorName: pickString(raw, 'username', 'UserName', 'nickname') || undefined
+    trackCount: pickNumber(raw, 'songcount', 'SongCount', 'percount', 'collectcount'),
+    creatorName: pickString(raw, 'username', 'UserName', 'nickname', 'singername') || undefined
   }
 }
 
@@ -212,8 +251,18 @@ export function mapMoodCategories(list: unknown[]): MusicMoodCategory[] {
   const out: MusicMoodCategory[] = []
   for (const item of list) {
     const row = item as Record<string, unknown>
-    const id = String(pickNumber(row, 'id', 'category_id', 'CategoryId') ?? pickString(row, 'id', 'name'))
-    const title = pickString(row, 'name', 'Name', 'title')
+    const sons = row.son as Array<Record<string, unknown>> | undefined
+    if (sons?.length) {
+      for (const son of sons) {
+        const title = pickString(son, 'tag_name', 'name', 'Name', 'title')
+        const id = String(pickNumber(son, 'tag_id', 'id') ?? title)
+        if (!title) continue
+        out.push({ id, title, browseId: `kugou:playlist-cat:${id}` })
+      }
+      continue
+    }
+    const id = String(pickNumber(row, 'id', 'category_id', 'CategoryId', 'tag_id') ?? pickString(row, 'id', 'name'))
+    const title = pickString(row, 'name', 'Name', 'title', 'tag_name')
     if (!title) continue
     out.push({
       id,

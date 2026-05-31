@@ -49,9 +49,13 @@ export class PlatformSessionStore {
 
   cookieObject(): Record<string, string> {
     if (this.platformId === 'kugou') {
-      const cookie: Record<string, string> = {}
-      if (this.data.musicU) cookie.token = this.data.musicU
-      if (this.data.userId) cookie.userid = String(this.data.userId)
+      const cookie: Record<string, string> = {
+        userid: this.data.userId ? String(this.data.userId) : '0',
+        token: this.data.musicU ?? ''
+      }
+      if (this.data.kugouGuid) cookie.KUGOU_API_GUID = this.data.kugouGuid
+      if (this.data.kugouMid) cookie.KUGOU_API_MID = this.data.kugouMid
+      if (this.data.dfid) cookie.dfid = this.data.dfid
       return cookie
     }
     const cookie: Record<string, string> = { os: 'pc' }
@@ -81,8 +85,20 @@ export class PlatformSessionStore {
     this.persist()
   }
 
+  setKugouDevice(device: { kugouGuid: string; kugouMid: string; dfid: string }): void {
+    this.data.kugouGuid = device.kugouGuid
+    this.data.kugouMid = device.kugouMid
+    this.data.dfid = device.dfid
+    this.persist()
+  }
+
   clear(): void {
-    this.data = { platformId: this.platformId, loginType: 'none' }
+    if (this.platformId === 'kugou') {
+      const { kugouGuid, kugouMid, dfid } = this.data
+      this.data = { platformId: this.platformId, loginType: 'none', kugouGuid, kugouMid, dfid }
+    } else {
+      this.data = { platformId: this.platformId, loginType: 'none' }
+    }
     this.persist()
   }
 

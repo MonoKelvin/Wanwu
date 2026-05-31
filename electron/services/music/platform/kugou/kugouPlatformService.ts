@@ -14,6 +14,8 @@ import type {
   MusicToplistSummary
 } from '../types'
 import { MusicSearchType } from '../types'
+import { ensureKugouDevice } from './kugouDevice'
+import { pickKugouStreamUrl, parseKugouJsonBody } from './kugouResponse'
 import { loadKugouApiModule } from './loadKugouApi'
 import {
   buildChartsPayload,
@@ -79,24 +81,15 @@ function extractSongRows(data: unknown): unknown[] {
   return []
 }
 
-function pickStreamUrl(body: unknown): string | undefined {
-  const root = body as Record<string, unknown>
-  const data = root.data
-  if (typeof data === 'string' && data.startsWith('http')) return data
-  if (Array.isArray(data)) {
-    for (const item of data) {
-      const row = item as Record<string, unknown>
-      const url = row.url ?? row.play_url ?? row.playUrl
-      if (typeof url === 'string' && url.startsWith('http')) return url
-    }
+function dedupeTracks(tracks: NormalizedTrack[]): NormalizedTrack[] {
+  const out: NormalizedTrack[] = []
+  const seen = new Set<string>()
+  for (const t of tracks) {
+    if (seen.has(t.trackKey)) continue
+    seen.add(t.trackKey)
+    out.push(t)
   }
-  if (data && typeof data === 'object') {
-    const row = data as Record<string, unknown>
-    const url = row.url ?? row.play_url ?? row.playUrl
-    if (typeof url === 'string' && url.startsWith('http')) return url
-  }
-  if (typeof root.url === 'string' && root.url.startsWith('http')) return root.url
-  return undefined
+  return out
 }
 
 export class KugouPlatformService implements IMusicPlatformService {
@@ -104,6 +97,7 @@ export class KugouPlatformService implements IMusicPlatformService {
   private readonly gateway: IMusicPlatformGateway
   private readonly session: PlatformSessionStore
   private proxy = ''
+  private deviceReady: Promise<void> | null = null
 
   constructor(basePath: string) {
     const api = loadKugouApiModule()
@@ -120,16 +114,20 @@ export class KugouPlatformService implements IMusicPlatformService {
     if (this.proxy) process.env.KUGOU_API_PROXY = this.proxy
   }
 
-  private invoke<T>(path: string, params: Record<string, unknown> = {}): Promise<T> {
+  private async invoke<T>(path: string, params: Record<string, unknown> = {}): Promise<T> {
     if (!this.gateway.isAvailable()) {
-      return Promise.reject(
-        new Error('酷狗 API 模块加载失败')
-      )
+      return Promise.reject(new Error('酷狗 API 模块加载失败'))
     }
-    return this.gateway.invoke<T>(path, params, {
+    if (!this.deviceReady) {
+      this.deviceReady = ensureKugouDevice(this.session, this.proxy || undefined)
+    }
+    await this.deviceReady
+
+    const raw = await this.gateway.invoke<unknown>(path, params, {
       cookie: this.session.cookieObject(),
       proxy: this.proxy || undefined
     })
+    return parseKugouJsonBody(raw) as T
   }
 
   getSessionSnapshot(): MusicPlatformSessionSnapshot {
@@ -189,8 +187,9 @@ export class KugouPlatformService implements IMusicPlatformService {
   }
 
   async loginQrKey(): Promise<MusicPlatformQrLoginState> {
-    const keyData = await this.invoke<{ data?: { qrcode?: string } }>('login/qr/key')
+    const keyData = await this.invoke<{ data?: { qrcode?: string; qrcode_img?: string } }>('login/qr/key')
     const key = keyData.data?.qrcode ?? ''
+    if (!key) throw new Error('无法获取二维码 key')
     const qr = await this.invoke<{ data?: { url?: string; base64?: string } }>('login/qr/create', {
       key,
       qrimg: true
@@ -198,7 +197,7 @@ export class KugouPlatformService implements IMusicPlatformService {
     return {
       key,
       qrUrl: qr.data?.url ?? '',
-      qrImageBase64: qr.data?.base64
+      qrImageBase64: qr.data?.base64 ?? keyData.data?.qrcode_img
     }
   }
 
@@ -249,9 +248,24 @@ export class KugouPlatformService implements IMusicPlatformService {
   }
 
   async searchSuggest(keywords: string): Promise<MusicSearchSuggestItem[]> {
-    const data = await this.invoke<{ data?: Array<{ keyword?: string }> }>('search/suggest', { keywords })
-    const list = Array.isArray(data.data) ? data.data : []
-    return list.map((item) => ({ keyword: item.keyword ?? '' })).filter((item) => item.keyword)
+    const data = await this.invoke<{ data?: unknown }>('search/suggest', { keywords })
+    const out: MusicSearchSuggestItem[] = []
+    if (Array.isArray(data.data)) {
+      for (const block of data.data) {
+        if (!block || typeof block !== 'object') continue
+        const row = block as Record<string, unknown>
+        const records = row.RecordDatas
+        if (Array.isArray(records)) {
+          for (const item of records) {
+            const hint = (item as Record<string, unknown>).HintInfo
+            if (typeof hint === 'string' && hint) out.push({ keyword: hint })
+          }
+        } else if (typeof row.keyword === 'string' && row.keyword) {
+          out.push({ keyword: row.keyword })
+        }
+      }
+    }
+    return out
   }
 
   async cloudSearch(
@@ -261,30 +275,64 @@ export class KugouPlatformService implements IMusicPlatformService {
     offset = 0
   ): Promise<MusicSearchResult> {
     const page = Math.floor(offset / limit) + 1
-    const body = await this.invoke('search', {
-      keywords,
-      type: mapSearchType(type),
-      pagesize: limit,
-      page
-    })
-    return mapKugouSearchResult(body, type)
+    const searchType = mapSearchType(type)
+
+    try {
+      const body = await this.invoke('search', {
+        keywords,
+        type: searchType,
+        pagesize: limit,
+        page
+      })
+      const mapped = mapKugouSearchResult(body, type)
+      if (
+        mapped.tracks.length ||
+        mapped.albums.length ||
+        mapped.artists.length ||
+        (mapped.playlists?.length ?? 0) > 0
+      ) {
+        return mapped
+      }
+    } catch {
+      /* 单曲搜索失败时走综合搜索 */
+    }
+
+    if (type === MusicSearchType.Song || type === MusicSearchType.All) {
+      try {
+        const body = await this.invoke('search/complex', { keywords, pagesize: limit, page })
+        return mapKugouSearchResult(body, type)
+      } catch {
+        /* ignore */
+      }
+    }
+
+    return { tracks: [], albums: [], artists: [] }
   }
 
   async resolveStream(songId: string, quality: MusicPlatformQuality): Promise<MusicStreamPick | null> {
     const { albumAudioId, hash, albumId } = parseKugouVideoId(songId)
     if (!hash && !albumAudioId) return null
-    const body = await this.invoke('song/url', {
+    const params = {
       hash,
       album_audio_id: albumAudioId,
       album_id: albumId || undefined,
       quality: mapQuality(quality)
-    })
-    const url = pickStreamUrl(body)
-    if (!url) return null
-    return {
-      url,
-      format: url.includes('.m4a') || url.includes('.mp4') ? 'mp4' : 'mp3'
     }
+
+    for (const path of ['song/url', 'song/url/new'] as const) {
+      try {
+        const body = await this.invoke(path, path === 'song/url/new' ? { hash, album_audio_id: albumAudioId } : params)
+        const url = pickKugouStreamUrl(body)
+        if (!url) continue
+        return {
+          url,
+          format: url.includes('.m4a') || url.includes('.mp4') ? 'mp4' : 'mp3'
+        }
+      } catch {
+        /* try next */
+      }
+    }
+    return null
   }
 
   async getLyrics(songId: string): Promise<MusicLyricsResult> {
@@ -315,28 +363,64 @@ export class KugouPlatformService implements IMusicPlatformService {
 
   async getPlaylistTracks(playlistId: string): Promise<NormalizedTrack[]> {
     const rawId = parseBrowseId(playlistId)?.id ?? playlistId
+    if (rawId.startsWith('rank:')) {
+      return this.getToplistTracks(rawId.slice('rank:'.length), 500)
+    }
+    if (rawId.startsWith('theme:')) {
+      const themeId = rawId.slice('theme:'.length)
+      const data = await this.invoke<{ data?: { songlist?: unknown[]; song_list?: unknown[] } }>(
+        'theme/playlist/track',
+        { theme_id: themeId, pagesize: 500 }
+      )
+      return mapKugouSongs(extractSongRows(data.data))
+    }
     const data = await this.invoke<{ data?: { lists?: unknown[]; songs?: unknown[] } }>('playlist/track/all', {
       id: rawId,
       pagesize: 500
     })
-    return mapKugouSongs(data.data?.lists ?? data.data?.songs ?? [])
+    const tracks = mapKugouSongs(data.data?.lists ?? data.data?.songs ?? [])
+    if (tracks.length) return tracks
+    const alt = await this.invoke<{ data?: { lists?: unknown[] } }>('playlist/track/all/new', {
+      listid: rawId,
+      pagesize: 500
+    })
+    return mapKugouSongs(alt.data?.lists ?? [])
   }
 
   async getPlaylistSummaries(category = '0', limit = 30): Promise<MusicPlaylistSummary[]> {
     const categoryId = Number(category) || 0
     try {
-      const data = await this.invoke<{ data?: { info?: unknown[]; lists?: unknown[] } }>('top/playlist', {
-        category_id: categoryId,
-        pagesize: limit
-      })
+      const data = await this.invoke<{ data?: { special_list?: unknown[]; info?: unknown[]; lists?: unknown[] } }>(
+        'top/playlist',
+        { category_id: categoryId, pagesize: limit }
+      )
       const out: MusicPlaylistSummary[] = []
-      for (const item of data.data?.info ?? data.data?.lists ?? []) {
+      for (const item of data.data?.special_list ?? data.data?.info ?? data.data?.lists ?? []) {
         const mapped = mapPlaylistSummary(item as Record<string, unknown>)
         if (mapped) out.push(mapped)
       }
       if (out.length) return out.slice(0, limit)
     } catch {
-      /* top/playlist 偶发 500，走下方 fallback */
+      /* fallback below */
+    }
+
+    try {
+      const rankTop = await this.invoke<{ data?: { list?: unknown[] } }>('rank/top', { pagesize: limit })
+      const out: MusicPlaylistSummary[] = []
+      for (const item of rankTop.data?.list ?? []) {
+        const row = item as Record<string, unknown>
+        const id = row.rankid != null ? String(row.rankid) : ''
+        const title = typeof row.rankname === 'string' ? row.rankname : ''
+        if (!id || !title) continue
+        out.push({
+          id: `rank:${id}`,
+          title,
+          coverUrl: typeof row.img_9 === 'string' ? String(row.img_9).replace('{size}', '240').replace('http://', 'https://') : undefined
+        })
+      }
+      if (out.length) return out.slice(0, limit)
+    } catch {
+      /* theme fallback */
     }
 
     const theme = await this.invoke<{ data?: { theme_list?: unknown[] } }>('theme/playlist', { pagesize: limit })
@@ -403,6 +487,21 @@ export class KugouPlatformService implements IMusicPlatformService {
   async getNewSongs(limit = 20): Promise<NormalizedTrack[]> {
     const data = await this.invoke<{ data?: unknown }>('top/song')
     return mapKugouSongs(extractSongRows(data.data)).slice(0, limit)
+  }
+
+  async getRecommendSongs(limit = 24): Promise<NormalizedTrack[]> {
+    const data = await this.invoke<{ data?: { song_list?: unknown[] } }>('recommend/songs')
+    return mapKugouSongs(data.data?.song_list ?? []).slice(0, limit)
+  }
+
+  async getStyleRecommend(limit = 24): Promise<NormalizedTrack[]> {
+    const data = await this.invoke<{ data?: { song_list?: unknown[] } }>('everyday/style/recommend')
+    return mapKugouSongs(data.data?.song_list ?? []).slice(0, limit)
+  }
+
+  async getTopCardTracks(cardId = 1, limit = 24): Promise<NormalizedTrack[]> {
+    const data = await this.invoke<{ data?: { song_list?: unknown[] } }>('top/card', { card_id: cardId })
+    return mapKugouSongs(data.data?.song_list ?? []).slice(0, limit)
   }
 
   async getNewAlbums(limit = 12): Promise<MusicSearchResult['albums']> {
@@ -652,21 +751,42 @@ export class KugouPlatformService implements IMusicPlatformService {
   }
 
   async buildDiscoverFeed(): Promise<MusicDiscoverFeed> {
-    const [daily, fm, newSongs, toplists, playlists] = await Promise.all([
+    const [daily, fm, newSongs, toplists, playlists, recommended, styled, cardTracks] = await Promise.all([
       this.getDailyRecommend().catch(() => []),
       this.getPersonalFm().catch(() => []),
-      this.getNewSongs(16).catch(() => []),
+      this.getNewSongs(24).catch(() => []),
       this.getToplists().catch(() => []),
-      this.getPlaylistSummaries('0', 12).catch(() => [])
+      this.getPlaylistSummaries('0', 12).catch(() => []),
+      this.getRecommendSongs(20).catch(() => []),
+      this.getStyleRecommend(20).catch(() => []),
+      this.getTopCardTracks(1, 16).catch(() => [])
     ])
-    const chartTracks = toplists.length ? await this.getToplistTracks(toplists[0].id, 12).catch(() => []) : []
+    const chartTracks = toplists.length ? await this.getToplistTracks(toplists[0].id, 24).catch(() => []) : []
+
+    const forYou = dedupeTracks([
+      ...daily,
+      ...recommended,
+      ...styled,
+      ...cardTracks,
+      ...newSongs.slice(0, 16)
+    ]).slice(0, 32)
+
+    const trending = dedupeTracks([
+      ...fm,
+      ...daily,
+      ...chartTracks,
+      ...recommended
+    ]).slice(0, 32)
+
     return {
-      forYou: daily.length ? daily : fm.length ? fm : newSongs.slice(0, 16),
-      trending: fm.length ? fm : daily.length ? daily : chartTracks.slice(0, 16),
+      forYou: forYou.length ? forYou : chartTracks.slice(0, 16),
+      trending: trending.length ? trending : forYou.slice(0, 16),
       newReleases: newSongs,
       chartTracks,
       chartPlaylists: playlists.map((p) => ({
-        browseId: `kugou:playlist:${p.id}`,
+        browseId: p.id.startsWith('rank:')
+          ? `kugou:toplist:${p.id.slice('rank:'.length)}`
+          : `kugou:playlist:${p.id}`,
         title: p.title,
         coverUrl: p.coverUrl,
         trackCount: p.trackCount

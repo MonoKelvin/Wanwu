@@ -62,15 +62,15 @@ async function openPlaylist(item: { id: string }) {
     <div class="ww-music-content-shell">
       <MusicPageHeading :title="categoryId" subtitle="分类歌单" />
 
-      <p v-if="loading" class="text-sm text-ww-ink-faint">加载中…</p>
+      <p v-if="loading" class="ww-music-state-hint">加载中…</p>
       <div v-else-if="error" class="ww-music-error-bar">
         <span>{{ error }}</span>
-        <button type="button" class="text-ww-accent" @click="loadPlaylists">重试</button>
+        <button type="button" class="ww-music-retry" @click="loadPlaylists">重试</button>
       </div>
       <MusicDiscoverSection v-else-if="coverItems.length" title="歌单">
         <MusicCoverRow :items="coverItems" @select="openPlaylist" />
       </MusicDiscoverSection>
-      <p v-else class="text-sm text-ww-ink-faint">该分类暂无歌单，请选择其他分类。</p>
+      <p v-else class="ww-music-state-hint">该分类暂无歌单，请选择其他分类。</p>
     </div>
   </div>
 </template>

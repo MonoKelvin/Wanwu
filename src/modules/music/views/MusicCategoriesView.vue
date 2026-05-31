@@ -39,7 +39,7 @@ function openMood(id: string) {
 
       <div v-if="error" class="ww-music-error-bar">
       <span>{{ error }}</span>
-      <button type="button" class="text-ww-accent" @click="loadMoods">重试</button>
+      <button type="button" class="ww-music-retry" @click="loadMoods">重试</button>
     </div>
 
     <div v-if="loading" class="ww-music-categories-skeleton">
@@ -47,7 +47,7 @@ function openMood(id: string) {
     </div>
 
     <MusicMoodGrid v-else-if="moods.length" :moods="moods" @select="openMood" />
-    <p v-else class="text-sm text-ww-ink-faint">暂无分类数据</p>
+    <p v-else class="ww-music-state-hint">暂无分类数据</p>
     </div>
   </div>
 </template>

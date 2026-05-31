@@ -41,6 +41,10 @@ export interface MusicPlatformSessionSnapshot {
   nickname?: string
   avatarUrl?: string
   refreshedAt?: string
+  /** 酷狗设备标识（register/dev） */
+  kugouGuid?: string
+  kugouMid?: string
+  dfid?: string
 }
 
 export interface MusicPlatformInvokeOptions {

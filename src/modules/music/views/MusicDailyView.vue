@@ -68,12 +68,12 @@ function play(track: NormalizedTrack) {
         @login="loginOpen = true"
       />
 
-      <p v-if="loading" class="text-sm text-ww-ink-faint">加载中…</p>
+      <p v-if="loading" class="ww-music-state-hint">加载中…</p>
       <MusicChartList v-else-if="tracks.length" :tracks="tracks" panel show-provider @play="play" />
-      <p v-else-if="!isPlatformPrimary" class="text-sm text-ww-ink-faint">
+      <p v-else-if="!isPlatformPrimary" class="ww-music-state-hint">
         当前主源为 Verome，请在设置中切换酷狗或网易云以使用日推。
       </p>
-      <p v-else-if="account.profile.loggedIn" class="text-sm text-ww-ink-faint">暂无日推内容。</p>
+      <p v-else-if="account.profile.loggedIn" class="ww-music-state-hint">暂无日推内容。</p>
     </div>
     <MusicPlatformLoginDialog v-model:visible="loginOpen" @success="onLoginSuccess" />
   </div>

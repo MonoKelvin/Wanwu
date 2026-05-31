@@ -1,12 +1,13 @@
 /* 音乐模块共享视觉 token */
 :root {
   --ww-music-card-size: 11.5rem;
-  --ww-music-card-gap: 0.85rem;
-  --ww-music-cover-radius: 1.25rem;
-  --ww-music-card-radius: 1.375rem;
+  --ww-music-card-gap: 0.75rem;
+  --ww-music-cover-radius: 1.125rem;
+  --ww-music-card-radius: 1.25rem;
   --ww-music-panel-radius: 1.125rem;
   --ww-music-inner-radius: 0.875rem;
-  --ww-music-section-gap: 1.25rem;
+  --ww-music-section-gap: 1.375rem;
+  --ww-music-section-head-gap: 0.75rem;
   --ww-music-control-gap: 0.5rem;
   --ww-music-pill-radius: var(--ww-radius-full);
   --ww-music-input-radius: 0.4375rem;
@@ -14,8 +15,14 @@
   --ww-music-minibar-inset: 0.875rem;
   --ww-music-minibar-max-width: 44rem;
   --ww-music-glass-panel: color-mix(in srgb, var(--ww-glass-bg-soft) 72%, var(--ww-content));
-  /* 播放条悬浮高度 + 边距，留给滚动内容底部留白（不在 shell 上垫纯色块） */
   --ww-music-minibar-clearance: 6.5rem;
+  --ww-music-fs-xs: 0.6875rem;
+  --ww-music-fs-sm: 0.75rem;
+  --ww-music-fs-base: 0.8125rem;
+  --ww-music-fs-md: 0.875rem;
+  --ww-music-fs-lg: 1.0625rem;
+  --ww-music-fs-xl: clamp(1.375rem, 2.5vw, 1.75rem);
+  --ww-music-content-max: min(100%, 72rem);
 }
 
 /* TabBar 已预留标题栏拖拽区，子页 PageHeader 不再重复顶距 */
@@ -27,7 +34,7 @@
   flex: 1;
   min-height: 0;
   padding:
-    0.75rem
+    0.875rem
     var(--ww-page-padding, 1.125rem)
     calc(var(--ww-music-minibar-clearance) + var(--ww-page-padding, 1.125rem));
   background: var(--ww-inset);
@@ -36,22 +43,25 @@
 .ww-music-search-results {
   flex: 1;
   min-height: 0;
-  padding-bottom: calc(var(--ww-music-minibar-clearance) + var(--ww-page-padding, 1.125rem));
+  padding:
+    0.875rem
+    var(--ww-page-padding, 1.125rem)
+    calc(var(--ww-music-minibar-clearance) + var(--ww-page-padding, 1.125rem));
 }
 
 .ww-music-content-shell {
-  width: 100%;
-  max-width: 72rem;
+  width: var(--ww-music-content-max);
+  max-width: var(--ww-music-content-max);
   margin: 0 auto;
 }
 
 .ww-music-page-heading {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--ww-music-section-gap);
 }
 
 .ww-music-page-heading__title {
   margin: 0;
-  font-size: clamp(1.375rem, 2.5vw, 1.75rem);
+  font-size: var(--ww-music-fs-xl);
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--ww-ink);
@@ -59,9 +69,167 @@
 }
 
 .ww-music-page-heading__sub {
-  margin: 0.35rem 0 0;
-  font-size: 0.8125rem;
+  margin: 0.375rem 0 0;
+  font-size: var(--ww-music-fs-base);
+  line-height: 1.45;
   color: var(--ww-ink-faint);
+}
+
+/* 统一 pill 分段控件（发现 Tab / 我的 Tab 等） */
+.ww-music-pill-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: var(--ww-music-pill-radius);
+  border: 1px solid var(--ww-glass-border);
+  background: color-mix(in srgb, var(--ww-inset) 88%, transparent);
+}
+
+.ww-music-pill-tabs__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4375rem 0.9375rem;
+  border: none;
+  border-radius: var(--ww-music-pill-radius);
+  background: transparent;
+  font-size: var(--ww-music-fs-base);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ww-ink-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    color var(--ww-duration-fast) var(--ww-ease-out),
+    box-shadow var(--ww-duration-fast) var(--ww-ease-out),
+    transform 0.15s var(--ww-ease-out);
+}
+
+.ww-music-pill-tabs__btn:hover {
+  color: var(--ww-ink);
+}
+
+.ww-music-pill-tabs__btn:active {
+  transform: scale(0.98);
+}
+
+.ww-music-pill-tabs__btn.is-active {
+  background: var(--ww-content);
+  color: var(--ww-ink);
+  font-weight: 600;
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--ww-ink) 8%, transparent);
+}
+
+/* 二级 Tab（我的页收藏/历史等） */
+.ww-music-subtabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+  margin-left: auto;
+}
+
+.ww-music-subtabs__btn {
+  padding: 0.3125rem 0.6875rem;
+  border: 1px solid var(--ww-border-faint);
+  border-radius: var(--ww-music-pill-radius);
+  background: transparent;
+  font-size: var(--ww-music-fs-sm);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ww-ink-muted);
+  cursor: pointer;
+  transition:
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    color var(--ww-duration-fast) var(--ww-ease-out),
+    background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-music-subtabs__btn:hover {
+  color: var(--ww-ink);
+}
+
+.ww-music-subtabs__btn.is-active {
+  border-color: color-mix(in srgb, var(--ww-ink) 12%, var(--ww-border-subtle));
+  background: color-mix(in srgb, var(--ww-ink) 5%, transparent);
+  color: var(--ww-ink);
+  font-weight: 600;
+}
+
+.ww-music-glass {
+  border-radius: var(--ww-music-panel-radius);
+  border: 1px solid var(--ww-glass-border);
+  background: var(--ww-music-glass-panel);
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  box-shadow: var(--ww-shadow-card);
+}
+
+.ww-music-state-hint,
+.ww-music-empty-hint {
+  margin: 0;
+  font-size: var(--ww-music-fs-sm);
+  line-height: 1.5;
+  color: var(--ww-ink-faint);
+}
+
+.ww-music-state-hint--block {
+  padding: 0.75rem 0;
+}
+
+.ww-music-retry {
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: var(--ww-music-fs-base);
+  font-weight: 500;
+  color: var(--ww-accent);
+  cursor: pointer;
+  transition: opacity var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-music-retry:hover {
+  opacity: 0.85;
+}
+
+.ww-music-login-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8125rem 1rem;
+  margin-bottom: var(--ww-music-section-gap);
+  border-radius: var(--ww-music-inner-radius);
+  border: 1px solid var(--ww-glass-border);
+  background: var(--ww-music-glass-panel);
+}
+
+.ww-music-login-banner__icon {
+  flex-shrink: 0;
+  color: var(--ww-ink-faint);
+}
+
+.ww-music-login-banner__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ww-music-login-banner__title {
+  margin: 0;
+  font-size: var(--ww-music-fs-base);
+  font-weight: 600;
+  color: var(--ww-ink);
+}
+
+.ww-music-login-banner__desc {
+  margin: 0.25rem 0 0;
+  font-size: var(--ww-music-fs-sm);
+  line-height: 1.45;
+  color: var(--ww-ink-muted);
 }
 
 .ww-music-nav-btn,
@@ -97,19 +265,19 @@
 
 .ww-music-segment {
   display: inline-flex;
-  gap: 0.2rem;
-  padding: 0.2rem;
-  border-radius: var(--ww-radius-full);
-  border: 1px solid var(--ww-border-subtle);
-  background: color-mix(in srgb, var(--ww-content) 70%, transparent);
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: var(--ww-music-pill-radius);
+  border: 1px solid var(--ww-glass-border);
+  background: color-mix(in srgb, var(--ww-inset) 88%, transparent);
 }
 
 .ww-music-segment__btn {
-  padding: 0.4rem 0.95rem;
+  padding: 0.4375rem 0.9375rem;
   border: none;
-  border-radius: var(--ww-radius-full);
+  border-radius: var(--ww-music-pill-radius);
   background: transparent;
-  font-size: 0.8125rem;
+  font-size: var(--ww-music-fs-base);
   font-weight: 500;
   color: var(--ww-ink-muted);
   cursor: pointer;
@@ -132,19 +300,22 @@
   backdrop-filter: blur(16px) saturate(1.15);
   -webkit-backdrop-filter: blur(16px) saturate(1.15);
   overflow: hidden;
-  padding: 0.4rem;
+  padding: 0.375rem;
   box-shadow: var(--ww-shadow-card);
 }
 
 .ww-music-section-title {
-  font-size: 1.125rem;
+  margin: 0;
+  font-size: var(--ww-music-fs-lg);
   font-weight: 600;
   color: var(--ww-ink);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
 }
 
 .ww-music-section-sub {
-  font-size: 0.8125rem;
+  font-size: var(--ww-music-fs-base);
+  line-height: 1.45;
   color: var(--ww-ink-faint);
 }
 
@@ -208,16 +379,18 @@
 
 .ww-music-card-item__title {
   display: block;
-  margin-top: 0.55rem;
-  font-size: 0.8125rem;
+  margin-top: 0.5rem;
+  font-size: var(--ww-music-fs-base);
   font-weight: 500;
+  line-height: 1.3;
   color: var(--ww-ink);
 }
 
 .ww-music-card-item__sub {
   display: block;
-  margin-top: 0.15rem;
-  font-size: 0.75rem;
+  margin-top: 0.125rem;
+  font-size: var(--ww-music-fs-sm);
+  line-height: 1.35;
   color: var(--ww-ink-faint);
 }
 
@@ -255,11 +428,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.55rem 0.85rem;
-  border-radius: var(--ww-music-pill-radius);
+  padding: 0.625rem 0.875rem;
+  margin-bottom: var(--ww-music-section-head-gap);
+  border-radius: var(--ww-music-inner-radius);
   background: color-mix(in srgb, var(--ww-danger, #ef4444) 8%, transparent);
   border: 1px solid color-mix(in srgb, var(--ww-danger, #ef4444) 25%, transparent);
-  font-size: 0.8125rem;
+  font-size: var(--ww-music-fs-base);
+  line-height: 1.45;
   color: var(--ww-ink-muted);
 }
 

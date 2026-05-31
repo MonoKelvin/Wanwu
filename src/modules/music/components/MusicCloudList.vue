@@ -14,7 +14,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <p v-if="loading" class="text-sm text-ww-ink-faint">加载中…</p>
+  <p v-if="loading" class="ww-music-state-hint">加载中…</p>
   <MusicChartList
     v-else-if="tracks.length"
     :tracks="tracks"
@@ -22,5 +22,5 @@ const emit = defineEmits<{
     show-provider
     @play="emit('play', $event)"
   />
-  <p v-else class="text-sm text-ww-ink-faint">{{ emptyText ?? '暂无内容' }}</p>
+  <p v-else class="ww-music-state-hint">{{ emptyText ?? '暂无内容' }}</p>
 </template>

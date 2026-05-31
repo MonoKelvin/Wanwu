@@ -45,7 +45,7 @@ const albumItems = computed(() =>
 <template>
   <div class="ww-music-tab-body ww-scroll-main">
     <div class="ww-music-content-shell">
-      <p v-if="loading" class="text-sm text-ww-ink-faint">加载中…</p>
+      <p v-if="loading" class="ww-music-state-hint">加载中…</p>
       <template v-else>
         <MusicAlbumHero
           :title="artist.name"
@@ -62,7 +62,7 @@ const albumItems = computed(() =>
           <MusicCoverRow :items="albumItems" @select="(item) => openAlbum(item.id)" />
         </MusicDiscoverSection>
 
-        <p v-if="!artist.tracks.length && !albumItems.length" class="text-sm text-ww-ink-faint">
+        <p v-if="!artist.tracks.length && !albumItems.length" class="ww-music-state-hint">
           暂无曲目数据，请从搜索进入专辑或单曲。
         </p>
       </template>

@@ -237,7 +237,7 @@ onUnmounted(() => {
   padding: 0.35rem 0.15rem;
   border: none;
   background: transparent;
-  font-size: 0.875rem;
+  font-size: var(--ww-music-fs-md);
   font-weight: 500;
   color: var(--ww-ink-muted);
   cursor: pointer;

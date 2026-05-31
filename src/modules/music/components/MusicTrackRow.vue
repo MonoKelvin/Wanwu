@@ -73,10 +73,10 @@ function formatDuration(sec?: number): string {
     transform 0.15s ease;
 }
 .ww-track-row:hover {
-  background: var(--ww-surface-hover);
+  background: var(--ww-list-hover-bg);
 }
 .ww-track-row.is-playing {
-  background: color-mix(in srgb, var(--ww-accent) 10%, transparent);
+  background: color-mix(in srgb, var(--ww-list-selected-accent, var(--ww-accent)) 10%, transparent);
 }
 .ww-track-row__rank {
   width: 1.75rem;
@@ -108,7 +108,7 @@ function formatDuration(sec?: number): string {
   min-width: 0;
 }
 .ww-track-row__title {
-  font-size: 0.875rem;
+  font-size: var(--ww-music-fs-md);
   font-weight: 500;
   color: var(--ww-ink);
   overflow: hidden;
@@ -120,8 +120,8 @@ function formatDuration(sec?: number): string {
 }
 .ww-track-row__artist {
   display: block;
-  margin-top: 0.1rem;
-  font-size: 0.75rem;
+  margin-top: 0.125rem;
+  font-size: var(--ww-music-fs-sm);
   color: var(--ww-ink-faint);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -133,7 +133,7 @@ function formatDuration(sec?: number): string {
   text-align: right;
 }
 .ww-track-row__duration {
-  font-size: 0.75rem;
+  font-size: var(--ww-music-fs-sm);
   color: var(--ww-ink-faint);
   font-variant-numeric: tabular-nums;
 }

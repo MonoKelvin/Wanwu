@@ -137,25 +137,29 @@ export class NeteasePlatformService implements IMusicPlatformService {
   }
 
   async loginQrKey(): Promise<MusicPlatformQrLoginState> {
-    const keyData = await this.invoke<{ unikey?: string }>('login/qr/key', { noCookie: true, timestamp: Date.now() }, true)
-    const key = keyData.unikey
+    const keyData = await this.invoke<{ data?: { unikey?: string } }>(
+      'login/qr/key',
+      { timestamp: Date.now() },
+      true
+    )
+    const key = keyData.data?.unikey
     if (!key) throw new Error('无法获取二维码 key')
-    const createData = await this.invoke<{ qrurl?: string; qrimg?: string }>(
+    const createData = await this.invoke<{ data?: { qrurl?: string; qrimg?: string } }>(
       'login/qr/create',
-      { key, qrimg: true, noCookie: true, timestamp: Date.now() },
+      { key, qrimg: true, timestamp: Date.now() },
       true
     )
     return {
       key,
-      qrUrl: createData.qrurl ?? `https://music.163.com/login?codekey=${encodeURIComponent(key)}`,
-      qrImageBase64: createData.qrimg
+      qrUrl: createData.data?.qrurl ?? `https://music.163.com/login?codekey=${encodeURIComponent(key)}`,
+      qrImageBase64: createData.data?.qrimg
     }
   }
 
   async loginQrCheck(key: string): Promise<{ status: number; message?: string; cookie?: string }> {
     const data = await this.invoke<{ code?: number; message?: string; cookie?: string }>(
       'login/qr/check',
-      { key, noCookie: true, timestamp: Date.now() },
+      { key, timestamp: Date.now() },
       true
     )
     const code = data.code ?? 801
@@ -168,13 +172,13 @@ export class NeteasePlatformService implements IMusicPlatformService {
   }
 
   sendPhoneCaptcha(phone: string, countryCode = 86): Promise<unknown> {
-    return this.invoke('captcha/sent', { phone, ctcode: countryCode, noCookie: true, timestamp: Date.now() }, true)
+    return this.invoke('captcha/sent', { phone, ctcode: countryCode, timestamp: Date.now() }, true)
   }
 
   async loginPhone(phone: string, captcha: string, countryCode = 86): Promise<unknown> {
     const data = await this.invoke<{ cookie?: string }>(
       'login/cellphone',
-      { phone, captcha, ctcode: countryCode, noCookie: true, timestamp: Date.now() },
+      { phone, captcha, ctcode: countryCode, timestamp: Date.now() },
       true
     )
     const musicU = extractMusicU(data.cookie)

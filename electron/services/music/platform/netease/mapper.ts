@@ -171,7 +171,7 @@ export function mapToplistChartCards(data: unknown): MusicChartCard[] {
     cards.push({
       browseId: `netease:toplist:${row.id}`,
       playlistId: String(row.id),
-      title: String(row.name ?? ''),
+      title: String(row.title ?? row.name ?? ''),
       subtitle: typeof row.updateFrequency === 'string' ? row.updateFrequency : undefined,
       coverUrl: pickCover(row)
     })

@@ -82,7 +82,7 @@ const hasAnyResults = computed(() => {
 
       <div v-else-if="search.error" class="ww-music-error-bar">
         <span>{{ search.error }}</span>
-        <button type="button" class="text-ww-accent" @click="search.search()">重试</button>
+        <button type="button" class="ww-music-retry" @click="search.search()">重试</button>
       </div>
 
       <template v-else-if="search.result">
@@ -229,7 +229,7 @@ const hasAnyResults = computed(() => {
 }
 
 .ww-music-search-results__tabs {
-  margin-bottom: 1rem;
+  margin-bottom: var(--ww-music-section-gap);
 }
 
 .ww-music-search-results__head {
@@ -237,28 +237,29 @@ const hasAnyResults = computed(() => {
   align-items: baseline;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: var(--ww-music-section-gap);
 }
 
 .ww-music-search-results__query {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: var(--ww-music-fs-md);
   font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--ww-ink);
 }
 
 .ww-music-search-results__count {
   flex-shrink: 0;
-  font-size: 0.75rem;
+  font-size: var(--ww-music-fs-sm);
   color: var(--ww-ink-faint);
 }
 
 .ww-music-search-results__section {
-  margin-bottom: 1.75rem;
+  margin-bottom: calc(var(--ww-music-section-gap) + 0.25rem);
 }
 
 .ww-music-search-results__section .ww-music-section-title {
-  margin: 0 0 0.65rem;
+  margin: 0 0 var(--ww-music-section-head-gap);
 }
 
 .ww-music-search-results__empty-wrap {

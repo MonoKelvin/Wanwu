@@ -59,7 +59,7 @@
 }
 
 .ww-music-shell .ww-music-section__head {
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--ww-music-section-head-gap);
 }
 
 .ww-music-shell .ww-music-search-results__tabs {
