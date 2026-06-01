@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import WwMarqueeText from '@shared/components/WwMarqueeText.vue'
 import { parseLrc, lrcLineAt, type LrcLine } from '@modules/music/composables/parseLrc'
+import { useLyricsScroll } from '@modules/music/composables/useLyricsScroll'
+import { lyricsEdgeFadePx, useLyricsEdgeBlur } from '@modules/music/composables/useLyricsEdgeBlur'
 import { formatPlayError } from '@modules/music/lib/formatPlayError'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 
@@ -13,6 +15,25 @@ const player = useMusicPlayerStore()
 const lines = ref<LrcLine[]>([])
 const synced = ref(true)
 const listRef = ref<HTMLElement | null>(null)
+const duetStageRef = ref<HTMLElement | null>(null)
+const duetPairRef = ref<HTMLElement | null>(null)
+
+const activeIndex = computed(() => {
+  if (!synced.value || !lines.value.length) return -1
+  return lrcLineAt(lines.value, player.progress)
+})
+
+function resumeAutoScroll() {
+  scrollToIndex(activeIndex.value, true)
+}
+
+const edgeFadePx = computed(() => lyricsEdgeFadePx(props.variant))
+const { refreshEdgeBlur } = useLyricsEdgeBlur(listRef, edgeFadePx)
+const { edgePad, isDragging, scrollToIndex, measureEdgePad, shouldSuppressClick } = useLyricsScroll(
+  listRef,
+  resumeAutoScroll,
+  refreshEdgeBlur
+)
 
 const playError = computed(() =>
   player.errorMessage ? formatPlayError(player.errorMessage) : null
@@ -42,31 +63,95 @@ watch(
   { immediate: true }
 )
 
-const activeIndex = computed(() => {
-  if (!synced.value || !lines.value.length) return -1
-  return lrcLineAt(lines.value, player.progress)
+const duetPairStart = computed(() => {
+  if (!lines.value.length) return 0
+  const idx = activeIndex.value
+  if (idx < 0) return 0
+  return Math.floor(idx / 2) * 2
 })
 
-const activeLine = computed(() => lines.value[activeIndex.value]?.text ?? '')
-const nextLine = computed(() => lines.value[activeIndex.value + 1]?.text ?? '')
+const duetLine1 = computed(() => lines.value[duetPairStart.value]?.text ?? '')
+const duetLine2 = computed(() => lines.value[duetPairStart.value + 1]?.text ?? '')
+const duetLine1Active = computed(() => activeIndex.value === duetPairStart.value)
+const duetLine2Active = computed(() => activeIndex.value === duetPairStart.value + 1)
 
-const duetLeftText = computed(() => activeLine.value || lines.value[0]?.text || '')
-const duetRightText = computed(() => nextLine.value)
+const duetPairCount = computed(() => Math.max(1, Math.ceil(lines.value.length / 2)))
+const duetPairIndex = computed(() => Math.floor(duetPairStart.value / 2))
+
+const duetStageHeight = ref(0)
+const duetPairHeight = ref(72)
+const duetPairStride = computed(() => Math.max(duetPairHeight.value + 12, 84))
+
+const duetEdgePad = computed(() =>
+  Math.max(0, (duetStageHeight.value - duetPairHeight.value) / 2)
+)
+
+const duetPadTop = computed(() => {
+  const consumed = duetPairIndex.value * duetPairStride.value
+  return `${Math.max(0, duetEdgePad.value - consumed)}px`
+})
+
+const duetPadBottom = computed(() => {
+  const remaining = duetPairCount.value - 1 - duetPairIndex.value
+  const consumed = remaining * duetPairStride.value
+  return `${Math.max(0, duetEdgePad.value - consumed)}px`
+})
 
 const useScrollList = computed(
   () => props.variant === 'list' || props.variant === 'immersion'
 )
 
+const listPadStyle = computed(() => ({
+  paddingTop: `${edgePad.value}px`,
+  paddingBottom: `${edgePad.value}px`
+}))
+
 function onLineClick(line: LrcLine) {
+  if (shouldSuppressClick()) return
   if (!synced.value || !Number.isFinite(line.timeSec)) return
   player.seekAndPlay(line.timeSec)
 }
 
+function measureDuetStage() {
+  duetStageHeight.value = duetStageRef.value?.clientHeight ?? 0
+  duetPairHeight.value = duetPairRef.value?.offsetHeight ?? 72
+}
+
+let duetObserver: ResizeObserver | null = null
+
 watch(activeIndex, async (idx) => {
-  if (!useScrollList.value || idx < 0) return
+  if (!useScrollList.value || idx < 0 || isDragging.value) return
   await nextTick()
-  const el = listRef.value?.querySelector(`[data-idx="${idx}"]`) as HTMLElement | null
-  el?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  scrollToIndex(idx, true)
+  refreshEdgeBlur()
+})
+
+watch(
+  () => lines.value.length,
+  async () => {
+    if (!useScrollList.value) return
+    await nextTick()
+    measureEdgePad()
+    scrollToIndex(activeIndex.value, false)
+    refreshEdgeBlur()
+  }
+)
+
+watch(isDragging, (dragging, wasDragging) => {
+  if (wasDragging && !dragging && useScrollList.value) {
+    void nextTick(() => scrollToIndex(activeIndex.value, true))
+  }
+})
+
+onMounted(() => {
+  measureDuetStage()
+  duetObserver = new ResizeObserver(() => measureDuetStage())
+  if (duetStageRef.value) duetObserver.observe(duetStageRef.value)
+  if (duetPairRef.value) duetObserver.observe(duetPairRef.value)
+})
+
+onUnmounted(() => {
+  duetObserver?.disconnect()
 })
 </script>
 
@@ -82,33 +167,42 @@ watch(activeIndex, async (idx) => {
     <p v-if="playError" class="ww-lyrics__error">{{ playError }}</p>
 
     <template v-else-if="variant === 'duet'">
-      <div class="ww-lyrics__duet-left">
-        <WwMarqueeText :text="duetLeftText" tag="p" class="ww-lyrics__duet-line" />
-      </div>
-      <div v-if="duetRightText" class="ww-lyrics__duet-right">
-        <WwMarqueeText :text="duetRightText" tag="p" class="ww-lyrics__duet-line" />
+      <div ref="duetStageRef" class="ww-lyrics__duet-stage">
+        <div class="ww-lyrics__duet-spacer" :style="{ height: duetPadTop }" aria-hidden="true" />
+        <div ref="duetPairRef" class="ww-lyrics__duet-pair">
+          <div class="ww-lyrics__duet-left" :class="{ 'is-active': duetLine1Active }">
+            <WwMarqueeText :text="duetLine1" tag="p" class="ww-lyrics__duet-line" />
+          </div>
+          <div v-if="duetLine2" class="ww-lyrics__duet-right" :class="{ 'is-active': duetLine2Active }">
+            <WwMarqueeText :text="duetLine2" tag="p" class="ww-lyrics__duet-line" />
+          </div>
+        </div>
+        <div class="ww-lyrics__duet-spacer" :style="{ height: duetPadBottom }" aria-hidden="true" />
       </div>
     </template>
 
-    <ul
-      v-else-if="useScrollList && lines.length"
-      ref="listRef"
-      class="ww-lyrics__list"
-    >
-      <li
-        v-for="(line, i) in lines"
-        :key="i"
-        :data-idx="i"
-        :class="{
-          'is-active': synced && i === activeIndex,
-          'is-near': synced && Math.abs(i - activeIndex) === 1,
-          'is-seekable': synced && Number.isFinite(line.timeSec)
-        }"
-        @click="onLineClick(line)"
+    <div v-else-if="useScrollList && lines.length" class="ww-lyrics__viewport">
+      <ul
+        ref="listRef"
+        class="ww-lyrics__list"
+        :class="{ 'is-dragging': isDragging }"
+        :style="listPadStyle"
       >
-        {{ line.text }}
-      </li>
-    </ul>
+        <li
+          v-for="(line, i) in lines"
+          :key="i"
+          :data-idx="i"
+          :class="{
+            'is-active': synced && i === activeIndex,
+            'is-near': synced && Math.abs(i - activeIndex) === 1,
+            'is-seekable': synced && Number.isFinite(line.timeSec)
+          }"
+          @click="onLineClick(line)"
+        >
+          {{ line.text }}
+        </li>
+      </ul>
+    </div>
 
     <p v-else-if="!lines.length" class="ww-lyrics__empty">暂无歌词</p>
     <p v-else-if="!synced" class="ww-lyrics__plain-hint">暂无时间轴，仅展示文本歌词</p>
@@ -121,6 +215,8 @@ watch(activeIndex, async (idx) => {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  height: 100%;
 }
 
 .ww-lyrics__error {
@@ -136,21 +232,36 @@ watch(activeIndex, async (idx) => {
   border: 1px solid color-mix(in srgb, var(--ww-danger, #ef4444) 22%, transparent);
 }
 
+.ww-lyrics__viewport {
+  --ww-lyrics-edge-fade: 3.25rem;
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 0.25rem 0 0.35rem;
+}
+
 .ww-lyrics__list {
   list-style: none;
   margin: 0;
-  padding: 2rem 0;
-  max-height: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  scroll-behavior: smooth;
+  overflow-x: hidden;
   scrollbar-width: none;
-  mask-image: linear-gradient(
-    180deg,
-    transparent,
-    #000 14%,
-    #000 86%,
-    transparent
-  );
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  cursor: grab;
+  overscroll-behavior: contain;
+}
+
+.ww-lyrics__list.is-dragging {
+  cursor: grabbing;
 }
 
 .ww-lyrics__list::-webkit-scrollbar {
@@ -158,17 +269,21 @@ watch(activeIndex, async (idx) => {
 }
 
 .ww-lyrics__list li {
-  padding: 0.5rem 0.75rem;
-  font-size: 0.9375rem;
-  line-height: 1.6;
+  padding: 0.45rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.55;
   color: color-mix(in srgb, var(--ww-ink) 38%, transparent);
   text-align: center;
   border-radius: var(--ww-radius-full);
+  transform-origin: center center;
   transition:
-    color 0.35s var(--ww-ease-out),
-    transform 0.35s cubic-bezier(0.34, 1.1, 0.64, 1),
-    opacity 0.35s var(--ww-ease-out),
-    font-size 0.35s var(--ww-ease-out);
+    color 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    font-size 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    font-weight 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-lyrics__list.is-dragging li {
+  transition-duration: 0.18s;
 }
 
 .ww-lyrics__list li.is-seekable {
@@ -181,19 +296,17 @@ watch(activeIndex, async (idx) => {
 
 .ww-lyrics__list li.is-near {
   color: color-mix(in srgb, var(--ww-ink) 58%, transparent);
-  font-size: 1rem;
+  font-size: 1.0625rem;
 }
 
 .ww-lyrics__list li.is-active {
   color: var(--ww-ink);
   font-weight: 600;
-  font-size: clamp(1.05rem, 2.2vw, 1.35rem);
-  transform: scale(1.02);
-  text-shadow: 0 0 24px color-mix(in srgb, var(--ww-ink) 12%, transparent);
+  font-size: clamp(1.18rem, 2.5vw, 1.45rem);
 }
 
 .ww-lyrics--immersion .ww-lyrics__list li.is-active {
-  font-size: clamp(1.25rem, 3.5vw, 2rem);
+  font-size: clamp(1.42rem, 3.85vw, 2.15rem);
 }
 
 .ww-lyrics--duet {
@@ -202,11 +315,34 @@ watch(activeIndex, async (idx) => {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
-  justify-content: center;
   flex: 1;
   min-height: 0;
-  padding: 0 0.25rem;
+  padding: 0 1.35rem;
+}
+
+.ww-lyrics__duet-stage {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.ww-lyrics__duet-spacer {
+  flex-shrink: 0;
+  width: 100%;
+  transition: height 0.52s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-lyrics__duet-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex-shrink: 0;
+  width: 100%;
+  padding: 0 0.65rem;
 }
 
 .ww-lyrics__duet-left,
@@ -218,25 +354,36 @@ watch(activeIndex, async (idx) => {
 .ww-lyrics__duet-left {
   align-self: flex-start;
   width: 100%;
-  max-width: min(72%, 36rem);
+  max-width: min(68%, 34rem);
+  padding-left: 0.35rem;
 }
 
 .ww-lyrics__duet-right {
   align-self: flex-end;
   width: 100%;
-  max-width: min(72%, 36rem);
+  max-width: min(68%, 34rem);
+  padding-right: 0.35rem;
 }
 
 .ww-lyrics__duet-line {
   margin: 0;
-  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  font-size: clamp(1.06rem, 2.55vw, 1.28rem);
   line-height: 1.55;
-  color: var(--ww-ink-muted);
+  color: color-mix(in srgb, var(--ww-ink) 42%, transparent);
+  font-weight: 400;
+  transform-origin: left center;
+  transition:
+    color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    font-weight 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    font-size 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-lyrics__duet-right .ww-lyrics__duet-line {
+  transform-origin: right center;
 }
 
 .ww-lyrics__duet-left .ww-lyrics__duet-line {
-  color: var(--ww-ink);
-  font-weight: 600;
   text-align: left;
 }
 
@@ -244,9 +391,15 @@ watch(activeIndex, async (idx) => {
   text-align: right;
 }
 
+.ww-lyrics__duet-left.is-active .ww-lyrics__duet-line,
+.ww-lyrics__duet-right.is-active .ww-lyrics__duet-line {
+  color: var(--ww-ink);
+  font-weight: 600;
+  font-size: clamp(1.18rem, 2.85vw, 1.45rem);
+}
+
 .ww-lyrics--immersion {
   align-items: stretch;
-  justify-content: center;
 }
 
 .ww-lyrics__empty,
@@ -255,5 +408,6 @@ watch(activeIndex, async (idx) => {
   text-align: center;
   font-size: 0.875rem;
   color: var(--ww-ink-faint);
+  user-select: none;
 }
 </style>

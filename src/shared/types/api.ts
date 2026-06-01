@@ -391,7 +391,7 @@ export interface WanwuApi {
     >
     getNeteaseLikedTracks: (limit?: number) => Promise<NormalizedTrack[]>
     getNeteaseUserCloud: (limit?: number) => Promise<NormalizedTrack[]>
-    getNeteaseArtistList: (limit?: number) => Promise<MusicSearchResult['artists']>
+    getNeteaseArtistList: (limit?: number, offset?: number) => Promise<MusicSearchResult['artists']>
     getNeteaseNewAlbums: (limit?: number) => Promise<MusicSearchResult['albums']>
     getPlatformSessionSnapshot: () => Promise<import('./music').MusicPlatformSessionSnapshot>
     getPlatformLoginStatus: () => Promise<import('./music').MusicNeteaseLoginStatus>

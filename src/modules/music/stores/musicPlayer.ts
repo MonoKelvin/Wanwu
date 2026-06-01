@@ -13,6 +13,7 @@ import {
   saveMusicPlaybackSnapshot
 } from '@modules/music/lib/musicPlaybackPrefs'
 import { formatPlayError } from '@modules/music/lib/formatPlayError'
+import { mergeTrackPlaybackMeta } from '@modules/music/lib/mergeTrackPlaybackMeta'
 import { useSettingsStore } from '@shared/stores/settings'
 
 export type MusicPlaybackQuality = 'standard' | 'higher' | 'exhigh' | 'lossless' | 'hires'
@@ -134,6 +135,7 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
     }
 
     player.pause()
+    player.resetProgress()
     currentTrack.value = source
     loading.value = true
     errorMessage.value = null
@@ -144,13 +146,17 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
       if (gen !== playGeneration) return
       if (!stream.url) throw new Error('无法获取播放地址')
 
-      const playable = stream.track ? plainTrack(stream.track) : source
+      const playable = mergeTrackPlaybackMeta(
+        stream.track ? plainTrack(stream.track) : source,
+        { isTrial: stream.isTrial }
+      )
       currentTrack.value = playable
       await player.loadAndPlay(stream.url, stream.format)
       if (gen !== playGeneration) {
         player.stop()
         return
       }
+      if (!player.playing.value) await player.play()
 
       void window.wanwu.music.appendHistory(plainTrack(playable))
       void loadLyricsForTrack(playable, gen)

@@ -491,8 +491,8 @@ export function registerIpcHandlers(services: AppServices): void {
   ipcMain.handle('music:getNeteaseUserCloud', (_e, { limit }: { limit?: number }) =>
     services.music?.getNeteaseUserCloud(limit) ?? []
   )
-  ipcMain.handle('music:getNeteaseArtistList', (_e, { limit }: { limit?: number }) =>
-    services.music?.getNeteaseArtistList(limit) ?? []
+  ipcMain.handle('music:getNeteaseArtistList', (_e, { limit, offset }: { limit?: number; offset?: number }) =>
+    services.music?.getNeteaseArtistList(limit, offset) ?? []
   )
   ipcMain.handle('music:getNeteaseNewAlbums', (_e, { limit }: { limit?: number }) =>
     services.music?.getNeteaseNewAlbums(limit) ?? []

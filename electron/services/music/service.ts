@@ -24,8 +24,9 @@ import { MusicAggregator } from './musicAggregator'
 import { MusicProviderRegistry } from './providers/MusicProviderRegistry'
 import { buildDiscoverFeed, fetchDiscoverSection, type DiscoverFeedDeps } from './discoverFeed'
 import { DiscoverCacheService, type DiscoverSectionKey } from './discoverCache'
-import { ensurePlayableTrack, enrichTrackCover, hydrateMissingCovers, normalizeForPlayback, promoteTracksToVerome } from './trackPlayback'
+import { ensurePlayableTrack, enrichTrackCover, hydrateMissingCovers, mergeTrackPlaybackMeta, normalizeForPlayback, promoteTracksToVerome } from './trackPlayback'
 import { MusicPlatformManager } from './platform/MusicPlatformManager'
+import { ensureNeteaseApiReady } from './platform/netease/neteaseApiBootstrap'
 import { MusicSearchType } from './platform/types'
 import { parseBrowseId } from './platform/browseId'
 import { CHINESE_MOOD_FALLBACK } from './moodLabels'
@@ -83,6 +84,23 @@ export class MusicService {
     return s === 'netease' || s === 'kugou'
   }
 
+  /** 发现页/歌手列表使用的平台：主源为平台时跟随主源，否则回退到已登录的网易/酷狗 */
+  private resolveDiscoverPlatform(): import('./platform/IMusicPlatformService').IMusicPlatformService | null {
+    const src = this.getSettings().musicPrimarySource
+    if (src === 'netease' || src === 'kugou') {
+      return this.primaryPlatform()
+    }
+    const neteaseSnap = this.platforms.netease.getSessionSnapshot()
+    if (neteaseSnap.musicU || neteaseSnap.userId) {
+      return this.platforms.netease
+    }
+    const kugouSnap = this.platforms.kugou.getSessionSnapshot()
+    if (kugouSnap.musicU || kugouSnap.userId) {
+      return this.platforms.kugou
+    }
+    return null
+  }
+
   private primaryPlatform() {
     return this.platforms.primary(this.getSettings())
   }
@@ -124,6 +142,7 @@ export class MusicService {
     }
     this.audius = new AudiusProvider(s.musicAudiusApiKey?.trim() || undefined)
     this.platforms.applySettings(s)
+    await ensureNeteaseApiReady()
     await this.platforms.netease.refreshLoginIfNeeded()
     await this.platforms.kugou.refreshLoginIfNeeded()
     this.registry = new MusicProviderRegistry(
@@ -384,13 +403,16 @@ export class MusicService {
     }
   }
 
-  private async ensurePlatformDiscoverFeed(force = false): Promise<MusicDiscoverFeed> {
+  private async ensurePlatformDiscoverFeed(
+    platform: import('./platform/IMusicPlatformService').IMusicPlatformService,
+    force = false
+  ): Promise<MusicDiscoverFeed> {
     if (!force && this.platformDiscoverFeedInflight) {
       return this.platformDiscoverFeedInflight
     }
 
     const task = (async () => {
-      const feed = await this.primaryPlatform().buildDiscoverFeed()
+      const feed = await platform.buildDiscoverFeed()
       this.cacheDiscoverFeed(feed)
       return feed
     })()
@@ -412,8 +434,9 @@ export class MusicService {
     const cached = this.discoverCache.get(section)
     if (cached !== null && !this.isDiscoverSectionEmpty(cached)) return cached
 
-    if (this.isPlatformPrimary()) {
-      const feed = await this.ensurePlatformDiscoverFeed()
+    const platform = this.resolveDiscoverPlatform()
+    if (platform) {
+      const feed = await this.ensurePlatformDiscoverFeed(platform)
       return feed[section]
     }
 
@@ -426,10 +449,11 @@ export class MusicService {
     section: K
   ): Promise<MusicDiscoverFeed[K]> {
     await this.refreshApiClient()
-    if (this.isPlatformPrimary()) {
+    const platform = this.resolveDiscoverPlatform()
+    if (platform) {
       return this.discoverCache.refresh(section, async () => {
         this.platformDiscoverFeedInflight = null
-        const feed = await this.primaryPlatform().buildDiscoverFeed()
+        const feed = await platform.buildDiscoverFeed()
         this.cacheDiscoverFeed(feed)
         return feed[section]
       })
@@ -441,8 +465,9 @@ export class MusicService {
 
   async getDiscoverFeed(): Promise<MusicDiscoverFeed> {
     await this.refreshApiClient()
-    if (this.isPlatformPrimary()) {
-      return this.ensurePlatformDiscoverFeed()
+    const platform = this.resolveDiscoverPlatform()
+    if (platform) {
+      return this.ensurePlatformDiscoverFeed(platform)
     }
 
     const keys = this.discoverSectionKeys()
@@ -722,13 +747,17 @@ export class MusicService {
           const cached = await this.streamCache.resolveWithCache(
             normalized,
             { url: picked.url, format: picked.format },
-            useCache
+            false
           )
+          const playable = mergeTrackPlaybackMeta(enrichTrackCover(normalized), {
+            isTrial: picked.isTrial
+          })
           return {
             url: cached.url,
             cachedPath: cached.cachedPath,
-            track: enrichTrackCover(normalized),
-            format: cached.format
+            track: playable,
+            format: cached.format,
+            isTrial: picked.isTrial
           }
         }
       } catch {
@@ -1082,10 +1111,10 @@ export class MusicService {
     return this.getPlatformUserCloud(limit)
   }
 
-  async getNeteaseArtistList(limit = 30) {
+  async getNeteaseArtistList(limit = 30, offset = 0) {
     await this.refreshApiClient()
-    if (!this.isPlatformPrimary()) return []
-    return this.primaryPlatform().getArtistList('-1', -1, '-1', limit)
+    const platform = this.resolveDiscoverPlatform() ?? this.platforms.netease
+    return platform.getArtistList('-1', -1, '-1', limit, offset)
   }
 
   async getNeteaseNewAlbums(limit = 12) {

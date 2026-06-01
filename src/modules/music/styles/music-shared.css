@@ -1,12 +1,12 @@
 /* 音乐模块共享视觉 token */
 :root {
   --ww-music-card-size: 11.5rem;
-  --ww-music-card-gap: 0.75rem;
+  --ww-music-card-gap: 1rem;
   --ww-music-cover-radius: 1.125rem;
   --ww-music-card-radius: 1.25rem;
   --ww-music-panel-radius: 1.125rem;
   --ww-music-inner-radius: 0.875rem;
-  --ww-music-section-gap: 1.375rem;
+  --ww-music-section-gap: 2rem;
   --ww-music-section-head-gap: 0.75rem;
   --ww-music-control-gap: 0.5rem;
   --ww-music-pill-radius: var(--ww-radius-full);
@@ -305,6 +305,12 @@
   box-shadow: var(--ww-shadow-card);
 }
 
+[data-theme='dark'] .ww-music-track-panel {
+  background: color-mix(in srgb, var(--ww-canvas) 88%, rgb(255 255 255 / 0.04));
+  border-color: color-mix(in srgb, var(--ww-border-subtle) 78%, transparent);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.22);
+}
+
 .ww-music-section-title {
   margin: 0;
   font-size: var(--ww-music-fs-lg);
@@ -350,6 +356,9 @@
   scrollbar-width: none;
   cursor: grab;
   user-select: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
 }
 .ww-music-scroll-row::-webkit-scrollbar {
   display: none;
@@ -357,6 +366,7 @@
 .ww-music-scroll-row.is-dragging {
   cursor: grabbing;
   scroll-snap-type: none;
+  scroll-behavior: auto;
 }
 
 .ww-music-card-item {
@@ -443,27 +453,6 @@
   position: relative;
   margin: 0 -0.25rem;
   padding: 0 0.25rem;
-}
-
-.ww-music-carousel-wrap::before,
-.ww-music-carousel-wrap::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0.35rem;
-  width: 2rem;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.ww-music-carousel-wrap::before {
-  left: 0;
-  background: linear-gradient(to right, var(--ww-inset), transparent);
-}
-
-.ww-music-carousel-wrap::after {
-  right: 0;
-  background: linear-gradient(to left, var(--ww-inset), transparent);
 }
 
 .ww-music-mood-card {

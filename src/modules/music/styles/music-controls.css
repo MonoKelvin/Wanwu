@@ -42,11 +42,31 @@
 
 .ww-music-shell .ww-music-search-panel {
   border-radius: var(--ww-music-panel-radius);
-  border: 1px solid var(--ww-glass-border);
-  background: var(--ww-music-glass-panel);
-  backdrop-filter: blur(16px) saturate(1.15);
-  -webkit-backdrop-filter: blur(16px) saturate(1.15);
-  box-shadow: var(--ww-shadow-soft);
+  border: 1px solid color-mix(in srgb, var(--ww-glass-border) 88%, transparent);
+  background: color-mix(in srgb, var(--ww-glass-bg) 86%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--ww-ink) 4%, transparent),
+    0 10px 32px color-mix(in srgb, var(--ww-ink) 10%, transparent);
+}
+
+[data-theme='dark'] .ww-music-shell .ww-music-search-panel {
+  background: color-mix(in srgb, var(--ww-glass-bg) 78%, rgb(0 0 0 / 0.22));
+  border-color: color-mix(in srgb, var(--ww-border-subtle) 82%, transparent);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.04),
+    0 12px 36px rgb(0 0 0 / 0.36);
+}
+
+[data-theme='dark'] .ww-music-shell :deep(.p-selectbutton) {
+  background: color-mix(in srgb, var(--ww-ink) 7%, transparent);
+  border-color: color-mix(in srgb, var(--ww-border-subtle) 80%, transparent);
+}
+
+[data-theme='dark'] .ww-music-shell :deep(.p-selectbutton .p-togglebutton.p-togglebutton-checked) {
+  background: color-mix(in srgb, var(--ww-ink) 10%, var(--ww-canvas)) !important;
+  box-shadow: 0 1px 6px rgb(0 0 0 / 0.28) !important;
 }
 
 .ww-music-shell .ww-music-search-panel__chip,
@@ -90,9 +110,5 @@
 }
 
 .ww-music-shell .ww-music-categories-skeleton__card {
-  border-radius: var(--ww-music-inner-radius);
-}
-
-.ww-music-shell .ww-music-discover-playlist-skeleton .ww-music-skeleton__discover-cover {
   border-radius: var(--ww-music-inner-radius);
 }

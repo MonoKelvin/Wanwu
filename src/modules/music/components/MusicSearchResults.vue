@@ -105,17 +105,20 @@ const hasAnyResults = computed(() => {
 
         <section v-if="search.filter === 'songs' && hasSongResults" class="ww-music-search-results__section">
           <h3 class="ww-music-section-title">歌曲</h3>
-          <MusicChartList
-            :tracks="search.result.tracks"
-            panel
-            show-provider
-            @play="play"
-          />
+          <div class="ww-music-search-results__panel">
+            <MusicChartList
+              :tracks="search.result.tracks"
+              panel
+              show-provider
+              @play="play"
+            />
+          </div>
         </section>
 
         <section v-if="search.filter === 'albums' && search.result.albums.length" class="ww-music-search-results__section">
           <h3 class="ww-music-section-title">专辑</h3>
-          <MusicCoverRow
+          <div class="ww-music-search-results__covers">
+            <MusicCoverRow
             :items="
               search.result.albums.map((a) => ({
                 id: a.browseId,
@@ -126,11 +129,13 @@ const hasAnyResults = computed(() => {
             "
             @select="(item) => openAlbum(item.id)"
           />
+          </div>
         </section>
 
         <section v-if="search.filter === 'artists' && search.result.artists.length" class="ww-music-search-results__section">
           <h3 class="ww-music-section-title">歌手</h3>
-          <MusicCoverRow
+          <div class="ww-music-search-results__covers">
+            <MusicCoverRow
             :items="
               search.result.artists.map((a) => ({
                 id: a.browseId,
@@ -141,6 +146,7 @@ const hasAnyResults = computed(() => {
             "
             @select="(item) => openArtist(item.id)"
           />
+          </div>
         </section>
 
         <section
@@ -148,7 +154,8 @@ const hasAnyResults = computed(() => {
           class="ww-music-search-results__section"
         >
           <h3 class="ww-music-section-title">歌单</h3>
-          <MusicCoverRow
+          <div class="ww-music-search-results__covers">
+            <MusicCoverRow
             :items="
               (search.result.playlists ?? []).map((p) => ({
                 id: p.playlistId,
@@ -159,6 +166,7 @@ const hasAnyResults = computed(() => {
             "
             @select="(item) => openPlaylist(item.id)"
           />
+          </div>
         </section>
       </template>
     </div>
@@ -260,6 +268,49 @@ const hasAnyResults = computed(() => {
 
 .ww-music-search-results__section .ww-music-section-title {
   margin: 0 0 var(--ww-music-section-head-gap);
+  text-align: center;
+}
+
+.ww-music-search-results__panel {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.ww-music-search-results__covers {
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+.ww-music-search-results__covers :deep(.ww-music-scroll-row) {
+  justify-content: center;
+}
+
+.ww-music-search-results__covers :deep(.ww-music-card-item) {
+  text-align: center;
+}
+
+.ww-music-search-results__tabs :deep(.p-selectbutton) {
+  justify-content: center;
+}
+
+[data-theme='dark'] .ww-music-search-results__tabs :deep(.p-selectbutton) {
+  background: color-mix(in srgb, var(--ww-ink) 7%, transparent);
+  border-color: color-mix(in srgb, var(--ww-border-subtle) 80%, transparent);
+}
+
+[data-theme='dark'] .ww-music-search-results__tabs :deep(.p-selectbutton .p-togglebutton) {
+  color: var(--ww-ink-muted) !important;
+}
+
+[data-theme='dark'] .ww-music-search-results__tabs :deep(.p-selectbutton .p-togglebutton.p-togglebutton-checked) {
+  background: color-mix(in srgb, var(--ww-ink) 10%, var(--ww-canvas)) !important;
+  color: var(--ww-ink) !important;
+  box-shadow: 0 1px 6px rgb(0 0 0 / 0.28) !important;
+}
+
+[data-theme='dark'] .ww-music-search-results :deep(.ww-music-track-panel) {
+  background: color-mix(in srgb, var(--ww-canvas) 88%, rgb(255 255 255 / 0.04));
+  border-color: color-mix(in srgb, var(--ww-border-subtle) 78%, transparent);
 }
 
 .ww-music-search-results__empty-wrap {

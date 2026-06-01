@@ -6,6 +6,8 @@ import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { MusicMvDetail } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
 
+defineOptions({ name: 'MusicVideoView' })
+
 const route = useRoute()
 const player = useMusicPlayerStore()
 const detail = ref<MusicMvDetail | null>(null)

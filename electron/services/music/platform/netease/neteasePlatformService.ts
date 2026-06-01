@@ -27,6 +27,12 @@ import {
   mapToplistSummary,
   parseBrowseId
 } from './mapper'
+import { ensureNeteaseApiReady } from './neteaseApiBootstrap'
+import {
+  pickStreamFromMatchBody,
+  pickStreamFromRows,
+  qualityToBitrate
+} from './neteaseStream'
 import type {
   MusicChartsPayload,
   MusicDiscoverFeed,
@@ -82,7 +88,12 @@ export class NeteasePlatformService implements IMusicPlatformService {
     this.proxy = opts.proxy?.trim() ?? ''
   }
 
-  private invoke<T>(path: string, params: Record<string, unknown> = {}, noCookie = false): Promise<T> {
+  private async invoke<T>(
+    path: string,
+    params: Record<string, unknown> = {},
+    noCookie = false
+  ): Promise<T> {
+    await ensureNeteaseApiReady()
     return this.gateway.invoke<T>(path, params, {
       cookie: noCookie ? {} : this.session.cookieObject(),
       realIp: this.realIp || undefined,
@@ -247,21 +258,55 @@ export class NeteasePlatformService implements IMusicPlatformService {
   }
 
   async resolveStream(songId: string, quality: MusicPlatformQuality): Promise<MusicStreamPick | null> {
-    const id = Number(songId)
+    const id = Number(songId.split('|')[0] || songId)
     if (!Number.isFinite(id)) return null
-    let data: { data?: Array<{ url?: string; br?: number; freeTrialInfo?: unknown }> }
-    if (quality === 'dolby') {
-      data = await this.invoke('song/url', { id, br: 999000, immerseType: 'c51', timestamp: Date.now() })
-    } else {
-      data = await this.invoke('song/url/v1', { id, level: quality, timestamp: Date.now() })
+
+    const fromV1 = await this.resolveStreamV1(id, quality)
+    if (fromV1?.url) return fromV1
+
+    const fromLegacy = await this.resolveStreamLegacy(id, quality)
+    if (fromLegacy?.url) return fromLegacy
+
+    return this.resolveStreamUnblock(id)
+  }
+
+  private async resolveStreamV1(id: number, quality: MusicPlatformQuality): Promise<MusicStreamPick | null> {
+    try {
+      if (quality === 'dolby') {
+        const data = await this.invoke<{ data?: Array<{ url?: string; br?: number; freeTrialInfo?: unknown }> }>(
+          'song/url',
+          { id, br: 999000, immerseType: 'c51', timestamp: Date.now() }
+        )
+        return pickStreamFromRows(data.data)
+      }
+      const data = await this.invoke<{ data?: Array<{ url?: string; br?: number; freeTrialInfo?: unknown }> }>(
+        'song/url/v1',
+        { id, level: quality, timestamp: Date.now() }
+      )
+      return pickStreamFromRows(data.data)
+    } catch {
+      return null
     }
-    const hit = data.data?.[0]
-    if (!hit?.url) return null
-    return {
-      url: hit.url,
-      format: hit.url.includes('.m4a') || hit.url.includes('.mp4') ? 'mp4' : 'mp3',
-      br: hit.br,
-      isTrial: !!hit.freeTrialInfo
+  }
+
+  private async resolveStreamLegacy(id: number, quality: MusicPlatformQuality): Promise<MusicStreamPick | null> {
+    try {
+      const data = await this.invoke<{ data?: Array<{ url?: string; br?: number; freeTrialInfo?: unknown }> }>(
+        'song/url',
+        { id, br: qualityToBitrate(quality), timestamp: Date.now() }
+      )
+      return pickStreamFromRows(data.data)
+    } catch {
+      return null
+    }
+  }
+
+  private async resolveStreamUnblock(id: number): Promise<MusicStreamPick | null> {
+    try {
+      const data = await this.invoke<{ data?: unknown }>('song/url/match', { id, timestamp: Date.now() })
+      return pickStreamFromMatchBody(data)
+    } catch {
+      return null
     }
   }
 
@@ -274,8 +319,9 @@ export class NeteasePlatformService implements IMusicPlatformService {
   }
 
   async getSongDetail(songId: string): Promise<NormalizedTrack | null> {
+    const rawId = songId.split('|')[0] || songId
     const data = await this.invoke<{ songs?: unknown[] }>('song/detail', {
-      ids: songId,
+      ids: String(rawId),
       timestamp: Date.now()
     })
     const first = data.songs?.[0]
@@ -320,6 +366,13 @@ export class NeteasePlatformService implements IMusicPlatformService {
 
   async getToplistTracks(toplistId: string, limit = 50): Promise<NormalizedTrack[]> {
     const rawId = parseBrowseId(toplistId)?.id ?? toplistId
+    try {
+      const data = await this.invoke<{ songs?: unknown[] }>('playlist/track/all', { id: rawId, limit })
+      const tracks = mapNeteaseSongs(data.songs ?? [])
+      if (tracks.length) return tracks.slice(0, limit)
+    } catch {
+      /* fallback */
+    }
     const data = await this.invoke<{ playlist?: { tracks?: unknown[] } }>('playlist/detail', { id: rawId, limit })
     return mapNeteaseSongs(data.playlist?.tracks ?? []).slice(0, limit)
   }
@@ -373,13 +426,15 @@ export class NeteasePlatformService implements IMusicPlatformService {
     area = '-1',
     type = -1,
     initial = '-1',
-    limit = 30
+    limit = 30,
+    offset = 0
   ): Promise<MusicSearchResult['artists']> {
     const data = await this.invoke<{ artists?: unknown[] }>('artist/list', {
       type,
       area,
       initial,
-      limit
+      limit,
+      offset
     })
     const out: MusicSearchResult['artists'] = []
     for (const a of data.artists ?? []) {
@@ -579,58 +634,112 @@ export class NeteasePlatformService implements IMusicPlatformService {
       this.getPlaylistSummaries('华语', 12)
     ])
 
-    const trending =
-      daily.status === 'fulfilled' && daily.value.length
-        ? daily.value
-        : fm.status === 'fulfilled'
-          ? fm.value
-          : []
-
-    const forYou = fm.status === 'fulfilled' ? fm.value : trending
     const newSongsVal = newSongs.status === 'fulfilled' ? newSongs.value : []
+    const personalizedVal = personalized.status === 'fulfilled' ? personalized.value : []
+    const toplistSummaries = toplists.status === 'fulfilled' ? toplists.value : []
 
-    const chartTracks =
-      toplists.status === 'fulfilled' && toplists.value[0]
-        ? await this.getToplistTracks(toplists.value[0].id, 40).catch(() => [])
-        : []
+    let chartTracks: NormalizedTrack[] = []
+    if (toplistSummaries[0]) {
+      chartTracks = await this.getToplistTracks(toplistSummaries[0].id, 40).catch(() => [])
+    }
+    if (!chartTracks.length && toplistSummaries[1]) {
+      chartTracks = await this.getToplistTracks(toplistSummaries[1].id, 40).catch(() => [])
+    }
 
-    const chartTracksOut =
-      chartTracks.length > 0
-        ? chartTracks
-        : newSongsVal.slice(0, 24).length
-          ? newSongsVal.slice(0, 24)
-          : forYou.slice(0, 16)
+    const dailyVal = daily.status === 'fulfilled' ? daily.value : []
+    const fmVal = fm.status === 'fulfilled' ? fm.value : []
+
+    const trending =
+      dailyVal.length > 0
+        ? dailyVal
+        : fmVal.length > 0
+          ? fmVal
+          : chartTracks.length > 0
+            ? chartTracks
+            : newSongsVal
+
+    const forYou =
+      newSongsVal.length > 0
+        ? newSongsVal
+        : dailyVal.length > 0
+          ? dailyVal
+          : fmVal.length > 0
+            ? fmVal
+            : chartTracks
+
+    let chartTracksOut =
+      chartTracks.length > 0 ? chartTracks : newSongsVal.length > 0 ? newSongsVal.slice(0, 24) : forYou.slice(0, 16)
 
     const chartPlaylists =
-      toplists.status === 'fulfilled'
-        ? mapToplistChartCards({ list: toplists.value })
-        : []
+      toplistSummaries.length > 0
+        ? mapToplistChartCards({ list: toplistSummaries })
+        : personalizedVal.map((p) => ({
+            browseId: `netease:playlist:${p.playlistId}`,
+            playlistId: p.playlistId,
+            title: p.title,
+            coverUrl: p.coverUrl
+          }))
 
     let forYouOut = forYou.slice(0, 24)
     let trendingOut = trending.slice(0, 32)
     if (!forYouOut.length) {
-      forYouOut = newSongsVal.slice(0, 16).length ? newSongsVal.slice(0, 16) : chartTracksOut.slice(0, 16)
+      forYouOut = chartTracksOut.slice(0, 16)
     }
     if (!trendingOut.length) {
       trendingOut = chartTracksOut.slice(0, 16)
     }
 
+    const hotPlaylistCards =
+      hotPlaylists.status === 'fulfilled'
+        ? hotPlaylists.value.map((p) => ({
+            browseId: `netease:playlist:${p.id}`,
+            playlistId: p.id,
+            title: p.title,
+            coverUrl: p.coverUrl
+          }))
+        : []
+
+    if (!forYouOut.length || !trendingOut.length || !chartTracksOut.length) {
+      const fallback = await this.fallbackDiscoverTracks(24)
+      if (!chartTracksOut.length && fallback.length) {
+        chartTracksOut = fallback.slice(0, 24)
+      }
+      if (!forYouOut.length && fallback.length) {
+        forYouOut = fallback.slice(0, 16)
+      }
+      if (!trendingOut.length && fallback.length) {
+        trendingOut = fallback.slice(0, 16)
+      }
+    }
+
     return {
       forYou: forYouOut,
       trending: trendingOut,
-      newReleases: newSongsVal.slice(0, 24),
+      newReleases: newSongsVal.length > 0 ? newSongsVal.slice(0, 24) : chartTracksOut.slice(0, 24),
       chartTracks: chartTracksOut,
-      chartPlaylists: [
-        ...chartPlaylists,
-        ...(hotPlaylists.status === 'fulfilled'
-          ? hotPlaylists.value.map((p) => ({
-              browseId: `netease:playlist:${p.id}`,
-              playlistId: p.id,
-              title: p.title,
-              coverUrl: p.coverUrl
-            }))
-          : [])
-      ]
+      chartPlaylists: [...chartPlaylists, ...hotPlaylistCards].slice(0, 20)
+    }
+  }
+
+  /** 热搜 + 搜索兜底，避免发现页全空 */
+  private async fallbackDiscoverTracks(limit = 24): Promise<NormalizedTrack[]> {
+    try {
+      const hot = await this.searchHot(Math.min(8, limit))
+      const tracks: NormalizedTrack[] = []
+      const seen = new Set<string>()
+      for (const item of hot) {
+        if (!item.keyword.trim()) continue
+        const result = await this.cloudSearch(item.keyword, MusicSearchType.Song, 4)
+        for (const track of result.tracks) {
+          if (seen.has(track.trackKey)) continue
+          seen.add(track.trackKey)
+          tracks.push(track)
+          if (tracks.length >= limit) return tracks
+        }
+      }
+      return tracks
+    } catch {
+      return []
     }
   }
 

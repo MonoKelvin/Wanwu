@@ -552,7 +552,8 @@ export class KugouPlatformService implements IMusicPlatformService {
     _area = '0',
     type = 0,
     initial = '',
-    limit = 30
+    limit = 30,
+    _offset = 0
   ): Promise<MusicSearchResult['artists']> {
     const data = await this.invoke<{ data?: { info?: unknown[] } }>('artist/lists', {
       type,

@@ -64,7 +64,13 @@ export interface IMusicPlatformService {
 
   getNewSongs(limit?: number): Promise<NormalizedTrack[]>
   getNewAlbums(limit?: number): Promise<MusicSearchResult['albums']>
-  getArtistList(area?: string, type?: number, initial?: string, limit?: number): Promise<MusicSearchResult['artists']>
+  getArtistList(
+    area?: string,
+    type?: number,
+    initial?: string,
+    limit?: number,
+    offset?: number
+  ): Promise<MusicSearchResult['artists']>
 
   getAlbum(browseId: string): Promise<{ album: unknown; tracks: NormalizedTrack[] }>
   getArtist(browseId: string): Promise<import('../../../../src/shared/types/music').MusicArtistPayload>

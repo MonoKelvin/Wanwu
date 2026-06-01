@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import type { NormalizedTrack } from '@shared/types/music'
 import MusicCover from '@modules/music/components/MusicCover.vue'
+import MusicTrackBadges from '@modules/music/components/MusicTrackBadges.vue'
 import WwMarqueeText from '@shared/components/WwMarqueeText.vue'
 import { useDragScroll } from '@modules/music/composables/useDragScroll'
 
@@ -60,6 +61,12 @@ function onCardClick(track: NormalizedTrack, index: number) {
         <span class="ww-music-card-item__meta">
           <WwMarqueeText :text="track.title" class="ww-music-card-item__title" />
           <span class="ww-music-card-item__sub ww-music-text-ellipsis">{{ track.artist }}</span>
+          <MusicTrackBadges
+            v-if="track.badges?.length || track.isTrial"
+            :track="track"
+            compact
+            class="ww-music-card-item__badges"
+          />
         </span>
       </div>
     </div>
@@ -111,6 +118,11 @@ function onCardClick(track: NormalizedTrack, index: number) {
   margin-top: 0;
   font-size: 0.6875rem;
   line-height: 1.1;
+}
+
+.ww-music-track-carousel :deep(.ww-music-card-item__badges) {
+  justify-content: center;
+  margin-top: 0.2rem;
 }
 
 .ww-music-track-carousel.ww-music-skeleton .ww-music-scroll-row {

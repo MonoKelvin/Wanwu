@@ -1,3 +1,6 @@
+/** 曲目能力/版权标识（来自网易云 privilege / 音质字段） */
+export type MusicTrackBadge = 'vip' | 'trial' | 'hires' | 'lossless' | 'paid'
+
 /** 统一曲目模型（主进程聚合后下发渲染层） */
 export interface NormalizedTrack {
   trackKey: string
@@ -9,6 +12,10 @@ export interface NormalizedTrack {
   durationSec?: number
   coverUrl?: string
   browseId?: string
+  /** 静态标签：VIP、Hi-Res、无损等 */
+  badges?: MusicTrackBadge[]
+  /** 当前流是否为试听（通常 30s/60s） */
+  isTrial?: boolean
 }
 
 export interface MusicSearchResult {
@@ -243,6 +250,7 @@ export interface MusicStreamResult {
   track?: NormalizedTrack
   /** Howler 解码格式（代理 URL 无扩展名时必须提供） */
   format?: 'mp4' | 'webm' | 'mp3' | 'ogg'
+  isTrial?: boolean
 }
 
 export interface MusicLyricsResult {

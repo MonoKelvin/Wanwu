@@ -11,16 +11,12 @@ import MusicCommentSheet from '@modules/music/components/MusicCommentSheet.vue'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import '@modules/music/styles/music-player.css'
 
+defineOptions({ name: 'MusicPlayerPage' })
+
 const router = useRouter()
 const player = useMusicPlayerStore()
 const queueOpen = ref(false)
 const commentsOpen = ref(false)
-
-const modeComponent = computed(() => {
-  if (player.layoutMode === 'duet') return MusicModeDuet
-  if (player.layoutMode === 'immersion') return MusicModeImmersion
-  return MusicModeGallery
-})
 
 const bgStyle = computed(() => {
   const url = player.currentTrack?.coverUrl
@@ -59,16 +55,26 @@ function back() {
           <WwIcon name="circle-help" size="sm" />
         </button>
       </header>
-      <component :is="modeComponent" />
+      <div class="ww-music-player-page__stage">
+        <MusicModeGallery
+          v-show="player.layoutMode === 'gallery'"
+          class="ww-music-player-page__mode"
+        />
+        <MusicModeDuet v-show="player.layoutMode === 'duet'" class="ww-music-player-page__mode" />
+        <MusicModeImmersion
+          v-show="player.layoutMode === 'immersion'"
+          class="ww-music-player-page__mode"
+        />
+      </div>
       <footer class="ww-music-player-page__footer">
         <MusicTransport @toggle-queue="queueOpen = !queueOpen" />
       </footer>
       <MusicQueueSheet :open="queueOpen" @close="queueOpen = false" />
-      <MusicCommentSheet
-        v-model:visible="commentsOpen"
-        :song-id="player.currentTrack?.videoId ?? ''"
-        :title="player.currentTrack?.title"
-      />
     </div>
+    <MusicCommentSheet
+      v-model:visible="commentsOpen"
+      :song-id="player.currentTrack?.videoId ?? ''"
+      :title="player.currentTrack?.title"
+    />
   </div>
 </template>

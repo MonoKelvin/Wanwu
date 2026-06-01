@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-export type DiscoverTabId = 'featured' | 'new' | 'more'
+export type DiscoverTabId = 'featured' | 'more'
 
 const props = defineProps<{
   modelValue: DiscoverTabId
@@ -13,7 +13,6 @@ const emit = defineEmits<{
 
 const tabs: Array<{ id: DiscoverTabId; label: string }> = [
   { id: 'featured', label: '精选' },
-  { id: 'new', label: '新歌' },
   { id: 'more', label: '更多' }
 ]
 

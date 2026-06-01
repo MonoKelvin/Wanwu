@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onActivated, onDeactivated, ref } from 'vue'
+import { computed, onActivated, onDeactivated, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicDiscoverSection from '@modules/music/components/MusicDiscoverSection.vue'
@@ -9,12 +9,13 @@ import MusicPlatformLoginDialog from '@modules/music/components/MusicPlatformLog
 import MusicTrackCarousel from '@modules/music/components/MusicTrackCarousel.vue'
 import MusicChartList from '@modules/music/components/MusicChartList.vue'
 import MusicChartCarousel from '@modules/music/components/MusicChartCarousel.vue'
+import MusicCoverRow from '@modules/music/components/MusicCoverRow.vue'
 import { useMusicAccount } from '@modules/music/composables/useMusicAccount'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import { useMusicDiscoverStore } from '@modules/music/stores/musicDiscover'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { DiscoverTabId } from '@modules/music/components/MusicDiscoverTabs.vue'
-import type { MusicChartCard, NormalizedTrack } from '@shared/types/music'
+import type { MusicChartCard, MusicChartSection, NormalizedTrack } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
 
 defineOptions({ name: 'MusicDiscoverView' })
@@ -24,13 +25,34 @@ const discover = useMusicDiscoverStore()
 const player = useMusicPlayerStore()
 const account = useMusicAccount()
 const { refresh: refreshAccount } = account
-const { resolvePlaylistBrowseId, platformLabel } = useMusicPlatform()
+const { buildBrowseId, platformLabel, platformId, isPlatformPrimary } = useMusicPlatform()
 
 const activeTab = ref<DiscoverTabId>('featured')
 const loginOpen = ref(false)
+const forYouTracks = ref<NormalizedTrack[]>([])
+const forYouLoading = ref(false)
+const forYouReady = ref(false)
+const dailyTracks = ref<NormalizedTrack[]>([])
+const newAlbums = ref<Array<{ browseId: string; title: string; artist: string; coverUrl?: string }>>([])
+const chartSections = ref<MusicChartSection[]>([])
+const artistPreview = ref<Array<{ browseId: string; name: string; coverUrl?: string }>>([])
+
+const dailyLoading = ref(false)
+const dailyReady = ref(false)
+const albumsLoading = ref(false)
+const albumsReady = ref(false)
+const artistsLoading = ref(false)
+const artistsReady = ref(false)
+const chartsLoading = ref(false)
+const chartsReady = ref(false)
 
 onActivated(() => {
   void discover.ensureLoaded()
+  if (!forYouReady.value) void loadForYou()
+  if (!dailyReady.value) void loadDaily()
+  if (!albumsReady.value) void loadAlbums()
+  if (!artistsReady.value) void loadArtists()
+  if (!chartsReady.value) void loadCharts()
   void player.refreshFavorites()
   discover.startAutoRefresh()
 })
@@ -39,179 +61,258 @@ onDeactivated(() => {
   discover.stopAutoRefresh()
 })
 
+watch(platformId, () => {
+  void discover.reloadAll()
+  void loadForYou()
+  void loadDaily()
+  void loadAlbums()
+  void loadArtists()
+  void loadCharts()
+})
+
+watch(
+  () => account.profile.value.loggedIn,
+  () => {
+    void loadForYou()
+    void loadDaily()
+  }
+)
+
+function sectionCards(section: MusicChartSection & { cards?: MusicChartCard[] }): MusicChartCard[] {
+  if (section.cards?.length) return section.cards
+  if (!Array.isArray(section.items)) return []
+  return section.items.filter((item): item is MusicChartCard => 'browseId' in (item as object))
+}
+
+const chartCarouselCards = computed(() =>
+  chartSections.value.flatMap((section) => sectionCards(section))
+)
+
+async function loadForYou() {
+  if (!isPlatformPrimary.value) {
+    forYouTracks.value = []
+    forYouReady.value = true
+    return
+  }
+
+  forYouLoading.value = true
+  forYouReady.value = false
+  try {
+    await discover.loadSection('forYou')
+    let tracks = [...discover.forYou.data]
+
+    if (!tracks.length) {
+      const [, songs] = await Promise.all([
+        discover.refreshSection('forYou').catch(() => {}),
+        window.wanwu.music.getNewSongs(24).catch(() => [] as NormalizedTrack[])
+      ])
+      tracks = discover.forYou.data.length ? [...discover.forYou.data] : songs
+    }
+
+    if (!tracks.length && account.profile.value.loggedIn) {
+      const daily = await window.wanwu.music.getDailyRecommend().catch(() => [] as NormalizedTrack[])
+      if (daily.length) tracks = daily
+    }
+    if (!tracks.length && account.profile.value.loggedIn) {
+      const fm = await window.wanwu.music.getPersonalFm().catch(() => [] as NormalizedTrack[])
+      if (fm.length) tracks = fm
+    }
+
+    forYouTracks.value = tracks
+  } finally {
+    forYouLoading.value = false
+    forYouReady.value = true
+  }
+}
+
+async function loadDaily() {
+  if (!isPlatformPrimary.value || !account.profile.value.loggedIn) {
+    dailyTracks.value = []
+    dailyReady.value = true
+    return
+  }
+  dailyLoading.value = true
+  dailyReady.value = false
+  try {
+    dailyTracks.value = await window.wanwu.music.getDailyRecommend().catch(() => [])
+  } finally {
+    dailyLoading.value = false
+    dailyReady.value = true
+  }
+}
+
+async function loadAlbums() {
+  if (!isPlatformPrimary.value) {
+    newAlbums.value = []
+    albumsReady.value = true
+    return
+  }
+  albumsLoading.value = true
+  albumsReady.value = false
+  try {
+    newAlbums.value = await window.wanwu.music.getNewAlbums(16).catch(() => [])
+  } finally {
+    albumsLoading.value = false
+    albumsReady.value = true
+  }
+}
+
+async function loadArtists() {
+  if (!isPlatformPrimary.value) {
+    artistPreview.value = []
+    artistsReady.value = true
+    return
+  }
+  artistsLoading.value = true
+  artistsReady.value = false
+  try {
+    artistPreview.value = await window.wanwu.music.getNeteaseArtistList(12).catch(() => [])
+  } finally {
+    artistsLoading.value = false
+    artistsReady.value = true
+  }
+}
+
+async function loadCharts() {
+  if (!isPlatformPrimary.value) {
+    chartSections.value = []
+    chartsReady.value = true
+    return
+  }
+  chartsLoading.value = true
+  chartsReady.value = false
+  try {
+    const charts = await window.wanwu.music.getCharts().catch(() => ({ sections: [] }))
+    chartSections.value = charts.sections ?? []
+  } finally {
+    chartsLoading.value = false
+    chartsReady.value = true
+  }
+}
+
 function playFrom(tracks: NormalizedTrack[], track: NormalizedTrack) {
   void player.playTrack(track, tracks.length ? tracks : [track])
 }
 
-function openPlaylist(card: MusicChartCard) {
-  const id = (card.playlistId ?? card.browseId)?.trim()
+function openToplist(card: MusicChartCard) {
+  const id = card.browseId ?? buildBrowseId('toplist', card.playlistId ?? '')
   if (!id) return
-  const playlistId = resolvePlaylistBrowseId(id)
-  if (!playlistId) return
-  void router.push({ name: 'music-playlist', params: { playlistId } })
+  void router.push({ name: 'music-toplist', params: { browseId: encodeURIComponent(id) } })
 }
 
-function sectionLoading(section: { loaded: boolean; loading: boolean; refreshing: boolean }) {
-  return !section.loaded || section.loading || section.refreshing
+function openAlbum(item: { id: string }) {
+  void router.push({ name: 'music-album', params: { browseId: item.id } })
 }
 
-function sectionError(section: { error: string | null }) {
-  return section.error
-}
-
-function retrySection(key: Parameters<typeof discover.refreshSection>[0]) {
-  void discover.refreshSection(key)
-}
-
-function openDaily() {
-  void router.push({ name: 'music-daily' })
+function openArtist(browseId: string) {
+  void router.push({ name: 'music-artist', params: { browseId } })
 }
 
 function openFm() {
   void router.push({ name: 'music-fm' })
 }
 
-function openCharts() {
-  void router.push({ name: 'music-charts' })
-}
-
-function openNew() {
-  void router.push({ name: 'music-new' })
-}
-
-function openArtists() {
-  void router.push({ name: 'music-artists' })
+function openCloud() {
+  void router.push({ name: 'music-cloud' })
 }
 
 function openRadio() {
   void router.push({ name: 'music-radio' })
 }
 
-function openCloud() {
-  void router.push({ name: 'music-cloud' })
+function openArtists() {
+  void router.push({ name: 'music-artists' })
 }
 
-const showLoginBanner = () =>
-  account.hasPlatformAccount.value && !account.profile.value.loggedIn
+const showLoginBanner = computed(
+  () => account.hasPlatformAccount.value && !account.profile.value.loggedIn
+)
 </script>
 
 <template>
   <div class="ww-music-tab-body ww-scroll-main">
     <div class="ww-music-content-shell">
-      <MusicPageHeading title="发现" subtitle="榜单 · 新歌 · 歌单" />
+      <MusicPageHeading title="发现" subtitle="推荐 · 新碟 · 歌手" />
 
       <MusicDiscoverTabs v-model="activeTab" />
 
-      <!-- 精选：推荐 + 歌单榜单 -->
       <template v-if="activeTab === 'featured'">
         <MusicLoginBanner
-          v-if="showLoginBanner()"
+          v-if="showLoginBanner"
           :platform-label="platformLabel"
           @login="loginOpen = true"
         />
 
-        <MusicDiscoverSection
-          title="为你推荐"
-          :refreshing="discover.forYou.refreshing"
-          @refresh="discover.refreshSection('forYou')"
-        >
+        <MusicDiscoverSection title="为你推荐" :refreshing="forYouLoading" @refresh="loadForYou">
           <MusicTrackCarousel
-            :tracks="discover.forYou.data"
-            :loading="sectionLoading(discover.forYou)"
-            @play="(t) => playFrom(discover.forYou.data, t)"
+            :tracks="forYouTracks"
+            :loading="forYouLoading || !forYouReady"
+            @play="(t) => playFrom(forYouTracks, t)"
           />
-          <p
-            v-if="discover.forYou.loaded && !discover.forYou.data.length && !discover.forYou.loading"
-            class="ww-music-state-hint"
-          >
-            暂无推荐，{{ showLoginBanner() ? '登录后刷新试试' : '稍后再试' }}。
+          <p v-if="forYouReady && !forYouLoading && !forYouTracks.length" class="ww-music-state-hint">
+            暂无推荐，{{ showLoginBanner ? '登录后刷新试试' : '稍后再试' }}
           </p>
         </MusicDiscoverSection>
 
         <MusicDiscoverSection
-          title="热门趋势"
-          :refreshing="discover.trending.refreshing"
-          @refresh="discover.refreshSection('trending')"
-        >
-          <MusicTrackCarousel
-            :tracks="discover.trending.data"
-            :loading="sectionLoading(discover.trending)"
-            @play="(t) => playFrom(discover.trending.data, t)"
-          />
-        </MusicDiscoverSection>
-
-        <div v-if="sectionError(discover.chartPlaylists)" class="ww-music-section-error">
-          <span>{{ discover.chartPlaylists.error }}</span>
-          <button type="button" class="ww-music-retry" @click="retrySection('chartPlaylists')">重试</button>
-        </div>
-        <MusicDiscoverSection
-          title="精选歌单"
-          :refreshing="discover.chartPlaylists.refreshing"
-          @refresh="discover.refreshSection('chartPlaylists')"
-        >
-          <div
-            v-if="sectionLoading(discover.chartPlaylists)"
-            class="ww-music-discover-playlist-skeleton ww-music-skeleton"
-          >
-            <div v-for="n in 5" :key="n" class="ww-music-skeleton__discover-card">
-              <div class="ww-music-skeleton__discover-cover" />
-              <div class="ww-music-skeleton__discover-line ww-music-skeleton__discover-line--title" />
-            </div>
-          </div>
-          <MusicChartCarousel
-            v-else-if="discover.chartPlaylists.data.length"
-            :cards="discover.chartPlaylists.data"
-            @select="openPlaylist"
-          />
-          <p v-else class="ww-music-state-hint">暂无歌单数据，请稍后刷新</p>
-        </MusicDiscoverSection>
-
-        <div v-if="sectionError(discover.chartTracks)" class="ww-music-section-error">
-          <span>{{ discover.chartTracks.error }}</span>
-          <button type="button" class="ww-music-retry" @click="retrySection('chartTracks')">重试</button>
-        </div>
-        <MusicDiscoverSection
-          title="排行榜"
-          :refreshing="discover.chartTracks.refreshing"
-          @refresh="discover.refreshSection('chartTracks')"
+          v-if="account.profile.loggedIn"
+          title="每日推荐"
+          :refreshing="dailyLoading"
+          @refresh="loadDaily"
         >
           <MusicChartList
-            :tracks="discover.chartTracks.data"
-            :loading="sectionLoading(discover.chartTracks)"
+            v-if="dailyLoading || dailyTracks.length"
+            :tracks="dailyTracks.slice(0, 12)"
+            :loading="dailyLoading || !dailyReady"
             panel
-            @play="(t) => playFrom(discover.chartTracks.data, t)"
+            show-provider
+            @play="(t) => playFrom(dailyTracks, t)"
           />
-          <p
-            v-if="discover.chartTracks.loaded && !discover.chartTracks.data.length && !sectionLoading(discover.chartTracks)"
-            class="ww-music-state-hint"
-          >
-            暂无排行榜数据，请稍后刷新
-          </p>
+          <p v-else-if="dailyReady" class="ww-music-state-hint">暂无日推内容</p>
+        </MusicDiscoverSection>
+
+        <MusicDiscoverSection title="新碟" :refreshing="albumsLoading" @refresh="loadAlbums">
+          <MusicCoverRow
+            :items="
+              newAlbums.map((a) => ({
+                id: a.browseId,
+                title: a.title,
+                subtitle: a.artist,
+                coverUrl: a.coverUrl
+              }))
+            "
+            :loading="albumsLoading || !albumsReady"
+            size="album"
+            @select="openAlbum"
+          />
+        </MusicDiscoverSection>
+
+        <MusicDiscoverSection title="热门歌手" :refreshing="artistsLoading" @refresh="loadArtists">
+          <MusicCoverRow
+            :items="
+              artistPreview.map((a) => ({
+                id: a.browseId,
+                title: a.name,
+                coverUrl: a.coverUrl,
+                shape: 'circle' as const
+              }))
+            "
+            :loading="artistsLoading || !artistsReady"
+            size="artist"
+            skeleton-shape="circle"
+            @select="(item) => openArtist(item.id)"
+          />
+        </MusicDiscoverSection>
+
+        <MusicDiscoverSection title="官方榜单" :refreshing="chartsLoading" @refresh="loadCharts">
+          <MusicChartCarousel
+            :cards="chartCarouselCards"
+            :loading="chartsLoading || !chartsReady"
+            @select="openToplist"
+          />
         </MusicDiscoverSection>
       </template>
 
-      <!-- 新歌 -->
-      <template v-else-if="activeTab === 'new'">
-        <MusicDiscoverSection
-          title="新上线"
-          :refreshing="discover.newReleases.refreshing"
-          @refresh="discover.refreshSection('newReleases')"
-        >
-          <MusicTrackCarousel
-            :tracks="discover.newReleases.data"
-            :loading="sectionLoading(discover.newReleases)"
-            @play="(t) => playFrom(discover.newReleases.data, t)"
-          />
-          <p
-            v-if="discover.newReleases.loaded && !discover.newReleases.data.length"
-            class="ww-music-state-hint"
-          >
-            暂无新歌数据
-          </p>
-        </MusicDiscoverSection>
-      </template>
-
-      <!-- 更多：日推/云盘入口 -->
       <template v-else>
         <section class="ww-music-discover-more-section">
           <p class="ww-music-mine-section-label">个性化</p>
@@ -219,91 +320,41 @@ const showLoginBanner = () =>
             <button type="button" class="ww-music-discover-more-card" @click="openFm">
               <p class="ww-music-discover-more-card__title">私人 FM</p>
               <p class="ww-music-discover-more-card__desc">
-                {{ platformLabel ? `${platformLabel} 漫游，需登录` : '平台 FM' }}
-              </p>
-            </button>
-            <button type="button" class="ww-music-discover-more-card" @click="openDaily">
-              <p class="ww-music-discover-more-card__title">每日推荐</p>
-              <p class="ww-music-discover-more-card__desc">
-                {{ platformLabel ? `${platformLabel} 日推，需登录` : '平台日推' }}
+                {{ platformLabel ? `${platformLabel} 漫游` : '平台 FM' }} · 需登录
               </p>
             </button>
             <button type="button" class="ww-music-discover-more-card" @click="openCloud">
               <p class="ww-music-discover-more-card__title">音乐云盘</p>
               <p class="ww-music-discover-more-card__desc">
-                {{ platformLabel ? `${platformLabel} 云盘，需登录` : '平台云盘' }}
+                {{ platformLabel ? `${platformLabel} 云盘` : '平台云盘' }} · 需登录
               </p>
             </button>
           </div>
         </section>
 
         <section class="ww-music-discover-more-section">
-          <p class="ww-music-mine-section-label">浏览发现</p>
+          <p class="ww-music-mine-section-label">浏览</p>
           <div class="ww-music-discover-more-grid">
-            <button type="button" class="ww-music-discover-more-card" @click="openCharts">
-              <p class="ww-music-discover-more-card__title">排行榜</p>
-              <p class="ww-music-discover-more-card__desc">官方榜单与热门趋势</p>
-            </button>
-            <button type="button" class="ww-music-discover-more-card" @click="openNew">
-              <p class="ww-music-discover-more-card__title">新歌新碟</p>
-              <p class="ww-music-discover-more-card__desc">最新歌曲与专辑</p>
-            </button>
-            <button type="button" class="ww-music-discover-more-card" @click="openArtists">
-              <p class="ww-music-discover-more-card__title">歌手</p>
-              <p class="ww-music-discover-more-card__desc">浏览热门歌手</p>
-            </button>
             <button type="button" class="ww-music-discover-more-card" @click="openRadio">
               <p class="ww-music-discover-more-card__title">场景电台</p>
               <p class="ww-music-discover-more-card__desc">按场景聆听</p>
+            </button>
+            <button type="button" class="ww-music-discover-more-card" @click="openArtists">
+              <p class="ww-music-discover-more-card__title">歌手</p>
+              <p class="ww-music-discover-more-card__desc">浏览全部歌手</p>
             </button>
           </div>
         </section>
       </template>
     </div>
-    <MusicPlatformLoginDialog v-model:visible="loginOpen" @success="() => refreshAccount()" />
+    <MusicPlatformLoginDialog
+      v-model:visible="loginOpen"
+      @success="
+        () =>
+          refreshAccount().then(() =>
+            Promise.all([loadForYou(), loadDaily(), loadAlbums(), loadArtists(), loadCharts()])
+          )
+      "
+    />
   </div>
 </template>
-
-<style scoped>
-.ww-music-discover-playlist-skeleton {
-  --ww-music-card-size: 8.75rem;
-  display: flex;
-  gap: var(--ww-music-card-gap);
-  overflow: hidden;
-}
-
-.ww-music-discover-playlist-skeleton .ww-music-skeleton__discover-card {
-  flex: 0 0 var(--ww-music-card-size);
-  width: var(--ww-music-card-size);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.ww-music-discover-playlist-skeleton .ww-music-skeleton__discover-cover {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: var(--ww-music-inner-radius, 0.875rem);
-  background: linear-gradient(
-    115deg,
-    var(--ww-surface-hover) 0%,
-    color-mix(in srgb, var(--ww-surface-hover) 55%, transparent) 45%,
-    var(--ww-surface-hover) 90%
-  );
-  background-size: 200% 200%;
-  animation: ww-music-shimmer 1.2s ease-in-out infinite;
-}
-
-.ww-music-discover-playlist-skeleton .ww-music-skeleton__discover-line {
-  height: 0.5rem;
-  margin-top: 0.35rem;
-  border-radius: 999px;
-  background: var(--ww-surface-hover);
-  animation: ww-music-shimmer 1.2s ease-in-out infinite;
-}
-
-.ww-music-discover-playlist-skeleton .ww-music-skeleton__discover-line--title {
-  width: 88%;
-  align-self: center;
-}
-</style>

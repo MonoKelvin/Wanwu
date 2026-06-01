@@ -6,6 +6,8 @@ import MusicMoodGrid from '@modules/music/components/MusicMoodGrid.vue'
 import type { MusicRadioCategory } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
 
+defineOptions({ name: 'MusicRadioView' })
+
 const router = useRouter()
 const categories = ref<MusicRadioCategory[]>([])
 const loading = ref(true)

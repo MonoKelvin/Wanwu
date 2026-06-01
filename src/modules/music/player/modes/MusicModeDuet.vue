@@ -25,16 +25,19 @@ const player = useMusicPlayerStore()
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 1.15rem;
+  gap: 1.35rem;
   flex: 1;
   min-height: 0;
-  padding: 1.25rem 1.5rem 1.5rem;
+  padding: 1.5rem 1.25rem 1.5rem;
 }
 
 .ww-mode-duet__cover {
-  width: min(18rem, 70vw);
+  width: min(16rem, 62vw);
   align-self: center;
   flex-shrink: 0;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem 1rem;
+  overflow: visible;
 }
 
 .ww-mode-duet__cover :deep(.ww-music-player-hero-cover) {
@@ -55,6 +58,7 @@ const player = useMusicPlayerStore()
   width: 100%;
   flex: 1;
   min-height: 0;
-  margin-top: -0.35rem;
+  margin-top: 0.5rem;
+  padding: 0 0.35rem;
 }
 </style>

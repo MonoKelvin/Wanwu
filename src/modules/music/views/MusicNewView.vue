@@ -8,6 +8,8 @@ import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { NormalizedTrack } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
 
+defineOptions({ name: 'MusicNewView' })
+
 type Tab = 'songs' | 'albums'
 
 const router = useRouter()

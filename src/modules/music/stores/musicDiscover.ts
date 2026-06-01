@@ -85,12 +85,32 @@ export const useMusicDiscoverStore = defineStore('musicDiscover', () => {
   }
 
   async function ensureLoaded() {
-    if (initialized.value) return
-    initialized.value = true
-    for (const key of SECTION_KEYS) {
-      sectionRef(key).value.loading = true
+    if (!initialized.value) {
+      initialized.value = true
+      void Promise.all(SECTION_KEYS.map((key) => loadSection(key))).then(async () => {
+        const allEmpty = SECTION_KEYS.every(
+          (k) => !sectionRef(k).value.data.length && !sectionRef(k).value.error
+        )
+        if (allEmpty) {
+          await Promise.all(SECTION_KEYS.map((key) => refreshSection(key)))
+        }
+      })
+      return
     }
-    await Promise.all(SECTION_KEYS.map((key) => loadSection(key)))
+
+    const allEmpty = SECTION_KEYS.every(
+      (k) => !sectionRef(k).value.data.length && !sectionRef(k).value.error
+    )
+    if (allEmpty) {
+      void Promise.all(SECTION_KEYS.map((key) => refreshSection(key)))
+    }
+  }
+
+  async function reloadAll() {
+    for (const key of SECTION_KEYS) {
+      sectionRef(key).value.loaded = false
+    }
+    await Promise.all(SECTION_KEYS.map((key) => loadSection(key, true)))
   }
 
   function startAutoRefresh() {
@@ -117,6 +137,7 @@ export const useMusicDiscoverStore = defineStore('musicDiscover', () => {
     chartTracks,
     chartPlaylists,
     ensureLoaded,
+    reloadAll,
     loadSection,
     refreshSection,
     startAutoRefresh,

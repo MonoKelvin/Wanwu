@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MusicAlbumHero from '@modules/music/components/MusicAlbumHero.vue'
 import MusicChartList from '@modules/music/components/MusicChartList.vue'
@@ -9,6 +9,8 @@ import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { MusicArtistPayload, NormalizedTrack } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
 
+defineOptions({ name: 'MusicArtistView' })
+
 const route = useRoute()
 const router = useRouter()
 const player = useMusicPlayerStore()
@@ -16,14 +18,18 @@ const artist = ref<MusicArtistPayload>({ name: '歌手', tracks: [], albums: [] 
 const loading = ref(true)
 const browseId = computed(() => String(route.params.browseId ?? ''))
 
-onMounted(async () => {
+async function loadArtist() {
   loading.value = true
   try {
     artist.value = await window.wanwu.music.getArtist(browseId.value)
   } finally {
     loading.value = false
   }
-})
+}
+
+watch(browseId, () => {
+  void loadArtist()
+}, { immediate: true })
 
 function play(track: NormalizedTrack) {
   void player.playTrack(track, artist.value.tracks)

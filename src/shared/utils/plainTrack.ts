@@ -13,6 +13,8 @@ export function plainTrack(track: NormalizedTrack): NormalizedTrack {
     album: t.album,
     durationSec: t.durationSec,
     coverUrl: t.coverUrl,
-    browseId: t.browseId
+    browseId: t.browseId,
+    badges: t.badges?.length ? [...t.badges] : undefined,
+    isTrial: t.isTrial
   }
 }

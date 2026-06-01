@@ -26,6 +26,18 @@ const modeIcon = computed(() => {
   if (player.playMode === 'single') return 'refresh-cw' as const
   return 'list-music' as const
 })
+
+const layoutIcon = computed(() => {
+  if (player.layoutMode === 'duet') return 'rows' as const
+  if (player.layoutMode === 'immersion') return 'gallery-vertical' as const
+  return 'columns-2' as const
+})
+
+const layoutLabel = computed(() => {
+  if (player.layoutMode === 'duet') return '双行歌词'
+  if (player.layoutMode === 'immersion') return '沉浸歌词'
+  return '左右布局'
+})
 </script>
 
 <template>
@@ -105,10 +117,10 @@ const modeIcon = computed(() => {
           type="button"
           class="ww-music-glass-chip"
           aria-label="布局"
-          v-tooltip.bottom="'切换布局'"
+          v-tooltip.bottom="layoutLabel"
           @click="player.cycleLayoutMode()"
         >
-          <WwIcon name="layout-grid" size="sm" />
+          <WwIcon :name="layoutIcon" size="sm" />
         </button>
       </div>
     </div>

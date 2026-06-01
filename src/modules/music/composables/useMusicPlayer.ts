@@ -98,10 +98,26 @@ export function useMusicPlayer() {
     duration.value = 0
   }
 
+  function resetProgress(): void {
+    progress.value = 0
+  }
+
+  function ensurePlaying(instance: Howl): void {
+    if (instance.playing()) return
+    const soundId = instance.play()
+    if (soundId === undefined && !instance.playing()) {
+      requestAnimationFrame(() => {
+        if (howl === instance && !instance.playing()) instance.play()
+      })
+    }
+  }
+
   async function load(url: string, format?: HowlFormat, autoplay = false): Promise<void> {
     howl?.pause()
     clearTimer()
     playing.value = false
+    progress.value = 0
+    duration.value = 0
     const formats = howlFormatList(format)
     const attempts: Array<{ formats: string[]; html5: boolean }> = [
       { formats, html5: true },
@@ -122,7 +138,7 @@ export function useMusicPlayer() {
         howl = instance
         bindHowlEvents(instance)
         duration.value = instance.duration() ?? 0
-        if (autoplay) instance.play()
+        if (autoplay) ensurePlaying(instance)
         return
       } catch (e) {
         lastError = e instanceof Error ? e : new Error('音频加载失败')
@@ -134,6 +150,10 @@ export function useMusicPlayer() {
 
   async function loadAndPlay(url: string, format?: HowlFormat): Promise<void> {
     await load(url, format, true)
+    if (!howl) return
+    howl.seek(0)
+    progress.value = 0
+    ensurePlaying(howl)
   }
 
   function play(): Promise<void> {
@@ -210,6 +230,7 @@ export function useMusicPlayer() {
     toggle,
     stop,
     seek,
+    resetProgress,
     setVolume,
     setVolumePercent,
     toggleMute,

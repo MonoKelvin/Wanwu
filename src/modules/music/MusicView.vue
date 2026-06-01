@@ -6,6 +6,7 @@ import MusicSearchResults from '@modules/music/components/MusicSearchResults.vue
 import { useMusicSearch } from '@modules/music/composables/useMusicSearch'
 import { useMusicAccount } from '@modules/music/composables/useMusicAccount'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
+import { MUSIC_KEEP_ALIVE } from '@modules/music/config/musicKeepAlive'
 import '@modules/music/styles/music-shared.css'
 import '@modules/music/styles/music-controls.css'
 import '@modules/music/styles/music-layout.css'
@@ -19,6 +20,7 @@ const player = useMusicPlayerStore()
 useMusicAccount()
 
 const isFullscreen = computed(() => !!route.meta.fullscreen)
+const pageTransition = computed(() => (isFullscreen.value ? '' : 'ww-music-page'))
 
 watch(
   () => route.meta.fullscreen,
@@ -38,14 +40,10 @@ onMounted(() => {
     <div class="flex min-h-0 flex-1 flex-col overflow-hidden ww-music-stage">
       <Transition name="ww-music-search-view" mode="out-in">
         <MusicSearchResults v-if="!isFullscreen && search.isActive" key="search" />
-        <RouterView v-else key="route" v-slot="{ Component }">
-          <Transition name="ww-music-page" mode="out-in">
-            <KeepAlive include="MusicDiscoverView,MusicCategoriesView,MusicMineView">
-              <component
-                :is="Component"
-                :key="route.name"
-                class="ww-music-page min-h-0 flex-1"
-              />
+        <RouterView v-else v-slot="{ Component }">
+          <Transition :name="pageTransition">
+            <KeepAlive :include="[...MUSIC_KEEP_ALIVE]">
+              <component :is="Component" class="ww-music-page min-h-0 flex-1" />
             </KeepAlive>
           </Transition>
         </RouterView>
@@ -100,20 +98,17 @@ onMounted(() => {
 .ww-music-page-enter-active,
 .ww-music-page-leave-active {
   transition:
-    opacity 0.28s var(--ww-ease-out),
-    transform 0.32s cubic-bezier(0.34, 1.05, 0.64, 1),
-    filter 0.28s var(--ww-ease-out);
+    opacity 0.16s var(--ww-ease-out),
+    transform 0.2s cubic-bezier(0.34, 1.05, 0.64, 1);
 }
 
 .ww-music-page-enter-from {
   opacity: 0;
-  transform: translateY(12px) scale(0.982);
-  filter: blur(2px);
+  transform: translateY(6px);
 }
 
 .ww-music-page-leave-to {
   opacity: 0;
-  transform: translateY(-8px) scale(0.988);
-  filter: blur(1px);
+  transform: translateY(-4px);
 }
 </style>

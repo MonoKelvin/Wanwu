@@ -4,6 +4,7 @@ import type {
   MusicMoodCategory,
   MusicMoodPlaylist,
   MusicSearchResult,
+  MusicTrackBadge,
   NormalizedTrack
 } from '../../../../../src/shared/types/music'
 import { upgradeCoverUrl } from '../../../../../src/shared/utils/musicCoverUrl'
@@ -19,11 +20,40 @@ function trackKey(songId: string | number): string {
 function pickCover(item: Record<string, unknown>): string | undefined {
   const pic = item.picUrl ?? item.coverImgUrl ?? item.img1v1Url
   if (typeof pic === 'string' && pic) return upgradeCoverUrl(pic.replace('http://', 'https://'), 'card')
-  const al = item.al as Record<string, unknown> | undefined
+  const al = (item.al ?? item.album) as Record<string, unknown> | undefined
   if (al?.picUrl && typeof al.picUrl === 'string') {
     return upgradeCoverUrl(al.picUrl.replace('http://', 'https://'), 'card')
   }
+  if (al?.blurPicUrl && typeof al.blurPicUrl === 'string') {
+    return upgradeCoverUrl(al.blurPicUrl.replace('http://', 'https://'), 'card')
+  }
   return undefined
+}
+
+function mapSongBadges(raw: Record<string, unknown>): MusicTrackBadge[] {
+  const badges: MusicTrackBadge[] = []
+  const priv = raw.privilege as Record<string, unknown> | undefined
+  const fee =
+    typeof priv?.fee === 'number'
+      ? priv.fee
+      : typeof raw.fee === 'number'
+        ? raw.fee
+        : 0
+
+  if (fee === 1 || fee === 8) badges.push('vip')
+  if (fee === 4) badges.push('paid')
+
+  const maxBr =
+    typeof priv?.maxbr === 'number'
+      ? priv.maxbr
+      : typeof priv?.maxBr === 'number'
+        ? priv.maxBr
+        : undefined
+
+  if (raw.hr || maxBr != null && maxBr >= 4_000_000) badges.push('hires')
+  else if (raw.sq || maxBr != null && maxBr >= 1_000_000) badges.push('lossless')
+
+  return badges
 }
 
 function mapArtistName(item: Record<string, unknown>): string {
@@ -40,7 +70,10 @@ export function mapNeteaseSong(raw: Record<string, unknown>): NormalizedTrack | 
   const songId = String(id)
   const title = String(raw.name ?? raw.title ?? '').trim()
   if (!title) return null
-  const al = raw.al as Record<string, unknown> | undefined
+  const al = (raw.al ?? raw.album) as Record<string, unknown> | undefined
+  const durationMs =
+    typeof raw.dt === 'number' ? raw.dt : typeof raw.duration === 'number' ? raw.duration : undefined
+  const badges = mapSongBadges(raw)
   return {
     trackKey: trackKey(songId),
     provider,
@@ -48,9 +81,10 @@ export function mapNeteaseSong(raw: Record<string, unknown>): NormalizedTrack | 
     title,
     artist: mapArtistName(raw),
     album: al?.name ? String(al.name) : undefined,
-    durationSec: typeof raw.dt === 'number' ? Math.round(raw.dt / 1000) : undefined,
+    durationSec: durationMs != null ? Math.round(durationMs / 1000) : undefined,
     coverUrl: pickCover(raw),
-    browseId: al?.id != null ? `netease:album:${al.id}` : undefined
+    browseId: al?.id != null ? `netease:album:${al.id}` : undefined,
+    badges: badges.length ? badges : undefined
   }
 }
 

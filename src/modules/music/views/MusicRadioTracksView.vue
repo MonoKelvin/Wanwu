@@ -7,6 +7,8 @@ import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { NormalizedTrack } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
 
+defineOptions({ name: 'MusicRadioTracksView' })
+
 const route = useRoute()
 const player = useMusicPlayerStore()
 const tracks = ref<NormalizedTrack[]>([])

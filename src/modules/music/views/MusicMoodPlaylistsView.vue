@@ -8,6 +8,8 @@ import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { MusicMoodPlaylist } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
 
+defineOptions({ name: 'MusicMoodPlaylistsView' })
+
 const route = useRoute()
 const player = useMusicPlayerStore()
 const playlists = ref<MusicMoodPlaylist[]>([])

@@ -3,6 +3,7 @@ import type { NormalizedTrack } from '@shared/types/music'
 import MusicCover from '@modules/music/components/MusicCover.vue'
 import MusicPlayingBars from '@modules/music/components/MusicPlayingBars.vue'
 import MusicProviderBadge from '@modules/music/components/MusicProviderBadge.vue'
+import MusicTrackBadges from '@modules/music/components/MusicTrackBadges.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 
 const props = defineProps<{
@@ -44,6 +45,7 @@ function formatDuration(sec?: number): string {
     <span class="ww-track-row__meta">
       <span class="ww-track-row__title-row">
         <span class="ww-track-row__title">{{ track.title }}</span>
+        <MusicTrackBadges v-if="track.badges?.length || track.isTrial" :track="track" compact />
         <MusicProviderBadge v-if="showProvider && track.provider !== 'verome'" :provider="track.provider" />
       </span>
       <span class="ww-track-row__artist">{{ track.artist }}</span>

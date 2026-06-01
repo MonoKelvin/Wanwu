@@ -38,9 +38,32 @@
 .ww-scrollbar::-webkit-scrollbar-button,
 .overflow-y-auto::-webkit-scrollbar-button,
 .overflow-auto::-webkit-scrollbar-button {
-  display: none;
-  width: 0;
-  height: 0;
+  display: block;
+  width: var(--ww-scrollbar-size);
+  height: calc(var(--ww-scrollbar-size) - 2px);
+  background: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.ww-scroll-main::-webkit-scrollbar-button:vertical:decrement,
+.ww-scrollbar::-webkit-scrollbar-button:vertical:decrement,
+.overflow-y-auto::-webkit-scrollbar-button:vertical:decrement,
+.overflow-auto::-webkit-scrollbar-button:vertical:decrement {
+  background-image: linear-gradient(45deg, transparent 50%, var(--ww-scrollbar-thumb) 50%),
+    linear-gradient(135deg, var(--ww-scrollbar-thumb) 50%, transparent 50%);
+  background-size: 5px 5px, 5px 5px;
+  background-position: calc(50% - 2px) calc(50% + 1px), calc(50% + 2px) calc(50% + 1px);
+}
+
+.ww-scroll-main::-webkit-scrollbar-button:vertical:increment,
+.ww-scrollbar::-webkit-scrollbar-button:vertical:increment,
+.overflow-y-auto::-webkit-scrollbar-button:vertical:increment,
+.overflow-auto::-webkit-scrollbar-button:vertical:increment {
+  background-image: linear-gradient(135deg, transparent 50%, var(--ww-scrollbar-thumb) 50%),
+    linear-gradient(225deg, var(--ww-scrollbar-thumb) 50%, transparent 50%);
+  background-size: 5px 5px, 5px 5px;
+  background-position: calc(50% - 2px) calc(50% - 1px), calc(50% + 2px) calc(50% - 1px);
 }
 
 .ww-scroll-main::-webkit-scrollbar-thumb,

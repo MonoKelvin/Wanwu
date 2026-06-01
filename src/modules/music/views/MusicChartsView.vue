@@ -7,6 +7,8 @@ import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import type { MusicChartCard, MusicChartSection } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
 
+defineOptions({ name: 'MusicChartsView' })
+
 const router = useRouter()
 const { buildBrowseId } = useMusicPlatform()
 const sections = ref<MusicChartSection[]>([])

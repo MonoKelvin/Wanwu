@@ -82,6 +82,7 @@ watch(
   max-width: 16.5rem;
   margin: auto;
   aspect-ratio: 1 / 1.1;
+  overflow: visible;
 }
 
 .ww-music-player-hero-cover__frame {
@@ -106,13 +107,13 @@ watch(
 .ww-music-player-hero-cover__shadow {
   position: absolute;
   z-index: 0;
-  inset: -4%;
+  inset: 0 -6% -10%;
   border-radius: 0.75rem;
   background-size: cover;
   background-position: center;
-  filter: blur(44px) saturate(1.05);
-  opacity: 0.36;
-  transform: translateY(25%) scale(1.18);
+  filter: blur(36px) saturate(1.05);
+  opacity: 0.34;
+  transform: translateY(16%) scale(1.1);
   pointer-events: none;
 }
 </style>

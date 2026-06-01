@@ -5,7 +5,15 @@ import MusicCover from '@modules/music/components/MusicCover.vue'
 import WwMarqueeText from '@shared/components/WwMarqueeText.vue'
 import { useDragScroll } from '@modules/music/composables/useDragScroll'
 
-defineProps<{ cards: MusicChartCard[] }>()
+withDefaults(
+  defineProps<{
+    cards: MusicChartCard[]
+    loading?: boolean
+    skeletonCount?: number
+  }>(),
+  { skeletonCount: 5 }
+)
+
 const emit = defineEmits<{ select: [card: MusicChartCard] }>()
 
 const rowRef = ref<HTMLElement | null>(null)
@@ -22,7 +30,16 @@ function onSelect(card: MusicChartCard) {
 </script>
 
 <template>
-  <div class="ww-music-chart-carousel ww-music-carousel-wrap">
+  <div v-if="loading" class="ww-music-chart-carousel ww-music-skeleton ww-music-carousel-wrap">
+    <div class="ww-music-scroll-row">
+      <div v-for="n in skeletonCount" :key="n" class="ww-music-skeleton__discover-card">
+        <div class="ww-music-skeleton__discover-cover" />
+        <div class="ww-music-skeleton__discover-line ww-music-skeleton__discover-line--title" />
+      </div>
+    </div>
+  </div>
+  <div v-else-if="!cards.length" class="ww-music-state-hint">暂无榜单</div>
+  <div v-else class="ww-music-chart-carousel ww-music-carousel-wrap">
     <div ref="rowRef" class="ww-music-scroll-row">
       <div
         v-for="card in cards"
@@ -57,6 +74,12 @@ function onSelect(card: MusicChartCard) {
 <style scoped>
 .ww-music-chart-carousel {
   --ww-music-card-size: 8.75rem;
+}
+
+.ww-music-chart-carousel.ww-music-skeleton .ww-music-scroll-row {
+  display: flex;
+  gap: var(--ww-music-card-gap);
+  overflow: hidden;
 }
 
 .ww-music-chart-carousel :deep(.ww-music-card-item) {

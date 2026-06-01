@@ -3,7 +3,7 @@ import { mapSearchResponse } from './discoveryMapper'
 import type { ItunesProvider } from './providers/itunesProvider'
 import type { KuwoProvider } from './providers/kuwoProvider'
 import type { VeromeClient } from './veromeClient'
-import type { NormalizedTrack } from '../../../src/shared/types/music'
+import type { MusicTrackBadge, NormalizedTrack } from '../../../src/shared/types/music'
 
 export type CoverHydrationDeps = {
   itunes: ItunesProvider
@@ -76,6 +76,16 @@ export function enrichTrackCover(track: NormalizedTrack): NormalizedTrack {
     upgradeCoverUrl(track.coverUrl, 'card')
   if (coverUrl) return { ...track, coverUrl }
   return track
+}
+
+export function mergeTrackPlaybackMeta(
+  track: NormalizedTrack,
+  meta?: { isTrial?: boolean }
+): NormalizedTrack {
+  if (!meta?.isTrial) return track
+  const badges = new Set<MusicTrackBadge>(track.badges ?? [])
+  badges.add('trial')
+  return { ...track, isTrial: true, badges: [...badges] }
 }
 
 /** iTunes 优先，酷我仅作封面/元数据补全（不用于音源流） */

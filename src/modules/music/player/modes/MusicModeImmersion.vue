@@ -14,6 +14,7 @@ import MusicLyricsPanel from '@modules/music/player/components/MusicLyricsPanel.
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  padding: 0 1.5rem 1rem;
+  padding: 0.5rem 1.25rem 0.75rem;
+  overflow: visible;
 }
 </style>

@@ -22,24 +22,35 @@ const player = useMusicPlayerStore()
 
 <style scoped>
 .ww-mode-gallery {
+  --ww-gallery-track-start: calc(2.35rem + 0.65rem);
   display: grid;
-  grid-template-columns: minmax(10rem, 0.82fr) minmax(14rem, 1.25fr);
-  gap: 2rem;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 1.25rem;
   flex: 1;
   min-height: 0;
-  padding: 1.5rem 2rem;
+  width: 100%;
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 0.5rem 0.35rem 0.75rem;
+  align-items: stretch;
+  overflow: visible;
 }
 
 .ww-mode-gallery__cover {
+  justify-self: start;
   align-self: center;
-  justify-self: center;
   width: min(100%, 16.5rem);
-  margin: 0.35rem 0 0 2.35rem;
-  transform: translate(0.55rem, 0.15rem);
+  margin-left: var(--ww-gallery-track-start);
+  transform: translateX(calc(100% / 3 - 100% / 5));
+  padding: 0.75rem 0.5rem 1.25rem 0;
+  overflow: visible;
 }
 
 .ww-mode-gallery__lyrics {
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  padding: 0.15rem 0 0.25rem;
 }
 </style>
