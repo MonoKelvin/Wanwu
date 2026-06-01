@@ -65,6 +65,8 @@ export class MusicService {
   private readonly discoverCache = new DiscoverCacheService()
   private readonly platforms: MusicPlatformManager
   private platformDiscoverFeedInflight: Promise<MusicDiscoverFeed> | null = null
+  /** 已登录时平台「我喜欢」trackKey 缓存，用于 isFavorite 与列表红心 */
+  private platformLikedKeys: Set<string> | null = null
 
   constructor(
     private readonly db: DatabaseService,
@@ -829,13 +831,81 @@ export class MusicService {
       .getDb()
       .prepare('SELECT 1 FROM music_favorites WHERE track_key = ?')
       .get(trackKey)
-    return !!row
+    if (row) return true
+    return this.platformLikedKeys?.has(trackKey) ?? false
   }
 
-  toggleFavorite(track: NormalizedTrack): boolean {
+  private patchPlatformLikedCache(trackKey: string, liked: boolean): void {
+    if (!this.platformLikedKeys) this.platformLikedKeys = new Set()
+    if (liked) this.platformLikedKeys.add(trackKey)
+    else this.platformLikedKeys.delete(trackKey)
+  }
+
+  async refreshPlatformLikedCache(): Promise<void> {
+    await this.refreshApiClient()
+    const platform = this.accountPlatform()
+    const status = await platform.getLoginStatus()
+    if (!status.loggedIn) {
+      this.platformLikedKeys = null
+      return
+    }
+    const keys = new Set<string>()
+    if (this.accountPlatformId() === 'netease') {
+      const ids = await platform.getLikedSongIds()
+      for (const id of ids) keys.add(`netease:${id}`)
+    } else {
+      const tracks = await this.getPlatformLikedTracks(500)
+      for (const t of tracks) keys.add(t.trackKey)
+    }
+    this.platformLikedKeys = keys
+  }
+
+  /** 将平台「我喜欢」合并进本地收藏表，并刷新平台红心缓存 */
+  async syncPlatformFavorites(limit = 300): Promise<void> {
+    await this.refreshApiClient()
+    const platform = this.accountPlatform()
+    const status = await platform.getLoginStatus()
+    if (!status.loggedIn) {
+      this.platformLikedKeys = null
+      return
+    }
+    const tracks = await this.getPlatformLikedTracks(limit)
+    const db = this.musicDb.getDb()
+    const now = new Date().toISOString()
+    const insert = db.prepare(
+      `INSERT OR IGNORE INTO music_favorites (track_key, title, artist, video_id, cover_url, payload_json, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
+    )
+    for (const track of tracks) {
+      insert.run(
+        track.trackKey,
+        track.title,
+        track.artist,
+        track.videoId,
+        track.coverUrl ?? null,
+        JSON.stringify(track),
+        now
+      )
+    }
+    await this.refreshPlatformLikedCache()
+  }
+
+  async toggleFavorite(track: NormalizedTrack): Promise<boolean> {
+    await this.refreshApiClient()
     const db = this.musicDb.getDb()
     const existing = db.prepare('SELECT 1 FROM music_favorites WHERE track_key = ?').get(track.trackKey)
     const nextLiked = !existing
+
+    const accountId = this.accountPlatformId()
+    const platform = this.accountPlatform()
+    const status = await platform.getLoginStatus()
+    const syncPlatform = status.loggedIn && track.provider === accountId
+
+    if (syncPlatform) {
+      await platform.likeSong(track.videoId, nextLiked)
+      this.patchPlatformLikedCache(track.trackKey, nextLiked)
+    }
+
     if (existing) {
       db.prepare('DELETE FROM music_favorites WHERE track_key = ?').run(track.trackKey)
     } else {
@@ -851,12 +921,6 @@ export class MusicService {
         JSON.stringify(track),
         new Date().toISOString()
       )
-    }
-    if (track.provider === 'netease' || track.provider === 'kugou') {
-      void this.platforms
-        .get(track.provider)
-        .likeSong(track.videoId, nextLiked)
-        .catch(() => {})
     }
     return nextLiked
   }
@@ -1113,8 +1177,8 @@ export class MusicService {
 
   async getNeteaseArtistList(limit = 30, offset = 0) {
     await this.refreshApiClient()
-    const platform = this.resolveDiscoverPlatform() ?? this.platforms.netease
-    return platform.getArtistList('-1', -1, '-1', limit, offset)
+    if (!this.isPlatformPrimary()) return []
+    return this.primaryPlatform().getArtistList('-1', -1, '-1', limit, offset)
   }
 
   async getNeteaseNewAlbums(limit = 12) {
@@ -1217,12 +1281,15 @@ export class MusicService {
   async platformLogout() {
     await this.refreshApiClient()
     await this.accountPlatform().logout()
+    this.platformLikedKeys = null
   }
 
   async platformLikeSong(songId: string, like: boolean): Promise<void> {
     await this.refreshApiClient()
-    if (!this.isPlatformPrimary()) return
-    await this.primaryPlatform().likeSong(songId, like)
+    const platform = this.accountPlatform()
+    const status = await platform.getLoginStatus()
+    if (!status.loggedIn) throw new Error('请先登录音乐平台账号')
+    await platform.likeSong(songId, like)
   }
 
   async getNewSongs(limit = 30): Promise<NormalizedTrack[]> {
@@ -1231,10 +1298,14 @@ export class MusicService {
     return this.primaryPlatform().getNewSongs(limit)
   }
 
-  async getNewAlbums(limit = 12) {
+  async getNewAlbums(limit = 12, seed = 0) {
     await this.refreshApiClient()
     if (!this.isPlatformPrimary()) return []
-    return this.primaryPlatform().getNewAlbums(limit)
+    const platform = this.primaryPlatform()
+    if (this.accountPlatformId() === 'kugou') {
+      return platform.getNewAlbums(limit, Math.max(1, seed + 1))
+    }
+    return platform.getNewAlbums(limit, Math.max(0, seed) * limit)
   }
 
   async getToplists() {

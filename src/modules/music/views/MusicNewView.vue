@@ -37,8 +37,12 @@ function play(track: NormalizedTrack) {
   void player.playTrack(track, songs.value)
 }
 
-function openAlbum(item: { id: string }) {
-  void router.push({ name: 'music-album', params: { browseId: item.id } })
+function openAlbum(item: { id: string; title?: string }) {
+  void router.push({
+    name: 'music-album',
+    params: { browseId: item.id },
+    query: item.title ? { title: item.title } : undefined
+  })
 }
 </script>
 

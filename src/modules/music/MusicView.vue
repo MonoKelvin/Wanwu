@@ -20,7 +20,16 @@ const player = useMusicPlayerStore()
 useMusicAccount()
 
 const isFullscreen = computed(() => !!route.meta.fullscreen)
-const pageTransition = computed(() => (isFullscreen.value ? '' : 'ww-music-page'))
+
+const MAIN_TAB_NAMES = new Set(['music-discover', 'music-categories', 'music-mine'])
+
+/** 发现/分类/我的切换不做过渡，避免内容区下坠再回弹 */
+const pageTransition = computed(() => {
+  if (isFullscreen.value) return ''
+  const name = String(route.name ?? '')
+  if (MAIN_TAB_NAMES.has(name)) return ''
+  return 'ww-music-page'
+})
 
 watch(
   () => route.meta.fullscreen,
@@ -97,18 +106,11 @@ onMounted(() => {
 
 .ww-music-page-enter-active,
 .ww-music-page-leave-active {
-  transition:
-    opacity 0.16s var(--ww-ease-out),
-    transform 0.2s cubic-bezier(0.34, 1.05, 0.64, 1);
+  transition: opacity 0.14s var(--ww-ease-out);
 }
 
-.ww-music-page-enter-from {
-  opacity: 0;
-  transform: translateY(6px);
-}
-
+.ww-music-page-enter-from,
 .ww-music-page-leave-to {
   opacity: 0;
-  transform: translateY(-4px);
 }
 </style>

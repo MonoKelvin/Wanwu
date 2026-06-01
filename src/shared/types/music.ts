@@ -214,12 +214,20 @@ export interface MusicProviderHealth {
   streamCapable: boolean
 }
 
+export interface MusicArtistPhoto {
+  url: string
+  title?: string
+}
+
 export interface MusicArtistPayload {
   name: string
   description?: string
   coverUrl?: string
   tracks: NormalizedTrack[]
   albums: Array<{ browseId: string; title: string; coverUrl?: string }>
+  mvs?: Array<{ browseId: string; title: string; coverUrl?: string }>
+  /** 歌手写真 / 高清图（酷狗 images、网易 MV 封面等） */
+  photos?: MusicArtistPhoto[]
 }
 
 export interface MusicChartsPayload {

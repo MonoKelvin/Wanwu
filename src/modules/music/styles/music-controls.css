@@ -44,8 +44,8 @@
   border-radius: var(--ww-music-panel-radius);
   border: 1px solid color-mix(in srgb, var(--ww-glass-border) 88%, transparent);
   background: color-mix(in srgb, var(--ww-glass-bg) 86%, transparent);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
   box-shadow:
     0 1px 0 color-mix(in srgb, var(--ww-ink) 4%, transparent),
     0 10px 32px color-mix(in srgb, var(--ww-ink) 10%, transparent);

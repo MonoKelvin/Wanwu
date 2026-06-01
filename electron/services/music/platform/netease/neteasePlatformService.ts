@@ -25,7 +25,8 @@ import {
   mapPlaylistSummary,
   mapToplistChartCards,
   mapToplistSummary,
-  parseBrowseId
+  parseBrowseId,
+  pickNeteaseAlbumArtist
 } from './mapper'
 import { ensureNeteaseApiReady } from './neteaseApiBootstrap'
 import {
@@ -406,8 +407,11 @@ export class NeteasePlatformService implements IMusicPlatformService {
     return mapNeteaseSongs((data.data ?? []).slice(0, limit))
   }
 
-  async getNewAlbums(limit = 12): Promise<MusicSearchResult['albums']> {
-    const data = await this.invoke<{ albums?: unknown[] }>('album/new', { limit })
+  async getNewAlbums(limit = 12, offset = 0): Promise<MusicSearchResult['albums']> {
+    const data = await this.invoke<{ albums?: unknown[] }>('album/new', {
+      limit,
+      offset: Math.max(0, offset)
+    })
     const out: MusicSearchResult['albums'] = []
     for (const a of data.albums ?? []) {
       const row = a as Record<string, unknown>
@@ -415,7 +419,7 @@ export class NeteasePlatformService implements IMusicPlatformService {
       out.push({
         browseId: `netease:album:${row.id}`,
         title: String(row.name ?? ''),
-        artist: String(row.artist?.name ?? row.artistName ?? ''),
+        artist: pickNeteaseAlbumArtist(row),
         coverUrl: typeof row.picUrl === 'string' ? row.picUrl : undefined
       })
     }
@@ -455,26 +459,110 @@ export class NeteasePlatformService implements IMusicPlatformService {
     return { album: data.album, tracks: mapNeteaseSongs(data.songs ?? []) }
   }
 
+  private formatNeteaseArtistDesc(data: {
+    briefDesc?: string
+    introduction?: Array<{ ti?: string; txt?: string }>
+  }): string | undefined {
+    const parts: string[] = []
+    if (typeof data.briefDesc === 'string' && data.briefDesc.trim()) {
+      parts.push(data.briefDesc.trim())
+    }
+    const introList = data.introduction ?? []
+    const profile = introList.find((x) => x.ti === '人物简介' || x.ti === '简介')
+    if (profile?.txt?.trim()) {
+      if (!parts.length || !parts[0]!.includes(profile.txt.slice(0, 40))) {
+        parts.push(profile.txt.trim())
+      }
+    } else if (!parts.length) {
+      for (const block of introList) {
+        if (block.txt?.trim()) parts.push(`${block.ti ? `${block.ti}：` : ''}${block.txt.trim()}`)
+        if (parts.join('\n\n').length > 2400) break
+      }
+    }
+    const text = parts.join('\n\n').trim()
+    return text ? text.slice(0, 2400) : undefined
+  }
+
+  private collectNeteaseArtistPhotos(
+    avatar?: string,
+    mvs: Array<{ coverUrl?: string; title: string }> = []
+  ): import('../../../../../src/shared/types/music').MusicArtistPhoto[] {
+    const urls = new Set<string>()
+    const out: import('../../../../../src/shared/types/music').MusicArtistPhoto[] = []
+    const push = (raw: string | undefined, title?: string) => {
+      if (!raw?.trim()) return
+      const url = raw.replace('http://', 'https://')
+      if (urls.has(url)) return
+      urls.add(url)
+      out.push({ url, title })
+    }
+    if (avatar) push(avatar.replace(/\?.*$/, '') + '?param=1080y1080', '头像')
+    for (const mv of mvs) {
+      if (mv.coverUrl) push(mv.coverUrl.replace(/\?.*$/, '') + '?param=720y720', mv.title)
+    }
+    return out
+  }
+
   async getArtist(browseId: string) {
     const id = parseBrowseId(browseId)?.id ?? browseId
-    const [detail, songs] = await Promise.all([
+    const [detail, songs, albumRes, mvRes, descRes] = await Promise.all([
       this.invoke<{ artist?: Record<string, unknown>; hotAlbums?: unknown[] }>('artist/detail', { id }),
-      this.invoke<{ songs?: unknown[] }>('artist/songs', { id, order: 'hot', limit: 50 })
+      this.invoke<{ songs?: unknown[] }>('artist/songs', { id, order: 'hot', limit: 50 }),
+      this.invoke<{ hotAlbums?: unknown[] }>('artist/album', { id, limit: 30 }).catch(() => ({ hotAlbums: [] })),
+      this.invoke<{ mvs?: unknown[] }>('artist/mv', { id, limit: 20 }).catch(() => ({ mvs: [] })),
+      this.invoke<{ briefDesc?: string; introduction?: Array<{ ti?: string; txt?: string }> }>('artist/desc', {
+        id
+      }).catch(() => ({}))
     ])
     const artist = detail.artist ?? {}
+    const pic =
+      typeof artist.picUrl === 'string'
+        ? artist.picUrl
+        : typeof artist.img1v1Url === 'string'
+          ? artist.img1v1Url
+          : typeof artist.avatar === 'string'
+            ? artist.avatar
+            : undefined
+    const albumMap = new Map<string, { browseId: string; title: string; coverUrl?: string }>()
+    for (const a of [...(detail.hotAlbums ?? []), ...(albumRes.hotAlbums ?? [])]) {
+      const row = a as Record<string, unknown>
+      if (row.id == null) continue
+      const browseIdKey = `netease:album:${row.id}`
+      albumMap.set(browseIdKey, {
+        browseId: browseIdKey,
+        title: String(row.name ?? ''),
+        coverUrl: typeof row.picUrl === 'string' ? row.picUrl : undefined
+      })
+    }
+    const mvs: Array<{ browseId: string; title: string; coverUrl?: string }> = []
+    for (const mv of mvRes.mvs ?? []) {
+      const row = mv as Record<string, unknown>
+      if (row.id == null) continue
+      mvs.push({
+        browseId: `netease:mv:${row.id}`,
+        title: String(row.name ?? row.title ?? 'MV'),
+        coverUrl: typeof row.imgurl === 'string' ? row.imgurl : typeof row.cover === 'string' ? row.cover : undefined
+      })
+    }
+    const description =
+      this.formatNeteaseArtistDesc(descRes) ??
+      (typeof artist.briefDesc === 'string'
+        ? artist.briefDesc
+        : typeof artist.desc === 'string'
+          ? artist.desc
+          : undefined)
+
+    const coverUrl = pic ? pic.replace('http://', 'https://') : undefined
+    const photos = this.collectNeteaseArtistPhotos(coverUrl, mvs)
+
     return {
       name: String(artist.name ?? ''),
-      description: typeof artist.briefDesc === 'string' ? artist.briefDesc : undefined,
-      coverUrl: typeof artist.picUrl === 'string' ? artist.picUrl : undefined,
+      description,
+      coverUrl,
       tracks: mapNeteaseSongs(songs.songs ?? []),
-      albums: (detail.hotAlbums ?? []).map((a) => {
-        const row = a as Record<string, unknown>
-        return {
-          browseId: `netease:album:${row.id}`,
-          title: String(row.name ?? ''),
-          coverUrl: typeof row.picUrl === 'string' ? row.picUrl : undefined
-        }
-      })
+      albums: [...albumMap.values()],
+      mvs,
+      photos: photos.length ? photos : undefined
     }
   }
 

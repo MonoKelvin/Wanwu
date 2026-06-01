@@ -358,6 +358,7 @@ export interface WanwuApi {
     listFavorites: () => Promise<MusicFavoriteRow[]>
     isFavorite: (trackKey: string) => Promise<boolean>
     toggleFavorite: (track: NormalizedTrack) => Promise<boolean>
+    syncPlatformFavorites: (limit?: number) => Promise<void>
     listHistory: (limit?: number) => Promise<MusicHistoryRow[]>
     appendHistory: (track: NormalizedTrack) => Promise<void>
     clearHistory: () => Promise<void>
@@ -414,7 +415,7 @@ export interface WanwuApi {
     platformLogout: () => Promise<void>
     platformLikeSong: (songId: string, like: boolean) => Promise<void>
     getNewSongs: (limit?: number) => Promise<NormalizedTrack[]>
-    getNewAlbums: (limit?: number) => Promise<MusicSearchResult['albums']>
+    getNewAlbums: (limit?: number, seed?: number) => Promise<MusicSearchResult['albums']>
     getToplists: () => Promise<Array<{ id: string; title: string; coverUrl?: string; updateFrequency?: string }>>
     getToplistTracks: (toplistId: string, limit?: number) => Promise<NormalizedTrack[]>
     createPlatformPlaylist: (name: string) => Promise<{ id: string; title: string; coverUrl?: string }>

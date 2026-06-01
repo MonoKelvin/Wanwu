@@ -29,10 +29,20 @@ function resumeAutoScroll() {
 
 const edgeFadePx = computed(() => lyricsEdgeFadePx(props.variant))
 const { refreshEdgeBlur } = useLyricsEdgeBlur(listRef, edgeFadePx)
-const { edgePad, isDragging, scrollToIndex, measureEdgePad, shouldSuppressClick } = useLyricsScroll(
+
+function seekToLineIndex(index: number) {
+  const line = lines.value[index]
+  if (!line || !synced.value || !Number.isFinite(line.timeSec)) return
+  clearAutoScrollPause()
+  player.seekAndPlay(line.timeSec)
+  void nextTick(() => scrollToIndex(index, true))
+}
+
+const { edgePad, isDragging, scrollToIndex, measureEdgePad, clearAutoScrollPause } = useLyricsScroll(
   listRef,
   resumeAutoScroll,
-  refreshEdgeBlur
+  refreshEdgeBlur,
+  seekToLineIndex
 )
 
 const playError = computed(() =>
@@ -106,12 +116,6 @@ const listPadStyle = computed(() => ({
   paddingBottom: `${edgePad.value}px`
 }))
 
-function onLineClick(line: LrcLine) {
-  if (shouldSuppressClick()) return
-  if (!synced.value || !Number.isFinite(line.timeSec)) return
-  player.seekAndPlay(line.timeSec)
-}
-
 function measureDuetStage() {
   duetStageHeight.value = duetStageRef.value?.clientHeight ?? 0
   duetPairHeight.value = duetPairRef.value?.offsetHeight ?? 72
@@ -170,10 +174,25 @@ onUnmounted(() => {
       <div ref="duetStageRef" class="ww-lyrics__duet-stage">
         <div class="ww-lyrics__duet-spacer" :style="{ height: duetPadTop }" aria-hidden="true" />
         <div ref="duetPairRef" class="ww-lyrics__duet-pair">
-          <div class="ww-lyrics__duet-left" :class="{ 'is-active': duetLine1Active }">
+          <div
+            class="ww-lyrics__duet-left"
+            :class="{
+              'is-active': duetLine1Active,
+              'is-seekable': synced && Number.isFinite(lines[duetPairStart]?.timeSec)
+            }"
+            @click="seekToLineIndex(duetPairStart)"
+          >
             <WwMarqueeText :text="duetLine1" tag="p" class="ww-lyrics__duet-line" />
           </div>
-          <div v-if="duetLine2" class="ww-lyrics__duet-right" :class="{ 'is-active': duetLine2Active }">
+          <div
+            v-if="duetLine2"
+            class="ww-lyrics__duet-right"
+            :class="{
+              'is-active': duetLine2Active,
+              'is-seekable': synced && Number.isFinite(lines[duetPairStart + 1]?.timeSec)
+            }"
+            @click="seekToLineIndex(duetPairStart + 1)"
+          >
             <WwMarqueeText :text="duetLine2" tag="p" class="ww-lyrics__duet-line" />
           </div>
         </div>
@@ -197,7 +216,6 @@ onUnmounted(() => {
             'is-near': synced && Math.abs(i - activeIndex) === 1,
             'is-seekable': synced && Number.isFinite(line.timeSec)
           }"
-          @click="onLineClick(line)"
         >
           {{ line.text }}
         </li>
@@ -302,11 +320,11 @@ onUnmounted(() => {
 .ww-lyrics__list li.is-active {
   color: var(--ww-ink);
   font-weight: 600;
-  font-size: clamp(1.18rem, 2.5vw, 1.45rem);
+  font-size: clamp(1.06rem, 2.15vw, 1.28rem);
 }
 
 .ww-lyrics--immersion .ww-lyrics__list li.is-active {
-  font-size: clamp(1.42rem, 3.85vw, 2.15rem);
+  font-size: clamp(1.28rem, 3.35vw, 1.85rem);
 }
 
 .ww-lyrics--duet {
@@ -349,6 +367,16 @@ onUnmounted(() => {
 .ww-lyrics__duet-right {
   max-width: 100%;
   min-width: 0;
+}
+
+.ww-lyrics__duet-left.is-seekable,
+.ww-lyrics__duet-right.is-seekable {
+  cursor: pointer;
+}
+
+.ww-lyrics__duet-left.is-seekable:hover .ww-lyrics__duet-line,
+.ww-lyrics__duet-right.is-seekable:hover .ww-lyrics__duet-line {
+  color: color-mix(in srgb, var(--ww-ink) 72%, transparent);
 }
 
 .ww-lyrics__duet-left {
@@ -395,7 +423,7 @@ onUnmounted(() => {
 .ww-lyrics__duet-right.is-active .ww-lyrics__duet-line {
   color: var(--ww-ink);
   font-weight: 600;
-  font-size: clamp(1.18rem, 2.85vw, 1.45rem);
+  font-size: clamp(1.08rem, 2.5vw, 1.3rem);
 }
 
 .ww-lyrics--immersion {

@@ -27,6 +27,9 @@ import {
   mapPlaylistSummary,
   mapToplistChartCards,
   mapToplistSummary,
+  mapKugouArtistDetail,
+  mapKugouArtistPhotos,
+  extractKugouList,
   parseBrowseId,
   parseKugouVideoId,
   pickHash,
@@ -531,8 +534,11 @@ export class KugouPlatformService implements IMusicPlatformService {
     return mapKugouSongs(data.data?.song_list ?? []).slice(0, limit)
   }
 
-  async getNewAlbums(limit = 12): Promise<MusicSearchResult['albums']> {
-    const data = await this.invoke<{ data?: { info?: unknown[] } }>('top/album', { pagesize: limit })
+  async getNewAlbums(limit = 12, page = 1): Promise<MusicSearchResult['albums']> {
+    const data = await this.invoke<{ data?: { info?: unknown[] } }>('top/album', {
+      pagesize: limit,
+      page: Math.max(1, page)
+    })
     const out: MusicSearchResult['albums'] = []
     for (const item of (data.data?.info ?? []).slice(0, limit)) {
       const row = item as Record<string, unknown>
@@ -553,12 +559,16 @@ export class KugouPlatformService implements IMusicPlatformService {
     type = 0,
     initial = '',
     limit = 30,
-    _offset = 0
+    offset = 0
   ): Promise<MusicSearchResult['artists']> {
+    const initials = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z']
+    const pickInitial = initial || initials[Math.floor(offset / Math.max(1, limit)) % initials.length] || ''
+    const page = Math.floor(offset / Math.max(1, limit)) + 1
     const data = await this.invoke<{ data?: { info?: unknown[] } }>('artist/lists', {
-      type,
+      type: type || (page % 4) + 1,
       pagesize: limit,
-      initial: initial || undefined
+      page,
+      initial: pickInitial || undefined
     })
     const out: MusicSearchResult['artists'] = []
     for (const item of data.data?.info ?? []) {
@@ -586,23 +596,46 @@ export class KugouPlatformService implements IMusicPlatformService {
     }
   }
 
+  private async fetchKugouArtistPhotos(tracks: NormalizedTrack[]): Promise<
+    import('../../../../../src/shared/types/music').MusicArtistPhoto[]
+  > {
+    const track = tracks[0]
+    if (!track) return []
+    const { albumAudioId, hash, albumId } = parseKugouVideoId(track.videoId)
+    if (!hash) return []
+    try {
+      const images = await this.invoke('images', {
+        hash,
+        album_audio_id: albumAudioId || '0',
+        album_id: albumId || '0',
+        count: 24
+      })
+      return mapKugouArtistPhotos(images)
+    } catch {
+      return []
+    }
+  }
+
   async getArtist(browseId: string): Promise<import('../../../../../src/shared/types/music').MusicArtistPayload> {
     const rawId = parseBrowseId(browseId)?.id ?? browseId
     const [detail, songs, albums] = await Promise.all([
-      this.invoke<{ data?: { singername?: string } }>('artist/detail', { singerid: rawId }),
-      this.invoke<{ data?: { info?: unknown[] } }>('artist/audios', { singerid: rawId, pagesize: 50 }),
-      this.invoke<{ data?: { info?: unknown[] } }>('artist/albums', { singerid: rawId, pagesize: 20 })
+      this.invoke('artist/detail', { id: rawId }),
+      this.invoke('artist/audios', { id: rawId, pagesize: 50 }),
+      this.invoke('artist/albums', { id: rawId, pagesize: 20 })
     ])
-    const albumRows = albums.data?.info ?? []
+    const profile = mapKugouArtistDetail(detail)
+    const tracks = mapKugouSongs(extractKugouList((songs as { data?: unknown }).data))
+    const photos = await this.fetchKugouArtistPhotos(tracks)
+    const albumRows = extractKugouList((albums as { data?: unknown }).data)
     return {
-      name: detail.data?.singername ?? '',
-      tracks: mapKugouSongs(songs.data?.info ?? []),
+      ...profile,
+      tracks,
+      photos: photos.length ? photos : undefined,
       albums: albumRows.map((a) => {
         const row = a as Record<string, unknown>
         return {
           browseId: `kugou:album:${row.album_id ?? row.AlbumID}`,
           title: String(row.album_name ?? row.AlbumName ?? ''),
-          artist: detail.data?.singername ?? '',
           coverUrl: typeof row.img === 'string' ? row.img : undefined
         }
       })

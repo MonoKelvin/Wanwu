@@ -1,6 +1,6 @@
 import { onUnmounted, ref, watch, type Ref } from 'vue'
 
-const DRAG_THRESHOLD = 5
+const DRAG_THRESHOLD = 10
 const MOMENTUM_FRICTION = 0.92
 const MOMENTUM_MIN = 0.08
 const AUTO_SCROLL_RESUME_MS = 2400
@@ -10,10 +10,19 @@ function easeOutCubic(t: number): number {
   return 1 - Math.pow(1 - t, 3)
 }
 
+function lineIndexFromPointerTarget(list: HTMLElement, target: EventTarget | null): number | null {
+  if (!(target instanceof Element)) return null
+  const li = target.closest('li[data-idx]')
+  if (!li || !list.contains(li)) return null
+  const idx = Number((li as HTMLElement).dataset.idx)
+  return Number.isFinite(idx) ? idx : null
+}
+
 export function useLyricsScroll(
   listRef: Ref<HTMLElement | null>,
   onResumeAutoScroll: () => void,
-  onScroll?: () => void
+  onScroll?: () => void,
+  onTapLine?: (index: number) => void
 ) {
   const edgePad = ref(0)
   const isDragging = ref(false)
@@ -22,7 +31,7 @@ export function useLyricsScroll(
   let startY = 0
   let startScrollTop = 0
   let dragActive = false
-  let suppressClick = false
+  let pointerCaptured = false
   let suppressAutoScroll = false
   let resumeTimer: ReturnType<typeof setTimeout> | null = null
   let lastY = 0
@@ -54,6 +63,16 @@ export function useLyricsScroll(
   function clampScroll(el: HTMLElement) {
     const max = Math.max(0, el.scrollHeight - el.clientHeight)
     el.scrollTop = Math.min(max, Math.max(0, el.scrollTop))
+  }
+
+  function releaseCapture(el: HTMLElement) {
+    if (!pointerCaptured || pointerId == null) return
+    try {
+      el.releasePointerCapture(pointerId)
+    } catch {
+      /* ignore */
+    }
+    pointerCaptured = false
   }
 
   function measureEdgePad() {
@@ -156,16 +175,13 @@ export function useLyricsScroll(
     pauseAutoScroll()
 
     dragActive = false
-    suppressClick = false
+    pointerCaptured = false
     pointerId = e.pointerId
     startY = e.clientY
     lastY = e.clientY
     lastTime = performance.now()
     velocity = 0
     startScrollTop = el.scrollTop
-
-    el.setPointerCapture(e.pointerId)
-    e.preventDefault()
   }
 
   function onPointerMove(e: PointerEvent) {
@@ -176,10 +192,15 @@ export function useLyricsScroll(
     if (!dragActive && Math.abs(dy) > DRAG_THRESHOLD) {
       dragActive = true
       isDragging.value = true
+      try {
+        el.setPointerCapture(e.pointerId)
+        pointerCaptured = true
+      } catch {
+        /* ignore */
+      }
     }
     if (!dragActive) return
 
-    suppressClick = true
     e.preventDefault()
 
     const now = performance.now()
@@ -197,32 +218,29 @@ export function useLyricsScroll(
     const el = listRef.value
     if (!el || pointerId !== e.pointerId) return
 
-    try {
-      el.releasePointerCapture(e.pointerId)
-    } catch {
-      /* ignore */
-    }
+    const wasDrag = dragActive
+    releaseCapture(el)
 
     pointerId = null
     isDragging.value = false
+    dragActive = false
 
-    if (dragActive && Math.abs(velocity) > MOMENTUM_MIN) {
+    if (!wasDrag) {
+      const idx = lineIndexFromPointerTarget(el, e.target)
+      if (idx != null) onTapLine?.(idx)
+    } else if (Math.abs(velocity) > MOMENTUM_MIN) {
       momentumFrame = requestAnimationFrame(applyMomentum)
     } else {
       scheduleAutoScrollResume()
     }
-
-    dragActive = false
-
-    if (suppressClick) {
-      setTimeout(() => {
-        suppressClick = false
-      }, 0)
-    }
   }
 
-  function shouldSuppressClick(): boolean {
-    return suppressClick
+  function clearAutoScrollPause() {
+    suppressAutoScroll = false
+    if (resumeTimer) {
+      clearTimeout(resumeTimer)
+      resumeTimer = null
+    }
   }
 
   function bindList(el: HTMLElement | null) {
@@ -263,6 +281,6 @@ export function useLyricsScroll(
     isDragging,
     scrollToIndex,
     measureEdgePad,
-    shouldSuppressClick
+    clearAutoScrollPause
   }
 }

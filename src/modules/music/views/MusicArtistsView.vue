@@ -65,9 +65,16 @@ useScrollNearEnd(scrollRoot, loadMore, {
   enabled: computed(() => hasMore.value && !loading.value)
 })
 
-function openArtist(item: { id: string }) {
+function openArtist(item: { id: string; title?: string; coverUrl?: string }) {
   const browseId = item.id.includes(':') ? item.id : buildBrowseId('artist', item.id)
-  void router.push({ name: 'music-artist', params: { browseId } })
+  void router.push({
+    name: 'music-artist',
+    params: { browseId },
+    query: {
+      ...(item.title ? { name: item.title } : {}),
+      ...(item.coverUrl ? { cover: item.coverUrl } : {})
+    }
+  })
 }
 </script>
 

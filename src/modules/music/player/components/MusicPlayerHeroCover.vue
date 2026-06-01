@@ -34,10 +34,6 @@ const imageUrl = computed(() => {
   return upgradeCoverUrl(props.src, 'hero')
 })
 
-const shadowStyle = computed(() =>
-  imageUrl.value ? { backgroundImage: `url("${imageUrl.value}")` } : undefined
-)
-
 function onImgError() {
   if (fallbackIndex.value < fallbackUrls.value.length - 1) {
     fallbackIndex.value += 1
@@ -54,29 +50,40 @@ watch(
 
 <template>
   <div class="ww-music-player-hero-cover">
-    <div
-      v-if="imageUrl"
-      class="ww-music-player-hero-cover__shadow"
-      :style="shadowStyle"
-      aria-hidden="true"
-    />
     <div class="ww-music-player-hero-cover__frame">
       <img
         v-if="imageUrl"
         :src="imageUrl"
-        :alt="title ?? ''"
-        class="ww-music-player-hero-cover__img"
+        alt=""
+        class="ww-music-player-hero-cover__shadow"
         draggable="false"
         referrerpolicy="no-referrer"
+        aria-hidden="true"
         @error="onImgError"
         @dragstart.prevent
       />
+      <div class="ww-music-player-hero-cover__clip">
+        <img
+          v-if="imageUrl"
+          :src="imageUrl"
+          :alt="title ?? ''"
+          class="ww-music-player-hero-cover__img"
+          draggable="false"
+          referrerpolicy="no-referrer"
+          @error="onImgError"
+          @dragstart.prevent
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
 .ww-music-player-hero-cover {
+  --ww-player-cover-radius: 1.375rem;
+  --ww-player-cover-shadow-blur: 3.125rem;
+  --ww-player-cover-shadow-offset: 1.375rem;
+  --ww-player-cover-shadow-opacity: 0.42;
   position: relative;
   width: 100%;
   max-width: 16.5rem;
@@ -87,10 +94,34 @@ watch(
 
 .ww-music-player-hero-cover__frame {
   position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.ww-music-player-hero-cover__shadow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--ww-player-cover-radius);
+  filter: blur(var(--ww-player-cover-shadow-blur)) saturate(1.15);
+  opacity: var(--ww-player-cover-shadow-opacity);
+  transform: translateY(var(--ww-player-cover-shadow-offset));
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.ww-music-player-hero-cover__clip {
+  position: relative;
   z-index: 1;
   width: 100%;
   height: 100%;
-  border-radius: 0.75rem;
+  border-radius: var(--ww-player-cover-radius);
   overflow: hidden;
   background: var(--ww-surface-raised);
 }
@@ -102,18 +133,5 @@ watch(
   object-fit: cover;
   -webkit-user-drag: none;
   user-select: none;
-}
-
-.ww-music-player-hero-cover__shadow {
-  position: absolute;
-  z-index: 0;
-  inset: 0 -6% -10%;
-  border-radius: 0.75rem;
-  background-size: cover;
-  background-position: center;
-  filter: blur(36px) saturate(1.05);
-  opacity: 0.34;
-  transform: translateY(16%) scale(1.1);
-  pointer-events: none;
 }
 </style>

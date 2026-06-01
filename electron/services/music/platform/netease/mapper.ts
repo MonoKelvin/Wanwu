@@ -88,6 +88,22 @@ export function mapNeteaseSong(raw: Record<string, unknown>): NormalizedTrack | 
   }
 }
 
+export function pickNeteaseAlbumArtist(row: Record<string, unknown>): string {
+  const artist = row.artist
+  if (typeof artist === 'string' && artist.trim()) return artist.trim()
+  if (artist && typeof artist === 'object' && !Array.isArray(artist)) {
+    const name = (artist as { name?: string }).name
+    if (typeof name === 'string' && name.trim()) return name.trim()
+  }
+  if (Array.isArray(row.artists)) {
+    const names = row.artists
+      .map((a) => (a && typeof a === 'object' ? String((a as { name?: string }).name ?? '').trim() : ''))
+      .filter(Boolean)
+    if (names.length) return names.join(', ')
+  }
+  return typeof row.artistName === 'string' ? row.artistName : ''
+}
+
 export function mapNeteaseSongs(list: unknown[]): NormalizedTrack[] {
   const out: NormalizedTrack[] = []
   for (const item of list) {

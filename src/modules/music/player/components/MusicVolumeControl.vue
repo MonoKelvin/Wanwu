@@ -24,6 +24,17 @@ let closeTimer: ReturnType<typeof setTimeout> | null = null
 
 const muteLabel = computed(() => (player.muted ? '取消静音' : '静音'))
 
+const WHEEL_STEP = 5
+
+function onWheel(e: WheelEvent) {
+  if (props.disabled) return
+  e.preventDefault()
+  e.stopPropagation()
+  const current = player.muted ? 0 : player.volumePercent
+  const delta = e.deltaY < 0 ? WHEEL_STEP : -WHEEL_STEP
+  player.setVolumePercent(Math.max(0, Math.min(100, current + delta)))
+}
+
 function updatePanelPosition() {
   const el = rootRef.value
   if (!el) return
@@ -80,6 +91,7 @@ onUnmounted(() => {
     :class="{ 'ww-music-volume--compact': compact, 'is-open': panelOpen }"
     @mouseenter="openPanel"
     @mouseleave="scheduleClose"
+    @wheel.prevent="onWheel"
   >
     <button
       type="button"
@@ -100,6 +112,7 @@ onUnmounted(() => {
           :style="{ left: panelStyle.left, bottom: panelStyle.bottom }"
           @mouseenter="openPanel"
           @mouseleave="scheduleClose"
+          @wheel.prevent="onWheel"
         >
           <MusicVolumeSlider />
         </div>

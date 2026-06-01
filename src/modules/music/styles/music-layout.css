@@ -16,18 +16,6 @@
   margin-bottom: var(--ww-music-section-gap);
 }
 
-.ww-music-shell .ww-music-discover-tabs {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-bottom: var(--ww-music-section-gap);
-}
-
-.ww-music-shell .ww-music-discover-tabs .ww-music-pill-tabs {
-  width: auto;
-  max-width: 100%;
-}
-
 .ww-music-shell .ww-music-search-wrap {
   max-width: min(100%, 16rem);
 }

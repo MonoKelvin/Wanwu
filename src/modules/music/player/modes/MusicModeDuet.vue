@@ -41,17 +41,10 @@ const player = useMusicPlayerStore()
 }
 
 .ww-mode-duet__cover :deep(.ww-music-player-hero-cover) {
+  --ww-player-cover-radius: var(--ww-music-cover-radius, 1.625rem);
   max-width: 100%;
   aspect-ratio: 1;
   margin: 0 auto;
-}
-
-.ww-mode-duet__cover :deep(.ww-music-player-hero-cover__frame) {
-  border-radius: var(--ww-music-cover-radius, 1.25rem);
-}
-
-.ww-mode-duet__cover :deep(.ww-music-player-hero-cover__shadow) {
-  border-radius: var(--ww-music-cover-radius, 1.25rem);
 }
 
 .ww-mode-duet__lyrics {

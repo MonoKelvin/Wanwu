@@ -20,6 +20,102 @@ function pickString(obj: Record<string, unknown>, ...keys: string[]): string {
   return ''
 }
 
+/** 酷狗列表接口：data 可能为数组，也可能在 info / lists 内 */
+export function extractKugouList(data: unknown): unknown[] {
+  if (Array.isArray(data)) return data
+  if (data && typeof data === 'object') {
+    const row = data as Record<string, unknown>
+    if (Array.isArray(row.info)) return row.info
+    if (Array.isArray(row.lists)) return row.lists
+    if (Array.isArray(row.songlist)) return row.songlist
+  }
+  return []
+}
+
+export function mapKugouArtistDetail(body: unknown): {
+  name: string
+  description?: string
+  coverUrl?: string
+} {
+  const root = (parseKugouJsonBody(body) ?? {}) as Record<string, unknown>
+  const data = ((root.data ?? root) as Record<string, unknown>) || {}
+  const name = pickString(data, 'author_name', 'singername', 'SingerName', 'nickname', 'name') || '歌手'
+  const coverRaw = pickString(
+    data,
+    'sizable_avatar',
+    'avatar',
+    'img',
+    'pic',
+    'singer_pic',
+    'singer_head',
+    'imgurl',
+    'avator'
+  )
+  const coverUrl = coverRaw
+    ? upgradeCoverUrl(coverRaw.replace('http://', 'https://').replace(/\{size\}/gi, '480'), 'hero')
+    : undefined
+
+  let description = pickString(data, 'intro', 'profile', 'description', 'biography', 'desc')
+  if (!description && Array.isArray(data.long_intro)) {
+    const parts = data.long_intro
+      .map((block) => {
+        if (!block || typeof block !== 'object') return ''
+        return pickString(block as Record<string, unknown>, 'content')
+      })
+      .filter(Boolean)
+    if (parts.length) description = parts.join('\n\n').slice(0, 2400)
+  }
+
+  const introBlock = Array.isArray(data.long_intro)
+    ? (data.long_intro as Record<string, unknown>[]).find((b) => {
+        const title = pickString(b, 'title')
+        return title === '简介' || title === '人物简介'
+      })
+    : undefined
+  const introFromBlock = introBlock ? pickString(introBlock, 'content') : ''
+  if (introFromBlock) description = introFromBlock
+
+  return { name, description: description || undefined, coverUrl }
+}
+
+export function mapKugouArtistPhotos(body: unknown): import('../../../../../src/shared/types/music').MusicArtistPhoto[] {
+  const root = (parseKugouJsonBody(body) ?? {}) as Record<string, unknown>
+  const rows = Array.isArray(root.data) ? root.data : []
+  const urls = new Set<string>()
+  const out: import('../../../../../src/shared/types/music').MusicArtistPhoto[] = []
+
+  const pushUrl = (raw: string, title?: string) => {
+    if (!raw?.trim()) return
+    const url = upgradeCoverUrl(
+      raw.replace('http://', 'https://').replace(/\{size\}/gi, '1080'),
+      'hero'
+    )
+    if (urls.has(url)) return
+    urls.add(url)
+    out.push({ url, title })
+  }
+
+  for (const row of rows) {
+    if (!row || typeof row !== 'object') continue
+    const authors = (row as Record<string, unknown>).author
+    if (!Array.isArray(authors)) continue
+    for (const author of authors) {
+      if (!author || typeof author !== 'object') continue
+      const imgs = (author as Record<string, unknown>).imgs as Record<string, unknown[]> | undefined
+      if (!imgs) continue
+      for (const list of Object.values(imgs)) {
+        if (!Array.isArray(list)) continue
+        for (const item of list) {
+          if (!item || typeof item !== 'object') continue
+          const portrait = pickString(item as Record<string, unknown>, 'sizable_portrait', 'portrait', 'img')
+          pushUrl(portrait)
+        }
+      }
+    }
+  }
+  return out
+}
+
 export function pickNumber(obj: Record<string, unknown>, ...keys: string[]): number | undefined {
   for (const key of keys) {
     const v = obj[key]

@@ -97,10 +97,17 @@ function setTabRef(el: unknown, index: number) {
   tabEls.value[index] = el instanceof HTMLElement ? el : null
 }
 
+function resetMainScroll() {
+  const root = document.querySelector('.ww-music-stage .ww-scroll-main')
+  if (root instanceof HTMLElement) root.scrollTop = 0
+}
+
 function go(name: string) {
   if (route.name === name) return
   search.clear()
-  void router.push({ name })
+  void router.push({ name }).then(() => {
+    nextTick(() => resetMainScroll())
+  })
 }
 
 function goBack() {

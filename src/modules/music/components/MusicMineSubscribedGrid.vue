@@ -12,7 +12,16 @@ const router = useRouter()
 function openItem(item: MusicPlatformSubscribedItem) {
   const [, kind] = item.browseId.split(':')
   if (kind === 'album') void router.push({ name: 'music-album', params: { browseId: item.browseId } })
-  else if (kind === 'artist') void router.push({ name: 'music-artist', params: { browseId: item.browseId } })
+  else if (kind === 'artist') {
+    void router.push({
+      name: 'music-artist',
+      params: { browseId: item.browseId },
+      query: {
+        ...(item.title ? { name: item.title } : {}),
+        ...(item.coverUrl ? { cover: item.coverUrl } : {})
+      }
+    })
+  }
 }
 </script>
 

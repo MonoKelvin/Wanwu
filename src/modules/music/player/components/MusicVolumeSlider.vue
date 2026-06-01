@@ -62,6 +62,16 @@ function onTrackPointerUp(e: PointerEvent) {
     /* ignore */
   }
 }
+
+const WHEEL_STEP = 5
+
+function onWheel(e: WheelEvent) {
+  e.preventDefault()
+  e.stopPropagation()
+  const current = player.muted ? 0 : player.volumePercent
+  const delta = e.deltaY < 0 ? WHEEL_STEP : -WHEEL_STEP
+  applyPercent(Math.max(0, Math.min(100, current + delta)), true)
+}
 </script>
 
 <template>
@@ -77,6 +87,7 @@ function onTrackPointerUp(e: PointerEvent) {
     @pointermove="onTrackPointerMove"
     @pointerup="onTrackPointerUp"
     @pointercancel="onTrackPointerUp"
+    @wheel.prevent="onWheel"
   >
     <div class="ww-music-volume-slider__rail">
       <div

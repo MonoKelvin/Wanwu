@@ -59,13 +59,19 @@
 
 .ww-music-player-page__stage {
   position: relative;
+  z-index: 1;
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
   padding: 0.85rem 1rem 0.35rem;
   box-sizing: border-box;
+  pointer-events: none;
+}
+
+.ww-music-player-page__stage > * {
+  pointer-events: auto;
 }
 
 .ww-music-player-page__mode {
@@ -77,23 +83,43 @@
 }
 
 .ww-music-player-page__head {
+  --ww-player-head-top-gap: 0.5rem;
+  --ww-player-head-side-inset: 2rem;
   flex-shrink: 0;
-  display: grid;
-  grid-template-columns: 2rem 1fr 2rem;
+  display: flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: calc(var(--ww-titlebar-height) + 0.5rem) 1.25rem 0.5rem;
+  gap: 0.5rem;
+  padding:
+    calc(var(--ww-titlebar-height) + var(--ww-player-head-top-gap))
+    1.25rem
+    0.5rem;
   -webkit-app-region: drag;
   app-region: drag;
 }
 
-.ww-music-player-page__head-side {
-  align-self: center;
+.ww-music-player-page__head .ww-music-nav-btn {
+  width: 2.375rem;
+  height: 2.375rem;
+}
+
+.ww-music-player-page__head-action {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
   -webkit-app-region: no-drag;
   app-region: no-drag;
 }
 
+.ww-music-player-page__head-action--back {
+  margin-left: var(--ww-player-head-side-inset);
+}
+
+.ww-music-player-page__head-action--comment {
+  margin-right: var(--ww-player-head-side-inset);
+}
+
 .ww-music-player-page__head-text {
+  flex: 1;
   min-width: 0;
   text-align: center;
   padding: 0.15rem 0;
@@ -118,6 +144,8 @@
 }
 
 .ww-music-player-page__footer {
+  position: relative;
+  z-index: 0;
   flex-shrink: 0;
   padding: 1rem 1.5rem 1.35rem;
   background: transparent;

@@ -12,7 +12,7 @@
   --ww-music-pill-radius: var(--ww-radius-full);
   --ww-music-input-radius: 0.4375rem;
   --ww-music-minibar-radius: 1rem;
-  --ww-music-minibar-inset: 0.875rem;
+  --ww-music-minibar-inset: 1.125rem;
   --ww-music-minibar-max-width: 44rem;
   --ww-music-glass-panel: color-mix(in srgb, var(--ww-glass-bg-soft) 72%, var(--ww-content));
   --ww-music-minibar-clearance: 6.5rem;
@@ -23,6 +23,12 @@
   --ww-music-fs-lg: 1.0625rem;
   --ww-music-fs-xl: clamp(1.375rem, 2.5vw, 1.75rem);
   --ww-music-content-max: min(100%, 72rem);
+  /* 专辑/歌手/MV 页 Hero 封面投影 */
+  --ww-music-hero-cover-box-shadow: 0 16px 40px color-mix(in srgb, var(--ww-ink) 14%, transparent);
+}
+
+[data-theme='dark'] {
+  --ww-music-hero-cover-box-shadow: 0 16px 40px -4px color-mix(in srgb, black 55%, transparent);
 }
 
 /* TabBar 已预留标题栏拖拽区，子页 PageHeader 不再重复顶距 */
@@ -33,8 +39,9 @@
 .ww-music-tab-body {
   flex: 1;
   min-height: 0;
+  overflow-anchor: none;
   padding:
-    1.125rem
+    0.75rem
     var(--ww-music-page-x, var(--ww-page-padding, 1.625rem))
     calc(var(--ww-music-minibar-clearance) + var(--ww-music-page-x, var(--ww-page-padding, 1.625rem)));
   background: var(--ww-inset);

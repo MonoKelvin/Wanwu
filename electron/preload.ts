@@ -93,6 +93,8 @@ const api: WanwuApi = {
     listFavorites: () => ipcRenderer.invoke('music:listFavorites'),
     isFavorite: (trackKey) => ipcRenderer.invoke('music:isFavorite', { trackKey }),
     toggleFavorite: (track) => ipcRenderer.invoke('music:toggleFavorite', { track }),
+    syncPlatformFavorites: (limit?: number) =>
+      ipcRenderer.invoke('music:syncPlatformFavorites', { limit }),
     listHistory: (limit) => ipcRenderer.invoke('music:listHistory', { limit }),
     appendHistory: (track) => ipcRenderer.invoke('music:appendHistory', { track }),
     clearHistory: () => ipcRenderer.invoke('music:clearHistory'),
@@ -152,7 +154,8 @@ const api: WanwuApi = {
     platformLikeSong: (songId: string, like: boolean) =>
       ipcRenderer.invoke('music:platformLikeSong', { songId, like }),
     getNewSongs: (limit?: number) => ipcRenderer.invoke('music:getNewSongs', { limit }),
-    getNewAlbums: (limit?: number) => ipcRenderer.invoke('music:getNewAlbums', { limit }),
+    getNewAlbums: (limit?: number, seed?: number) =>
+      ipcRenderer.invoke('music:getNewAlbums', { limit, seed }),
     getToplists: () => ipcRenderer.invoke('music:getToplists'),
     getToplistTracks: (toplistId: string, limit?: number) =>
       ipcRenderer.invoke('music:getToplistTracks', { toplistId, limit }),

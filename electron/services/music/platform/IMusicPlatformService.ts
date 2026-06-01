@@ -63,7 +63,7 @@ export interface IMusicPlatformService {
   getPersonalizedPlaylists(limit?: number): Promise<MusicMoodPlaylist[]>
 
   getNewSongs(limit?: number): Promise<NormalizedTrack[]>
-  getNewAlbums(limit?: number): Promise<MusicSearchResult['albums']>
+  getNewAlbums(limit?: number, pageOrOffset?: number): Promise<MusicSearchResult['albums']>
   getArtistList(
     area?: string,
     type?: number,

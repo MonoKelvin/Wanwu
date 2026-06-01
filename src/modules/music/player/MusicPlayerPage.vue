@@ -17,6 +17,11 @@ const router = useRouter()
 const player = useMusicPlayerStore()
 const queueOpen = ref(false)
 const commentsOpen = ref(false)
+const commentBtnRef = ref<HTMLButtonElement | null>(null)
+
+function toggleComments() {
+  commentsOpen.value = !commentsOpen.value
+}
 
 const bgStyle = computed(() => {
   const url = player.currentTrack?.coverUrl
@@ -34,26 +39,27 @@ function back() {
     <div class="ww-music-player-page__bg" aria-hidden="true" />
     <div class="ww-music-player-page__content">
       <header v-if="player.currentTrack" class="ww-music-player-page__head">
-        <button
-          type="button"
-          class="ww-music-nav-btn ww-music-player-page__head-side"
-          aria-label="返回"
-          @click="back"
-        >
-          <WwIcon name="chevron-left" size="sm" />
-        </button>
+        <div class="ww-music-player-page__head-action ww-music-player-page__head-action--back">
+          <button type="button" class="ww-music-nav-btn" aria-label="返回" @click="back">
+            <WwIcon name="chevron-left" size="md" />
+          </button>
+        </div>
         <div class="ww-music-player-page__head-text">
           <h1>{{ player.currentTrack.title }}</h1>
           <p>{{ player.currentTrack.artist }}</p>
         </div>
-        <button
-          type="button"
-          class="ww-music-nav-btn ww-music-player-page__head-side"
-          aria-label="评论"
-          @click="commentsOpen = true"
-        >
-          <WwIcon name="circle-help" size="sm" />
-        </button>
+        <div class="ww-music-player-page__head-action ww-music-player-page__head-action--comment">
+          <button
+            ref="commentBtnRef"
+            type="button"
+            class="ww-music-nav-btn"
+            aria-label="评论"
+            :aria-expanded="commentsOpen"
+            @click="toggleComments"
+          >
+            <WwIcon name="message-circle" size="md" />
+          </button>
+        </div>
       </header>
       <div class="ww-music-player-page__stage">
         <MusicModeGallery
@@ -73,6 +79,7 @@ function back() {
     </div>
     <MusicCommentSheet
       v-model:visible="commentsOpen"
+      :anchor-el="commentBtnRef"
       :song-id="player.currentTrack?.videoId ?? ''"
       :title="player.currentTrack?.title"
     />

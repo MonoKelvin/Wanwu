@@ -28,12 +28,23 @@ function play(track: NormalizedTrack, _index: number) {
   void player.playTrack(track, list.length ? list : [track])
 }
 
-function openAlbum(browseId: string) {
-  void router.push({ name: 'music-album', params: { browseId } })
+function openAlbum(browseId: string, title?: string) {
+  void router.push({
+    name: 'music-album',
+    params: { browseId },
+    query: title ? { title } : undefined
+  })
 }
 
-function openArtist(browseId: string) {
-  void router.push({ name: 'music-artist', params: { browseId } })
+function openArtist(browseId: string, name?: string, coverUrl?: string) {
+  void router.push({
+    name: 'music-artist',
+    params: { browseId },
+    query: {
+      ...(name ? { name } : {}),
+      ...(coverUrl ? { cover: coverUrl } : {})
+    }
+  })
 }
 
 function openPlaylist(playlistId: string) {
@@ -127,7 +138,7 @@ const hasAnyResults = computed(() => {
                 coverUrl: a.coverUrl
               }))
             "
-            @select="(item) => openAlbum(item.id)"
+            @select="(item) => openAlbum(item.id, item.title)"
           />
           </div>
         </section>
@@ -144,7 +155,7 @@ const hasAnyResults = computed(() => {
                 shape: 'circle' as const
               }))
             "
-            @select="(item) => openArtist(item.id)"
+            @select="(item) => openArtist(item.id, item.title, item.coverUrl)"
           />
           </div>
         </section>

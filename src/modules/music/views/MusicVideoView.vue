@@ -1,96 +1,123 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onActivated, onDeactivated, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
-import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
+import MusicAlbumHero from '@modules/music/components/MusicAlbumHero.vue'
+import MusicInlineMvPlayer from '@modules/music/components/MusicInlineMvPlayer.vue'
+import { useMusicMvPlayback } from '@modules/music/composables/useMusicMvPlayback'
 import type { MusicMvDetail } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
 
 defineOptions({ name: 'MusicVideoView' })
 
 const route = useRoute()
-const player = useMusicPlayerStore()
+const mvPlayback = useMusicMvPlayback()
 const detail = ref<MusicMvDetail | null>(null)
+const streamUrl = ref<string | null>(null)
 const loading = ref(true)
+const streamLoading = ref(false)
 const error = ref<string | null>(null)
+const playerRef = ref<InstanceType<typeof MusicInlineMvPlayer> | null>(null)
 
-onMounted(async () => {
-  const browseId = decodeURIComponent(String(route.params.browseId ?? ''))
+const browseId = computed(() => decodeURIComponent(String(route.params.browseId ?? '')))
+
+const playCountLabel = computed(() => {
+  const n = detail.value?.playCount
+  if (n == null || n <= 0) return ''
+  if (n >= 100_000_000) return `${(n / 100_000_000).toFixed(1)}亿次播放`
+  if (n >= 10_000) return `${Math.round(n / 10_000)}万次播放`
+  return `${n}次播放`
+})
+
+const heroMeta = computed(() => {
+  const parts = [detail.value?.artist, playCountLabel.value].filter(Boolean)
+  return parts.join(' · ')
+})
+
+async function loadMv(id: string) {
+  playerRef.value?.stop()
+  streamUrl.value = null
+  detail.value = null
   loading.value = true
   error.value = null
   try {
-    detail.value = await window.wanwu.music.getPlatformMvDetail(browseId)
-    if (!detail.value) error.value = '无法加载 MV 信息'
+    const d = await window.wanwu.music.getPlatformMvDetail(id)
+    if (!d) {
+      error.value = '无法加载 MV 信息'
+      return
+    }
+    detail.value = d
+    streamLoading.value = true
+    const stream = await window.wanwu.music.resolvePlatformMvStream(d.id)
+    streamUrl.value = stream?.url ?? null
+    if (!streamUrl.value) error.value = '暂无法获取播放地址'
   } catch (e) {
     error.value = e instanceof Error ? e.message : '加载失败'
   } finally {
     loading.value = false
+    streamLoading.value = false
   }
+}
+
+watch(
+  browseId,
+  (id) => {
+    if (!id) return
+    void loadMv(id)
+  },
+  { immediate: true }
+)
+
+onActivated(() => {
+  mvPlayback.enterMvPage()
 })
 
-async function playMv() {
-  if (!detail.value) return
-  const stream = await window.wanwu.music.resolvePlatformMvStream(detail.value.id)
-  if (!stream?.url) {
-    error.value = '无法获取播放地址'
-    return
-  }
-  const track = {
-    trackKey: `mv:${detail.value.id}`,
-    provider: 'kugou' as const,
-    videoId: detail.value.id,
-    title: detail.value.title,
-    artist: detail.value.artist,
-    coverUrl: detail.value.coverUrl
-  }
-  void player.playTrack(track, [track])
-}
+onDeactivated(() => {
+  playerRef.value?.stop()
+  mvPlayback.leaveMvPage()
+})
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main">
-    <div class="ww-music-content-shell">
-      <MusicPageHeading title="MV" subtitle="音乐视频" />
+  <div class="ww-music-tab-body ww-scroll-main ww-music-mv-page-body">
+    <div class="ww-music-content-shell ww-music-mv-page">
       <p v-if="loading" class="ww-music-state-hint">加载中…</p>
-      <p v-else-if="error" class="ww-music-state-hint">{{ error }}</p>
-      <div v-else-if="detail" class="ww-music-mv-detail">
-        <div class="ww-music-mv-detail__cover">
-          <img v-if="detail.coverUrl" :src="detail.coverUrl" :alt="detail.title" />
-        </div>
-        <div class="ww-music-mv-detail__meta">
-          <h2>{{ detail.title }}</h2>
-          <p>{{ detail.artist }}</p>
-          <button type="button" class="ww-music-glass-chip" @click="playMv">播放 MV</button>
-        </div>
-      </div>
+      <p v-else-if="error && !detail" class="ww-music-state-hint">{{ error }}</p>
+      <template v-else-if="detail">
+        <MusicAlbumHero
+          :title="detail.title"
+          subtitle="MV"
+          :cover-url="detail.coverUrl"
+          :meta="heroMeta || undefined"
+        />
+
+        <MusicInlineMvPlayer
+          :key="browseId"
+          ref="playerRef"
+          :src="streamUrl ?? ''"
+          :poster="detail.coverUrl"
+          :title="detail.title"
+          @play="mvPlayback.onMvVideoPlay"
+          @pause="mvPlayback.onMvVideoPause"
+        />
+        <p v-if="streamLoading" class="ww-music-state-hint ww-music-mv-page__hint">正在解析播放地址…</p>
+        <p v-else-if="error" class="ww-mv-page-error">{{ error }}</p>
+      </template>
     </div>
   </div>
 </template>
 
 <style scoped>
-.ww-music-mv-detail {
-  display: grid;
-  grid-template-columns: minmax(8rem, 12rem) 1fr;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: var(--ww-music-inner-radius, 0.875rem);
-  background: var(--ww-glass-bg, color-mix(in srgb, var(--ww-surface) 72%, transparent));
+.ww-music-mv-page-body {
+  padding-bottom: 1.25rem;
 }
 
-.ww-music-mv-detail__cover img {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: calc(var(--ww-music-inner-radius, 0.875rem) * 0.75);
+.ww-music-mv-page__hint {
+  margin-top: 0.5rem;
 }
 
-.ww-music-mv-detail__meta h2 {
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.ww-music-mv-detail__meta p {
-  margin: 0.35rem 0 0.75rem;
-  color: var(--ww-text-secondary);
+.ww-mv-page-error {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--ww-danger-text, #b91c1c);
 }
 </style>

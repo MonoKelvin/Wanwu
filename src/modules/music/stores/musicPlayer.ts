@@ -15,6 +15,8 @@ import {
 import { formatPlayError } from '@modules/music/lib/formatPlayError'
 import { mergeTrackPlaybackMeta } from '@modules/music/lib/mergeTrackPlaybackMeta'
 import { useSettingsStore } from '@shared/stores/settings'
+import { useWanwuToast } from '@shared/composables/useWanwuToast'
+import { useMusicAccount } from '@modules/music/composables/useMusicAccount'
 
 export type MusicPlaybackQuality = 'standard' | 'higher' | 'exhigh' | 'lossless' | 'hires'
 
@@ -22,6 +24,8 @@ const QUALITY_CYCLE: MusicPlaybackQuality[] = ['standard', 'higher', 'exhigh', '
 
 export const useMusicPlayerStore = defineStore('musicPlayer', () => {
   const settingsStore = useSettingsStore()
+  const toast = useWanwuToast()
+  const account = useMusicAccount()
   const currentTrack = ref<NormalizedTrack | null>(null)
   const queue = ref<NormalizedTrack[]>([])
   const queueIndex = ref(0)
@@ -73,6 +77,13 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
   }
 
   async function refreshFavorites() {
+    if (account.profile.value.loggedIn) {
+      try {
+        await window.wanwu.music.syncPlatformFavorites()
+      } catch {
+        /* 同步失败时仍加载本地收藏 */
+      }
+    }
     const rows = await window.wanwu.music.listFavorites()
     favoriteKeys.value = new Set(rows.map((r) => r.trackKey))
   }
@@ -85,17 +96,14 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
   async function toggleFavorite(track?: NormalizedTrack | null) {
     const t = track ?? currentTrack.value
     if (!t) return
-    const on = await window.wanwu.music.toggleFavorite(plainTrack(t))
-    if ((t.provider === 'netease' || t.provider === 'kugou') && on !== undefined) {
-      try {
-        await window.wanwu.music.platformLikeSong(t.videoId, on)
-      } catch {
-        /* 本地收藏仍有效 */
-      }
+    try {
+      const on = await window.wanwu.music.toggleFavorite(plainTrack(t))
+      if (on) favoriteKeys.value.add(t.trackKey)
+      else favoriteKeys.value.delete(t.trackKey)
+      favoriteKeys.value = new Set(favoriteKeys.value)
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : '收藏操作失败')
     }
-    if (on) favoriteKeys.value.add(t.trackKey)
-    else favoriteKeys.value.delete(t.trackKey)
-    favoriteKeys.value = new Set(favoriteKeys.value)
   }
 
   function setQueue(tracks: NormalizedTrack[], startIndex = 0) {
@@ -292,6 +300,15 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
   )
 
   watch([playMode, layoutMode, currentTrack], () => schedulePersist())
+
+  watch(
+    () => account.profile.value.loggedIn,
+    (loggedIn, wasLoggedIn) => {
+      if (loggedIn || wasLoggedIn) void refreshFavorites()
+    }
+  )
+
+  void refreshFavorites()
 
   if (typeof window !== 'undefined') {
     window.addEventListener('beforeunload', () => persistPlaybackState())

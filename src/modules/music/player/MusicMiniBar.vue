@@ -161,11 +161,22 @@ function openPlayer() {
 
 .ww-music-minibar.ww-glass-blur {
   border: 1px solid var(--ww-glass-border);
-  box-shadow: none;
+  box-shadow:
+    0 -1px 0 color-mix(in srgb, white 55%, transparent),
+    0 -8px 22px -6px color-mix(in srgb, var(--ww-ink) 7%, transparent),
+    0 -3px 10px -4px color-mix(in srgb, var(--ww-ink) 4%, transparent);
+  transform: translateY(-2px);
 }
 
 .ww-music-minibar.ww-glass-blur::before {
   background: color-mix(in srgb, var(--ww-glass-bg-soft) 72%, transparent);
+}
+
+[data-theme='dark'] .ww-music-minibar.ww-glass-blur {
+  box-shadow:
+    0 -1px 0 rgb(255 255 255 / 0.05),
+    0 -10px 28px -8px rgb(0 0 0 / 0.32),
+    0 -3px 12px -5px rgb(0 0 0 / 0.18);
 }
 
 .ww-music-minibar__body {

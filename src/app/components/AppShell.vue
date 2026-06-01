@@ -9,6 +9,7 @@ import { MODULE_KEEP_ALIVE } from '@app/config/modules'
 import { moduleViewComponent } from '@app/shell/moduleShell'
 import ItemDetailView from '@modules/item/ItemDetailView.vue'
 import MusicMiniBar from '@modules/music/player/MusicMiniBar.vue'
+import { useMusicMvPlayback } from '@modules/music/composables/useMusicMvPlayback'
 import { useAppStore } from '@shared/stores/app'
 import { useSettingsStore } from '@shared/stores/settings'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
@@ -20,7 +21,10 @@ const shellComponent = computed(() => moduleViewComponent(shellModule.value))
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 const isFullscreen = computed(() => !!route.meta.fullscreen)
-const showMusicBar = computed(() => routeModule.value === 'music' && !isFullscreen.value)
+const { minibarHidden } = useMusicMvPlayback()
+const showMusicBar = computed(
+  () => routeModule.value === 'music' && !isFullscreen.value && !minibarHidden.value
+)
 
 const isItemDetail = computed(() => isItemDetailRoute(route.name))
 /** 物品详情为全屏内容区：不显示分类侧栏，避免与缓存的全库列表叠在一起 */
@@ -62,7 +66,9 @@ watch(
       <Transition name="ww-item-detail">
         <ItemDetailView v-if="isItemDetail" class="ww-item-detail-layer" />
       </Transition>
-      <MusicMiniBar v-if="showMusicBar" />
+      <Transition name="ww-music-minibar">
+        <MusicMiniBar v-if="showMusicBar" />
+      </Transition>
     </main>
   </div>
 </template>
@@ -95,5 +101,25 @@ watch(
 .ww-item-detail-leave-to {
   opacity: 0;
   transform: translateY(10px);
+}
+
+/* 音乐底栏：沉入窗口底部外，先快后慢 */
+.ww-music-minibar-enter-active,
+.ww-music-minibar-leave-active {
+  transition:
+    transform 0.44s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-music-minibar-enter-from,
+.ww-music-minibar-leave-to {
+  opacity: 0;
+  transform: translateY(calc(100% + var(--ww-music-minibar-inset, 1.125rem) + 0.75rem));
+}
+
+.ww-music-minibar-enter-to,
+.ww-music-minibar-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>

@@ -416,8 +416,12 @@ export function registerIpcHandlers(services: AppServices): void {
   })
 
   ipcMain.handle('music:toggleFavorite', (_e, { track }: { track: import('../../src/shared/types/music').NormalizedTrack }) => {
-    return services.music?.toggleFavorite(track) ?? false
+    return services.music?.toggleFavorite(track) ?? Promise.resolve(false)
   })
+
+  ipcMain.handle('music:syncPlatformFavorites', (_e, { limit }: { limit?: number }) =>
+    services.music?.syncPlatformFavorites(limit) ?? Promise.resolve()
+  )
 
   ipcMain.handle('music:listHistory', (_e, { limit }: { limit?: number }) => {
     return services.music?.listHistory(limit ?? 50) ?? []
@@ -544,8 +548,8 @@ export function registerIpcHandlers(services: AppServices): void {
   ipcMain.handle('music:getNewSongs', (_e, { limit }: { limit?: number }) =>
     services.music?.getNewSongs(limit) ?? []
   )
-  ipcMain.handle('music:getNewAlbums', (_e, { limit }: { limit?: number }) =>
-    services.music?.getNewAlbums(limit) ?? []
+  ipcMain.handle('music:getNewAlbums', (_e, { limit, seed }: { limit?: number; seed?: number }) =>
+    services.music?.getNewAlbums(limit, seed) ?? []
   )
   ipcMain.handle('music:getToplists', () => services.music?.getToplists() ?? [])
   ipcMain.handle('music:getToplistTracks', (_e, { toplistId, limit }: { toplistId: string; limit?: number }) =>
