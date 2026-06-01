@@ -13,13 +13,22 @@ import {
   saveMusicPlaybackSnapshot
 } from '@modules/music/lib/musicPlaybackPrefs'
 import { formatPlayError } from '@modules/music/lib/formatPlayError'
+import { useSettingsStore } from '@shared/stores/settings'
+
+export type MusicPlaybackQuality = 'standard' | 'higher' | 'exhigh' | 'lossless' | 'hires'
+
+const QUALITY_CYCLE: MusicPlaybackQuality[] = ['standard', 'higher', 'exhigh', 'lossless', 'hires']
 
 export const useMusicPlayerStore = defineStore('musicPlayer', () => {
+  const settingsStore = useSettingsStore()
   const currentTrack = ref<NormalizedTrack | null>(null)
   const queue = ref<NormalizedTrack[]>([])
   const queueIndex = ref(0)
   const playMode = ref<MusicPlayMode>('sequence')
   const layoutMode = ref<MusicPlayerLayoutMode>('gallery')
+  const playbackQuality = ref<MusicPlaybackQuality>(
+    (settingsStore.settings.musicNeteaseQuality as MusicPlaybackQuality) || 'standard'
+  )
   const favoriteKeys = ref<Set<string>>(new Set())
   const loading = ref(false)
   const errorMessage = ref<string | null>(null)
@@ -76,6 +85,13 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
     const t = track ?? currentTrack.value
     if (!t) return
     const on = await window.wanwu.music.toggleFavorite(plainTrack(t))
+    if ((t.provider === 'netease' || t.provider === 'kugou') && on !== undefined) {
+      try {
+        await window.wanwu.music.platformLikeSong(t.videoId, on)
+      } catch {
+        /* 本地收藏仍有效 */
+      }
+    }
     if (on) favoriteKeys.value.add(t.trackKey)
     else favoriteKeys.value.delete(t.trackKey)
     favoriteKeys.value = new Set(favoriteKeys.value)
@@ -124,7 +140,7 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
     lyricsLrc.value = null
 
     try {
-      const stream = await window.wanwu.music.resolveStream(source, false)
+      const stream = await window.wanwu.music.resolveStream(source, false, playbackQuality.value)
       if (gen !== playGeneration) return
       if (!stream.url) throw new Error('无法获取播放地址')
 
@@ -242,6 +258,12 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
     schedulePersist()
   }
 
+  function cyclePlaybackQuality() {
+    const i = QUALITY_CYCLE.indexOf(playbackQuality.value)
+    playbackQuality.value = QUALITY_CYCLE[(i + 1) % QUALITY_CYCLE.length]!
+    if (currentTrack.value) void playTrack(currentTrack.value)
+  }
+
   player.onEnded(() => {
     if (playMode.value === 'single') {
       player.seek(0)
@@ -275,6 +297,7 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
     queueIndex,
     playMode,
     layoutMode,
+    playbackQuality,
     favoriteKeys,
     loading,
     errorMessage,
@@ -296,6 +319,7 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
     togglePlay,
     cyclePlayMode,
     cycleLayoutMode,
+    cyclePlaybackQuality,
     restoreSession,
     stop,
     seek: (s: number) => {

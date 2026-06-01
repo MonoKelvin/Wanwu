@@ -63,6 +63,7 @@ export class MusicService {
   private registry: MusicProviderRegistry | null = null
   private readonly discoverCache = new DiscoverCacheService()
   private readonly platforms: MusicPlatformManager
+  private platformDiscoverFeedInflight: Promise<MusicDiscoverFeed> | null = null
 
   constructor(
     private readonly db: DatabaseService,
@@ -360,18 +361,60 @@ export class MusicService {
     }
   }
 
+  private discoverSectionKeys(): DiscoverSectionKey[] {
+    return ['forYou', 'trending', 'newReleases', 'chartTracks', 'chartPlaylists']
+  }
+
+  private isDiscoverSectionEmpty(data: unknown): boolean {
+    return Array.isArray(data) && data.length === 0
+  }
+
+  private cacheDiscoverFeed(feed: MusicDiscoverFeed): void {
+    for (const key of this.discoverSectionKeys()) {
+      const existing = this.discoverCache.get(key)
+      const incoming = feed[key]
+      if (
+        this.isDiscoverSectionEmpty(incoming) &&
+        existing !== null &&
+        !this.isDiscoverSectionEmpty(existing)
+      ) {
+        continue
+      }
+      this.discoverCache.set(key, incoming)
+    }
+  }
+
+  private async ensurePlatformDiscoverFeed(force = false): Promise<MusicDiscoverFeed> {
+    if (!force && this.platformDiscoverFeedInflight) {
+      return this.platformDiscoverFeedInflight
+    }
+
+    const task = (async () => {
+      const feed = await this.primaryPlatform().buildDiscoverFeed()
+      this.cacheDiscoverFeed(feed)
+      return feed
+    })()
+
+    this.platformDiscoverFeedInflight = task
+    try {
+      return await task
+    } finally {
+      if (this.platformDiscoverFeedInflight === task) {
+        this.platformDiscoverFeedInflight = null
+      }
+    }
+  }
+
   async getDiscoverSection<K extends DiscoverSectionKey>(
     section: K
   ): Promise<MusicDiscoverFeed[K]> {
     await this.refreshApiClient()
     const cached = this.discoverCache.get(section)
-    if (cached) return cached
+    if (cached !== null && !this.isDiscoverSectionEmpty(cached)) return cached
 
     if (this.isPlatformPrimary()) {
-      const feed = await this.primaryPlatform().buildDiscoverFeed()
-      const data = feed[section]
-      this.discoverCache.set(section, data)
-      return data
+      const feed = await this.ensurePlatformDiscoverFeed()
+      return feed[section]
     }
 
     const data = await fetchDiscoverSection(section, this.discoverDeps())
@@ -385,7 +428,9 @@ export class MusicService {
     await this.refreshApiClient()
     if (this.isPlatformPrimary()) {
       return this.discoverCache.refresh(section, async () => {
+        this.platformDiscoverFeedInflight = null
         const feed = await this.primaryPlatform().buildDiscoverFeed()
+        this.cacheDiscoverFeed(feed)
         return feed[section]
       })
     }
@@ -397,34 +442,18 @@ export class MusicService {
   async getDiscoverFeed(): Promise<MusicDiscoverFeed> {
     await this.refreshApiClient()
     if (this.isPlatformPrimary()) {
-      const feed = await this.primaryPlatform().buildDiscoverFeed()
-      const keys = [
-        'forYou',
-        'trending',
-        'newReleases',
-        'chartTracks',
-        'chartPlaylists'
-      ] as const
-      for (const key of keys) {
-        this.discoverCache.set(key, feed[key])
-      }
-      return feed
+      return this.ensurePlatformDiscoverFeed()
     }
 
-    const keys = [
-      'forYou',
-      'trending',
-      'newReleases',
-      'chartTracks',
-      'chartPlaylists'
-    ] as const
-    const allCached = keys.every((k) => this.discoverCache.get(k) !== null)
+    const keys = this.discoverSectionKeys()
+    const allCached = keys.every((k) => {
+      const v = this.discoverCache.get(k)
+      return v !== null && !this.isDiscoverSectionEmpty(v)
+    })
     if (allCached) return this.discoverCache.snapshot()
 
     const feed = await buildDiscoverFeed(this.discoverDeps())
-    for (const key of keys) {
-      this.discoverCache.set(key, feed[key])
-    }
+    this.cacheDiscoverFeed(feed)
     return feed
   }
 
@@ -673,12 +702,39 @@ export class MusicService {
     return {}
   }
 
-  async resolveStream(track: NormalizedTrack, useCache = true): Promise<MusicStreamResult> {
+  async resolveStream(
+    track: NormalizedTrack,
+    useCache = true,
+    qualityOverride?: import('./platform/types').MusicPlatformQuality
+  ): Promise<MusicStreamResult> {
     await this.refreshApiClient()
     const normalized =
       track.provider === 'netease' || track.provider === 'kugou'
         ? enrichTrackCover(track)
         : await normalizeForPlayback(this.verome, track)
+
+    const quality = qualityOverride ?? this.getSettings().musicNeteaseQuality
+
+    if (normalized.provider === 'netease' || normalized.provider === 'kugou') {
+      try {
+        const picked = await this.platforms.get(normalized.provider).resolveStream(normalized.videoId, quality)
+        if (picked?.url) {
+          const cached = await this.streamCache.resolveWithCache(
+            normalized,
+            { url: picked.url, format: picked.format },
+            useCache
+          )
+          return {
+            url: cached.url,
+            cachedPath: cached.cachedPath,
+            track: enrichTrackCover(normalized),
+            format: cached.format
+          }
+        }
+      } catch {
+        /* fallback to registry */
+      }
+    }
 
     const resolved = await resolvePlayableStream(normalized, {
       registry: this.registry,
@@ -1098,5 +1154,125 @@ export class MusicService {
   ): Promise<MusicPlatformSubscribedItem[]> {
     await this.refreshApiClient()
     return this.accountPlatform().getSubscribed(kind, limit)
+  }
+
+  // --- 统一平台登录（随 musicPrimarySource） ---
+
+  async platformLoginQrKey() {
+    await this.refreshApiClient()
+    return this.accountPlatform().loginQrKey()
+  }
+
+  async platformLoginQrCheck(key: string) {
+    await this.refreshApiClient()
+    return this.accountPlatform().loginQrCheck(key)
+  }
+
+  async platformSendCaptcha(phone: string, countryCode = 86) {
+    await this.refreshApiClient()
+    return this.accountPlatform().sendPhoneCaptcha(phone, countryCode)
+  }
+
+  async platformLoginPhone(phone: string, captcha: string, countryCode = 86) {
+    await this.refreshApiClient()
+    return this.accountPlatform().loginPhone(phone, captcha, countryCode)
+  }
+
+  async platformLoginCookie(credential: string) {
+    await this.refreshApiClient()
+    const platform = this.accountPlatform()
+    platform.setMusicUCookie(credential)
+    return platform.getLoginStatus()
+  }
+
+  async platformLogout() {
+    await this.refreshApiClient()
+    await this.accountPlatform().logout()
+  }
+
+  async platformLikeSong(songId: string, like: boolean): Promise<void> {
+    await this.refreshApiClient()
+    if (!this.isPlatformPrimary()) return
+    await this.primaryPlatform().likeSong(songId, like)
+  }
+
+  async getNewSongs(limit = 30): Promise<NormalizedTrack[]> {
+    await this.refreshApiClient()
+    if (!this.isPlatformPrimary()) return []
+    return this.primaryPlatform().getNewSongs(limit)
+  }
+
+  async getNewAlbums(limit = 12) {
+    await this.refreshApiClient()
+    if (!this.isPlatformPrimary()) return []
+    return this.primaryPlatform().getNewAlbums(limit)
+  }
+
+  async getToplists() {
+    await this.refreshApiClient()
+    if (!this.isPlatformPrimary()) return []
+    return this.primaryPlatform().getToplists()
+  }
+
+  async getToplistTracks(toplistId: string, limit = 50): Promise<NormalizedTrack[]> {
+    await this.refreshApiClient()
+    if (!this.isPlatformPrimary()) return []
+    return this.primaryPlatform().getToplistTracks(toplistId, limit)
+  }
+
+  async createPlatformPlaylist(name: string) {
+    await this.refreshApiClient()
+    return this.accountPlatform().createPlaylist(name)
+  }
+
+  async deletePlatformPlaylist(playlistId: string) {
+    await this.refreshApiClient()
+    await this.accountPlatform().deletePlaylist(playlistId)
+  }
+
+  async addPlatformPlaylistTracks(playlistId: string, songIds: string[]) {
+    await this.refreshApiClient()
+    await this.accountPlatform().addPlaylistTracks(playlistId, songIds)
+  }
+
+  async removePlatformPlaylistTracks(playlistId: string, songIds: string[]) {
+    await this.refreshApiClient()
+    await this.accountPlatform().removePlaylistTracks(playlistId, songIds)
+  }
+
+  async followPlatformArtist(artistId: string, follow: boolean) {
+    await this.refreshApiClient()
+    await this.accountPlatform().followArtist(artistId, follow)
+  }
+
+  async getPlatformSongComments(songId: string, page = 1) {
+    await this.refreshApiClient()
+    if (!this.isPlatformPrimary()) return { comments: [], hasMore: false }
+    return this.primaryPlatform().getSongComments(songId, page)
+  }
+
+  async getPlatformMvDetail(browseId: string) {
+    await this.refreshApiClient()
+    const ref = parseBrowseId(browseId)
+    const platform = ref ? this.platforms.get(ref.platform) : this.primaryPlatform()
+    return platform.getMvDetail(browseId)
+  }
+
+  async resolvePlatformMvStream(mvId: string) {
+    await this.refreshApiClient()
+    if (!this.isPlatformPrimary()) return null
+    return this.primaryPlatform().resolveMvStream(mvId)
+  }
+
+  async getPlatformRadioCategories() {
+    await this.refreshApiClient()
+    if (!this.isPlatformPrimary()) return []
+    return this.primaryPlatform().getRadioCategories()
+  }
+
+  async getPlatformRadioTracks(categoryId: string, limit = 30) {
+    await this.refreshApiClient()
+    if (!this.isPlatformPrimary()) return []
+    return this.primaryPlatform().getRadioTracks(categoryId, limit)
   }
 }

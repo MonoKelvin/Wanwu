@@ -15,6 +15,7 @@ import type {
 } from '../types'
 import { MusicSearchType } from '../types'
 import { ensureKugouDevice } from './kugouDevice'
+import { invokeKugou } from './kugouInvoke'
 import { pickKugouStreamUrl, parseKugouJsonBody } from './kugouResponse'
 import { loadKugouApiModule } from './loadKugouApi'
 import {
@@ -24,9 +25,12 @@ import {
   mapKugouSongs,
   mapMoodCategories,
   mapPlaylistSummary,
+  mapToplistChartCards,
   mapToplistSummary,
   parseBrowseId,
-  parseKugouVideoId
+  parseKugouVideoId,
+  pickHash,
+  pickNumber
 } from './mapper'
 import type {
   MusicChartsPayload,
@@ -39,6 +43,9 @@ import type {
   MusicPlatformUserProfile,
   MusicSearchResult,
   MusicTrendingPayload,
+  MusicMvDetail,
+  MusicRadioCategory,
+  MusicSongCommentPage,
   NormalizedTrack
 } from '../../../../../src/shared/types/music'
 
@@ -123,11 +130,8 @@ export class KugouPlatformService implements IMusicPlatformService {
     }
     await this.deviceReady
 
-    const raw = await this.gateway.invoke<unknown>(path, params, {
-      cookie: this.session.cookieObject(),
-      proxy: this.proxy || undefined
-    })
-    return parseKugouJsonBody(raw) as T
+    const raw = await invokeKugou(this.session, path, params, this.proxy || undefined)
+    return raw as T
   }
 
   getSessionSnapshot(): MusicPlatformSessionSnapshot {
@@ -138,23 +142,24 @@ export class KugouPlatformService implements IMusicPlatformService {
     if (!this.session.getMusicU()) return { loggedIn: false, loginType: 'none' }
     const cached = this.session.snapshot()
     try {
-      const data = await this.invoke<{ data?: { userid?: number; nickname?: string; pic?: string } }>('user/detail')
-      const profile = data.data
-      if (!profile?.userid) {
+      const data = await this.invoke<{ status?: number; data?: { userid?: number; nickname?: string; pic?: string } }>(
+        'user/detail'
+      )
+      if (data.status !== 1 || !data.data?.userid) {
         this.session.clear()
         return { loggedIn: false, loginType: 'none' }
       }
       this.session.setProfile({
-        userId: profile.userid,
-        nickname: profile.nickname,
-        avatarUrl: profile.pic
+        userId: data.data.userid,
+        nickname: data.data.nickname,
+        avatarUrl: data.data.pic
       })
       return {
         loggedIn: true,
         loginType: 'normal',
-        userId: profile.userid,
-        nickname: profile.nickname ?? cached.nickname,
-        avatarUrl: profile.pic ?? cached.avatarUrl
+        userId: data.data.userid,
+        nickname: data.data.nickname ?? cached.nickname,
+        avatarUrl: data.data.pic ?? cached.avatarUrl
       }
     } catch {
       if (!cached.musicU) return { loggedIn: false, loginType: 'none' }
@@ -177,12 +182,12 @@ export class KugouPlatformService implements IMusicPlatformService {
   }
 
   async refreshLoginIfNeeded(): Promise<void> {
-    if (!this.session.needsRefresh()) return
+    if (!this.session.getMusicU() || !this.session.needsRefresh()) return
     try {
       await this.invoke('login/token')
       this.session.markRefreshed()
     } catch {
-      /* ignore */
+      /* token 失效时由 getLoginStatus 校验并清理 */
     }
   }
 
@@ -207,9 +212,14 @@ export class KugouPlatformService implements IMusicPlatformService {
       { key }
     )
     const status = data.data?.status ?? 1
-    if (status === 4 && data.data?.token) {
-      this.session.setMusicU(data.data.token, { userId: data.data.userid })
-      return { status, cookie: data.data.token }
+    if (status === 4) {
+      const token = data.data?.token?.trim()
+      const userId = data.data?.userid
+      if (token && !this.session.getMusicU()) {
+        this.session.setMusicU(token, userId ? { userId } : undefined)
+      }
+      await this.getLoginStatus()
+      return { status, cookie: this.session.getMusicU() }
     }
     return { status }
   }
@@ -223,9 +233,12 @@ export class KugouPlatformService implements IMusicPlatformService {
       mobile: phone,
       code: captcha
     })
-    if (data.data?.token) {
-      this.session.setMusicU(data.data.token, { userId: data.data.userid })
+    const token = data.data?.token?.trim()
+    const userId = data.data?.userid
+    if (token && !this.session.getMusicU()) {
+      this.session.setMusicU(token, userId ? { userId } : undefined)
     }
+    await this.getLoginStatus()
     return data
   }
 
@@ -465,13 +478,27 @@ export class KugouPlatformService implements IMusicPlatformService {
   }
 
   async getPersonalFm(): Promise<NormalizedTrack[]> {
-    const data = await this.invoke<{ data?: { song_list?: unknown[]; lists?: unknown[] } }>('personal_fm')
-    return mapKugouSongs(data.data?.song_list ?? data.data?.lists ?? [])
+    for (const path of ['personal_fm', 'fm/recommend', 'fm/songs'] as const) {
+      try {
+        const params =
+          path === 'personal_fm' ? { action: 'play' } : path === 'fm/songs' ? {} : {}
+        const data = await this.invoke<{ data?: unknown }>(path, params)
+        const tracks = mapKugouSongs(extractSongRows(data.data ?? data))
+        if (tracks.length) return tracks
+      } catch {
+        /* try next */
+      }
+    }
+    return []
   }
 
   async trashPersonalFm(songId: string): Promise<void> {
-    const { albumAudioId } = parseKugouVideoId(songId)
-    await this.invoke('personal_fm', { action: 'garbage', album_audio_id: albumAudioId })
+    const { albumAudioId, hash } = parseKugouVideoId(songId)
+    await this.invoke('personal_fm', {
+      action: 'garbage',
+      hash,
+      songid: albumAudioId
+    })
   }
 
   async getPersonalizedPlaylists(limit = 10): Promise<MusicMoodPlaylist[]> {
@@ -616,8 +643,50 @@ export class KugouPlatformService implements IMusicPlatformService {
     }
   }
 
-  likeSong(_songId: string, _like: boolean): Promise<void> {
-    return Promise.resolve()
+  private async resolveFavPlaylist(): Promise<{ listId: string; globalId: string } | null> {
+    const playlists = await this.getUserPlaylists()
+    const fav = playlists.find((p) => /我喜欢|收藏|最爱|默认/.test(p.title))
+    if (!fav) return null
+    const listId = fav.listId ?? fav.id
+    return { listId, globalId: fav.id }
+  }
+
+  async likeSong(songId: string, like: boolean): Promise<void> {
+    if (!this.session.getMusicU()) throw new Error('请先登录酷狗账号')
+    const fav = await this.resolveFavPlaylist()
+    if (!fav) throw new Error('未找到「我喜欢」歌单')
+
+    const { albumAudioId, hash, albumId } = parseKugouVideoId(songId)
+    if (like) {
+      let title = ''
+      try {
+        const detail = await this.getSongDetail(songId)
+        title = detail?.title ?? ''
+      } catch {
+        /* ignore */
+      }
+      const payload = `${title}|${hash}|${albumId}|${albumAudioId}`
+      await this.invoke('playlist/tracks/add', { listid: fav.listId, data: payload })
+      return
+    }
+
+    const raw = await this.invoke<{ data?: { info?: unknown[]; lists?: unknown[] } }>('playlist/track/all', {
+      id: fav.globalId,
+      pagesize: 500
+    })
+    const fileIds: string[] = []
+    for (const item of raw.data?.info ?? raw.data?.lists ?? []) {
+      const row = item as Record<string, unknown>
+      const mixId = String(
+        pickNumber(row, 'album_audio_id', 'mixsongid', 'MixSongID', 'Audioid') ?? ''
+      )
+      const rowHash = pickHash(row)
+      if (mixId !== albumAudioId && rowHash !== hash) continue
+      const fid = row.fileid ?? row.file_id
+      if (fid != null) fileIds.push(String(fid))
+    }
+    if (!fileIds.length) return
+    await this.invoke('playlist/tracks/del', { listid: fav.listId, fileids: fileIds.join(',') })
   }
 
   async getUserCloud(limit = 50): Promise<NormalizedTrack[]> {
@@ -643,7 +712,13 @@ export class KugouPlatformService implements IMusicPlatformService {
           subscribedAlbums: false,
           subscribedArtists: true,
           subscribedMvs: true,
-          subscribedDjs: false
+          subscribedDjs: false,
+          personalFm: true,
+          playlistEdit: true,
+          cloudUpload: false,
+          comments: true,
+          mv: true,
+          sceneRadio: true
         }
       }
     }
@@ -698,7 +773,13 @@ export class KugouPlatformService implements IMusicPlatformService {
         subscribedAlbums: false,
         subscribedArtists: true,
         subscribedMvs: true,
-        subscribedDjs: false
+        subscribedDjs: false,
+        personalFm: true,
+        playlistEdit: true,
+        cloudUpload: false,
+        comments: true,
+        mv: true,
+        sceneRadio: true
       }
     }
   }
@@ -761,7 +842,34 @@ export class KugouPlatformService implements IMusicPlatformService {
       this.getStyleRecommend(20).catch(() => []),
       this.getTopCardTracks(1, 16).catch(() => [])
     ])
-    const chartTracks = toplists.length ? await this.getToplistTracks(toplists[0].id, 24).catch(() => []) : []
+
+    let chartTracks: NormalizedTrack[] = []
+    for (const list of toplists.slice(0, 3)) {
+      if (chartTracks.length >= 24) break
+      const rows = await this.getToplistTracks(list.id, 24).catch(() => [])
+      chartTracks = dedupeTracks([...chartTracks, ...rows])
+    }
+    if (!chartTracks.length) {
+      chartTracks = dedupeTracks([
+        ...cardTracks,
+        ...newSongs.slice(0, 24),
+        ...recommended.slice(0, 16),
+        ...styled.slice(0, 12),
+        ...daily.slice(0, 12)
+      ]).slice(0, 40)
+    }
+
+    let chartPlaylists = playlists.map((p) => ({
+      browseId: p.id.startsWith('rank:')
+        ? `kugou:toplist:${p.id.slice('rank:'.length)}`
+        : `kugou:playlist:${p.id}`,
+      title: p.title,
+      coverUrl: p.coverUrl,
+      trackCount: p.trackCount
+    }))
+    if (!chartPlaylists.length && toplists.length) {
+      chartPlaylists = mapToplistChartCards(toplists).slice(0, 12)
+    }
 
     const forYou = dedupeTracks([
       ...daily,
@@ -783,14 +891,7 @@ export class KugouPlatformService implements IMusicPlatformService {
       trending: trending.length ? trending : forYou.slice(0, 16),
       newReleases: newSongs,
       chartTracks,
-      chartPlaylists: playlists.map((p) => ({
-        browseId: p.id.startsWith('rank:')
-          ? `kugou:toplist:${p.id.slice('rank:'.length)}`
-          : `kugou:playlist:${p.id}`,
-        title: p.title,
-        coverUrl: p.coverUrl,
-        trackCount: p.trackCount
-      }))
+      chartPlaylists
     }
   }
 
@@ -802,5 +903,172 @@ export class KugouPlatformService implements IMusicPlatformService {
   async getCharts(): Promise<MusicChartsPayload> {
     const data = await this.invoke<{ data?: { info?: unknown[]; lists?: unknown[] } }>('rank/list')
     return buildChartsPayload(data.data?.info ?? data.data?.lists ?? [])
+  }
+
+  async createPlaylist(name: string): Promise<MusicPlaylistSummary> {
+    if (!this.session.getMusicU()) throw new Error('请先登录')
+    const data = await this.invoke<{ data?: Record<string, unknown> }>('playlist/add', {
+      name,
+      type: 0,
+      source: 1
+    })
+    const row = data.data ?? {}
+    const mapped = mapPlaylistSummary(row)
+    if (!mapped) throw new Error('创建歌单失败')
+    return mapped
+  }
+
+  async deletePlaylist(playlistId: string): Promise<void> {
+    if (!this.session.getMusicU()) throw new Error('请先登录')
+    const rawId = parseBrowseId(playlistId)?.id ?? playlistId
+    const playlists = await this.getUserPlaylists()
+    const target = playlists.find((p) => p.id === rawId)
+    const listId = target?.listId ?? rawId
+    await this.invoke('playlist/del', { listid: listId })
+  }
+
+  async addPlaylistTracks(playlistId: string, songIds: string[]): Promise<void> {
+    if (!this.session.getMusicU()) throw new Error('请先登录')
+    const rawId = parseBrowseId(playlistId)?.id ?? playlistId
+    const playlists = await this.getUserPlaylists()
+    const target = playlists.find((p) => p.id === rawId)
+    const listId = target?.listId ?? rawId
+    const chunks: string[] = []
+    for (const songId of songIds) {
+      const { albumAudioId, hash, albumId } = parseKugouVideoId(songId)
+      let title = ''
+      try {
+        const detail = await this.getSongDetail(songId)
+        title = detail?.title ?? ''
+      } catch {
+        /* ignore */
+      }
+      chunks.push(`${title}|${hash}|${albumId}|${albumAudioId}`)
+    }
+    if (!chunks.length) return
+    await this.invoke('playlist/tracks/add', { listid: listId, data: chunks.join(',') })
+  }
+
+  async removePlaylistTracks(playlistId: string, songIds: string[]): Promise<void> {
+    if (!this.session.getMusicU()) throw new Error('请先登录')
+    const rawId = parseBrowseId(playlistId)?.id ?? playlistId
+    const playlists = await this.getUserPlaylists()
+    const target = playlists.find((p) => p.id === rawId)
+    const listId = target?.listId ?? rawId
+    const globalId = target?.id ?? rawId
+    const raw = await this.invoke<{ data?: { info?: unknown[]; lists?: unknown[] } }>('playlist/track/all', {
+      id: globalId,
+      pagesize: 500
+    })
+    const want = new Set(songIds.map((id) => parseKugouVideoId(id).albumAudioId))
+    const fileIds: string[] = []
+    for (const item of raw.data?.info ?? raw.data?.lists ?? []) {
+      const row = item as Record<string, unknown>
+      const mixId = String(pickNumber(row, 'album_audio_id', 'mixsongid', 'MixSongID') ?? '')
+      if (!want.has(mixId)) continue
+      const fid = row.fileid ?? row.file_id
+      if (fid != null) fileIds.push(String(fid))
+    }
+    if (!fileIds.length) return
+    await this.invoke('playlist/tracks/del', { listid: listId, fileids: fileIds.join(',') })
+  }
+
+  async followArtist(artistId: string, follow: boolean): Promise<void> {
+    if (!this.session.getMusicU()) throw new Error('请先登录')
+    const rawId = parseBrowseId(artistId)?.id ?? artistId
+    if (follow) {
+      await this.invoke('artist/follow', { id: rawId })
+    } else {
+      await this.invoke('artist/unfollow', { id: rawId })
+    }
+  }
+
+  async getSongComments(songId: string, page = 1): Promise<MusicSongCommentPage> {
+    const { albumAudioId } = parseKugouVideoId(songId)
+    const data = await this.invoke<{ comments?: unknown[]; total?: number }>('comment/music', {
+      mixsongid: albumAudioId,
+      page,
+      pagesize: 30
+    })
+    const comments = (data.comments ?? []).map((item, idx) => {
+      const row = item as Record<string, unknown>
+      return {
+        id: String(row.id ?? row.cmtid ?? idx),
+        userName: String(row.user_name ?? row.nickname ?? row.username ?? '匿名'),
+        content: String(row.content ?? row.msg ?? ''),
+        likedCount: pickNumber(row, 'like_count', 'likenum', 'liked_count'),
+        time: typeof row.addtime === 'string' ? row.addtime : undefined,
+        avatarUrl: typeof row.user_pic === 'string' ? row.user_pic : undefined
+      }
+    })
+    return { comments, total: data.total, hasMore: comments.length >= 30 }
+  }
+
+  async getMvDetail(browseId: string): Promise<MusicMvDetail | null> {
+    const rawId = parseBrowseId(browseId)?.id ?? browseId.replace(/^kugou:mv:/, '')
+    const data = await this.invoke<{ data?: { info?: unknown[]; lists?: unknown[] } }>('video/detail', {
+      id: rawId
+    })
+    const row = (data.data?.info ?? data.data?.lists ?? [])[0] as Record<string, unknown> | undefined
+    if (!row) return null
+    const id = String(row.video_id ?? row.id ?? rawId)
+    return {
+      id,
+      title: String(row.video_name ?? row.name ?? row.title ?? ''),
+      artist: String(row.author_name ?? row.singername ?? ''),
+      coverUrl: typeof row.img === 'string' ? row.img.replace('http://', 'https://') : undefined,
+      durationSec: pickNumber(row, 'timelen', 'duration'),
+      playCount: pickNumber(row, 'play_count', 'playcount'),
+      browseId: `kugou:mv:${id}`
+    }
+  }
+
+  async resolveMvStream(mvId: string): Promise<MusicStreamPick | null> {
+    const data = await this.invoke<{ data?: { info?: Array<{ mvdata?: Array<{ downurl?: string }> }> } }>(
+      'kmr/audio/mv',
+      { video_id: mvId }
+    )
+    const url = data.data?.info?.[0]?.mvdata?.[0]?.downurl
+    if (!url) return null
+    return { url, format: url.includes('.mp4') ? 'mp4' : 'mp3' }
+  }
+
+  async getRadioCategories(): Promise<MusicRadioCategory[]> {
+    const data = await this.invoke<{ data?: { info?: unknown[]; lists?: unknown[] } }>('scene/module')
+    const rows = data.data?.info ?? data.data?.lists ?? []
+    return rows
+      .map((item) => {
+        const row = item as Record<string, unknown>
+        const id = String(row.scene_id ?? row.id ?? '')
+        const title = String(row.scene_name ?? row.name ?? row.title ?? '')
+        if (!id || !title) return null
+        return {
+          id,
+          title,
+          coverUrl: typeof row.img === 'string' ? row.img : undefined,
+          subtitle: typeof row.intro === 'string' ? row.intro : undefined
+        }
+      })
+      .filter((item): item is MusicRadioCategory => item != null)
+  }
+
+  async getRadioTracks(categoryId: string, limit = 30): Promise<NormalizedTrack[]> {
+    const data = await this.invoke<{ data?: { info?: unknown[]; lists?: unknown[] } }>('scene/music', {
+      id: categoryId,
+      pagesize: limit
+    })
+    return mapKugouSongs(data.data?.info ?? data.data?.lists ?? []).slice(0, limit)
+  }
+
+  async resolveCloudStream(songId: string, meta?: { name?: string }): Promise<MusicStreamPick | null> {
+    const { albumAudioId, hash } = parseKugouVideoId(songId)
+    const data = await this.invoke<{ url?: string | string[] }>('user/cloud/url', {
+      hash,
+      album_audio_id: albumAudioId,
+      name: meta?.name ?? ''
+    })
+    const url = pickKugouStreamUrl(data)
+    if (!url) return null
+    return { url, format: url.includes('.m4a') || url.includes('.mp4') ? 'mp4' : 'mp3' }
   }
 }

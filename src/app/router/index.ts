@@ -146,6 +146,54 @@ const router = createRouter({
           meta: { module: 'music', title: '日推', needLogin: true }
         },
         {
+          path: 'fm',
+          name: 'music-fm',
+          component: () => import('@modules/music/views/MusicFmView.vue'),
+          meta: { module: 'music', title: '私人 FM', needLogin: true }
+        },
+        {
+          path: 'charts',
+          name: 'music-charts',
+          component: () => import('@modules/music/views/MusicChartsView.vue'),
+          meta: { module: 'music', title: '排行榜' }
+        },
+        {
+          path: 'toplist/:browseId',
+          name: 'music-toplist',
+          component: () => import('@modules/music/views/MusicToplistView.vue'),
+          meta: { module: 'music', title: '榜单' }
+        },
+        {
+          path: 'new',
+          name: 'music-new',
+          component: () => import('@modules/music/views/MusicNewView.vue'),
+          meta: { module: 'music', title: '新歌新碟' }
+        },
+        {
+          path: 'artists',
+          name: 'music-artists',
+          component: () => import('@modules/music/views/MusicArtistsView.vue'),
+          meta: { module: 'music', title: '歌手' }
+        },
+        {
+          path: 'radio',
+          name: 'music-radio',
+          component: () => import('@modules/music/views/MusicRadioView.vue'),
+          meta: { module: 'music', title: '场景电台' }
+        },
+        {
+          path: 'radio/:categoryId',
+          name: 'music-radio-tracks',
+          component: () => import('@modules/music/views/MusicRadioTracksView.vue'),
+          meta: { module: 'music', title: '电台' }
+        },
+        {
+          path: 'video/:browseId',
+          name: 'music-video',
+          component: () => import('@modules/music/views/MusicVideoView.vue'),
+          meta: { module: 'music', title: 'MV' }
+        },
+        {
           path: 'cloud',
           name: 'music-cloud',
           component: () => import('@modules/music/views/MusicCloudView.vue'),

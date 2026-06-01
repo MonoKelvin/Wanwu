@@ -38,8 +38,26 @@ import type {
   MusicPlatformUserProfile,
   MusicSearchResult,
   MusicTrendingPayload,
+  MusicMvDetail,
+  MusicRadioCategory,
+  MusicSongCommentPage,
   NormalizedTrack
 } from '../../../../../src/shared/types/music'
+
+const PLATFORM_CAPABILITIES = {
+  likedSongs: true,
+  cloud: true,
+  subscribedAlbums: true,
+  subscribedArtists: true,
+  subscribedMvs: true,
+  subscribedDjs: true,
+  personalFm: true,
+  playlistEdit: true,
+  cloudUpload: true,
+  comments: true,
+  mv: true,
+  sceneRadio: true
+} as const
 
 function extractMusicU(cookieStr: string | undefined): string | undefined {
   if (!cookieStr) return undefined
@@ -444,14 +462,7 @@ export class NeteasePlatformService implements IMusicPlatformService {
       return {
         platform: 'netease',
         loggedIn: false,
-        capabilities: {
-          likedSongs: true,
-          cloud: true,
-          subscribedAlbums: true,
-          subscribedArtists: true,
-          subscribedMvs: true,
-          subscribedDjs: true
-        }
+        capabilities: { ...PLATFORM_CAPABILITIES }
       }
     }
     const uid = status.userId
@@ -490,14 +501,7 @@ export class NeteasePlatformService implements IMusicPlatformService {
         mvCount: subcountRes.mvCount,
         djCount: subcountRes.djRadioCount
       },
-      capabilities: {
-        likedSongs: true,
-        cloud: true,
-        subscribedAlbums: true,
-        subscribedArtists: true,
-        subscribedMvs: true,
-        subscribedDjs: true
-      }
+      capabilities: { ...PLATFORM_CAPABILITIES }
     }
   }
 
@@ -583,32 +587,39 @@ export class NeteasePlatformService implements IMusicPlatformService {
           : []
 
     const forYou = fm.status === 'fulfilled' ? fm.value : trending
+    const newSongsVal = newSongs.status === 'fulfilled' ? newSongs.value : []
 
     const chartTracks =
       toplists.status === 'fulfilled' && toplists.value[0]
         ? await this.getToplistTracks(toplists.value[0].id, 40).catch(() => [])
         : []
 
+    const chartTracksOut =
+      chartTracks.length > 0
+        ? chartTracks
+        : newSongsVal.slice(0, 24).length
+          ? newSongsVal.slice(0, 24)
+          : forYou.slice(0, 16)
+
     const chartPlaylists =
       toplists.status === 'fulfilled'
         ? mapToplistChartCards({ list: toplists.value })
         : []
 
-    const newSongsVal = newSongs.status === 'fulfilled' ? newSongs.value : []
     let forYouOut = forYou.slice(0, 24)
     let trendingOut = trending.slice(0, 32)
     if (!forYouOut.length) {
-      forYouOut = newSongsVal.slice(0, 16).length ? newSongsVal.slice(0, 16) : chartTracks.slice(0, 16)
+      forYouOut = newSongsVal.slice(0, 16).length ? newSongsVal.slice(0, 16) : chartTracksOut.slice(0, 16)
     }
     if (!trendingOut.length) {
-      trendingOut = chartTracks.slice(0, 16)
+      trendingOut = chartTracksOut.slice(0, 16)
     }
 
     return {
       forYou: forYouOut,
       trending: trendingOut,
       newReleases: newSongsVal.slice(0, 24),
-      chartTracks,
+      chartTracks: chartTracksOut,
       chartPlaylists: [
         ...chartPlaylists,
         ...(hotPlaylists.status === 'fulfilled'
@@ -634,5 +645,123 @@ export class NeteasePlatformService implements IMusicPlatformService {
     const toplists = await this.getToplists()
     const tracks = toplists[0] ? await this.getToplistTracks(toplists[0].id, 30) : []
     return buildChartsPayload(toplists, tracks)
+  }
+
+  async createPlaylist(name: string): Promise<MusicPlaylistSummary> {
+    const data = await this.invoke<{ id?: number }>('playlist/create', { name })
+    if (!data.id) throw new Error('创建歌单失败')
+    return { id: String(data.id), title: name }
+  }
+
+  async deletePlaylist(playlistId: string): Promise<void> {
+    const rawId = parseBrowseId(playlistId)?.id ?? playlistId
+    await this.invoke('playlist/delete', { id: rawId })
+  }
+
+  async addPlaylistTracks(playlistId: string, songIds: string[]): Promise<void> {
+    const rawId = parseBrowseId(playlistId)?.id ?? playlistId
+    const ids = songIds.map((id) => Number(id.split('|')[0] || id)).filter((n) => Number.isFinite(n))
+    if (!ids.length) return
+    await this.invoke('playlist/tracks', { op: 'add', pid: rawId, tracks: ids.join(',') })
+  }
+
+  async removePlaylistTracks(playlistId: string, songIds: string[]): Promise<void> {
+    const rawId = parseBrowseId(playlistId)?.id ?? playlistId
+    const ids = songIds.map((id) => Number(id.split('|')[0] || id)).filter((n) => Number.isFinite(n))
+    if (!ids.length) return
+    await this.invoke('playlist/tracks', { op: 'del', pid: rawId, tracks: ids.join(',') })
+  }
+
+  async followArtist(artistId: string, follow: boolean): Promise<void> {
+    const rawId = parseBrowseId(artistId)?.id ?? artistId
+    await this.invoke(follow ? 'artist/sub' : 'artist/del/sub', { id: rawId, t: follow ? 1 : 0 })
+  }
+
+  async getSongComments(songId: string, page = 1): Promise<MusicSongCommentPage> {
+    const rawId = songId.split('|')[0] || songId
+    const data = await this.invoke<{ comments?: unknown[]; total?: number }>('comment/music', {
+      id: rawId,
+      offset: (page - 1) * 30,
+      limit: 30
+    })
+    const comments = (data.comments ?? []).map((item, idx) => {
+      const row = item as Record<string, unknown>
+      const user = row.user as Record<string, unknown> | undefined
+      return {
+        id: String(row.commentId ?? row.id ?? idx),
+        userName: String(user?.nickname ?? '匿名'),
+        content: String(row.content ?? ''),
+        likedCount: typeof row.likedCount === 'number' ? row.likedCount : undefined,
+        time: typeof row.timeStr === 'string' ? row.timeStr : undefined,
+        avatarUrl: typeof user?.avatarUrl === 'string' ? user.avatarUrl : undefined
+      }
+    })
+    return { comments, total: data.total, hasMore: comments.length >= 30 }
+  }
+
+  async getMvDetail(browseId: string): Promise<MusicMvDetail | null> {
+    const rawId = parseBrowseId(browseId)?.id ?? browseId.replace(/^netease:mv:/, '')
+    const data = await this.invoke<{ data?: Record<string, unknown> }>('mv/detail', { mvid: rawId })
+    const row = data.data
+    if (!row) return null
+    const id = String(row.id ?? rawId)
+    return {
+      id,
+      title: String(row.name ?? ''),
+      artist: String(row.artistName ?? ''),
+      coverUrl: typeof row.cover === 'string' ? row.cover : undefined,
+      durationSec: typeof row.duration === 'number' ? Math.round(row.duration / 1000) : undefined,
+      playCount: typeof row.playCount === 'number' ? row.playCount : undefined,
+      browseId: `netease:mv:${id}`
+    }
+  }
+
+  async resolveMvStream(mvId: string): Promise<MusicStreamPick | null> {
+    const data = await this.invoke<{ data?: { url?: string } }>('mv/url', { id: mvId })
+    const url = data.data?.url
+    if (!url) return null
+    return { url, format: url.includes('.mp4') ? 'mp4' : 'mp3' }
+  }
+
+  async getRadioCategories(): Promise<MusicRadioCategory[]> {
+    try {
+      const data = await this.invoke<{ categories?: unknown[] }>('dj/category/recommend')
+      return (data.categories ?? []).map((item) => {
+        const row = item as Record<string, unknown>
+        return {
+          id: String(row.id ?? row.categoryId ?? ''),
+          title: String(row.name ?? row.categoryName ?? ''),
+          coverUrl: typeof row.picWebUrl === 'string' ? row.picWebUrl : undefined
+        }
+      }).filter((c) => c.id && c.title)
+    } catch {
+      return []
+    }
+  }
+
+  async getRadioTracks(categoryId: string, limit = 30): Promise<NormalizedTrack[]> {
+    const data = await this.invoke<{ programs?: unknown[] }>('dj/program/byradio', {
+      rid: categoryId,
+      limit
+    })
+    const tracks: NormalizedTrack[] = []
+    for (const item of data.programs ?? []) {
+      const row = item as Record<string, unknown>
+      const mainSong = row.mainSong as Record<string, unknown> | undefined
+      if (!mainSong) continue
+      const mapped = mapNeteaseSong(mainSong)
+      if (mapped) tracks.push(mapped)
+    }
+    return tracks.slice(0, limit)
+  }
+
+  async resolveCloudStream(songId: string): Promise<MusicStreamPick | null> {
+    const rawId = songId.split('|')[0] || songId
+    const data = await this.invoke<{ data?: { downloadUrl?: string; url?: string } }>('user/cloud/download', {
+      id: rawId
+    })
+    const url = data.data?.downloadUrl ?? data.data?.url
+    if (!url) return null
+    return { url, format: url.includes('.mp4') ? 'mp4' : 'mp3' }
   }
 }

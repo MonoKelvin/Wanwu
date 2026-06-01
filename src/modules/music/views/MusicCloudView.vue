@@ -13,6 +13,7 @@ import '@modules/music/styles/music-shared.css'
 
 const player = useMusicPlayerStore()
 const account = useMusicAccount()
+const { profile, hasPlatformAccount, refresh: refreshAccount } = account
 const { platformLabel } = useMusicPlatform()
 const tracks = ref<NormalizedTrack[]>([])
 const loading = ref(true)
@@ -20,7 +21,7 @@ const loginOpen = ref(false)
 
 const heroSubtitle = computed(() => {
   if (loading.value) return '加载中…'
-  if (!account.profile.value.loggedIn) return `登录${platformLabel.value}后同步云盘`
+  if (!profile.value.loggedIn) return `登录${platformLabel.value}后同步云盘`
   if (!tracks.value.length) return '云盘暂无歌曲'
   return `${tracks.value.length} 首 · ${platformLabel.value}`
 })
@@ -28,7 +29,7 @@ const heroSubtitle = computed(() => {
 async function loadCloud() {
   loading.value = true
   try {
-    if (account.profile.value.loggedIn) {
+    if (profile.value.loggedIn) {
       tracks.value = await window.wanwu.music.getPlatformUserCloud(80)
     } else {
       tracks.value = []
@@ -39,12 +40,12 @@ async function loadCloud() {
 }
 
 onMounted(async () => {
-  await account.refresh()
+  await refreshAccount()
   await loadCloud()
 })
 
 function onLoginSuccess() {
-  void account.refresh().then(() => loadCloud())
+  void refreshAccount().then(() => loadCloud())
 }
 
 function play(track: NormalizedTrack) {
@@ -63,7 +64,7 @@ function play(track: NormalizedTrack) {
       <MusicFeatureHero title="我的云盘" :subtitle="heroSubtitle" :tracks="tracks" />
 
       <MusicLoginBanner
-        v-if="account.hasPlatformAccount && !account.profile.loggedIn && !loading"
+        v-if="hasPlatformAccount && !profile.loggedIn && !loading"
         :platform-label="platformLabel"
         title="登录后查看云盘"
         description="云盘歌曲需登录平台账号后同步。"
@@ -72,7 +73,7 @@ function play(track: NormalizedTrack) {
 
       <MusicCloudList
         :tracks="tracks"
-        :loading="loading && account.profile.loggedIn"
+        :loading="loading && profile.loggedIn"
         empty-text="云盘为空或当前平台暂不支持。"
         @play="play"
       />

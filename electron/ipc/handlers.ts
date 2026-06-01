@@ -387,9 +387,21 @@ export function registerIpcHandlers(services: AppServices): void {
     }
   )
 
-  ipcMain.handle('music:resolveStream', (_e, { track, useCache }: { track: import('../../src/shared/types/music').NormalizedTrack; useCache?: boolean }) => {
-    return services.music?.resolveStream(track, useCache !== false) ?? { url: '' }
-  })
+  ipcMain.handle(
+    'music:resolveStream',
+    (
+      _e,
+      {
+        track,
+        useCache,
+        quality
+      }: {
+        track: import('../../src/shared/types/music').NormalizedTrack
+        useCache?: boolean
+        quality?: import('../services/music/platform/types').MusicPlatformQuality
+      }
+    ) => services.music?.resolveStream(track, useCache !== false, quality) ?? { url: '' }
+  )
 
   ipcMain.handle('music:testConnection', () => services.music?.testConnection() ?? { ok: false, baseUrl: '', error: 'Music service unavailable' })
 
@@ -508,6 +520,70 @@ export function registerIpcHandlers(services: AppServices): void {
     'music:getPlatformSubscribed',
     (_e, { kind, limit }: { kind: import('../../src/shared/types/music').MusicPlatformSubscribedKind; limit?: number }) =>
       services.music?.getPlatformSubscribed(kind, limit) ?? []
+  )
+
+  ipcMain.handle('music:platformLoginQrKey', () => services.music?.platformLoginQrKey())
+  ipcMain.handle('music:platformLoginQrCheck', (_e, { key }: { key: string }) =>
+    services.music?.platformLoginQrCheck(key)
+  )
+  ipcMain.handle('music:platformSendCaptcha', (_e, { phone, countryCode }: { phone: string; countryCode?: number }) =>
+    services.music?.platformSendCaptcha(phone, countryCode)
+  )
+  ipcMain.handle(
+    'music:platformLoginPhone',
+    (_e, { phone, captcha, countryCode }: { phone: string; captcha: string; countryCode?: number }) =>
+      services.music?.platformLoginPhone(phone, captcha, countryCode)
+  )
+  ipcMain.handle('music:platformLoginCookie', (_e, { credential }: { credential: string }) =>
+    services.music?.platformLoginCookie(credential)
+  )
+  ipcMain.handle('music:platformLogout', () => services.music?.platformLogout())
+  ipcMain.handle('music:platformLikeSong', (_e, { songId, like }: { songId: string; like: boolean }) =>
+    services.music?.platformLikeSong(songId, like)
+  )
+  ipcMain.handle('music:getNewSongs', (_e, { limit }: { limit?: number }) =>
+    services.music?.getNewSongs(limit) ?? []
+  )
+  ipcMain.handle('music:getNewAlbums', (_e, { limit }: { limit?: number }) =>
+    services.music?.getNewAlbums(limit) ?? []
+  )
+  ipcMain.handle('music:getToplists', () => services.music?.getToplists() ?? [])
+  ipcMain.handle('music:getToplistTracks', (_e, { toplistId, limit }: { toplistId: string; limit?: number }) =>
+    services.music?.getToplistTracks(toplistId, limit) ?? []
+  )
+  ipcMain.handle('music:createPlatformPlaylist', (_e, { name }: { name: string }) =>
+    services.music?.createPlatformPlaylist(name)
+  )
+  ipcMain.handle('music:deletePlatformPlaylist', (_e, { playlistId }: { playlistId: string }) =>
+    services.music?.deletePlatformPlaylist(playlistId)
+  )
+  ipcMain.handle(
+    'music:addPlatformPlaylistTracks',
+    (_e, { playlistId, songIds }: { playlistId: string; songIds: string[] }) =>
+      services.music?.addPlatformPlaylistTracks(playlistId, songIds)
+  )
+  ipcMain.handle(
+    'music:removePlatformPlaylistTracks',
+    (_e, { playlistId, songIds }: { playlistId: string; songIds: string[] }) =>
+      services.music?.removePlatformPlaylistTracks(playlistId, songIds)
+  )
+  ipcMain.handle('music:followPlatformArtist', (_e, { artistId, follow }: { artistId: string; follow: boolean }) =>
+    services.music?.followPlatformArtist(artistId, follow)
+  )
+  ipcMain.handle('music:getPlatformSongComments', (_e, { songId, page }: { songId: string; page?: number }) =>
+    services.music?.getPlatformSongComments(songId, page) ?? { comments: [], hasMore: false }
+  )
+  ipcMain.handle('music:getPlatformMvDetail', (_e, { browseId }: { browseId: string }) =>
+    services.music?.getPlatformMvDetail(browseId)
+  )
+  ipcMain.handle('music:resolvePlatformMvStream', (_e, { mvId }: { mvId: string }) =>
+    services.music?.resolvePlatformMvStream(mvId)
+  )
+  ipcMain.handle('music:getPlatformRadioCategories', () =>
+    services.music?.getPlatformRadioCategories() ?? []
+  )
+  ipcMain.handle('music:getPlatformRadioTracks', (_e, { categoryId, limit }: { categoryId: string; limit?: number }) =>
+    services.music?.getPlatformRadioTracks(categoryId, limit) ?? []
   )
 
   ipcMain.handle('notes:list', () => services.notes?.listNotes() ?? [])

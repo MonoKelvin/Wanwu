@@ -104,6 +104,7 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
       typeof data.musicNeteaseRealIp === 'string' ? data.musicNeteaseRealIp : '',
     musicNeteaseProxy: typeof data.musicNeteaseProxy === 'string' ? data.musicNeteaseProxy : '',
     musicNeteaseQuality:
+      data.musicNeteaseQuality === 'standard' ||
       data.musicNeteaseQuality === 'higher' ||
       data.musicNeteaseQuality === 'exhigh' ||
       data.musicNeteaseQuality === 'lossless' ||

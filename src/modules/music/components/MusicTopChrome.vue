@@ -28,6 +28,14 @@ const showBack = computed(() => {
     name === 'music-artist' ||
     name === 'music-playlist' ||
     name === 'music-daily' ||
+    name === 'music-fm' ||
+    name === 'music-charts' ||
+    name === 'music-toplist' ||
+    name === 'music-new' ||
+    name === 'music-artists' ||
+    name === 'music-radio' ||
+    name === 'music-radio-tracks' ||
+    name === 'music-video' ||
     name === 'music-cloud'
   )
 })

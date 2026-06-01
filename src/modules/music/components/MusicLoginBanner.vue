@@ -13,7 +13,7 @@ const emit = defineEmits<{ login: [] }>()
 
 <template>
   <div class="ww-music-login-banner">
-    <WwIcon name="user-circle" size="sm" class="ww-music-login-banner__icon" />
+    <WwIcon name="user" :size="32" class="ww-music-login-banner__icon" />
     <div class="ww-music-login-banner__body">
       <p class="ww-music-login-banner__title">
         {{ title ?? (platformLabel ? `登录${platformLabel}解锁更多` : '登录解锁更多') }}

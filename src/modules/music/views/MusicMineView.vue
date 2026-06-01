@@ -26,7 +26,13 @@ type CollectSubTab = 'album' | 'artist' | 'mv' | 'dj'
 const route = useRoute()
 const router = useRouter()
 const player = useMusicPlayerStore()
-const account = useMusicAccount()
+const {
+  profile,
+  loading: accountLoading,
+  platformLabel,
+  hasPlatformAccount,
+  refresh: refreshAccount
+} = useMusicAccount()
 const { resolvePlaylistBrowseId } = useMusicPlatform()
 
 const activeTab = ref<MineTab>('liked')
@@ -48,7 +54,7 @@ const loadingCloud = ref(false)
 const loadingCollect = ref(false)
 
 const platformTabs = computed(() => {
-  if (!account.hasPlatformAccount.value) return [{ id: 'local' as const, label: '本地', icon: 'database' as const }]
+  if (!hasPlatformAccount.value) return [{ id: 'local' as const, label: '本地', icon: 'database' as const }]
   return [
     { id: 'liked' as const, label: '喜欢', icon: 'heart' as const },
     { id: 'playlists' as const, label: '歌单', icon: 'list-music' as const },
@@ -58,8 +64,11 @@ const platformTabs = computed(() => {
   ]
 })
 
+const platformAccountTabs = computed(() => platformTabs.value.filter((t) => t.id !== 'local'))
+const localOnlyTabs = computed(() => platformTabs.value.filter((t) => t.id === 'local'))
+
 const collectSubTabs = computed(() => {
-  const caps = account.profile.value.capabilities
+  const caps = profile.value.capabilities
   const tabs: Array<{ id: CollectSubTab; label: string; supported: boolean }> = [
     { id: 'album', label: '专辑', supported: caps?.subscribedAlbums !== false },
     { id: 'artist', label: '歌手', supported: caps?.subscribedArtists !== false },
@@ -70,10 +79,10 @@ const collectSubTabs = computed(() => {
 })
 
 const createdPlaylists = computed(() =>
-  playlists.value.filter((p) => !p.creatorName || p.creatorName === account.profile.value.nickname)
+  playlists.value.filter((p) => !p.creatorName || p.creatorName === profile.value.nickname)
 )
 const subscribedPlaylists = computed(() =>
-  playlists.value.filter((p) => p.creatorName && p.creatorName !== account.profile.value.nickname)
+  playlists.value.filter((p) => p.creatorName && p.creatorName !== profile.value.nickname)
 )
 
 const currentLocalTracks = computed(() =>
@@ -82,7 +91,7 @@ const currentLocalTracks = computed(() =>
 
 const unsupportedCollectMessage = computed(() => {
   const tab = collectSubTabs.value.find((t) => t.id === collectSubTab.value)
-  if (tab && !tab.supported) return `当前平台（${account.platformLabel.value}）暂不支持${tab.label}收藏`
+  if (tab && !tab.supported) return `当前平台（${platformLabel.value}）暂不支持${tab.label}收藏`
   return ''
 })
 
@@ -141,7 +150,7 @@ async function loadLocalData() {
 }
 
 async function loadLiked() {
-  if (!account.profile.value.loggedIn) {
+  if (!profile.value.loggedIn) {
     likedTracks.value = []
     return
   }
@@ -154,7 +163,7 @@ async function loadLiked() {
 }
 
 async function loadPlaylists() {
-  if (!account.profile.value.loggedIn) {
+  if (!profile.value.loggedIn) {
     playlists.value = []
     return
   }
@@ -167,7 +176,7 @@ async function loadPlaylists() {
 }
 
 async function loadCloud() {
-  if (!account.profile.value.loggedIn) {
+  if (!profile.value.loggedIn) {
     cloudTracks.value = []
     return
   }
@@ -180,7 +189,7 @@ async function loadCloud() {
 }
 
 async function loadCollect() {
-  if (!account.profile.value.loggedIn) {
+  if (!profile.value.loggedIn) {
     subscribedItems.value = []
     return
   }
@@ -256,11 +265,11 @@ function openPlaylist(id: string) {
 }
 
 function onLoginSuccess() {
-  void account.refresh().then(() => loadActiveTabData())
+  void refreshAccount().then(() => loadActiveTabData())
 }
 
 function onLoginDialogClose(open: boolean) {
-  if (!open) void account.refresh()
+  if (!open) void refreshAccount()
 }
 
 watch(
@@ -272,7 +281,7 @@ watch(
 )
 
 watch(
-  () => account.profile.value.loggedIn,
+  () => profile.value.loggedIn,
   () => {
     if (activeTab.value !== 'local') loadActiveTabData()
   }
@@ -290,64 +299,83 @@ onMounted(() => {
     <div class="ww-music-content-shell">
       <MusicPageHeading
         :title="'我的'"
-        :subtitle="account.hasPlatformAccount ? `${account.platformLabel} 账号与本地库` : '本地收藏与播放历史'"
+        :subtitle="hasPlatformAccount ? `${platformLabel} 账号与本地库` : '本地收藏与播放历史'"
       />
 
       <MusicProfileHero
-        :profile="account.profile"
-        :platform-label="account.platformLabel"
-        :has-platform-account="account.hasPlatformAccount"
-        :loading="account.loading"
+        :profile="profile"
+        :platform-label="platformLabel"
+        :has-platform-account="hasPlatformAccount"
+        :loading="accountLoading"
         @login="loginOpen = true"
         @stat-click="onStatClick"
       />
 
       <div class="ww-music-mine-toolbar">
         <div class="ww-music-mine-tabs-row">
-          <div class="ww-music-pill-tabs">
-            <button
-              v-for="tab in platformTabs"
-              :key="tab.id"
-              type="button"
-              class="ww-music-pill-tabs__btn"
-              :class="{ 'is-active': activeTab === tab.id }"
-              @click="switchTab(tab.id)"
-            >
-              <WwIcon :name="tab.icon" size="sm" />
-              <span>{{ tab.label }}</span>
-            </button>
+          <div class="ww-music-mine-tabs-primary">
+            <div v-if="platformAccountTabs.length" class="ww-music-pill-tabs">
+              <button
+                v-for="tab in platformAccountTabs"
+                :key="tab.id"
+                type="button"
+                class="ww-music-pill-tabs__btn"
+                :class="{ 'is-active': activeTab === tab.id }"
+                @click="switchTab(tab.id)"
+              >
+                <WwIcon :name="tab.icon" size="sm" />
+                <span>{{ tab.label }}</span>
+              </button>
+            </div>
+            <div v-if="localOnlyTabs.length" class="ww-music-pill-tabs">
+              <button
+                v-for="tab in localOnlyTabs"
+                :key="tab.id"
+                type="button"
+                class="ww-music-pill-tabs__btn"
+                :class="{ 'is-active': activeTab === tab.id }"
+                @click="switchTab(tab.id)"
+              >
+                <WwIcon :name="tab.icon" size="sm" />
+                <span>{{ tab.label }}</span>
+              </button>
+            </div>
           </div>
 
-          <div v-if="activeTab === 'local'" class="ww-music-subtabs">
-            <button
-              type="button"
-              class="ww-music-subtabs__btn"
-              :class="{ 'is-active': localSubTab === 'favorites' }"
-              @click="switchLocalSub('favorites')"
-            >
-              收藏
-            </button>
-            <button
-              type="button"
-              class="ww-music-subtabs__btn"
-              :class="{ 'is-active': localSubTab === 'history' }"
-              @click="switchLocalSub('history')"
-            >
-              历史
-            </button>
+          <div v-if="activeTab === 'collect'" class="ww-music-mine-tabs-secondary">
+            <div class="ww-music-subtabs ww-music-mine-subtabs">
+              <button
+                v-for="sub in collectSubTabs"
+                :key="sub.id"
+                type="button"
+                class="ww-music-subtabs__btn"
+                :class="{ 'is-active': collectSubTab === sub.id }"
+                @click="switchCollectSub(sub.id)"
+              >
+                {{ sub.label }}
+              </button>
+            </div>
           </div>
 
-          <div v-if="activeTab === 'collect'" class="ww-music-subtabs">
-            <button
-              v-for="sub in collectSubTabs"
-              :key="sub.id"
-              type="button"
-              class="ww-music-subtabs__btn"
-              :class="{ 'is-active': collectSubTab === sub.id }"
-              @click="switchCollectSub(sub.id)"
-            >
-              {{ sub.label }}
-            </button>
+          <div v-else-if="activeTab === 'local'" class="ww-music-mine-tabs-secondary">
+            <div class="ww-music-subtabs ww-music-mine-subtabs">
+              <button
+                type="button"
+                class="ww-music-subtabs__btn"
+                :class="{ 'is-active': localSubTab === 'favorites' }"
+                @click="switchLocalSub('favorites')"
+              >
+                收藏
+              </button>
+              <button
+                type="button"
+                class="ww-music-subtabs__btn"
+                :class="{ 'is-active': localSubTab === 'history' }"
+                @click="switchLocalSub('history')"
+              >
+                历史
+              </button>
+            </div>
           </div>
         </div>
 
@@ -381,9 +409,9 @@ onMounted(() => {
         </template>
 
         <!-- 需登录的平台 Tab -->
-        <template v-else-if="account.hasPlatformAccount && !account.profile.loggedIn">
+        <template v-else-if="hasPlatformAccount && !profile.loggedIn">
           <div class="ww-music-mine-empty">
-            <p class="ww-music-mine-empty__text">登录{{ account.platformLabel }}后可查看{{ activeTab === 'liked' ? '喜欢' : activeTab === 'playlists' ? '歌单' : activeTab === 'cloud' ? '云盘' : '收藏' }}。</p>
+            <p class="ww-music-mine-empty__text">登录{{ platformLabel }}后可查看{{ activeTab === 'liked' ? '喜欢' : activeTab === 'playlists' ? '歌单' : activeTab === 'cloud' ? '云盘' : '收藏' }}。</p>
             <WwButton label="登录" size="small" @click="loginOpen = true" />
           </div>
         </template>

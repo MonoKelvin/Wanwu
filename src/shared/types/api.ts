@@ -348,7 +348,11 @@ export interface WanwuApi {
       artist: string,
       hint?: Pick<import('@shared/types/music').NormalizedTrack, 'provider' | 'videoId' | 'trackKey'>
     ) => Promise<MusicLyricsResult>
-    resolveStream: (track: NormalizedTrack, useCache?: boolean) => Promise<MusicStreamResult>
+    resolveStream: (
+      track: NormalizedTrack,
+      useCache?: boolean,
+      quality?: import('./settings').AppSettings['musicNeteaseQuality']
+    ) => Promise<MusicStreamResult>
     testConnection: () => Promise<MusicConnectionTestResult>
     getRadio: (videoId: string) => Promise<NormalizedTrack[]>
     listFavorites: () => Promise<MusicFavoriteRow[]>
@@ -402,6 +406,27 @@ export interface WanwuApi {
       kind: import('./music').MusicPlatformSubscribedKind,
       limit?: number
     ) => Promise<import('./music').MusicPlatformSubscribedItem[]>
+    platformLoginQrKey: () => Promise<import('./music').MusicNeteaseQrLogin>
+    platformLoginQrCheck: (key: string) => Promise<{ status: number; message?: string; cookie?: string }>
+    platformSendCaptcha: (phone: string, countryCode?: number) => Promise<unknown>
+    platformLoginPhone: (phone: string, captcha: string, countryCode?: number) => Promise<unknown>
+    platformLoginCookie: (credential: string) => Promise<import('./music').MusicNeteaseLoginStatus>
+    platformLogout: () => Promise<void>
+    platformLikeSong: (songId: string, like: boolean) => Promise<void>
+    getNewSongs: (limit?: number) => Promise<NormalizedTrack[]>
+    getNewAlbums: (limit?: number) => Promise<MusicSearchResult['albums']>
+    getToplists: () => Promise<Array<{ id: string; title: string; coverUrl?: string; updateFrequency?: string }>>
+    getToplistTracks: (toplistId: string, limit?: number) => Promise<NormalizedTrack[]>
+    createPlatformPlaylist: (name: string) => Promise<{ id: string; title: string; coverUrl?: string }>
+    deletePlatformPlaylist: (playlistId: string) => Promise<void>
+    addPlatformPlaylistTracks: (playlistId: string, songIds: string[]) => Promise<void>
+    removePlatformPlaylistTracks: (playlistId: string, songIds: string[]) => Promise<void>
+    followPlatformArtist: (artistId: string, follow: boolean) => Promise<void>
+    getPlatformSongComments: (songId: string, page?: number) => Promise<import('./music').MusicSongCommentPage>
+    getPlatformMvDetail: (browseId: string) => Promise<import('./music').MusicMvDetail | null>
+    resolvePlatformMvStream: (mvId: string) => Promise<{ url: string; format: string } | null>
+    getPlatformRadioCategories: () => Promise<import('./music').MusicRadioCategory[]>
+    getPlatformRadioTracks: (categoryId: string, limit?: number) => Promise<NormalizedTrack[]>
   }
   share: {
     canNativeShare: () => Promise<boolean>

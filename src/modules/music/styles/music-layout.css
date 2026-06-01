@@ -1,6 +1,6 @@
 /* 音乐模块页面布局对齐 */
 .ww-music-shell {
-  --ww-music-page-x: var(--ww-page-padding, 1.125rem);
+  --ww-music-page-x: var(--ww-page-padding, 1.625rem);
 }
 
 .ww-music-shell .ww-music-top {
@@ -17,7 +17,15 @@
 }
 
 .ww-music-shell .ww-music-discover-tabs {
+  display: flex;
+  justify-content: center;
+  width: 100%;
   margin-bottom: var(--ww-music-section-gap);
+}
+
+.ww-music-shell .ww-music-discover-tabs .ww-music-pill-tabs {
+  width: auto;
+  max-width: 100%;
 }
 
 .ww-music-shell .ww-music-search-wrap {
@@ -26,7 +34,7 @@
 
 .ww-music-shell .ww-music-mine-toolbar {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: var(--ww-music-section-gap);
@@ -34,11 +42,30 @@
 
 .ww-music-shell .ww-music-mine-tabs-row {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 0.625rem 0.875rem;
+  justify-content: flex-start;
+  gap: 0.75rem;
   flex: 1;
   min-width: 0;
+}
+
+.ww-music-shell .ww-music-mine-tabs-primary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.625rem;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.ww-music-shell .ww-music-mine-tabs-secondary {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.ww-music-shell .ww-music-mine-subtabs {
+  margin-left: 0;
 }
 
 .ww-music-shell .ww-music-feature-hero {
@@ -96,6 +123,14 @@
   font-size: var(--ww-music-fs-base);
   line-height: 1.45;
   color: var(--ww-ink-muted);
+}
+
+.ww-music-shell .ww-music-discover-more-section + .ww-music-discover-more-section {
+  margin-top: calc(var(--ww-music-section-gap) + 0.25rem);
+}
+
+.ww-music-shell .ww-music-discover-more-section .ww-music-mine-section-label {
+  margin-bottom: 0.625rem;
 }
 
 .ww-music-shell .ww-music-discover-more-grid {

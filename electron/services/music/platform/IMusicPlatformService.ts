@@ -4,10 +4,13 @@ import type {
   MusicLyricsResult,
   MusicMoodCategory,
   MusicMoodPlaylist,
+  MusicMvDetail,
   MusicPlatformSubscribedItem,
   MusicPlatformSubscribedKind,
   MusicPlatformUserProfile,
+  MusicRadioCategory,
   MusicSearchResult,
+  MusicSongCommentPage,
   MusicTrendingPayload,
   NormalizedTrack
 } from '../../../../src/shared/types/music'
@@ -77,4 +80,16 @@ export interface IMusicPlatformService {
   buildDiscoverFeed(): Promise<MusicDiscoverFeed>
   getTrending(): Promise<MusicTrendingPayload>
   getCharts(): Promise<MusicChartsPayload>
+
+  createPlaylist(name: string): Promise<MusicPlaylistSummary>
+  deletePlaylist(playlistId: string): Promise<void>
+  addPlaylistTracks(playlistId: string, songIds: string[]): Promise<void>
+  removePlaylistTracks(playlistId: string, songIds: string[]): Promise<void>
+  followArtist(artistId: string, follow: boolean): Promise<void>
+  getSongComments(songId: string, page?: number): Promise<MusicSongCommentPage>
+  getMvDetail(browseId: string): Promise<MusicMvDetail | null>
+  resolveMvStream(mvId: string): Promise<MusicStreamPick | null>
+  getRadioCategories(): Promise<MusicRadioCategory[]>
+  getRadioTracks(categoryId: string, limit?: number): Promise<NormalizedTrack[]>
+  resolveCloudStream(songId: string, meta?: { name?: string }): Promise<MusicStreamPick | null>
 }

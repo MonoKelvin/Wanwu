@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-export type DiscoverTabId = 'featured' | 'recommend' | 'new' | 'more'
+export type DiscoverTabId = 'featured' | 'new' | 'more'
 
 const props = defineProps<{
   modelValue: DiscoverTabId
@@ -13,7 +13,6 @@ const emit = defineEmits<{
 
 const tabs: Array<{ id: DiscoverTabId; label: string }> = [
   { id: 'featured', label: '精选' },
-  { id: 'recommend', label: '推荐' },
   { id: 'new', label: '新歌' },
   { id: 'more', label: '更多' }
 ]
@@ -25,18 +24,20 @@ const active = computed({
 </script>
 
 <template>
-  <div class="ww-music-pill-tabs ww-music-discover-tabs" role="tablist" aria-label="发现分类">
-    <button
-      v-for="tab in tabs"
-      :key="tab.id"
-      type="button"
-      role="tab"
-      class="ww-music-pill-tabs__btn"
-      :class="{ 'is-active': active === tab.id }"
-      :aria-selected="active === tab.id"
-      @click="active = tab.id"
-    >
-      {{ tab.label }}
-    </button>
+  <div class="ww-music-discover-tabs">
+    <div class="ww-music-pill-tabs" role="tablist" aria-label="发现分类">
+      <button
+        v-for="tab in tabs"
+        :key="tab.id"
+        type="button"
+        role="tab"
+        class="ww-music-pill-tabs__btn"
+        :class="{ 'is-active': active === tab.id }"
+        :aria-selected="active === tab.id"
+        @click="active = tab.id"
+      >
+        {{ tab.label }}
+      </button>
+    </div>
   </div>
 </template>

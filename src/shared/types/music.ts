@@ -76,7 +76,45 @@ export interface MusicPlatformUserProfile {
     subscribedArtists?: boolean
     subscribedMvs?: boolean
     subscribedDjs?: boolean
+    personalFm?: boolean
+    playlistEdit?: boolean
+    cloudUpload?: boolean
+    comments?: boolean
+    mv?: boolean
+    sceneRadio?: boolean
   }
+}
+
+export interface MusicSongComment {
+  id: string
+  userName: string
+  content: string
+  likedCount?: number
+  time?: string
+  avatarUrl?: string
+}
+
+export interface MusicSongCommentPage {
+  comments: MusicSongComment[]
+  total?: number
+  hasMore?: boolean
+}
+
+export interface MusicMvDetail {
+  id: string
+  title: string
+  artist: string
+  coverUrl?: string
+  durationSec?: number
+  playCount?: number
+  browseId: string
+}
+
+export interface MusicRadioCategory {
+  id: string
+  title: string
+  coverUrl?: string
+  subtitle?: string
 }
 
 export interface MusicPlatformSessionSnapshot {

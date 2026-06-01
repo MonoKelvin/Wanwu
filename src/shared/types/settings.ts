@@ -96,7 +96,7 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   musicNeteasePort: 25884,
   musicNeteaseRealIp: '',
   musicNeteaseProxy: '',
-  musicNeteaseQuality: 'exhigh'
+  musicNeteaseQuality: 'standard'
 }
 
 export const COLOR_SCHEME_OPTIONS: Array<{ label: string; value: ColorScheme }> = [

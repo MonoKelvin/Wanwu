@@ -39,5 +39,8 @@ export async function ensureKugouDevice(session: PlatformSessionStore, proxy?: s
   }
   if (!dfid) throw new Error('酷狗设备注册失败，无法获取 dfid')
 
+  if (Array.isArray(res.cookie) && res.cookie.length) {
+    session.mergeKugouCookieStrings(res.cookie)
+  }
   session.setKugouDevice({ kugouGuid: guid, kugouMid: mid, dfid })
 }

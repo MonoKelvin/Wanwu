@@ -86,7 +86,8 @@ const api: WanwuApi = {
     getProviderHealth: () => ipcRenderer.invoke('music:getProviderHealth'),
     getLyrics: (title, artist, hint) =>
       ipcRenderer.invoke('music:getLyrics', { title, artist, ...hint }),
-    resolveStream: (track, useCache) => ipcRenderer.invoke('music:resolveStream', { track, useCache }),
+    resolveStream: (track, useCache, quality) =>
+      ipcRenderer.invoke('music:resolveStream', { track, useCache, quality }),
     testConnection: () => ipcRenderer.invoke('music:testConnection'),
     getRadio: (videoId) => ipcRenderer.invoke('music:getRadio', { videoId }),
     listFavorites: () => ipcRenderer.invoke('music:listFavorites'),
@@ -138,7 +139,42 @@ const api: WanwuApi = {
     getPlatformLikedTracks: (limit?: number) => ipcRenderer.invoke('music:getPlatformLikedTracks', { limit }),
     getPlatformUserCloud: (limit?: number) => ipcRenderer.invoke('music:getPlatformUserCloud', { limit }),
     getPlatformSubscribed: (kind, limit?: number) =>
-      ipcRenderer.invoke('music:getPlatformSubscribed', { kind, limit })
+      ipcRenderer.invoke('music:getPlatformSubscribed', { kind, limit }),
+    platformLoginQrKey: () => ipcRenderer.invoke('music:platformLoginQrKey'),
+    platformLoginQrCheck: (key: string) => ipcRenderer.invoke('music:platformLoginQrCheck', { key }),
+    platformSendCaptcha: (phone: string, countryCode?: number) =>
+      ipcRenderer.invoke('music:platformSendCaptcha', { phone, countryCode }),
+    platformLoginPhone: (phone: string, captcha: string, countryCode?: number) =>
+      ipcRenderer.invoke('music:platformLoginPhone', { phone, captcha, countryCode }),
+    platformLoginCookie: (credential: string) =>
+      ipcRenderer.invoke('music:platformLoginCookie', { credential }),
+    platformLogout: () => ipcRenderer.invoke('music:platformLogout'),
+    platformLikeSong: (songId: string, like: boolean) =>
+      ipcRenderer.invoke('music:platformLikeSong', { songId, like }),
+    getNewSongs: (limit?: number) => ipcRenderer.invoke('music:getNewSongs', { limit }),
+    getNewAlbums: (limit?: number) => ipcRenderer.invoke('music:getNewAlbums', { limit }),
+    getToplists: () => ipcRenderer.invoke('music:getToplists'),
+    getToplistTracks: (toplistId: string, limit?: number) =>
+      ipcRenderer.invoke('music:getToplistTracks', { toplistId, limit }),
+    createPlatformPlaylist: (name: string) =>
+      ipcRenderer.invoke('music:createPlatformPlaylist', { name }),
+    deletePlatformPlaylist: (playlistId: string) =>
+      ipcRenderer.invoke('music:deletePlatformPlaylist', { playlistId }),
+    addPlatformPlaylistTracks: (playlistId: string, songIds: string[]) =>
+      ipcRenderer.invoke('music:addPlatformPlaylistTracks', { playlistId, songIds }),
+    removePlatformPlaylistTracks: (playlistId: string, songIds: string[]) =>
+      ipcRenderer.invoke('music:removePlatformPlaylistTracks', { playlistId, songIds }),
+    followPlatformArtist: (artistId: string, follow: boolean) =>
+      ipcRenderer.invoke('music:followPlatformArtist', { artistId, follow }),
+    getPlatformSongComments: (songId: string, page?: number) =>
+      ipcRenderer.invoke('music:getPlatformSongComments', { songId, page }),
+    getPlatformMvDetail: (browseId: string) =>
+      ipcRenderer.invoke('music:getPlatformMvDetail', { browseId }),
+    resolvePlatformMvStream: (mvId: string) =>
+      ipcRenderer.invoke('music:resolvePlatformMvStream', { mvId }),
+    getPlatformRadioCategories: () => ipcRenderer.invoke('music:getPlatformRadioCategories'),
+    getPlatformRadioTracks: (categoryId: string, limit?: number) =>
+      ipcRenderer.invoke('music:getPlatformRadioTracks', { categoryId, limit })
   },
   notes: {
     listNotes: () => ipcRenderer.invoke('notes:list'),

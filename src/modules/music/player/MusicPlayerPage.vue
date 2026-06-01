@@ -7,12 +7,14 @@ import MusicModeDuet from '@modules/music/player/modes/MusicModeDuet.vue'
 import MusicModeImmersion from '@modules/music/player/modes/MusicModeImmersion.vue'
 import MusicTransport from '@modules/music/player/components/MusicTransport.vue'
 import MusicQueueSheet from '@modules/music/player/components/MusicQueueSheet.vue'
+import MusicCommentSheet from '@modules/music/components/MusicCommentSheet.vue'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import '@modules/music/styles/music-player.css'
 
 const router = useRouter()
 const player = useMusicPlayerStore()
 const queueOpen = ref(false)
+const commentsOpen = ref(false)
 
 const modeComponent = computed(() => {
   if (player.layoutMode === 'duet') return MusicModeDuet
@@ -38,7 +40,7 @@ function back() {
       <header v-if="player.currentTrack" class="ww-music-player-page__head">
         <button
           type="button"
-          class="ww-music-nav-btn ww-music-player-page__back"
+          class="ww-music-nav-btn ww-music-player-page__head-side"
           aria-label="返回"
           @click="back"
         >
@@ -48,13 +50,25 @@ function back() {
           <h1>{{ player.currentTrack.title }}</h1>
           <p>{{ player.currentTrack.artist }}</p>
         </div>
-        <span class="ww-music-player-page__head-spacer" aria-hidden="true" />
+        <button
+          type="button"
+          class="ww-music-nav-btn ww-music-player-page__head-side"
+          aria-label="评论"
+          @click="commentsOpen = true"
+        >
+          <WwIcon name="circle-help" size="sm" />
+        </button>
       </header>
       <component :is="modeComponent" />
       <footer class="ww-music-player-page__footer">
         <MusicTransport @toggle-queue="queueOpen = !queueOpen" />
       </footer>
       <MusicQueueSheet :open="queueOpen" @close="queueOpen = false" />
+      <MusicCommentSheet
+        v-model:visible="commentsOpen"
+        :song-id="player.currentTrack?.videoId ?? ''"
+        :title="player.currentTrack?.title"
+      />
     </div>
   </div>
 </template>

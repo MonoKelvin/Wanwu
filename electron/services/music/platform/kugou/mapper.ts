@@ -20,7 +20,7 @@ function pickString(obj: Record<string, unknown>, ...keys: string[]): string {
   return ''
 }
 
-function pickNumber(obj: Record<string, unknown>, ...keys: string[]): number | undefined {
+export function pickNumber(obj: Record<string, unknown>, ...keys: string[]): number | undefined {
   for (const key of keys) {
     const v = obj[key]
     if (typeof v === 'number' && Number.isFinite(v)) return v
@@ -29,7 +29,7 @@ function pickNumber(obj: Record<string, unknown>, ...keys: string[]): number | u
   return undefined
 }
 
-function pickHash(raw: Record<string, unknown>): string {
+export function pickHash(raw: Record<string, unknown>): string {
   const direct = pickString(raw, 'hash', 'Hash', 'FileHash', 'file_hash')
   if (direct) return direct.toLowerCase()
   for (const key of ['128', '320', 'HQ', 'SQ', 'Flac', 'High']) {
@@ -205,12 +205,14 @@ export function mapPlaylistSummary(raw: Record<string, unknown>): MusicPlaylistS
     (raw.specialid != null ? String(raw.specialid) : '')
   const title = pickString(raw, 'specialname', 'SpecialName', 'name', 'title')
   if (!id || !title) return null
+  const listId = pickString(raw, 'listid', 'list_id', 'ListID') || undefined
   return {
     id,
     title,
     coverUrl: pickCover(raw),
     trackCount: pickNumber(raw, 'songcount', 'SongCount', 'percount', 'collectcount'),
-    creatorName: pickString(raw, 'username', 'UserName', 'nickname', 'singername') || undefined
+    creatorName: pickString(raw, 'username', 'UserName', 'nickname', 'singername') || undefined,
+    listId
   }
 }
 

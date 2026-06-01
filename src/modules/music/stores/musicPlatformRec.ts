@@ -5,7 +5,7 @@ function todayKey(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-export const useMusicNeteaseRecStore = defineStore('musicNeteaseRec', {
+export const useMusicPlatformRecStore = defineStore('musicPlatformRec', {
   state: () => ({
     dailyDate: '' as string,
     dailyTracks: [] as NormalizedTrack[],

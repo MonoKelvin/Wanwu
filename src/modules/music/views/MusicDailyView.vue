@@ -12,7 +12,7 @@ import type { NormalizedTrack } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
 
 const player = useMusicPlayerStore()
-const account = useMusicAccount()
+const { profile, refresh: refreshAccount } = useMusicAccount()
 const { platformLabel, isPlatformPrimary } = useMusicPlatform()
 const tracks = ref<NormalizedTrack[]>([])
 const loading = ref(true)
@@ -42,7 +42,7 @@ async function loadDaily() {
 onMounted(() => void loadDaily())
 
 function onLoginSuccess() {
-  void account.refresh().then(() => loadDaily())
+  void refreshAccount().then(() => loadDaily())
 }
 
 function play(track: NormalizedTrack) {
@@ -62,7 +62,7 @@ function play(track: NormalizedTrack) {
       />
 
       <MusicLoginBanner
-        v-if="isPlatformPrimary && !account.profile.loggedIn && !loading"
+        v-if="isPlatformPrimary && !profile.loggedIn && !loading"
         :platform-label="platformLabel"
         title="登录后查看完整日推"
         @login="loginOpen = true"
@@ -73,7 +73,7 @@ function play(track: NormalizedTrack) {
       <p v-else-if="!isPlatformPrimary" class="ww-music-state-hint">
         当前主源为 Verome，请在设置中切换酷狗或网易云以使用日推。
       </p>
-      <p v-else-if="account.profile.loggedIn" class="ww-music-state-hint">暂无日推内容。</p>
+      <p v-else-if="profile.loggedIn" class="ww-music-state-hint">暂无日推内容。</p>
     </div>
     <MusicPlatformLoginDialog v-model:visible="loginOpen" @success="onLoginSuccess" />
   </div>

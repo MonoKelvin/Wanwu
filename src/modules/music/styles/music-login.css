@@ -100,7 +100,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.65rem;
   padding: 0.25rem 0;
 }
 
@@ -110,6 +109,84 @@
   border-radius: var(--ww-music-inner-radius, 0.875rem);
   border: 1px solid var(--ww-border-subtle);
   background: var(--ww-elevated);
+}
+
+.ww-music-login__qr-frame.is-refreshable:hover .ww-music-login__qr-dim {
+  opacity: 1;
+}
+
+.ww-music-login__qr-dim {
+  position: absolute;
+  inset: 0.5rem;
+  z-index: 1;
+  border-radius: calc(var(--ww-music-inner-radius, 0.875rem) - 0.125rem);
+  background: color-mix(in srgb, var(--ww-ink) 42%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s var(--ww-ease-out);
+}
+
+.ww-music-login__qr-refresh {
+  position: absolute;
+  inset: 0.5rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s var(--ww-ease-out);
+}
+
+.ww-music-login__qr-frame.is-refreshable:hover .ww-music-login__qr-refresh:not(:disabled),
+.ww-music-login__qr-refresh:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ww-music-login__qr-refresh:disabled {
+  cursor: default;
+}
+
+.ww-music-login__qr-refresh-glass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  color: var(--ww-ink);
+  background: color-mix(in srgb, var(--ww-glass-bg-soft) 62%, transparent);
+  backdrop-filter: blur(14px) saturate(170%);
+  -webkit-backdrop-filter: blur(14px) saturate(170%);
+  box-shadow:
+    0 4px 16px color-mix(in srgb, black 12%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 16%, transparent);
+  opacity: 0;
+  transform: scale(0.88);
+  transition:
+    opacity 0.28s var(--ww-ease-out),
+    transform 0.28s var(--ww-ease-out);
+  will-change: opacity, transform;
+}
+
+.ww-music-login__qr-frame.is-refreshable:hover .ww-music-login__qr-refresh:not(:disabled) .ww-music-login__qr-refresh-glass,
+.ww-music-login__qr-refresh:focus-visible .ww-music-login__qr-refresh-glass {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ww-music-login__qr-refresh:hover .ww-music-login__qr-refresh-glass {
+  transform: scale(1.05);
+}
+
+.ww-music-login__qr-refresh:active .ww-music-login__qr-refresh-glass {
+  transform: scale(0.97);
 }
 
 .ww-music-login__qr-frame.is-loading::after {
@@ -161,10 +238,52 @@
   gap: 0.65rem;
 }
 
-.ww-music-login__row {
-  display: flex;
-  gap: 0.5rem;
-  align-items: stretch;
+.ww-music-login__field--with-action {
+  position: relative;
+}
+
+.ww-music-login__field--with-action :deep(.p-inputtext) {
+  padding-right: 2.5rem;
+}
+
+.ww-music-login__field-action {
+  position: absolute;
+  top: 50%;
+  right: 0.3125rem;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.875rem;
+  height: 1.875rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--ww-radius-full);
+  background: color-mix(in srgb, var(--ww-ink) 6%, transparent);
+  color: var(--ww-ink-muted);
+  cursor: pointer;
+  transition:
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    color var(--ww-duration-fast) var(--ww-ease-out),
+    transform 0.15s var(--ww-ease-out);
+}
+
+.ww-music-login__field-action:hover:not(:disabled) {
+  color: var(--ww-ink);
+  background: color-mix(in srgb, var(--ww-ink) 10%, transparent);
+}
+
+.ww-music-login__field-action:active:not(:disabled) {
+  transform: translateY(-50%) scale(0.94);
+}
+
+.ww-music-login__field-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ww-music-login__footer-logout {
+  margin-right: auto;
 }
 
 .ww-music-login__field :deep(.p-inputtext) {

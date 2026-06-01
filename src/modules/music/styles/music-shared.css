@@ -34,9 +34,9 @@
   flex: 1;
   min-height: 0;
   padding:
-    0.875rem
-    var(--ww-page-padding, 1.125rem)
-    calc(var(--ww-music-minibar-clearance) + var(--ww-page-padding, 1.125rem));
+    1.125rem
+    var(--ww-music-page-x, var(--ww-page-padding, 1.625rem))
+    calc(var(--ww-music-minibar-clearance) + var(--ww-music-page-x, var(--ww-page-padding, 1.625rem)));
   background: var(--ww-inset);
 }
 
@@ -44,15 +44,16 @@
   flex: 1;
   min-height: 0;
   padding:
-    0.875rem
-    var(--ww-page-padding, 1.125rem)
-    calc(var(--ww-music-minibar-clearance) + var(--ww-page-padding, 1.125rem));
+    1.125rem
+    var(--ww-music-page-x, var(--ww-page-padding, 1.625rem))
+    calc(var(--ww-music-minibar-clearance) + var(--ww-music-page-x, var(--ww-page-padding, 1.625rem)));
 }
 
 .ww-music-content-shell {
   width: var(--ww-music-content-max);
   max-width: var(--ww-music-content-max);
   margin: 0 auto;
+  padding-inline: 0.75rem;
 }
 
 .ww-music-page-heading {

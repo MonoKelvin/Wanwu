@@ -23,6 +23,7 @@ const router = useRouter()
 const discover = useMusicDiscoverStore()
 const player = useMusicPlayerStore()
 const account = useMusicAccount()
+const { refresh: refreshAccount } = account
 const { resolvePlaylistBrowseId, platformLabel } = useMusicPlatform()
 
 const activeTab = ref<DiscoverTabId>('featured')
@@ -66,6 +67,26 @@ function openDaily() {
   void router.push({ name: 'music-daily' })
 }
 
+function openFm() {
+  void router.push({ name: 'music-fm' })
+}
+
+function openCharts() {
+  void router.push({ name: 'music-charts' })
+}
+
+function openNew() {
+  void router.push({ name: 'music-new' })
+}
+
+function openArtists() {
+  void router.push({ name: 'music-artists' })
+}
+
+function openRadio() {
+  void router.push({ name: 'music-radio' })
+}
+
 function openCloud() {
   void router.push({ name: 'music-cloud' })
 }
@@ -81,54 +102,8 @@ const showLoginBanner = () =>
 
       <MusicDiscoverTabs v-model="activeTab" />
 
-      <!-- 精选：公开内容 -->
+      <!-- 精选：推荐 + 歌单榜单 -->
       <template v-if="activeTab === 'featured'">
-        <div v-if="sectionError(discover.chartPlaylists)" class="ww-music-section-error">
-          <span>{{ discover.chartPlaylists.error }}</span>
-          <button type="button" class="ww-music-retry" @click="retrySection('chartPlaylists')">重试</button>
-        </div>
-        <MusicDiscoverSection
-          title="精选歌单"
-          :refreshing="discover.chartPlaylists.refreshing"
-          @refresh="discover.refreshSection('chartPlaylists')"
-        >
-          <div
-            v-if="sectionLoading(discover.chartPlaylists)"
-            class="ww-music-discover-playlist-skeleton ww-music-skeleton"
-          >
-            <div v-for="n in 5" :key="n" class="ww-music-skeleton__discover-card">
-              <div class="ww-music-skeleton__discover-cover" />
-              <div class="ww-music-skeleton__discover-line ww-music-skeleton__discover-line--title" />
-            </div>
-          </div>
-          <MusicChartCarousel
-            v-else-if="discover.chartPlaylists.data.length"
-            :cards="discover.chartPlaylists.data"
-            @select="openPlaylist"
-          />
-          <p v-else class="ww-music-state-hint">暂无歌单数据</p>
-        </MusicDiscoverSection>
-
-        <div v-if="sectionError(discover.chartTracks)" class="ww-music-section-error">
-          <span>{{ discover.chartTracks.error }}</span>
-          <button type="button" class="ww-music-retry" @click="retrySection('chartTracks')">重试</button>
-        </div>
-        <MusicDiscoverSection
-          title="排行榜"
-          :refreshing="discover.chartTracks.refreshing"
-          @refresh="discover.refreshSection('chartTracks')"
-        >
-          <MusicChartList
-            :tracks="discover.chartTracks.data"
-            :loading="sectionLoading(discover.chartTracks)"
-            panel
-            @play="(t) => playFrom(discover.chartTracks.data, t)"
-          />
-        </MusicDiscoverSection>
-      </template>
-
-      <!-- 推荐：个性化 + 登录引导 -->
-      <template v-else-if="activeTab === 'recommend'">
         <MusicLoginBanner
           v-if="showLoginBanner()"
           :platform-label="platformLabel"
@@ -164,6 +139,55 @@ const showLoginBanner = () =>
             @play="(t) => playFrom(discover.trending.data, t)"
           />
         </MusicDiscoverSection>
+
+        <div v-if="sectionError(discover.chartPlaylists)" class="ww-music-section-error">
+          <span>{{ discover.chartPlaylists.error }}</span>
+          <button type="button" class="ww-music-retry" @click="retrySection('chartPlaylists')">重试</button>
+        </div>
+        <MusicDiscoverSection
+          title="精选歌单"
+          :refreshing="discover.chartPlaylists.refreshing"
+          @refresh="discover.refreshSection('chartPlaylists')"
+        >
+          <div
+            v-if="sectionLoading(discover.chartPlaylists)"
+            class="ww-music-discover-playlist-skeleton ww-music-skeleton"
+          >
+            <div v-for="n in 5" :key="n" class="ww-music-skeleton__discover-card">
+              <div class="ww-music-skeleton__discover-cover" />
+              <div class="ww-music-skeleton__discover-line ww-music-skeleton__discover-line--title" />
+            </div>
+          </div>
+          <MusicChartCarousel
+            v-else-if="discover.chartPlaylists.data.length"
+            :cards="discover.chartPlaylists.data"
+            @select="openPlaylist"
+          />
+          <p v-else class="ww-music-state-hint">暂无歌单数据，请稍后刷新</p>
+        </MusicDiscoverSection>
+
+        <div v-if="sectionError(discover.chartTracks)" class="ww-music-section-error">
+          <span>{{ discover.chartTracks.error }}</span>
+          <button type="button" class="ww-music-retry" @click="retrySection('chartTracks')">重试</button>
+        </div>
+        <MusicDiscoverSection
+          title="排行榜"
+          :refreshing="discover.chartTracks.refreshing"
+          @refresh="discover.refreshSection('chartTracks')"
+        >
+          <MusicChartList
+            :tracks="discover.chartTracks.data"
+            :loading="sectionLoading(discover.chartTracks)"
+            panel
+            @play="(t) => playFrom(discover.chartTracks.data, t)"
+          />
+          <p
+            v-if="discover.chartTracks.loaded && !discover.chartTracks.data.length && !sectionLoading(discover.chartTracks)"
+            class="ww-music-state-hint"
+          >
+            暂无排行榜数据，请稍后刷新
+          </p>
+        </MusicDiscoverSection>
       </template>
 
       <!-- 新歌 -->
@@ -189,23 +213,54 @@ const showLoginBanner = () =>
 
       <!-- 更多：日推/云盘入口 -->
       <template v-else>
-        <div class="ww-music-discover-more-grid">
-          <button type="button" class="ww-music-discover-more-card" @click="openDaily">
-            <p class="ww-music-discover-more-card__title">每日推荐</p>
-            <p class="ww-music-discover-more-card__desc">
-              {{ platformLabel ? `${platformLabel} 日推，需登录` : '平台日推' }}
-            </p>
-          </button>
-          <button type="button" class="ww-music-discover-more-card" @click="openCloud">
-            <p class="ww-music-discover-more-card__title">音乐云盘</p>
-            <p class="ww-music-discover-more-card__desc">
-              {{ platformLabel ? `${platformLabel} 云盘，需登录` : '平台云盘' }}
-            </p>
-          </button>
-        </div>
+        <section class="ww-music-discover-more-section">
+          <p class="ww-music-mine-section-label">个性化</p>
+          <div class="ww-music-discover-more-grid">
+            <button type="button" class="ww-music-discover-more-card" @click="openFm">
+              <p class="ww-music-discover-more-card__title">私人 FM</p>
+              <p class="ww-music-discover-more-card__desc">
+                {{ platformLabel ? `${platformLabel} 漫游，需登录` : '平台 FM' }}
+              </p>
+            </button>
+            <button type="button" class="ww-music-discover-more-card" @click="openDaily">
+              <p class="ww-music-discover-more-card__title">每日推荐</p>
+              <p class="ww-music-discover-more-card__desc">
+                {{ platformLabel ? `${platformLabel} 日推，需登录` : '平台日推' }}
+              </p>
+            </button>
+            <button type="button" class="ww-music-discover-more-card" @click="openCloud">
+              <p class="ww-music-discover-more-card__title">音乐云盘</p>
+              <p class="ww-music-discover-more-card__desc">
+                {{ platformLabel ? `${platformLabel} 云盘，需登录` : '平台云盘' }}
+              </p>
+            </button>
+          </div>
+        </section>
+
+        <section class="ww-music-discover-more-section">
+          <p class="ww-music-mine-section-label">浏览发现</p>
+          <div class="ww-music-discover-more-grid">
+            <button type="button" class="ww-music-discover-more-card" @click="openCharts">
+              <p class="ww-music-discover-more-card__title">排行榜</p>
+              <p class="ww-music-discover-more-card__desc">官方榜单与热门趋势</p>
+            </button>
+            <button type="button" class="ww-music-discover-more-card" @click="openNew">
+              <p class="ww-music-discover-more-card__title">新歌新碟</p>
+              <p class="ww-music-discover-more-card__desc">最新歌曲与专辑</p>
+            </button>
+            <button type="button" class="ww-music-discover-more-card" @click="openArtists">
+              <p class="ww-music-discover-more-card__title">歌手</p>
+              <p class="ww-music-discover-more-card__desc">浏览热门歌手</p>
+            </button>
+            <button type="button" class="ww-music-discover-more-card" @click="openRadio">
+              <p class="ww-music-discover-more-card__title">场景电台</p>
+              <p class="ww-music-discover-more-card__desc">按场景聆听</p>
+            </button>
+          </div>
+        </section>
       </template>
     </div>
-    <MusicPlatformLoginDialog v-model:visible="loginOpen" @success="() => account.refresh()" />
+    <MusicPlatformLoginDialog v-model:visible="loginOpen" @success="() => refreshAccount()" />
   </div>
 </template>
 

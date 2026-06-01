@@ -62,7 +62,7 @@
   app-region: drag;
 }
 
-.ww-music-player-page__back {
+.ww-music-player-page__head-side {
   align-self: center;
   -webkit-app-region: no-drag;
   app-region: no-drag;
@@ -74,11 +74,6 @@
   padding: 0.15rem 0;
   cursor: default;
   user-select: none;
-}
-
-.ww-music-player-page__head-spacer {
-  width: 2rem;
-  flex-shrink: 0;
   -webkit-app-region: drag;
   app-region: drag;
 }

@@ -4,6 +4,7 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import MusicProgressBar from '@modules/music/components/MusicProgressBar.vue'
 import MusicGlassPlayButton from '@modules/music/player/components/MusicGlassPlayButton.vue'
 import MusicVolumeControl from '@modules/music/player/components/MusicVolumeControl.vue'
+import MusicQualityControl from '@modules/music/player/components/MusicQualityControl.vue'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 
 const player = useMusicPlayerStore()
@@ -48,6 +49,7 @@ const modeIcon = computed(() => {
         >
           <WwIcon :name="modeIcon" size="sm" />
         </button>
+        <MusicQualityControl />
       </div>
 
       <div class="ww-music-transport__center">

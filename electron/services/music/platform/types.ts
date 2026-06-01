@@ -45,6 +45,8 @@ export interface MusicPlatformSessionSnapshot {
   kugouGuid?: string
   kugouMid?: string
   dfid?: string
+  /** 酷狗登录 Cookie 全量持久化（token/t1/vip_token 等） */
+  kugouCookies?: Record<string, string>
 }
 
 export interface MusicPlatformInvokeOptions {
@@ -77,6 +79,8 @@ export interface MusicPlaylistSummary {
   coverUrl?: string
   trackCount?: number
   creatorName?: string
+  /** 酷狗云列表内部 listid（歌单增删曲目用） */
+  listId?: string
 }
 
 export interface MusicToplistSummary {

@@ -61,7 +61,19 @@ export function useMusicAccount() {
     try {
       await applySessionSnapshot()
       if (!options?.skipRefreshLogin) {
-        await window.wanwu.music.refreshPlatformLogin()
+        const status = await window.wanwu.music.refreshPlatformLogin()
+        if (status.loggedIn) {
+          profile.value = {
+            ...profile.value,
+            platform: platformSource.value,
+            loggedIn: true,
+            userId: status.userId ?? profile.value.userId,
+            nickname: status.nickname ?? profile.value.nickname,
+            avatarUrl: status.avatarUrl ?? profile.value.avatarUrl
+          }
+        } else if (!profile.value.loggedIn) {
+          profile.value = { ...emptyProfile(platformSource.value), loggedIn: false }
+        }
       }
       profile.value = await window.wanwu.music.getPlatformUserProfile()
     } catch (e) {
