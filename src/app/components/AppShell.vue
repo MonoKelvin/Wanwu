@@ -54,7 +54,7 @@ watch(
       :class="routeModule === 'cloud-abode' ? 'bg-transparent' : 'bg-ww-content'"
     >
       <!-- 底层模块常驻 KeepAlive；物品详情用浮层，避免 out-in 闪白与列表重挂载 -->
-      <RouterView v-slot="{ Component }">
+      <RouterView :key="routeModule ?? route.fullPath" v-slot="{ Component }">
         <KeepAlive :include="[...MODULE_KEEP_ALIVE]">
           <component
             :is="isItemDetail ? shellComponent : Component"

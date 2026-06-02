@@ -41,9 +41,32 @@ const tabs = computed(() => {
   return list
 })
 
+const VALID_TABS: ArtistTab[] = ['tracks', 'albums', 'mvs', 'photos']
+
+function resolveTabFromQuery(): ArtistTab {
+  const raw = String(route.query.tab ?? '').trim() as ArtistTab
+  return VALID_TABS.includes(raw) ? raw : 'tracks'
+}
+
 watch(tabs, (next) => {
   if (!next.length) return
   if (!next.some((t) => t.id === tab.value)) tab.value = next[0]!.id
+})
+
+watch(
+  () => route.query.tab,
+  () => {
+    const next = resolveTabFromQuery()
+    if (tab.value !== next) tab.value = next
+  }
+)
+
+watch(tab, (next) => {
+  const current = String(route.query.tab ?? '')
+  if (current === next) return
+  void router.replace({
+    query: { ...route.query, tab: next }
+  })
 })
 
 async function loadArtist() {
@@ -65,7 +88,7 @@ async function loadArtist() {
 }
 
 watch(browseId, () => {
-  tab.value = 'tracks'
+  tab.value = resolveTabFromQuery()
   artist.value = { name: queryName.value || '歌手', tracks: [], albums: [] }
   void loadArtist()
 }, { immediate: true })

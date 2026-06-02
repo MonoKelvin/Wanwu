@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onActivated, onDeactivated, ref, watch } from 'vue'
+import { computed, onActivated, onDeactivated, onBeforeUnmount, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicDiscoverSection from '@modules/music/components/MusicDiscoverSection.vue'
@@ -55,6 +55,18 @@ const chartsReady = ref(false)
 
 const loadTask = useAsyncTask()
 const sectionQueue = useLoadQueue()
+type DiscoverRefreshSection = 'forYou' | 'daily' | 'albums' | 'artists' | 'charts'
+
+const MIN_REFRESH_INTERVAL_MS = 55_000
+const EMPTY_RETRY_MIN_MS = 8_000
+const EMPTY_RETRY_MAX_MS = 18_000
+const FILLED_RETRY_MIN_MS = 95_000
+const FILLED_RETRY_MAX_MS = 180_000
+
+const refreshTimers = new Map<DiscoverRefreshSection, ReturnType<typeof setTimeout>>()
+const lastRefreshAt = new Map<DiscoverRefreshSection, number>()
+const schedulerActive = ref(false)
+const viewActive = ref(false)
 
 const albumCoverItems = computed(() =>
   newAlbums.value.map((a) => ({
@@ -78,12 +90,129 @@ function cacheKey(suffix: string) {
   return `discover:${suffix}:${platformId.value}`
 }
 
+function randomBetween(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+function hasSectionData(section: DiscoverRefreshSection): boolean {
+  switch (section) {
+    case 'forYou':
+      return forYouTracks.value.length > 0
+    case 'daily':
+      return dailyTracks.value.length > 0
+    case 'albums':
+      return newAlbums.value.length > 0
+    case 'artists':
+      return artistPreview.value.length > 0
+    case 'charts':
+      return chartSections.value.length > 0
+  }
+}
+
+function isSectionEligible(section: DiscoverRefreshSection): boolean {
+  if (!isPlatformPrimary.value) return false
+  if (section === 'daily') return account.profile.value.loggedIn
+  return true
+}
+
+function clearRefreshTimer(section: DiscoverRefreshSection): void {
+  const timer = refreshTimers.get(section)
+  if (!timer) return
+  clearTimeout(timer)
+  refreshTimers.delete(section)
+}
+
+function stopSectionScheduler(): void {
+  schedulerActive.value = false
+  for (const timer of refreshTimers.values()) {
+    clearTimeout(timer)
+  }
+  refreshTimers.clear()
+}
+
+function markRefreshed(section: DiscoverRefreshSection): void {
+  lastRefreshAt.set(section, Date.now())
+}
+
+function scheduleSectionRefresh(section: DiscoverRefreshSection): void {
+  clearRefreshTimer(section)
+  if (!schedulerActive.value) return
+  if (!isSectionEligible(section)) return
+  const hasData = hasSectionData(section)
+  const delay = hasData
+    ? randomBetween(FILLED_RETRY_MIN_MS, FILLED_RETRY_MAX_MS)
+    : randomBetween(EMPTY_RETRY_MIN_MS, EMPTY_RETRY_MAX_MS)
+  const timer = setTimeout(() => {
+    void runSectionRefresh(section, 'timer')
+  }, delay)
+  refreshTimers.set(section, timer)
+}
+
+async function runSectionRefresh(
+  section: DiscoverRefreshSection,
+  trigger: 'timer' | 'manual' | 'empty'
+): Promise<void> {
+  if (!schedulerActive.value && trigger !== 'manual') return
+  if (!isSectionEligible(section)) {
+    scheduleSectionRefresh(section)
+    return
+  }
+  const now = Date.now()
+  const last = lastRefreshAt.get(section) ?? 0
+  const hasData = hasSectionData(section)
+  const shouldThrottle = trigger !== 'manual' && hasData && now - last < MIN_REFRESH_INTERVAL_MS
+  if (shouldThrottle) {
+    const wait = MIN_REFRESH_INTERVAL_MS - (now - last)
+    clearRefreshTimer(section)
+    const timer = setTimeout(() => {
+      void runSectionRefresh(section, 'timer')
+    }, Math.max(1_000, wait))
+    refreshTimers.set(section, timer)
+    return
+  }
+
+  switch (section) {
+    case 'forYou':
+      await loadForYou(true)
+      break
+    case 'daily':
+      await loadDaily(true)
+      break
+    case 'albums':
+      await loadAlbums(true)
+      break
+    case 'artists':
+      await loadArtists(true)
+      break
+    case 'charts':
+      await loadCharts(true)
+      break
+  }
+
+  if (schedulerActive.value) {
+    scheduleSectionRefresh(section)
+  }
+}
+
+function startSectionScheduler(): void {
+  schedulerActive.value = true
+  const sections: DiscoverRefreshSection[] = ['forYou', 'daily', 'albums', 'artists', 'charts']
+  for (const section of sections) {
+    scheduleSectionRefresh(section)
+    if (isSectionEligible(section) && !hasSectionData(section)) {
+      void runSectionRefresh(section, 'empty')
+    }
+  }
+}
+
 onActivated(() => {
+  viewActive.value = true
   discover.startAutoRefresh()
   if (!forYouReady.value) void loadForYou()
   requestAnimationFrame(() => {
     void player.refreshFavorites()
   })
+  startSectionScheduler()
 })
 
 function ensureDaily() {
@@ -107,18 +236,27 @@ function ensureCharts() {
 }
 
 onDeactivated(() => {
+  viewActive.value = false
   discover.stopAutoRefresh()
+  stopSectionScheduler()
+})
+
+onBeforeUnmount(() => {
+  viewActive.value = false
+  stopSectionScheduler()
 })
 
 watch(platformId, () => {
   loadTask.cancel()
   clearMusicViewCache('discover:')
+  stopSectionScheduler()
   forYouReady.value = false
   dailyReady.value = false
   albumsReady.value = false
   artistsReady.value = false
   chartsReady.value = false
   void loadForYou(true)
+  if (viewActive.value) startSectionScheduler()
 })
 
 watch(
@@ -126,6 +264,7 @@ watch(
   () => {
     void loadForYou()
     void loadDaily()
+    if (viewActive.value) startSectionScheduler()
   }
 )
 
@@ -196,6 +335,7 @@ async function loadForYou(force = false) {
 
     if (force && tracks.length > 1) tracks = shuffleTracks(tracks)
     forYouTracks.value = tracks.slice(0, 32)
+    markRefreshed('forYou')
   } finally {
     if (loadTask.isCurrent(token)) {
       forYouLoading.value = false
@@ -227,6 +367,7 @@ async function loadDaily(force = false) {
     let tracks = await window.wanwu.music.getDailyRecommend().catch(() => [])
     if (force && tracks.length > 1) tracks = shuffleTracks(tracks)
     dailyTracks.value = tracks
+    markRefreshed('daily')
     if (tracks.length) writeMusicViewCache(cacheKey('daily'), tracks)
   } finally {
     dailyLoading.value = false
@@ -257,6 +398,7 @@ async function loadAlbums(force = false) {
     if (force) albumsSeed.value += 1
     const albums = await window.wanwu.music.getNewAlbums(16, albumsSeed.value).catch(() => [])
     newAlbums.value = albums
+    markRefreshed('albums')
     if (albums.length) writeMusicViewCache(cacheKey(`albums:${albumsSeed.value}`), albums)
   } finally {
     albumsLoading.value = false
@@ -289,6 +431,7 @@ async function loadArtists(force = false) {
       .getNeteaseArtistList(12, artistsOffset.value)
       .catch(() => [])
     artistPreview.value = artists
+    markRefreshed('artists')
     if (artists.length) writeMusicViewCache(cacheKey(`artists:${artistsOffset.value}`), artists)
   } finally {
     artistsLoading.value = false
@@ -323,6 +466,7 @@ async function loadCharts(force = false) {
       sections = [...sections.slice(shift), ...sections.slice(0, shift)]
     }
     chartSections.value = sections
+    markRefreshed('charts')
     if (sections.length) writeMusicViewCache(cacheKey('charts'), sections)
   } finally {
     chartsLoading.value = false
@@ -382,6 +526,26 @@ function onLoginSuccess() {
   })
 }
 
+function refreshForYouManual() {
+  void runSectionRefresh('forYou', 'manual')
+}
+
+function refreshDailyManual() {
+  void runSectionRefresh('daily', 'manual')
+}
+
+function refreshAlbumsManual() {
+  void runSectionRefresh('albums', 'manual')
+}
+
+function refreshArtistsManual() {
+  void runSectionRefresh('artists', 'manual')
+}
+
+function refreshChartsManual() {
+  void runSectionRefresh('charts', 'manual')
+}
+
 const showLoginBanner = computed(
   () => account.hasPlatformAccount.value && !account.profile.value.loggedIn
 )
@@ -398,7 +562,7 @@ const showLoginBanner = computed(
         @login="loginOpen = true"
       />
 
-      <MusicDiscoverSection title="为你推荐" :refreshing="forYouLoading" @refresh="loadForYou(true)">
+      <MusicDiscoverSection title="为你推荐" :refreshing="forYouLoading" @refresh="refreshForYouManual">
         <MusicTrackCarousel
           :tracks="forYouTracks"
           :loading="forYouLoading || !forYouReady"
@@ -414,7 +578,7 @@ const showLoginBanner = computed(
         lazy
         title="每日推荐"
         :refreshing="dailyLoading"
-        @refresh="loadDaily(true)"
+        @refresh="refreshDailyManual"
         @visible="ensureDaily"
       >
         <MusicChartList
@@ -433,7 +597,7 @@ const showLoginBanner = computed(
         title="新碟"
         more-label="更多"
         :refreshing="albumsLoading"
-        @refresh="loadAlbums(true)"
+        @refresh="refreshAlbumsManual"
         @visible="ensureAlbums"
         @more="() => router.push({ name: 'music-new' })"
       >
@@ -450,7 +614,7 @@ const showLoginBanner = computed(
         title="热门歌手"
         more-label="更多"
         :refreshing="artistsLoading"
-        @refresh="loadArtists(true)"
+        @refresh="refreshArtistsManual"
         @visible="ensureArtists"
         @more="openArtists"
       >
@@ -468,7 +632,7 @@ const showLoginBanner = computed(
         title="官方榜单"
         more-label="更多"
         :refreshing="chartsLoading"
-        @refresh="loadCharts(true)"
+        @refresh="refreshChartsManual"
         @visible="ensureCharts"
         @more="() => router.push({ name: 'music-charts' })"
       >

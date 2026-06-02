@@ -111,6 +111,11 @@ function go(name: string) {
 }
 
 function goBack() {
+  const returnTo = typeof route.query.returnTo === 'string' ? route.query.returnTo.trim() : ''
+  if (returnTo && returnTo.startsWith('/music') && returnTo !== route.fullPath) {
+    void router.push(returnTo)
+    return
+  }
   if (window.history.length > 1) router.back()
   else if (route.name === 'music-mood') void router.push({ name: 'music-categories' })
   else void router.push({ name: 'music-discover' })
