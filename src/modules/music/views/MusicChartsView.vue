@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicChartCarousel from '@modules/music/components/MusicChartCarousel.vue'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import type { MusicChartCard, MusicChartSection } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
@@ -38,7 +39,7 @@ function openToplist(card: MusicChartCard) {
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main">
+  <MusicScrollBody>
     <div class="ww-music-content-shell">
       <MusicPageHeading title="排行榜" subtitle="官方榜单与热门趋势" />
 
@@ -52,7 +53,7 @@ function openToplist(card: MusicChartCard) {
         <p v-if="!sections.length" class="ww-music-state-hint">暂无排行榜数据</p>
       </template>
     </div>
-  </div>
+  </MusicScrollBody>
 </template>
 
 <style scoped>

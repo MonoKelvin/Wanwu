@@ -19,12 +19,15 @@ const props = withDefaults(
     shape?: 'square' | 'circle'
     showPlay?: boolean
     shadowGlow?: boolean
+    /** 当前播放封面等需立即加载 */
+    priority?: boolean
   }>(),
   {
     size: 'card',
     shape: 'square',
     showPlay: false,
-    shadowGlow: false
+    shadowGlow: false,
+    priority: false
   }
 )
 
@@ -52,6 +55,14 @@ const imageUrl = computed(() => {
 })
 
 const showImg = computed(() => !!imageUrl.value)
+
+const imgLoading = computed(() =>
+  props.priority || props.size === 'hero' ? 'eager' : 'lazy'
+)
+
+const imgFetchPriority = computed(() =>
+  props.priority || props.size === 'hero' ? 'high' : 'auto'
+)
 
 function onImgError() {
   if (fallbackIndex.value < fallbackUrls.value.length - 1) {
@@ -93,7 +104,8 @@ function onPlayClick() {
         :alt="title ?? ''"
         class="ww-music-cover__img"
         draggable="false"
-        loading="lazy"
+        :loading="imgLoading"
+        :fetchpriority="imgFetchPriority"
         referrerpolicy="no-referrer"
         @error="onImgError"
         @dragstart.prevent

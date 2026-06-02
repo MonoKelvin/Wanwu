@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { nextTick, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
+import { useScrollNearEnd } from '@modules/music/composables/useScrollNearEnd'
 import type { MusicSongComment } from '@shared/types/music'
 import '@modules/music/styles/music-popover.css'
 
@@ -14,31 +15,75 @@ const props = defineProps<{
 }>()
 
 const comments = ref<MusicSongComment[]>([])
+const hotComments = ref<MusicSongComment[]>([])
 const loading = ref(false)
 const page = ref(1)
 const hasMore = ref(false)
+const total = ref<number | undefined>()
+const listRef = ref<HTMLElement | null>(null)
 const panelRef = ref<HTMLElement | null>(null)
 const panelStyle = ref<{ top: string; left: string }>({ top: '0px', left: '0px' })
+const commentScrollTops = new Map<string, number>()
 
 const PANEL_GAP = 8
 const VIEWPORT_PAD = 10
+
+const titleLabel = computed(() => {
+  if (!props.title) return '歌曲评论'
+  if (total.value != null && total.value > 0) return `${props.title} · ${total.value} 条评论`
+  return `${props.title} · 评论`
+})
+
+function saveListScroll() {
+  const el = listRef.value
+  if (!el || !props.songId) return
+  commentScrollTops.set(props.songId, el.scrollTop)
+}
+
+function restoreListScroll() {
+  const el = listRef.value
+  if (!el || !props.songId) return
+  const top = commentScrollTops.get(props.songId) ?? 0
+  requestAnimationFrame(() => {
+    if (listRef.value) listRef.value.scrollTop = top
+  })
+}
 
 async function load(pageNum = 1) {
   if (!props.songId) return
   loading.value = true
   try {
     const data = await window.wanwu.music.getPlatformSongComments(props.songId, pageNum)
-    if (pageNum === 1) comments.value = data.comments
-    else comments.value = [...comments.value, ...data.comments]
+    if (pageNum === 1) {
+      comments.value = data.comments
+      hotComments.value = data.hotComments ?? []
+    } else {
+      comments.value = [...comments.value, ...data.comments]
+    }
     hasMore.value = !!data.hasMore
+    total.value = data.total
     page.value = pageNum
   } finally {
     loading.value = false
-    if (visible.value) void nextTick(updatePanelPosition)
+    if (visible.value) {
+      await nextTick()
+      updatePanelPosition()
+      if (pageNum === 1) restoreListScroll()
+    }
   }
 }
 
+async function loadMore() {
+  if (loading.value || !hasMore.value) return
+  await load(page.value + 1)
+}
+
+useScrollNearEnd(listRef, loadMore, {
+  enabled: computed(() => visible.value && hasMore.value && !loading.value)
+})
+
 function close() {
+  saveListScroll()
   visible.value = false
 }
 
@@ -98,7 +143,8 @@ function unbindGlobal() {
 
 watch(
   () => [visible.value, props.songId] as const,
-  ([open, id]) => {
+  ([open, id], prev) => {
+    if (prev?.[0] && prev[1] && prev[1] !== id) saveListScroll()
     if (open && id) void load(1)
   }
 )
@@ -139,7 +185,7 @@ onUnmounted(unbindGlobal)
       >
         <header class="ww-music-comments-popover__head">
           <h2 class="ww-music-comments-popover__title">
-            {{ title ? `${title} · 评论` : '歌曲评论' }}
+            {{ titleLabel }}
           </h2>
           <button type="button" class="ww-music-comments-popover__close" aria-label="关闭" @click="close">
             <WwIcon name="x" size="sm" />
@@ -147,8 +193,39 @@ onUnmounted(unbindGlobal)
         </header>
 
         <div class="ww-music-comments">
-          <p v-if="loading && !comments.length" class="ww-music-state-hint">加载中…</p>
-          <ul v-else-if="comments.length" class="ww-music-comments__list ww-scrollbar">
+          <p v-if="loading && !comments.length && !hotComments.length" class="ww-music-state-hint">加载中…</p>
+          <ul v-else-if="hotComments.length || comments.length" ref="listRef" class="ww-music-comments__list ww-scrollbar">
+            <li v-if="hotComments.length" class="ww-music-comments__section-label">
+              <WwIcon name="star" size="xs" />
+              热门评论
+            </li>
+            <li
+              v-for="item in hotComments"
+              :key="`hot-${item.id}`"
+              class="ww-music-comments__item"
+            >
+              <div class="ww-music-comments__head">
+                <strong class="ww-music-comments__user">{{ item.userName }}</strong>
+                <div class="ww-music-comments__meta">
+                  <span v-if="item.likedCount" class="ww-music-comments__likes">
+                    <WwIcon name="thumbs-up" size="xs" />
+                    {{ item.likedCount }}
+                  </span>
+                  <span v-if="item.time" class="ww-music-comments__time">{{ item.time }}</span>
+                </div>
+              </div>
+              <p class="ww-music-comments__content">{{ item.content }}</p>
+              <ul v-if="item.replies?.length" class="ww-music-comments__replies">
+                <li v-for="reply in item.replies" :key="reply.id" class="ww-music-comments__reply">
+                  <strong class="ww-music-comments__reply-user">{{ reply.userName }}</strong>
+                  <span class="ww-music-comments__reply-text">{{ reply.content }}</span>
+                </li>
+              </ul>
+            </li>
+            <li v-if="hotComments.length && comments.length" class="ww-music-comments__section-label">
+              <WwIcon name="message-circle" size="xs" />
+              全部评论
+            </li>
             <li v-for="item in comments" :key="item.id" class="ww-music-comments__item">
               <div class="ww-music-comments__head">
                 <strong class="ww-music-comments__user">{{ item.userName }}</strong>
@@ -161,19 +238,16 @@ onUnmounted(unbindGlobal)
                 </div>
               </div>
               <p class="ww-music-comments__content">{{ item.content }}</p>
+              <ul v-if="item.replies?.length" class="ww-music-comments__replies">
+                <li v-for="reply in item.replies" :key="reply.id" class="ww-music-comments__reply">
+                  <strong class="ww-music-comments__reply-user">{{ reply.userName }}</strong>
+                  <span class="ww-music-comments__reply-text">{{ reply.content }}</span>
+                </li>
+              </ul>
             </li>
           </ul>
           <p v-else class="ww-music-state-hint">暂无评论</p>
-          <div v-if="hasMore" class="ww-music-comments__more">
-            <button
-              type="button"
-              class="ww-music-comments__load-more"
-              :disabled="loading"
-              @click="load(page + 1)"
-            >
-              加载更多
-            </button>
-          </div>
+          <p v-if="loading && (comments.length || hotComments.length)" class="ww-music-comments__loading-more">加载中…</p>
         </div>
       </aside>
     </Transition>
@@ -259,6 +333,48 @@ onUnmounted(unbindGlobal)
   scrollbar-gutter: stable;
 }
 
+.ww-music-comments__section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.15rem 0.15rem;
+  font-size: var(--ww-music-fs-xs, 0.6875rem);
+  font-weight: 600;
+  letter-spacing: var(--ww-music-ls-label, 0.03em);
+  text-transform: uppercase;
+  color: var(--ww-ink-faint);
+  border-bottom: none;
+  list-style: none;
+}
+
+.ww-music-comments__replies {
+  margin: 0.5rem 0 0;
+  padding: 0.45rem 0.55rem;
+  list-style: none;
+  border-radius: var(--ww-radius-sm, 0.375rem);
+  background: color-mix(in srgb, var(--ww-inset) 88%, transparent);
+}
+
+.ww-music-comments__reply {
+  font-size: var(--ww-music-fs-sm, 0.75rem);
+  line-height: var(--ww-music-lh-body, 1.45);
+  color: var(--ww-ink-muted);
+}
+
+.ww-music-comments__reply + .ww-music-comments__reply {
+  margin-top: 0.35rem;
+}
+
+.ww-music-comments__reply-user {
+  font-weight: 600;
+  color: var(--ww-ink);
+  margin-right: 0.35rem;
+}
+
+.ww-music-comments__reply-text {
+  word-break: break-word;
+}
+
 .ww-music-comments__item {
   padding: 0.85rem 0.15rem 0.85rem 0;
   border-bottom: 1px solid color-mix(in srgb, var(--ww-glass-border) 70%, transparent);
@@ -317,32 +433,11 @@ onUnmounted(unbindGlobal)
   word-break: break-word;
 }
 
-.ww-music-comments__more {
-  display: flex;
-  justify-content: center;
-  margin-top: 0.75rem;
-}
-
-.ww-music-comments__load-more {
-  padding: 0.25rem 0.5rem;
-  border: none;
-  background: transparent;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--ww-accent);
-  cursor: pointer;
-  transition:
-    color 0.16s var(--ww-ease-out),
-    opacity 0.16s var(--ww-ease-out);
-}
-
-.ww-music-comments__load-more:hover:not(:disabled) {
-  color: color-mix(in srgb, var(--ww-accent) 82%, var(--ww-ink));
-}
-
-.ww-music-comments__load-more:disabled {
-  opacity: 0.55;
-  cursor: default;
+.ww-music-comments__loading-more {
+  margin: 0.5rem 0 0;
+  text-align: center;
+  font-size: var(--ww-music-fs-sm, 0.75rem);
+  color: var(--ww-ink-faint);
 }
 
 .ww-music-comments-pop-enter-active,

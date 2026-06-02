@@ -31,6 +31,7 @@ import { MusicSearchType } from './platform/types'
 import { parseBrowseId } from './platform/browseId'
 import { CHINESE_MOOD_FALLBACK } from './moodLabels'
 import { resolvePlayableStream } from './streamResolver'
+import { TtlRequestCache } from './ttlRequestCache'
 import type {
   MusicChartsPayload,
   MusicConnectionTestResult,
@@ -67,6 +68,7 @@ export class MusicService {
   private platformDiscoverFeedInflight: Promise<MusicDiscoverFeed> | null = null
   /** 已登录时平台「我喜欢」trackKey 缓存，用于 isFavorite 与列表红心 */
   private platformLikedKeys: Set<string> | null = null
+  private readonly readCache = new TtlRequestCache(45_000)
 
   constructor(
     private readonly db: DatabaseService,
@@ -117,6 +119,10 @@ export class MusicService {
 
   private accountPlatform() {
     return this.platforms.get(this.accountPlatformId())
+  }
+
+  private readCacheKey(suffix: string): string {
+    return `${this.accountPlatformId()}:${suffix}`
   }
 
   private getSettings(): AppSettings {
@@ -499,57 +505,61 @@ export class MusicService {
   }
 
   async getCharts(): Promise<MusicChartsPayload> {
-    await this.refreshApiClient()
-    if (this.isPlatformPrimary()) {
-      return this.primaryPlatform().getCharts()
-    }
-    const country = this.discoverCountry()
-    let payload: MusicChartsPayload = { sections: [], country }
-    try {
-      const data = await this.verome.getCharts(country)
-      payload = mapChartsResponse(data)
-      payload.country = country
-    } catch {
-      /* fallback below */
-    }
-
-    const hasTrackSections = payload.sections.some(
-      (s) => s.kind === 'songs' || s.kind === 'trending' || s.kind === 'videos'
-    )
-    if (!hasTrackSections) {
-      try {
-        const top = await this.verome.getTopTracks(country)
-        const tracks = mapTopTracksResponse(top)
-        if (tracks.length) {
-          payload.sections.unshift({
-            kind: 'songs',
-            title: '热门歌曲',
-            items: tracks
-          })
-        }
-      } catch {
-        /* ignore */
+    return this.readCache.run(this.readCacheKey('charts'), async () => {
+      await this.refreshApiClient()
+      if (this.isPlatformPrimary()) {
+        return this.primaryPlatform().getCharts()
       }
-    }
+      const country = this.discoverCountry()
+      let payload: MusicChartsPayload = { sections: [], country }
+      try {
+        const data = await this.verome.getCharts(country)
+        payload = mapChartsResponse(data)
+        payload.country = country
+      } catch {
+        /* fallback below */
+      }
 
-    return payload
+      const hasTrackSections = payload.sections.some(
+        (s) => s.kind === 'songs' || s.kind === 'trending' || s.kind === 'videos'
+      )
+      if (!hasTrackSections) {
+        try {
+          const top = await this.verome.getTopTracks(country)
+          const tracks = mapTopTracksResponse(top)
+          if (tracks.length) {
+            payload.sections.unshift({
+              kind: 'songs',
+              title: '热门歌曲',
+              items: tracks
+            })
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+
+      return payload
+    })
   }
 
   async getMoods(): Promise<MusicMoodCategory[]> {
-    await this.refreshApiClient()
-    if (this.isPlatformPrimary()) {
-      const moods = await this.primaryPlatform().getMoodCategories()
-      if (moods.length) return moods
+    return this.readCache.run(this.readCacheKey('moods'), async () => {
+      await this.refreshApiClient()
+      if (this.isPlatformPrimary()) {
+        const moods = await this.primaryPlatform().getMoodCategories()
+        if (moods.length) return moods
+        return CHINESE_MOOD_FALLBACK
+      }
+      try {
+        const data = await this.verome.getMoods()
+        const moods = mapMoodsResponse(data)
+        if (moods.length) return moods
+      } catch {
+        /* fallback below */
+      }
       return CHINESE_MOOD_FALLBACK
-    }
-    try {
-      const data = await this.verome.getMoods()
-      const moods = mapMoodsResponse(data)
-      if (moods.length) return moods
-    } catch {
-      /* fallback below */
-    }
-    return CHINESE_MOOD_FALLBACK
+    })
   }
 
   async getMoodPlaylists(categoryId: string): Promise<MusicMoodPlaylist[]> {
@@ -1176,9 +1186,11 @@ export class MusicService {
   }
 
   async getNeteaseArtistList(limit = 30, offset = 0) {
-    await this.refreshApiClient()
-    if (!this.isPlatformPrimary()) return []
-    return this.primaryPlatform().getArtistList('-1', -1, '-1', limit, offset)
+    return this.readCache.run(this.readCacheKey(`artists:${limit}:${offset}`), async () => {
+      await this.refreshApiClient()
+      if (!this.isPlatformPrimary()) return []
+      return this.primaryPlatform().getArtistList('-1', -1, '-1', limit, offset)
+    })
   }
 
   async getNeteaseNewAlbums(limit = 12) {
@@ -1293,19 +1305,23 @@ export class MusicService {
   }
 
   async getNewSongs(limit = 30): Promise<NormalizedTrack[]> {
-    await this.refreshApiClient()
-    if (!this.isPlatformPrimary()) return []
-    return this.primaryPlatform().getNewSongs(limit)
+    return this.readCache.run(this.readCacheKey(`newSongs:${limit}`), async () => {
+      await this.refreshApiClient()
+      if (!this.isPlatformPrimary()) return []
+      return this.primaryPlatform().getNewSongs(limit)
+    })
   }
 
   async getNewAlbums(limit = 12, seed = 0) {
-    await this.refreshApiClient()
-    if (!this.isPlatformPrimary()) return []
-    const platform = this.primaryPlatform()
-    if (this.accountPlatformId() === 'kugou') {
-      return platform.getNewAlbums(limit, Math.max(1, seed + 1))
-    }
-    return platform.getNewAlbums(limit, Math.max(0, seed) * limit)
+    return this.readCache.run(this.readCacheKey(`newAlbums:${limit}:${seed}`), async () => {
+      await this.refreshApiClient()
+      if (!this.isPlatformPrimary()) return []
+      const platform = this.primaryPlatform()
+      if (this.accountPlatformId() === 'kugou') {
+        return platform.getNewAlbums(limit, Math.max(1, seed + 1))
+      }
+      return platform.getNewAlbums(limit, Math.max(0, seed) * limit)
+    })
   }
 
   async getToplists() {

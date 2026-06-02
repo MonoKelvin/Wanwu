@@ -14,6 +14,7 @@ import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import { useMusicDiscoverStore } from '@modules/music/stores/musicDiscover'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { MusicChartCard, MusicChartSection, NormalizedTrack } from '@shared/types/music'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import '@modules/music/styles/music-shared.css'
 
 defineOptions({ name: 'MusicDiscoverView' })
@@ -47,14 +48,26 @@ const chartsReady = ref(false)
 
 onActivated(() => {
   void discover.ensureLoaded()
-  if (!forYouReady.value) void loadForYou()
-  if (!dailyReady.value) void loadDaily()
-  if (!albumsReady.value) void loadAlbums()
-  if (!artistsReady.value) void loadArtists()
-  if (!chartsReady.value) void loadCharts()
   void player.refreshFavorites()
   discover.startAutoRefresh()
+  if (!forYouReady.value) void loadForYou()
 })
+
+function ensureDaily() {
+  if (!dailyReady.value) void loadDaily()
+}
+
+function ensureAlbums() {
+  if (!albumsReady.value) void loadAlbums()
+}
+
+function ensureArtists() {
+  if (!artistsReady.value) void loadArtists()
+}
+
+function ensureCharts() {
+  if (!chartsReady.value) void loadCharts()
+}
 
 onDeactivated(() => {
   discover.stopAutoRefresh()
@@ -62,11 +75,7 @@ onDeactivated(() => {
 
 watch(platformId, () => {
   void discover.reloadAll()
-  void loadForYou()
-  void loadDaily()
-  void loadAlbums()
-  void loadArtists()
-  void loadCharts()
+  void Promise.all([loadForYou(), loadDaily(), loadAlbums(), loadArtists(), loadCharts()])
 })
 
 watch(
@@ -264,13 +273,19 @@ function openArtists() {
   void router.push({ name: 'music-artists' })
 }
 
+function onLoginSuccess() {
+  void refreshAccount().then(() =>
+    Promise.all([loadForYou(), loadDaily(), loadAlbums(), loadArtists(), loadCharts()])
+  )
+}
+
 const showLoginBanner = computed(
   () => account.hasPlatformAccount.value && !account.profile.value.loggedIn
 )
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main">
+  <MusicScrollBody>
     <div class="ww-music-content-shell">
       <MusicPageHeading title="发现" subtitle="推荐 · 新碟 · 歌手 · FM" />
 
@@ -292,10 +307,12 @@ const showLoginBanner = computed(
       </MusicDiscoverSection>
 
       <MusicDiscoverSection
-        v-if="account.profile.loggedIn"
+        v-if="account.profile.value.loggedIn"
+        lazy
         title="每日推荐"
         :refreshing="dailyLoading"
         @refresh="loadDaily(true)"
+        @visible="ensureDaily"
       >
         <MusicChartList
           v-if="dailyLoading || dailyTracks.length"
@@ -308,7 +325,13 @@ const showLoginBanner = computed(
         <p v-else-if="dailyReady" class="ww-music-state-hint">暂无日推内容</p>
       </MusicDiscoverSection>
 
-      <MusicDiscoverSection title="新碟" :refreshing="albumsLoading" @refresh="loadAlbums(true)">
+      <MusicDiscoverSection
+        lazy
+        title="新碟"
+        :refreshing="albumsLoading"
+        @refresh="loadAlbums(true)"
+        @visible="ensureAlbums"
+      >
         <MusicCoverRow
           :items="
             newAlbums.map((a) => ({
@@ -324,7 +347,13 @@ const showLoginBanner = computed(
         />
       </MusicDiscoverSection>
 
-      <MusicDiscoverSection title="热门歌手" :refreshing="artistsLoading" @refresh="loadArtists(true)">
+      <MusicDiscoverSection
+        lazy
+        title="热门歌手"
+        :refreshing="artistsLoading"
+        @refresh="loadArtists(true)"
+        @visible="ensureArtists"
+      >
         <MusicCoverRow
           :items="
             artistPreview.map((a) => ({
@@ -341,7 +370,13 @@ const showLoginBanner = computed(
         />
       </MusicDiscoverSection>
 
-      <MusicDiscoverSection title="官方榜单" :refreshing="chartsLoading" @refresh="loadCharts(true)">
+      <MusicDiscoverSection
+        lazy
+        title="官方榜单"
+        :refreshing="chartsLoading"
+        @refresh="loadCharts(true)"
+        @visible="ensureCharts"
+      >
         <MusicChartCarousel
           :cards="chartCarouselCards"
           :loading="chartsLoading || !chartsReady"
@@ -381,14 +416,6 @@ const showLoginBanner = computed(
         </div>
       </section>
     </div>
-    <MusicPlatformLoginDialog
-      v-model:visible="loginOpen"
-      @success="
-        () =>
-          refreshAccount().then(() =>
-            Promise.all([loadForYou(), loadDaily(), loadAlbums(), loadArtists(), loadCharts()])
-          )
-      "
-    />
-  </div>
+    <MusicPlatformLoginDialog v-model:visible="loginOpen" @success="onLoginSuccess" />
+  </MusicScrollBody>
 </template>

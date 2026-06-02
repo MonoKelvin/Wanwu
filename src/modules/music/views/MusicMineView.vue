@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onActivated, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwButton from '@shared/components/WwButton.vue'
@@ -10,6 +10,7 @@ import MusicProfileHero from '@modules/music/components/MusicProfileHero.vue'
 import MusicMineSubscribedGrid from '@modules/music/components/MusicMineSubscribedGrid.vue'
 import MusicCloudList from '@modules/music/components/MusicCloudList.vue'
 import MusicPlatformLoginDialog from '@modules/music/components/MusicPlatformLoginDialog.vue'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useMusicAccount } from '@modules/music/composables/useMusicAccount'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
@@ -287,6 +288,19 @@ watch(
   }
 )
 
+watch(
+  () => player.currentTrack?.trackKey,
+  () => {
+    if (activeTab.value === 'local' && localSubTab.value === 'history') {
+      void loadHistory()
+    }
+  }
+)
+
+onActivated(() => {
+  loadActiveTabData()
+})
+
 onMounted(() => {
   syncTabFromRoute()
   void loadLocalData()
@@ -295,7 +309,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main">
+  <MusicScrollBody>
     <div class="ww-music-content-shell">
       <MusicPageHeading
         :title="'我的'"
@@ -468,5 +482,5 @@ onMounted(() => {
 
       <MusicPlatformLoginDialog v-model:visible="loginOpen" @success="onLoginSuccess" @update:visible="onLoginDialogClose" />
     </div>
-  </div>
+  </MusicScrollBody>
 </template>

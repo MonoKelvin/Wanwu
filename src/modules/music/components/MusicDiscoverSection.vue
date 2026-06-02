@@ -1,16 +1,25 @@
 <script setup lang="ts">
+import { ref, toRef } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
+import { useSectionVisible } from '@modules/music/composables/useSectionVisible'
 
-defineProps<{
+const props = defineProps<{
   title: string
   refreshing?: boolean
+  /** 进入视口后再触发 visible（发现页懒加载） */
+  lazy?: boolean
 }>()
 
-defineEmits<{ refresh: [] }>()
+const emit = defineEmits<{ refresh: []; visible: [] }>()
+
+const root = ref<HTMLElement | null>(null)
+const lazy = toRef(props, 'lazy')
+
+useSectionVisible(root, () => emit('visible'), { enabled: () => lazy.value === true })
 </script>
 
 <template>
-  <section class="ww-music-section">
+  <section ref="root" class="ww-music-section">
     <header class="ww-music-section__head">
       <div class="ww-music-section__title-row">
         <h2 class="ww-music-section-title">{{ title }}</h2>

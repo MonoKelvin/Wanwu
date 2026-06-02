@@ -4,6 +4,7 @@ import type {
   MusicMoodCategory,
   MusicMoodPlaylist,
   MusicSearchResult,
+  MusicSongComment,
   MusicTrackBadge,
   NormalizedTrack
 } from '../../../../../src/shared/types/music'
@@ -227,6 +228,40 @@ export function mapToplistChartCards(data: unknown): MusicChartCard[] {
     })
   }
   return cards
+}
+
+export function mapNeteaseSongComment(
+  row: Record<string, unknown>,
+  idx: number,
+  isHot = false
+): MusicSongComment {
+  const user = row.user as Record<string, unknown> | undefined
+  const beReplied = Array.isArray(row.beReplied) ? row.beReplied : []
+  const replies: MusicSongComment[] = []
+
+  for (let ri = 0; ri < beReplied.length; ri++) {
+    const replyRow = beReplied[ri] as Record<string, unknown>
+    const content = String(replyRow.content ?? '').trim()
+    if (!content) continue
+    const ru = replyRow.user as Record<string, unknown> | undefined
+    replies.push({
+      id: String(replyRow.commentId ?? replyRow.id ?? `${idx}-r-${ri}`),
+      userName: String(ru?.nickname ?? '匿名'),
+      content,
+      likedCount: typeof replyRow.likedCount === 'number' ? replyRow.likedCount : undefined
+    })
+  }
+
+  return {
+    id: String(row.commentId ?? row.id ?? idx),
+    userName: String(user?.nickname ?? '匿名'),
+    content: String(row.content ?? ''),
+    likedCount: typeof row.likedCount === 'number' ? row.likedCount : undefined,
+    time: typeof row.timeStr === 'string' ? row.timeStr : undefined,
+    avatarUrl: typeof user?.avatarUrl === 'string' ? user.avatarUrl : undefined,
+    isHot: isHot || undefined,
+    replies: replies.length ? replies : undefined
+  }
 }
 
 export function parseBrowseId(browseId: string): { kind: string; id: string } | null {

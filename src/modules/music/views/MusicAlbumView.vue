@@ -6,6 +6,7 @@ import MusicChartList from '@modules/music/components/MusicChartList.vue'
 import { normalizeAlbumMeta } from '@modules/music/lib/normalizeAlbumMeta'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { NormalizedTrack } from '@shared/types/music'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import '@modules/music/styles/music-shared.css'
 
 defineOptions({ name: 'MusicAlbumView' })
@@ -104,7 +105,7 @@ function play(track: NormalizedTrack) {
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main">
+  <MusicScrollBody>
     <div class="ww-music-content-shell">
       <p v-if="loading" class="ww-music-state-hint">加载中…</p>
       <div v-else-if="error" class="ww-music-error-bar">
@@ -122,5 +123,5 @@ function play(track: NormalizedTrack) {
         <MusicChartList :tracks="tracks" panel @play="play" />
       </template>
     </div>
-  </div>
+  </MusicScrollBody>
 </template>

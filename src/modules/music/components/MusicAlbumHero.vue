@@ -73,10 +73,10 @@ withDefaults(
   display: inline-block;
   margin: 0 0 0.5rem;
   padding: 0.28rem 0.65rem;
-  font-size: 0.8125rem;
+  font-size: var(--ww-music-fs-base);
   font-weight: 600;
-  letter-spacing: 0.03em;
-  line-height: 1.2;
+  letter-spacing: var(--ww-music-ls-label);
+  line-height: var(--ww-music-lh-tight);
   color: var(--ww-ink);
   background: color-mix(in srgb, var(--ww-accent) 14%, var(--ww-inset));
   border: 1px solid color-mix(in srgb, var(--ww-accent) 22%, var(--ww-border-subtle));
@@ -88,21 +88,21 @@ withDefaults(
   font-size: clamp(1.35rem, 3.2vw, 1.875rem);
   font-weight: 700;
   color: var(--ww-ink);
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  letter-spacing: var(--ww-music-ls-title);
+  line-height: var(--ww-music-lh-tight);
 }
 
 .ww-album-hero__meta {
   margin: 0.4rem 0 0;
-  font-size: 0.875rem;
-  line-height: 1.45;
+  font-size: var(--ww-music-fs-md);
+  line-height: var(--ww-music-lh-body);
   color: var(--ww-ink-muted);
 }
 
 .ww-album-hero__desc {
   margin: 0.5rem 0 0;
-  font-size: 0.8125rem;
-  line-height: 1.55;
+  font-size: var(--ww-music-fs-base);
+  line-height: var(--ww-music-lh-relaxed);
   color: var(--ww-ink-faint);
   display: -webkit-box;
   -webkit-box-orient: vertical;

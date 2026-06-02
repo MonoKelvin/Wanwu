@@ -5,6 +5,7 @@ import MusicChartList from '@modules/music/components/MusicChartList.vue'
 import MusicFeatureHero from '@modules/music/components/MusicFeatureHero.vue'
 import MusicLoginBanner from '@modules/music/components/MusicLoginBanner.vue'
 import MusicPlatformLoginDialog from '@modules/music/components/MusicPlatformLoginDialog.vue'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useMusicAccount } from '@modules/music/composables/useMusicAccount'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
@@ -53,7 +54,7 @@ function play(track: NormalizedTrack) {
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main">
+  <MusicScrollBody>
     <div class="ww-music-content-shell">
       <MusicPageHeading title="每日推荐" :subtitle="subtitle" />
 
@@ -78,5 +79,5 @@ function play(track: NormalizedTrack) {
       <p v-else-if="profile.loggedIn" class="ww-music-state-hint">暂无日推内容。</p>
     </div>
     <MusicPlatformLoginDialog v-model:visible="loginOpen" @success="onLoginSuccess" />
-  </div>
+  </MusicScrollBody>
 </template>

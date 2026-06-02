@@ -7,6 +7,8 @@ import MusicCoverRow from '@modules/music/components/MusicCoverRow.vue'
 import MusicArtistPhotosGrid from '@modules/music/components/MusicArtistPhotosGrid.vue'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { MusicArtistPayload, NormalizedTrack } from '@shared/types/music'
+import { musicScrollKey } from '@modules/music/lib/musicScrollKey'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import '@modules/music/styles/music-shared.css'
 
 defineOptions({ name: 'MusicArtistView' })
@@ -58,6 +60,7 @@ async function loadArtist() {
 }
 
 watch(browseId, () => {
+  tab.value = 'tracks'
   void loadArtist()
 }, { immediate: true })
 
@@ -92,10 +95,12 @@ const mvItems = computed(() =>
     coverUrl: m.coverUrl
   }))
 )
+
+const scrollKey = computed(() => `${musicScrollKey(route)}:tab:${tab.value}`)
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main">
+  <MusicScrollBody :scroll-key="scrollKey">
     <div class="ww-music-content-shell">
       <p v-if="loading && !queryName" class="ww-music-state-hint">加载中…</p>
       <template v-else>
@@ -150,7 +155,7 @@ const mvItems = computed(() =>
         </p>
       </template>
     </div>
-  </div>
+  </MusicScrollBody>
 </template>
 
 <style scoped>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import SelectButton from 'primevue/selectbutton'
 import EmptyState from '@app/components/EmptyState.vue'
 import MusicChartList from '@modules/music/components/MusicChartList.vue'
 import MusicCoverRow from '@modules/music/components/MusicCoverRow.vue'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useMusicSearch, type MusicSearchFilter } from '@modules/music/composables/useMusicSearch'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
@@ -64,19 +64,32 @@ const hasAnyResults = computed(() => {
     (r.playlists?.length ?? 0) > 0
   )
 })
+
+const scrollKey = computed(() => {
+  const q = search.submittedQuery.trim()
+  if (!q) return 'music-search'
+  return `music-search:${q}:${search.filter}`
+})
 </script>
 
 <template>
-  <div class="ww-music-search-results ww-scroll-main">
+  <MusicScrollBody variant="search" :scroll-key="scrollKey">
     <div class="ww-music-content-shell">
       <div v-if="search.submittedQuery" class="ww-music-search-results__tabs">
-        <SelectButton
-          :model-value="search.filter"
-          :options="filterOptions"
-          option-label="label"
-          option-value="value"
-          @update:model-value="(v) => search.setFilter(v as MusicSearchFilter)"
-        />
+        <div class="ww-music-pill-tabs ww-music-search-filter-tabs" role="tablist">
+          <button
+            v-for="opt in filterOptions"
+            :key="opt.value"
+            type="button"
+            class="ww-music-pill-tabs__btn"
+            :class="{ 'is-active': search.filter === opt.value }"
+            role="tab"
+            :aria-selected="search.filter === opt.value"
+            @click="search.setFilter(opt.value)"
+          >
+            {{ opt.label }}
+          </button>
+        </div>
       </div>
       <div v-if="search.loading" class="ww-music-search-loading">
         <div class="ww-music-search-loading__list ww-music-track-panel">
@@ -181,7 +194,7 @@ const hasAnyResults = computed(() => {
         </section>
       </template>
     </div>
-  </div>
+  </MusicScrollBody>
 </template>
 
 <style scoped>
@@ -248,7 +261,13 @@ const hasAnyResults = computed(() => {
 }
 
 .ww-music-search-results__tabs {
+  display: flex;
+  justify-content: center;
   margin-bottom: var(--ww-music-section-gap);
+}
+
+.ww-music-search-filter-tabs {
+  flex-wrap: nowrap;
 }
 
 .ww-music-search-results__head {
@@ -298,25 +317,6 @@ const hasAnyResults = computed(() => {
 
 .ww-music-search-results__covers :deep(.ww-music-card-item) {
   text-align: center;
-}
-
-.ww-music-search-results__tabs :deep(.p-selectbutton) {
-  justify-content: center;
-}
-
-[data-theme='dark'] .ww-music-search-results__tabs :deep(.p-selectbutton) {
-  background: color-mix(in srgb, var(--ww-ink) 7%, transparent);
-  border-color: color-mix(in srgb, var(--ww-border-subtle) 80%, transparent);
-}
-
-[data-theme='dark'] .ww-music-search-results__tabs :deep(.p-selectbutton .p-togglebutton) {
-  color: var(--ww-ink-muted) !important;
-}
-
-[data-theme='dark'] .ww-music-search-results__tabs :deep(.p-selectbutton .p-togglebutton.p-togglebutton-checked) {
-  background: color-mix(in srgb, var(--ww-ink) 10%, var(--ww-canvas)) !important;
-  color: var(--ww-ink) !important;
-  box-shadow: 0 1px 6px rgb(0 0 0 / 0.28) !important;
 }
 
 [data-theme='dark'] .ww-music-search-results :deep(.ww-music-track-panel) {

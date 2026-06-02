@@ -5,7 +5,9 @@ import MusicTopChrome from '@modules/music/components/MusicTopChrome.vue'
 import MusicSearchResults from '@modules/music/components/MusicSearchResults.vue'
 import { useMusicSearch } from '@modules/music/composables/useMusicSearch'
 import { useMusicAccount } from '@modules/music/composables/useMusicAccount'
+import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
+import { musicScrollPositions } from '@modules/music/stores/musicScrollPositions'
 import { MUSIC_KEEP_ALIVE } from '@modules/music/config/musicKeepAlive'
 import '@modules/music/styles/music-shared.css'
 import '@modules/music/styles/music-controls.css'
@@ -17,6 +19,7 @@ defineOptions({ name: 'MusicView' })
 const route = useRoute()
 const search = useMusicSearch()
 const player = useMusicPlayerStore()
+const { platformId } = useMusicPlatform()
 useMusicAccount()
 
 const isFullscreen = computed(() => !!route.meta.fullscreen)
@@ -37,6 +40,13 @@ watch(
     if (fullscreen) search.clear()
   }
 )
+
+watch(platformId, (next, prev) => {
+  if (prev != null && next !== prev) {
+    musicScrollPositions.clearAll()
+    search.clear()
+  }
+})
 
 onMounted(() => {
   void player.restoreSession()

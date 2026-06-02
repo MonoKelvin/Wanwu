@@ -57,6 +57,8 @@ watch(
         alt=""
         class="ww-music-player-hero-cover__shadow"
         draggable="false"
+        loading="eager"
+        fetchpriority="high"
         referrerpolicy="no-referrer"
         aria-hidden="true"
         @error="onImgError"
@@ -69,6 +71,8 @@ watch(
           :alt="title ?? ''"
           class="ww-music-player-hero-cover__img"
           draggable="false"
+          loading="eager"
+          fetchpriority="high"
           referrerpolicy="no-referrer"
           @error="onImgError"
           @dragstart.prevent

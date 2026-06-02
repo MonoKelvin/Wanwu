@@ -20,6 +20,7 @@ import {
   mapCloudSearchResult,
   mapMoodPlaylist,
   mapNeteaseSong,
+  mapNeteaseSongComment,
   mapNeteaseSongs,
   mapPlaylistCatlist,
   mapPlaylistSummary,
@@ -876,24 +877,25 @@ export class NeteasePlatformService implements IMusicPlatformService {
 
   async getSongComments(songId: string, page = 1): Promise<MusicSongCommentPage> {
     const rawId = songId.split('|')[0] || songId
-    const data = await this.invoke<{ comments?: unknown[]; total?: number }>('comment/music', {
+    const data = await this.invoke<{
+      comments?: unknown[]
+      hotComments?: unknown[]
+      total?: number
+    }>('comment/music', {
       id: rawId,
       offset: (page - 1) * 30,
       limit: 30
     })
-    const comments = (data.comments ?? []).map((item, idx) => {
-      const row = item as Record<string, unknown>
-      const user = row.user as Record<string, unknown> | undefined
-      return {
-        id: String(row.commentId ?? row.id ?? idx),
-        userName: String(user?.nickname ?? '匿名'),
-        content: String(row.content ?? ''),
-        likedCount: typeof row.likedCount === 'number' ? row.likedCount : undefined,
-        time: typeof row.timeStr === 'string' ? row.timeStr : undefined,
-        avatarUrl: typeof user?.avatarUrl === 'string' ? user.avatarUrl : undefined
-      }
-    })
-    return { comments, total: data.total, hasMore: comments.length >= 30 }
+    const comments = (data.comments ?? []).map((item, idx) =>
+      mapNeteaseSongComment(item as Record<string, unknown>, idx, false)
+    )
+    const hotComments =
+      page === 1
+        ? (data.hotComments ?? []).map((item, idx) =>
+            mapNeteaseSongComment(item as Record<string, unknown>, idx, true)
+          )
+        : undefined
+    return { comments, hotComments, total: data.total, hasMore: comments.length >= 30 }
   }
 
   async getMvDetail(browseId: string): Promise<MusicMvDetail | null> {

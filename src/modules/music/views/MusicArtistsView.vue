@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onActivated, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicArtistGrid from '@modules/music/components/MusicArtistGrid.vue'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useScrollNearEnd } from '@modules/music/composables/useScrollNearEnd'
 import '@modules/music/styles/music-shared.css'
 
 defineOptions({ name: 'MusicArtistsView' })
 
-const PAGE_SIZE = 24
+const PAGE_SIZE = 16
 
 const router = useRouter()
 const { buildBrowseId } = useMusicPlatform()
-const scrollRoot = ref<HTMLElement | null>(null)
+const scrollBodyRef = ref<InstanceType<typeof MusicScrollBody> | null>(null)
+const scrollRoot = computed(() => scrollBodyRef.value?.scrollEl ?? null)
 const artists = ref<Array<{ browseId: string; name: string; coverUrl?: string }>>([])
-const loading = ref(true)
+const loading = ref(false)
 const loadingMore = ref(false)
 const hasMore = ref(true)
+const initialized = ref(false)
 
 const gridItems = computed(() =>
   artists.value.map((a) => ({
@@ -26,6 +29,19 @@ const gridItems = computed(() =>
     coverUrl: a.coverUrl
   }))
 )
+
+async function loadInitial() {
+  if (initialized.value || loading.value) return
+  loading.value = true
+  try {
+    const first = await window.wanwu.music.getNeteaseArtistList(PAGE_SIZE, 0)
+    artists.value = first
+    hasMore.value = first.length >= PAGE_SIZE
+    initialized.value = true
+  } finally {
+    loading.value = false
+  }
+}
 
 async function loadMore() {
   if (loading.value || loadingMore.value || !hasMore.value) return
@@ -48,21 +64,14 @@ async function loadMore() {
   }
 }
 
-onMounted(async () => {
-  loading.value = true
-  artists.value = []
-  hasMore.value = true
-  try {
-    const first = await window.wanwu.music.getNeteaseArtistList(PAGE_SIZE, 0)
-    artists.value = first
-    hasMore.value = first.length >= PAGE_SIZE
-  } finally {
-    loading.value = false
-  }
+onActivated(() => {
+  requestAnimationFrame(() => {
+    void loadInitial()
+  })
 })
 
 useScrollNearEnd(scrollRoot, loadMore, {
-  enabled: computed(() => hasMore.value && !loading.value)
+  enabled: computed(() => hasMore.value && initialized.value && !loading.value && !loadingMore.value)
 })
 
 function openArtist(item: { id: string; title?: string; coverUrl?: string }) {
@@ -79,15 +88,15 @@ function openArtist(item: { id: string; title?: string; coverUrl?: string }) {
 </script>
 
 <template>
-  <div ref="scrollRoot" class="ww-music-tab-body ww-scroll-main">
+  <MusicScrollBody ref="scrollBodyRef">
     <div class="ww-music-content-shell">
       <MusicPageHeading title="歌手" subtitle="热门歌手浏览" />
       <MusicArtistGrid
         :items="gridItems"
-        :loading="loading"
+        :loading="loading && !initialized"
         :loading-more="loadingMore"
         @select="openArtist"
       />
     </div>
-  </div>
+  </MusicScrollBody>
 </template>

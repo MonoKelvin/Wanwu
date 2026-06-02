@@ -5,6 +5,7 @@ import MusicAlbumHero from '@modules/music/components/MusicAlbumHero.vue'
 import MusicInlineMvPlayer from '@modules/music/components/MusicInlineMvPlayer.vue'
 import { useMusicMvPlayback } from '@modules/music/composables/useMusicMvPlayback'
 import type { MusicMvDetail } from '@shared/types/music'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import '@modules/music/styles/music-shared.css'
 
 defineOptions({ name: 'MusicVideoView' })
@@ -78,7 +79,7 @@ onDeactivated(() => {
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main ww-music-mv-page-body">
+  <MusicScrollBody class="ww-music-mv-page-body">
     <div class="ww-music-content-shell ww-music-mv-page">
       <p v-if="loading" class="ww-music-state-hint">加载中…</p>
       <p v-else-if="error && !detail" class="ww-music-state-hint">{{ error }}</p>
@@ -103,7 +104,7 @@ onDeactivated(() => {
         <p v-else-if="error" class="ww-mv-page-error">{{ error }}</p>
       </template>
     </div>
-  </div>
+  </MusicScrollBody>
 </template>
 
 <style scoped>

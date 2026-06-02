@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicCoverRow from '@modules/music/components/MusicCoverRow.vue'
 import MusicDiscoverSection from '@modules/music/components/MusicDiscoverSection.vue'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { MusicMoodPlaylist } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
@@ -60,7 +61,7 @@ async function openPlaylist(item: { id: string }) {
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main">
+  <MusicScrollBody>
     <div class="ww-music-content-shell">
       <MusicPageHeading :title="categoryId" subtitle="分类歌单" />
 
@@ -74,5 +75,5 @@ async function openPlaylist(item: { id: string }) {
       </MusicDiscoverSection>
       <p v-else class="ww-music-state-hint">该分类暂无歌单，请选择其他分类。</p>
     </div>
-  </div>
+  </MusicScrollBody>
 </template>

@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicMoodGrid from '@modules/music/components/MusicMoodGrid.vue'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import type { MusicMoodCategory } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
 
@@ -33,7 +34,7 @@ function openMood(id: string) {
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main">
+  <MusicScrollBody>
     <div class="ww-music-content-shell">
       <MusicPageHeading title="分类" subtitle="按心情与场景浏览歌单" />
 
@@ -49,7 +50,7 @@ function openMood(id: string) {
     <MusicMoodGrid v-else-if="moods.length" :moods="moods" @select="openMood" />
     <p v-else class="ww-music-state-hint">暂无分类数据</p>
     </div>
-  </div>
+  </MusicScrollBody>
 </template>
 
 <style scoped>

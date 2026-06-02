@@ -40,6 +40,11 @@
   box-shadow: var(--ww-focus-ring);
 }
 
+[data-theme='dark'] .ww-music-shell :deep(.p-inputtext:enabled:focus) {
+  border-color: color-mix(in srgb, var(--ww-accent) 32%, var(--ww-border-subtle));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ww-accent) 38%, transparent);
+}
+
 .ww-music-shell .ww-music-search-panel {
   border-radius: var(--ww-music-panel-radius);
   border: 1px solid color-mix(in srgb, var(--ww-glass-border) 88%, transparent);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUnmounted, ref, watch } from 'vue'
+import { onBeforeUnmount, onUnmounted, ref, watch } from 'vue'
 import Hls from 'hls.js'
 import WwIcon from '@shared/components/WwIcon.vue'
 
@@ -21,8 +21,11 @@ const error = ref<string | null>(null)
 let hls: Hls | null = null
 
 function destroyHls() {
-  hls?.destroy()
-  hls = null
+  if (hls) {
+    hls.detachMedia()
+    hls.destroy()
+    hls = null
+  }
 }
 
 function isHls(url: string): boolean {
@@ -131,7 +134,8 @@ watch(
   }
 )
 
-onUnmounted(() => stopPlayback())
+onBeforeUnmount(() => stopPlayback())
+onUnmounted(() => destroyHls())
 
 defineExpose({ stop: () => stopPlayback() })
 </script>

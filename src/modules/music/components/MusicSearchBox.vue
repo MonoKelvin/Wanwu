@@ -19,6 +19,20 @@ const defaultKeyword = ref('')
 
 let blurTimer: ReturnType<typeof setTimeout> | null = null
 
+function getInputEl(): HTMLInputElement | null {
+  const cmp = inputRef.value as { $el?: HTMLElement } | null
+  if (!cmp?.$el) return null
+  return cmp.$el instanceof HTMLInputElement
+    ? cmp.$el
+    : cmp.$el.querySelector('input')
+}
+
+function focusInput(select = false) {
+  const el = getInputEl()
+  el?.focus()
+  if (select) el?.select()
+}
+
 const showPanel = computed(
   () =>
     panelOpen.value &&
@@ -38,9 +52,7 @@ watch(
   () => search.focusRequest,
   () => {
     void nextTick(() => {
-      const el = inputRef.value?.$el as HTMLInputElement | undefined
-      el?.focus()
-      el?.select()
+      focusInput(true)
       panelOpen.value = true
     })
   }
@@ -70,8 +82,7 @@ function onSubmit() {
 function onClear() {
   search.clearQuery()
   panelOpen.value = true
-  const el = inputRef.value?.$el as HTMLInputElement | undefined
-  el?.focus()
+  focusInput()
 }
 
 function applyHistory(term: string) {
@@ -220,6 +231,7 @@ onUnmounted(() => {
   width: min(100%, 15rem);
   min-width: 8.5rem;
   margin-left: auto;
+  margin-right: 0.85rem;
   z-index: 25;
 }
 
@@ -228,6 +240,16 @@ onUnmounted(() => {
   width: 100%;
   display: flex;
   align-items: center;
+  border-radius: var(--ww-music-input-radius);
+  transition: box-shadow 0.18s var(--ww-ease-out);
+}
+
+.ww-music-search-field.is-focused {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ww-accent) 26%, transparent);
+}
+
+[data-theme='dark'] .ww-music-search-field.is-focused {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ww-accent) 42%, transparent);
 }
 
 .ww-music-search {

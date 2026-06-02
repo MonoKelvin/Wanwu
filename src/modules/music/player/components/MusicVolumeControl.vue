@@ -5,7 +5,7 @@ import MusicVolumeSlider from '@modules/music/player/components/MusicVolumeSlide
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import '@modules/music/styles/music-popover.css'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     compact?: boolean
     disabled?: boolean

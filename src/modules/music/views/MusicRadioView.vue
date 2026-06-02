@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicMoodGrid from '@modules/music/components/MusicMoodGrid.vue'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import type { MusicRadioCategory } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
 
@@ -27,7 +28,7 @@ function openRadio(id: string) {
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main">
+  <MusicScrollBody>
     <div class="ww-music-content-shell">
       <MusicPageHeading title="场景电台" subtitle="按场景聆听" />
       <p v-if="loading" class="ww-music-state-hint">加载中…</p>
@@ -38,5 +39,5 @@ function openRadio(id: string) {
       />
       <p v-else class="ww-music-state-hint">当前平台暂不支持场景电台</p>
     </div>
-  </div>
+  </MusicScrollBody>
 </template>

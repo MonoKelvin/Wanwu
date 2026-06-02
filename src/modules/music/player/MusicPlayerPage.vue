@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onActivated, onDeactivated, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import WwIcon from '@shared/components/WwIcon.vue'
 import MusicModeGallery from '@modules/music/player/modes/MusicModeGallery.vue'
@@ -8,6 +8,7 @@ import MusicModeImmersion from '@modules/music/player/modes/MusicModeImmersion.v
 import MusicTransport from '@modules/music/player/components/MusicTransport.vue'
 import MusicQueueSheet from '@modules/music/player/components/MusicQueueSheet.vue'
 import MusicCommentSheet from '@modules/music/components/MusicCommentSheet.vue'
+import { resolveCommentSongId } from '@modules/music/lib/resolveCommentSongId'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import '@modules/music/styles/music-player.css'
 
@@ -23,6 +24,8 @@ function toggleComments() {
   commentsOpen.value = !commentsOpen.value
 }
 
+const commentSongId = computed(() => resolveCommentSongId(player.currentTrack))
+
 const bgStyle = computed(() => {
   const url = player.currentTrack?.coverUrl
   if (!url) return {}
@@ -32,6 +35,11 @@ const bgStyle = computed(() => {
 function back() {
   router.back()
 }
+
+onDeactivated(() => {
+  queueOpen.value = false
+  commentsOpen.value = false
+})
 </script>
 
 <template>
@@ -80,7 +88,7 @@ function back() {
     <MusicCommentSheet
       v-model:visible="commentsOpen"
       :anchor-el="commentBtnRef"
-      :song-id="player.currentTrack?.videoId ?? ''"
+      :song-id="commentSongId"
       :title="player.currentTrack?.title"
     />
   </div>

@@ -323,6 +323,19 @@ onUnmounted(() => {
   font-size: clamp(1.06rem, 2.15vw, 1.28rem);
 }
 
+[data-theme='dark'] .ww-lyrics__list li {
+  color: color-mix(in srgb, var(--ww-ink) 34%, transparent);
+}
+
+[data-theme='dark'] .ww-lyrics__list li.is-near {
+  color: color-mix(in srgb, var(--ww-ink) 52%, transparent);
+}
+
+[data-theme='dark'] .ww-lyrics__list li.is-active {
+  color: var(--ww-ink);
+  text-shadow: 0 1px 12px color-mix(in srgb, black 35%, transparent);
+}
+
 .ww-lyrics--immersion .ww-lyrics__list li.is-active {
   font-size: clamp(1.28rem, 3.35vw, 1.85rem);
 }

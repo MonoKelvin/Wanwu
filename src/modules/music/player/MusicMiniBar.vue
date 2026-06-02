@@ -59,6 +59,7 @@ function openPlayer() {
             :title="player.currentTrack.title"
             size="thumb"
             shape="square"
+            priority
             class="ww-music-minibar__cover"
           />
           <span v-else class="ww-music-minibar__cover ww-music-minibar__cover--empty" aria-hidden="true">
@@ -163,8 +164,8 @@ function openPlayer() {
   border: 1px solid var(--ww-glass-border);
   box-shadow:
     0 -1px 0 color-mix(in srgb, white 55%, transparent),
-    0 -8px 22px -6px color-mix(in srgb, var(--ww-ink) 7%, transparent),
-    0 -3px 10px -4px color-mix(in srgb, var(--ww-ink) 4%, transparent);
+    0 -12px 32px -8px color-mix(in srgb, var(--ww-ink) 10%, transparent),
+    0 -4px 14px -6px color-mix(in srgb, var(--ww-ink) 6%, transparent);
   transform: translateY(-2px);
 }
 
@@ -175,8 +176,8 @@ function openPlayer() {
 [data-theme='dark'] .ww-music-minibar.ww-glass-blur {
   box-shadow:
     0 -1px 0 rgb(255 255 255 / 0.05),
-    0 -10px 28px -8px rgb(0 0 0 / 0.32),
-    0 -3px 12px -5px rgb(0 0 0 / 0.18);
+    0 -14px 36px -10px rgb(0 0 0 / 0.38),
+    0 -4px 14px -6px rgb(0 0 0 / 0.22);
 }
 
 .ww-music-minibar__body {

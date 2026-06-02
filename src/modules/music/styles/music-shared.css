@@ -22,6 +22,12 @@
   --ww-music-fs-md: 0.875rem;
   --ww-music-fs-lg: 1.0625rem;
   --ww-music-fs-xl: clamp(1.375rem, 2.5vw, 1.75rem);
+  --ww-music-lh-tight: 1.2;
+  --ww-music-lh-body: 1.45;
+  --ww-music-lh-relaxed: 1.55;
+  --ww-music-ls-display: -0.03em;
+  --ww-music-ls-title: -0.02em;
+  --ww-music-ls-label: 0.03em;
   --ww-music-content-max: min(100%, 72rem);
   /* 专辑/歌手/MV 页 Hero 封面投影 */
   --ww-music-hero-cover-box-shadow: 0 16px 40px color-mix(in srgb, var(--ww-ink) 14%, transparent);
@@ -71,15 +77,15 @@
   margin: 0;
   font-size: var(--ww-music-fs-xl);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: var(--ww-music-ls-display);
   color: var(--ww-ink);
-  line-height: 1.15;
+  line-height: var(--ww-music-lh-tight);
 }
 
 .ww-music-page-heading__sub {
   margin: 0.375rem 0 0;
   font-size: var(--ww-music-fs-base);
-  line-height: 1.45;
+  line-height: var(--ww-music-lh-body);
   color: var(--ww-ink-faint);
 }
 
@@ -128,7 +134,18 @@
   background: var(--ww-content);
   color: var(--ww-ink);
   font-weight: 600;
-  box-shadow: 0 1px 4px color-mix(in srgb, var(--ww-ink) 8%, transparent);
+  box-shadow: 0 1px 4px color-mix(in srgb, black 8%, transparent);
+}
+
+[data-theme='dark'] .ww-music-pill-tabs {
+  background: color-mix(in srgb, var(--ww-canvas) 90%, rgb(255 255 255 / 0.03));
+  border-color: color-mix(in srgb, var(--ww-border-subtle) 78%, transparent);
+}
+
+[data-theme='dark'] .ww-music-pill-tabs__btn.is-active {
+  background: color-mix(in srgb, var(--ww-content) 96%, rgb(255 255 255 / 0.04));
+  color: var(--ww-ink);
+  box-shadow: 0 1px 6px rgb(0 0 0 / 0.32);
 }
 
 /* 二级 Tab（我的页收藏/历史等） */
@@ -298,7 +315,11 @@
   background: var(--ww-content);
   color: var(--ww-ink);
   font-weight: 600;
-  box-shadow: 0 1px 4px color-mix(in srgb, var(--ww-ink) 8%, transparent);
+  box-shadow: 0 1px 4px color-mix(in srgb, black 8%, transparent);
+}
+
+[data-theme='dark'] .ww-music-segment__btn.is-active {
+  box-shadow: 0 1px 6px rgb(0 0 0 / 0.32);
 }
 
 .ww-music-track-panel {
@@ -323,8 +344,8 @@
   font-size: var(--ww-music-fs-lg);
   font-weight: 600;
   color: var(--ww-ink);
-  letter-spacing: -0.02em;
-  line-height: 1.25;
+  letter-spacing: var(--ww-music-ls-title);
+  line-height: var(--ww-music-lh-tight);
 }
 
 .ww-music-section-sub {

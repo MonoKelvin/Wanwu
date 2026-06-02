@@ -32,8 +32,14 @@ function formatDuration(sec?: number): string {
     :class="{ 'is-playing': playing, 'is-loading': loading }"
     @click="emit('play', track)"
   >
-    <span v-if="rank != null" class="ww-track-row__rank">{{ rank }}</span>
-    <span v-else-if="index != null" class="ww-track-row__rank">{{ index + 1 }}</span>
+    <span v-if="rank != null" class="ww-track-row__rank">
+      <MusicPlayingBars v-if="playing" class="ww-track-row__rank-bars" />
+      <template v-else>{{ rank }}</template>
+    </span>
+    <span v-else-if="index != null" class="ww-track-row__rank">
+      <MusicPlayingBars v-if="playing" class="ww-track-row__rank-bars" />
+      <template v-else>{{ index + 1 }}</template>
+    </span>
         <MusicCover
           :src="track.coverUrl"
           :video-id="track.videoId"
@@ -52,8 +58,11 @@ function formatDuration(sec?: number): string {
     </span>
     <span class="ww-track-row__tail">
       <WwIcon v-if="loading" name="loader" size="sm" spin class="ww-track-row__loading" />
-      <MusicPlayingBars v-else-if="playing" class="ww-track-row__playing-bars" />
-      <span v-else-if="track.durationSec" class="ww-track-row__duration">{{ formatDuration(track.durationSec) }}</span>
+      <MusicPlayingBars v-else-if="playing && rank == null && index == null" class="ww-track-row__playing-bars" />
+      <template v-else>
+        <span v-if="track.durationSec" class="ww-track-row__duration">{{ formatDuration(track.durationSec) }}</span>
+        <WwIcon name="play" size="sm" filled class="ww-track-row__play-hint" />
+      </template>
     </span>
   </button>
 </template>
@@ -71,14 +80,21 @@ function formatDuration(sec?: number): string {
   cursor: pointer;
   text-align: left;
   transition:
-    background 0.15s ease,
-    transform 0.15s ease;
+    background 0.15s var(--ww-ease-out),
+    transform 0.15s var(--ww-ease-out);
 }
 .ww-track-row:hover {
   background: var(--ww-list-hover-bg);
 }
+.ww-track-row:active {
+  transform: scale(0.995);
+}
 .ww-track-row.is-playing {
   background: color-mix(in srgb, var(--ww-list-selected-accent, var(--ww-accent)) 10%, transparent);
+}
+
+[data-theme='dark'] .ww-track-row.is-playing {
+  background: color-mix(in srgb, var(--ww-accent) 12%, transparent);
 }
 .ww-track-row__rank {
   width: 1.75rem;
@@ -87,6 +103,14 @@ function formatDuration(sec?: number): string {
   font-weight: 600;
   color: var(--ww-ink-faint);
   text-align: center;
+}
+
+.ww-track-row__rank-bars {
+  margin: 0 auto;
+}
+
+.ww-track-row.is-playing .ww-track-row__rank {
+  color: var(--ww-accent);
 }
 .ww-track-row__cover {
   width: 2.75rem;
@@ -138,6 +162,20 @@ function formatDuration(sec?: number): string {
   font-size: var(--ww-music-fs-sm);
   color: var(--ww-ink-faint);
   font-variant-numeric: tabular-nums;
+}
+
+.ww-track-row__play-hint {
+  display: none;
+  color: var(--ww-ink);
+  opacity: 0.72;
+}
+
+.ww-track-row:hover .ww-track-row__play-hint {
+  display: inline-flex;
+}
+
+.ww-track-row:hover .ww-track-row__duration {
+  display: none;
 }
 .ww-track-row.is-loading {
   opacity: 0.85;

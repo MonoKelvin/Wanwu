@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicTrackCarousel from '@modules/music/components/MusicTrackCarousel.vue'
 import MusicCoverRow from '@modules/music/components/MusicCoverRow.vue'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { NormalizedTrack } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
@@ -47,7 +48,7 @@ function openAlbum(item: { id: string; title?: string }) {
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main">
+  <MusicScrollBody>
     <div class="ww-music-content-shell">
       <MusicPageHeading title="新歌新碟" subtitle="最新歌曲与专辑" />
 
@@ -91,5 +92,5 @@ function openAlbum(item: { id: string; title?: string }) {
         <p v-else class="ww-music-state-hint">暂无新碟</p>
       </template>
     </div>
-  </div>
+  </MusicScrollBody>
 </template>

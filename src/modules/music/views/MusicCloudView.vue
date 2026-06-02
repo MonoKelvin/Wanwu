@@ -5,6 +5,7 @@ import MusicCloudList from '@modules/music/components/MusicCloudList.vue'
 import MusicFeatureHero from '@modules/music/components/MusicFeatureHero.vue'
 import MusicLoginBanner from '@modules/music/components/MusicLoginBanner.vue'
 import MusicPlatformLoginDialog from '@modules/music/components/MusicPlatformLoginDialog.vue'
+import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useMusicAccount } from '@modules/music/composables/useMusicAccount'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
@@ -56,7 +57,7 @@ function play(track: NormalizedTrack) {
 </script>
 
 <template>
-  <div class="ww-music-tab-body ww-scroll-main">
+  <MusicScrollBody>
     <div class="ww-music-content-shell">
       <MusicPageHeading
         title="云盘"
@@ -81,5 +82,5 @@ function play(track: NormalizedTrack) {
       />
     </div>
     <MusicPlatformLoginDialog v-model:visible="loginOpen" @success="onLoginSuccess" />
-  </div>
+  </MusicScrollBody>
 </template>

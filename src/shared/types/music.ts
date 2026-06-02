@@ -99,10 +99,13 @@ export interface MusicSongComment {
   likedCount?: number
   time?: string
   avatarUrl?: string
+  isHot?: boolean
+  replies?: MusicSongComment[]
 }
 
 export interface MusicSongCommentPage {
   comments: MusicSongComment[]
+  hotComments?: MusicSongComment[]
   total?: number
   hasMore?: boolean
 }

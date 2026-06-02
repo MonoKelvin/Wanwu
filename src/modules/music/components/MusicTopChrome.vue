@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import WwIcon from '@shared/components/WwIcon.vue'
 import MusicSearchBox from '@modules/music/components/MusicSearchBox.vue'
 import { useMusicSearch } from '@modules/music/composables/useMusicSearch'
+import { applyMainTabScrollReset } from '@modules/music/stores/musicScrollPositions'
 
 const route = useRoute()
 const router = useRouter()
@@ -98,8 +99,7 @@ function setTabRef(el: unknown, index: number) {
 }
 
 function resetMainScroll() {
-  const root = document.querySelector('.ww-music-stage .ww-scroll-main')
-  if (root instanceof HTMLElement) root.scrollTop = 0
+  applyMainTabScrollReset()
 }
 
 function go(name: string) {
