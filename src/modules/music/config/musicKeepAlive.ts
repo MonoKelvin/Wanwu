@@ -7,15 +7,5 @@ export const MUSIC_KEEP_ALIVE = [
   'MusicArtistView',
   'MusicPlaylistView',
   'MusicDailyView',
-  'MusicFmView',
-  'MusicChartsView',
-  'MusicToplistView',
-  'MusicNewView',
-  'MusicArtistsView',
-  'MusicRadioView',
-  'MusicRadioTracksView',
-  'MusicVideoView',
-  'MusicCloudView',
-  'MusicMoodPlaylistsView',
-  'MusicPlayerPage'
+  'MusicChartsView'
 ] as const

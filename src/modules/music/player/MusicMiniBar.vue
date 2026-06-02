@@ -7,6 +7,7 @@ import MusicCover from '@modules/music/components/MusicCover.vue'
 import MusicProgressBar from '@modules/music/components/MusicProgressBar.vue'
 import MusicGlassPlayButton from '@modules/music/player/components/MusicGlassPlayButton.vue'
 import MusicVolumeControl from '@modules/music/player/components/MusicVolumeControl.vue'
+import { parseLrc, lrcLineAt } from '@modules/music/composables/parseLrc'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 
 const router = useRouter()
@@ -14,13 +15,28 @@ const player = useMusicPlayerStore()
 
 const hasTrack = computed(() => !!player.currentTrack)
 const isFavorite = computed(() => player.isFavorite(player.currentTrack))
+const trackKey = computed(() => player.currentTrack?.trackKey ?? 'empty')
 
-const titleText = computed(() =>
-  hasTrack.value ? player.currentTrack!.title : '未在播放'
-)
-const artistText = computed(() =>
-  hasTrack.value ? player.currentTrack!.artist : '选择歌曲开始播放'
-)
+const titleText = computed(() => {
+  if (!hasTrack.value) return '未在播放'
+  const title = player.currentTrack!.title
+  const artist = player.currentTrack!.artist?.trim()
+  return artist ? `${title} — ${artist}` : title
+})
+
+const instantLyric = computed(() => {
+  const raw = player.lyricsLrc
+  if (!hasTrack.value || !raw?.includes('[')) return ''
+  const lines = parseLrc(raw)
+  if (!lines.length) return ''
+  const idx = lrcLineAt(lines, player.progress)
+  return idx >= 0 ? lines[idx]?.text ?? '' : ''
+})
+
+const metaSecondary = computed(() => {
+  if (!hasTrack.value) return '选择歌曲开始播放'
+  return instantLyric.value
+})
 
 const playModeLabel = computed(() => {
   if (player.playMode === 'shuffle') return '随机播放'
@@ -51,23 +67,36 @@ function openPlayer() {
           :disabled="!hasTrack"
           @click="openPlayer"
         >
-          <MusicCover
-            v-if="hasTrack && player.currentTrack"
-            :src="player.currentTrack.coverUrl"
-            :video-id="player.currentTrack.videoId"
-            :provider="player.currentTrack.provider"
-            :title="player.currentTrack.title"
-            size="thumb"
-            shape="square"
-            priority
-            class="ww-music-minibar__cover"
-          />
+          <div v-if="hasTrack && player.currentTrack" class="ww-music-minibar__cover-wrap">
+            <Transition name="ww-minibar-cover" mode="out-in">
+              <MusicCover
+                :key="trackKey"
+                :src="player.currentTrack.coverUrl"
+                :video-id="player.currentTrack.videoId"
+                :provider="player.currentTrack.provider"
+                :title="player.currentTrack.title"
+                size="thumb"
+                shape="square"
+                priority
+                class="ww-music-minibar__cover"
+              />
+            </Transition>
+          </div>
           <span v-else class="ww-music-minibar__cover ww-music-minibar__cover--empty" aria-hidden="true">
             <WwIcon name="disc-3" size="sm" />
           </span>
           <span class="ww-music-minibar__meta">
-            <WwMarqueeText :text="titleText" class="ww-music-minibar__title" />
-            <span class="ww-music-minibar__artist ww-music-text-ellipsis">{{ artistText }}</span>
+            <Transition name="ww-minibar-meta" mode="out-in">
+              <span :key="trackKey" class="ww-music-minibar__meta-inner">
+                <WwMarqueeText :text="titleText" class="ww-music-minibar__title" />
+                <WwMarqueeText
+                  v-if="metaSecondary"
+                  :text="metaSecondary"
+                  class="ww-music-minibar__artist"
+                  :class="{ 'is-lyric': hasTrack && !!instantLyric }"
+                />
+              </span>
+            </Transition>
           </span>
         </button>
 
@@ -208,6 +237,64 @@ function openPlayer() {
   cursor: default;
 }
 
+.ww-music-minibar__cover-wrap {
+  position: relative;
+  width: 2.85rem;
+  height: 2.85rem;
+  flex-shrink: 0;
+  border-radius: var(--ww-music-inner-radius, 0.875rem);
+  overflow: hidden;
+}
+
+.ww-music-minibar__cover-wrap .ww-music-minibar__cover {
+  position: absolute;
+  inset: 0;
+}
+
+.ww-minibar-cover-enter-active {
+  transition:
+    opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-minibar-cover-leave-active {
+  transition:
+    opacity 0.16s cubic-bezier(0.55, 0, 1, 0.45),
+    transform 0.18s cubic-bezier(0.55, 0, 1, 0.45);
+}
+
+.ww-minibar-cover-enter-from {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.ww-minibar-cover-leave-to {
+  opacity: 0;
+  transform: scale(1.06);
+}
+
+.ww-minibar-meta-enter-active {
+  transition:
+    opacity 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-minibar-meta-leave-active {
+  transition:
+    opacity 0.14s cubic-bezier(0.55, 0, 1, 0.45),
+    transform 0.16s cubic-bezier(0.55, 0, 1, 0.45);
+}
+
+.ww-minibar-meta-enter-from {
+  opacity: 0;
+  transform: translateY(5px);
+}
+
+.ww-minibar-meta-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
 .ww-music-minibar__cover {
   width: 2.85rem;
   height: 2.85rem;
@@ -232,6 +319,16 @@ function openPlayer() {
 .ww-music-minibar__meta {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ww-music-minibar__meta-inner {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
 }
 
 .ww-music-minibar__title {
@@ -247,6 +344,27 @@ function openPlayer() {
   margin-top: 0.1rem;
   font-size: 0.75rem;
   color: var(--ww-ink-faint);
+  line-height: 1.25;
+}
+
+.ww-music-minibar__artist.is-lyric {
+  color: color-mix(in srgb, var(--ww-ink) 72%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-minibar-cover-enter-active,
+  .ww-minibar-cover-leave-active,
+  .ww-minibar-meta-enter-active,
+  .ww-minibar-meta-leave-active {
+    transition-duration: 0.01ms;
+  }
+
+  .ww-minibar-cover-enter-from,
+  .ww-minibar-cover-leave-to,
+  .ww-minibar-meta-enter-from,
+  .ww-minibar-meta-leave-to {
+    transform: none;
+  }
 }
 
 .ww-music-minibar__controls {

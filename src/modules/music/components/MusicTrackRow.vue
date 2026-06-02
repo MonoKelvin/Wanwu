@@ -32,14 +32,8 @@ function formatDuration(sec?: number): string {
     :class="{ 'is-playing': playing, 'is-loading': loading }"
     @click="emit('play', track)"
   >
-    <span v-if="rank != null" class="ww-track-row__rank">
-      <MusicPlayingBars v-if="playing" class="ww-track-row__rank-bars" />
-      <template v-else>{{ rank }}</template>
-    </span>
-    <span v-else-if="index != null" class="ww-track-row__rank">
-      <MusicPlayingBars v-if="playing" class="ww-track-row__rank-bars" />
-      <template v-else>{{ index + 1 }}</template>
-    </span>
+    <span v-if="rank != null" class="ww-track-row__rank">{{ rank }}</span>
+    <span v-else-if="index != null" class="ww-track-row__rank">{{ index + 1 }}</span>
         <MusicCover
           :src="track.coverUrl"
           :video-id="track.videoId"
@@ -57,12 +51,30 @@ function formatDuration(sec?: number): string {
       <span class="ww-track-row__artist">{{ track.artist }}</span>
     </span>
     <span class="ww-track-row__tail">
-      <WwIcon v-if="loading" name="loader" size="sm" spin class="ww-track-row__loading" />
-      <MusicPlayingBars v-else-if="playing && rank == null && index == null" class="ww-track-row__playing-bars" />
-      <template v-else>
-        <span v-if="track.durationSec" class="ww-track-row__duration">{{ formatDuration(track.durationSec) }}</span>
-        <WwIcon name="play" size="sm" filled class="ww-track-row__play-hint" />
-      </template>
+      <span class="ww-track-row__action">
+        <span
+          v-show="!playing && !loading && track.durationSec"
+          class="ww-track-row__duration"
+        >{{ formatDuration(track.durationSec) }}</span>
+        <WwIcon
+          v-if="loading"
+          name="loader"
+          size="sm"
+          spin
+          class="ww-track-row__status-item ww-track-row__loading"
+        />
+        <MusicPlayingBars
+          v-else-if="playing"
+          class="ww-track-row__status-item ww-track-row__playing-bars"
+        />
+        <WwIcon
+          v-else
+          name="play"
+          size="sm"
+          filled
+          class="ww-track-row__status-item ww-track-row__play-hint"
+        />
+      </span>
     </span>
   </button>
 </template>
@@ -103,10 +115,6 @@ function formatDuration(sec?: number): string {
   font-weight: 600;
   color: var(--ww-ink-faint);
   text-align: center;
-}
-
-.ww-track-row__rank-bars {
-  margin: 0 auto;
 }
 
 .ww-track-row.is-playing .ww-track-row__rank {
@@ -155,35 +163,72 @@ function formatDuration(sec?: number): string {
 }
 .ww-track-row__tail {
   flex-shrink: 0;
-  width: 2.5rem;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 2.75rem;
+  min-width: 2rem;
+  padding-right: 0.8rem;
 }
+
+.ww-track-row__action {
+  position: relative;
+  width: 2rem;
+  height: 1rem;
+  line-height: 1;
+}
+
+.ww-track-row__duration,
+.ww-track-row__status-item {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  transform: translateY(-50%);
+  line-height: 1;
+}
+
 .ww-track-row__duration {
   font-size: var(--ww-music-fs-sm);
   color: var(--ww-ink-faint);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: opacity 0.15s var(--ww-ease-out);
 }
 
 .ww-track-row__play-hint {
-  display: none;
   color: var(--ww-ink);
+  opacity: 0;
+  transition: opacity 0.15s var(--ww-ease-out);
+}
+
+.ww-track-row__play-hint :deep(svg) {
+  display: block;
+}
+
+.ww-track-row:hover:not(.is-playing):not(.is-loading) .ww-track-row__play-hint {
   opacity: 0.72;
 }
 
-.ww-track-row:hover .ww-track-row__play-hint {
-  display: inline-flex;
+.ww-track-row:hover:not(.is-playing):not(.is-loading) .ww-track-row__duration {
+  opacity: 0;
 }
 
-.ww-track-row:hover .ww-track-row__duration {
-  display: none;
-}
 .ww-track-row.is-loading {
   opacity: 0.85;
 }
+
 .ww-track-row__loading {
   color: var(--ww-ink-muted);
 }
-.ww-track-row__playing-bars {
-  margin-left: auto;
+
+.ww-track-row__loading :deep(svg) {
+  display: block;
+}
+
+.ww-track-row__playing-bars :deep(.ww-music-playing-bars) {
+  align-items: center;
 }
 </style>

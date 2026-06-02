@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia'
 import { onScopeDispose, ref } from 'vue'
 import type { DiscoverSectionKey, MusicChartCard, NormalizedTrack } from '@shared/types/music'
+import {
+  clearDiscoverSectionCache,
+  readDiscoverSectionCache,
+  writeDiscoverSectionCache
+} from '@modules/music/lib/discoverSectionCache'
 
-const SECTION_KEYS: DiscoverSectionKey[] = [
-  'forYou',
-  'trending',
-  'newReleases',
-  'chartTracks',
-  'chartPlaylists'
-]
+/** 发现页 UI 实际使用的 section（其余 key 仍可通过 loadSection 按需拉取） */
+const ACTIVE_SECTION_KEYS: DiscoverSectionKey[] = ['forYou']
 
 const AUTO_REFRESH_MS = 120_000
 
@@ -54,12 +54,24 @@ export const useMusicDiscoverStore = defineStore('musicDiscover', () => {
     if (state.value.loaded && !force) return
     if (state.value.loading && !force) return
 
+    if (!force) {
+      const cached = readDiscoverSectionCache<typeof state.value.data>(key)
+      if (cached?.length) {
+        state.value.data = cached as never
+        state.value.loaded = true
+        return
+      }
+    }
+
     state.value.loading = true
     state.value.error = null
     try {
       const data = await window.wanwu.music.getDiscoverSection(key)
       state.value.data = data as never
       state.value.loaded = true
+      if (Array.isArray(data) && data.length) {
+        writeDiscoverSectionCache(key, data)
+      }
     } catch (e) {
       state.value.error = e instanceof Error ? e.message : '加载失败'
     } finally {
@@ -77,6 +89,9 @@ export const useMusicDiscoverStore = defineStore('musicDiscover', () => {
       const data = await window.wanwu.music.refreshDiscoverSection(key)
       state.value.data = data as never
       state.value.loaded = true
+      if (Array.isArray(data) && data.length) {
+        writeDiscoverSectionCache(key, data)
+      }
     } catch (e) {
       state.value.error = e instanceof Error ? e.message : '刷新失败'
     } finally {
@@ -87,38 +102,28 @@ export const useMusicDiscoverStore = defineStore('musicDiscover', () => {
   async function ensureLoaded() {
     if (!initialized.value) {
       initialized.value = true
-      void Promise.all(SECTION_KEYS.map((key) => loadSection(key))).then(async () => {
-        const allEmpty = SECTION_KEYS.every(
-          (k) => !sectionRef(k).value.data.length && !sectionRef(k).value.error
-        )
-        if (allEmpty) {
-          await Promise.all(SECTION_KEYS.map((key) => refreshSection(key)))
-        }
-      })
+      await loadSection('forYou')
+      if (!forYou.value.data.length && !forYou.value.error) {
+        await refreshSection('forYou')
+      }
       return
     }
 
-    const allEmpty = SECTION_KEYS.every(
-      (k) => !sectionRef(k).value.data.length && !sectionRef(k).value.error
-    )
-    if (allEmpty) {
-      void Promise.all(SECTION_KEYS.map((key) => refreshSection(key)))
+    if (!forYou.value.loaded) {
+      await loadSection('forYou')
     }
   }
 
   async function reloadAll() {
-    for (const key of SECTION_KEYS) {
-      sectionRef(key).value.loaded = false
-    }
-    await Promise.all(SECTION_KEYS.map((key) => loadSection(key, true)))
+    clearDiscoverSectionCache('forYou')
+    forYou.value.loaded = false
+    await loadSection('forYou', true)
   }
 
   function startAutoRefresh() {
     if (autoTimer) return
     autoTimer = setInterval(() => {
-      for (const key of SECTION_KEYS) {
-        void refreshSection(key)
-      }
+      void refreshSection('forYou')
     }, AUTO_REFRESH_MS)
   }
 

@@ -53,6 +53,8 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
 
   let playGeneration = 0
   let persistTimer: ReturnType<typeof setTimeout> | null = null
+  let progressPersistTimer: ReturnType<typeof setTimeout> | null = null
+  const PROGRESS_PERSIST_MS = 8000
 
   function persistPlaybackState(wasPlaying?: boolean) {
     if (!currentTrack.value) {
@@ -296,10 +298,16 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
 
   watch(
     () => player.progress.value,
-    () => schedulePersist()
+    () => {
+      if (progressPersistTimer) return
+      progressPersistTimer = setTimeout(() => {
+        progressPersistTimer = null
+        schedulePersist()
+      }, PROGRESS_PERSIST_MS)
+    }
   )
 
-  watch([playMode, layoutMode, currentTrack], () => schedulePersist())
+  watch([playMode, layoutMode, currentTrack, queueIndex], () => schedulePersist())
 
   watch(
     () => account.profile.value.loggedIn,

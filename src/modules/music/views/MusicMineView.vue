@@ -113,6 +113,7 @@ function syncTabFromRoute() {
 }
 
 async function loadFavorites() {
+  if (loadingLocal.value) return
   loadingLocal.value = true
   try {
     const rows = await window.wanwu.music.listFavorites()
@@ -135,6 +136,7 @@ function dedupeHistoryTracks(tracks: NormalizedTrack[]): NormalizedTrack[] {
 }
 
 async function loadHistory() {
+  if (loadingLocal.value) return
   loadingLocal.value = true
   try {
     const rows = await window.wanwu.music.listHistory(80)
@@ -151,6 +153,7 @@ async function loadLocalData() {
 }
 
 async function loadLiked() {
+  if (loadingLiked.value) return
   if (!profile.value.loggedIn) {
     likedTracks.value = []
     return
@@ -164,6 +167,7 @@ async function loadLiked() {
 }
 
 async function loadPlaylists() {
+  if (loadingPlaylists.value) return
   if (!profile.value.loggedIn) {
     playlists.value = []
     return
@@ -177,6 +181,7 @@ async function loadPlaylists() {
 }
 
 async function loadCloud() {
+  if (loadingCloud.value) return
   if (!profile.value.loggedIn) {
     cloudTracks.value = []
     return
@@ -190,6 +195,7 @@ async function loadCloud() {
 }
 
 async function loadCollect() {
+  if (loadingCollect.value) return
   if (!profile.value.loggedIn) {
     subscribedItems.value = []
     return
@@ -298,12 +304,11 @@ watch(
 )
 
 onActivated(() => {
-  loadActiveTabData()
+  requestAnimationFrame(() => loadActiveTabData())
 })
 
 onMounted(() => {
   syncTabFromRoute()
-  void loadLocalData()
   loadActiveTabData()
 })
 </script>

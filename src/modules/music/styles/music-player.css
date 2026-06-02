@@ -26,6 +26,26 @@
   will-change: transform, opacity;
 }
 
+.ww-music-player-page__bg-slot {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ww-player-bg-enter-active {
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-player-bg-leave-active {
+  transition: opacity 0.24s cubic-bezier(0.55, 0, 1, 0.45);
+}
+
+.ww-player-bg-enter-from,
+.ww-player-bg-leave-to {
+  opacity: 0;
+}
+
 @keyframes ww-music-bg-breathe {
   from {
     transform: scale(1.06);
@@ -82,6 +102,53 @@
   overflow: visible;
 }
 
+.ww-music-player-page__head,
+.ww-music-player-page__footer {
+  transition:
+    opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-music-player-page__head.is-hidden,
+.ww-music-player-page__footer.is-hidden {
+  opacity: 0;
+  transform: translateY(-0.35rem);
+  pointer-events: none;
+}
+
+.ww-music-player-page__footer.is-hidden {
+  transform: translateY(0.35rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-music-player-page__bg {
+    animation: none;
+    filter: blur(40px) saturate(1.2);
+  }
+
+  .ww-player-bg-enter-active,
+  .ww-player-bg-leave-active,
+  .ww-player-meta-enter-active,
+  .ww-player-meta-leave-active {
+    transition-duration: 0.01ms;
+  }
+
+  .ww-player-meta-enter-from,
+  .ww-player-meta-leave-to {
+    transform: none;
+  }
+
+  .ww-music-player-page__head,
+  .ww-music-player-page__footer {
+    transition: opacity 0.15s linear;
+  }
+
+  .ww-music-player-page__head.is-hidden,
+  .ww-music-player-page__footer.is-hidden {
+    transform: none;
+  }
+}
+
 .ww-music-player-page__head {
   --ww-player-head-top-gap: 0.5rem;
   --ww-player-head-side-inset: 2rem;
@@ -127,6 +194,28 @@
   user-select: none;
   -webkit-app-region: drag;
   app-region: drag;
+}
+
+.ww-player-meta-enter-active {
+  transition:
+    opacity 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-player-meta-leave-active {
+  transition:
+    opacity 0.14s cubic-bezier(0.55, 0, 1, 0.45),
+    transform 0.16s cubic-bezier(0.55, 0, 1, 0.45);
+}
+
+.ww-player-meta-enter-from {
+  opacity: 0;
+  transform: translateY(5px);
+}
+
+.ww-player-meta-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 
 .ww-music-player-page__head h1 {

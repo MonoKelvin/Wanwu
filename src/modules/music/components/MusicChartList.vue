@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { computed, inject, ref, watch } from 'vue'
 import type { NormalizedTrack } from '@shared/types/music'
 import MusicTrackRow from '@modules/music/components/MusicTrackRow.vue'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
-import { computed } from 'vue'
+import { musicScrollBodyKey } from '@modules/music/lib/musicScrollBodyKey'
+import { useChartListVirtual } from '@modules/music/composables/useChartListVirtual'
 
 const props = defineProps<{
   tracks: NormalizedTrack[]
@@ -18,6 +20,27 @@ const emit = defineEmits<{
 const player = useMusicPlayerStore()
 const currentKey = computed(() => player.currentTrack?.trackKey)
 const loadingKey = computed(() => (player.loading ? player.currentTrack?.trackKey : undefined))
+
+const listRef = ref<HTMLElement | null>(null)
+const scrollEl = inject(musicScrollBodyKey, ref<HTMLElement | null>(null))
+const { enabled, range, measure } = useChartListVirtual(
+  scrollEl,
+  listRef,
+  computed(() => props.tracks.length)
+)
+
+const visibleTracks = computed(() => {
+  if (!enabled.value) return props.tracks.map((track, index) => ({ track, index }))
+  return props.tracks.slice(range.value.start, range.value.end).map((track, i) => ({
+    track,
+    index: range.value.start + i
+  }))
+})
+
+watch(
+  () => props.tracks.length,
+  () => measure()
+)
 </script>
 
 <template>
@@ -31,22 +54,43 @@ const loadingKey = computed(() => (player.loading ? player.currentTrack?.trackKe
       </div>
     </div>
   </div>
-  <div v-else class="ww-chart-list" :class="{ 'ww-music-track-panel': props.panel }">
-    <MusicTrackRow
-      v-for="(track, i) in tracks"
-      :key="track.trackKey"
-      :track="track"
-      :rank="i + 1"
-      :playing="currentKey === track.trackKey && player.isPlaying"
-      :loading="loadingKey === track.trackKey"
-      :show-provider="showProvider"
-      @play="emit('play', track, i)"
-    />
+  <div
+    v-else
+    ref="listRef"
+    class="ww-chart-list"
+    :class="{ 'ww-music-track-panel': props.panel, 'is-virtual': enabled }"
+    :style="enabled ? { minHeight: `${range.totalHeight}px` } : undefined"
+  >
+    <div
+      class="ww-chart-list__window"
+      :style="enabled ? { transform: `translateY(${range.offsetY}px)` } : undefined"
+    >
+      <MusicTrackRow
+        v-for="{ track, index } in visibleTracks"
+        :key="track.trackKey"
+        :track="track"
+        :rank="index + 1"
+        :playing="currentKey === track.trackKey && player.isPlaying"
+        :loading="loadingKey === track.trackKey"
+        :show-provider="showProvider"
+        @play="emit('play', track, index)"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped>
 .ww-chart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.ww-chart-list.is-virtual {
+  position: relative;
+}
+
+.ww-chart-list__window {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;

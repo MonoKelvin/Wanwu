@@ -1,12 +1,12 @@
 /* 音乐模块共享视觉 token */
 :root {
   --ww-music-card-size: 11.5rem;
-  --ww-music-card-gap: 1rem;
+  --ww-music-card-gap: 0.75rem;
   --ww-music-cover-radius: 1.125rem;
   --ww-music-card-radius: 1.25rem;
   --ww-music-panel-radius: 1.125rem;
   --ww-music-inner-radius: 0.875rem;
-  --ww-music-section-gap: 2rem;
+  --ww-music-section-gap: 1.75rem;
   --ww-music-section-head-gap: 0.75rem;
   --ww-music-control-gap: 0.5rem;
   --ww-music-pill-radius: var(--ww-radius-full);
@@ -18,7 +18,7 @@
   --ww-music-minibar-clearance: 6.5rem;
   --ww-music-fs-xs: 0.6875rem;
   --ww-music-fs-sm: 0.75rem;
-  --ww-music-fs-base: 0.8125rem;
+  --ww-music-fs-base: 0.875rem;
   --ww-music-fs-md: 0.875rem;
   --ww-music-fs-lg: 1.0625rem;
   --ww-music-fs-xl: clamp(1.375rem, 2.5vw, 1.75rem);
@@ -56,10 +56,12 @@
 .ww-music-search-results {
   flex: 1;
   min-height: 0;
+  overflow-anchor: none;
   padding:
-    1.125rem
+    0
     var(--ww-music-page-x, var(--ww-page-padding, 1.625rem))
     calc(var(--ww-music-minibar-clearance) + var(--ww-music-page-x, var(--ww-page-padding, 1.625rem)));
+  background: var(--ww-inset);
 }
 
 .ww-music-content-shell {
@@ -346,6 +348,24 @@
   color: var(--ww-ink);
   letter-spacing: var(--ww-music-ls-title);
   line-height: var(--ww-music-lh-tight);
+}
+
+.ww-music-section-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.2rem 0.35rem;
+  border: none;
+  border-radius: var(--ww-radius-full);
+  background: transparent;
+  font-size: var(--ww-music-fs-sm);
+  color: var(--ww-ink-faint);
+  cursor: pointer;
+  transition: color 0.18s var(--ww-ease-out);
+}
+
+.ww-music-section-more:hover {
+  color: var(--ww-ink);
 }
 
 .ww-music-section-sub {

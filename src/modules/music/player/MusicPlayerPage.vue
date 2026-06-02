@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onActivated, onDeactivated, ref } from 'vue'
+import { computed, onDeactivated, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import WwIcon from '@shared/components/WwIcon.vue'
 import MusicModeGallery from '@modules/music/player/modes/MusicModeGallery.vue'
@@ -19,42 +19,96 @@ const player = useMusicPlayerStore()
 const queueOpen = ref(false)
 const commentsOpen = ref(false)
 const commentBtnRef = ref<HTMLButtonElement | null>(null)
+const chromeVisible = ref(true)
+let idleTimer: ReturnType<typeof setTimeout> | null = null
+const IDLE_MS = 3000
 
 function toggleComments() {
   commentsOpen.value = !commentsOpen.value
 }
 
 const commentSongId = computed(() => resolveCommentSongId(player.currentTrack))
+const trackKey = computed(() => player.currentTrack?.trackKey ?? 'empty')
 
-const bgStyle = computed(() => {
+const bgCoverStyle = computed(() => {
   const url = player.currentTrack?.coverUrl
-  if (!url) return {}
-  return { '--ww-music-cover-url': `url("${url}")` }
+  if (!url) return undefined
+  return { '--ww-music-cover-url': `url("${url}")` } as Record<string, string>
 })
+
+const hideChrome = computed(
+  () => player.layoutMode === 'immersion' && !chromeVisible.value && !queueOpen.value && !commentsOpen.value
+)
+
+function resetIdleTimer() {
+  chromeVisible.value = true
+  if (idleTimer) clearTimeout(idleTimer)
+  if (player.layoutMode !== 'immersion') return
+  idleTimer = setTimeout(() => {
+    chromeVisible.value = false
+  }, IDLE_MS)
+}
 
 function back() {
   router.back()
 }
 
+watch(
+  () => player.layoutMode,
+  () => resetIdleTimer()
+)
+
+watch([queueOpen, commentsOpen], () => resetIdleTimer())
+
+onMounted(() => {
+  window.addEventListener('pointerdown', resetIdleTimer, { passive: true })
+  window.addEventListener('pointermove', resetIdleTimer, { passive: true })
+  resetIdleTimer()
+})
+
+onUnmounted(() => {
+  if (idleTimer) clearTimeout(idleTimer)
+  window.removeEventListener('pointerdown', resetIdleTimer)
+  window.removeEventListener('pointermove', resetIdleTimer)
+})
+
 onDeactivated(() => {
   queueOpen.value = false
   commentsOpen.value = false
+  chromeVisible.value = true
 })
 </script>
 
 <template>
-  <div class="ww-music-player-page" :style="bgStyle">
-    <div class="ww-music-player-page__bg" aria-hidden="true" />
+  <div class="ww-music-player-page">
+    <div class="ww-music-player-page__bg-slot" aria-hidden="true">
+      <Transition name="ww-player-bg">
+        <div
+          v-if="bgCoverStyle"
+          :key="trackKey"
+          class="ww-music-player-page__bg"
+          :style="bgCoverStyle"
+        />
+      </Transition>
+    </div>
     <div class="ww-music-player-page__content">
-      <header v-if="player.currentTrack" class="ww-music-player-page__head">
+      <header
+        v-if="player.currentTrack"
+        class="ww-music-player-page__head"
+        :class="{ 'is-hidden': hideChrome }"
+      >
         <div class="ww-music-player-page__head-action ww-music-player-page__head-action--back">
           <button type="button" class="ww-music-nav-btn" aria-label="返回" @click="back">
             <WwIcon name="chevron-left" size="md" />
           </button>
         </div>
         <div class="ww-music-player-page__head-text">
-          <h1>{{ player.currentTrack.title }}</h1>
-          <p>{{ player.currentTrack.artist }}</p>
+          <Transition name="ww-player-meta" mode="out-in">
+            <div :key="trackKey" class="ww-music-player-page__head-text-inner">
+              <h1>{{ player.currentTrack.title }}</h1>
+              <p>{{ player.currentTrack.artist }}</p>
+            </div>
+          </Transition>
         </div>
         <div class="ww-music-player-page__head-action ww-music-player-page__head-action--comment">
           <button
@@ -71,16 +125,16 @@ onDeactivated(() => {
       </header>
       <div class="ww-music-player-page__stage">
         <MusicModeGallery
-          v-show="player.layoutMode === 'gallery'"
+          v-if="player.layoutMode === 'gallery'"
           class="ww-music-player-page__mode"
         />
-        <MusicModeDuet v-show="player.layoutMode === 'duet'" class="ww-music-player-page__mode" />
+        <MusicModeDuet v-if="player.layoutMode === 'duet'" class="ww-music-player-page__mode" />
         <MusicModeImmersion
-          v-show="player.layoutMode === 'immersion'"
+          v-if="player.layoutMode === 'immersion'"
           class="ww-music-player-page__mode"
         />
       </div>
-      <footer class="ww-music-player-page__footer">
+      <footer class="ww-music-player-page__footer" :class="{ 'is-hidden': hideChrome }">
         <MusicTransport @toggle-queue="queueOpen = !queueOpen" />
       </footer>
       <MusicQueueSheet :open="queueOpen" @close="queueOpen = false" />

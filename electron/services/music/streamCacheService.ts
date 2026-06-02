@@ -1,4 +1,4 @@
-import { createWriteStream, existsSync, statSync } from 'fs'
+import { createWriteStream, existsSync, readdirSync, statSync, unlinkSync } from 'fs'
 import { join, relative } from 'path'
 import { ensureWanwuDataLayout, getWanwuPathLayout } from '../data/paths'
 import { toWanwuMediaUrl } from '../media/wanwu'
@@ -15,6 +15,7 @@ import {
 
 export class StreamCacheService {
   private readonly layout: ReturnType<typeof getWanwuPathLayout>
+  private static readonly MAX_CACHE_FILES = 48
 
   constructor(
     basePath: string,
@@ -30,6 +31,24 @@ export class StreamCacheService {
 
   private audioDir(): string {
     return this.layout.musicCacheAudio
+  }
+
+  private evictOldCacheFiles(): void {
+    try {
+      const dir = this.audioDir()
+      const files = readdirSync(dir)
+        .map((name) => {
+          const path = join(dir, name)
+          return { path, mtime: statSync(path).mtimeMs }
+        })
+        .sort((a, b) => a.mtime - b.mtime)
+      while (files.length > StreamCacheService.MAX_CACHE_FILES) {
+        const old = files.shift()
+        if (old) unlinkSync(old.path)
+      }
+    } catch {
+      /* ignore */
+    }
   }
 
   cacheKey(provider: string, videoId: string): string {
@@ -131,6 +150,7 @@ export class StreamCacheService {
       Readable.fromWeb(res.body as import('stream/web').ReadableStream),
       createWriteStream(dest)
     )
+    this.evictOldCacheFiles()
     const rel = relative(this.basePath, dest).replace(/\\/g, '/')
     return {
       url: toWanwuMediaUrl(rel) ?? `wanwu-media://${encodeURI(rel)}`,

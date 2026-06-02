@@ -176,18 +176,171 @@
   color: var(--ww-ink-muted);
 }
 
-.ww-music-shell .ww-music-search-results__tabs {
-  margin-bottom: var(--ww-music-section-gap);
+.ww-music-shell .ww-music-search-layout {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--ww-inset);
 }
 
-.ww-music-shell .ww-music-search-results__head {
-  margin-bottom: var(--ww-music-section-gap);
+.ww-music-shell .ww-music-search-layout__header {
+  flex-shrink: 0;
+  padding:
+    0.75rem
+    var(--ww-music-page-x, var(--ww-page-padding, 1.625rem))
+    0.875rem;
+  background: var(--ww-inset);
+  border-bottom: 1px solid color-mix(in srgb, var(--ww-border-subtle) 42%, transparent);
 }
 
-.ww-music-shell .ww-music-search-results__section {
-  margin-bottom: calc(var(--ww-music-section-gap) + 0.25rem);
+.ww-music-shell .ww-music-search-layout__body.ww-music-search-results {
+  flex: 1;
+  min-height: 0;
 }
 
-.ww-music-shell .ww-music-search-results__section .ww-music-section-title {
-  margin-bottom: var(--ww-music-section-head-gap);
+.ww-music-shell .ww-music-search-page .ww-music-content-shell {
+  padding-top: 0;
+}
+
+.ww-music-shell .ww-music-search-page__heading {
+  margin-bottom: 0.875rem;
+}
+
+.ww-music-shell .ww-music-search-page__heading .ww-music-page-heading {
+  margin-bottom: 0;
+}
+
+.ww-music-shell .ww-music-search-tabs {
+  display: flex;
+  justify-content: center;
+}
+
+.ww-music-shell .ww-music-search-tabs .ww-music-pill-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: auto;
+  max-width: 100%;
+}
+
+.ww-music-shell .ww-music-search-body {
+  padding-top: 0.375rem;
+}
+
+.ww-music-shell .ww-music-search-pane {
+  min-height: 10rem;
+  padding: 0.375rem 0 0.5rem;
+}
+
+.ww-music-shell .ww-music-search-pane.is-loading {
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.18s var(--ww-ease-out);
+}
+
+.ww-music-shell .ww-music-search-pane__tracks {
+  margin-top: 0.25rem;
+}
+
+.ww-music-shell .ww-music-search-pane__tracks .ww-chart-list {
+  gap: 0.25rem;
+}
+
+.ww-music-shell .ww-music-search-pane__tracks .ww-chart-list__window {
+  gap: 0.25rem;
+}
+
+.ww-music-shell .ww-music-search-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.25rem, 1fr));
+  gap: 1.375rem 1rem;
+  padding: 0.375rem 0.125rem 0.75rem;
+}
+
+.ww-music-shell .ww-music-search-grid--artist {
+  grid-template-columns: repeat(auto-fill, minmax(6.25rem, 1fr));
+  gap: 1.5rem 1rem;
+  padding-inline: 0.5rem;
+}
+
+.ww-music-shell .ww-music-search-grid__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ww-music-shell .ww-music-search-grid--artist .ww-music-search-grid__item {
+  align-items: center;
+  text-align: center;
+  gap: 0.625rem;
+}
+
+.ww-music-shell .ww-music-search-grid__cover {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--ww-music-inner-radius);
+  overflow: hidden;
+  transition: transform var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-music-shell .ww-music-search-grid__cover .ww-music-cover,
+.ww-music-shell .ww-music-search-grid__cover .ww-music-cover__frame {
+  width: 100%;
+  height: 100%;
+}
+
+.ww-music-shell .ww-music-search-grid__cover .ww-music-cover__frame {
+  border-radius: inherit;
+}
+
+.ww-music-shell .ww-music-search-grid--artist .ww-music-search-grid__cover {
+  width: 100%;
+  max-width: 6rem;
+  border-radius: var(--ww-radius-full);
+}
+
+.ww-music-shell .ww-music-search-grid__item:hover .ww-music-search-grid__cover {
+  transform: translateY(-2px);
+}
+
+.ww-music-shell .ww-music-search-grid__title {
+  font-size: var(--ww-music-fs-base);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ww-ink);
+}
+
+.ww-music-shell .ww-music-search-grid__sub {
+  margin-top: -0.125rem;
+  font-size: var(--ww-music-fs-sm);
+  line-height: 1.4;
+  color: var(--ww-ink-faint);
+}
+
+.ww-music-shell .ww-music-search-loading {
+  padding: 0.375rem 0 0.75rem;
+}
+
+.ww-music-shell .ww-music-search-loading__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.25rem, 1fr));
+  gap: 1.375rem 1rem;
+  padding: 0.375rem 0.125rem;
+}
+
+.ww-music-shell .ww-music-search-loading__grid.is-artist {
+  grid-template-columns: repeat(auto-fill, minmax(6.25rem, 1fr));
+  gap: 1.5rem 1rem;
+  padding-inline: 0.5rem;
+}
+
+.ww-music-shell .ww-music-search-empty {
+  padding: 1.25rem 0 2.5rem;
 }

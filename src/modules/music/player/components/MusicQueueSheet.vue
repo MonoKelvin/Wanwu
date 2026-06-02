@@ -27,6 +27,15 @@ watch(
     scrollToCurrent()
   }
 )
+
+watch(
+  () => player.queueIndex,
+  async () => {
+    if (!props.open) return
+    await nextTick()
+    scrollToCurrent()
+  }
+)
 </script>
 
 <template>
@@ -78,8 +87,8 @@ watch(
   max-width: 100%;
   border-left: 1px solid color-mix(in srgb, var(--ww-glass-border) 82%, transparent);
   background: color-mix(in srgb, var(--ww-glass-bg) 78%, transparent);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
   box-shadow: -16px 0 48px color-mix(in srgb, var(--ww-ink) 10%, transparent);
   will-change: transform;
 }

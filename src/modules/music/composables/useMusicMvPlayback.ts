@@ -18,6 +18,9 @@ export function useMusicMvPlayback() {
 
   function leaveMvPage() {
     mvPageActive.value = false
+    if (musicWasPlayingBeforeMv === true && !player.isPlaying) {
+      player.togglePlay()
+    }
     musicWasPlayingBeforeMv = null
   }
 

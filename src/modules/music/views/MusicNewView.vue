@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicTrackCarousel from '@modules/music/components/MusicTrackCarousel.vue'
@@ -18,21 +18,47 @@ const player = useMusicPlayerStore()
 const tab = ref<Tab>('songs')
 const songs = ref<NormalizedTrack[]>([])
 const albums = ref<Array<{ browseId: string; title: string; artist: string; coverUrl?: string }>>([])
-const loading = ref(true)
+const songsLoading = ref(true)
+const albumsLoading = ref(false)
+const albumsReady = ref(false)
 
-onMounted(async () => {
-  loading.value = true
+const albumItems = computed(() =>
+  albums.value.map((a) => ({
+    id: a.browseId,
+    title: a.title,
+    subtitle: a.artist,
+    coverUrl: a.coverUrl
+  }))
+)
+
+async function loadSongs() {
+  songsLoading.value = true
   try {
-    const [songRows, albumRows] = await Promise.all([
-      window.wanwu.music.getNewSongs(40),
-      window.wanwu.music.getNewAlbums(24)
-    ])
-    songs.value = songRows
-    albums.value = albumRows
+    songs.value = await window.wanwu.music.getNewSongs(40)
   } finally {
-    loading.value = false
+    songsLoading.value = false
   }
+}
+
+async function loadAlbums() {
+  if (albumsReady.value || albumsLoading.value) return
+  albumsLoading.value = true
+  try {
+    albums.value = await window.wanwu.music.getNewAlbums(24)
+    albumsReady.value = true
+  } finally {
+    albumsLoading.value = false
+  }
+}
+
+onMounted(() => {
+  void loadSongs()
 })
+
+function onTabChange(next: Tab) {
+  tab.value = next
+  if (next === 'albums') void loadAlbums()
+}
 
 function play(track: NormalizedTrack) {
   void player.playTrack(track, songs.value)
@@ -57,7 +83,7 @@ function openAlbum(item: { id: string; title?: string }) {
           type="button"
           class="ww-music-login__tab"
           :class="{ 'is-active': tab === 'songs' }"
-          @click="tab = 'songs'"
+          @click="onTabChange('songs')"
         >
           新歌
         </button>
@@ -65,31 +91,24 @@ function openAlbum(item: { id: string; title?: string }) {
           type="button"
           class="ww-music-login__tab"
           :class="{ 'is-active': tab === 'albums' }"
-          @click="tab = 'albums'"
+          @click="onTabChange('albums')"
         >
           新碟
         </button>
       </div>
 
-      <p v-if="loading" class="ww-music-state-hint">加载中…</p>
-      <template v-else-if="tab === 'songs'">
-        <MusicTrackCarousel :tracks="songs" @play="play" />
-        <p v-if="!songs.length" class="ww-music-state-hint">暂无新歌</p>
+      <template v-if="tab === 'songs'">
+        <MusicTrackCarousel :tracks="songs" :loading="songsLoading" @play="play" />
+        <p v-if="!songsLoading && !songs.length" class="ww-music-state-hint">暂无新歌</p>
       </template>
       <template v-else>
         <MusicCoverRow
-          v-if="albums.length"
-          :items="
-            albums.map((a) => ({
-              id: a.browseId,
-              title: a.title,
-              subtitle: a.artist,
-              coverUrl: a.coverUrl
-            }))
-          "
+          :items="albumItems"
+          :loading="albumsLoading || !albumsReady"
+          size="album"
           @select="openAlbum"
         />
-        <p v-else class="ww-music-state-hint">暂无新碟</p>
+        <p v-if="albumsReady && !albumsLoading && !albums.length" class="ww-music-state-hint">暂无新碟</p>
       </template>
     </div>
   </MusicScrollBody>

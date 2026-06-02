@@ -16,6 +16,10 @@ const props = defineProps<{
 
 const fallbackIndex = ref(0)
 
+const coverKey = computed(
+  () => `${props.provider ?? ''}:${props.videoId ?? ''}:${props.src ?? ''}`
+)
+
 const fallbackUrls = computed(() =>
   listTrackCoverFallbacks(
     {
@@ -65,18 +69,21 @@ watch(
         @dragstart.prevent
       />
       <div class="ww-music-player-hero-cover__clip">
-        <img
-          v-if="imageUrl"
-          :src="imageUrl"
-          :alt="title ?? ''"
-          class="ww-music-player-hero-cover__img"
-          draggable="false"
-          loading="eager"
-          fetchpriority="high"
-          referrerpolicy="no-referrer"
-          @error="onImgError"
-          @dragstart.prevent
-        />
+        <Transition name="ww-cover-fade" mode="out-in">
+          <img
+            v-if="imageUrl"
+            :key="coverKey"
+            :src="imageUrl"
+            :alt="title ?? ''"
+            class="ww-music-player-hero-cover__img"
+            draggable="false"
+            loading="eager"
+            fetchpriority="high"
+            referrerpolicy="no-referrer"
+            @error="onImgError"
+            @dragstart.prevent
+          />
+        </Transition>
       </div>
     </div>
   </div>
@@ -137,5 +144,39 @@ watch(
   object-fit: cover;
   -webkit-user-drag: none;
   user-select: none;
+}
+
+.ww-cover-fade-enter-active {
+  transition:
+    opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-cover-fade-leave-active {
+  transition:
+    opacity 0.16s cubic-bezier(0.55, 0, 1, 0.45),
+    transform 0.18s cubic-bezier(0.55, 0, 1, 0.45);
+}
+
+.ww-cover-fade-enter-from {
+  opacity: 0;
+  transform: scale(0.92);
+}
+
+.ww-cover-fade-leave-to {
+  opacity: 0;
+  transform: scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-cover-fade-enter-active,
+  .ww-cover-fade-leave-active {
+    transition-duration: 0.01ms;
+  }
+
+  .ww-cover-fade-enter-from,
+  .ww-cover-fade-leave-to {
+    transform: none;
+  }
 }
 </style>

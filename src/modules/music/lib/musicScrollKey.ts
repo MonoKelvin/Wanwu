@@ -10,6 +10,7 @@ export function musicScrollKey(
   const paramId =
     route.params.browseId ??
     route.params.playlistId ??
+    route.params.categoryId ??
     route.params.id
   if (paramId != null && String(paramId).length > 0) {
     return `${name}:${String(paramId)}`

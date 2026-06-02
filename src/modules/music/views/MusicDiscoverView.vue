@@ -13,6 +13,13 @@ import { useMusicAccount } from '@modules/music/composables/useMusicAccount'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import { useMusicDiscoverStore } from '@modules/music/stores/musicDiscover'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
+import { useAsyncTask } from '@modules/music/composables/useAsyncTask'
+import { useLoadQueue } from '@modules/music/composables/useLoadQueue'
+import {
+  clearMusicViewCache,
+  readMusicViewCache,
+  writeMusicViewCache
+} from '@modules/music/lib/musicViewCache'
 import type { MusicChartCard, MusicChartSection, NormalizedTrack } from '@shared/types/music'
 import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import '@modules/music/styles/music-shared.css'
@@ -46,27 +53,57 @@ const artistsReady = ref(false)
 const chartsLoading = ref(false)
 const chartsReady = ref(false)
 
+const loadTask = useAsyncTask()
+const sectionQueue = useLoadQueue()
+
+const albumCoverItems = computed(() =>
+  newAlbums.value.map((a) => ({
+    id: a.browseId,
+    title: a.title,
+    subtitle: a.artist,
+    coverUrl: a.coverUrl
+  }))
+)
+
+const artistCoverItems = computed(() =>
+  artistPreview.value.map((a) => ({
+    id: a.browseId,
+    title: a.name,
+    coverUrl: a.coverUrl,
+    shape: 'circle' as const
+  }))
+)
+
+function cacheKey(suffix: string) {
+  return `discover:${suffix}:${platformId.value}`
+}
+
 onActivated(() => {
-  void discover.ensureLoaded()
-  void player.refreshFavorites()
   discover.startAutoRefresh()
   if (!forYouReady.value) void loadForYou()
+  requestAnimationFrame(() => {
+    void player.refreshFavorites()
+  })
 })
 
 function ensureDaily() {
-  if (!dailyReady.value) void loadDaily()
+  if (dailyReady.value || dailyLoading.value) return
+  sectionQueue.enqueue(() => loadDaily())
 }
 
 function ensureAlbums() {
-  if (!albumsReady.value) void loadAlbums()
+  if (albumsReady.value || albumsLoading.value) return
+  sectionQueue.enqueue(() => loadAlbums())
 }
 
 function ensureArtists() {
-  if (!artistsReady.value) void loadArtists()
+  if (artistsReady.value || artistsLoading.value) return
+  sectionQueue.enqueue(() => loadArtists())
 }
 
 function ensureCharts() {
-  if (!chartsReady.value) void loadCharts()
+  if (chartsReady.value || chartsLoading.value) return
+  sectionQueue.enqueue(() => loadCharts())
 }
 
 onDeactivated(() => {
@@ -74,8 +111,14 @@ onDeactivated(() => {
 })
 
 watch(platformId, () => {
-  void discover.reloadAll()
-  void Promise.all([loadForYou(), loadDaily(), loadAlbums(), loadArtists(), loadCharts()])
+  loadTask.cancel()
+  clearMusicViewCache('discover:')
+  forYouReady.value = false
+  dailyReady.value = false
+  albumsReady.value = false
+  artistsReady.value = false
+  chartsReady.value = false
+  void loadForYou(true)
 })
 
 watch(
@@ -83,6 +126,14 @@ watch(
   () => {
     void loadForYou()
     void loadDaily()
+  }
+)
+
+watch(
+  () => discover.forYou.data,
+  (tracks) => {
+    if (forYouLoading.value || !forYouReady.value) return
+    if (tracks.length) forYouTracks.value = tracks.slice(0, 32)
   }
 )
 
@@ -113,42 +164,43 @@ async function loadForYou(force = false) {
     forYouReady.value = true
     return
   }
+  if (forYouLoading.value && !force) return
 
+  const token = loadTask.next()
   forYouLoading.value = true
   if (!force) forYouReady.value = false
   try {
-    if (force) {
-      await discover.refreshSection('forYou')
-    } else {
-      await discover.loadSection('forYou')
-    }
+    if (force) await discover.refreshSection('forYou')
+    else await discover.loadSection('forYou')
+    if (!loadTask.isCurrent(token)) return
 
     let tracks = [...discover.forYou.data]
 
-    if (!tracks.length || force) {
-      const [refreshed, songs] = await Promise.all([
-        force ? Promise.resolve() : discover.refreshSection('forYou').catch(() => {}),
-        window.wanwu.music.getNewSongs(24).catch(() => [] as NormalizedTrack[])
-      ])
-      void refreshed
-      if (discover.forYou.data.length) tracks = [...discover.forYou.data]
-      else if (songs.length) tracks = songs
+    if (!tracks.length) {
+      const songs = await window.wanwu.music.getNewSongs(24).catch(() => [] as NormalizedTrack[])
+      if (!loadTask.isCurrent(token)) return
+      if (songs.length) tracks = songs
     }
 
-    if ((!tracks.length || force) && account.profile.value.loggedIn) {
+    if (!tracks.length && account.profile.value.loggedIn) {
       const daily = await window.wanwu.music.getDailyRecommend().catch(() => [] as NormalizedTrack[])
-      if (daily.length) tracks = force ? shuffleTracks(daily) : daily
+      if (!loadTask.isCurrent(token)) return
+      if (daily.length) tracks = daily
     }
+
     if (!tracks.length && account.profile.value.loggedIn) {
       const fm = await window.wanwu.music.getPersonalFm().catch(() => [] as NormalizedTrack[])
+      if (!loadTask.isCurrent(token)) return
       if (fm.length) tracks = fm
     }
 
     if (force && tracks.length > 1) tracks = shuffleTracks(tracks)
     forYouTracks.value = tracks.slice(0, 32)
   } finally {
-    forYouLoading.value = false
-    forYouReady.value = true
+    if (loadTask.isCurrent(token)) {
+      forYouLoading.value = false
+      forYouReady.value = true
+    }
   }
 }
 
@@ -158,12 +210,24 @@ async function loadDaily(force = false) {
     dailyReady.value = true
     return
   }
+  if (dailyLoading.value && !force) return
+
+  if (!force) {
+    const cached = readMusicViewCache<NormalizedTrack[]>(cacheKey('daily'))
+    if (cached?.length) {
+      dailyTracks.value = cached
+      dailyReady.value = true
+      return
+    }
+  }
+
   dailyLoading.value = true
   if (!force) dailyReady.value = false
   try {
     let tracks = await window.wanwu.music.getDailyRecommend().catch(() => [])
     if (force && tracks.length > 1) tracks = shuffleTracks(tracks)
     dailyTracks.value = tracks
+    if (tracks.length) writeMusicViewCache(cacheKey('daily'), tracks)
   } finally {
     dailyLoading.value = false
     dailyReady.value = true
@@ -176,11 +240,24 @@ async function loadAlbums(force = false) {
     albumsReady.value = true
     return
   }
+  if (albumsLoading.value && !force) return
+
+  if (!force) {
+    const cached = readMusicViewCache<typeof newAlbums.value>(cacheKey(`albums:${albumsSeed.value}`))
+    if (cached?.length) {
+      newAlbums.value = cached
+      albumsReady.value = true
+      return
+    }
+  }
+
   albumsLoading.value = true
   if (!force) albumsReady.value = false
   try {
     if (force) albumsSeed.value += 1
-    newAlbums.value = await window.wanwu.music.getNewAlbums(16, albumsSeed.value).catch(() => [])
+    const albums = await window.wanwu.music.getNewAlbums(16, albumsSeed.value).catch(() => [])
+    newAlbums.value = albums
+    if (albums.length) writeMusicViewCache(cacheKey(`albums:${albumsSeed.value}`), albums)
   } finally {
     albumsLoading.value = false
     albumsReady.value = true
@@ -193,13 +270,26 @@ async function loadArtists(force = false) {
     artistsReady.value = true
     return
   }
+  if (artistsLoading.value && !force) return
+
+  if (!force) {
+    const cached = readMusicViewCache<typeof artistPreview.value>(cacheKey(`artists:${artistsOffset.value}`))
+    if (cached?.length) {
+      artistPreview.value = cached
+      artistsReady.value = true
+      return
+    }
+  }
+
   artistsLoading.value = true
   if (!force) artistsReady.value = false
   try {
     if (force) artistsOffset.value += 12
-    artistPreview.value = await window.wanwu.music
+    const artists = await window.wanwu.music
       .getNeteaseArtistList(12, artistsOffset.value)
       .catch(() => [])
+    artistPreview.value = artists
+    if (artists.length) writeMusicViewCache(cacheKey(`artists:${artistsOffset.value}`), artists)
   } finally {
     artistsLoading.value = false
     artistsReady.value = true
@@ -212,6 +302,17 @@ async function loadCharts(force = false) {
     chartsReady.value = true
     return
   }
+  if (chartsLoading.value && !force) return
+
+  if (!force) {
+    const cached = readMusicViewCache<MusicChartSection[]>(cacheKey('charts'))
+    if (cached?.length) {
+      chartSections.value = cached
+      chartsReady.value = true
+      return
+    }
+  }
+
   chartsLoading.value = true
   if (!force) chartsReady.value = false
   try {
@@ -222,6 +323,7 @@ async function loadCharts(force = false) {
       sections = [...sections.slice(shift), ...sections.slice(0, shift)]
     }
     chartSections.value = sections
+    if (sections.length) writeMusicViewCache(cacheKey('charts'), sections)
   } finally {
     chartsLoading.value = false
     chartsReady.value = true
@@ -274,9 +376,10 @@ function openArtists() {
 }
 
 function onLoginSuccess() {
-  void refreshAccount().then(() =>
-    Promise.all([loadForYou(), loadDaily(), loadAlbums(), loadArtists(), loadCharts()])
-  )
+  void refreshAccount().then(() => {
+    sectionQueue.enqueue(() => loadForYou())
+    sectionQueue.enqueue(() => loadDaily())
+  })
 }
 
 const showLoginBanner = computed(
@@ -328,19 +431,14 @@ const showLoginBanner = computed(
       <MusicDiscoverSection
         lazy
         title="新碟"
+        more-label="更多"
         :refreshing="albumsLoading"
         @refresh="loadAlbums(true)"
         @visible="ensureAlbums"
+        @more="() => router.push({ name: 'music-new' })"
       >
         <MusicCoverRow
-          :items="
-            newAlbums.map((a) => ({
-              id: a.browseId,
-              title: a.title,
-              subtitle: a.artist,
-              coverUrl: a.coverUrl
-            }))
-          "
+          :items="albumCoverItems"
           :loading="albumsLoading || !albumsReady"
           size="album"
           @select="openAlbum"
@@ -350,19 +448,14 @@ const showLoginBanner = computed(
       <MusicDiscoverSection
         lazy
         title="热门歌手"
+        more-label="更多"
         :refreshing="artistsLoading"
         @refresh="loadArtists(true)"
         @visible="ensureArtists"
+        @more="openArtists"
       >
         <MusicCoverRow
-          :items="
-            artistPreview.map((a) => ({
-              id: a.browseId,
-              title: a.name,
-              coverUrl: a.coverUrl,
-              shape: 'circle' as const
-            }))
-          "
+          :items="artistCoverItems"
           :loading="artistsLoading || !artistsReady"
           size="artist"
           skeleton-shape="circle"
@@ -373,9 +466,11 @@ const showLoginBanner = computed(
       <MusicDiscoverSection
         lazy
         title="官方榜单"
+        more-label="更多"
         :refreshing="chartsLoading"
         @refresh="loadCharts(true)"
         @visible="ensureCharts"
+        @more="() => router.push({ name: 'music-charts' })"
       >
         <MusicChartCarousel
           :cards="chartCarouselCards"

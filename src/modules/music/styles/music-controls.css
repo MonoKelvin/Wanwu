@@ -87,8 +87,8 @@
   margin-bottom: var(--ww-music-section-head-gap);
 }
 
-.ww-music-shell .ww-music-search-results__tabs {
-  margin-bottom: var(--ww-music-section-gap);
+.ww-music-shell .ww-music-search-tabs {
+  margin-bottom: 0;
 }
 
 .ww-music-shell .ww-track-row {

@@ -3,7 +3,6 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import WwMarqueeText from '@shared/components/WwMarqueeText.vue'
 import { parseLrc, lrcLineAt, type LrcLine } from '@modules/music/composables/parseLrc'
 import { useLyricsScroll } from '@modules/music/composables/useLyricsScroll'
-import { lyricsEdgeFadePx, useLyricsEdgeBlur } from '@modules/music/composables/useLyricsEdgeBlur'
 import { formatPlayError } from '@modules/music/lib/formatPlayError'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 
@@ -27,9 +26,6 @@ function resumeAutoScroll() {
   scrollToIndex(activeIndex.value, true)
 }
 
-const edgeFadePx = computed(() => lyricsEdgeFadePx(props.variant))
-const { refreshEdgeBlur } = useLyricsEdgeBlur(listRef, edgeFadePx)
-
 function seekToLineIndex(index: number) {
   const line = lines.value[index]
   if (!line || !synced.value || !Number.isFinite(line.timeSec)) return
@@ -41,7 +37,7 @@ function seekToLineIndex(index: number) {
 const { edgePad, isDragging, scrollToIndex, measureEdgePad, clearAutoScrollPause } = useLyricsScroll(
   listRef,
   resumeAutoScroll,
-  refreshEdgeBlur,
+  undefined,
   seekToLineIndex
 )
 
@@ -127,7 +123,6 @@ watch(activeIndex, async (idx) => {
   if (!useScrollList.value || idx < 0 || isDragging.value) return
   await nextTick()
   scrollToIndex(idx, true)
-  refreshEdgeBlur()
 })
 
 watch(
@@ -137,7 +132,6 @@ watch(
     await nextTick()
     measureEdgePad()
     scrollToIndex(activeIndex.value, false)
-    refreshEdgeBlur()
   }
 )
 
@@ -259,6 +253,24 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   padding: 0.25rem 0 0.35rem;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--ww-lyrics-edge-fade),
+    #000 calc(100% - var(--ww-lyrics-edge-fade)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--ww-lyrics-edge-fade),
+    #000 calc(100% - var(--ww-lyrics-edge-fade)),
+    transparent 100%
+  );
+}
+
+.ww-lyrics--immersion .ww-lyrics__viewport {
+  --ww-lyrics-edge-fade: 4.5rem;
 }
 
 .ww-lyrics__list {
@@ -287,8 +299,8 @@ onUnmounted(() => {
 }
 
 .ww-lyrics__list li {
-  padding: 0.45rem 0.75rem;
-  font-size: 1rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 1.1875rem;
   line-height: 1.55;
   color: color-mix(in srgb, var(--ww-ink) 38%, transparent);
   text-align: center;
@@ -314,13 +326,13 @@ onUnmounted(() => {
 
 .ww-lyrics__list li.is-near {
   color: color-mix(in srgb, var(--ww-ink) 58%, transparent);
-  font-size: 1.0625rem;
+  font-size: 1.25rem;
 }
 
 .ww-lyrics__list li.is-active {
   color: var(--ww-ink);
   font-weight: 600;
-  font-size: clamp(1.06rem, 2.15vw, 1.28rem);
+  font-size: clamp(1.28rem, 2.5vw, 1.55rem);
 }
 
 [data-theme='dark'] .ww-lyrics__list li {
@@ -337,7 +349,7 @@ onUnmounted(() => {
 }
 
 .ww-lyrics--immersion .ww-lyrics__list li.is-active {
-  font-size: clamp(1.28rem, 3.35vw, 1.85rem);
+  font-size: clamp(1.55rem, 3.8vw, 2.15rem);
 }
 
 .ww-lyrics--duet {
@@ -408,7 +420,7 @@ onUnmounted(() => {
 
 .ww-lyrics__duet-line {
   margin: 0;
-  font-size: clamp(1.06rem, 2.55vw, 1.28rem);
+  font-size: clamp(1.15rem, 2.75vw, 1.4rem);
   line-height: 1.55;
   color: color-mix(in srgb, var(--ww-ink) 42%, transparent);
   font-weight: 400;
@@ -436,7 +448,7 @@ onUnmounted(() => {
 .ww-lyrics__duet-right.is-active .ww-lyrics__duet-line {
   color: var(--ww-ink);
   font-weight: 600;
-  font-size: clamp(1.08rem, 2.5vw, 1.3rem);
+  font-size: clamp(1.2rem, 2.7vw, 1.45rem);
 }
 
 .ww-lyrics--immersion {

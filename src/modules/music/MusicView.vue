@@ -4,6 +4,7 @@ import { RouterView, useRoute } from 'vue-router'
 import MusicTopChrome from '@modules/music/components/MusicTopChrome.vue'
 import MusicSearchResults from '@modules/music/components/MusicSearchResults.vue'
 import { useMusicSearch } from '@modules/music/composables/useMusicSearch'
+import { clearMusicViewCache } from '@modules/music/lib/musicViewCache'
 import { useMusicAccount } from '@modules/music/composables/useMusicAccount'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
@@ -44,6 +45,8 @@ watch(
 watch(platformId, (next, prev) => {
   if (prev != null && next !== prev) {
     musicScrollPositions.clearAll()
+    clearMusicViewCache()
+    search.clearCache()
     search.clear()
   }
 })
@@ -58,7 +61,7 @@ onMounted(() => {
     <MusicTopChrome v-if="!isFullscreen" />
     <div class="flex min-h-0 flex-1 flex-col overflow-hidden ww-music-stage">
       <Transition name="ww-music-search-view" mode="out-in">
-        <MusicSearchResults v-if="!isFullscreen && search.isActive" key="search" />
+        <MusicSearchResults v-if="!isFullscreen && search.isActive" key="search" class="min-h-0 flex-1" />
         <RouterView v-else v-slot="{ Component }">
           <Transition :name="pageTransition">
             <KeepAlive :include="[...MUSIC_KEEP_ALIVE]">
@@ -119,8 +122,19 @@ onMounted(() => {
   transition: opacity 0.14s var(--ww-ease-out);
 }
 
-.ww-music-page-enter-from,
-.ww-music-page-leave-to {
-  opacity: 0;
+@media (prefers-reduced-motion: reduce) {
+  .ww-music-search-view-enter-active,
+  .ww-music-search-view-leave-active {
+    transition: opacity 0.15s linear;
+    filter: none;
+    transform: none;
+  }
+
+  .ww-music-search-view-enter-from,
+  .ww-music-search-view-leave-to {
+    opacity: 0;
+    filter: none;
+    transform: none;
+  }
 }
 </style>

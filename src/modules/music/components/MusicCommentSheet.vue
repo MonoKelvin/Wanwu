@@ -24,6 +24,15 @@ const listRef = ref<HTMLElement | null>(null)
 const panelRef = ref<HTMLElement | null>(null)
 const panelStyle = ref<{ top: string; left: string }>({ top: '0px', left: '0px' })
 const commentScrollTops = new Map<string, number>()
+const MAX_COMMENT_SCROLL_KEYS = 24
+
+function trimCommentScrollCache() {
+  while (commentScrollTops.size > MAX_COMMENT_SCROLL_KEYS) {
+    const first = commentScrollTops.keys().next().value
+    if (first == null) break
+    commentScrollTops.delete(first)
+  }
+}
 
 const PANEL_GAP = 8
 const VIEWPORT_PAD = 10
@@ -38,6 +47,7 @@ function saveListScroll() {
   const el = listRef.value
   if (!el || !props.songId) return
   commentScrollTops.set(props.songId, el.scrollTop)
+  trimCommentScrollCache()
 }
 
 function restoreListScroll() {

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicChartList from '@modules/music/components/MusicChartList.vue'
 import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
+import { useAsyncTask } from '@modules/music/composables/useAsyncTask'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { NormalizedTrack } from '@shared/types/music'
 import '@modules/music/styles/music-shared.css'
@@ -12,20 +13,32 @@ defineOptions({ name: 'MusicRadioTracksView' })
 
 const route = useRoute()
 const player = useMusicPlayerStore()
+const loadTask = useAsyncTask()
 const tracks = ref<NormalizedTrack[]>([])
 const loading = ref(true)
 const title = ref('电台')
 
-onMounted(async () => {
-  const categoryId = String(route.params.categoryId ?? '')
+const categoryId = computed(() => String(route.params.categoryId ?? ''))
+const pageTitle = computed(() => (route.query.title ? String(route.query.title) : ''))
+
+async function loadRadioTracks() {
+  const id = categoryId.value
+  if (!id) return
+  const token = loadTask.next()
   loading.value = true
+  if (pageTitle.value) title.value = pageTitle.value
   try {
-    tracks.value = await window.wanwu.music.getPlatformRadioTracks(categoryId, 50)
-    title.value = route.query.title ? String(route.query.title) : '场景电台'
+    tracks.value = await window.wanwu.music.getPlatformRadioTracks(id, 50)
+    title.value = pageTitle.value || '场景电台'
   } finally {
-    loading.value = false
+    if (loadTask.isCurrent(token)) loading.value = false
   }
-})
+}
+
+watch(categoryId, () => {
+  tracks.value = []
+  void loadRadioTracks()
+}, { immediate: true })
 
 function play(track: NormalizedTrack) {
   void player.playTrack(track, tracks.value)
@@ -35,10 +48,15 @@ function play(track: NormalizedTrack) {
 <template>
   <MusicScrollBody>
     <div class="ww-music-content-shell">
-      <MusicPageHeading :title="title" subtitle="电台节目" />
-      <p v-if="loading" class="ww-music-state-hint">加载中…</p>
-      <MusicChartList v-else-if="tracks.length" :tracks="tracks" panel show-provider @play="play" />
-      <p v-else class="ww-music-state-hint">暂无电台内容</p>
+      <MusicPageHeading :title="pageTitle || title" subtitle="电台节目" />
+      <MusicChartList
+        :tracks="tracks"
+        :loading="loading"
+        panel
+        show-provider
+        @play="play"
+      />
+      <p v-if="!loading && !tracks.length" class="ww-music-state-hint">暂无电台内容</p>
     </div>
   </MusicScrollBody>
 </template>

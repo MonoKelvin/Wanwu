@@ -3,7 +3,8 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import EmptyState from '@app/components/EmptyState.vue'
 import MusicChartList from '@modules/music/components/MusicChartList.vue'
-import MusicCoverRow from '@modules/music/components/MusicCoverRow.vue'
+import MusicCover from '@modules/music/components/MusicCover.vue'
+import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useMusicSearch, type MusicSearchFilter } from '@modules/music/composables/useMusicSearch'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
@@ -22,6 +23,13 @@ const filterOptions: Array<{ label: string; value: MusicSearchFilter }> = [
   { label: '歌手', value: 'artists' },
   { label: '歌单', value: 'playlists' }
 ]
+
+const filterUnit: Record<MusicSearchFilter, string> = {
+  songs: '首歌曲',
+  albums: '张专辑',
+  artists: '位歌手',
+  playlists: '个歌单'
+}
 
 function play(track: NormalizedTrack, _index: number) {
   const list = search.result?.tracks ?? []
@@ -53,17 +61,58 @@ function openPlaylist(playlistId: string) {
   void router.push({ name: 'music-playlist', params: { playlistId: browseId } })
 }
 
-const hasSongResults = computed(() => (search.result?.tracks.length ?? 0) > 0)
-const hasAnyResults = computed(() => {
+const activeCount = computed(() => {
   const r = search.result
-  if (!r) return false
-  return (
-    r.tracks.length > 0 ||
-    r.albums.length > 0 ||
-    r.artists.length > 0 ||
-    (r.playlists?.length ?? 0) > 0
-  )
+  if (!r) return 0
+  switch (search.filter) {
+    case 'songs':
+      return r.tracks.length
+    case 'albums':
+      return r.albums.length
+    case 'artists':
+      return r.artists.length
+    case 'playlists':
+      return r.playlists?.length ?? 0
+  }
 })
+
+const hasFilterResults = computed(() => activeCount.value > 0)
+
+const pageSubtitle = computed(() => {
+  if (search.loading && !search.result) return '正在搜索…'
+  if (search.loading && search.result) return '加载中…'
+  if (!search.result || !hasFilterResults.value) return undefined
+  return `${activeCount.value} ${filterUnit[search.filter]}`
+})
+
+const showInitialLoading = computed(() => search.loading && !search.result)
+const showFilterLoading = computed(() => search.loading && !!search.result)
+
+const albumItems = computed(() =>
+  (search.result?.albums ?? []).map((a) => ({
+    id: a.browseId,
+    title: a.title,
+    subtitle: a.artist,
+    coverUrl: a.coverUrl
+  }))
+)
+
+const artistItems = computed(() =>
+  (search.result?.artists ?? []).map((a) => ({
+    id: a.browseId,
+    title: a.name,
+    coverUrl: a.coverUrl
+  }))
+)
+
+const playlistItems = computed(() =>
+  (search.result?.playlists ?? []).map((p) => ({
+    id: p.playlistId,
+    title: p.title,
+    subtitle: p.trackCount ? `${p.trackCount} 首` : undefined,
+    coverUrl: p.coverUrl
+  }))
+)
 
 const scrollKey = computed(() => {
   const q = search.submittedQuery.trim()
@@ -73,63 +122,87 @@ const scrollKey = computed(() => {
 </script>
 
 <template>
-  <MusicScrollBody variant="search" :scroll-key="scrollKey">
-    <div class="ww-music-content-shell">
-      <div v-if="search.submittedQuery" class="ww-music-search-results__tabs">
-        <div class="ww-music-pill-tabs ww-music-search-filter-tabs" role="tablist">
-          <button
-            v-for="opt in filterOptions"
-            :key="opt.value"
-            type="button"
-            class="ww-music-pill-tabs__btn"
-            :class="{ 'is-active': search.filter === opt.value }"
-            role="tab"
-            :aria-selected="search.filter === opt.value"
-            @click="search.setFilter(opt.value)"
-          >
-            {{ opt.label }}
-          </button>
+  <div class="ww-music-search-layout">
+    <header v-if="search.submittedQuery" class="ww-music-search-layout__header">
+      <div class="ww-music-content-shell ww-music-search-page">
+        <div class="ww-music-search-page__heading">
+          <MusicPageHeading :title="search.submittedQuery" :subtitle="pageSubtitle" />
         </div>
-      </div>
-      <div v-if="search.loading" class="ww-music-search-loading">
-        <div class="ww-music-search-loading__list ww-music-track-panel">
-          <div v-for="n in 8" :key="n" class="ww-music-search-loading__row">
-            <div class="ww-music-search-loading__rank" />
-            <div class="ww-music-search-loading__cover" />
-            <div class="ww-music-search-loading__lines">
-              <div class="ww-music-search-loading__line ww-music-search-loading__line--title" />
-              <div class="ww-music-search-loading__line ww-music-search-loading__line--sub" />
-            </div>
+
+        <div class="ww-music-search-tabs" role="tablist" aria-label="搜索分类">
+          <div class="ww-music-pill-tabs">
+            <button
+              v-for="opt in filterOptions"
+              :key="opt.value"
+              type="button"
+              class="ww-music-pill-tabs__btn"
+              :class="{ 'is-active': search.filter === opt.value }"
+              role="tab"
+              :aria-selected="search.filter === opt.value"
+              @click="search.setFilter(opt.value)"
+            >
+              {{ opt.label }}
+            </button>
           </div>
         </div>
       </div>
+    </header>
 
-      <div v-else-if="search.error" class="ww-music-error-bar">
-        <span>{{ search.error }}</span>
-        <button type="button" class="ww-music-retry" @click="search.search()">重试</button>
-      </div>
-
-      <template v-else-if="search.result">
-        <header v-if="hasAnyResults" class="ww-music-search-results__head">
-          <p class="ww-music-search-results__query">
-            「{{ search.submittedQuery }}」的搜索结果
-          </p>
-          <span v-if="hasSongResults" class="ww-music-search-results__count">
-            {{ search.result.tracks.length }} 首歌曲
-          </span>
-        </header>
-
-        <div v-if="!hasAnyResults" class="ww-music-search-results__empty-wrap">
-          <EmptyState
-            variant="not-found"
-            title="未找到结果"
-            description="换个关键词或切换分类试试。"
-          />
+    <MusicScrollBody
+      variant="search"
+      class="ww-music-search-layout__body"
+      :scroll-key="scrollKey"
+    >
+      <div class="ww-music-content-shell">
+        <div v-if="showInitialLoading" class="ww-music-search-loading" aria-busy="true">
+          <div
+            v-if="search.filter === 'songs'"
+            class="ww-music-search-loading__list ww-music-track-panel"
+          >
+            <div v-for="n in 8" :key="n" class="ww-music-search-loading__row">
+              <div class="ww-music-search-loading__cover" />
+              <div class="ww-music-search-loading__lines">
+                <div class="ww-music-search-loading__line ww-music-search-loading__line--title" />
+                <div class="ww-music-search-loading__line ww-music-search-loading__line--sub" />
+              </div>
+            </div>
+          </div>
+          <div
+            v-else
+            class="ww-music-search-loading__grid"
+            :class="{ 'is-artist': search.filter === 'artists' }"
+          >
+            <div v-for="n in 8" :key="n" class="ww-music-search-loading__grid-card">
+              <div
+                class="ww-music-search-loading__grid-cover"
+                :class="{ 'is-circle': search.filter === 'artists' }"
+              />
+              <div class="ww-music-search-loading__line ww-music-search-loading__line--title" />
+            </div>
+          </div>
         </div>
 
-        <section v-if="search.filter === 'songs' && hasSongResults" class="ww-music-search-results__section">
-          <h3 class="ww-music-section-title">歌曲</h3>
-          <div class="ww-music-search-results__panel">
+        <div v-else-if="search.error" class="ww-music-error-bar">
+          <span>{{ search.error }}</span>
+          <button type="button" class="ww-music-retry" @click="search.search(undefined, { skipCache: true })">
+            重试
+          </button>
+        </div>
+
+        <div
+          v-else-if="search.result"
+          class="ww-music-search-pane"
+          :class="{ 'is-loading': showFilterLoading }"
+        >
+          <div v-if="!hasFilterResults" class="ww-music-search-empty">
+            <EmptyState
+              variant="not-found"
+              title="未找到结果"
+              description="换个关键词或切换分类试试。"
+            />
+          </div>
+
+          <div v-else-if="search.filter === 'songs'" class="ww-music-search-pane__tracks">
             <MusicChartList
               :tracks="search.result.tracks"
               panel
@@ -137,89 +210,83 @@ const scrollKey = computed(() => {
               @play="play"
             />
           </div>
-        </section>
 
-        <section v-if="search.filter === 'albums' && search.result.albums.length" class="ww-music-search-results__section">
-          <h3 class="ww-music-section-title">专辑</h3>
-          <div class="ww-music-search-results__covers">
-            <MusicCoverRow
-            :items="
-              search.result.albums.map((a) => ({
-                id: a.browseId,
-                title: a.title,
-                subtitle: a.artist,
-                coverUrl: a.coverUrl
-              }))
-            "
-            @select="(item) => openAlbum(item.id, item.title)"
-          />
+          <div v-else-if="search.filter === 'albums'" class="ww-music-search-grid">
+            <button
+              v-for="item in albumItems"
+              :key="item.id"
+              type="button"
+              class="ww-music-search-grid__item"
+              @click="openAlbum(item.id, item.title)"
+            >
+              <div class="ww-music-search-grid__cover">
+                <MusicCover :src="item.coverUrl" :title="item.title" size="card" />
+              </div>
+              <span class="ww-music-search-grid__title ww-music-text-ellipsis">{{ item.title }}</span>
+              <span v-if="item.subtitle" class="ww-music-search-grid__sub ww-music-text-ellipsis">
+                {{ item.subtitle }}
+              </span>
+            </button>
           </div>
-        </section>
 
-        <section v-if="search.filter === 'artists' && search.result.artists.length" class="ww-music-search-results__section">
-          <h3 class="ww-music-section-title">歌手</h3>
-          <div class="ww-music-search-results__covers">
-            <MusicCoverRow
-            :items="
-              search.result.artists.map((a) => ({
-                id: a.browseId,
-                title: a.name,
-                coverUrl: a.coverUrl,
-                shape: 'circle' as const
-              }))
-            "
-            @select="(item) => openArtist(item.id, item.title, item.coverUrl)"
-          />
+          <div v-else-if="search.filter === 'artists'" class="ww-music-search-grid ww-music-search-grid--artist">
+            <button
+              v-for="item in artistItems"
+              :key="item.id"
+              type="button"
+              class="ww-music-search-grid__item"
+              @click="openArtist(item.id, item.title, item.coverUrl)"
+            >
+              <div class="ww-music-search-grid__cover">
+                <MusicCover :src="item.coverUrl" :title="item.title" size="card" shape="circle" />
+              </div>
+              <span class="ww-music-search-grid__title ww-music-text-ellipsis">{{ item.title }}</span>
+            </button>
           </div>
-        </section>
 
-        <section
-          v-if="search.filter === 'playlists' && (search.result.playlists?.length ?? 0)"
-          class="ww-music-search-results__section"
-        >
-          <h3 class="ww-music-section-title">歌单</h3>
-          <div class="ww-music-search-results__covers">
-            <MusicCoverRow
-            :items="
-              (search.result.playlists ?? []).map((p) => ({
-                id: p.playlistId,
-                title: p.title,
-                subtitle: p.trackCount ? `${p.trackCount} 首` : undefined,
-                coverUrl: p.coverUrl
-              }))
-            "
-            @select="(item) => openPlaylist(item.id)"
-          />
+          <div v-else-if="search.filter === 'playlists'" class="ww-music-search-grid">
+            <button
+              v-for="item in playlistItems"
+              :key="item.id"
+              type="button"
+              class="ww-music-search-grid__item"
+              @click="openPlaylist(item.id)"
+            >
+              <div class="ww-music-search-grid__cover">
+                <MusicCover :src="item.coverUrl" :title="item.title" size="card" />
+              </div>
+              <span class="ww-music-search-grid__title ww-music-text-ellipsis">{{ item.title }}</span>
+              <span v-if="item.subtitle" class="ww-music-search-grid__sub ww-music-text-ellipsis">
+                {{ item.subtitle }}
+              </span>
+            </button>
           </div>
-        </section>
-      </template>
-    </div>
-  </MusicScrollBody>
+        </div>
+      </div>
+    </MusicScrollBody>
+  </div>
 </template>
 
 <style scoped>
 .ww-music-search-loading {
-  min-height: min(40vh, 22rem);
-  display: flex;
-  flex-direction: column;
+  min-height: min(34vh, 20rem);
 }
 
 .ww-music-search-loading__list {
-  margin-top: 0.25rem;
   opacity: 0.72;
 }
 
 .ww-music-search-loading__row {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.55rem 0.85rem;
+  gap: 0.75rem;
+  padding: 0.65rem 0.95rem;
 }
 
-.ww-music-search-loading__rank,
 .ww-music-search-loading__cover,
-.ww-music-search-loading__line {
-  border-radius: 999px;
+.ww-music-search-loading__line,
+.ww-music-search-loading__grid-cover {
+  border-radius: var(--ww-music-inner-radius);
   background: linear-gradient(
     115deg,
     var(--ww-surface-hover) 0%,
@@ -230,15 +297,9 @@ const scrollKey = computed(() => {
   animation: ww-music-shimmer 1.2s ease-in-out infinite;
 }
 
-.ww-music-search-loading__rank {
-  width: 1.25rem;
-  height: 0.75rem;
-}
-
 .ww-music-search-loading__cover {
   width: 2.75rem;
   height: 2.75rem;
-  border-radius: var(--ww-music-inner-radius, 0.875rem);
   flex-shrink: 0;
 }
 
@@ -249,6 +310,7 @@ const scrollKey = computed(() => {
 
 .ww-music-search-loading__line {
   height: 0.55rem;
+  border-radius: 999px;
 }
 
 .ww-music-search-loading__line--title {
@@ -257,82 +319,35 @@ const scrollKey = computed(() => {
 
 .ww-music-search-loading__line--sub {
   width: 36%;
-  margin-top: 0.35rem;
+  margin-top: 0.4rem;
 }
 
-.ww-music-search-results__tabs {
+.ww-music-search-loading__grid-card {
   display: flex;
-  justify-content: center;
-  margin-bottom: var(--ww-music-section-gap);
+  flex-direction: column;
+  gap: 0.625rem;
 }
 
-.ww-music-search-filter-tabs {
-  flex-wrap: nowrap;
-}
-
-.ww-music-search-results__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: var(--ww-music-section-gap);
-}
-
-.ww-music-search-results__query {
-  margin: 0;
-  font-size: var(--ww-music-fs-md);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ww-ink);
-}
-
-.ww-music-search-results__count {
-  flex-shrink: 0;
-  font-size: var(--ww-music-fs-sm);
-  color: var(--ww-ink-faint);
-}
-
-.ww-music-search-results__section {
-  margin-bottom: calc(var(--ww-music-section-gap) + 0.25rem);
-}
-
-.ww-music-search-results__section .ww-music-section-title {
-  margin: 0 0 var(--ww-music-section-head-gap);
-  text-align: center;
-}
-
-.ww-music-search-results__panel {
-  max-width: 42rem;
-  margin: 0 auto;
-}
-
-.ww-music-search-results__covers {
-  max-width: 52rem;
-  margin: 0 auto;
-}
-
-.ww-music-search-results__covers :deep(.ww-music-scroll-row) {
-  justify-content: center;
-}
-
-.ww-music-search-results__covers :deep(.ww-music-card-item) {
-  text-align: center;
-}
-
-[data-theme='dark'] .ww-music-search-results :deep(.ww-music-track-panel) {
-  background: color-mix(in srgb, var(--ww-canvas) 88%, rgb(255 255 255 / 0.04));
-  border-color: color-mix(in srgb, var(--ww-border-subtle) 78%, transparent);
-}
-
-.ww-music-search-results__empty-wrap {
-  display: flex;
-  justify-content: center;
-  padding: 1.5rem 0 2rem;
-}
-
-.ww-music-search-results__empty-wrap :deep(.ww-empty-state) {
-  flex: none;
+.ww-music-search-loading__grid-cover {
   width: 100%;
-  padding: 1rem 0 0.5rem;
+  aspect-ratio: 1;
+}
+
+.ww-music-search-loading__grid-cover.is-circle {
+  border-radius: var(--ww-radius-full);
+  max-width: 6rem;
+  margin-inline: auto;
+}
+
+.ww-music-search-loading__grid-card .ww-music-search-loading__line--title {
+  width: 72%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-music-search-loading__cover,
+  .ww-music-search-loading__line,
+  .ww-music-search-loading__grid-cover {
+    animation: none;
+  }
 }
 </style>

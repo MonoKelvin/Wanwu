@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onActivated, onDeactivated, ref, watch } from 'vue'
+import { computed, onActivated, onDeactivated, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import MusicAlbumHero from '@modules/music/components/MusicAlbumHero.vue'
 import MusicInlineMvPlayer from '@modules/music/components/MusicInlineMvPlayer.vue'
@@ -68,14 +68,20 @@ watch(
   { immediate: true }
 )
 
-onActivated(() => {
+function syncEnterMvPage() {
   mvPlayback.enterMvPage()
-})
+}
 
-onDeactivated(() => {
+function syncLeaveMvPage() {
   playerRef.value?.stop()
   mvPlayback.leaveMvPage()
-})
+}
+
+onMounted(syncEnterMvPage)
+onActivated(syncEnterMvPage)
+
+onDeactivated(syncLeaveMvPage)
+onUnmounted(syncLeaveMvPage)
 </script>
 
 <template>

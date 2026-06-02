@@ -5,6 +5,7 @@ import MusicAlbumHero from '@modules/music/components/MusicAlbumHero.vue'
 import MusicChartList from '@modules/music/components/MusicChartList.vue'
 import MusicCoverRow from '@modules/music/components/MusicCoverRow.vue'
 import MusicArtistPhotosGrid from '@modules/music/components/MusicArtistPhotosGrid.vue'
+import { useAsyncTask } from '@modules/music/composables/useAsyncTask'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { MusicArtistPayload, NormalizedTrack } from '@shared/types/music'
 import { musicScrollKey } from '@modules/music/lib/musicScrollKey'
@@ -18,6 +19,7 @@ type ArtistTab = 'tracks' | 'albums' | 'mvs' | 'photos'
 const route = useRoute()
 const router = useRouter()
 const player = useMusicPlayerStore()
+const loadTask = useAsyncTask()
 const artist = ref<MusicArtistPayload>({ name: '歌手', tracks: [], albums: [] })
 const loading = ref(true)
 const tab = ref<ArtistTab>('tracks')
@@ -45,9 +47,12 @@ watch(tabs, (next) => {
 })
 
 async function loadArtist() {
+  const token = loadTask.next()
   loading.value = true
   try {
-    artist.value = await window.wanwu.music.getArtist(browseId.value)
+    const payload = await window.wanwu.music.getArtist(browseId.value)
+    if (!loadTask.isCurrent(token)) return
+    artist.value = payload
     if (!artist.value.name && queryName.value) {
       artist.value = { ...artist.value, name: queryName.value }
     }
@@ -55,12 +60,13 @@ async function loadArtist() {
       artist.value = { ...artist.value, coverUrl: queryCover.value }
     }
   } finally {
-    loading.value = false
+    if (loadTask.isCurrent(token)) loading.value = false
   }
 }
 
 watch(browseId, () => {
   tab.value = 'tracks'
+  artist.value = { name: queryName.value || '歌手', tracks: [], albums: [] }
   void loadArtist()
 }, { immediate: true })
 
@@ -102,58 +108,69 @@ const scrollKey = computed(() => `${musicScrollKey(route)}:tab:${tab.value}`)
 <template>
   <MusicScrollBody :scroll-key="scrollKey">
     <div class="ww-music-content-shell">
-      <p v-if="loading && !queryName" class="ww-music-state-hint">加载中…</p>
-      <template v-else>
-        <MusicAlbumHero
-          :title="displayName"
-          subtitle="歌手"
-          :cover-url="displayCover"
-          :description="displayDescription"
+      <MusicAlbumHero
+        :title="displayName"
+        subtitle="歌手"
+        :cover-url="displayCover"
+        :description="displayDescription"
+      />
+
+      <div v-if="tabs.length" class="ww-music-pill-tabs ww-music-artist-tabs" role="tablist">
+        <button
+          v-for="t in tabs"
+          :key="t.id"
+          type="button"
+          class="ww-music-pill-tabs__btn"
+          :class="{ 'is-active': tab === t.id }"
+          role="tab"
+          :aria-selected="tab === t.id"
+          @click="tab = t.id"
+        >
+          {{ t.label }}
+        </button>
+      </div>
+
+      <div v-if="tab === 'tracks'" class="ww-music-artist-panel">
+        <MusicChartList
+          :tracks="artist.tracks"
+          :loading="loading"
+          panel
+          @play="play"
         />
-
-        <div v-if="tabs.length" class="ww-music-pill-tabs ww-music-artist-tabs" role="tablist">
-          <button
-            v-for="t in tabs"
-            :key="t.id"
-            type="button"
-            class="ww-music-pill-tabs__btn"
-            :class="{ 'is-active': tab === t.id }"
-            role="tab"
-            :aria-selected="tab === t.id"
-            @click="tab = t.id"
-          >
-            {{ t.label }}
-          </button>
-        </div>
-
-        <div v-if="tab === 'tracks' && artist.tracks.length" class="ww-music-artist-panel">
-          <MusicChartList :tracks="artist.tracks" panel @play="play" />
-        </div>
-
-        <div v-else-if="tab === 'albums' && albumItems.length" class="ww-music-artist-panel">
-          <MusicCoverRow
-            :items="albumItems"
-            size="album"
-            @select="(item) => openAlbum(item.id, item.title)"
-          />
-        </div>
-
-        <div v-else-if="tab === 'mvs' && mvItems.length" class="ww-music-artist-panel">
-          <MusicCoverRow
-            :items="mvItems"
-            size="album"
-            @select="(item) => openMv(item.id)"
-          />
-        </div>
-
-        <div v-else-if="tab === 'photos'" class="ww-music-artist-panel">
-          <MusicArtistPhotosGrid :photos="artist.photos ?? []" />
-        </div>
-
-        <p v-if="!loading && !tabs.length" class="ww-music-state-hint">
-          暂无曲目数据，请从搜索进入专辑或单曲。
+        <p v-if="!loading && !artist.tracks.length" class="ww-music-state-hint">
+          暂无单曲
         </p>
-      </template>
+      </div>
+
+      <div v-else-if="tab === 'albums'" class="ww-music-artist-panel">
+        <MusicCoverRow
+          v-if="loading || albumItems.length"
+          :items="albumItems"
+          :loading="loading"
+          size="album"
+          @select="(item) => openAlbum(item.id, item.title)"
+        />
+        <p v-else class="ww-music-state-hint">暂无专辑</p>
+      </div>
+
+      <div v-else-if="tab === 'mvs'" class="ww-music-artist-panel">
+        <MusicCoverRow
+          v-if="loading || mvItems.length"
+          :items="mvItems"
+          :loading="loading"
+          size="album"
+          @select="(item) => openMv(item.id)"
+        />
+        <p v-else class="ww-music-state-hint">暂无 MV</p>
+      </div>
+
+      <div v-else-if="tab === 'photos'" class="ww-music-artist-panel">
+        <MusicArtistPhotosGrid :photos="artist.photos ?? []" />
+      </div>
+
+      <p v-if="!loading && !tabs.length" class="ww-music-state-hint">
+        暂无曲目数据，请从搜索进入专辑或单曲。
+      </p>
     </div>
   </MusicScrollBody>
 </template>

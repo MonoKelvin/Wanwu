@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicCoverRow from '@modules/music/components/MusicCoverRow.vue'
@@ -27,13 +27,14 @@ const coverItems = computed(() =>
   }))
 )
 
-onMounted(() => {
+watch(categoryId, () => {
   void loadPlaylists()
-})
+}, { immediate: true })
 
 async function loadPlaylists() {
   loading.value = true
   error.value = null
+  playlists.value = []
   try {
     playlists.value = await window.wanwu.music.getMoodPlaylists(categoryId.value)
   } catch (e) {

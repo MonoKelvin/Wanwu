@@ -460,9 +460,7 @@ export class MusicService {
     const platform = this.resolveDiscoverPlatform()
     if (platform) {
       return this.discoverCache.refresh(section, async () => {
-        this.platformDiscoverFeedInflight = null
-        const feed = await platform.buildDiscoverFeed()
-        this.cacheDiscoverFeed(feed)
+        const feed = await this.ensurePlatformDiscoverFeed(platform, true)
         return feed[section]
       })
     }

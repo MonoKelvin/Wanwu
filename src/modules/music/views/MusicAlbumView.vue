@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import MusicAlbumHero from '@modules/music/components/MusicAlbumHero.vue'
 import MusicChartList from '@modules/music/components/MusicChartList.vue'
 import { normalizeAlbumMeta } from '@modules/music/lib/normalizeAlbumMeta'
+import { useAsyncTask } from '@modules/music/composables/useAsyncTask'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import type { NormalizedTrack } from '@shared/types/music'
 import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
@@ -13,6 +14,7 @@ defineOptions({ name: 'MusicAlbumView' })
 
 const route = useRoute()
 const player = useMusicPlayerStore()
+const loadTask = useAsyncTask()
 const tracks = ref<NormalizedTrack[]>([])
 const title = ref('专辑')
 const artist = ref('')
@@ -29,6 +31,8 @@ const heroMeta = computed(() => {
   const parts = [artist.value, publishTime.value].filter(Boolean)
   return parts.join(' · ')
 })
+
+const displayTitle = computed(() => pageTitle.value || title.value)
 
 function applyAlbumMeta(album: unknown) {
   const meta = normalizeAlbumMeta(album, pageTitle.value || '专辑')
@@ -49,14 +53,15 @@ async function load() {
     return
   }
 
+  const token = loadTask.next()
   loading.value = true
   error.value = null
-  tracks.value = []
   if (pageTitle.value) title.value = pageTitle.value
 
   try {
     try {
       const { album, tracks: albumTracks } = await window.wanwu.music.getAlbum(id)
+      if (!loadTask.isCurrent(token)) return
       if (albumTracks.length) {
         tracks.value = albumTracks
         applyAlbumMeta(album)
@@ -68,6 +73,7 @@ async function load() {
     }
 
     const playlistTracks = await window.wanwu.music.getPlaylistTracks(id)
+    if (!loadTask.isCurrent(token)) return
     if (playlistTracks.length) {
       tracks.value = playlistTracks
       title.value = pageTitle.value || '歌单'
@@ -78,11 +84,14 @@ async function load() {
       albumKind.value = '歌单'
       return
     }
+    tracks.value = []
     error.value = '未找到可播放曲目'
   } catch (e) {
+    if (!loadTask.isCurrent(token)) return
     error.value = e instanceof Error ? e.message : '加载失败'
+    tracks.value = []
   } finally {
-    loading.value = false
+    if (loadTask.isCurrent(token)) loading.value = false
   }
 }
 
@@ -107,20 +116,25 @@ function play(track: NormalizedTrack) {
 <template>
   <MusicScrollBody>
     <div class="ww-music-content-shell">
-      <p v-if="loading" class="ww-music-state-hint">加载中…</p>
-      <div v-else-if="error" class="ww-music-error-bar">
+      <div v-if="error && !loading" class="ww-music-error-bar">
         <span>{{ error }}</span>
         <button type="button" class="ww-music-retry" @click="load">重试</button>
       </div>
       <template v-else>
         <MusicAlbumHero
-          :title="title"
+          :title="displayTitle"
           :subtitle="albumKind"
-          :cover-url="coverUrl"
+          :cover-url="coverUrl || tracks[0]?.coverUrl"
           :meta="heroMeta || undefined"
           :description="description"
         />
-        <MusicChartList :tracks="tracks" panel @play="play" />
+        <MusicChartList
+          :tracks="tracks"
+          :loading="loading"
+          panel
+          @play="play"
+        />
+        <p v-if="!loading && !tracks.length" class="ww-music-state-hint">暂无曲目</p>
       </template>
     </div>
   </MusicScrollBody>

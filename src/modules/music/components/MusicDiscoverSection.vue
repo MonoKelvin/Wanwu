@@ -6,11 +6,11 @@ import { useSectionVisible } from '@modules/music/composables/useSectionVisible'
 const props = defineProps<{
   title: string
   refreshing?: boolean
-  /** 进入视口后再触发 visible（发现页懒加载） */
   lazy?: boolean
+  moreLabel?: string
 }>()
 
-const emit = defineEmits<{ refresh: []; visible: [] }>()
+const emit = defineEmits<{ refresh: []; visible: []; more: [] }>()
 
 const root = ref<HTMLElement | null>(null)
 const lazy = toRef(props, 'lazy')
@@ -36,6 +36,15 @@ useSectionVisible(root, () => emit('visible'), { enabled: () => lazy.value === t
         </button>
       </div>
       <slot name="action" />
+      <button
+        v-if="moreLabel"
+        type="button"
+        class="ww-music-section-more"
+        @click="emit('more')"
+      >
+        {{ moreLabel }}
+        <WwIcon name="chevron-right" size="xs" />
+      </button>
     </header>
     <slot />
   </section>
