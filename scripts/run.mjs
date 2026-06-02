@@ -158,7 +158,8 @@ function cmdLibraryPack() {
   const electronPath = require('electron')
   const tsxCli = join(dirname(require.resolve('tsx/package.json')), 'dist', 'cli.mjs')
   const script = join(root, 'scripts', 'build-library-pack.ts')
-  execFileSync(electronPath, [tsxCli, script], {
+  const tsconfig = join(root, 'tsconfig.node.json')
+  execFileSync(electronPath, [tsxCli, '--tsconfig', tsconfig, script], {
     cwd: root,
     stdio: 'inherit',
     env: { ...process.env, ...electronSqliteEnv() }
