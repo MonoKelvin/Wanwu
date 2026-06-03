@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
 import { computed, defineAsyncComponent, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { RouterView, useRoute } from 'vue-router'
 import ModuleSidebar from '@app/components/ModuleSidebar.vue'
 import { useRouteModule } from '@app/composables/useRouteModule'
 import { useShellModule } from '@app/composables/useShellModule'
@@ -24,7 +24,21 @@ const SubItemPanel = defineAsyncComponent(
 const route = useRoute()
 const routeModule = useRouteModule()
 const shellModule = useShellModule()
-const shellComponent = computed(() => moduleViewComponent(shellModule.value))
+const isItemDetail = computed(() => isItemDetailRoute(route.name))
+const itemDetailShell = computed(() => moduleViewComponent(shellModule.value))
+
+const activeShellKey = computed(() =>
+  isItemDetail.value ? `item:${shellModule.value}` : (routeModule.value ?? route.fullPath)
+)
+
+/** 离开全库时销毁 LibraryView，避免便笺 Tiptap 在 KeepAlive 中残留串屏 */
+const shellKeepAliveInclude = computed(() => {
+  const active = isItemDetail.value ? shellModule.value : routeModule.value
+  const names = [...MODULE_KEEP_ALIVE]
+  if (active === 'library') return names
+  return names.filter((n) => n !== 'LibraryView')
+})
+
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 const isFullscreen = computed(() => !!route.meta.fullscreen)
@@ -33,9 +47,6 @@ const showMusicBar = computed(
   () => routeModule.value === 'music' && !isFullscreen.value && !minibarHidden.value
 )
 
-const isItemDetail = computed(() => isItemDetailRoute(route.name))
-/** 模块级 key：修复便笺/音乐等模块串屏（1ed8eac）；全库子路由由 LibraryShellView 内层 key 负责 */
-const shellRouterViewKey = computed(() => routeModule.value ?? route.fullPath)
 /** 物品详情为全屏内容区：不显示分类侧栏，避免与缓存的全库列表叠在一起 */
 const showSubPanel = computed(() => {
   if (isItemDetail.value || isFullscreen.value) return false
@@ -62,12 +73,13 @@ watch(
       class="relative flex min-w-0 flex-1 flex-col overflow-hidden"
       :class="routeModule === 'cloud-abode' ? 'bg-transparent' : 'bg-ww-content'"
     >
-      <!-- 底层模块常驻 KeepAlive；物品详情用浮层，避免 out-in 闪白与列表重挂载 -->
-      <RouterView :key="shellRouterViewKey" v-slot="{ Component }">
-        <KeepAlive :max="4" :include="[...MODULE_KEEP_ALIVE]">
+      <!-- 须经顶层 RouterView 承接匹配，否则各模块内层 RouterView 深度错乱（便笺 Tiptap 串屏） -->
+      <RouterView v-slot="{ Component: matched }">
+        <KeepAlive :max="MODULE_KEEP_ALIVE.length" :include="shellKeepAliveInclude">
           <component
-            :is="isItemDetail ? shellComponent : Component"
-            :key="shellModule"
+            v-if="isItemDetail || matched"
+            :is="(isItemDetail ? itemDetailShell : matched)!"
+            :key="activeShellKey"
             class="h-full min-h-0 flex flex-1 flex-col"
           />
         </KeepAlive>

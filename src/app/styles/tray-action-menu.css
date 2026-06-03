@@ -1,0 +1,93 @@
+/**
+ * 托盘菜单独立窗：操作菜单布局（主窗 WwContextMenu 的样式未打入托盘 bundle）
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html.ww-tray-menu-root body {
+  margin: 0;
+  font-family: 'Segoe UI', 'PingFang SC', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--ww-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+html.ww-tray-menu-root #app,
+html.ww-tray-menu-root .ww-tray-menu-app {
+  display: block;
+  width: max-content;
+}
+
+.ww-action-menu {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.ww-icon {
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+.ww-icon svg {
+  display: block;
+}
+
+.ww-action-menu__item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4375rem 0.5625rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--ww-ink);
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-action-menu__check {
+  flex-shrink: 0;
+  display: flex;
+  width: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.ww-action-menu__item .ww-icon {
+  flex-shrink: 0;
+  color: var(--ww-ink-muted);
+}
+
+.ww-action-menu__item:hover:not(:disabled):not(.is-disabled) {
+  background: var(--ww-action-menu-item-hover-bg);
+}
+
+.ww-action-menu__item:disabled,
+.ww-action-menu__item.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ww-action-menu__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.ww-action-menu__sep {
+  margin: 0.25rem 0.375rem;
+  border: none;
+  border-top: 1px solid var(--ww-border-faint);
+}

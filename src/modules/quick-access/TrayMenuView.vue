@@ -161,6 +161,7 @@ onUnmounted(() => {
   min-width: 10.5rem;
   max-width: 18rem;
   margin: 0;
+  padding: 0.375rem;
   border: 1px solid var(--ww-glass-border);
   border-radius: 0;
   background: var(--ww-elevated);
@@ -170,7 +171,7 @@ onUnmounted(() => {
 }
 
 .ww-tray-menu-panel .ww-action-menu__item {
-  border-radius: 0;
+  border-radius: 0.375rem;
 }
 
 .ww-tray-menu__danger .ww-action-menu__label {

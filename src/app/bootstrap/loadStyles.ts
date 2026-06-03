@@ -4,7 +4,11 @@ export async function loadStylesForMode(mode: BootMode): Promise<void> {
   await import('@app/styles/tokens.css')
 
   if (mode === 'tray-menu') {
-    await import('@app/styles/tray-menu-popout.css')
+    await Promise.all([
+      import('@app/styles/theme-dark.css'),
+      import('@app/styles/tray-action-menu.css'),
+      import('@app/styles/tray-menu-popout.css')
+    ])
     return
   }
 
