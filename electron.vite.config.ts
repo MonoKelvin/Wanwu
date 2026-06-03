@@ -2,10 +2,30 @@
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
 import { rendererFullReloadInDev } from './scripts/vite-renderer-full-reload'
-// import glsl from 'vite-plugin-glsl'
 
 const sharedAlias = {
   '@shared': resolve(__dirname, 'src/shared')
+}
+
+function rendererManualChunks(id: string): string | undefined {
+  if (!id.includes('node_modules')) {
+    if (id.includes('/src/shared/stores/')) return 'stores'
+    if (id.includes('/src/app/router/')) return 'app-router'
+    return undefined
+  }
+  if (id.includes('three') || id.includes('postprocessing') || id.includes('three-mesh-bvh')) {
+    return 'vendor-three'
+  }
+  if (id.includes('@primeuix')) return 'vendor-primeuix'
+  if (id.includes('primevue')) return 'vendor-primevue'
+  if (id.includes('@tiptap')) return 'vendor-tiptap'
+  if (id.includes('hls.js') || id.includes('howler')) return 'vendor-media'
+  if (id.includes('@lucide') || id.includes('lucide')) return 'vendor-icons'
+  if (id.includes('gsap')) return 'vendor-gsap'
+  if (id.includes('vue') || id.includes('pinia') || id.includes('vue-router')) {
+    return 'vendor-vue'
+  }
+  return undefined
 }
 
 export default defineConfig({
@@ -45,9 +65,16 @@ export default defineConfig({
       }
     },
     build: {
+      target: 'es2022',
+      cssMinify: true,
+      sourcemap: false,
+      chunkSizeWarningLimit: 1200,
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'index.html')
+        },
+        output: {
+          manualChunks: rendererManualChunks
         }
       }
     },
@@ -63,13 +90,6 @@ export default defineConfig({
         '@assets': resolve(__dirname, 'assets')
       }
     },
-    plugins: [
-      vue(),
-      rendererFullReloadInDev()
-      // glsl({
-      //   root: resolve(__dirname),
-      //   include: ['**/*.glsl', '**/*.frag', '**/*.vert']
-      // })
-    ]
+    plugins: [vue(), rendererFullReloadInDev()]
   }
 })

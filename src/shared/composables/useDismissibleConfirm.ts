@@ -1,4 +1,5 @@
-﻿import { reactive } from 'vue'
+﻿import { reactive, nextTick } from 'vue'
+import { ensureDismissibleConfirmMounted } from '@app/bootstrap/overlayHosts'
 import type { DismissiblePromptId } from '@shared/constants/dismissiblePrompts'
 import {
   dismissDismissiblePrompt,
@@ -37,16 +38,19 @@ export function useDismissibleConfirm() {
     }
 
     return new Promise((resolve) => {
-      dismissibleConfirmState.promptId = options.id
-      dismissibleConfirmState.header = options.header
-      dismissibleConfirmState.message = options.message
-      dismissibleConfirmState.detail = options.detail ?? ''
-      dismissibleConfirmState.acceptLabel = options.acceptLabel ?? '确定'
-      dismissibleConfirmState.rejectLabel = options.rejectLabel ?? '取消'
-      dismissibleConfirmState.danger = options.danger ?? false
-      dismissibleConfirmState.skipChecked = false
-      dismissibleConfirmState._resolve = resolve
-      dismissibleConfirmState.open = true
+      ensureDismissibleConfirmMounted()
+      void nextTick(() => {
+        dismissibleConfirmState.promptId = options.id
+        dismissibleConfirmState.header = options.header
+        dismissibleConfirmState.message = options.message
+        dismissibleConfirmState.detail = options.detail ?? ''
+        dismissibleConfirmState.acceptLabel = options.acceptLabel ?? '确定'
+        dismissibleConfirmState.rejectLabel = options.rejectLabel ?? '取消'
+        dismissibleConfirmState.danger = options.danger ?? false
+        dismissibleConfirmState.skipChecked = false
+        dismissibleConfirmState._resolve = resolve
+        dismissibleConfirmState.open = true
+      })
     })
   }
 

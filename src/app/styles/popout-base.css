@@ -1,0 +1,23 @@
+/** 独立小窗（日签等）基础布局，避免加载完整 main.css */
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Inter', 'PingFang SC', 'Source Han Sans SC', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  background: var(--ww-canvas);
+  color: var(--ww-ink);
+  overflow: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}

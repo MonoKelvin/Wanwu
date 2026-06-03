@@ -1,3 +1,4 @@
+import './bootstrap/quietDotenv'
 import { app, BrowserWindow, nativeImage, protocol, shell } from 'electron'
 import { existsSync, statSync } from 'fs'
 import { createReadStream } from 'fs'

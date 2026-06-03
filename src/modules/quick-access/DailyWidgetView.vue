@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import WwButton from '@shared/components/WwButton.vue'
 import { useSettingsStore } from '@shared/stores/settings'
 import type { DailyPickPreview } from '@shared/types/quickAccess'
 import { toWanwuMediaUrl } from '@shared/utils/profileMedia'
@@ -45,7 +44,7 @@ function closeWidget() {
       <p class="ww-daily-widget__category">{{ daily.categoryName }}</p>
       <h1 class="ww-daily-widget__title">{{ daily.name }}</h1>
       <p v-if="daily.summary" class="ww-daily-widget__summary">{{ daily.summary }}</p>
-      <WwButton label="在万物中打开" size="small" class="ww-daily-widget__cta" @click="openInMain" />
+      <button type="button" class="ww-daily-widget__cta" @click="openInMain">在万物中打开</button>
     </div>
 
     <p v-else class="ww-daily-widget__loading">图鉴加载中…</p>
@@ -152,6 +151,24 @@ function closeWidget() {
 
 .ww-daily-widget__cta {
   align-self: stretch;
+  -webkit-app-region: no-drag;
+  margin-top: 0.125rem;
+  padding: 0.4375rem 0.75rem;
+  border: 1px solid var(--ww-glass-border);
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ww-ink);
+  background: color-mix(in srgb, var(--ww-surface) 88%, transparent);
+  cursor: pointer;
+  transition:
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    border-color var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-daily-widget__cta:hover {
+  background: var(--ww-list-hover-bg);
+  border-color: var(--ww-accent);
 }
 
 .ww-daily-widget__loading {

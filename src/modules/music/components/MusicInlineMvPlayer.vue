@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onUnmounted, ref, watch } from 'vue'
-import Hls from 'hls.js'
+import type Hls from 'hls.js'
 import WwIcon from '@shared/components/WwIcon.vue'
 
 const props = defineProps<{
@@ -47,48 +47,50 @@ function stopPlayback(opts?: { notifyPause?: boolean }) {
 
 function bindSource(url: string) {
   const video = videoRef.value
-  if (!video) return
+  if (!video) return Promise.resolve()
   destroyHls()
   error.value = null
 
   if (isHls(url)) {
-    if (Hls.isSupported()) {
-      hls = new Hls({ enableWorker: false, lowLatencyMode: false })
-      hls.loadSource(url)
-      hls.attachMedia(video)
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        void video.play().catch(() => {
-          error.value = '无法自动播放'
-        })
-      })
-      hls.on(Hls.Events.ERROR, (_e, data) => {
-        if (!data.fatal) return
-        error.value = '视频加载失败'
-        destroyHls()
-      })
-      return
-    }
-    if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = url
-      video.addEventListener(
-        'loadedmetadata',
-        () => {
+    return import('hls.js').then(({ default: Hls }) => {
+      if (Hls.isSupported()) {
+        hls = new Hls({ enableWorker: false, lowLatencyMode: false })
+        hls.loadSource(url)
+        hls.attachMedia(video)
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
           void video.play().catch(() => {
             error.value = '无法自动播放'
           })
-        },
-        { once: true }
-      )
-      return
-    }
-    error.value = '当前环境不支持 HLS 播放'
-    return
+        })
+        hls.on(Hls.Events.ERROR, (_e, data) => {
+          if (!data.fatal) return
+          error.value = '视频加载失败'
+          destroyHls()
+        })
+        return
+      }
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url
+        video.addEventListener(
+          'loadedmetadata',
+          () => {
+            void video.play().catch(() => {
+              error.value = '无法自动播放'
+            })
+          },
+          { once: true }
+        )
+        return
+      }
+      error.value = '当前环境不支持 HLS 播放'
+    })
   }
 
   video.src = url
   void video.play().catch(() => {
     error.value = '无法自动播放'
   })
+  return Promise.resolve()
 }
 
 function onVideoPlay() {
@@ -116,7 +118,7 @@ async function togglePlay() {
   loading.value = true
   error.value = null
   try {
-    bindSource(props.src)
+    await bindSource(props.src)
   } catch (e) {
     error.value = e instanceof Error ? e.message : '播放失败'
     playing.value = false

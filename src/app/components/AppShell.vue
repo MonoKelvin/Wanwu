@@ -1,18 +1,25 @@
 ﻿<script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, defineAsyncComponent, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import ModuleSidebar from '@app/components/ModuleSidebar.vue'
-import SubItemPanel from '@app/components/SubItemPanel.vue'
 import { useRouteModule } from '@app/composables/useRouteModule'
 import { useShellModule } from '@app/composables/useShellModule'
 import { MODULE_KEEP_ALIVE } from '@app/config/modules'
 import { moduleViewComponent } from '@app/shell/moduleShell'
-import ItemDetailView from '@modules/item/ItemDetailView.vue'
-import MusicMiniBar from '@modules/music/player/MusicMiniBar.vue'
-import { useMusicMvPlayback } from '@modules/music/composables/useMusicMvPlayback'
+import { mvPageActive } from '@modules/music/lib/musicMvOverlayState'
 import { useAppStore } from '@shared/stores/app'
 import { useSettingsStore } from '@shared/stores/settings'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
+
+const ItemDetailView = defineAsyncComponent(
+  () => import('@modules/item/ItemDetailView.vue')
+)
+const MusicMiniBar = defineAsyncComponent(
+  () => import('@modules/music/player/MusicMiniBar.vue')
+)
+const SubItemPanel = defineAsyncComponent(
+  () => import('@app/components/SubItemPanel.vue')
+)
 
 const route = useRoute()
 const routeModule = useRouteModule()
@@ -21,12 +28,14 @@ const shellComponent = computed(() => moduleViewComponent(shellModule.value))
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 const isFullscreen = computed(() => !!route.meta.fullscreen)
-const { minibarHidden } = useMusicMvPlayback()
+const minibarHidden = computed(() => mvPageActive.value)
 const showMusicBar = computed(
   () => routeModule.value === 'music' && !isFullscreen.value && !minibarHidden.value
 )
 
 const isItemDetail = computed(() => isItemDetailRoute(route.name))
+/** 模块级 key：修复便笺/音乐等模块串屏（1ed8eac）；全库子路由由 LibraryShellView 内层 key 负责 */
+const shellRouterViewKey = computed(() => routeModule.value ?? route.fullPath)
 /** 物品详情为全屏内容区：不显示分类侧栏，避免与缓存的全库列表叠在一起 */
 const showSubPanel = computed(() => {
   if (isItemDetail.value || isFullscreen.value) return false
@@ -48,14 +57,14 @@ watch(
 <template>
   <div class="flex h-full w-full overflow-hidden bg-ww-canvas text-color">
     <ModuleSidebar v-show="!isFullscreen" />
-    <SubItemPanel v-show="showSubPanel" class="shrink-0" />
+    <SubItemPanel v-if="showSubPanel" class="shrink-0" />
     <main
       class="relative flex min-w-0 flex-1 flex-col overflow-hidden"
       :class="routeModule === 'cloud-abode' ? 'bg-transparent' : 'bg-ww-content'"
     >
       <!-- 底层模块常驻 KeepAlive；物品详情用浮层，避免 out-in 闪白与列表重挂载 -->
-      <RouterView :key="routeModule ?? route.fullPath" v-slot="{ Component }">
-        <KeepAlive :include="[...MODULE_KEEP_ALIVE]">
+      <RouterView :key="shellRouterViewKey" v-slot="{ Component }">
+        <KeepAlive :max="4" :include="[...MODULE_KEEP_ALIVE]">
           <component
             :is="isItemDetail ? shellComponent : Component"
             :key="shellModule"

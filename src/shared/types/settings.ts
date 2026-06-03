@@ -35,6 +35,8 @@ export interface AppSettings {
   windowStateMode: WindowStateMode
   colorScheme: ColorScheme
   notesPopoutRestore: NotesPopoutRestoreMode
+  /** 登录系统后自动启动应用 */
+  launchAtStartup: boolean
   /** 在任务栏显示托盘图标 */
   trayEnabled: boolean
   /** 关闭主窗口时的行为 */
@@ -82,6 +84,7 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   windowStateMode: 'remember',
   colorScheme: 'system',
   notesPopoutRestore: 'on-enter-notes',
+  launchAtStartup: false,
   trayEnabled: true,
   closeBehavior: 'quit',
   dailyWidgetEnabled: false,

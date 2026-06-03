@@ -13,9 +13,9 @@ const module = computed(() => route.meta.module as string)
       <h2 class="ww-section-label">{{ route.meta.title }}</h2>
     </header>
 
-    <LibraryCategoryPanel v-show="module === 'library'" class="flex min-h-0 flex-1 flex-col" />
+    <LibraryCategoryPanel v-if="module === 'library'" class="flex min-h-0 flex-1 flex-col" />
 
-    <div v-show="module === 'rss'" class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+    <div v-if="module === 'rss'" class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
       <RssSidebar class="min-h-0 flex-1" />
     </div>
 

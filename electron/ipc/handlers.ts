@@ -24,6 +24,7 @@ import type { DatabaseService } from '../services/core/database'
 import type { LibraryService } from '../services/library/service'
 import type { LinksService } from '../services/links/service'
 import type { RssService } from '../services/rss/service'
+import { applyRssAutoRefreshSchedule } from '../services/rss/scheduler'
 import type { MusicService } from '../services/music/service'
 import type { MediaService } from '../services/media/service'
 import type { NotesService } from '../services/notes/service'
@@ -65,7 +66,11 @@ import { consumeStartupNotices, waitForLibraryBootstrap } from '../services/libr
 import { importProfileImage, removeProfileFile } from '../services/media/userProfile'
 import { toWanwuMediaUrl } from '../services/media/wanwu'
 import { normalizeAppSettings, mergeAppSettings } from '../services/data/settings'
-import { applyRssAutoRefreshSchedule } from '../services/rss/scheduler'
+import {
+  applyLaunchAtStartup,
+  readLaunchAtStartupFromOs,
+  canApplyLaunchAtStartup
+} from '../services/app/launchAtStartup'
 import {
   buildDiagnosticsReport,
   clearCacheDirectory,
@@ -893,12 +898,21 @@ export function registerIpcHandlers(services: AppServices): void {
     services.userData?.updateAppSettings(next)
     applyRssAutoRefreshSchedule(services)
     syncQuickAccessFromSettings()
+    applyLaunchAtStartup(next.launchAtStartup)
     broadcastToAllWindows('app:settings-changed', next)
     return next
   }
 
   ipcMain.handle('app:getSettings', () => {
-    return normalizeAppSettings(services.userData?.getAppSettings() ?? {})
+    let settings = normalizeAppSettings(services.userData?.getAppSettings() ?? {})
+    if (canApplyLaunchAtStartup()) {
+      const osEnabled = readLaunchAtStartupFromOs()
+      if (osEnabled !== settings.launchAtStartup) {
+        settings = mergeAppSettings({ launchAtStartup: osEnabled }, settings)
+        services.userData?.updateAppSettings(settings)
+      }
+    }
+    return settings
   })
 
   ipcMain.handle('app:updateSettings', (_e, settings: unknown) => {
@@ -1218,4 +1232,7 @@ export function registerIpcHandlers(services: AppServices): void {
   startBrowserBookmarksWatchers(() => getMainWindow())
   initQuickAccess(services)
   configureWindowClosePolicy(services)
+  applyLaunchAtStartup(
+    normalizeAppSettings(services.userData?.getAppSettings() ?? {}).launchAtStartup
+  )
 }

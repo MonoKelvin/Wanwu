@@ -111,6 +111,11 @@ async function onClipboardAssistEnabledChange(enabled: boolean) {
   if (enabled === settings.value.clipboardAssistEnabled) return
   await settingsStore.setClipboardAssistEnabled(enabled)
 }
+
+async function onLaunchAtStartupChange(enabled: boolean) {
+  if (enabled === settings.value.launchAtStartup) return
+  await settingsStore.setLaunchAtStartup(enabled)
+}
 </script>
 
 <template>
@@ -177,6 +182,13 @@ async function onClipboardAssistEnabledChange(enabled: boolean) {
 
     <div class="ww-settings-group">
       <h3 class="ww-settings-group__label">桌面增强</h3>
+      <SettingsRow label="开机自启" subtitle="登录系统后自动启动万物">
+        <WwToggleSwitch
+          :model-value="settings.launchAtStartup"
+          aria-label="开机自启"
+          @update:model-value="onLaunchAtStartupChange"
+        />
+      </SettingsRow>
       <SettingsRow label="关闭软件时" subtitle="点击窗口关闭按钮的行为">
         <WwSelect
           size="narrow"

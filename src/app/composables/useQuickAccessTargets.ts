@@ -1,11 +1,8 @@
 import { nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useItemDetailNavigation } from '@app/composables/useItemDetailNavigation'
-import { useNotesStore } from '@shared/stores/notes'
 import type { QuickAccessHit, QuickAccessOpenTarget } from '@shared/types/quickAccess'
 import type { NormalizedTrack } from '@shared/types/music'
-import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
-import { useMusicSearch } from '@modules/music/composables/useMusicSearch'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
 
 export function hitToOpenTarget(hit: QuickAccessHit): QuickAccessOpenTarget {
@@ -29,7 +26,6 @@ export function hitToOpenTarget(hit: QuickAccessHit): QuickAccessOpenTarget {
 export function useQuickAccessTargets() {
   const router = useRouter()
   const { openItemDetail } = useItemDetailNavigation()
-  const notesStore = useNotesStore()
 
   function libraryHandbookPath(): string {
     return router.resolve({ name: 'library-illustrated-handbook' }).fullPath
@@ -73,6 +69,8 @@ export function useQuickAccessTargets() {
       case 'note': {
         const noteId = target.noteId ?? target.id
         if (!noteId) return
+        const { useNotesStore } = await import('@shared/stores/notes')
+        const notesStore = useNotesStore()
         if (!notesStore.notes.length) await notesStore.loadAll()
         await router.push({ name: 'library-notes' })
         await nextTick()
@@ -103,9 +101,10 @@ export function useQuickAccessTargets() {
         await router.push({ name: 'music-discover' })
         await nextTick()
         if (track) {
-          const player = useMusicPlayerStore()
-          void player.playTrack(track)
+          const { useMusicPlayerStore } = await import('@modules/music/stores/musicPlayer')
+          void useMusicPlayerStore().playTrack(track)
         } else {
+          const { useMusicSearch } = await import('@modules/music/composables/useMusicSearch')
           useMusicSearch().requestFocus()
         }
         break

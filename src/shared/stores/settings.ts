@@ -54,6 +54,7 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
       ? data.notesPopoutRestore
       : 'on-enter-notes'
 
+  const launchAtStartup = data.launchAtStartup === true
   const trayEnabled = data.trayEnabled !== false
   const closeBehavior: CloseBehavior =
     data.closeBehavior === 'tray' || data.closeBehavior === 'ask' ? data.closeBehavior : 'quit'
@@ -70,6 +71,7 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
     windowStateMode,
     colorScheme,
     notesPopoutRestore,
+    launchAtStartup,
     trayEnabled,
     closeBehavior,
     dailyWidgetEnabled,
@@ -214,6 +216,10 @@ export const useSettingsStore = defineStore('settings', () => {
     await save({ notesPopoutRestore })
   }
 
+  async function setLaunchAtStartup(launchAtStartup: boolean) {
+    await save({ launchAtStartup })
+  }
+
   async function setTrayEnabled(trayEnabled: boolean) {
     await save({ trayEnabled })
   }
@@ -272,6 +278,7 @@ export const useSettingsStore = defineStore('settings', () => {
     setWindowStateMode,
     setColorScheme,
     setNotesPopoutRestore,
+    setLaunchAtStartup,
     setTrayEnabled,
     setCloseBehavior,
     setDailyWidgetEnabled,

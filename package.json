@@ -11,9 +11,9 @@
         "url": "https://github.com/MonoKelvin/Wanwu.git"
     },
     "scripts": {
-        "dev": "node scripts/run.mjs dev && electron-vite dev",
-        "build": "node scripts/run.mjs sqlite electron && node scripts/run.mjs library-pack && electron-vite build",
-        "build:app": "electron-vite build && node scripts/run.mjs sqlite electron",
+        "dev": "node scripts/run.mjs dev && node scripts/electron-vite.mjs dev",
+        "build": "node scripts/run.mjs sqlite electron && node scripts/run.mjs library-pack && node scripts/electron-vite.mjs build",
+        "build:app": "node scripts/electron-vite.mjs build && node scripts/run.mjs sqlite electron",
         "pack": "node scripts/run.mjs pack",
         "logo:ico": "node scripts/generate-app-ico.mjs",
         "typecheck": "vue-tsc --noEmit -p tsconfig.web.json",

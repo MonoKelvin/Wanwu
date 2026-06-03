@@ -2,6 +2,7 @@
 defineOptions({ name: 'LibraryNotesView' })
 
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import ModulePageLayout from '@app/components/ModulePageLayout.vue'
 import PageHeader from '@app/components/PageHeader.vue'
 import EmptyState from '@app/components/EmptyState.vue'
@@ -101,6 +102,12 @@ onMounted(async () => {
   } catch {
     toast.error('加载便笺失败')
   }
+})
+
+/** 离开便笺页前落盘并释放 Tiptap，避免 KeepAlive 嵌套路由下编辑器挂载导致子路由视图卡住 */
+onBeforeRouteLeave(async () => {
+  notesEditorRef.value?.syncToDraft()
+  await flushDraft()
 })
 
 watch(
@@ -411,6 +418,10 @@ async function onSidebarAction(payload: {
 </template>
 
 <style scoped>
+.ww-notes-layout :deep(.ww-module-layout__body) {
+  overflow: hidden;
+}
+
 .ww-notes-layout :deep(.ww-module-layout__body > .ww-notes-workspace) {
   padding: var(--ww-page-padding);
   flex: 1;

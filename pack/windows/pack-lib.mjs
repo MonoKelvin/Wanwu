@@ -245,24 +245,24 @@ function trimLocales(appOutDir) {
   console.log(`[pack] locales：保留 ${keep.size}，删除 ${removed}`)
 }
 
-function trimNativeSharePrebuilds(appOutDir) {
+function trimNativeModulePrebuilds(appOutDir, moduleName, keepPlatform = 'win32-x64') {
   const prebuilds = join(
     appOutDir,
     'resources',
     'app.asar.unpacked',
     'node_modules',
-    'electron-native-share',
+    moduleName,
     'prebuilds'
   )
   if (!existsSync(prebuilds)) return
   let removed = 0
   for (const name of readdirSync(prebuilds, { withFileTypes: true })) {
-    if (!name.isDirectory() || name.name === 'win32-x64') continue
+    if (!name.isDirectory() || name.name === keepPlatform) continue
     rmSync(join(prebuilds, name.name), { recursive: true, force: true })
     removed++
   }
   if (removed > 0) {
-    console.log(`[pack] electron-native-share prebuilds：删除 ${removed} 个非 win32-x64 目录`)
+    console.log(`[pack] ${moduleName} prebuilds：删除 ${removed} 个非 ${keepPlatform} 目录`)
   }
 }
 
@@ -271,7 +271,8 @@ export default async function afterPack(context) {
   trimLocales(context.appOutDir)
   if (process.platform !== 'win32') return
 
-  trimNativeSharePrebuilds(context.appOutDir)
+  trimNativeModulePrebuilds(context.appOutDir, 'electron-native-share')
+  trimNativeModulePrebuilds(context.appOutDir, 'better-sqlite3')
   try {
     const { exeName } = await applyWinExeMetadata(context.appOutDir, {
       log: (msg) => console.log(`[pack] ${msg}`)

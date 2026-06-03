@@ -11,6 +11,7 @@
  *   node scripts/run.mjs renderer           # 开发态 renderer 回退包
  *   node scripts/run.mjs pack [opts]        # Windows 安装包（转发 pack/windows/pack.mjs）
  */
+import './ensure-quiet-dotenv.mjs'
 import { execFileSync, execSync, spawnSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { createRequire } from 'node:module'
@@ -170,7 +171,7 @@ function cmdRenderer() {
   const html = join(root, 'out', 'renderer', 'index.html')
   if (existsSync(html)) return
   console.log('[万物] 未找到 out/renderer，正在构建 renderer 备用包...')
-  const r = spawnSync('npx', ['electron-vite', 'build'], {
+  const r = spawnSync(process.execPath, [join(root, 'scripts', 'electron-vite.mjs'), 'build'], {
     cwd: root,
     stdio: 'inherit',
     shell: true

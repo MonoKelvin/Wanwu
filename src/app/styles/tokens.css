@@ -169,6 +169,7 @@
   --ww-settings-nav-bg: rgb(238 238 240 / 0.72);
   --ww-surface: #ffffff;
   --ww-surface-float: rgb(255 255 255 / 0.9);
+  --ww-surface-raised: var(--ww-inset);
   --ww-panel-edge-highlight: 1px 0 0 rgb(255 255 255 / 0.4);
   --ww-on-media-fg: rgb(255 255 255 / 0.95);
   --ww-on-media-fg-muted: rgb(255 255 255 / 0.72);

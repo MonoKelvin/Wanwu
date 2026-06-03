@@ -1,5 +1,11 @@
 /* 原生滚动条：须挂在可滚动元素上（Chromium 对裸 ::-webkit-scrollbar 偶发不生效） */
 
+.ww-scroll-main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .ww-scroll-main,
 .ww-scrollbar,
 .ww-settings-panel__body,

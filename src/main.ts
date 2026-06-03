@@ -1,27 +1,10 @@
-﻿import { createApp } from 'vue'
+﻿import { createApp, type Component } from 'vue'
 import { createPinia } from 'pinia'
-import PrimeVue from 'primevue/config'
-import ToastService from 'primevue/toastservice'
-import ConfirmationService from 'primevue/confirmationservice'
-import Tooltip from 'primevue/tooltip'
-import { WanwuPreset } from '@app/theme/preset'
-import { primeVueZhCn } from '@app/locale/primevue-zh-cn'
 import { applyColorScheme, readStoredColorScheme } from '@app/theme/applyTheme'
-import { isNotePopoutHash } from '@app/utils/notePopoutEntry'
-import { isTrayMenuHash } from '@app/utils/trayMenuEntry'
-
-if (isTrayMenuHash()) {
-  document.documentElement.classList.add('ww-tray-menu-root')
-}
-
-import '@app/styles/tokens.css'
-import '@app/styles/theme-dark.css'
-import '@app/styles/main.css'
-import '@app/styles/tray-menu-popout.css'
-import '@app/styles/form-fields.css'
-import '@app/styles/scrollbars.css'
-import '@app/styles/theme-components.css'
-import App from '@app/App.vue'
+import { detectBootMode, isPopoutBootMode, type BootMode } from '@app/bootstrap/bootMode'
+import { loadStylesForMode } from '@app/bootstrap/loadStyles'
+import { loadWebFonts } from '@app/bootstrap/loadWebFonts'
+import { installUiPlugins } from '@app/bootstrap/uiPlugins'
 import router from '@app/router'
 
 async function syncThemeBeforePaint(): Promise<void> {
@@ -37,32 +20,45 @@ async function syncThemeBeforePaint(): Promise<void> {
   }
 }
 
+async function resolveRootComponent(mode: BootMode): Promise<Component> {
+  switch (mode) {
+    case 'tray-menu':
+      return (await import('@app/shell/AppTray.vue')).default
+    case 'daily-widget':
+      return (await import('@app/shell/AppDailyWidget.vue')).default
+    case 'note-popout':
+      return (await import('@app/shell/AppNotePopout.vue')).default
+    default:
+      return (await import('@app/App.vue')).default
+  }
+}
+
 async function bootstrap(): Promise<void> {
-  const bootPopout = isNotePopoutHash() || isTrayMenuHash()
-  if (!bootPopout) {
+  const mode = detectBootMode()
+
+  if (mode === 'tray-menu') {
+    document.documentElement.classList.add('ww-tray-menu-root')
+  }
+
+  await loadStylesForMode(mode)
+  loadWebFonts(mode)
+  if (mode === 'main') {
+    await import('@app/styles/toast-stack.css')
+  } else if (mode === 'note-popout') {
+    await import('@app/styles/toast-stack.css')
+  }
+
+  if (!isPopoutBootMode(mode)) {
     applyColorScheme(readStoredColorScheme() ?? 'system')
   }
 
-  const app = createApp(App)
+  const app = createApp(await resolveRootComponent(mode))
   app.use(createPinia())
   app.use(router)
-  app.directive('tooltip', Tooltip)
-  app.use(ToastService)
-  app.use(ConfirmationService)
-  app.use(PrimeVue, {
-    ripple: false,
-    locale: primeVueZhCn,
-    theme: {
-      preset: WanwuPreset,
-      options: {
-        darkModeSelector: '.p-dark',
-        cssLayer: false
-      }
-    }
-  })
+  await installUiPlugins(app, mode)
 
   await router.isReady()
-  if (bootPopout) {
+  if (isPopoutBootMode(mode)) {
     await syncThemeBeforePaint()
   }
   app.mount('#app')

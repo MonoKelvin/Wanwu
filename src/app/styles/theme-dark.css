@@ -102,6 +102,7 @@
   --ww-settings-nav-bg: rgb(24 24 27 / 0.86);
   --ww-surface: #18181b;
   --ww-surface-float: rgb(30 30 34 / 0.92);
+  --ww-surface-raised: var(--ww-inset);
   --ww-panel-edge-highlight: none;
   --ww-danger-text: #f87171;
 }

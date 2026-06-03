@@ -1,8 +1,8 @@
 import { computed, ref } from 'vue'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
+import { mvPageActive } from '@modules/music/lib/musicMvOverlayState'
 
 /** MV 页激活时隐藏底栏并协调音乐播放 */
-const mvPageActive = ref(false)
 let musicWasPlayingBeforeMv: boolean | null = null
 
 export function useMusicMvPlayback() {

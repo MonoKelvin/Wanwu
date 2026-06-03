@@ -2,7 +2,10 @@
 export class TtlRequestCache {
   private store = new Map<string, { exp: number; p: Promise<unknown> }>()
 
-  constructor(private readonly ttlMs: number) {}
+  constructor(
+    private readonly ttlMs: number,
+    private readonly maxEntries = 256
+  ) {}
 
   run<T>(key: string, fn: () => Promise<T>): Promise<T> {
     const now = Date.now()
@@ -14,7 +17,20 @@ export class TtlRequestCache {
       throw err
     })
     this.store.set(key, { exp: now + this.ttlMs, p })
+    this.evictIfNeeded()
     return p as Promise<T>
+  }
+
+  private evictIfNeeded(): void {
+    const now = Date.now()
+    for (const [key, entry] of this.store) {
+      if (entry.exp <= now) this.store.delete(key)
+    }
+    while (this.store.size > this.maxEntries) {
+      const oldest = this.store.keys().next().value
+      if (oldest === undefined) break
+      this.store.delete(oldest)
+    }
   }
 
   clear(): void {

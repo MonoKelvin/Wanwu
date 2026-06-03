@@ -1,21 +1,27 @@
-﻿import type { Component } from 'vue'
-import { isModuleId, type ModuleId } from '@app/config/modules'
+﻿import { defineAsyncComponent, type Component } from 'vue'
+import { CLOUD_ABODE_ENABLED, isModuleId, type ModuleId } from '@app/config/modules'
 import { isItemDetailPath, moduleIdForItemDetailSource } from '@shared/utils/itemDetailRoute'
-import CloudAbodeView from '@modules/cloud-abode/CloudAbodeView.vue'
-import LibraryShellView from '@modules/library/LibraryShellView.vue'
-import PersonalView from '@modules/personal/PersonalView.vue'
-import RssView from '@modules/rss/RssView.vue'
-import MusicView from '@modules/music/MusicView.vue'
-import SettingsView from '@modules/settings/SettingsView.vue'
 
-const MODULE_VIEW: Record<ModuleId, Component> = {
-  library: LibraryShellView,
-  rss: RssView,
-  music: MusicView,
-  'cloud-abode': CloudAbodeView,
-  personal: PersonalView,
-  settings: SettingsView
+type ModuleLoader = () => Promise<{ default: Component }>
+
+const MODULE_LOADERS: Partial<Record<ModuleId, ModuleLoader>> = {
+  library: () => import('@modules/library/LibraryShellView.vue'),
+  rss: () => import('@modules/rss/RssView.vue'),
+  music: () => import('@modules/music/MusicView.vue'),
+  personal: () => import('@modules/personal/PersonalView.vue'),
+  settings: () => import('@modules/settings/SettingsView.vue')
 }
+
+if (CLOUD_ABODE_ENABLED) {
+  MODULE_LOADERS['cloud-abode'] = () => import('@modules/cloud-abode/CloudAbodeView.vue')
+}
+
+const MODULE_VIEW = Object.fromEntries(
+  Object.entries(MODULE_LOADERS).map(([id, loader]) => [
+    id,
+    defineAsyncComponent(() => loader!().then((m) => m.default))
+  ])
+) as Record<ModuleId, Component>
 
 function moduleIdFromPath(path: string): ModuleId | undefined {
   const seg = path.replace(/^#/, '').split('/').filter(Boolean)[0]
@@ -32,5 +38,8 @@ export function shellModuleFromReturnPath(returnPath: string | null | undefined)
 }
 
 export function moduleViewComponent(id: ModuleId): Component {
-  return MODULE_VIEW[id]
+  if (id === 'cloud-abode' && !CLOUD_ABODE_ENABLED) {
+    return MODULE_VIEW.library
+  }
+  return MODULE_VIEW[id] ?? MODULE_VIEW.library
 }
