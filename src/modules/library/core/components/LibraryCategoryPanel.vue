@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router'
 import type { TreeNode } from 'primevue/treenode'
 import IconField from 'primevue/iconfield'
 import WwInputIcon from '@shared/components/WwInputIcon.vue'
@@ -27,6 +27,7 @@ import {
   readHandbookCatalogSelection,
   writeHandbookCatalogSelection
 } from '@modules/library/core/composables/libraryCatalogTreeMemory'
+import { prepareShellNavigation } from '@app/composables/shellNavigation'
 
 const EXPANDED_STORAGE_KEY = 'wanwu:library:category-tree-expanded'
 
@@ -54,9 +55,16 @@ const {
   onFolderDeleteConfirm
 } = useLinksFolderDialogs({
   navigateFolder: (id) => {
-    void router.push({ name: 'library-links', params: { folderId: id } })
+    void pushLibraryRoute({ name: 'library-links', params: { folderId: id } })
   }
 })
+
+async function pushLibraryRoute(to: RouteLocationRaw) {
+  const resolved = router.resolve(to)
+  if (router.currentRoute.value.fullPath === resolved.fullPath) return
+  prepareShellNavigation()
+  await router.push(to).catch(() => {})
+}
 
 const activeMajor = computed<LibraryMajorId | null>(() => {
   const m = route.meta.major as string | undefined
@@ -182,18 +190,18 @@ watch(
   { deep: true }
 )
 
-function navigateMajor(majorId: LibraryMajorId) {
+async function navigateMajor(majorId: LibraryMajorId) {
   if (majorId === 'notes') {
-    void router.push({ name: 'library-notes' })
+    await pushLibraryRoute({ name: 'library-notes' })
     return
   }
   if (majorId === 'illustrated-handbook') {
-    void router.push({ name: 'library-illustrated-handbook' })
+    await pushLibraryRoute({ name: 'library-illustrated-handbook' })
     return
   }
   const target = resolveLinksEntryTarget()
-  if (typeof target === 'string') void router.push(target)
-  else void router.push(target)
+  if (typeof target === 'string') await pushLibraryRoute(target)
+  else await pushLibraryRoute(target)
 }
 
 function linksCatalogNodeBadge(node: TreeNode): number | undefined {
@@ -247,12 +255,12 @@ function onLinksNodeContextMenu(event: MouseEvent, node: TreeNode) {
   linksContextMenu.value?.show(event)
 }
 
-function onNodeSelect(node: TreeNode) {
+async function onNodeSelect(node: TreeNode) {
   const key = String(node.key)
   if (isCatalogLoadingNodeKey(key)) return
 
   if (key.startsWith('major:')) {
-    navigateMajor(key.slice('major:'.length) as LibraryMajorId)
+    await navigateMajor(key.slice('major:'.length) as LibraryMajorId)
     return
   }
 
@@ -260,16 +268,16 @@ function onNodeSelect(node: TreeNode) {
     const rest = key.slice(3)
     if (rest.includes('::')) {
       const [catId, subId] = rest.split('::')
-      void router.push({ name: 'library-illustrated-handbook', params: { catId, subId } })
+      await pushLibraryRoute({ name: 'library-illustrated-handbook', params: { catId, subId } })
     } else {
-      void router.push({ name: 'library-illustrated-handbook', params: { catId: rest } })
+      await pushLibraryRoute({ name: 'library-illustrated-handbook', params: { catId: rest } })
     }
     return
   }
 
   if (key.startsWith('ln:')) {
     const folderId = key.slice(3)
-    void router.push({ name: 'library-links', params: { folderId } })
+    await pushLibraryRoute({ name: 'library-links', params: { folderId } })
   }
 }
 </script>

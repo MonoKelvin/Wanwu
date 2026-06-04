@@ -22,8 +22,8 @@ const navAlignClass = computed(() =>
   settings.value.navAlign === 'center' ? 'ww-module-nav--center' : 'ww-module-nav--start'
 )
 
-function navigate(id: ModuleId) {
-  navigateToModule(id)
+function onModuleClick(id: ModuleId) {
+  void navigateToModule(id)
 }
 
 function isActive(id: ModuleId) {
@@ -62,7 +62,7 @@ function isActive(id: ModuleId) {
           }"
           :aria-label="m.label"
           :aria-current="isActive(m.id) ? 'page' : undefined"
-          @click="navigate(m.id as ModuleId)"
+          @click="onModuleClick(m.id as ModuleId)"
         >
           <WwIcon :name="m.icon" size="md" class="ww-module-btn__icon" />
           <span v-if="showLabel" class="ww-module-btn__label">{{ m.label }}</span>

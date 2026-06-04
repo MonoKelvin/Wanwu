@@ -25,7 +25,7 @@ const router = createRouter({
         const cat = String(to.params.legacyCat ?? '')
         if (isLibraryMajorId(cat)) {
           if (cat === 'notes') {
-            return { name: 'library-notes' }
+            return { path: '/notes' }
           }
           if (cat === 'links') {
             return {
@@ -49,6 +49,12 @@ const router = createRouter({
       }
     },
     {
+      path: '/notes',
+      name: 'library-notes',
+      component: () => import('@modules/library/notes/views/NotesView.vue'),
+      meta: { module: 'library', major: 'notes', title: '便笺' }
+    },
+    {
       path: '/library',
       component: () => import('@modules/library/LibraryShellView.vue'),
       meta: { module: 'library', title: '全库' },
@@ -59,9 +65,7 @@ const router = createRouter({
         },
         {
           path: 'notes',
-          name: 'library-notes',
-          component: () => import('@modules/library/notes/views/NotesView.vue'),
-          meta: { module: 'library', major: 'notes', title: '便笺' }
+          redirect: { path: '/notes', replace: true }
         },
         {
           path: 'links/:folderId?',
@@ -77,10 +81,6 @@ const router = createRouter({
           meta: { module: 'library', major: 'illustrated-handbook', title: '图鉴' }
         }
       ]
-    },
-    {
-      path: '/notes',
-      redirect: { name: 'library-notes' }
     },
     {
       path: '/rss/:feedId?',

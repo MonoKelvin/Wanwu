@@ -4,6 +4,7 @@ import Tree from 'primevue/tree'
 import type { TreeNode } from 'primevue/treenode'
 import Badge from 'primevue/badge'
 import WwIcon from '@shared/components/WwIcon.vue'
+import { releaseFocusBeforeNavigation } from '@app/composables/shellNavigation'
 import { usePersistedTreeExpanded } from '@shared/composables/usePersistedTreeExpanded'
 import { filterTreeNodes } from '@modules/library/core/catalog/filterTreeNodes'
 import { collectExpandableKeys } from '@modules/library/core/utils/treeKeys'
@@ -197,6 +198,7 @@ function badgeForNode(node: TreeNode): string | number | null | undefined {
     :value="filteredNodes"
     selection-mode="single"
     :class="['ww-catalog-tree w-full border-0 bg-transparent p-0', treeClass]"
+    @pointerdown.capture="releaseFocusBeforeNavigation"
     @node-select="onNodeSelect"
     @node-expand="onTreeNodeExpand"
     @node-collapse="onTreeNodeCollapse"

@@ -28,10 +28,10 @@ const isItemDetail = computed(() => isItemDetailRoute(route.name))
 const itemDetailShell = computed(() => moduleViewComponent(shellModule.value))
 
 const activeShellKey = computed(() =>
-  isItemDetail.value ? `item:${shellModule.value}` : (routeModule.value ?? route.fullPath)
+  isItemDetail.value ? `item:${shellModule.value}` : route.fullPath
 )
 
-/** 离开全库时销毁 LibraryView，避免便笺 Tiptap 在 KeepAlive 中残留串屏 */
+/** 便笺含 Tiptap，LibraryView 离开全库时必须销毁，避免 KeepAlive 串屏 */
 const shellKeepAliveInclude = computed(() => {
   const active = isItemDetail.value ? shellModule.value : routeModule.value
   const names = [...MODULE_KEEP_ALIVE]

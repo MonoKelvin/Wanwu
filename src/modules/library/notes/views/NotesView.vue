@@ -2,7 +2,6 @@
 defineOptions({ name: 'LibraryNotesView' })
 
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { onBeforeRouteLeave } from 'vue-router'
 import ModulePageLayout from '@app/components/ModulePageLayout.vue'
 import PageHeader from '@app/components/PageHeader.vue'
 import EmptyState from '@app/components/EmptyState.vue'
@@ -21,6 +20,7 @@ import NotesSidebar from '@modules/library/notes/components/NotesSidebar.vue'
 import NotesEditor from '@modules/library/notes/components/NotesEditor.vue'
 import { useNotesDraft } from '@modules/library/notes/lib/useNotesDraft'
 import { registerNotePopoutSelectHandler } from '@modules/library/notes/lib/notePopoutFocusSync'
+import { registerNotesNavigationSync } from '@modules/library/notes/lib/notesNavigationTeardown'
 import { normalizeNotePlainText } from '@modules/library/notes/lib/noteContentText'
 import type { NoteItem } from '@shared/types/notes'
 
@@ -104,10 +104,8 @@ onMounted(async () => {
   }
 })
 
-/** 离开便笺页前落盘并释放 Tiptap，避免 KeepAlive 嵌套路由下编辑器挂载导致子路由视图卡住 */
-onBeforeRouteLeave(async () => {
+const unregisterNotesNavigationSync = registerNotesNavigationSync(() => {
   notesEditorRef.value?.syncToDraft()
-  await flushDraft()
 })
 
 watch(
@@ -156,17 +154,20 @@ async function selectNote(id: string) {
 
 const unregisterPopoutSelectHandler = registerNotePopoutSelectHandler((id) => selectNote(id))
 
-onBeforeUnmount(async () => {
+onBeforeUnmount(() => {
+  unregisterNotesNavigationSync()
   unregisterPopoutSelectHandler()
   const noteId = notesStore.selectedNoteId
   const content = draftContent.value
   const note = noteId ? notesStore.notes.find((item) => item.id === noteId) : null
-  await flushDraft()
-  if (note) {
-    await pruneUnreferencedNoteImages(note.images, content, (imageId) =>
-      notesStore.removeImage(imageId)
-    )
-  }
+  notesEditorRef.value?.syncToDraft()
+  void flushDraft().then(() => {
+    if (note) {
+      void pruneUnreferencedNoteImages(note.images, content, (imageId) =>
+        notesStore.removeImage(imageId)
+      )
+    }
+  })
 })
 
 async function onTogglePopout(anchor?: PopoutScreenAnchor) {

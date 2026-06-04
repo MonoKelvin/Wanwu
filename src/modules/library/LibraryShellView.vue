@@ -7,7 +7,7 @@ import { isLibraryMajorId } from '@modules/library/core/config/majors'
 
 const route = useRoute()
 
-/** 便笺/链接/图鉴大分类切换须 remount 内层 RouterView，否则 KeepAlive 父级下子页（尤其 Tiptap）会卡住 */
+/** 链接/图鉴大分类切换须 remount 内层 RouterView（便笺已提升为 /notes 顶层路由） */
 const libraryChildOutletKey = computed(() => {
   const major = route.meta.major
   if (typeof major === 'string' && isLibraryMajorId(major)) return major
