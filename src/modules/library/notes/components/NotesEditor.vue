@@ -331,7 +331,20 @@ function syncToDraft() {
   syncToDraftFromEditor(editor.value, { force: true })
 }
 
-defineExpose({ syncToDraft, hydrateFromDraft: hydrateEditorFromDraft })
+function destroyEditor() {
+  const instance = editor.value
+  if (!instance || instance.isDestroyed) return
+  viewerOpen.value = false
+  viewerSlides.value = []
+  releaseViewerResource()
+  imageMenuRef.value?.hide()
+  if (instance.view?.dom) {
+    unbindEditorDomListeners(instance.view.dom)
+  }
+  instance.destroy()
+}
+
+defineExpose({ syncToDraft, hydrateFromDraft: hydrateEditorFromDraft, destroyEditor })
 
 async function hydrateEditorFromDraft() {
   await nextTick()
@@ -548,11 +561,7 @@ watch(
 )
 
 onBeforeUnmount(() => {
-  if (editor.value?.view?.dom) {
-    unbindEditorDomListeners(editor.value.view.dom)
-  }
-  editor.value?.destroy()
-  releaseViewerResource()
+  destroyEditor()
 })
 </script>
 

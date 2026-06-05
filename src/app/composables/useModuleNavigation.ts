@@ -29,10 +29,15 @@ export function useModuleNavigation() {
     const remembered = appStore.pathForModule(id)
     const path = belongsToModule(remembered, id) ? remembered : modulePathById(id)
     const active = currentRouteModule(router)
-    const needPush = active !== id || router.currentRoute.value.fullPath !== path
-    if (!needPush) return
+    const resolved = router.resolve(path)
+    const samePath = router.currentRoute.value.fullPath === resolved.fullPath
 
-    prepareShellNavigation()
+    if (active === id && samePath) {
+      appStore.bumpShellOutlet()
+      return
+    }
+
+    await prepareShellNavigation()
     await router.push(path).catch(() => {})
   }
 

@@ -1,10 +1,14 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupModulePathMemory } from '@app/router/moduleMemory'
+import { setupShellNavigationHooks } from '@app/composables/shellNavigation'
 // import { CLOUD_ABODE_ENABLED } from '@app/config/modules'
 // import { cloudAbodeChildRoutes } from '@modules/cloud-abode/router'
 import { useSettingsStore } from '@shared/stores/settings'
 import { resolveStartupPath } from '@shared/utils/startupModule'
 import { isLibraryMajorId } from '@modules/library/core/config/majors'
+
+/** 便笺由 AppShell 直接挂载（含 Tiptap），此处仅占位以保持路由 meta/名称 */
+const ROUTE_OUTLET_SHELL = { template: '<div />' }
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -51,7 +55,7 @@ const router = createRouter({
     {
       path: '/notes',
       name: 'library-notes',
-      component: () => import('@modules/library/notes/views/NotesView.vue'),
+      component: ROUTE_OUTLET_SHELL,
       meta: { module: 'library', major: 'notes', title: '便笺' }
     },
     {
@@ -260,5 +264,6 @@ const router = createRouter({
 })
 
 setupModulePathMemory(router)
+setupShellNavigationHooks(router)
 
 export default router

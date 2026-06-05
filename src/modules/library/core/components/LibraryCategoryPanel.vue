@@ -27,7 +27,7 @@ import {
   readHandbookCatalogSelection,
   writeHandbookCatalogSelection
 } from '@modules/library/core/composables/libraryCatalogTreeMemory'
-import { prepareShellNavigation } from '@app/composables/shellNavigation'
+import { pushShellRoute } from '@app/composables/shellNavigation'
 
 const EXPANDED_STORAGE_KEY = 'wanwu:library:category-tree-expanded'
 
@@ -60,10 +60,7 @@ const {
 })
 
 async function pushLibraryRoute(to: RouteLocationRaw) {
-  const resolved = router.resolve(to)
-  if (router.currentRoute.value.fullPath === resolved.fullPath) return
-  prepareShellNavigation()
-  await router.push(to).catch(() => {})
+  await pushShellRoute(router, to)
 }
 
 const activeMajor = computed<LibraryMajorId | null>(() => {

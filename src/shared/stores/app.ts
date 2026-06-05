@@ -23,6 +23,13 @@ export const useAppStore = defineStore('app', () => {
   /** 本次打开物品详情前的页面（详情返回用，与主导航历史栈无关） */
   const itemDetailReturnPath = ref<string | null>(null)
 
+  /** 侧栏重复点击同模块时强制 remount 主内容区（从便笺 Tiptap 卡死恢复） */
+  const shellOutletRevision = ref(0)
+
+  function bumpShellOutlet() {
+    shellOutletRevision.value += 1
+  }
+
   function setModule(id: ModuleId) {
     activeModule.value = id
   }
@@ -49,6 +56,8 @@ export const useAppStore = defineStore('app', () => {
     setModule,
     rememberModulePath,
     rememberItemDetailReturn,
-    pathForModule
+    pathForModule,
+    shellOutletRevision,
+    bumpShellOutlet
   }
 })

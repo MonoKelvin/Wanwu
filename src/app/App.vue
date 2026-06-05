@@ -7,6 +7,7 @@ import WwToastMessage from '@shared/components/WwToastMessage.vue'
 import TitleBar from '@app/components/TitleBar.vue'
 import AppShell from '@app/components/AppShell.vue'
 import WwPopTipHost from '@shared/components/WwPopTipHost.vue'
+import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
 import { useSettingsStore } from '@shared/stores/settings'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { tryRestoreNotePopouts } from '@modules/library/notes/lib/useNotePopoutAutoRestore'
@@ -29,7 +30,10 @@ const CloseAppDialog = defineAsyncComponent(() => import('@app/components/CloseA
 const route = useRoute()
 const settingsStore = useSettingsStore()
 const toast = useWanwuToast()
-const isFullscreenRoute = computed(() => Boolean(route.meta.fullscreen))
+const isFullscreenRoute = computed(
+  () => Boolean(route.meta.fullscreen) && !isItemDetailRoute(route.name)
+)
+
 const { paletteOpen } = useQuickAccessHost()
 const {
   closeDialogVisible,

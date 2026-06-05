@@ -20,7 +20,11 @@ import NotesSidebar from '@modules/library/notes/components/NotesSidebar.vue'
 import NotesEditor from '@modules/library/notes/components/NotesEditor.vue'
 import { useNotesDraft } from '@modules/library/notes/lib/useNotesDraft'
 import { registerNotePopoutSelectHandler } from '@modules/library/notes/lib/notePopoutFocusSync'
-import { registerNotesNavigationSync } from '@modules/library/notes/lib/notesNavigationTeardown'
+import {
+  registerNotesEditorDestroy,
+  registerNotesNavigationSync
+} from '@modules/library/notes/lib/notesNavigationTeardown'
+import { notesEditorMountAllowed } from '@modules/library/notes/lib/notesEditorMount'
 import { normalizeNotePlainText } from '@modules/library/notes/lib/noteContentText'
 import type { NoteItem } from '@shared/types/notes'
 
@@ -96,16 +100,20 @@ const {
   }
 })
 
+const unregisterNotesNavigationSync = registerNotesNavigationSync(() => {
+  notesEditorRef.value?.syncToDraft()
+})
+
+const unregisterNotesEditorDestroy = registerNotesEditorDestroy(() => {
+  notesEditorRef.value?.destroyEditor()
+})
+
 onMounted(async () => {
   try {
     await loadNotes()
   } catch {
     toast.error('加载便笺失败')
   }
-})
-
-const unregisterNotesNavigationSync = registerNotesNavigationSync(() => {
-  notesEditorRef.value?.syncToDraft()
 })
 
 watch(
@@ -156,6 +164,7 @@ const unregisterPopoutSelectHandler = registerNotePopoutSelectHandler((id) => se
 
 onBeforeUnmount(() => {
   unregisterNotesNavigationSync()
+  unregisterNotesEditorDestroy()
   unregisterPopoutSelectHandler()
   const noteId = notesStore.selectedNoteId
   const content = draftContent.value
@@ -378,7 +387,7 @@ async function onSidebarAction(payload: {
           :aria-hidden="!showRightPane"
         >
           <NotesEditor
-            v-if="showEditor"
+            v-if="showEditor && notesEditorMountAllowed"
             :key="editorSessionKey"
             ref="notesEditorRef"
             v-model:draftTitle="draftTitle"
