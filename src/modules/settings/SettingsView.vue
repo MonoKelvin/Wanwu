@@ -455,18 +455,6 @@ async function refreshPaths() {
   display: none;
 }
 
-.ww-view-mode-toggle.p-selectbutton .p-togglebutton .p-togglebutton-content {
-  padding: 0.25rem !important;
-}
-
-.ww-view-mode-toggle__option {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
 /* 鈥斺€?鏁版嵁鐩綍 / 澶囦唤鍧?鈥斺€?*/
 .ww-settings-block {
   padding: 1rem;

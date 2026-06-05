@@ -65,8 +65,8 @@ const editorNote = computed(() => {
 
 const showEditor = computed(() => Boolean(editorNote.value))
 
-const { isPopoutOpen, popoutToggleLabel, togglePopout } = useNotePopout(selectedNoteId)
-const { scopeCount, batchLabel, toggleAllPopouts } = useNotePopoutsBatch()
+const { isPopoutVisible, popoutToggleLabel, togglePopout } = useNotePopout(selectedNoteId)
+const { batchDisabled, batchLabel, refreshBatchState, toggleAllPopouts } = useNotePopoutsBatch()
 
 useNotePopoutAutoRestoreOnEnter()
 
@@ -182,6 +182,7 @@ onBeforeUnmount(() => {
 async function onTogglePopout(anchor?: PopoutScreenAnchor) {
   notesEditorRef.value?.syncToDraft()
   await togglePopout(undefined, anchor)
+  await refreshBatchState()
 }
 
 async function createNote() {
@@ -351,7 +352,7 @@ async function onSidebarAction(payload: {
                 size="small"
                 :label="batchLabel"
                 class="ww-notes-batch-popout-btn"
-                :disabled="scopeCount <= 0"
+                :disabled="batchDisabled"
                 @click="toggleAllPopouts"
               />
               <WwButton
@@ -395,7 +396,7 @@ async function onSidebarAction(payload: {
             :note="editorNote"
             :note-colors="NOTE_COLORS"
             :color-labels="NOTE_COLOR_LABELS"
-            :popout-open="isPopoutOpen"
+            :popout-open="isPopoutVisible"
             :popout-toggle-label="popoutToggleLabel"
             @flush="flushDraft"
             @toggle-pinned="togglePinned"
@@ -541,6 +542,12 @@ async function onSidebarAction(payload: {
 
 .ww-notes-layout :deep(.ww-notes-batch-popout-btn.p-button) {
   white-space: nowrap;
+}
+
+.ww-notes-layout :deep(.ww-notes-batch-popout-btn.p-button:disabled) {
+  opacity: 0.42;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .ww-notes-icon-btn--on {

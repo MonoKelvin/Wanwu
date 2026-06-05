@@ -54,6 +54,7 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
       ? data.notesPopoutRestore
       : 'on-enter-notes'
 
+  const notesSpellcheckEnabled = data.notesSpellcheckEnabled === true
   const launchAtStartup = data.launchAtStartup === true
   const trayEnabled = data.trayEnabled !== false
   const closeBehavior: CloseBehavior =
@@ -71,6 +72,7 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
     windowStateMode,
     colorScheme,
     notesPopoutRestore,
+    notesSpellcheckEnabled,
     launchAtStartup,
     trayEnabled,
     closeBehavior,
@@ -216,6 +218,10 @@ export const useSettingsStore = defineStore('settings', () => {
     await save({ notesPopoutRestore })
   }
 
+  async function setNotesSpellcheckEnabled(notesSpellcheckEnabled: boolean) {
+    await save({ notesSpellcheckEnabled })
+  }
+
   async function setLaunchAtStartup(launchAtStartup: boolean) {
     await save({ launchAtStartup })
   }
@@ -278,6 +284,7 @@ export const useSettingsStore = defineStore('settings', () => {
     setWindowStateMode,
     setColorScheme,
     setNotesPopoutRestore,
+    setNotesSpellcheckEnabled,
     setLaunchAtStartup,
     setTrayEnabled,
     setCloseBehavior,

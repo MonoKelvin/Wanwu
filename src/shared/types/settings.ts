@@ -35,6 +35,8 @@ export interface AppSettings {
   windowStateMode: WindowStateMode
   colorScheme: ColorScheme
   notesPopoutRestore: NotesPopoutRestoreMode
+  /** 便笺标题与正文拼写检查 */
+  notesSpellcheckEnabled: boolean
   /** 登录系统后自动启动应用 */
   launchAtStartup: boolean
   /** 在任务栏显示托盘图标 */
@@ -84,6 +86,7 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   windowStateMode: 'remember',
   colorScheme: 'system',
   notesPopoutRestore: 'on-enter-notes',
+  notesSpellcheckEnabled: false,
   launchAtStartup: false,
   trayEnabled: true,
   closeBehavior: 'quit',

@@ -23,13 +23,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="ww-note-popout-shell flex h-full flex-col overflow-hidden">
+  <div class="ww-note-popout-shell">
     <Toast position="bottom-right" class="ww-toast-stack">
       <template #message="{ message }">
         <WwToastMessage :message="message" />
       </template>
     </Toast>
     <WwPopTipHost />
-    <RouterView class="min-h-0 flex-1" />
+    <div class="ww-note-popout-shell__outlet">
+      <RouterView />
+    </div>
   </div>
 </template>

@@ -141,8 +141,22 @@ export interface WanwuApi {
       isOpen: (noteId: string) => Promise<boolean>
       isVisible: (noteId: string) => Promise<boolean>
       listOpen: () => Promise<string[]>
-      getBatchState: () => Promise<{ scopeCount: number; openCount: number; visibleCount: number }>
-      toggleAllVisibility: () => Promise<{ scopeCount: number; openCount: number; visibleCount: number }>
+      getBatchState: () => Promise<{
+        scopeCount: number
+        openCount: number
+        visibleCount: number
+        showableCount: number
+        canShowAll: boolean
+        canHideAll: boolean
+      }>
+      toggleAllVisibility: () => Promise<{
+        scopeCount: number
+        openCount: number
+        visibleCount: number
+        showableCount: number
+        canShowAll: boolean
+        canHideAll: boolean
+      }>
       restore: () => Promise<{ restoredCount: number }>
       rendererReady: () => void
       saveScroll: (params: { noteId: string; scrollTop: number }) => Promise<void>

@@ -1,5 +1,7 @@
 ﻿<script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSettingsStore } from '@shared/stores/settings'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
@@ -28,6 +30,9 @@ import { pickNotePlaceholder } from '@modules/library/notes/lib/notePlaceholders
 
 const toast = useWanwuToast()
 const popTip = usePopTip()
+const settingsStore = useSettingsStore()
+const { settings } = storeToRefs(settingsStore)
+const notesSpellcheckEnabled = computed(() => settings.value.notesSpellcheckEnabled)
 
 const draftTitle = defineModel<string>('draftTitle', { required: true })
 const draftContent = defineModel<string>('draftContent', { required: true })
@@ -292,6 +297,9 @@ const editor = useEditor({
   ],
   content: normalizeEditorHtml(draftContent.value),
   editorProps: {
+    attributes: {
+      spellcheck: 'false'
+    },
     handleClick: (_view, _pos, event) => {
       const mouseEvent = event as MouseEvent
       const target = mouseEvent.target
@@ -523,8 +531,13 @@ const editorPasteListener: EventListener = (event) => {
   void handleEditorPaste(event as ClipboardEvent)
 }
 
+function applyEditorSpellcheck(dom: HTMLElement) {
+  dom.spellcheck = notesSpellcheckEnabled.value
+}
+
 function bindEditorDomListeners(dom: HTMLElement) {
   dom.addEventListener('paste', editorPasteListener)
+  applyEditorSpellcheck(dom)
 }
 
 function unbindEditorDomListeners(dom: HTMLElement) {
@@ -546,6 +559,11 @@ watch(
     releaseViewerResource()
   }
 )
+
+watch(notesSpellcheckEnabled, (enabled) => {
+  const dom = editor.value?.view?.dom
+  if (dom) dom.spellcheck = enabled
+})
 
 watch(
   () => editor.value,
@@ -678,6 +696,7 @@ onBeforeUnmount(() => {
           maxlength="80"
           placeholder="标题"
           aria-label="便笺标题"
+          :spellcheck="notesSpellcheckEnabled"
           @blur="emit('flush')"
         />
         <EditorContent
@@ -708,7 +727,9 @@ onBeforeUnmount(() => {
 
 .ww-notes-editor-wrap--popout {
   flex: 1;
+  flex-direction: column;
   height: 100%;
+  min-height: 0;
   background: transparent;
 }
 

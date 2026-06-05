@@ -66,6 +66,7 @@ export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppS
     windowStateMode: normalizeWindowStateMode(raw.windowStateMode),
     colorScheme: normalizeColorScheme(raw.colorScheme),
     notesPopoutRestore: normalizeNotesPopoutRestore(raw.notesPopoutRestore),
+    notesSpellcheckEnabled: raw.notesSpellcheckEnabled === true,
     launchAtStartup: raw.launchAtStartup === true,
     trayEnabled: raw.trayEnabled !== false,
     closeBehavior: normalizeCloseBehavior(raw.closeBehavior),

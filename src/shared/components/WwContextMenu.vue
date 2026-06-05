@@ -11,6 +11,13 @@ const open = defineModel<boolean>('open', { default: false })
 
 const menuRef = ref<HTMLElement | null>(null)
 const pos = ref({ x: 0, y: 0 })
+const menuOrigin = ref('0% 0%')
+
+const wrapStyle = computed(() => ({
+  left: `${pos.value.x}px`,
+  top: `${pos.value.y}px`,
+  '--ww-action-menu-origin': menuOrigin.value
+}))
 
 const visibleItems = computed(() => props.model.filter((item) => item.visible !== false))
 
@@ -27,6 +34,7 @@ function clampPosition(x: number, y: number) {
 }
 
 async function placeAt(x: number, y: number) {
+  menuOrigin.value = '0% 0%'
   open.value = true
   await nextTick()
   pos.value = clampPosition(x, y)
@@ -39,6 +47,7 @@ async function show(event: Event) {
 
 /** 锚点按钮下方、右对齐（图片区右上角菜单） */
 async function showBelowAnchor(anchor: HTMLElement, gap = 6) {
+  menuOrigin.value = '100% 0%'
   open.value = true
   await nextTick()
   const rect = anchor.getBoundingClientRect()
@@ -68,7 +77,7 @@ function runItem(item: WwMenuItem, event: MouseEvent) {
 
 function onDocPointerDown(e: PointerEvent) {
   if (!open.value) return
-  const el = menuRef.value
+  const el = menuRef.value?.parentElement
   if (el?.contains(e.target as Node)) return
   hide()
 }
@@ -99,66 +108,90 @@ defineExpose({ show, hide, placeAt, showBelowAnchor, toggleAnchor })
 
 <template>
   <Teleport to="body">
-    <div
-      v-if="open"
-      ref="menuRef"
-      class="ww-action-menu ww-glass-blur"
-      role="menu"
-      :style="{ left: `${pos.x}px`, top: `${pos.y}px` }"
-      @click.stop
-      @contextmenu.prevent
-    >
-      <template v-for="(item, index) in visibleItems" :key="index">
-        <hr v-if="item.separator" class="ww-action-menu__sep" />
-        <button
-          v-else
-          type="button"
-          role="menuitem"
-          class="ww-action-menu__item"
-          :class="[item.class, { 'is-disabled': itemDisabled(item) }]"
-          :disabled="itemDisabled(item)"
-          @click="runItem(item, $event)"
-        >
-          <span
-            v-if="wwMenuItemHasCheckColumn(item)"
-            class="ww-action-menu__check"
-            aria-hidden="true"
-          >
-            <WwIcon v-if="item.checked" name="check" size="sm" />
-          </span>
-          <WwIcon v-if="item.wwIcon" :name="item.wwIcon" size="sm" />
-          <span class="ww-action-menu__label">{{ item.label }}</span>
-        </button>
-      </template>
-    </div>
+    <Transition name="ww-action-menu-pop">
+      <div
+        v-if="open"
+        class="ww-action-menu-wrap"
+        :style="wrapStyle"
+        @click.stop
+        @contextmenu.prevent
+      >
+        <div ref="menuRef" class="ww-action-menu" role="menu">
+          <template v-for="(item, index) in visibleItems" :key="index">
+            <hr v-if="item.separator" class="ww-action-menu__sep" />
+            <button
+              v-else
+              type="button"
+              role="menuitem"
+              class="ww-action-menu__item"
+              :class="[item.class, { 'is-disabled': itemDisabled(item) }]"
+              :disabled="itemDisabled(item)"
+              @click="runItem(item, $event)"
+            >
+              <span
+                v-if="wwMenuItemHasCheckColumn(item)"
+                class="ww-action-menu__check"
+                aria-hidden="true"
+              >
+                <WwIcon v-if="item.checked" name="check" size="sm" />
+              </span>
+              <WwIcon v-if="item.wwIcon" :name="item.wwIcon" size="sm" />
+              <span class="ww-action-menu__label">{{ item.label }}</span>
+            </button>
+          </template>
+        </div>
+      </div>
+    </Transition>
   </Teleport>
 </template>
 
 <style>
-/* 统一操作菜单（右键 / 锚点弹出，与图片区右上角菜单一致） */
-.ww-action-menu {
+/* 统一操作菜单（右键 / 锚点弹出） */
+.ww-action-menu-wrap {
   position: fixed;
-  z-index: 10050;
+  z-index: var(--ww-z-context-menu, 10050);
+}
+
+.ww-action-menu-wrap .ww-action-menu {
+  --ww-action-menu-blur: 3rem;
+  --ww-action-menu-bg: rgb(255 255 255 / 0.72);
+
   min-width: 10.5rem;
   padding: 0.375rem;
-  border: none;
+  border: 1px solid var(--ww-glass-border);
   border-radius: 0.75rem;
-  background: var(--ww-glass-bg);
+  background: var(--ww-action-menu-bg);
+  backdrop-filter: blur(var(--ww-action-menu-blur)) saturate(1.5);
+  -webkit-backdrop-filter: blur(var(--ww-action-menu-blur)) saturate(1.5);
   box-shadow: var(--ww-menu-shadow);
+  transform-origin: var(--ww-action-menu-origin, 0% 0%);
+  isolation: isolate;
 }
 
-.ww-action-menu.ww-glass-blur {
-  border: none;
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+[data-theme='dark'] .ww-action-menu-wrap .ww-action-menu {
+  --ww-action-menu-bg: rgb(32 32 36 / 0.76);
+  border-color: var(--ww-glass-border);
 }
 
-.ww-action-menu.ww-glass-blur::before {
-  border-radius: 0.75rem;
-  background: var(--ww-glass-bg-soft);
-  backdrop-filter: blur(var(--ww-blur-glass)) saturate(1.35);
-  -webkit-backdrop-filter: blur(var(--ww-blur-glass)) saturate(1.35);
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .ww-action-menu-wrap .ww-action-menu {
+    background: var(--ww-elevated);
+  }
+}
+
+.ww-action-menu-pop-enter-active .ww-action-menu,
+.ww-action-menu-pop-leave-active .ww-action-menu {
+  transition: transform var(--ww-duration-fast) cubic-bezier(0.34, 1.12, 0.64, 1);
+}
+
+.ww-action-menu-pop-leave-active .ww-action-menu {
+  transition-duration: 0.16s;
+  transition-timing-function: var(--ww-ease-out);
+}
+
+.ww-action-menu-pop-enter-from .ww-action-menu,
+.ww-action-menu-pop-leave-to .ww-action-menu {
+  transform: scale(0.94) translateY(-0.25rem);
 }
 
 .ww-action-menu__item {
@@ -218,5 +251,17 @@ defineExpose({ show, hide, placeAt, showBelowAnchor, toggleAnchor })
   margin: 0.25rem 0.375rem;
   border: none;
   border-top: 1px solid var(--ww-border-faint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-action-menu-pop-enter-active .ww-action-menu,
+  .ww-action-menu-pop-leave-active .ww-action-menu {
+    transition: none;
+  }
+
+  .ww-action-menu-pop-enter-from .ww-action-menu,
+  .ww-action-menu-pop-leave-to .ww-action-menu {
+    transform: none;
+  }
 }
 </style>

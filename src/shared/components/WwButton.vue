@@ -11,16 +11,18 @@ withDefaults(
     iconSize?: 'xs' | 'sm' | 'md' | 'lg' | number
     label?: string
     loading?: boolean
+    disabled?: boolean
   }>(),
   {
     iconSize: 'sm',
-    loading: false
+    loading: false,
+    disabled: false
   }
 )
 </script>
 
 <template>
-  <Button v-bind="$attrs" :label="label" :loading="loading">
+  <Button v-bind="$attrs" :label="label" :loading="loading" :disabled="disabled">
     <template v-if="icon && !loading" #icon>
       <WwIcon :name="icon" :size="iconSize" />
     </template>

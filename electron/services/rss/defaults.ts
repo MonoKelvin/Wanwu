@@ -1,10 +1,16 @@
 ﻿import type Database from 'better-sqlite3'
 import { randomUUID } from 'crypto'
 import {
+  RSS_GROUP_ANIME_ID,
   RSS_GROUP_BLOG_ID,
   RSS_GROUP_COMMUNITY_ID,
+  RSS_GROUP_LITERATURE_ID,
+  RSS_GROUP_LIFE_ID,
   RSS_GROUP_OTHER_ID,
-  RSS_GROUP_TECH_ID
+  RSS_GROUP_PHYSICS_ID,
+  RSS_GROUP_SCIENCE_ID,
+  RSS_GROUP_TECH_ID,
+  RSS_GROUP_VIDEO_ID
 } from '../../../src/shared/types/rss'
 import { ensureRssSchema } from './schema'
 import { faviconUrlFromSite } from './entryMedia'
@@ -41,9 +47,6 @@ export const REMOVED_DEFAULT_FEED_URLS = [
   'https://www.liaoxuefeng.com/feed.xml',
   'https://www.zhangxinxu.com/wordpress/feed/',
   'https://jandan.net/feed',
-  'https://rsshub.rssforever.com/bilibili/popular/all',
-  'https://rsshub.rssforever.com/douban/movie/playing',
-  'https://rsshub.rssforever.com/jandan/top',
   'https://www.engadget.com/rss.xml'
 ]
 
@@ -69,6 +72,42 @@ export const DEFAULT_RSS_FEEDS: DefaultRssFeed[] = [
 
   // 社区
   { title: '掘金', url: 'https://juejin.cn/rss', groupId: RSS_GROUP_COMMUNITY_ID, sortOrder: 1 },
+
+  // 视频（B 站 / 豆瓣电影，经 RSSHub 聚合，国内可访问）
+  { title: 'B站 · 综合热门', url: 'https://rsshub.rssforever.com/bilibili/popular/all', groupId: RSS_GROUP_VIDEO_ID, sortOrder: 1 },
+  { title: 'B站 · 每周必看', url: 'https://rsshub.rssforever.com/bilibili/weekly', groupId: RSS_GROUP_VIDEO_ID, sortOrder: 2 },
+  { title: 'B站 · 电影', url: 'https://rsshub.rssforever.com/bilibili/partion/23', groupId: RSS_GROUP_VIDEO_ID, sortOrder: 3 },
+  { title: 'B站 · 纪录片', url: 'https://rsshub.rssforever.com/bilibili/partion/177', groupId: RSS_GROUP_VIDEO_ID, sortOrder: 4 },
+  { title: 'B站 · 影视杂谈', url: 'https://rsshub.rssforever.com/bilibili/partion/182', groupId: RSS_GROUP_VIDEO_ID, sortOrder: 5 },
+  { title: '豆瓣 · 正在热映', url: 'https://rsshub.rssforever.com/douban/movie/playing', groupId: RSS_GROUP_VIDEO_ID, sortOrder: 6 },
+  { title: '豆瓣 · 一周口碑榜', url: 'https://rsshub.rssforever.com/douban/movie/weekly', groupId: RSS_GROUP_VIDEO_ID, sortOrder: 7 },
+  { title: '豆瓣 · 最受关注', url: 'https://rsshub.rssforever.com/douban/movie/coming', groupId: RSS_GROUP_VIDEO_ID, sortOrder: 8 },
+
+  // 二次元
+  { title: 'B站 · 动画', url: 'https://rsshub.rssforever.com/bilibili/partion/33', groupId: RSS_GROUP_ANIME_ID, sortOrder: 1 },
+  { title: 'Anime1 · 新番', url: 'https://rsshub.rssforever.com/anime1/anime/1/0', groupId: RSS_GROUP_ANIME_ID, sortOrder: 2 },
+  { title: '哔哩轻小说 · 月榜', url: 'https://lnovel.animes.garden/bili/top/monthvisit/feed.xml', groupId: RSS_GROUP_ANIME_ID, sortOrder: 3 },
+  { title: 'B站 · 手办模玩', url: 'https://rsshub.rssforever.com/bilibili/partion/210', groupId: RSS_GROUP_ANIME_ID, sortOrder: 4 },
+  { title: 'B站 · 鬼畜', url: 'https://rsshub.rssforever.com/bilibili/partion/119', groupId: RSS_GROUP_ANIME_ID, sortOrder: 5 },
+
+  // 文学
+  { title: '豆瓣 · 新书速递', url: 'https://rsshub.rssforever.com/douban/book/latest', groupId: RSS_GROUP_LITERATURE_ID, sortOrder: 1 },
+  { title: '简书 · 热门', url: 'https://rsshub.rssforever.com/jianshu/home', groupId: RSS_GROUP_LITERATURE_ID, sortOrder: 2 },
+  { title: '澎湃新闻', url: 'https://rsshub.rssforever.com/thepaper/featured', groupId: RSS_GROUP_LITERATURE_ID, sortOrder: 3 },
+
+  // 科学（非计算机向）
+  { title: '果壳 · 科学', url: 'https://rsshub.rssforever.com/guokr/scientific', groupId: RSS_GROUP_SCIENCE_ID, sortOrder: 1 },
+  { title: 'B站 · 知识', url: 'https://rsshub.rssforever.com/bilibili/partion/36', groupId: RSS_GROUP_SCIENCE_ID, sortOrder: 2 },
+
+  // 物理
+  { title: 'B站 · 科学科普', url: 'https://rsshub.rssforever.com/bilibili/partion/188', groupId: RSS_GROUP_PHYSICS_ID, sortOrder: 1 },
+
+  // 生活
+  { title: '理想生活实验室', url: 'https://www.toodaylab.com/feed', groupId: RSS_GROUP_LIFE_ID, sortOrder: 1 },
+  { title: 'B站 · 生活', url: 'https://rsshub.rssforever.com/bilibili/partion/160', groupId: RSS_GROUP_LIFE_ID, sortOrder: 2 },
+  { title: 'B站 · 美食', url: 'https://rsshub.rssforever.com/bilibili/partion/211', groupId: RSS_GROUP_LIFE_ID, sortOrder: 3 },
+  { title: 'B站 · 时尚', url: 'https://rsshub.rssforever.com/bilibili/partion/155', groupId: RSS_GROUP_LIFE_ID, sortOrder: 4 },
+  { title: '知乎 · 日报', url: 'https://rsshub.rssforever.com/zhihu/daily', groupId: RSS_GROUP_LIFE_ID, sortOrder: 5 },
 
   // 其他：以配图为主的源（启动时会探测，无正文且无配图则自动删除）
   { title: 'NASA 每日一图', url: 'https://apod.nasa.gov/apod.rss', groupId: RSS_GROUP_OTHER_ID, sortOrder: 1 },

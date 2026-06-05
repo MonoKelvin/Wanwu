@@ -39,10 +39,8 @@
 .ww-action-menu,
 .ww-hero-menu {
   border: none;
-  background: var(--ww-glass-bg);
 }
 
-.ww-action-menu.ww-glass-blur::before,
 .ww-hero-menu.ww-glass-blur::before {
   background: var(--ww-glass-bg-soft);
 }

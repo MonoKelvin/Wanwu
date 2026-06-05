@@ -21,3 +21,18 @@ body {
 *::after {
   box-sizing: border-box;
 }
+
+/** 便笺/日签等小窗壳：不依赖 Tailwind，保证 flex 高度链 */
+.ww-note-popout-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ww-note-popout-shell__outlet {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}

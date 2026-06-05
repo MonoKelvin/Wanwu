@@ -1,10 +1,16 @@
 ﻿import type Database from 'better-sqlite3'
 import {
   RSS_DEFAULT_GROUP_ID,
+  RSS_GROUP_ANIME_ID,
   RSS_GROUP_BLOG_ID,
   RSS_GROUP_COMMUNITY_ID,
+  RSS_GROUP_LITERATURE_ID,
+  RSS_GROUP_LIFE_ID,
   RSS_GROUP_OTHER_ID,
+  RSS_GROUP_PHYSICS_ID,
+  RSS_GROUP_SCIENCE_ID,
   RSS_GROUP_TECH_ID,
+  RSS_GROUP_VIDEO_ID,
   RSS_RECYCLE_GROUP_ID
 } from '../../../src/shared/types/rss'
 
@@ -12,7 +18,13 @@ const SYSTEM_GROUPS = [
   { id: RSS_GROUP_BLOG_ID, name: '博客专栏', sortOrder: 1 },
   { id: RSS_GROUP_TECH_ID, name: '科技资讯', sortOrder: 2 },
   { id: RSS_GROUP_COMMUNITY_ID, name: '社区', sortOrder: 3 },
-  { id: RSS_GROUP_OTHER_ID, name: '其他', sortOrder: 4 }
+  { id: RSS_GROUP_VIDEO_ID, name: '视频', sortOrder: 4 },
+  { id: RSS_GROUP_ANIME_ID, name: '二次元', sortOrder: 5 },
+  { id: RSS_GROUP_LITERATURE_ID, name: '文学', sortOrder: 6 },
+  { id: RSS_GROUP_SCIENCE_ID, name: '科学', sortOrder: 7 },
+  { id: RSS_GROUP_PHYSICS_ID, name: '物理', sortOrder: 8 },
+  { id: RSS_GROUP_LIFE_ID, name: '生活', sortOrder: 9 },
+  { id: RSS_GROUP_OTHER_ID, name: '其他', sortOrder: 10 }
 ]
 
 export function ensureRssSchema(rssDb: Database.Database): void {
@@ -56,10 +68,14 @@ function seedSystemGroups(rssDb: Database.Database): void {
   const insert = rssDb.prepare(
     'INSERT OR IGNORE INTO rss_groups (id, name, sort_order, kind) VALUES (?, ?, ?, ?)'
   )
+  const syncMeta = rssDb.prepare(
+    'UPDATE rss_groups SET name = ?, sort_order = ? WHERE id = ? AND kind = ?'
+  )
   insert.run(RSS_RECYCLE_GROUP_ID, '回收站', 9999, 'recycle')
 
   for (const g of SYSTEM_GROUPS) {
     insert.run(g.id, g.name, g.sortOrder, 'normal')
+    syncMeta.run(g.name, g.sortOrder, g.id, 'normal')
   }
 
   // 旧版「默认」分组：将其中系统订阅迁出后删除空分组

@@ -394,6 +394,7 @@ export function hideNotePopout(
   if (!entry || entry.win.isDestroyed()) {
     if (source === 'user') {
       markNotePopoutUserDismissed(noteId)
+      notifyPopoutState(noteId, false, false)
     }
     return
   }
@@ -540,26 +541,36 @@ export function closeAllNotePopouts(): void {
   closeAllNotePopoutsForAppExit()
 }
 
-export function getPopoutsBatchState(): {
+export interface NotePopoutBatchState {
   scopeCount: number
   openCount: number
   visibleCount: number
-} {
+  showableCount: number
+  canShowAll: boolean
+  canHideAll: boolean
+}
+
+export function getPopoutsBatchState(): NotePopoutBatchState {
   const scopeIds = listNotePopoutScopeIds()
   const scopeSet = new Set(scopeIds)
   let visibleCount = 0
+  let showableCount = 0
   for (const id of scopeIds) {
     if (isNotePopoutVisible(id)) visibleCount += 1
+    if (!isNotePopoutUserDismissed(id)) showableCount += 1
   }
   const openCount = listOpenNotePopouts().filter((id) => scopeSet.has(id)).length
-  return { scopeCount: scopeIds.length, openCount, visibleCount }
+  return {
+    scopeCount: scopeIds.length,
+    openCount,
+    visibleCount,
+    showableCount,
+    canShowAll: showableCount > 0,
+    canHideAll: visibleCount > 0
+  }
 }
 
-export function hideAllNotePopouts(): {
-  scopeCount: number
-  openCount: number
-  visibleCount: number
-} {
+export function hideAllNotePopouts(): NotePopoutBatchState {
   for (const noteId of listNotePopoutScopeIds()) {
     if (!isNotePopoutOpen(noteId)) continue
     if (isNotePopoutVisible(noteId)) {
@@ -569,11 +580,7 @@ export function hideAllNotePopouts(): {
   return getPopoutsBatchState()
 }
 
-export function showAllNotePopouts(): {
-  scopeCount: number
-  openCount: number
-  visibleCount: number
-} {
+export function showAllNotePopouts(): NotePopoutBatchState {
   for (const noteId of listNotePopoutScopeIds()) {
     if (isNotePopoutUserDismissed(noteId)) continue
     showNotePopout(noteId, 'batch')
@@ -603,11 +610,7 @@ export function restoreNotePopoutsFromSession(): { restoredCount: number } {
 }
 
 /** 批量显示/隐藏用户曾手动打开过的独立便笺；单条手动显示/隐藏优先级更高 */
-export function toggleAllNotePopoutsVisibility(): {
-  scopeCount: number
-  openCount: number
-  visibleCount: number
-} {
+export function toggleAllNotePopoutsVisibility(): NotePopoutBatchState {
   const state = getPopoutsBatchState()
   if (state.scopeCount === 0) return state
   if (state.visibleCount > 0) return hideAllNotePopouts()

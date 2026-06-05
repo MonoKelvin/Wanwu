@@ -601,6 +601,8 @@ watch(folderId, async (id) => {
 .ww-links-scroll-body {
   overflow-x: hidden;
   overflow-y: auto;
+  /* 为卡片/列表项 hover 上浮与阴影留出空间，避免顶部被裁切 */
+  padding-top: 0.375rem;
   padding-bottom: 0.5rem;
 }
 
