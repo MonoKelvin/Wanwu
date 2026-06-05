@@ -37,6 +37,11 @@ const router = createRouter({
               params: { folderId: to.params.legacySub as string | undefined }
             }
           }
+          if (cat === 'diagrams') {
+            const sub = to.params.legacySub as string | undefined
+            if (!sub) return { name: 'library-diagrams-home' }
+            return { name: 'library-diagrams-folder', params: { folderId: sub } }
+          }
           return {
             name: 'library-illustrated-handbook',
             params: {
@@ -76,6 +81,24 @@ const router = createRouter({
           name: 'library-links',
           component: () => import('@modules/library/links/views/LinksView.vue'),
           meta: { module: 'library', major: 'links', title: '链接' }
+        },
+        {
+          path: 'diagrams',
+          name: 'library-diagrams-home',
+          component: () => import('@modules/library/diagrams/views/DiagramHomeView.vue'),
+          meta: { module: 'library', major: 'diagrams', title: '流程图' }
+        },
+        {
+          path: 'diagrams/f/:folderId',
+          name: 'library-diagrams-folder',
+          component: () => import('@modules/library/diagrams/views/DiagramFileListView.vue'),
+          meta: { module: 'library', major: 'diagrams', title: '流程图' }
+        },
+        {
+          path: 'diagrams/edit/:fileId',
+          name: 'library-diagrams-editor',
+          component: () => import('@modules/library/diagrams/views/DiagramEditorView.vue'),
+          meta: { module: 'library', major: 'diagrams', title: '流程图编辑器' }
         },
         {
           path: 'illustrated-handbook/:catId?/:subId?',

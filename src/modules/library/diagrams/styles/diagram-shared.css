@@ -1,0 +1,556 @@
+/* 流程图模块 — 精简、留白、对齐万物 */
+
+:root {
+  --dg-radius: 0.75rem;
+  --dg-radius-lg: 1rem;
+  --dg-gap-section: 2rem;
+  --dg-gap-inner: 0.75rem;
+  --dg-panel-w: 13.5rem;
+}
+
+.dg-fade-in {
+  animation: dg-fade-in var(--ww-duration) var(--ww-ease-out) both;
+}
+
+@keyframes dg-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* —— 页面 —— */
+
+.dg-page-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dg-gap-section);
+  max-width: 42rem;
+}
+
+.dg-page-inner--wide {
+  max-width: none;
+}
+
+.dg-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dg-gap-inner);
+}
+
+.dg-section-label {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ww-ink-muted);
+}
+
+.dg-hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--ww-ink-faint);
+}
+
+/* —— 模板网格 —— */
+
+.dg-template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 0.625rem;
+}
+
+.dg-template-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 1rem;
+  border: 1px solid var(--ww-border-subtle);
+  border-radius: var(--dg-radius-lg);
+  background: var(--ww-content);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.dg-template-card:hover {
+  border-color: var(--ww-border);
+  background: var(--ww-list-hover-bg);
+}
+
+.dg-template-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--dg-radius);
+  background: var(--ww-inset);
+  color: var(--ww-ink-muted);
+}
+
+.dg-template-card__name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+  color: var(--ww-ink);
+}
+
+.dg-template-card__desc {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--ww-ink-faint);
+}
+
+/* —— 统一列表面板 —— */
+
+.dg-list-panel {
+  border: 1px solid var(--ww-border-subtle);
+  border-radius: var(--dg-radius-lg);
+  background: var(--ww-content);
+  overflow: hidden;
+}
+
+.dg-list-panel__rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dg-list-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.8125rem 1rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.dg-list-panel__rows > li + li {
+  border-top: 1px solid var(--ww-border-subtle);
+}
+
+.dg-list-row:hover {
+  background: var(--ww-list-hover-bg);
+}
+
+.dg-list-row__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--dg-radius);
+  background: var(--ww-inset);
+  color: var(--ww-ink-muted);
+}
+
+.dg-list-row__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.dg-list-row__title {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--ww-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dg-list-row__meta {
+  font-size: 0.75rem;
+  color: var(--ww-ink-faint);
+}
+
+.dg-list-row__chevron {
+  flex-shrink: 0;
+  opacity: 0.35;
+}
+
+/* 文件行（含操作区） */
+
+.dg-file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.dg-file-item__actions {
+  display: flex;
+  gap: 0.25rem;
+  padding-right: 0.5rem;
+  opacity: 0;
+  transition: opacity var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.dg-file-item:hover .dg-file-item__actions,
+.dg-file-item:focus-within .dg-file-item__actions {
+  opacity: 1;
+}
+
+.dg-file-item .dg-list-row {
+  flex: 1;
+}
+
+/* —— 编辑器：全屏画布 + 悬浮面板 —— */
+
+.dg-editor-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--ww-content);
+}
+
+.dg-editor-chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3125rem 0.625rem 0.3125rem 0.375rem;
+  border-radius: var(--dg-radius-lg);
+  max-width: min(22rem, calc(100% - 14rem));
+}
+
+.dg-editor-chrome.ww-glass-blur {
+  background: transparent;
+}
+
+.dg-editor-chrome__title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ww-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.dg-editor-chrome__badge {
+  flex-shrink: 0;
+  font-size: 0.6875rem;
+  color: var(--ww-warn);
+}
+
+.dg-editor-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 全屏画布 */
+
+.dg-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.dg-canvas-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 0;
+  background: var(--ww-content);
+  overflow: hidden;
+  transition: opacity var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.dg-canvas-frame .lf-control,
+.dg-canvas-frame .lf-mini-map {
+  display: none !important;
+}
+
+.dg-canvas-frame--loading {
+  opacity: 0.5;
+}
+
+.dg-canvas-wrap__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--ww-content) 55%, transparent);
+  backdrop-filter: blur(var(--ww-blur-glass));
+  -webkit-backdrop-filter: blur(var(--ww-blur-glass));
+  color: var(--ww-ink-muted);
+  font-size: 0.8125rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 悬浮毛玻璃面板 */
+
+.dg-float {
+  position: absolute;
+  z-index: 4;
+  pointer-events: auto;
+}
+
+.dg-float--top-left {
+  top: 0.75rem;
+  left: 0.75rem;
+}
+
+.dg-float--left {
+  top: 0.75rem;
+  left: 0.75rem;
+}
+
+.dg-float-stack {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  width: var(--dg-panel-w);
+  pointer-events: none;
+}
+
+.dg-float-stack > * {
+  pointer-events: auto;
+}
+
+.dg-float-stack--right {
+  top: 0.75rem;
+  right: 0.75rem;
+  max-height: calc(100% - 5.5rem);
+}
+
+.dg-action-dock {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.3125rem 0.5rem;
+  border-radius: var(--dg-radius-lg);
+}
+
+.dg-action-dock.ww-glass-blur {
+  background: transparent;
+}
+
+.dg-action-dock__sep {
+  width: 1px;
+  height: 1.125rem;
+  margin: 0 0.125rem;
+  background: var(--ww-border-subtle);
+}
+
+.dg-shape-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  width: 10.75rem;
+  max-height: calc(100% - 5.5rem);
+  padding: 0.625rem 0.5rem;
+  border-radius: var(--dg-radius-lg);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.dg-shape-panel.ww-glass-blur {
+  background: transparent;
+}
+
+.dg-shape-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.dg-shape-group__label {
+  margin: 0;
+  padding: 0 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ww-ink-faint);
+}
+
+.dg-shape-group__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+
+.dg-shape-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-height: 3.25rem;
+  padding: 0.375rem 0.25rem;
+  border: none;
+  border-radius: var(--dg-radius);
+  background: transparent;
+  cursor: pointer;
+  transition: background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.dg-shape-item:hover {
+  background: var(--ww-list-hover-bg);
+}
+
+.dg-shape-item__label {
+  max-width: 100%;
+  font-size: 0.625rem;
+  line-height: 1.2;
+  color: var(--ww-ink-muted);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dg-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: var(--dg-panel-w);
+  padding: 0.875rem 1rem;
+  border-radius: var(--dg-radius-lg);
+}
+
+.dg-panel.ww-glass-blur {
+  background: transparent;
+}
+
+.dg-panel--stacked {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.dg-panel__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem 0.5rem;
+  text-align: center;
+}
+
+.dg-panel__empty .dg-hint {
+  max-width: 10rem;
+}
+
+/* 页签（底部悬浮） */
+
+.dg-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  overflow-x: auto;
+}
+
+.dg-tabs-float {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 0.75rem;
+  transform: translateX(-50%);
+  max-width: min(32rem, calc(100% - 16rem));
+  padding: 0.375rem 0.5rem;
+  border-radius: var(--dg-radius-lg);
+  pointer-events: auto;
+}
+
+.dg-tabs-float.ww-glass-blur {
+  background: transparent;
+}
+
+.dg-tab {
+  padding: 0.375rem 0.75rem;
+  border: none;
+  border-radius: var(--dg-radius);
+  background: transparent;
+  color: var(--ww-ink-muted);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    color var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.dg-tab:hover {
+  color: var(--ww-ink);
+  background: var(--ww-list-hover-bg);
+}
+
+.dg-tab--active {
+  color: var(--ww-ink);
+  font-weight: 500;
+  background: var(--ww-list-hover-bg);
+}
+
+.dg-tab-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.625rem;
+  height: 1.625rem;
+  margin-left: 0.25rem;
+  border: none;
+  border-radius: var(--dg-radius);
+  background: transparent;
+  color: var(--ww-ink-faint);
+  cursor: pointer;
+  transition:
+    color var(--ww-duration-fast) var(--ww-ease-out),
+    background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.dg-tab-add:hover {
+  color: var(--ww-ink);
+  background: var(--ww-list-hover-bg);
+}
+
+/* 表单 */
+
+.dg-field-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--ww-ink-muted);
+}
+
+.dg-field-input {
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--ww-border-subtle);
+  border-radius: var(--dg-radius);
+  background: var(--ww-inset);
+  color: var(--ww-ink);
+  font-size: 0.8125rem;
+  transition: border-color var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.dg-field-input:focus {
+  outline: none;
+  border-color: var(--ww-border);
+}

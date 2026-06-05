@@ -18,6 +18,7 @@ import {
 import { DatabaseService } from './services/core/database'
 import { LibraryService } from './services/library/service'
 import { LinksService } from './services/links/service'
+import { DiagramService } from './services/diagrams/service'
 import { RssService } from './services/rss/service'
 import { MusicService } from './services/music/service'
 import { MediaService } from './services/media/service'
@@ -111,6 +112,7 @@ const services = {
   db: null as DatabaseService | null,
   library: null as LibraryService | null,
   links: null as LinksService | null,
+  diagrams: null as DiagramService | null,
   rss: null as RssService | null,
   music: null as MusicService | null,
   media: null as MediaService | null,
@@ -234,6 +236,7 @@ async function initServices(): Promise<void> {
   await services.db.init({ skipLibrarySeed: true })
   services.library = new LibraryService(services.db)
   services.links = new LinksService(userData)
+  services.diagrams = new DiagramService(userData)
   services.rss = new RssService(services.db)
   services.music = new MusicService(services.db, userData)
   services.media = new MediaService(userData)

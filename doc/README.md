@@ -31,6 +31,7 @@
 | [su7-reverse-engineering.md](design/su7-reverse-engineering.md) | **gamemcu SU7 深度逆向分析（Markdown 详版）** |
 | [cloud-abode-development-plan.md](design/cloud-abode-development-plan.md) | **云斋开发计划（定稿，含里程碑与验收清单）** |
 | [library-catalog-supplement-v7.docx](design/library-catalog-supplement-v7.docx) | 全库条目补充说明（v7） |
+| [flowchart-v1.2-requirements.md](design/flowchart-v1.2-requirements.md) | **v1.2 全库流程图 — TRD v1.1（命令化架构 · 待评审）** |
 
 ### 优化
 

@@ -13,6 +13,12 @@ export const LIBRARY_MAJORS = [
     description: '浏览器收藏与网址'
   },
   {
+    id: 'diagrams',
+    name: '流程图',
+    icon: 'layers',
+    description: '本地流程图绘制与整理'
+  },
+  {
     id: 'illustrated-handbook',
     name: '图鉴',
     icon: 'book-open',

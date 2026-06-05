@@ -3,13 +3,17 @@ import { LIBRARY_MAJORS, type LibraryMajorId } from '@modules/library/core/confi
 import { handbookCatalogFromCategories, sectionTreeForMajor } from '@modules/library/core/composables/libraryCategoryTree'
 import type { useIllustratedHandbookStore } from '@shared/stores/illustratedHandbook'
 import type { useLinksStore } from '@shared/stores/links'
+import type { useDiagramsStore } from '@shared/stores/diagrams'
+import { buildDiagramCatalogTree } from '@modules/library/diagrams/lib/diagramCatalogTree'
 
 type HandbookStore = ReturnType<typeof useIllustratedHandbookStore>
 type LinksStore = ReturnType<typeof useLinksStore>
+type DiagramsStore = ReturnType<typeof useDiagramsStore>
 
 export interface LibrarySubmoduleContext {
   handbookStore: HandbookStore
   linksStore: LinksStore
+  diagramsStore: DiagramsStore
 }
 
 export interface LibrarySubmoduleConfig {
@@ -41,6 +45,18 @@ const notesModule: LibrarySubmoduleConfig = {
   }
 }
 
+const diagramsModule: LibrarySubmoduleConfig = {
+  id: 'diagrams',
+  routeName: 'library-diagrams-home',
+  buildSectionTree(ctx) {
+    return buildDiagramCatalogTree(ctx.diagramsStore.folders)
+  },
+  async ensureLoaded(ctx) {
+    await ctx.diagramsStore.loadFolders()
+    await ctx.diagramsStore.refreshRecycleCount()
+  }
+}
+
 const linksModule: LibrarySubmoduleConfig = {
   id: 'links',
   routeName: 'library-links',
@@ -58,6 +74,7 @@ const linksModule: LibrarySubmoduleConfig = {
 export const LIBRARY_SUBMODULES: LibrarySubmoduleConfig[] = [
   notesModule,
   linksModule,
+  diagramsModule,
   illustratedHandbookModule
 ]
 

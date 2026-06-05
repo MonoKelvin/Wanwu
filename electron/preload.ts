@@ -384,6 +384,38 @@ const api: WanwuApi = {
       return () => ipcRenderer.removeListener('quick-access:clipboard-matches', handler)
     }
   },
+  diagrams: {
+    listFolders: () => ipcRenderer.invoke('diagrams:listFolders'),
+    listFiles: (params) => ipcRenderer.invoke('diagrams:listFiles', params),
+    listRecentFiles: (params) => ipcRenderer.invoke('diagrams:listRecentFiles', params),
+    readFile: (params) => ipcRenderer.invoke('diagrams:readFile', params),
+    writeFile: (params) => ipcRenderer.invoke('diagrams:writeFile', params),
+    createFile: (params) => ipcRenderer.invoke('diagrams:createFile', params),
+    renameFile: (params) => ipcRenderer.invoke('diagrams:renameFile', params),
+    moveFile: (params) => ipcRenderer.invoke('diagrams:moveFile', params),
+    softDeleteFile: (params) => ipcRenderer.invoke('diagrams:softDeleteFile', params),
+    restoreFile: (params) => ipcRenderer.invoke('diagrams:restoreFile', params),
+    purgeFile: (params) => ipcRenderer.invoke('diagrams:purgeFile', params),
+    createFolder: (params) => ipcRenderer.invoke('diagrams:createFolder', params),
+    renameFolder: (params) => ipcRenderer.invoke('diagrams:renameFolder', params),
+    deleteFolder: (params) => ipcRenderer.invoke('diagrams:deleteFolder', params),
+    reorderFolders: (params) => ipcRenderer.invoke('diagrams:reorderFolders', params),
+    executeCommands: (cmds, options) =>
+      ipcRenderer.invoke('diagrams:executeCommands', { cmds, ...options }),
+    onRunCommands: (listener) => {
+      const handler = (
+        _: unknown,
+        payload: {
+          requestId: string
+          cmds: import('../src/modules/library/diagrams/domain/commands/types').DiagramCommandEnvelope[]
+        }
+      ) => listener(payload)
+      ipcRenderer.on('diagrams:run-commands', handler)
+      return () => ipcRenderer.removeListener('diagrams:run-commands', handler)
+    },
+    sendRunCommandsResult: (requestId, results) =>
+      ipcRenderer.send('diagrams:run-commands-result', { requestId, results })
+  },
   share: {
     canNativeShare: () => ipcRenderer.invoke('share:canNativeShare'),
     nativeShare: (params) => ipcRenderer.invoke('share:nativeShare', params),

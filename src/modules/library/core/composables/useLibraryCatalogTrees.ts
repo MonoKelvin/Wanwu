@@ -12,9 +12,11 @@ import {
 import { filterLinksSourceTreeNodes } from '@modules/library/links/lib/linksSearch'
 import type { useIllustratedHandbookStore } from '@shared/stores/illustratedHandbook'
 import type { useLinksStore } from '@shared/stores/links'
+import type { useDiagramsStore } from '@shared/stores/diagrams'
 
 type HandbookStore = ReturnType<typeof useIllustratedHandbookStore>
 type LinksStore = ReturnType<typeof useLinksStore>
+type DiagramsStore = ReturnType<typeof useDiagramsStore>
 
 const MAJOR_IDS: LibraryMajorId[] = libraryMajorIds()
 
@@ -22,7 +24,8 @@ function emptyMajorState() {
   return {
     notes: false,
     'illustrated-handbook': false,
-    links: false
+    links: false,
+    diagrams: false
   } as Record<LibraryMajorId, boolean>
 }
 
@@ -31,11 +34,13 @@ export function useLibraryCatalogTrees(options: {
   categorySearch: Ref<string>
   handbookStore: HandbookStore
   linksStore: LinksStore
+  diagramsStore: DiagramsStore
 }) {
   const sectionByMajor = reactive<Record<LibraryMajorId, TreeNode[]>>({
     notes: [],
     'illustrated-handbook': [],
-    links: []
+    links: [],
+    diagrams: []
   })
   const loadingMajor = reactive(emptyMajorState())
   const loadedMajor = reactive(emptyMajorState())
@@ -43,7 +48,8 @@ export function useLibraryCatalogTrees(options: {
   const loadPromises = new Map<LibraryMajorId, Promise<void>>()
   const moduleContext: LibrarySubmoduleContext = {
     handbookStore: options.handbookStore,
-    linksStore: options.linksStore
+    linksStore: options.linksStore,
+    diagramsStore: options.diagramsStore
   }
 
   function buildSectionForMajor(major: LibraryMajorId): TreeNode[] {
@@ -115,13 +121,15 @@ export function useLibraryCatalogTrees(options: {
       {
         notes: sectionByMajor.notes,
         'illustrated-handbook': sectionByMajor['illustrated-handbook'],
-        links: sectionByMajor.links
+        links: sectionByMajor.links,
+        diagrams: sectionByMajor.diagrams
       },
       {
         majorLoading: {
           notes: loadingMajor.notes,
           'illustrated-handbook': loadingMajor['illustrated-handbook'],
-          links: loadingMajor.links
+          links: loadingMajor.links,
+          diagrams: loadingMajor.diagrams
         },
         majorLoaded: loadedMajor
       }
@@ -145,6 +153,12 @@ export function useLibraryCatalogTrees(options: {
   watch(
     () => options.linksStore.folders,
     () => refreshSection('links'),
+    { deep: true }
+  )
+
+  watch(
+    () => options.diagramsStore.folders,
+    () => refreshSection('diagrams'),
     { deep: true }
   )
 

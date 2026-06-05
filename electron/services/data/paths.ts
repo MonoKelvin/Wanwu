@@ -126,6 +126,8 @@ export interface WanwuPathLayout {
   userDbFile: string
   rssDbFile: string
   linksDbFile: string
+  diagramsDbFile: string
+  diagramsMediaDir: string
   notePopoutSessionsFile: string
   windowStateFile: string
   cloudAbodeDir: string
@@ -146,6 +148,8 @@ export function getWanwuPathLayout(basePath?: string): WanwuPathLayout {
     userDbFile: join(root, 'db', 'user.sqlite'),
     rssDbFile: join(root, 'db', 'rss.sqlite'),
     linksDbFile: join(root, 'db', 'library_links.sqlite'),
+    diagramsDbFile: join(root, 'db', 'library_diagrams.sqlite'),
+    diagramsMediaDir: join(root, 'media', 'diagrams'),
     notePopoutSessionsFile: join(root, 'note-popout-sessions.json'),
     windowStateFile: join(root, 'window-state.json'),
     cloudAbodeDir: join(root, 'cloud-abode')

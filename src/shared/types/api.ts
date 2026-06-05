@@ -27,6 +27,17 @@ import type {
 } from './music'
 import type { NoteCreateInput, NoteImage, NoteItem, NoteUpdateInput } from './notes'
 import type {
+  DiagramCommandEnvelope,
+  DiagramCommandResult
+} from '@modules/library/diagrams/domain/commands/types'
+import type {
+  DiagramContent,
+  DiagramFileMeta,
+  DiagramFileRecord,
+  DiagramFolder,
+  WriteResult
+} from './diagrams'
+import type {
   ClipboardAssistPayload,
   DailyPickPreview,
   QuickAccessHit,
@@ -442,6 +453,42 @@ export interface WanwuApi {
     resolvePlatformMvStream: (mvId: string) => Promise<{ url: string; format: string } | null>
     getPlatformRadioCategories: () => Promise<import('./music').MusicRadioCategory[]>
     getPlatformRadioTracks: (categoryId: string, limit?: number) => Promise<NormalizedTrack[]>
+  }
+  diagrams: {
+    listFolders: () => Promise<DiagramFolder[]>
+    listFiles: (params: { folderId: string }) => Promise<DiagramFileMeta[]>
+    listRecentFiles: (params?: { limit?: number }) => Promise<DiagramFileMeta[]>
+    readFile: (params: { fileId: string }) => Promise<DiagramFileRecord | null>
+    writeFile: (params: {
+      fileId: string
+      content: DiagramContent
+      baseUpdatedAt: string
+    }) => Promise<WriteResult>
+    createFile: (params: {
+      folderId: string
+      title: string
+      content?: DiagramContent
+    }) => Promise<DiagramFileRecord>
+    renameFile: (params: { fileId: string; title: string }) => Promise<DiagramFileMeta | null>
+    moveFile: (params: { fileId: string; folderId: string }) => Promise<DiagramFileMeta | null>
+    softDeleteFile: (params: { fileId: string }) => Promise<void>
+    restoreFile: (params: { fileId: string }) => Promise<void>
+    purgeFile: (params: { fileId: string }) => Promise<void>
+    createFolder: (params: { name: string }) => Promise<DiagramFolder>
+    renameFolder: (params: { folderId: string; name: string }) => Promise<void>
+    deleteFolder: (params: { folderId: string }) => Promise<void>
+    reorderFolders: (params: { orders: Array<{ folderId: string; sortOrder: number }> }) => Promise<void>
+    executeCommands: (
+      cmds: DiagramCommandEnvelope[],
+      options?: { stopOnError?: boolean }
+    ) => Promise<DiagramCommandResult[]>
+    onRunCommands: (
+      listener: (payload: {
+        requestId: string
+        cmds: DiagramCommandEnvelope[]
+      }) => void
+    ) => () => void
+    sendRunCommandsResult: (requestId: string, results: DiagramCommandResult[]) => void
   }
   share: {
     canNativeShare: () => Promise<boolean>

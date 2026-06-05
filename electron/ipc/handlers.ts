@@ -23,6 +23,9 @@ import { getMainWindow, broadcastMaximizedState } from '../windowState'
 import type { DatabaseService } from '../services/core/database'
 import type { LibraryService } from '../services/library/service'
 import type { LinksService } from '../services/links/service'
+import type { DiagramService } from '../services/diagrams/service'
+import { registerDiagramCommandBridge } from './diagramCommands'
+import type { DiagramContent } from '../../src/shared/types/diagrams'
 import type { RssService } from '../services/rss/service'
 import { applyRssAutoRefreshSchedule } from '../services/rss/scheduler'
 import type { MusicService } from '../services/music/service'
@@ -111,6 +114,7 @@ export interface AppServices {
   db: DatabaseService | null
   library: LibraryService | null
   links: LinksService | null
+  diagrams: DiagramService | null
   rss: RssService | null
   music: MusicService | null
   media: MediaService | null
@@ -151,6 +155,79 @@ export function registerIpcHandlers(services: AppServices): void {
     if (!services.library) throw new Error('库服务未就绪')
     return services.library.uploadItemImage(params.itemId, params.filePath)
   })
+
+  registerDiagramCommandBridge(() => services.diagrams)
+
+  ipcMain.handle('diagrams:listFolders', () => services.diagrams?.listFolders() ?? [])
+
+  ipcMain.handle('diagrams:listFiles', (_e, params: { folderId: string }) => {
+    const includeDeleted = params.folderId === 'dg-recycle'
+    return services.diagrams?.listFiles(params.folderId, includeDeleted) ?? []
+  })
+
+  ipcMain.handle('diagrams:listRecentFiles', (_e, params?: { limit?: number }) => {
+    return services.diagrams?.listRecentFiles(params?.limit ?? 20) ?? []
+  })
+
+  ipcMain.handle('diagrams:readFile', (_e, params: { fileId: string }) => {
+    return services.diagrams?.readFile(params.fileId) ?? null
+  })
+
+  ipcMain.handle(
+    'diagrams:writeFile',
+    (_e, params: { fileId: string; content: DiagramContent; baseUpdatedAt: string }) => {
+      if (!services.diagrams) throw new Error('流程图服务未就绪')
+      return services.diagrams.writeFile(params.fileId, params.content, params.baseUpdatedAt)
+    }
+  )
+
+  ipcMain.handle(
+    'diagrams:createFile',
+    (_e, params: { folderId: string; title: string; content?: DiagramContent }) => {
+      if (!services.diagrams) throw new Error('流程图服务未就绪')
+      return services.diagrams.createFile(params.folderId, params.title, params.content)
+    }
+  )
+
+  ipcMain.handle('diagrams:renameFile', (_e, params: { fileId: string; title: string }) => {
+    return services.diagrams?.renameFile(params.fileId, params.title) ?? null
+  })
+
+  ipcMain.handle('diagrams:moveFile', (_e, params: { fileId: string; folderId: string }) => {
+    return services.diagrams?.moveFile(params.fileId, params.folderId) ?? null
+  })
+
+  ipcMain.handle('diagrams:softDeleteFile', (_e, params: { fileId: string }) => {
+    services.diagrams?.softDeleteFile(params.fileId)
+  })
+
+  ipcMain.handle('diagrams:restoreFile', (_e, params: { fileId: string }) => {
+    services.diagrams?.restoreFile(params.fileId)
+  })
+
+  ipcMain.handle('diagrams:purgeFile', (_e, params: { fileId: string }) => {
+    services.diagrams?.purgeFile(params.fileId)
+  })
+
+  ipcMain.handle('diagrams:createFolder', (_e, params: { name: string }) => {
+    if (!services.diagrams) throw new Error('流程图服务未就绪')
+    return services.diagrams.createFolder(params.name)
+  })
+
+  ipcMain.handle('diagrams:renameFolder', (_e, params: { folderId: string; name: string }) => {
+    services.diagrams?.renameFolder(params.folderId, params.name)
+  })
+
+  ipcMain.handle('diagrams:deleteFolder', (_e, params: { folderId: string }) => {
+    services.diagrams?.deleteFolder(params.folderId)
+  })
+
+  ipcMain.handle(
+    'diagrams:reorderFolders',
+    (_e, params: { orders: Array<{ folderId: string; sortOrder: number }> }) => {
+      services.diagrams?.reorderFolders(params.orders)
+    }
+  )
 
   ipcMain.handle('links:listFolders', () => services.links?.listFolders() ?? [])
 

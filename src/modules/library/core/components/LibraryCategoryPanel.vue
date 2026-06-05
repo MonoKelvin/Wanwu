@@ -17,6 +17,19 @@ import { useLibraryCatalogTrees } from '@modules/library/core/composables/useLib
 import { isCatalogLoadingNodeKey } from '@modules/library/core/composables/libraryCategoryTree'
 import { useIllustratedHandbookStore } from '@shared/stores/illustratedHandbook'
 import { LINKS_RECYCLE_BIN_ID, LOCAL_COLLECTIONS_ROOT_ID, useLinksStore } from '@shared/stores/links'
+import { useDiagramsStore } from '@shared/stores/diagrams'
+import {
+  DG_HOME,
+  DG_RECYCLE,
+  isDiagramCustomFolderId,
+  isDiagramSystemFolderId
+} from '@modules/library/diagrams/domain/diagramFolderIds'
+import {
+  defaultDiagramsCatalogExpanded,
+  diagramFolderIdFromTreeKey,
+  readDiagramCatalogSelection,
+  writeDiagramCatalogSelection
+} from '@modules/library/diagrams/lib/diagramCatalogTree'
 import { resolveLinksEntryTarget } from '@modules/library/links/lib/linksNavigation'
 import {
   defaultLinksCatalogExpanded,
@@ -35,6 +48,7 @@ const route = useRoute()
 const router = useRouter()
 const handbookStore = useIllustratedHandbookStore()
 const linksStore = useLinksStore()
+const diagramsStore = useDiagramsStore()
 
 const selectionKeys = ref<Record<string, boolean>>({})
 const categorySearch = ref('')
@@ -78,12 +92,21 @@ const {
 } = useLibraryCatalogTrees({
   categorySearch,
   handbookStore,
-  linksStore
+  linksStore,
+  diagramsStore
 })
 
-const linksDefaultExpanded = computed(() =>
-  activeMajor.value === 'links' ? defaultLinksCatalogExpanded() : {}
-)
+const catalogDefaultExpanded = computed(() => {
+  if (activeMajor.value === 'links') return defaultLinksCatalogExpanded()
+  if (activeMajor.value === 'diagrams') return defaultDiagramsCatalogExpanded()
+  return {}
+})
+
+const catalogChildIconPrefix = computed(() => {
+  if (activeMajor.value === 'links') return 'ln:'
+  if (activeMajor.value === 'diagrams') return 'dg:'
+  return 'ln:'
+})
 
 function selectionFromRoute(): Record<string, boolean> | null {
   const major = activeMajor.value
@@ -93,6 +116,18 @@ function selectionFromRoute(): Record<string, boolean> | null {
     const folderId = route.params.folderId as string | undefined
     if (folderId) return { [`ln:${folderId}`]: true }
     return null
+  }
+
+  if (major === 'diagrams') {
+    const folderId = route.params.folderId as string | undefined
+    if (route.name === 'library-diagrams-editor') {
+      return { 'major:diagrams': true }
+    }
+    if (folderId) {
+      if (isDiagramSystemFolderId(folderId)) return { [`dg:sys:${folderId}`]: true }
+      if (isDiagramCustomFolderId(folderId)) return { [`dg:folder:${folderId}`]: true }
+    }
+    return { [`dg:sys:${DG_HOME}`]: true }
   }
 
   if (major === 'illustrated-handbook') {
@@ -109,6 +144,7 @@ function selectionFromRoute(): Record<string, boolean> | null {
 
 function persistedSelectionForMajor(major: LibraryMajorId): Record<string, boolean> {
   if (major === 'links') return readLinksCatalogSelection()
+  if (major === 'diagrams') return readDiagramCatalogSelection()
   if (major === 'illustrated-handbook') return readHandbookCatalogSelection()
   return {}
 }
@@ -145,6 +181,7 @@ function syncSelectionFromRoute() {
   const fromRoute = selectionFromRoute()
   if (fromRoute) {
     if (major === 'links') writeLinksCatalogSelection(fromRoute)
+    else if (major === 'diagrams') writeDiagramCatalogSelection(fromRoute)
     else if (major === 'illustrated-handbook') writeHandbookCatalogSelection(fromRoute)
   }
 }
@@ -159,6 +196,7 @@ watch(libraryTree, () => {
 function persistSelection(keys: Record<string, boolean>) {
   const major = activeMajor.value
   if (major === 'links') writeLinksCatalogSelection(keys)
+  else if (major === 'diagrams') writeDiagramCatalogSelection(keys)
   else if (major === 'illustrated-handbook') writeHandbookCatalogSelection(keys)
 }
 
@@ -192,6 +230,10 @@ async function navigateMajor(majorId: LibraryMajorId) {
     await pushLibraryRoute({ name: 'library-notes' })
     return
   }
+  if (majorId === 'diagrams') {
+    await pushLibraryRoute({ name: 'library-diagrams-home' })
+    return
+  }
   if (majorId === 'illustrated-handbook') {
     await pushLibraryRoute({ name: 'library-illustrated-handbook' })
     return
@@ -199,6 +241,16 @@ async function navigateMajor(majorId: LibraryMajorId) {
   const target = resolveLinksEntryTarget()
   if (typeof target === 'string') await pushLibraryRoute(target)
   else await pushLibraryRoute(target)
+}
+
+function diagramsCatalogNodeBadge(node: TreeNode): number | undefined {
+  const folderId = diagramFolderIdFromTreeKey(String(node.key))
+  if (folderId === DG_RECYCLE) return diagramsStore.recycleBinCount
+  return undefined
+}
+
+function catalogNodeBadge(node: TreeNode): number | undefined {
+  return linksCatalogNodeBadge(node) ?? diagramsCatalogNodeBadge(node)
 }
 
 function linksCatalogNodeBadge(node: TreeNode): number | undefined {
@@ -275,6 +327,16 @@ async function onNodeSelect(node: TreeNode) {
   if (key.startsWith('ln:')) {
     const folderId = key.slice(3)
     await pushLibraryRoute({ name: 'library-links', params: { folderId } })
+    return
+  }
+
+  if (key.startsWith('dg:')) {
+    const folderId = diagramFolderIdFromTreeKey(key)
+    if (!folderId || folderId === DG_HOME) {
+      await pushLibraryRoute({ name: 'library-diagrams-home' })
+    } else {
+      await pushLibraryRoute({ name: 'library-diagrams-folder', params: { folderId } })
+    }
   }
 }
 </script>
@@ -300,12 +362,12 @@ async function onNodeSelect(node: TreeNode) {
         :search-query="categorySearch"
         :expand-all-branches="expandAllBranches"
         :expand-on-search="false"
-        :default-expanded-keys="linksDefaultExpanded"
+        :default-expanded-keys="catalogDefaultExpanded"
         major-key-prefix="major:"
         :show-child-icons="true"
-        child-icon-key-prefix="ln:"
+        :child-icon-key-prefix="catalogChildIconPrefix"
         child-icon="folder"
-        :node-badge="linksCatalogNodeBadge"
+        :node-badge="catalogNodeBadge"
         tree-class="ww-catalog-tree--library-majors"
         @select="onNodeSelect"
         @contextmenu="onLinksNodeContextMenu"

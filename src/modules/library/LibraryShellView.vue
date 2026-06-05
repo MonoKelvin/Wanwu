@@ -2,10 +2,14 @@
 defineOptions({ name: 'LibraryView' })
 
 import { computed } from 'vue'
+import { initDiagramCatalogCommandBus } from '@shared/stores/diagrams'
 import { RouterView, useRoute } from 'vue-router'
 import { isLibraryMajorId } from '@modules/library/core/config/majors'
 
 const route = useRoute()
+
+// 须在子路由 setup 之前完成（DiagramHomeView 等会同步 inject）
+initDiagramCatalogCommandBus()
 
 /** 链接/图鉴大分类切换须 remount 内层 RouterView（便笺已提升为 /notes 顶层路由） */
 const libraryChildOutletKey = computed(() => {

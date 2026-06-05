@@ -18,6 +18,11 @@ export function shutdownDataServices(services: AppServices): void {
     /* ignore */
   }
   try {
+    services.diagrams?.close()
+  } catch {
+    /* ignore */
+  }
+  try {
     services.db?.close()
   } catch {
     /* ignore */
@@ -26,6 +31,7 @@ export function shutdownDataServices(services: AppServices): void {
   services.db = null
   services.library = null
   services.links = null
+  services.diagrams = null
   services.rss = null
   services.music = null
   services.media = null
