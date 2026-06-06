@@ -1,17 +1,19 @@
 <script setup lang="ts">
 defineOptions({ name: 'DiagramEditorView' })
 
-import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
-import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, toRefs, watch } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
+import { useRoute, useRouter, type NavigationGuardReturn } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
-import '@logicflow/core/es/index.css'
-import '@logicflow/extension/es/index.css'
-import DiagramEditorChrome from '@modules/library/diagrams/components/DiagramEditorChrome.vue'
-import DiagramEditorActions from '@modules/library/diagrams/components/DiagramEditorActions.vue'
-import DiagramShapePalette from '@modules/library/diagrams/components/DiagramShapePalette.vue'
+import DiagramEditorToolbar from '@modules/library/diagrams/components/DiagramEditorToolbar.vue'
+import DiagramAssetPanel from '@modules/library/diagrams/components/DiagramAssetPanel.vue'
 import DiagramPropertyPanel from '@modules/library/diagrams/components/DiagramPropertyPanel.vue'
 import DiagramPageTabs from '@modules/library/diagrams/components/DiagramPageTabs.vue'
-import { LogicFlowDiagramAdapter } from '@modules/library/diagrams/services/LogicFlowDiagramAdapter'
+import DiagramAlignBar from '@modules/library/diagrams/components/DiagramAlignBar.vue'
+import DiagramCanvasContextMenu from '@modules/library/diagrams/components/DiagramCanvasContextMenu.vue'
+import DiagramSaveConflictDialog from '@modules/library/diagrams/components/DiagramSaveConflictDialog.vue'
+import DiagramFolderPickerDialog from '@modules/library/diagrams/components/DiagramFolderPickerDialog.vue'
+import type { LogicFlowDiagramAdapter } from '@modules/library/diagrams/services/LogicFlowDiagramAdapter'
 import { DiagramEditorSession } from '@modules/library/diagrams/app/DiagramEditorSession'
 import { DiagramRepositoryIpcAdapter } from '@modules/library/diagrams/infrastructure/DiagramRepositoryIpcAdapter'
 import { createDiagramCommandBus } from '@modules/library/diagrams/app/commandBus/createDiagramCommandBus'
@@ -20,16 +22,60 @@ import { useDiagramAutosave } from '@modules/library/diagrams/composables/useDia
 import { useDiagramShortcuts } from '@modules/library/diagrams/composables/useDiagramShortcuts'
 import { useDiagramIpcBridge } from '@modules/library/diagrams/composables/useDiagramIpcBridge'
 import { pushShellRoute } from '@app/composables/shellNavigation'
+import { provideDiagramSaveFlow } from '@modules/library/diagrams/composables/useDiagramSaveFlow'
+import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
+import { LIBRARY_DIAGRAMS_EDITOR_ROUTE, isDiagramEditorPath } from '@modules/library/diagrams/domain/diagramRoutes'
+import { isShapeDragEvent, readShapeDragData } from '@modules/library/diagrams/lib/diagramShapeDrag'
+import {
+  defaultCanvasSettings,
+  type DiagramEditorSelection
+} from '@modules/library/diagrams/lib/diagramSelectionTypes'
 
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
+const { ask } = useWanwuConfirm()
+const selectedNodeCount = ref(0)
 const canvasRef = ref<HTMLElement | null>(null)
+const canvasWrapRef = ref<HTMLElement | null>(null)
+const canvasMenuRef = ref<InstanceType<typeof DiagramCanvasContextMenu> | null>(null)
 const sessionRef = shallowRef<DiagramEditorSession | null>(null)
 const portRef = shallowRef<LogicFlowDiagramAdapter | null>(null)
-const selectedNodeId = ref<string | null>(null)
-const selectedText = ref('')
 const loading = ref(true)
+const loadError = ref<string | null>(null)
+const bootError = ref<string | null>(null)
+const editorReady = ref(false)
+const editorSelection = ref<DiagramEditorSelection>({
+  kind: 'canvas',
+  node: null,
+  edge: null,
+  canvas: defaultCanvasSettings(resolvedTheme()),
+  selectedNodeCount: 0,
+  selectedEdgeCount: 0
+})
+const isCanvasDragOver = ref(false)
+const dropIndicator = ref<{ x: number; y: number } | null>(null)
+const canvasEmpty = ref(false)
+const viewportZoomPercent = ref(100)
+let resizeObserver: ResizeObserver | null = null
+let teardownZoomWheel: (() => void) | null = null
+let resizeRaf = 0
+let zoomWheelRaf = 0
+
+function refreshViewportZoom() {
+  const zoom = portRef.value?.getViewport().zoom ?? 1
+  viewportZoomPercent.value = Math.round(zoom * 100)
+}
+
+function refreshCanvasEmpty() {
+  const port = portRef.value
+  if (!port) {
+    canvasEmpty.value = false
+    return
+  }
+  const graph = port.getGraph() as { nodes?: unknown[] }
+  canvasEmpty.value = !(graph.nodes?.length)
+}
 
 const repo = new DiagramRepositoryIpcAdapter()
 const bus = createDiagramCommandBus({
@@ -37,16 +83,65 @@ const bus = createDiagramCommandBus({
   repo
 })
 provideDiagramCommandBus(bus)
-useDiagramShortcuts(bus)
+const saveFlow = provideDiagramSaveFlow(bus, toast)
+const { conflictOpen, folderPickerOpen, pickedFolderId } = toRefs(saveFlow)
+const { onConflictReload, onConflictOverwrite, onConflictSaveAs, onFolderPicked } = saveFlow
+useDiagramShortcuts(bus, {
+  onSaveAs: () => saveFlow.promptSaveAs(sessionRef.value?.content?.meta.title),
+  isActive: () => isDiagramEditorPath(route.path)
+})
 useDiagramIpcBridge(bus)
-useDiagramAutosave({ bus, session: sessionRef })
+useDiagramAutosave({
+  bus,
+  session: sessionRef,
+  isBlocked: () => conflictOpen.value || folderPickerOpen.value,
+  onSaveError: (detail) => {
+    toast.add({ severity: 'warn', summary: '自动保存失败', detail, life: 3500 })
+  }
+})
 
-bus.onResult((cmd, result) => {
-  if (cmd.type !== 'document.save' || !result.ok || !isNewDraft.value) return
-  const data = result.data as { meta?: { id: string } } | undefined
-  const id = data?.meta?.id ?? (data as { fileId?: string } | undefined)?.fileId
-  if (id) {
-    void router.replace({ name: 'library-diagrams-editor', params: { fileId: id } })
+const unsubscribeBusResult = bus.onResult((cmd, result) => {
+  if (!result.ok) return
+
+  if (
+    cmd.type === 'document.save' ||
+    cmd.type === 'document.saveAs' ||
+    cmd.type === 'document.importWfg' ||
+    cmd.type === 'document.importDrawio'
+  ) {
+    const data = result.data as { meta?: { id: string } } | undefined
+    const id = data?.meta?.id ?? (data as { fileId?: string } | undefined)?.fileId
+    if (id && id !== fileId.value) {
+      void router.replace({
+        name: LIBRARY_DIAGRAMS_EDITOR_ROUTE,
+        params: { fileId: id },
+        query:
+          cmd.type === 'document.importWfg' || cmd.type === 'document.importDrawio'
+            ? { fitView: '1' }
+            : {}
+      })
+    }
+  }
+
+  if (
+    cmd.type === 'canvas.zoom' ||
+    cmd.type === 'canvas.zoomToFit' ||
+    cmd.type === 'canvas.zoomReset' ||
+    cmd.type === 'document.open' ||
+    cmd.type === 'document.importWfg' ||
+    cmd.type === 'document.importDrawio' ||
+    cmd.type.startsWith('page.')
+  ) {
+    refreshViewportZoom()
+    refreshCanvasEmpty()
+    if (
+      (cmd.type === 'document.open' ||
+        cmd.type === 'document.importWfg' ||
+        cmd.type === 'document.importDrawio') &&
+      portRef.value
+    ) {
+      editorSelection.value = portRef.value.getSelection()
+    }
   }
 })
 
@@ -63,93 +158,376 @@ function resolvedTheme(): 'light' | 'dark' {
   return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
 }
 
+function focusCanvasForKeys() {
+  portRef.value?.focusCanvas()
+  canvasWrapRef.value?.focus({ preventScroll: true })
+}
+
+function waitForLayout(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  })
+}
+
+async function applyFitView() {
+  await waitForLayout()
+  portRef.value?.resize()
+  await bus.dispatch({ type: 'canvas.zoomToFit' })
+  refreshViewportZoom()
+}
+
 async function openDocument() {
-  const payload: Record<string, string> = {}
+  loadError.value = null
+  const wantFitView = route.query.fitView === '1'
+  const payload: Record<string, string | boolean> = {}
   if (!isNewDraft.value) {
     payload.fileId = fileId.value
   } else if (templateQuery.value) {
     payload.templateId = templateQuery.value
   }
+  if (wantFitView) {
+    payload.skipViewport = true
+  }
   const result = await bus.dispatch({ type: 'document.open', payload })
   if (!result.ok) {
-    toast.add({ severity: 'error', summary: '打开失败', detail: result.message, life: 4000 })
-    await pushShellRoute(router, { name: 'library-diagrams-home' })
+    loadError.value = result.message ?? '无法打开文档'
+    toast.add({
+      severity: 'error',
+      summary: '打开失败',
+      detail: loadError.value,
+      life: 5000
+    })
+    if (sessionRef.value && !sessionRef.value.content) {
+      sessionRef.value.openBlank()
+    }
+    return
+  }
+  portRef.value?.resize()
+  if (wantFitView) {
+    await applyFitView()
+    sessionRef.value?.flushActivePage()
+    const nextQuery = { ...route.query }
+    delete nextQuery.fitView
+    void router.replace({ query: nextQuery })
+  } else if (isNewDraft.value && templateQuery.value) {
+    await applyFitView()
+    sessionRef.value?.flushActivePage()
+  } else {
+    portRef.value?.centerOrigin()
   }
 }
 
-onMounted(async () => {
-  const port = new LogicFlowDiagramAdapter()
+async function bootstrapEditor() {
+  await import('@logicflow/core/es/index.css')
+  const { LogicFlowDiagramAdapter: Adapter, ensureSnapshotPlugin, ensureMiniMapPlugin, ensureSelectionSelectPlugin } = await import(
+    '@modules/library/diagrams/services/LogicFlowDiagramAdapter'
+  )
+  await ensureSnapshotPlugin()
+  await ensureMiniMapPlugin()
+  await ensureSelectionSelectPlugin()
+
+  const port = new Adapter()
   const session = new DiagramEditorSession(port, repo)
   sessionRef.value = session
   portRef.value = port
 
-  if (canvasRef.value) {
-    port.mount(canvasRef.value)
-    port.setTheme(resolvedTheme())
-    port.onSelectionChange((nodeId, text) => {
-      selectedNodeId.value = nodeId
-      selectedText.value = text
-    })
-    port.onGraphChange(() => {
-      if (sessionRef.value) sessionRef.value.dirty = true
-    })
+  // 等 AppShell 侧栏等 async 子树卸载完成，避免与 nextTick 同帧触发 ref 空引用
+  await waitForLayout()
+  await nextTick()
+
+  const el = canvasRef.value
+  if (!el) {
+    throw new Error('画布容器未就绪')
   }
 
+  port.mount(el)
+  port.setTheme(resolvedTheme())
+  port.onEditorSelectionChange((selection) => {
+    editorSelection.value = selection
+    selectedNodeCount.value = port.getSelectedNodeIds().length
+  })
+  const markViewportDirty = useDebounceFn(() => {
+    sessionRef.value?.markActivePageDirty()
+  }, 500)
+
+  port.onViewportChange(() => {
+    void markViewportDirty()
+  })
+  port.onGraphChange(() => {
+    sessionRef.value?.markActivePageDirty()
+    refreshCanvasEmpty()
+  })
+  port.onContextMenu((detail) => {
+    canvasMenuRef.value?.show(detail.event, {
+      kind: detail.kind,
+      targetId: detail.targetId,
+      nodeIds: detail.nodeIds,
+      edgeIds: detail.edgeIds
+    })
+  })
+  editorSelection.value = port.getSelection()
+
+  resizeObserver = new ResizeObserver(() => {
+    if (resizeRaf) cancelAnimationFrame(resizeRaf)
+    resizeRaf = requestAnimationFrame(() => {
+      resizeRaf = 0
+      port.resize()
+    })
+  })
+  resizeObserver.observe(el)
+
+  const onZoomWheel = () => {
+    if (zoomWheelRaf) return
+    zoomWheelRaf = requestAnimationFrame(() => {
+      zoomWheelRaf = 0
+      refreshViewportZoom()
+    })
+  }
+  el.addEventListener('wheel', onZoomWheel, { passive: true })
+  teardownZoomWheel = () => el.removeEventListener('wheel', onZoomWheel)
+
+  port.resize()
   await openDocument()
-  loading.value = false
+  editorReady.value = true
+  refreshCanvasEmpty()
+  refreshViewportZoom()
+  await waitForLayout()
+  port.resize()
+}
+
+async function confirmDirtyLeave(): Promise<boolean> {
+  if (!sessionRef.value?.dirty) return true
+  const shouldSave = await ask({
+    header: '未保存的更改',
+    message: '文档有未保存的更改。保存并离开，还是不保存直接离开？',
+    acceptLabel: '保存并离开',
+    rejectLabel: '不保存离开'
+  })
+  if (shouldSave) {
+    return saveFlow.saveDocument()
+  }
+  return true
+}
+
+async function flushBeforeLeave(): Promise<NavigationGuardReturn> {
+  return confirmDirtyLeave()
+}
+
+let removeLeaveGuard: (() => void) | null = null
+let removeBeforeUnload: (() => void) | null = null
+
+onMounted(() => {
+  removeLeaveGuard = router.beforeEach(async (to, from) => {
+    if (!isDiagramEditorPath(from.path) || isDiagramEditorPath(to.path)) return true
+    return flushBeforeLeave()
+  })
+
+  function onBeforeUnload(e: BeforeUnloadEvent) {
+    if (!sessionRef.value?.dirty) return
+    e.preventDefault()
+  }
+  window.addEventListener('beforeunload', onBeforeUnload)
+  removeBeforeUnload = () => window.removeEventListener('beforeunload', onBeforeUnload)
+
+  void (async () => {
+    try {
+      await bootstrapEditor()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      if (import.meta.env.DEV && err instanceof Error && err.stack) {
+        console.error('[DiagramEditor] bootstrap failed:', err.stack)
+      }
+      bootError.value = message
+      loadError.value = message
+      toast.add({ severity: 'error', summary: '画布初始化失败', detail: message, life: 5000 })
+    } finally {
+      loading.value = false
+    }
+  })()
+})
+
+watch(fileId, async (id, prev) => {
+  if (!portRef.value || !sessionRef.value || id === prev) return
+  const ok = await confirmDirtyLeave()
+  if (!ok) {
+    if (prev) {
+      await router.replace({ name: LIBRARY_DIAGRAMS_EDITOR_ROUTE, params: { fileId: prev } })
+    }
+    return
+  }
+  loading.value = true
+  loadError.value = null
+  try {
+    await openDocument()
+    refreshCanvasEmpty()
+    refreshViewportZoom()
+    await waitForLayout()
+    portRef.value.resize()
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    loadError.value = message
+  } finally {
+    loading.value = false
+  }
 })
 
 watch(
   () => document.documentElement.dataset.theme,
-  () => portRef.value?.setTheme(resolvedTheme())
+  () => {
+    portRef.value?.setTheme(resolvedTheme())
+    if (portRef.value) editorSelection.value = portRef.value.getSelection()
+  }
 )
 
-onBeforeRouteLeave(async () => {
-  if (sessionRef.value?.dirty) {
-    const result = await bus.dispatch({ type: 'document.save' })
-    if (!result.ok && result.code === 'CONFLICT') {
-      toast.add({ severity: 'warn', summary: '保存冲突', detail: result.message, life: 5000 })
-    }
-  }
-})
-
 onBeforeUnmount(() => {
-  sessionRef.value?.flushActivePage()
+  editorReady.value = false
+  unsubscribeBusResult()
+  removeLeaveGuard?.()
+  removeLeaveGuard = null
+  removeBeforeUnload?.()
+  removeBeforeUnload = null
+  if (resizeRaf) cancelAnimationFrame(resizeRaf)
+  if (zoomWheelRaf) cancelAnimationFrame(zoomWheelRaf)
+  resizeObserver?.disconnect()
+  resizeObserver = null
+  teardownZoomWheel?.()
+  teardownZoomWheel = null
   portRef.value?.destroy()
   sessionRef.value = null
   portRef.value = null
 })
 
 async function goBack() {
-  if (sessionRef.value?.dirty) {
-    const result = await bus.dispatch({ type: 'document.save' })
-    if (!result.ok && result.code !== 'CONFLICT') return
-  }
+  const ok = await confirmDirtyLeave()
+  if (!ok) return
   await pushShellRoute(router, { name: 'library-diagrams-home' })
+}
+
+function updateDropIndicator(event: DragEvent) {
+  const el = canvasRef.value
+  if (!el) return
+  const rect = el.getBoundingClientRect()
+  dropIndicator.value = {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top
+  }
+}
+
+function resetCanvasDragState() {
+  isCanvasDragOver.value = false
+  dropIndicator.value = null
+}
+
+function onCanvasDragEnter(event: DragEvent) {
+  if (!isShapeDragEvent(event)) return
+  isCanvasDragOver.value = true
+}
+
+function onCanvasDragOver(event: DragEvent) {
+  if (!isShapeDragEvent(event)) return
+  event.preventDefault()
+  if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy'
+  isCanvasDragOver.value = true
+  updateDropIndicator(event)
+}
+
+function onCanvasDragLeave(event: DragEvent) {
+  if (!isShapeDragEvent(event)) return
+  const wrap = event.currentTarget as HTMLElement
+  const related = event.relatedTarget as Node | null
+  if (related && wrap.contains(related)) return
+  resetCanvasDragState()
+}
+
+function onCanvasDrop(event: DragEvent) {
+  resetCanvasDragState()
+  const payload = readShapeDragData(event)
+  if (!payload || !portRef.value) return
+  event.preventDefault()
+  const { x, y } = portRef.value.clientToCanvas(event.clientX, event.clientY)
+  void bus.dispatch({
+    type: 'canvas.addNode',
+    payload: {
+      shape: payload.shapeId,
+      x,
+      y,
+      text: payload.defaultText || undefined
+    }
+  })
 }
 </script>
 
 <template>
-  <div class="dg-editor-root dg-fade-in flex min-h-0 flex-1 flex-col">
+  <div class="dg-editor-root dg-fade-in flex h-full min-h-0 w-full flex-1 flex-col">
     <div class="dg-editor-stage">
-      <div class="dg-canvas-wrap">
+      <div
+        ref="canvasWrapRef"
+        class="dg-canvas-wrap"
+        tabindex="0"
+        :class="{ 'dg-canvas-wrap--drop-target': isCanvasDragOver }"
+        @pointerdown="focusCanvasForKeys"
+        @dragenter="onCanvasDragEnter"
+        @dragover="onCanvasDragOver"
+        @dragleave="onCanvasDragLeave"
+        @drop="onCanvasDrop"
+      >
         <div
           ref="canvasRef"
           class="dg-canvas-frame"
           :class="{ 'dg-canvas-frame--loading': loading }"
         />
-        <div v-if="loading" class="dg-canvas-wrap__overlay">加载画布…</div>
-      </div>
-      <DiagramEditorChrome :title="title" :dirty="dirty" @back="goBack" />
-      <div v-show="!loading" class="dg-float-stack dg-float-stack--right">
-        <DiagramEditorActions />
-        <DiagramPropertyPanel
-          :selected-node-id="selectedNodeId"
-          :selected-text="selectedText"
+        <div
+          v-if="isCanvasDragOver && dropIndicator"
+          class="dg-drop-indicator"
+          :style="{ left: `${dropIndicator.x}px`, top: `${dropIndicator.y}px` }"
+          aria-hidden="true"
         />
+        <div
+          v-if="!loading && !loadError && editorReady && canvasEmpty"
+          class="dg-canvas-empty"
+          aria-hidden="true"
+        >
+          <p class="dg-canvas-empty__title">画布为空</p>
+          <p class="dg-canvas-empty__hint">从左侧素材拖入图形，或使用顶部「文件」菜单导入</p>
+        </div>
+        <div v-if="loading" class="dg-canvas-wrap__overlay">加载画布…</div>
+        <div v-else-if="loadError" class="dg-canvas-wrap__overlay dg-canvas-wrap__overlay--error">
+          {{ loadError }}
+        </div>
       </div>
-      <DiagramShapePalette v-show="!loading" />
-      <DiagramPageTabs v-show="!loading" :pages="pages" :active-page-id="activePageId" />
+
+      <template v-if="editorReady">
+        <DiagramEditorToolbar
+          :title="title"
+          :dirty="dirty"
+          :zoom-percent="viewportZoomPercent"
+          @back="goBack"
+        />
+        <DiagramAlignBar :node-count="selectedNodeCount" />
+        <DiagramAssetPanel />
+        <DiagramPropertyPanel
+          :selection="editorSelection"
+          :file-id="sessionRef?.fileId ?? null"
+        />
+        <DiagramPageTabs :pages="pages" :active-page-id="activePageId" />
+        <DiagramSaveConflictDialog
+          v-model:open="conflictOpen"
+          @reload="onConflictReload"
+          @overwrite="onConflictOverwrite"
+          @save-as="onConflictSaveAs"
+        />
+        <DiagramFolderPickerDialog
+          v-model:open="folderPickerOpen"
+          v-model:folder-id="pickedFolderId"
+          @confirm="onFolderPicked"
+        />
+        <DiagramCanvasContextMenu ref="canvasMenuRef" />
+      </template>
+      <DiagramEditorToolbar
+        v-else-if="!loading"
+        title="流程图"
+        @back="goBack"
+      />
     </div>
   </div>
 </template>

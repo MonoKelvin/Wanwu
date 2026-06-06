@@ -1,0 +1,99 @@
+import type {
+  DiagramArrowType,
+  DiagramEdgeType,
+  DiagramShadowPreset,
+  DiagramThemePreset
+} from '@modules/library/diagrams/lib/diagramEditorConstants'
+
+export type DiagramSelectionKind = 'node' | 'edge' | 'canvas'
+
+export interface DiagramDefaultEdgeStyle {
+  type: DiagramEdgeType
+  stroke: string
+  strokeWidth: number
+  strokeDasharray: string
+  startArrowType: DiagramArrowType
+  endArrowType: DiagramArrowType
+}
+
+export interface DiagramCanvasSettings {
+  gridVisible: boolean
+  snapGrid: boolean
+  backgroundColor: string
+  miniMapVisible: boolean
+  themePreset: DiagramThemePreset
+  defaultEdge: DiagramDefaultEdgeStyle
+}
+
+export interface DiagramNodeTextStyle {
+  fontSize: number
+  color: string
+  textAlign: 'left' | 'center' | 'right'
+  fontWeight: 'normal' | 'bold'
+  underline: boolean
+  strikethrough: boolean
+}
+
+export interface DiagramNodeImageAsset {
+  assetId: string
+  ext: string
+  url: string
+}
+
+export interface DiagramNodeProperties {
+  id: string
+  type: string
+  text: string
+  textStyle: DiagramNodeTextStyle
+  x: number
+  y: number
+  width: number
+  height: number
+  fill: string
+  stroke: string
+  strokeWidth: number
+  shadow: DiagramShadowPreset
+  imageAsset: DiagramNodeImageAsset | null
+}
+
+export interface DiagramEdgeProperties {
+  id: string
+  type: DiagramEdgeType
+  stroke: string
+  strokeWidth: number
+  strokeDasharray: string
+  startArrowType: DiagramArrowType
+  endArrowType: DiagramArrowType
+  text: string
+}
+
+export interface DiagramEditorSelection {
+  kind: DiagramSelectionKind
+  node: DiagramNodeProperties | null
+  edge: DiagramEdgeProperties | null
+  canvas: DiagramCanvasSettings
+  selectedNodeCount: number
+  selectedEdgeCount: number
+}
+
+export function defaultDefaultEdgeStyle(resolved: 'light' | 'dark'): DiagramDefaultEdgeStyle {
+  return {
+    type: 'polyline',
+    stroke: resolved === 'dark' ? '#8a8a92' : '#5a5a62',
+    strokeWidth: 1.5,
+    strokeDasharray: '',
+    startArrowType: 'none',
+    endArrowType: 'solid'
+  }
+}
+
+export function defaultCanvasSettings(resolved: 'light' | 'dark'): DiagramCanvasSettings {
+  return {
+    gridVisible: true,
+    snapGrid: true,
+    backgroundColor: resolved === 'dark' ? '#161618' : '#ffffff',
+    miniMapVisible: false,
+    themePreset: resolved === 'dark' ? 'classic-dark' : 'classic-light',
+    defaultEdge: defaultDefaultEdgeStyle(resolved)
+  }
+}

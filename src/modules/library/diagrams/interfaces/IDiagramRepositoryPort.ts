@@ -1,8 +1,11 @@
 import type {
   DiagramContent,
+  DiagramExportWfgResult,
+  DiagramImportWfgResult,
   DiagramFileMeta,
   DiagramFileRecord,
   DiagramFolder,
+  DiagramWritePatch,
   WriteResult
 } from '@shared/types/diagrams'
 
@@ -11,7 +14,25 @@ export interface IDiagramRepositoryPort {
   listFiles(folderId: string): Promise<DiagramFileMeta[]>
   listRecentFiles(limit?: number): Promise<DiagramFileMeta[]>
   readFile(fileId: string): Promise<DiagramFileRecord | null>
-  writeFile(fileId: string, content: DiagramContent, baseUpdatedAt: string): Promise<WriteResult>
+  writeFile(
+    fileId: string,
+    content: DiagramContent,
+    baseUpdatedAt: string,
+    force?: boolean,
+    patch?: DiagramWritePatch
+  ): Promise<WriteResult>
+  importWfg(): Promise<DiagramImportWfgResult>
+  importWfgFromSource(
+    folderId: string,
+    sourcePath: string,
+    content: DiagramContent
+  ): Promise<DiagramFileRecord | null>
+  importDrawio(): Promise<import('@shared/types/diagrams').DiagramImportDrawioResult>
+  exportWfg(input: {
+    fileId?: string | null
+    content?: DiagramContent
+    defaultName: string
+  }): Promise<DiagramExportWfgResult>
   createFile(folderId: string, title: string, content?: DiagramContent): Promise<DiagramFileRecord>
   renameFile(fileId: string, title: string): Promise<DiagramFileMeta | null>
   moveFile(fileId: string, folderId: string): Promise<DiagramFileMeta | null>

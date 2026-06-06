@@ -37,11 +37,13 @@ import { runStartupLibrarySeed } from './services/library/seed'
 import { startLibraryBootstrap } from './services/library/pack'
 import { runInstallerLibraryPackImport } from './services/library/installerImport'
 // import { CloudAbodeService } from './services/cloud-abode/service'
-import { disposeQuickAccess, focusMainWindow } from './services/quickAccess/quickAccessManager'
 import {
-  attachMainWindowCloseBehavior,
-  shouldKeepAppRunningAfterWindowClose
-} from './services/app/windowClose'
+  disposeQuickAccess,
+  focusMainWindow,
+  isAppQuitting
+} from './services/quickAccess/quickAccessManager'
+import { attachMainWindowCloseBehavior, shouldKeepAppRunningAfterWindowClose } from './services/app/windowClose'
+import { shutdownDataServices } from './services/data/shutdown'
 
 const isDev = !app.isPackaged
 const INSTALLER_IMPORT_FLAG = '--installer-import-library-pack'
@@ -344,11 +346,13 @@ app.on('before-quit', () => {
 })
 
 app.on('window-all-closed', () => {
-  closeAllNotePopoutsForAppExit()
-  if (shouldKeepAppRunningAfterWindowClose()) {
+  if (!isAppQuitting() && shouldKeepAppRunningAfterWindowClose()) {
     return
   }
+  closeAllNotePopoutsForAppExit()
   setMainWindow(null)
-  services.db?.close()
-  if (process.platform !== 'darwin') app.quit()
+  shutdownDataServices(services)
+  if (process.platform !== 'darwin') {
+    app.exit(0)
+  }
 })

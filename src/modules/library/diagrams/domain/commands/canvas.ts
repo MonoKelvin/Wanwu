@@ -1,9 +1,13 @@
 export const CANVAS_COMMAND_TYPES = [
   'canvas.addNode',
   'canvas.updateNode',
+  'canvas.updateEdge',
+  'canvas.updateSettings',
+  'canvas.batchUpdateNodes',
+  'canvas.alignNodes',
+  'canvas.distributeNodes',
   'canvas.deleteSelection',
   'canvas.connect',
-  'canvas.updateEdge',
   'canvas.select',
   'canvas.selectAll',
   'canvas.clearSelection',
@@ -14,6 +18,7 @@ export const CANVAS_COMMAND_TYPES = [
   'canvas.zoom',
   'canvas.zoomToFit',
   'canvas.zoomReset',
+  'canvas.centerOrigin',
   'canvas.setGrid'
 ] as const
 
@@ -32,7 +37,8 @@ export interface CanvasAddNodePayload {
 
 export interface CanvasUpdateNodePayload {
   nodeId: string
-  patch: Record<string, unknown>
+  patch?: Record<string, unknown>
+  nodeProps?: Partial<import('@modules/library/diagrams/lib/diagramSelectionTypes').DiagramNodeProperties>
 }
 
 export interface CanvasDeleteSelectionPayload {
@@ -48,7 +54,8 @@ export interface CanvasConnectPayload {
 
 export interface CanvasUpdateEdgePayload {
   edgeId: string
-  patch: Record<string, unknown>
+  patch?: Record<string, unknown>
+  edgeProps?: Partial<import('@modules/library/diagrams/lib/diagramSelectionTypes').DiagramEdgeProperties>
 }
 
 export interface CanvasSelectPayload {
@@ -70,4 +77,23 @@ export interface CanvasZoomPayload {
 export interface CanvasSetGridPayload {
   visible: boolean
   snap?: boolean
+}
+
+export interface CanvasUpdateSettingsPayload {
+  settings: Partial<import('@modules/library/diagrams/lib/diagramSelectionTypes').DiagramCanvasSettings>
+}
+
+export interface CanvasBatchUpdateNodesPayload {
+  nodeIds?: string[]
+  nodeProps: Partial<import('@modules/library/diagrams/lib/diagramSelectionTypes').DiagramNodeProperties>
+}
+
+export interface CanvasAlignNodesPayload {
+  mode: import('@modules/library/diagrams/lib/diagramNodeLayout').DiagramAlignMode
+  nodeIds?: string[]
+}
+
+export interface CanvasDistributeNodesPayload {
+  mode: import('@modules/library/diagrams/lib/diagramNodeLayout').DiagramDistributeMode
+  nodeIds?: string[]
 }

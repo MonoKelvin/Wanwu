@@ -12,6 +12,7 @@ export interface ZipArchiveEntry {
 export type ZipArchiveHandle = {
   pipe<T extends Writable>(destination: T): T
   file(filepath: string, data?: { name?: string }): ZipArchiveHandle
+  append(source: Buffer | string, data?: { name?: string }): ZipArchiveHandle
   finalize(): Promise<void>
   on(event: 'error', listener: (err: Error) => void): ZipArchiveHandle
   on(event: 'entry', listener: (entry: ZipArchiveEntry) => void): ZipArchiveHandle

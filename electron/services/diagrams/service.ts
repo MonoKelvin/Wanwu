@@ -1,5 +1,7 @@
 import Database from 'better-sqlite3'
 import { randomUUID } from 'crypto'
+import { readFile } from 'fs/promises'
+import { extname } from 'path'
 import { ensureWanwuDataLayout, getWanwuPathLayout } from '../data/paths'
 import {
   DG_DRAFTS,
@@ -9,20 +11,41 @@ import {
   isDiagramCustomFolderId,
   isDiagramSystemFolderId
 } from '../../../src/modules/library/diagrams/domain/diagramFolderIds'
+import { dialog } from 'electron'
 import type {
   DiagramContent,
+  DiagramExportWfgResult,
+  DiagramImportDrawioResult,
+  DiagramImportNodeAssetResult,
+  DiagramImportWfgResult,
   DiagramFileMeta,
   DiagramFileRecord,
   DiagramFolder,
+  DiagramSearchHit,
+  DiagramWritePatch,
   WriteResult
 } from '../../../src/shared/types/diagrams'
+import { getMainWindow } from '../../windowState'
+import { diagramBodyPlainText } from '../../../src/modules/library/diagrams/lib/diagramContentText'
 import {
   createBlankContent,
   deleteDiagramContent,
+  diagramContentPath,
+  diagramContentSizeBytes,
+  exportContentWfg,
+  exportDiagramWfg,
   readDiagramContent,
+  materializeImportedWfg,
+  readDrawioFile,
+  readWfgFile,
   relativeContentPath,
-  writeDiagramContent
+  writeDiagramAsset,
+  writeDiagramContent,
+  writeDiagramContentWithAssets,
+  writeDiagramContentPatch
 } from './diagramFileStorage'
+import { toWanwuMediaUrl } from '../media/wanwu'
+import { buildDiagramAssetRelPath } from '../../../src/modules/library/diagrams/lib/diagramAssetRefs'
 
 const SYSTEM_FOLDERS: Array<{ id: string; name: string; sortOrder: number }> = [
   { id: DG_HOME, name: '首页', sortOrder: 0 },
@@ -72,6 +95,14 @@ export class DiagramService {
       );
       CREATE INDEX IF NOT EXISTS idx_diagram_files_folder ON diagram_files(folder_id);
     `)
+    this.migrateSchema()
+  }
+
+  private migrateSchema(): void {
+    const cols = this.db.prepare(`PRAGMA table_info(diagram_files)`).all() as Array<{ name: string }>
+    if (!cols.some((c) => c.name === 'pinned')) {
+      this.db.exec(`ALTER TABLE diagram_files ADD COLUMN pinned INTEGER NOT NULL DEFAULT 0`)
+    }
   }
 
   private ensureSystemFolders(): void {
@@ -172,10 +203,10 @@ export class DiagramService {
     if (folderId === DG_HOME) return this.listRecentFiles(20)
 
     const sql = includeDeleted
-      ? `SELECT id, folder_id, title, page_count, thumbnail_path, created_at, updated_at, deleted_at
-         FROM diagram_files WHERE folder_id = ? ORDER BY updated_at DESC`
-      : `SELECT id, folder_id, title, page_count, thumbnail_path, created_at, updated_at, deleted_at
-         FROM diagram_files WHERE folder_id = ? AND deleted_at IS NULL ORDER BY updated_at DESC`
+      ? `SELECT id, folder_id, title, page_count, thumbnail_path, pinned, created_at, updated_at, deleted_at
+         FROM diagram_files WHERE folder_id = ? ORDER BY pinned DESC, updated_at DESC`
+      : `SELECT id, folder_id, title, page_count, thumbnail_path, pinned, created_at, updated_at, deleted_at
+         FROM diagram_files WHERE folder_id = ? AND deleted_at IS NULL ORDER BY pinned DESC, updated_at DESC`
 
     const rows = this.db.prepare(sql).all(folderId) as Array<{
       id: string
@@ -183,20 +214,21 @@ export class DiagramService {
       title: string
       page_count: number
       thumbnail_path: string | null
+      pinned: number
       created_at: string
       updated_at: string
       deleted_at: string | null
     }>
 
-    return rows.map(mapFileRow)
+    return rows.map((r) => mapFileRow(r, this.mediaDir))
   }
 
   listRecentFiles(limit = 20): DiagramFileMeta[] {
     const rows = this.db
       .prepare(
-        `SELECT id, folder_id, title, page_count, thumbnail_path, created_at, updated_at, deleted_at
+        `SELECT id, folder_id, title, page_count, thumbnail_path, pinned, created_at, updated_at, deleted_at
          FROM diagram_files WHERE deleted_at IS NULL AND folder_id != ?
-         ORDER BY updated_at DESC LIMIT ?`
+         ORDER BY pinned DESC, updated_at DESC LIMIT ?`
       )
       .all(DG_RECYCLE, limit) as Array<{
       id: string
@@ -204,11 +236,76 @@ export class DiagramService {
       title: string
       page_count: number
       thumbnail_path: string | null
+      pinned: number
       created_at: string
       updated_at: string
       deleted_at: string | null
     }>
-    return rows.map(mapFileRow)
+    return rows.map((r) => mapFileRow(r, this.mediaDir))
+  }
+
+  searchFiles(query: string, limit = 40): DiagramSearchHit[] {
+    const q = query.trim().toLowerCase()
+    if (!q) return []
+
+    const rows = this.db
+      .prepare(
+        `SELECT id, folder_id, title, page_count, thumbnail_path, pinned, created_at, updated_at, deleted_at
+         FROM diagram_files WHERE deleted_at IS NULL AND folder_id != ?
+         ORDER BY pinned DESC, updated_at DESC`
+      )
+      .all(DG_RECYCLE) as Array<{
+      id: string
+      folder_id: string
+      title: string
+      page_count: number
+      thumbnail_path: string | null
+      pinned: number
+      created_at: string
+      updated_at: string
+      deleted_at: string | null
+    }>
+
+    const hits: DiagramSearchHit[] = []
+    for (const row of rows) {
+      const titleMatch = row.title.toLowerCase().includes(q)
+      const content = readDiagramContent(this.mediaDir, row.id)
+      const bodyPlain = content ? diagramBodyPlainText(content) : ''
+      const contentMatch = bodyPlain.toLowerCase().includes(q)
+      if (!titleMatch && !contentMatch) continue
+      hits.push({
+        meta: mapFileRow(row, this.mediaDir),
+        matchedInTitle: titleMatch,
+        matchedInContent: contentMatch
+      })
+      if (hits.length >= limit) break
+    }
+    return hits
+  }
+
+  duplicateFile(fileId: string): DiagramFileRecord | null {
+    const record = this.readFile(fileId)
+    if (!record || record.meta.deletedAt) return null
+    const newTitle = `${record.meta.title.trim() || '未命名流程图'} 副本`
+    const content = structuredClone(record.content)
+    content.meta.title = newTitle
+    return this.createFile(record.meta.folderId, newTitle, content)
+  }
+
+  setFilePinned(fileId: string, pinned: boolean): DiagramFileMeta | null {
+    const row = this.getFileRow(fileId)
+    if (!row || row.deleted_at) return null
+    const now = new Date().toISOString()
+    this.db
+      .prepare(`UPDATE diagram_files SET pinned = ?, updated_at = ? WHERE id = ?`)
+      .run(pinned ? 1 : 0, now, fileId)
+    return mapFileRow({ ...row, pinned: pinned ? 1 : 0, updated_at: now }, this.mediaDir)
+  }
+
+  getFileContentPath(fileId: string): string | null {
+    const row = this.getFileRow(fileId)
+    if (!row) return null
+    return diagramContentPath(this.mediaDir, fileId)
   }
 
   createFile(folderId: string, title: string, content?: DiagramContent): DiagramFileRecord {
@@ -217,9 +314,9 @@ export class DiagramService {
     }
     const id = randomUUID()
     const now = new Date().toISOString()
-    const body = content ?? createBlankContent(title)
+    let body = content ?? createBlankContent(title)
     body.meta.title = title
-    writeDiagramContent(this.mediaDir, id, body)
+    body = writeDiagramContentWithAssets(this.mediaDir, id, body)
 
     this.db
       .prepare(
@@ -236,6 +333,8 @@ export class DiagramService {
         title,
         pageCount: body.pages.length,
         thumbnailPath: null,
+        pinned: false,
+        sizeBytes: diagramContentSizeBytes(this.mediaDir, id),
         createdAt: now,
         updatedAt: now,
         deletedAt: null
@@ -249,18 +348,30 @@ export class DiagramService {
     if (!row) return null
     const content = readDiagramContent(this.mediaDir, fileId)
     if (!content) return null
-    return { meta: mapFileRow(row), content }
+    return { meta: mapFileRow(row, this.mediaDir), content }
   }
 
-  writeFile(fileId: string, content: DiagramContent, baseUpdatedAt: string): WriteResult {
+  writeFile(
+    fileId: string,
+    content: DiagramContent,
+    baseUpdatedAt: string,
+    force = false,
+    patch?: DiagramWritePatch
+  ): WriteResult {
     const row = this.getFileRow(fileId)
     if (!row) return { ok: false, reason: 'not_found', message: '文件不存在' }
-    if (row.updated_at !== baseUpdatedAt) {
-      return { ok: false, reason: 'conflict', message: '文件已被修改' }
+    if (!force && row.updated_at !== baseUpdatedAt) {
+      return { ok: false, reason: 'conflict', message: '文件已被其他位置修改，请重新加载或覆盖保存' }
     }
 
     const now = new Date().toISOString()
-    writeDiagramContent(this.mediaDir, fileId, content)
+    if (patch && patch.dirtyPageIds.length + (patch.deletedPageIds?.length ?? 0) > 0) {
+      writeDiagramContentPatch(this.mediaDir, fileId, content, patch)
+    } else if (patch?.metaDirty) {
+      writeDiagramContentPatch(this.mediaDir, fileId, content, patch)
+    } else {
+      writeDiagramContent(this.mediaDir, fileId, content)
+    }
     this.db
       .prepare(
         `UPDATE diagram_files SET title = ?, page_count = ?, updated_at = ? WHERE id = ?`
@@ -268,6 +379,201 @@ export class DiagramService {
       .run(content.meta.title, content.pages.length, now, fileId)
 
     return { ok: true, updatedAt: now }
+  }
+
+  private async createFileFromImportedWfg(
+    folderId: string,
+    sourcePath: string,
+    content: DiagramContent
+  ): Promise<DiagramFileRecord | null> {
+    const id = randomUUID()
+    const title = content.meta.title
+    const now = new Date().toISOString()
+    await materializeImportedWfg(this.mediaDir, sourcePath, id, content)
+
+    this.db
+      .prepare(
+        `INSERT INTO diagram_files
+         (id, folder_id, title, page_count, content_path, thumbnail_path, created_at, updated_at, deleted_at)
+         VALUES (?, ?, ?, ?, ?, NULL, ?, ?, NULL)`
+      )
+      .run(
+        id,
+        folderId,
+        title,
+        content.pages.length,
+        relativeContentPath(id),
+        now,
+        now
+      )
+
+    const saved = readDiagramContent(this.mediaDir, id)
+    if (!saved) return null
+
+    return {
+      meta: {
+        id,
+        folderId,
+        title,
+        pageCount: saved.pages.length,
+        thumbnailPath: null,
+        pinned: false,
+        sizeBytes: diagramContentSizeBytes(this.mediaDir, id),
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: null
+      },
+      content: saved
+    }
+  }
+
+  async importWfgAndCreate(
+    folderId: string
+  ): Promise<DiagramFileRecord | { canceled: true } | null> {
+    if (folderId === DG_HOME || folderId === DG_RECYCLE) {
+      throw new Error('不能在该分组创建文件')
+    }
+    const imported = await this.importWfg()
+    if (!imported.ok) {
+      if (imported.canceled) return { canceled: true }
+      return null
+    }
+    return this.createFileFromImportedWfg(folderId, imported.sourcePath, imported.content)
+  }
+
+  async importWfgFromSource(
+    folderId: string,
+    sourcePath: string,
+    content: DiagramContent
+  ): Promise<DiagramFileRecord | null> {
+    if (folderId === DG_HOME || folderId === DG_RECYCLE) {
+      throw new Error('不能在该分组创建文件')
+    }
+    return this.createFileFromImportedWfg(folderId, sourcePath, content)
+  }
+
+  async importDrawioAndCreate(
+    folderId: string
+  ): Promise<DiagramFileRecord | { canceled: true } | null> {
+    if (folderId === DG_HOME || folderId === DG_RECYCLE) {
+      throw new Error('不能在该分组创建文件')
+    }
+    const imported = await this.importDrawio()
+    if (!imported.ok) {
+      if (imported.canceled) return { canceled: true }
+      return null
+    }
+    return this.createFile(folderId, imported.content.meta.title, imported.content)
+  }
+
+  async importDrawio(): Promise<DiagramImportDrawioResult> {
+    const win = getMainWindow()
+    const openOptions = {
+      filters: [
+        { name: 'draw.io 图表', extensions: ['drawio', 'xml'] }
+      ],
+      properties: ['openFile'] as const
+    }
+    const result = win
+      ? await dialog.showOpenDialog(win, openOptions)
+      : await dialog.showOpenDialog(openOptions)
+    if (result.canceled || !result.filePaths?.[0]) return { ok: false, canceled: true }
+
+    try {
+      const sourcePath = result.filePaths[0]
+      const content = await readDrawioFile(sourcePath)
+      return { ok: true, content, sourcePath }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      return { ok: false, error: message }
+    }
+  }
+
+  async importWfg(): Promise<DiagramImportWfgResult> {
+    const win = getMainWindow()
+    const openOptions = {
+      filters: [{ name: 'Wanwu 流程图', extensions: ['wfg'] }],
+      properties: ['openFile'] as const
+    }
+    const result = win
+      ? await dialog.showOpenDialog(win, openOptions)
+      : await dialog.showOpenDialog(openOptions)
+    if (result.canceled || !result.filePaths?.[0]) return { ok: false, canceled: true }
+
+    try {
+      const sourcePath = result.filePaths[0]
+      const content = await readWfgFile(sourcePath)
+      return { ok: true, content, sourcePath }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      return { ok: false, error: message }
+    }
+  }
+
+  async importNodeAsset(fileId: string): Promise<DiagramImportNodeAssetResult> {
+    const row = this.getFileRow(fileId)
+    if (!row || row.deleted_at) {
+      return { ok: false, error: '文件不存在' }
+    }
+
+    const win = getMainWindow()
+    const openOptions = {
+      filters: [
+        { name: '图片', extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'] }
+      ],
+      properties: ['openFile'] as const
+    }
+    const result = win
+      ? await dialog.showOpenDialog(win, openOptions)
+      : await dialog.showOpenDialog(openOptions)
+    if (result.canceled || !result.filePaths?.[0]) return { ok: false, canceled: true }
+
+    try {
+      const sourcePath = result.filePaths[0]
+      const rawExt = extname(sourcePath).slice(1).toLowerCase()
+      const ext = rawExt === 'jpeg' ? 'jpg' : rawExt || 'png'
+      const data = await readFile(sourcePath)
+      const assetId = randomUUID()
+      writeDiagramAsset(this.mediaDir, fileId, assetId, ext, data)
+      const rel = buildDiagramAssetRelPath(fileId, assetId, ext)
+      const url = toWanwuMediaUrl(rel)
+      if (!url) return { ok: false, error: '资源路径无效' }
+      return { ok: true, assetId, ext, url }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      return { ok: false, error: message }
+    }
+  }
+
+  async exportWfg(input: {
+    fileId?: string | null
+    content?: DiagramContent
+    defaultName: string
+  }): Promise<DiagramExportWfgResult> {
+    const win = getMainWindow()
+    const defaultPath = `${input.defaultName.trim() || '未命名流程图'}.wfg`
+    const saveOptions = {
+      defaultPath,
+      filters: [{ name: 'Wanwu 流程图', extensions: ['wfg'] }]
+    }
+    const result = win
+      ? await dialog.showSaveDialog(win, saveOptions)
+      : await dialog.showSaveDialog(saveOptions)
+    if (result.canceled || !result.filePath) return { ok: false, canceled: true }
+
+    try {
+      if (input.fileId) {
+        await exportDiagramWfg(this.mediaDir, input.fileId, result.filePath)
+      } else if (input.content) {
+        await exportContentWfg(input.content, result.filePath)
+      } else {
+        return { ok: false, error: '缺少导出内容' }
+      }
+      return { ok: true, path: result.filePath }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      return { ok: false, error: message }
+    }
   }
 
   renameFile(fileId: string, title: string): DiagramFileMeta | null {
@@ -278,9 +584,12 @@ export class DiagramService {
     const content = readDiagramContent(this.mediaDir, fileId)
     if (content) {
       content.meta.title = title
-      writeDiagramContent(this.mediaDir, fileId, content)
+      writeDiagramContentPatch(this.mediaDir, fileId, content, {
+        dirtyPageIds: [],
+        metaDirty: true
+      })
     }
-    return { ...mapFileRow(row), title, updatedAt: now }
+    return { ...mapFileRow(row, this.mediaDir), title, updatedAt: now }
   }
 
   moveFile(fileId: string, folderId: string): DiagramFileMeta | null {
@@ -291,7 +600,7 @@ export class DiagramService {
     this.db
       .prepare(`UPDATE diagram_files SET folder_id = ?, updated_at = ? WHERE id = ?`)
       .run(folderId, now, fileId)
-    return { ...mapFileRow(row), folderId, updatedAt: now }
+    return { ...mapFileRow(row, this.mediaDir), folderId, updatedAt: now }
   }
 
   softDeleteFile(fileId: string): boolean {
@@ -328,7 +637,7 @@ export class DiagramService {
   private getFileRow(fileId: string) {
     return this.db
       .prepare(
-        `SELECT id, folder_id, title, page_count, thumbnail_path, created_at, updated_at, deleted_at
+        `SELECT id, folder_id, title, page_count, thumbnail_path, pinned, created_at, updated_at, deleted_at
          FROM diagram_files WHERE id = ?`
       )
       .get(fileId) as
@@ -338,6 +647,7 @@ export class DiagramService {
           title: string
           page_count: number
           thumbnail_path: string | null
+          pinned: number
           created_at: string
           updated_at: string
           deleted_at: string | null
@@ -346,22 +656,28 @@ export class DiagramService {
   }
 }
 
-function mapFileRow(r: {
-  id: string
-  folder_id: string
-  title: string
-  page_count: number
-  thumbnail_path: string | null
-  created_at: string
-  updated_at: string
-  deleted_at: string | null
-}): DiagramFileMeta {
+function mapFileRow(
+  r: {
+    id: string
+    folder_id: string
+    title: string
+    page_count: number
+    thumbnail_path: string | null
+    pinned: number
+    created_at: string
+    updated_at: string
+    deleted_at: string | null
+  },
+  mediaDir: string
+): DiagramFileMeta {
   return {
     id: r.id,
     folderId: r.folder_id,
     title: r.title,
     pageCount: r.page_count,
     thumbnailPath: r.thumbnail_path,
+    pinned: Boolean(r.pinned),
+    sizeBytes: diagramContentSizeBytes(mediaDir, r.id),
     createdAt: r.created_at,
     updatedAt: r.updated_at,
     deletedAt: r.deleted_at

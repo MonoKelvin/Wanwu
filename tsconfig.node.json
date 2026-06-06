@@ -12,7 +12,8 @@
     "types": ["node"],
     "paths": {
       "@electron/*": ["./electron/*"],
-      "@shared/*": ["./src/shared/*"]
+      "@shared/*": ["./src/shared/*"],
+      "@modules/*": ["./src/modules/*"]
     }
   },
   "include": [
@@ -21,7 +22,9 @@
     "scripts/**/*",
     "src/shared/types/**/*",
     "src/shared/constants/**/*",
-    "src/shared/notes/**/*"
+    "src/shared/notes/**/*",
+    "src/shared/documentPackage/**/*",
+    "src/modules/library/diagrams/lib/**/*.ts"
   ],
   "exclude": ["src/shared/types/menu.ts"]
 }

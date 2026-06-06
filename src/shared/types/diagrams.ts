@@ -18,10 +18,20 @@ export interface DiagramFileMeta {
   title: string
   pageCount: number
   thumbnailPath: string | null
+  pinned: boolean
+  sizeBytes: number | null
   createdAt: string
   updatedAt: string
   deletedAt: string | null
 }
+
+export interface DiagramSearchHit {
+  meta: DiagramFileMeta
+  matchedInTitle: boolean
+  matchedInContent: boolean
+}
+
+import type { DiagramCanvasSettings } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 
 export interface DiagramPage {
   id: string
@@ -29,6 +39,8 @@ export interface DiagramPage {
   sortOrder: number
   viewport: { x: number; y: number; zoom: number }
   graphData: DiagramGraphData
+  /** 画布显示与主题偏好（可选，旧文件无此字段） */
+  canvasSettings?: DiagramCanvasSettings
 }
 
 export interface DiagramGraphData {
@@ -43,7 +55,8 @@ export interface DiagramContentMeta {
 
 export interface DiagramContent {
   format: 'wanwu-diagram'
-  formatVersion: 1
+  /** 1=单文件 content.json；2=文档包 content/meta + content/pages */
+  formatVersion: 1 | 2
   engine: 'logicflow'
   engineVersion: string
   meta: DiagramContentMeta
@@ -58,6 +71,29 @@ export interface DiagramFileRecord {
 export type WriteResult =
   | { ok: true; updatedAt: string }
   | { ok: false; reason: 'conflict' | 'not_found' | 'error'; message?: string }
+
+/** 文档包增量写入：仅落盘变更页与元数据 */
+export interface DiagramWritePatch {
+  dirtyPageIds: string[]
+  metaDirty?: boolean
+  deletedPageIds?: string[]
+}
+
+export type DiagramExportWfgResult =
+  | { ok: true; path: string }
+  | { ok: false; canceled?: boolean; error?: string }
+
+export type DiagramImportWfgResult =
+  | { ok: true; content: DiagramContent; sourcePath: string }
+  | { ok: false; canceled?: boolean; error?: string }
+
+export type DiagramImportNodeAssetResult =
+  | { ok: true; assetId: string; ext: string; url: string }
+  | { ok: false; canceled?: boolean; error?: string }
+
+export type DiagramImportDrawioResult =
+  | { ok: true; content: DiagramContent; sourcePath: string }
+  | { ok: false; canceled?: boolean; error?: string }
 
 export interface DiagramTemplate {
   id: string

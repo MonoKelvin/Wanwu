@@ -1,12 +1,11 @@
 import {
-  app,
   clipboard,
   globalShortcut,
   nativeImage,
   Tray,
   type BrowserWindow
 } from 'electron'
-import type { AppServices } from '../../ipc/handlers'
+import type { AppServices } from '../../ipc/types'
 import { mergeAppSettings, normalizeAppSettings } from '../data/settings'
 import { resolveAppLogoPath } from '../media/appAssets'
 import { getMainWindow } from '../../windowState'
@@ -33,6 +32,7 @@ import {
   resolveTrayMenuAnchor,
   showTrayMenuWindow
 } from './trayMenuWindow'
+import { requestAppQuit } from '../app/appQuit'
 
 const PALETTE_ACCELERATOR = 'CommandOrControl+Shift+P'
 const CLIPBOARD_POLL_MS = 900
@@ -159,8 +159,7 @@ export function executeTrayMenuAction(action: TrayMenuAction): void {
       sendTogglePalette()
       break
     case 'quit':
-      markAppQuitting()
-      app.quit()
+      requestAppQuit()
       break
     default:
       break

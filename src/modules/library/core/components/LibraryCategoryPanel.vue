@@ -24,6 +24,7 @@ import {
   isDiagramCustomFolderId,
   isDiagramSystemFolderId
 } from '@modules/library/diagrams/domain/diagramFolderIds'
+import { isDiagramEditorRoute } from '@modules/library/diagrams/domain/diagramRoutes'
 import {
   defaultDiagramsCatalogExpanded,
   diagramFolderIdFromTreeKey,
@@ -105,7 +106,8 @@ const catalogDefaultExpanded = computed(() => {
 const catalogChildIconPrefix = computed(() => {
   if (activeMajor.value === 'links') return 'ln:'
   if (activeMajor.value === 'diagrams') return 'dg:'
-  return 'ln:'
+  if (activeMajor.value === 'illustrated-handbook') return 'hb:'
+  return ''
 })
 
 function selectionFromRoute(): Record<string, boolean> | null {
@@ -120,7 +122,7 @@ function selectionFromRoute(): Record<string, boolean> | null {
 
   if (major === 'diagrams') {
     const folderId = route.params.folderId as string | undefined
-    if (route.name === 'library-diagrams-editor') {
+    if (isDiagramEditorRoute(route.name, route.path)) {
       return { 'major:diagrams': true }
     }
     if (folderId) {

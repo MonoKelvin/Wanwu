@@ -137,13 +137,15 @@ function nodeIconSrc(node: TreeNode): string | null {
 
 function nodeIcon(node: TreeNode): WwIconName | null {
   if (nodeIconSrc(node)) return null
+  const data = node.data as { icon?: string } | undefined
+  const resolvedIcon = (node.icon ?? data?.icon) as WwIconName | undefined
   if (isMajorNode(node)) {
-    return (node.icon as WwIconName) || 'folder'
+    return resolvedIcon || 'folder'
   }
   if (!props.showChildIcons) return null
   const prefix = props.childIconKeyPrefix
   if (prefix && !String(node.key).startsWith(prefix)) return null
-  return (node.icon as WwIconName) || props.childIcon
+  return resolvedIcon || props.childIcon
 }
 
 function isExpandableNode(node: TreeNode): boolean {

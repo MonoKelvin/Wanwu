@@ -82,6 +82,10 @@ body > div:has(> .p-dialog.ww-glass-dialog-root) {
   z-index: var(--ww-z-dialog) !important;
 }
 
+.p-dialog.ww-confirm-dialog {
+  width: min(92vw, 20rem);
+}
+
 /* 对话框：底部操作区布局 */
 .p-dialog .p-dialog-footer,
 .ww-glass-dialog__footer {

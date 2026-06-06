@@ -3,6 +3,7 @@ import type { QuickAccessHit, QuickAccessHitKind } from '@shared/types/quickAcce
 export const PALETTE_KIND_ORDER: QuickAccessHitKind[] = [
   'library',
   'note',
+  'diagram',
   'link',
   'rss',
   'music',

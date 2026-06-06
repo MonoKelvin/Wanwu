@@ -1,5 +1,5 @@
 import { ensureRssSchema } from '../rss/schema'
-import type { AppServices } from '../../ipc/handlers'
+import type { AppServices } from '../../ipc/types'
 import type { QuickAccessHit, QuickAccessHitKind } from '../../../src/shared/types/quickAccess'
 import { waitForLibraryBootstrap } from '../library/pack'
 
@@ -9,12 +9,14 @@ const KIND_LIMIT: Record<QuickAccessHitKind, number> = {
   link: 4,
   rss: 4,
   music: 6,
-  favorite: 4
+  favorite: 4,
+  diagram: 6
 }
 
 const PALETTE_KIND_ORDER: QuickAccessHitKind[] = [
   'library',
   'note',
+  'diagram',
   'link',
   'rss',
   'music',
@@ -163,6 +165,27 @@ export function searchRssHits(services: AppServices, term: string): QuickAccessH
   return hits
 }
 
+export function searchDiagramHits(services: AppServices, term: string): QuickAccessHit[] {
+  const hits: QuickAccessHit[] = []
+  const perKind = new Map<QuickAccessHitKind, number>()
+  const rows = services.diagrams?.searchFiles(term, KIND_LIMIT.diagram) ?? []
+  for (const row of rows) {
+    pushHit(
+      hits,
+      {
+        kind: 'diagram',
+        id: row.meta.id,
+        title: row.meta.title.trim() || '未命名流程图',
+        subtitle: row.matchedInContent ? '流程图 · 内容匹配' : '流程图',
+        diagramFileId: row.meta.id
+      },
+      'diagram',
+      perKind
+    )
+  }
+  return hits
+}
+
 export function searchFavoriteHits(services: AppServices, term: string): QuickAccessHit[] {
   const hits: QuickAccessHit[] = []
   const perKind = new Map<QuickAccessHitKind, number>()
@@ -222,6 +245,7 @@ const SEARCH_BY_KIND: Record<
 > = {
   library: searchLibraryHits,
   note: searchNoteHits,
+  diagram: searchDiagramHits,
   link: searchLinkHits,
   rss: searchRssHits,
   favorite: searchFavoriteHits

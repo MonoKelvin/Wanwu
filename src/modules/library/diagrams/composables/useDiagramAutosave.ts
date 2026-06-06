@@ -6,16 +6,42 @@ export function useDiagramAutosave(options: {
   bus: IDiagramCommandBus
   session: Ref<DiagramEditorSession | null>
   debounceMs?: number
+  isBlocked?: () => boolean
+  onSaveError?: (message: string) => void
 }) {
   let timer: ReturnType<typeof setTimeout> | null = null
-  const debounceMs = options.debounceMs ?? 1500
+  let saving = false
+  const debounceMs = options.debounceMs ?? 2000
+
+  function cancelScheduledSave() {
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
+    }
+  }
+
+  async function runSave() {
+    if (saving || options.isBlocked?.()) return
+    const session = options.session.value
+    if (!session?.dirty) return
+
+    saving = true
+    try {
+      const result = await options.bus.dispatch({ type: 'document.save' })
+      if (!result.ok && result.code !== 'CONFLICT') {
+        options.onSaveError?.(result.message ?? '自动保存失败')
+      }
+    } finally {
+      saving = false
+    }
+  }
 
   function scheduleSave() {
-    if (timer) clearTimeout(timer)
+    if (options.isBlocked?.()) return
+    cancelScheduledSave()
     timer = setTimeout(() => {
-      const session = options.session.value
-      if (!session?.dirty || !session.fileId) return
-      void options.bus.dispatch({ type: 'document.save' })
+      timer = null
+      void runSave()
     }, debounceMs)
   }
 
@@ -28,16 +54,14 @@ export function useDiagramAutosave(options: {
 
   const stopFile = watch(
     () => options.session.value?.fileId,
-    () => {
-      if (timer) clearTimeout(timer)
-    }
+    () => cancelScheduledSave()
   )
 
   onUnmounted(() => {
     stopDirty()
     stopFile()
-    if (timer) clearTimeout(timer)
+    cancelScheduledSave()
   })
 
-  return { scheduleSave }
+  return { scheduleSave, cancelScheduledSave }
 }

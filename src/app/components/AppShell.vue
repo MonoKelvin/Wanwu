@@ -2,9 +2,12 @@
 import { computed, defineAsyncComponent, watch } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import ModuleSidebar from '@app/components/ModuleSidebar.vue'
+import SubItemPanel from '@app/components/SubItemPanel.vue'
 import { useRouteModule } from '@app/composables/useRouteModule'
 import { useShellModule } from '@app/composables/useShellModule'
 import { moduleViewComponent } from '@app/shell/moduleShell'
+import { isDiagramEditorRoute } from '@modules/library/diagrams/domain/diagramRoutes'
+import DiagramEditorView from '@modules/library/diagrams/views/DiagramEditorView.vue'
 import { LIBRARY_NOTES_ROUTE } from '@modules/library/notes/domain/noteRoutes'
 import { mvPageActive } from '@modules/music/lib/musicMvOverlayState'
 import { useAppStore } from '@shared/stores/app'
@@ -20,9 +23,6 @@ const ItemDetailView = defineAsyncComponent(
 const MusicMiniBar = defineAsyncComponent(
   () => import('@modules/music/player/MusicMiniBar.vue')
 )
-const SubItemPanel = defineAsyncComponent(
-  () => import('@app/components/SubItemPanel.vue')
-)
 
 const route = useRoute()
 const routeModule = useRouteModule()
@@ -30,10 +30,20 @@ const shellModule = useShellModule()
 const appStore = useAppStore()
 const isItemDetail = computed(() => isItemDetailRoute(route.name))
 const isNotesRoute = computed(() => route.name === LIBRARY_NOTES_ROUTE)
+const showDiagramEditor = computed(() => isDiagramEditorRoute(route.name, route.path))
+const diagramEditorKey = computed(
+  () => `diagrams-editor:${String(route.params.fileId)}:${String(route.query.template ?? '')}`
+)
 const itemDetailShell = computed(() => moduleViewComponent(shellModule.value))
 
 const activeShellKey = computed(() => {
   if (isItemDetail.value) return `item:${shellModule.value}`
+  if (isDiagramEditorRoute(route.name, route.path)) {
+    return diagramEditorKey.value
+  }
+  if (route.meta.module === 'library') {
+    return `library#${appStore.shellOutletRevision}`
+  }
   return `${route.fullPath}#${appStore.shellOutletRevision}`
 })
 
@@ -45,7 +55,7 @@ const showMusicBar = computed(
 )
 
 const showSubPanel = computed(() => {
-  if (isItemDetail.value || isFullscreen.value) return false
+  if (isItemDetail.value || isFullscreen.value || route.meta.hideSubPanel) return false
   const mod = routeModule.value
   return mod === 'library' || mod === 'rss'
 })
@@ -59,6 +69,12 @@ watch(
   },
   { immediate: true }
 )
+
+watch(showDiagramEditor, (active, wasActive) => {
+  if (wasActive && !active) {
+    appStore.bumpShellOutlet()
+  }
+})
 </script>
 
 <template>
@@ -66,11 +82,18 @@ watch(
     <ModuleSidebar v-show="!isFullscreen" />
     <SubItemPanel v-if="showSubPanel" class="shrink-0" />
     <main
+      :key="showDiagramEditor ? 'diagram-editor-shell' : `shell-${activeShellKey}`"
       class="relative flex min-w-0 flex-1 flex-col overflow-hidden"
       :class="routeModule === 'cloud-abode' ? 'bg-transparent' : 'bg-ww-content'"
     >
       <!-- 便笺含 Tiptap：必须在 RouterView 外渲染，否则切模块时 outlet 卡死 -->
       <NotesView v-if="isNotesRoute" class="h-full min-h-0 flex flex-1 flex-col" />
+      <!-- 编辑器不走 RouterView，避免 vue-router 5 卸载时 vnode 为 null 触发 component 读取错误 -->
+      <DiagramEditorView
+        v-else-if="showDiagramEditor"
+        :key="diagramEditorKey"
+        class="h-full min-h-0 flex flex-1 flex-col"
+      />
       <template v-else-if="isItemDetail">
         <component
           :is="itemDetailShell"

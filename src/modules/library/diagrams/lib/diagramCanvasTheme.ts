@@ -18,9 +18,12 @@ export function diagramGridOptions(resolved: DiagramCanvasTheme) {
 
 export function diagramAxisStyle(resolved: DiagramCanvasTheme) {
   const isDark = resolved === 'dark'
+  const grid = isDark ? '#3a3a42' : '#e0e0e4'
   return {
-    color: isDark ? '#7a7a84' : '#a8a8b0',
-    width: 1.75
+    vertical: isDark ? '#3f3f46' : '#d8d8de',
+    horizontal: isDark ? '#45454d' : '#dedee4',
+    width: 1,
+    grid
   }
 }
 

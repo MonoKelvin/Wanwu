@@ -4,7 +4,8 @@ import vue from '@vitejs/plugin-vue'
 import { rendererFullReloadInDev } from './scripts/vite-renderer-full-reload'
 
 const sharedAlias = {
-  '@shared': resolve(__dirname, 'src/shared')
+  '@shared': resolve(__dirname, 'src/shared'),
+  '@modules': resolve(__dirname, 'src/modules')
 }
 
 function rendererManualChunks(id: string): string | undefined {

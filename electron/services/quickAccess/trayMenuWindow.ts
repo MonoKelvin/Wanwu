@@ -3,7 +3,7 @@ import { existsSync } from 'fs'
 import { join } from 'path'
 import { normalizeAppSettings } from '../data/settings'
 import { resolveAppLogoPath } from '../media/appAssets'
-import type { AppServices } from '../../ipc/handlers'
+import type { AppServices } from '../../ipc/types'
 
 /** 与 --ww-elevated 一致；窗口即菜单，无额外底色块 */
 const TRAY_MENU_BG_LIGHT = '#ffffff'

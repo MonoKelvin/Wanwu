@@ -3,7 +3,8 @@ import type LogicFlow from '@logicflow/core'
 const AXIS_EXTENT = 120_000
 
 export type DiagramAxisStyle = {
-  color: string
+  vertical: string
+  horizontal: string
   width: number
 }
 
@@ -36,8 +37,8 @@ export function mountDiagramAxisOverlay(
 
   const sync = () => {
     const style = getStyle()
-    vLine.setAttribute('stroke', style.color)
-    hLine.setAttribute('stroke', style.color)
+    vLine.setAttribute('stroke', style.vertical)
+    hLine.setAttribute('stroke', style.horizontal)
     vLine.setAttribute('stroke-width', String(style.width))
     hLine.setAttribute('stroke-width', String(style.width))
 

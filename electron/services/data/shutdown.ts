@@ -1,4 +1,4 @@
-import type { AppServices } from '../../ipc/handlers'
+import type { AppServices } from '../../ipc/types'
 
 /** 备份/迁移/恢复前关闭所有 SQLite 与其它数据服务，避免 Windows 文件锁 */
 export function shutdownDataServices(services: AppServices): void {

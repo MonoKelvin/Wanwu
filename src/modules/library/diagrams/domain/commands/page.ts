@@ -4,7 +4,9 @@ export const PAGE_COMMAND_TYPES = [
   'page.delete',
   'page.duplicate',
   'page.reorder',
-  'page.switch'
+  'page.switch',
+  'page.prev',
+  'page.next'
 ] as const
 
 export type PageCommandType = (typeof PAGE_COMMAND_TYPES)[number]

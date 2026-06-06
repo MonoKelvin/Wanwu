@@ -1,4 +1,4 @@
-ï»¿<script setup lang="ts">
+<script setup lang="ts">
 defineOptions({ name: 'ItemDetailView' })
 
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
@@ -100,7 +100,7 @@ function bindThumbsStrip() {
 const isLibrary = computed(() => (route.params.source as string) === 'library')
 
 const specEntries = computed(() =>
-  Object.entries(item.value?.specs ?? {}).filter(([key]) => key !== 'æ‘˜è¦')
+  Object.entries(item.value?.specs ?? {}).filter(([key]) => key !== 'ÕªÒª')
 )
 
 const gallerySlides = computed(() => {
@@ -322,10 +322,10 @@ function startDescEdit() {
 async function cancelDescEdit() {
   const ok = await dismissConfirm.ask({
     id: DISMISSIBLE_PROMPT_IDS.itemDescCancel,
-    header: 'æ”¾å¼ƒç¼–è¾‘',
-    message: 'å½“å‰ä¿®æ”¹å°šæœªä¿å­˜ï¼Œç¡®å®šè¦é€€å‡ºç¼–è¾‘å—ï¼Ÿ',
-    acceptLabel: 'æ”¾å¼ƒä¿®æ”¹',
-    rejectLabel: 'ç»§ç»­ç¼–è¾‘',
+    header: '·ÅÆú±à¼­',
+    message: 'µ±Ç°ĞŞ¸ÄÉĞÎ´±£´æ£¬È·¶¨ÒªÍË³ö±à¼­Âğ£¿',
+    acceptLabel: '·ÅÆúĞŞ¸Ä',
+    rejectLabel: '¼ÌĞø±à¼­',
     danger: true
   })
   if (!ok) return
@@ -337,10 +337,10 @@ async function saveDescEdit() {
   if (!item.value) return
   const ok = await dismissConfirm.ask({
     id: DISMISSIBLE_PROMPT_IDS.itemDescSave,
-    header: 'ä¿å­˜è¯¦æƒ…',
-    message: 'ç¡®å®šå°†å½“å‰ Markdown æ­£æ–‡å†™å…¥è¯¥ç‰©å“å—ï¼Ÿ',
-    acceptLabel: 'ä¿å­˜',
-    rejectLabel: 'ç»§ç»­ç¼–è¾‘'
+    header: '±£´æÏêÇé',
+    message: 'È·¶¨½«µ±Ç° Markdown ÕıÎÄĞ´Èë¸ÃÎïÆ·Âğ£¿',
+    acceptLabel: '±£´æ',
+    rejectLabel: '¼ÌĞø±à¼­'
   })
   if (!ok) return
   descSaving.value = true
@@ -386,7 +386,7 @@ async function revealInFolder() {
       <button
         type="button"
         class="ww-product-detail__back ww-glass-btn ww-glass-btn--icon ww-glass-btn--on-light"
-        aria-label="è¿”å›"
+        aria-label="·µ»Ø"
         @click="goBack"
       >
         <WwIcon name="arrow-left" size="sm" />
@@ -396,12 +396,12 @@ async function revealInFolder() {
         <span v-if="item?.subCategoryName" class="ww-product-detail__crumb-sep" aria-hidden="true">/</span>
         <span class="ww-product-detail__crumb-current">{{ item?.name ?? U.loading }}</span>
       </nav>
-      <div v-if="item" class="ww-product-detail__page-meta" aria-label="æ—¶é—´ä¿¡æ¯">
+      <div v-if="item" class="ww-product-detail__page-meta" aria-label="Ê±¼äĞÅÏ¢">
         <span v-if="item.createdAt" class="ww-product-detail__page-meta-item">
-          åˆ›å»ºæ—¶é—´: {{ formatDateTime(item.createdAt) }}
+          ´´½¨Ê±¼ä: {{ formatDateTime(item.createdAt) }}
         </span>
         <span v-if="item.updatedAt" class="ww-product-detail__page-meta-item">
-          æ›´æ–°æ—¶é—´: {{ formatDateTime(item.updatedAt) }}
+          ¸üĞÂÊ±¼ä: {{ formatDateTime(item.updatedAt) }}
         </span>
       </div>
     </header>
@@ -417,18 +417,18 @@ async function revealInFolder() {
     <EmptyState
       v-else-if="!item"
       variant="not-found"
-      title="æœªæ‰¾åˆ°ç‰©å“"
-      description="è¯¥æ¡ç›®å¯èƒ½å·²è¢«åˆ é™¤æˆ– ID ä¸æ­£ç¡®ã€‚"
+      title="Î´ÕÒµ½ÎïÆ·"
+      description="¸ÃÌõÄ¿¿ÉÄÜÒÑ±»É¾³ı»ò ID ²»ÕıÈ·¡£"
     />
 
     <div v-else class="ww-product-detail__scroll">
       <article ref="shareCaptureRef" class="ww-product-detail__inner" data-share-capture>
         <div class="ww-product-detail__main">
-          <section class="ww-product-detail__gallery" aria-label="å›¾ç‰‡">
+          <section class="ww-product-detail__gallery" aria-label="Í¼Æ¬">
             <button
               type="button"
               class="ww-product-detail__id-outside ww-product-detail__id-link"
-              :title="'ç‚¹å‡»å¤åˆ¶ IDï¼š' + item.id"
+              :title="'µã»÷¸´ÖÆ ID£º' + item.id"
               @click="copyItemId"
             >
               ID: {{ item.id }}
@@ -480,7 +480,7 @@ async function revealInFolder() {
                 v-show="thumbsCanScrollLeft"
                 type="button"
                 class="ww-product-detail__thumbs-nav ww-product-detail__thumbs-nav--prev"
-                aria-label="ä¸Šä¸€ç»„å›¾ç‰‡"
+                aria-label="ÉÏÒ»×éÍ¼Æ¬"
                 @click="scrollThumbs(-1)"
               >
                 <WwIcon name="chevron-left" size="sm" />
@@ -489,7 +489,7 @@ async function revealInFolder() {
                 ref="thumbsStripRef"
                 class="ww-product-detail__thumbs"
                 role="tablist"
-                aria-label="å›¾é›†"
+                aria-label="Í¼¼¯"
                 @scroll.passive="updateThumbsScrollState"
               >
                 <button
@@ -500,7 +500,7 @@ async function revealInFolder() {
                   class="ww-product-detail__thumb"
                   :class="{ 'ww-product-detail__thumb--active': activeImage === slide.url }"
                   :aria-selected="activeImage === slide.url"
-                  :aria-label="`å›¾ ${i + 1}`"
+                  :aria-label="`Í¼ ${i + 1}`"
                   @click="selectImage(slide.url)"
                 >
                   <img :src="slide.url" alt="" />
@@ -510,7 +510,7 @@ async function revealInFolder() {
                   type="button"
                   class="ww-product-detail__thumb ww-product-detail__thumb--add"
                   :disabled="uploading"
-                  aria-label="ä¸Šä¼ å›¾ç‰‡"
+                  aria-label="ÉÏ´«Í¼Æ¬"
                   @click="uploadImage"
                 >
                   <WwIcon name="plus" size="sm" />
@@ -520,7 +520,7 @@ async function revealInFolder() {
                 v-show="thumbsCanScrollRight"
                 type="button"
                 class="ww-product-detail__thumbs-nav ww-product-detail__thumbs-nav--next"
-                aria-label="ä¸‹ä¸€ç»„å›¾ç‰‡"
+                aria-label="ÏÂÒ»×éÍ¼Æ¬"
                 @click="scrollThumbs(1)"
               >
                 <WwIcon name="chevron-right" size="sm" />
@@ -541,7 +541,7 @@ async function revealInFolder() {
             </div>
 
             <div v-if="specEntries.length" class="ww-product-detail__spec-block">
-              <h2 class="ww-section-label">è§„æ ¼å‚æ•°</h2>
+              <h2 class="ww-section-label">¹æ¸ñ²ÎÊı</h2>
               <dl class="ww-product-detail__specs">
                 <div v-for="[key, val] in specEntries" :key="key" class="ww-product-detail__spec-row">
                   <dt>{{ key }}</dt>
@@ -554,12 +554,12 @@ async function revealInFolder() {
 
         <section v-if="isLibrary" class="ww-product-detail__desc">
           <div class="ww-product-detail__desc-head">
-            <h2 class="ww-section-label">è¯¦ç»†ä»‹ç»</h2>
+            <h2 class="ww-section-label">ÏêÏ¸½éÉÜ</h2>
             <div v-if="!descEditing" class="ww-product-detail__desc-actions">
               <button
                 type="button"
                 class="ww-product-detail__desc-btn"
-                aria-label="ç¼–è¾‘è¯¦æƒ…"
+                aria-label="±à¼­ÏêÇé"
                 @click="startDescEdit"
               >
                 <WwIcon name="pencil" size="sm" />
@@ -570,7 +570,7 @@ async function revealInFolder() {
                 type="button"
                 class="ww-product-detail__desc-btn ww-product-detail__desc-btn--primary"
                 :disabled="descSaving"
-                aria-label="å®Œæˆ"
+                aria-label="Íê³É"
                 @click="void saveDescEdit()"
               >
                 <WwIcon name="check" size="sm" />
@@ -579,7 +579,7 @@ async function revealInFolder() {
                 type="button"
                 class="ww-product-detail__desc-btn"
                 :disabled="descSaving"
-                aria-label="å–æ¶ˆ"
+                aria-label="È¡Ïû"
                 @click="void cancelDescEdit()"
               >
                 <WwIcon name="x" size="sm" />
@@ -593,7 +593,7 @@ async function revealInFolder() {
               class="w-full"
               rows="12"
               auto-resize
-              placeholder="Markdown æ­£æ–‡"
+              placeholder="Markdown ÕıÎÄ"
             />
           </div>
           <WwMarkdownReader
@@ -601,11 +601,11 @@ async function revealInFolder() {
             :content="item.description"
             class="ww-product-detail__prose"
           />
-          <p v-else class="ww-product-detail__desc-empty">æš‚æ— è¯¦ç»†ä»‹ç»ï¼Œç‚¹å‡»ä¸Šæ–¹ç¼–è¾‘æŒ‰é’®æ·»åŠ ã€‚</p>
+          <p v-else class="ww-product-detail__desc-empty">ÔİÎŞÏêÏ¸½éÉÜ£¬µã»÷ÉÏ·½±à¼­°´Å¥Ìí¼Ó¡£</p>
         </section>
 
         <section v-else-if="item.description" class="ww-product-detail__desc">
-          <h2 class="ww-section-label">è¯¦ç»†ä»‹ç»</h2>
+          <h2 class="ww-section-label">ÏêÏ¸½éÉÜ</h2>
           <WwMarkdownReader :content="item.description" class="ww-product-detail__prose" />
         </section>
       </article>
@@ -615,53 +615,53 @@ async function revealInFolder() {
       v-if="item && !loading"
       class="ww-product-detail__float-dock ww-product-detail__dock ww-glass-blur"
       role="toolbar"
-      aria-label="ç‰©å“æ“ä½œ"
+      aria-label="ÎïÆ·²Ù×÷"
     >
       <button
-        v-tooltip.bottom="isLiked ? 'å–æ¶ˆç‚¹èµ' : 'ç‚¹èµ'"
+        v-tooltip.bottom="isLiked ? 'È¡ÏûµãÔŞ' : 'µãÔŞ'"
         type="button"
         class="ww-product-detail__dock-btn"
         :class="{ 'ww-product-detail__dock-btn--liked': isLiked }"
         :aria-pressed="isLiked"
-        :aria-label="isLiked ? 'å–æ¶ˆç‚¹èµ' : 'ç‚¹èµ'"
+        :aria-label="isLiked ? 'È¡ÏûµãÔŞ' : 'µãÔŞ'"
         @click="onLikeClick"
       >
         <WwIcon name="thumbs-up" size="sm" :filled="isLiked" />
       </button>
       <button
-        v-tooltip.bottom="isFavorited ? 'å–æ¶ˆæ”¶è—' : 'æ”¶è—'"
+        v-tooltip.bottom="isFavorited ? 'È¡ÏûÊÕ²Ø' : 'ÊÕ²Ø'"
         type="button"
         class="ww-product-detail__dock-btn"
         :class="{ 'ww-product-detail__dock-btn--active': isFavorited }"
         :aria-pressed="isFavorited"
-        :aria-label="isFavorited ? 'å–æ¶ˆæ”¶è—' : 'æ”¶è—'"
+        :aria-label="isFavorited ? 'È¡ÏûÊÕ²Ø' : 'ÊÕ²Ø'"
         @click="onFavoriteClick"
       >
         <WwIcon name="heart" size="sm" :filled="isFavorited" />
       </button>
       <button
-        v-tooltip.bottom="'åˆ†äº«é•¿å›¾'"
+        v-tooltip.bottom="'·ÖÏí³¤Í¼'"
         type="button"
         class="ww-product-detail__dock-btn"
-        aria-label="åˆ†äº«é•¿å›¾"
+        aria-label="·ÖÏí³¤Í¼"
         @click="openShareImageDialog"
       >
         <WwIcon name="share" size="sm" />
       </button>
       <button
-        v-tooltip.bottom="'å®šåˆ¶å¡ç‰‡'"
+        v-tooltip.bottom="'¶¨ÖÆ¿¨Æ¬'"
         type="button"
         class="ww-product-detail__dock-btn"
-        aria-label="å®šåˆ¶å¡ç‰‡"
+        aria-label="¶¨ÖÆ¿¨Æ¬"
         @click="shareCardOpen = true"
       >
         <WwIcon name="sparkles" size="sm" />
       </button>
       <button
-        v-tooltip.bottom="'å¤åˆ¶è¯¦æƒ…'"
+        v-tooltip.bottom="'¸´ÖÆÏêÇé'"
         type="button"
         class="ww-product-detail__dock-btn"
-        aria-label="å¤åˆ¶è¯¦æƒ…"
+        aria-label="¸´ÖÆÏêÇé"
         @click="copyItemDetails"
       >
         <WwIcon name="copy" size="sm" />
@@ -691,767 +691,5 @@ async function revealInFolder() {
 </template>
 
 <style>
-.ww-product-detail__hero-img.ww-cover-image__placeholder {
-  min-height: 12rem;
-}
-
-.ww-product-detail__thumb .ww-cover-image__img,
-.ww-product-detail__thumb .ww-cover-image__placeholder {
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-}
-
-.ww-product-detail__thumb .ww-cover-image__placeholder-text {
-  display: none;
-}
-
-.ww-product-detail {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  background: var(--ww-content);
-}
-
-.ww-product-detail__bar {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem 0.75rem;
-  padding: 0.375rem 1rem 0.5rem;
-}
-
-.ww-product-detail__bar .ww-product-detail__page-meta {
-  flex: 0 1 auto;
-  width: auto;
-  max-width: min(52vw, 28rem);
-  margin: 0 0 0 auto;
-  margin-top: 0;
-  padding-top: 0;
-  border-top: none;
-  justify-content: flex-end;
-}
-
-.ww-product-detail__bar.ww-chrome-safe {
-  padding-top: calc(var(--ww-titlebar-height) + 0.25rem);
-}
-
-.ww-product-detail__crumb {
-  display: flex;
-  min-width: 0;
-  flex: 1;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: 0.75rem;
-}
-
-.ww-product-detail__crumb-muted {
-  flex-shrink: 0;
-  color: var(--ww-ink-faint);
-}
-
-.ww-product-detail__crumb-sep {
-  flex-shrink: 0;
-  color: var(--ww-ink-faint);
-  opacity: 0.5;
-}
-
-.ww-product-detail__crumb-current {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 500;
-  color: var(--ww-ink);
-}
-
-.ww-product-detail__back {
-  flex-shrink: 0;
-}
-
-.ww-product-detail__intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-
-.ww-product-detail__id-link {
-  margin: 0.25rem 0 0;
-  padding: 0;
-  border: none;
-  background: none;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.6875rem;
-  line-height: 1.4;
-  letter-spacing: 0.01em;
-  color: var(--ww-ink-faint);
-  text-align: left;
-  word-break: break-all;
-  cursor: pointer;
-  transition: color var(--ww-duration-fast) var(--ww-ease-out);
-}
-
-.ww-product-detail__id-link:hover {
-  color: var(--ww-ink-muted);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.ww-product-detail__page-meta {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.375rem 1rem;
-  font-size: 0.6875rem;
-  line-height: 1.4;
-  color: var(--ww-ink-faint);
-}
-
-.ww-product-detail__page-meta-item {
-  white-space: nowrap;
-}
-
-.ww-product-detail__float-dock {
-  position: fixed;
-  top: auto;
-  left: auto;
-  right: 2.25rem;
-  bottom: 1.5rem;
-  z-index: var(--ww-detail-dock-z, 100);
-  width: max-content;
-  max-width: min(calc(100vw - 4.5rem), 22rem);
-  pointer-events: none;
-}
-
-/* è¦†ç›– .ww-glass-blur çš„ position:relative ä¸ z-index:0ï¼Œé¿å…è¢«æ­£æ–‡/Markdown å±‚é®æŒ¡ */
-.ww-product-detail__float-dock.ww-glass-blur {
-  position: fixed;
-  top: auto;
-  left: auto;
-  right: 2.25rem;
-  bottom: 1.5rem;
-  z-index: var(--ww-detail-dock-z, 100);
-}
-
-.ww-product-detail__float-dock > * {
-  pointer-events: auto;
-}
-
-.ww-product-detail__dock {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.3125rem;
-  border-radius: 999px;
-}
-
-.ww-product-detail__dock-btn {
-  display: inline-flex;
-  width: 2.25rem;
-  height: 2.25rem;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 999px;
-  color: var(--ww-ink-muted);
-  background: transparent;
-  cursor: pointer;
-  transition:
-    color var(--ww-duration-fast) var(--ww-ease-out),
-    background var(--ww-duration-fast) var(--ww-ease-out),
-    transform var(--ww-duration-fast) var(--ww-ease-out);
-}
-
-.ww-product-detail__dock-btn:hover {
-  color: var(--ww-ink);
-  background: var(--ww-list-hover-bg);
-}
-
-.ww-product-detail__dock-btn:active {
-  transform: scale(0.94);
-}
-
-.ww-product-detail__dock-btn--active {
-  color: var(--ww-danger-text);
-  background: rgb(254 226 226 / 0.65);
-}
-
-.ww-product-detail__dock-btn--active:hover {
-  color: rgb(153 27 27);
-  background: rgb(254 202 202 / 0.75);
-}
-
-.ww-product-detail__dock-btn--liked {
-  color: rgb(37 99 235);
-  background: rgb(219 234 254 / 0.75);
-}
-
-.ww-product-detail__dock-btn--liked:hover {
-  color: rgb(29 78 216);
-  background: rgb(191 219 254 / 0.85);
-}
-
-.ww-product-detail__toast {
-  position: fixed;
-  top: calc(var(--ww-titlebar-height) + 3.25rem);
-  left: 50%;
-  z-index: 120;
-  margin: 0;
-  padding: 0.5rem 1rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  line-height: 1.35;
-  white-space: nowrap;
-  color: var(--ww-ink);
-  border: 1px solid var(--ww-glass-border);
-  border-radius: 999px;
-  background: var(--ww-glass-bg-soft);
-  box-shadow: var(--ww-shadow-soft);
-  transform: translateX(-50%);
-  pointer-events: none;
-}
-
-@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .ww-product-detail__toast {
-    background: var(--ww-glass-bg-soft);
-    backdrop-filter: blur(16px) saturate(1.35);
-    -webkit-backdrop-filter: blur(16px) saturate(1.35);
-  }
-}
-
-.ww-product-detail__float-dock.ww-glass-blur {
-  border: none;
-  border-radius: 999px;
-  overflow: visible;
-}
-
-.ww-product-detail__float-dock.ww-glass-blur::before {
-  border-radius: 999px;
-  background: var(--ww-glass-bg-soft);
-}
-
-.ww-toast-enter-active,
-.ww-toast-leave-active {
-  transition:
-    opacity var(--ww-duration-fast) var(--ww-ease-out),
-    transform var(--ww-duration-fast) var(--ww-ease-out);
-}
-
-.ww-toast-enter-from,
-.ww-toast-leave-to {
-  opacity: 0;
-  transform: translateX(-50%) translateY(-6px);
-}
-
-.ww-product-detail__scroll {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-.ww-product-detail__inner {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  width: 100%;
-  max-width: var(--ww-content-max);
-  margin: 0 auto;
-  padding: 1.25rem 1rem 3rem;
-  box-sizing: border-box;
-}
-
-.ww-product-detail__skeleton {
-  padding-top: 0.5rem;
-}
-
-.ww-product-detail__main {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.75rem;
-  align-items: start;
-}
-
-@media (min-width: 900px) {
-  .ww-product-detail__inner {
-    padding: 1.5rem 1.75rem 3.5rem;
-  }
-
-  .ww-product-detail__main {
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-    gap: 2.5rem;
-  }
-}
-
-.ww-product-detail__gallery {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  min-width: 0;
-}
-
-.ww-product-detail__id-outside {
-  display: inline-block;
-  align-self: flex-start;
-  flex-shrink: 0;
-  margin: 0;
-  padding: 0;
-  text-align: left;
-}
-
-.ww-product-detail__id-outside.ww-product-detail__id-link {
-  margin: 0 0 0.125rem;
-}
-
-.ww-product-detail__hero-stage {
-  position: relative;
-  height: var(--ww-hero-height);
-  min-height: var(--ww-hero-height);
-  border-radius: 0.75rem;
-  overflow: clip;
-}
-
-@supports not (overflow: clip) {
-  .ww-product-detail__hero-stage {
-    overflow: hidden;
-  }
-}
-
-.ww-product-detail__hero-actions {
-  position: absolute;
-  top: 0.625rem;
-  right: 0.625rem;
-  z-index: 4;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.375rem;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-4px);
-  transition:
-    opacity var(--ww-duration) var(--ww-ease-out),
-    transform var(--ww-duration) var(--ww-ease-out);
-}
-
-.ww-product-detail__hero-actions.is-visible {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-.ww-product-detail__hero-stage:hover .ww-product-detail__hero-actions,
-.ww-product-detail__hero-actions:focus-within {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-.ww-surface-grid {
-  position: relative;
-}
-
-.ww-surface-grid::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: radial-gradient(circle, var(--ww-grid-dot) 1px, transparent 1px);
-  background-size: var(--ww-grid-size) var(--ww-grid-size);
-  mask-image: radial-gradient(ellipse 85% 70% at 50% 0%, black 15%, transparent 78%);
-  opacity: 0.85;
-}
-
-.ww-product-detail__hero-frame {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: inherit;
-  background: var(--ww-inset);
-}
-
-.ww-product-detail__hero-frame > * {
-  position: relative;
-  z-index: 1;
-}
-
-.ww-product-detail__hero-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.ww-product-detail__hero-placeholder {
-  font-size: 2.5rem;
-  color: var(--ww-ink-faint);
-  opacity: 0.35;
-}
-
-.ww-product-detail__credit {
-  padding: 0 0.125rem;
-}
-
-.ww-product-detail__thumbs-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  min-width: 0;
-}
-
-.ww-product-detail__thumbs {
-  display: flex;
-  flex: 1;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding: 2px 0;
-}
-
-.ww-product-detail__thumbs::-webkit-scrollbar {
-  display: none;
-}
-
-.ww-product-detail__thumbs-nav {
-  display: inline-flex;
-  flex-shrink: 0;
-  width: 1.75rem;
-  height: 1.75rem;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: none;
-  border-radius: 999px;
-  color: var(--ww-ink-muted);
-  background: var(--ww-elevated);
-  box-shadow: var(--ww-shadow-soft);
-  cursor: pointer;
-  transition:
-    color var(--ww-duration-fast) var(--ww-ease-out),
-    background var(--ww-duration-fast) var(--ww-ease-out),
-    transform var(--ww-duration-fast) var(--ww-ease-out);
-}
-
-.ww-product-detail__thumbs-nav:hover {
-  color: var(--ww-ink);
-  background: var(--ww-list-hover-bg);
-}
-
-.ww-product-detail__thumbs-nav:active {
-  transform: scale(0.94);
-}
-
-.ww-product-detail__thumbs-nav:focus-visible {
-  outline: none;
-  box-shadow: var(--ww-focus-ring);
-}
-
-.ww-product-detail__info {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  min-width: 0;
-}
-
-.ww-product-detail__intro {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-}
-
-.ww-product-detail__eyebrow {
-  margin: 0;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ww-accent);
-}
-
-.ww-product-detail__title {
-  margin: 0;
-  font-size: clamp(1.375rem, 2.5vw, 1.75rem);
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.025em;
-  color: var(--ww-ink);
-}
-
-.ww-product-detail__lead {
-  margin: 0.25rem 0 0;
-  font-size: 0.9375rem;
-  line-height: 1.65;
-  color: var(--ww-ink-muted);
-}
-
-.ww-product-detail__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-}
-
-.ww-product-detail__pill-tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 1.375rem;
-  padding: 0 0.5rem;
-  border-radius: 999px;
-  font-size: 0.6875rem;
-  line-height: 1;
-  font-weight: 500;
-  color: var(--ww-tag-fg);
-  background: var(--ww-tag-bg);
-  border: 1px solid var(--ww-tag-border);
-}
-
-.ww-product-detail__spec-block {
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-}
-
-.ww-product-detail__specs {
-  margin: 0;
-  border: 1px solid var(--ww-border-subtle);
-  border-radius: 0.625rem;
-  overflow: hidden;
-  background: var(--ww-elevated);
-}
-
-.ww-product-detail__spec-row {
-  display: grid;
-  grid-template-columns: minmax(6.5rem, 38%) 1fr;
-  gap: 0.75rem;
-  padding: 0.625rem 0.875rem;
-  border-bottom: 1px solid var(--ww-border-faint);
-  font-size: 0.8125rem;
-}
-
-.ww-product-detail__spec-row:last-child {
-  border-bottom: none;
-}
-
-.ww-product-detail__spec-row dt {
-  margin: 0;
-  font-weight: 500;
-  color: var(--ww-ink-muted);
-}
-
-.ww-product-detail__spec-row dd {
-  margin: 0;
-  color: var(--ww-ink);
-  font-weight: 500;
-}
-
-.ww-product-detail__actions {
-  padding-top: 0.25rem;
-}
-
-.ww-product-detail__desc {
-  flex: none;
-  align-self: stretch;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  margin-top: 2.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--ww-border-subtle);
-  box-sizing: border-box;
-}
-
-.ww-product-detail__desc .ww-section-label {
-  margin: 0 0 1rem;
-}
-
-.ww-product-detail__prose {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-}
-
-.ww-product-detail__desc-head .ww-section-label {
-  margin: 0;
-  font-size: 1.375rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  text-transform: none;
-  color: var(--ww-ink-muted);
-}
-
-.ww-product-detail__thumb {
-  flex-shrink: 0;
-  width: 3.75rem;
-  height: 3.75rem;
-  overflow: hidden;
-  border: 2px solid transparent;
-  border-radius: 0.5rem;
-  background: var(--ww-panel);
-  padding: 0;
-  cursor: pointer;
-  transition:
-    border-color var(--ww-duration-fast) var(--ww-ease-out),
-    opacity var(--ww-duration-fast) var(--ww-ease-out);
-}
-
-.ww-product-detail__thumb:hover {
-  opacity: 0.88;
-}
-
-.ww-product-detail__thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.ww-product-detail__thumb--active {
-  border-color: var(--ww-accent);
-}
-
-.ww-product-detail__thumb--add {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ww-ink-muted);
-  border: 2px dashed var(--ww-thumb-add-dash);
-  background: var(--ww-elevated);
-}
-
-.ww-product-detail__thumb--add:hover:not(:disabled) {
-  color: var(--ww-ink);
-  border-color: var(--ww-thumb-add-dash);
-  background: var(--ww-panel);
-}
-
-.ww-product-detail__thumb--add:disabled {
-  opacity: 0.5;
-  cursor: wait;
-}
-
-.ww-product-detail__updated {
-  margin: 0.125rem 0 0;
-  font-size: 0.75rem;
-  color: var(--ww-ink-faint);
-}
-
-.ww-product-detail__desc-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.ww-product-detail__desc-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-
-.ww-product-detail__desc-btn {
-  display: inline-flex;
-  width: 2rem;
-  height: 2rem;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--ww-glass-border);
-  border-radius: 0.5rem;
-  background: var(--ww-elevated);
-  color: var(--ww-ink-muted);
-  cursor: pointer;
-  transition:
-    color var(--ww-duration-fast) var(--ww-ease-out),
-    background var(--ww-duration-fast) var(--ww-ease-out),
-    border-color var(--ww-duration-fast) var(--ww-ease-out);
-}
-
-.ww-product-detail__desc-btn:hover {
-  color: var(--ww-ink);
-  border-color: var(--ww-border-subtle);
-  background: var(--ww-panel);
-}
-
-.ww-product-detail__desc-btn--primary {
-  color: #fff;
-  border-color: transparent;
-  background: var(--ww-accent);
-}
-
-.ww-product-detail__desc-btn--primary:hover {
-  color: #fff;
-  background: var(--ww-accent-hover, var(--ww-accent));
-}
-
-[data-theme='dark'] .ww-product-detail__desc-btn--primary {
-  color: #121214;
-  background: var(--ww-accent);
-}
-
-[data-theme='dark'] .ww-product-detail__desc-btn--primary:hover {
-  color: #121214;
-  background: var(--ww-accent-hover, var(--ww-accent));
-}
-
-/* å¯å…³é—­çš„ç¡®è®¤å¯¹è¯æ¡† */
-.ww-dismiss-confirm__message {
-  margin: 0 0 0.875rem;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: var(--ww-ink-muted);
-}
-
-.ww-dismiss-confirm__skip {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8125rem;
-  color: var(--ww-ink-muted);
-  cursor: pointer;
-  user-select: none;
-}
-
-.ww-product-detail__desc-editor {
-  width: 100%;
-  max-width: 100%;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.8125rem;
-  line-height: 1.55;
-}
-
-.ww-product-detail__desc-empty {
-  margin: 0;
-  width: 100%;
-  font-size: 0.875rem;
-  color: var(--ww-ink-faint);
-}
-
-.ww-product-detail__hero-frame--openable {
-  cursor: zoom-in;
-}
-
-.ww-product-detail__hero-frame--openable .ww-product-detail__hero-img {
-  cursor: zoom-in;
-}
+@import './ItemDetailView.css';
 </style>

@@ -30,7 +30,11 @@ export async function pushShellRoute(router: Router, to: RouteLocationRaw) {
   if (router.currentRoute.value.fullPath === resolved.fullPath) return
 
   await prepareShellNavigation()
-  await router.push(to).catch(() => {})
+  await router.push(to).catch((err) => {
+    if (import.meta.env.DEV) {
+      console.warn('[pushShellRoute] navigation failed:', err)
+    }
+  })
 }
 
 export function setupShellNavigationHooks(router: Router) {

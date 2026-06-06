@@ -8,7 +8,7 @@ function belongsToModule(path: string, id: ModuleId): boolean {
   const normalized = path.replace(/^#/, '')
   const seg = normalized.split('?')[0]?.split('/').filter(Boolean)[0]
   if (seg === id) return true
-  if (id === 'library' && seg === 'notes') return true
+  if (id === 'library' && (seg === 'notes' || seg === 'diagrams')) return true
   if (isItemDetailPath(normalized)) {
     const source = normalized.split('?')[0]?.split('/')[2]
     return moduleIdForItemDetailSource(source) === id

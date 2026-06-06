@@ -26,14 +26,15 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
       switch (cmd.type) {
         case 'document.open': {
           if (!session) return diagramError('NO_SESSION', '无活跃编辑器会话')
+          const skipViewport = Boolean(p.skipViewport)
           if (p.fileId) {
-            await session.openFromFile(p.fileId as string)
+            await session.openFromFile(p.fileId as string, { skipViewport })
             return { ok: true, data: { fileId: session.fileId } }
           }
           if (p.templateId) {
             const tpl = getDiagramTemplate(p.templateId as string)
             if (!tpl) return diagramError('NOT_FOUND', '模板不存在')
-            await session.openFromTemplate(tpl.content)
+            await session.openFromTemplate(tpl.content, { skipViewport })
             return { ok: true, data: { templateId: p.templateId } }
           }
           session.openBlank()
@@ -43,17 +44,107 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
           return this.save(
             session,
             (p.folderId as string) || DG_DRAFTS,
-            p.title as string | undefined
+            p.title as string | undefined,
+            p.force as boolean | undefined
           )
         case 'document.saveAs':
-          return this.save(session, (p.folderId as string) ?? DG_FILES, p.title as string | undefined)
+          return this.saveAsNew(
+            session,
+            (p.folderId as string) ?? DG_FILES,
+            p.title as string | undefined
+          )
+        case 'document.importWfg': {
+          if (!session) return diagramError('NO_SESSION', '无活跃编辑器会话')
+          if (session.dirty && !p.discard) {
+            return diagramError('VALIDATION', '当前文档有未保存更改')
+          }
+          const imported = await session.repository.importWfg()
+          if (!imported.ok) {
+            if (imported.canceled) return { ok: true, data: { canceled: true } }
+            return diagramError('INTERNAL', imported.error ?? '导入失败')
+          }
+          const record = await session.repository.importWfgFromSource(
+            DG_DRAFTS,
+            imported.sourcePath,
+            imported.content
+          )
+          if (!record) return diagramError('INTERNAL', '导入保存失败')
+          return { ok: true, data: { fileId: record.meta.id, title: record.meta.title } }
+        }
+        case 'document.importDrawio': {
+          if (!session) return diagramError('NO_SESSION', '无活跃编辑器会话')
+          if (session.dirty && !p.discard) {
+            return diagramError('VALIDATION', '当前文档有未保存更改')
+          }
+          const imported = await session.repository.importDrawio()
+          if (!imported.ok) {
+            if (imported.canceled) return { ok: true, data: { canceled: true } }
+            return diagramError('INTERNAL', imported.error ?? '导入失败')
+          }
+          const record = await session.repository.createFile(
+            DG_DRAFTS,
+            imported.content.meta.title,
+            imported.content
+          )
+          return { ok: true, data: { fileId: record.meta.id, title: record.meta.title } }
+        }
+        case 'document.reload': {
+          if (!session?.fileId) return diagramError('VALIDATION', '当前文档尚未保存')
+          await session.openFromFile(session.fileId)
+          return { ok: true, data: { fileId: session.fileId } }
+        }
         case 'document.export': {
           if (!session) return diagramError('NO_SESSION', '无活跃编辑器会话')
-          const format = (p.format as 'png' | 'svg') ?? 'png'
+          const format = (p.format as 'png' | 'svg' | 'wfg') ?? 'png'
+          const scope = (p.scope as 'page' | 'all') ?? 'page'
+
+          if (format === 'wfg') {
+            session.flushActivePage({ markDirty: false })
+            if (!session.content) return diagramError('VALIDATION', '无文档内容')
+            const exported = await session.repository.exportWfg({
+              fileId: session.fileId,
+              content: session.fileId ? undefined : session.content,
+              defaultName: session.content.meta.title
+            })
+            if (!exported.ok) {
+              if (exported.canceled) return { ok: true, data: { format: 'wfg', canceled: true } }
+              return diagramError('INTERNAL', exported.error ?? '导出失败')
+            }
+            return { ok: true, data: { format: 'wfg', path: exported.path } }
+          }
+
+          if (scope === 'all') {
+            session.flushActivePage({ markDirty: false })
+            const restorePageId = session.activePageId
+            const pages: Array<{ pageId: string; pageName: string; blob?: Blob; svg?: string }> = []
+            for (const page of session.pages) {
+              if (page.id !== session.activePageId) {
+                session.switchPage(page.id)
+              }
+              if (format === 'svg') {
+                pages.push({
+                  pageId: page.id,
+                  pageName: page.name,
+                  svg: await session.editorPort.exportSvg()
+                })
+              } else {
+                pages.push({
+                  pageId: page.id,
+                  pageName: page.name,
+                  blob: await session.editorPort.exportPng()
+                })
+              }
+            }
+            if (restorePageId && restorePageId !== session.activePageId) {
+              session.switchPage(restorePageId)
+            }
+            return { ok: true, data: { format, scope: 'all', pages } }
+          }
+
           if (p.pageId && p.pageId !== session.activePageId) {
             session.switchPage(p.pageId as string)
           } else {
-            session.flushActivePage()
+            session.flushActivePage({ markDirty: false })
           }
           if (format === 'svg') {
             const svg = await session.editorPort.exportSvg()
@@ -81,13 +172,17 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
   private async save(
     session: DiagramEditorSession | null,
     folderId: string,
-    title?: string
+    title?: string,
+    force?: boolean
   ): Promise<DiagramCommandResult> {
     if (!session || !session.content) return diagramError('NO_SESSION', '无活跃编辑器会话')
     session.flushActivePage()
 
     const content = session.content
-    if (title) content.meta.title = title
+    if (title) {
+      content.meta.title = title
+      session.metaDirty = true
+    }
 
     if (!session.fileId) {
       const record = await session.repository.createFile(
@@ -102,7 +197,9 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
     const result = await session.repository.writeFile(
       session.fileId,
       content,
-      session.fileMeta?.updatedAt ?? ''
+      session.fileMeta?.updatedAt ?? '',
+      force,
+      session.getWritePatch()
     )
     if (!result.ok) {
       return diagramError('CONFLICT', result.message ?? '保存冲突')
@@ -115,7 +212,27 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
         updatedAt: result.updatedAt
       }
     }
-    session.dirty = false
+    session.markSaved(session.fileMeta!)
     return { ok: true, data: { fileId: session.fileId, updatedAt: result.updatedAt } }
+  }
+
+  private async saveAsNew(
+    session: DiagramEditorSession | null,
+    folderId: string,
+    title?: string
+  ): Promise<DiagramCommandResult> {
+    if (!session || !session.content) return diagramError('NO_SESSION', '无活跃编辑器会话')
+    session.flushActivePage()
+
+    const content = structuredClone(session.content)
+    if (title) content.meta.title = title
+
+    const record = await session.repository.createFile(
+      folderId || DG_FILES,
+      content.meta.title,
+      content
+    )
+    session.markSaved(record.meta)
+    return { ok: true, data: record }
   }
 }

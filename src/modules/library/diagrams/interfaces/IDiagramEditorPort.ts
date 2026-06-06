@@ -1,3 +1,10 @@
+import type {
+  DiagramCanvasSettings,
+  DiagramEdgeProperties,
+  DiagramEditorSelection,
+  DiagramNodeProperties
+} from '@modules/library/diagrams/lib/diagramSelectionTypes'
+
 export interface CanvasGraphPatch {
   addNodes?: unknown[]
   updateNodes?: Array<{ id: string; patch: Record<string, unknown> }>
@@ -5,6 +12,17 @@ export interface CanvasGraphPatch {
   addEdges?: unknown[]
   updateEdges?: Array<{ id: string; patch: Record<string, unknown> }>
   deleteEdgeIds?: string[]
+}
+
+export interface DiagramViewport {
+  x: number
+  y: number
+  zoom: number
+}
+
+export interface CanvasPoint {
+  x: number
+  y: number
 }
 
 export interface IDiagramEditorPort {
@@ -21,6 +39,10 @@ export interface IDiagramEditorPort {
   zoom(delta?: number, scale?: number): void
   zoomToFit(): void
   zoomReset(): void
+  resize(): void
+  centerOrigin(): void
+  getViewport(): DiagramViewport
+  applyViewport(viewport: DiagramViewport): void
   setGrid(visible: boolean, snap?: boolean): void
   selectAll(): void
   clearSelection(): void
@@ -32,6 +54,33 @@ export interface IDiagramEditorPort {
   connect(sourceNodeId: string, targetNodeId: string, style?: Record<string, unknown>): string
   updateNode(nodeId: string, patch: Record<string, unknown>): void
   updateEdge(edgeId: string, patch: Record<string, unknown>): void
-  onSelectionChange?(handler: (nodeId: string | null, text: string) => void): void
+  clientToCanvas(clientX: number, clientY: number): CanvasPoint
+  getSelection(): DiagramEditorSelection
+  getSelectedNodeIds(): string[]
+  alignNodes(mode: import('@modules/library/diagrams/lib/diagramNodeLayout').DiagramAlignMode, nodeIds?: string[]): void
+  distributeNodes(
+    mode: import('@modules/library/diagrams/lib/diagramNodeLayout').DiagramDistributeMode,
+    nodeIds?: string[]
+  ): void
+  batchUpdateNodeProperties(
+    nodeProps: Partial<DiagramNodeProperties>,
+    nodeIds?: string[]
+  ): void
+  updateNodeProperties(props: Partial<DiagramNodeProperties> & { id: string }): void
+  updateEdgeProperties(props: Partial<DiagramEdgeProperties> & { id: string }): void
+  getCanvasSettings(): DiagramCanvasSettings
+  applyCanvasSettings(settings: Partial<DiagramCanvasSettings>): void
+  loadCanvasSettings(settings: DiagramCanvasSettings | undefined): void
+  onEditorSelectionChange?(handler: (selection: DiagramEditorSelection) => void): void
   onGraphChange?(handler: () => void): void
+  onContextMenu?(
+    handler: (detail: {
+      event: MouseEvent
+      kind: 'node' | 'edge' | 'blank'
+      targetId?: string
+      nodeIds: string[]
+      edgeIds: string[]
+    }) => void
+  ): void
+  focusCanvas?(): void
 }

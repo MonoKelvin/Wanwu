@@ -1,12 +1,12 @@
-import { app, type BrowserWindow } from 'electron'
+import type { BrowserWindow } from 'electron'
 import { normalizeAppSettings } from '../data/settings'
-import type { AppServices } from '../../ipc/handlers'
+import type { AppServices } from '../../ipc/types'
 import { getMainWindow } from '../../windowState'
+import { requestAppQuit } from './appQuit'
 import {
   ensureTrayForWindowHide,
   isAppQuitting,
-  isTrayActive,
-  markAppQuitting
+  isTrayActive
 } from '../quickAccess/quickAccessManager'
 
 export type MainWindowCloseResult = 'hidden' | 'quit' | 'cancelled'
@@ -40,9 +40,8 @@ function hideToTray(win: BrowserWindow): MainWindowCloseResult {
   return 'hidden'
 }
 
-function quitFromWindow(win: BrowserWindow): MainWindowCloseResult {
-  markAppQuitting()
-  win.close()
+function quitFromWindow(_win: BrowserWindow): MainWindowCloseResult {
+  requestAppQuit()
   return 'quit'
 }
 
@@ -78,8 +77,7 @@ export function resolveClosePrompt(choice: ClosePromptChoice): void {
     return
   }
 
-  markAppQuitting()
-  app.quit()
+  requestAppQuit()
   resolve('quit')
 }
 
@@ -106,7 +104,8 @@ export function attachMainWindowCloseBehavior(win: BrowserWindow): void {
 
     const { closeBehavior } = currentSettings()
     if (closeBehavior === 'quit') {
-      markAppQuitting()
+      event.preventDefault()
+      requestAppQuit()
       return
     }
 

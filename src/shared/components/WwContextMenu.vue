@@ -55,6 +55,15 @@ async function showBelowAnchor(anchor: HTMLElement, gap = 6) {
   pos.value = clampPosition(rect.right - w, rect.bottom + gap)
 }
 
+async function showBelowAnchorLeft(anchor: HTMLElement, gap = 4, offset = 8) {
+  menuOrigin.value = '100% 0%'
+  open.value = true
+  await nextTick()
+  const rect = anchor.getBoundingClientRect()
+  const w = menuRef.value?.offsetWidth ?? 168
+  pos.value = clampPosition(rect.left - w - offset, rect.bottom + gap)
+}
+
 function toggleAnchor(anchor: HTMLElement) {
   if (open.value) hide()
   else void showBelowAnchor(anchor)
@@ -103,7 +112,7 @@ watch(open, (v) => {
 
 onUnmounted(unbindGlobal)
 
-defineExpose({ show, hide, placeAt, showBelowAnchor, toggleAnchor })
+defineExpose({ show, hide, placeAt, showBelowAnchor, showBelowAnchorLeft, toggleAnchor })
 </script>
 
 <template>

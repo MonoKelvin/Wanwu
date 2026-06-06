@@ -64,6 +64,25 @@ const router = createRouter({
       meta: { module: 'library', major: 'notes', title: '便笺' }
     },
     {
+      path: '/diagrams/edit/:fileId',
+      name: 'library-diagrams-editor',
+      component: ROUTE_OUTLET_SHELL,
+      meta: {
+        module: 'library',
+        major: 'diagrams',
+        title: '流程图编辑器',
+        hideSubPanel: true
+      }
+    },
+    {
+      path: '/library/diagrams/edit/:fileId',
+      redirect: (to) => ({
+        name: 'library-diagrams-editor',
+        params: { fileId: to.params.fileId as string },
+        query: to.query
+      })
+    },
+    {
       path: '/library',
       component: () => import('@modules/library/LibraryShellView.vue'),
       meta: { module: 'library', title: '全库' },
@@ -93,12 +112,6 @@ const router = createRouter({
           name: 'library-diagrams-folder',
           component: () => import('@modules/library/diagrams/views/DiagramFileListView.vue'),
           meta: { module: 'library', major: 'diagrams', title: '流程图' }
-        },
-        {
-          path: 'diagrams/edit/:fileId',
-          name: 'library-diagrams-editor',
-          component: () => import('@modules/library/diagrams/views/DiagramEditorView.vue'),
-          meta: { module: 'library', major: 'diagrams', title: '流程图编辑器' }
         },
         {
           path: 'illustrated-handbook/:catId?/:subId?',

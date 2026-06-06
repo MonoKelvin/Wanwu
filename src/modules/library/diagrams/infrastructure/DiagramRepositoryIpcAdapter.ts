@@ -1,5 +1,5 @@
 import type { IDiagramRepositoryPort } from '@modules/library/diagrams/interfaces/IDiagramRepositoryPort'
-import type { DiagramContent } from '@shared/types/diagrams'
+import type { DiagramContent, DiagramWritePatch } from '@shared/types/diagrams'
 
 export class DiagramRepositoryIpcAdapter implements IDiagramRepositoryPort {
   listFolders() {
@@ -18,8 +18,30 @@ export class DiagramRepositoryIpcAdapter implements IDiagramRepositoryPort {
     return window.wanwu.diagrams.readFile({ fileId })
   }
 
-  writeFile(fileId: string, content: DiagramContent, baseUpdatedAt: string) {
-    return window.wanwu.diagrams.writeFile({ fileId, content, baseUpdatedAt })
+  writeFile(
+    fileId: string,
+    content: DiagramContent,
+    baseUpdatedAt: string,
+    force?: boolean,
+    patch?: DiagramWritePatch
+  ) {
+    return window.wanwu.diagrams.writeFile({ fileId, content, baseUpdatedAt, force, patch })
+  }
+
+  importWfg() {
+    return window.wanwu.diagrams.importWfg()
+  }
+
+  importWfgFromSource(folderId: string, sourcePath: string, content: DiagramContent) {
+    return window.wanwu.diagrams.importWfgFromSource({ folderId, sourcePath, content })
+  }
+
+  importDrawio() {
+    return window.wanwu.diagrams.importDrawio()
+  }
+
+  exportWfg(input: { fileId?: string | null; content?: DiagramContent; defaultName: string }) {
+    return window.wanwu.diagrams.exportWfg(input)
   }
 
   createFile(folderId: string, title: string, content?: DiagramContent) {

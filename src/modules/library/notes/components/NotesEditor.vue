@@ -1,4 +1,4 @@
-Ôªø<script setup lang="ts">
+<script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'
@@ -51,7 +51,7 @@ const props = withDefaults(
     variant: 'embedded',
     popoutAlwaysOnTop: false,
     popoutOpen: false,
-    popoutToggleLabel: 'ÊâìÂºÄÁã¨Á´ãÁ™óÂè£'
+    popoutToggleLabel: '¥Úø™∂¿¡¢¥∞ø⁄'
   }
 )
 
@@ -69,12 +69,12 @@ const emit = defineEmits<{
 
 const isPopout = computed(() => props.variant === 'popout')
 
-/** Ê≠£Âêë‰∏∫Â∞ÜË¶ÅÊâßË°åÁöÑÊìç‰ΩúÔºõÊøÄÊ¥ªÊÄÅ‰∏∫ÁÇπÂáªÂêéÁöÑÊí§ÈîÄ/ÂÖ≥Èó≠ */
+/** ’˝œÚŒ™Ω´“™÷¥––µƒ≤Ÿ◊˜£ªº§ªÓÃ¨Œ™µ„ª˜∫Ûµƒ≥∑œ˙/πÿ±’ */
 const listPinActionLabel = computed(() =>
-  props.note.pinned ? 'ÂèñÊ∂àÁΩÆÈ°∂' : 'ÁΩÆÈ°∂Âà∞ÂàóË°®'
+  props.note.pinned ? '»°œ˚÷√∂•' : '÷√∂•µΩ¡–±Ì'
 )
 const windowTopActionLabel = computed(() =>
-  props.popoutAlwaysOnTop ? 'ÂèñÊ∂àÁ™óÂè£ÁΩÆÈ°∂' : 'Á™óÂè£ÁΩÆÈ°∂'
+  props.popoutAlwaysOnTop ? '»°œ˚¥∞ø⁄÷√∂•' : '¥∞ø⁄÷√∂•'
 )
 const popoutOpenActionLabel = computed(() => props.popoutToggleLabel)
 
@@ -84,8 +84,8 @@ function noteMediaUrl(relativePath: string): string | null {
 
 const contentStats = computed(() => {
   const raw = normalizeNotePlainText(draftContent.value)
-  if (!raw) return '0 Â≠ó'
-  return `${raw.length} Â≠ó`
+  if (!raw) return '0 ◊÷'
+  return `${raw.length} ◊÷`
 })
 
 const updatedLabel = computed(() =>
@@ -112,7 +112,7 @@ const viewerSlides = ref<ImageViewerSlide[]>([])
 const viewerRevoke = ref<(() => void) | null>(null)
 const imageMenuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
 const imageMenuTarget = ref<NoteImageMenuTarget | null>(null)
-/** Ê≠£Âú®Êää store/ËçâÁ®øÂÜôÂÖ•ÁºñËæëÂô®ÔºåÈÅøÂÖç onUpdate ÂõûÂÜôÂºïÂèëÂæ™ÁéØ */
+/** ’˝‘⁄∞— store/≤›∏Â–¥»Î±‡º≠∆˜£¨±‹√‚ onUpdate ªÿ–¥“˝∑¢—≠ª∑ */
 let applyingRemote = false
 
 function releaseViewerResource() {
@@ -132,7 +132,7 @@ async function openImageViewerAt(imageId?: string, fallbackSrc?: string) {
     entries.push({ src: fallbackSrc.trim() })
   }
   if (!entries.length) {
-    toast.error('Êó†Ê≥ïÊâìÂºÄÂ§ßÂõæ')
+    toast.error('Œﬁ∑®¥Úø™¥ÛÕº')
     return
   }
 
@@ -173,7 +173,7 @@ async function openImageViewerAt(imageId?: string, fallbackSrc?: string) {
   }
 
   if (!slides.length) {
-    toast.error('Êó†Ê≥ïÊâìÂºÄÂ§ßÂõæ')
+    toast.error('Œﬁ∑®¥Úø™¥ÛÕº')
     return
   }
 
@@ -188,9 +188,9 @@ async function saveImageAs(src: string) {
   const ext = /\.png/i.test(src) ? 'png' : /\.webp/i.test(src) ? 'webp' : 'jpg'
   const result = await window.wanwu.shell.downloadFile({ url: src, defaultName: `image.${ext}` })
   if (result.ok && result.path) {
-    toast.success('ÂõæÁâáÂ∑≤‰øùÂ≠ò', undefined, { action: toast.revealInFolderAction(result.path) })
+    toast.success('Õº∆¨“—±£¥Ê', undefined, { action: toast.revealInFolderAction(result.path) })
   } else if (!result.canceled) {
-    toast.error(result.error ?? '‰øùÂ≠òÂ§±Ë¥•')
+    toast.error(result.error ?? '±£¥Ê ß∞‹')
   }
 }
 
@@ -202,9 +202,9 @@ async function copyImageToClipboard(src: string) {
       popTip.show(POP_TIP_COPY_MESSAGES.image)
       return
     }
-    toast.error(result.error === 'not_found' ? 'Êâæ‰∏çÂà∞ÂõæÁâáÊñá‰ª∂' : 'Â§çÂà∂Â§±Ë¥•')
+    toast.error(result.error === 'not_found' ? '’“≤ªµΩÕº∆¨Œƒº˛' : '∏¥÷∆ ß∞‹')
   } catch {
-    toast.error('Â§çÂà∂Â§±Ë¥•')
+    toast.error('∏¥÷∆ ß∞‹')
   }
 }
 
@@ -219,38 +219,38 @@ const imageMenuItems = computed((): WwMenuItem[] => {
   const align = target.align
   return [
     {
-      label: 'Êü•ÁúãÂ§ßÂõæ',
+      label: '≤Èø¥¥ÛÕº',
       wwIcon: 'maximize',
       command: () => void openImageViewerAt(target.imageId || undefined, target.src || undefined)
     },
     {
-      label: 'Â§çÂà∂',
+      label: '∏¥÷∆',
       wwIcon: 'copy',
       command: () => void copyImageToClipboard(target.src)
     },
     {
-      label: 'Âè¶Â≠ò‰∏∫',
+      label: '¡Ì¥ÊŒ™',
       wwIcon: 'download',
       command: () => void saveImageAs(target.src)
     },
     {
-      label: 'Âà†Èô§',
+      label: '…æ≥˝',
       wwIcon: 'trash-2',
       command: () => target.remove()
     },
     { separator: true },
     {
-      label: 'Â∑¶ÂØπÈΩê',
+      label: '◊Û∂‘∆Î',
       checked: align === 'left',
       command: () => target.updateAlign('left')
     },
     {
-      label: 'Â±Ö‰∏≠ÂØπÈΩê',
+      label: 'æ”÷–∂‘∆Î',
       checked: align === 'center',
       command: () => target.updateAlign('center')
     },
     {
-      label: 'Âè≥ÂØπÈΩê',
+      label: '”“∂‘∆Î',
       checked: align === 'right',
       command: () => target.updateAlign('right')
     }
@@ -264,7 +264,7 @@ provide(NOTE_IMAGE_EDITOR_KEY, {
   openImageMenu
 })
 
-/** ÂàáÊç¢‰æøÁ¨∫Êó∂ÈáçÊñ∞ÊäΩÂèñÔºõÂêå‰∏ÄÊù°‰æøÁ¨∫ÂÜÖ‰øùÊåÅÂΩìÂâçÊèêÁ§∫‰∏çÂèò */
+/** «–ªª±„º„ ±÷ÿ–¬≥È»°£ªÕ¨“ªÃı±„º„ƒ⁄±£≥÷µ±«∞Ã· æ≤ª±‰ */
 const bodyPlaceholder = ref(pickNotePlaceholder())
 
 function refreshBodyPlaceholder() {
@@ -333,7 +333,7 @@ function syncToDraftFromEditor(
   draftContent.value = next
 }
 
-/** ËêΩÁõòÂâçÁî±Áà∂Á∫ßË∞ÉÁî®ÔºåÁ°Æ‰øùËçâÁ®ø‰∏éÁºñËæëÂô® ProseMirror Áä∂ÊÄÅ‰∏ÄËá¥ */
+/** ¬‰≈Ã«∞”…∏∏º∂µ˜”√£¨»∑±£≤›∏Â”Î±‡º≠∆˜ ProseMirror ◊¥Ã¨“ª÷¬ */
 function syncToDraft() {
   if (!editor.value) return
   syncToDraftFromEditor(editor.value, { force: true })
@@ -366,7 +366,7 @@ async function hydrateEditorFromDraft() {
   applyingRemote = false
 }
 
-/** ‰ª• props.noteÔºàstoreÔºâ‰∏∫ÂáÜÂêåÊ≠•ËçâÁ®øÂπ∂ÁÅåÂÖ• TiptapÔºåÈÅøÂÖçÊêúÁ¥¢Âú∫ÊôØ‰∏ãÁà∂Á∫ßËçâÁ®øÊó∂Â∫èÈóÆÈ¢ò */
+/** “‘ props.note£®store£©Œ™◊ºÕ¨≤Ω≤›∏Â≤¢π‡»Î Tiptap£¨±‹√‚À—À˜≥°æ∞œ¬∏∏º∂≤›∏Â ±–ÚŒ Ã‚ */
 function applyNoteToEditor(note: NoteItem) {
   applyingRemote = true
   draftTitle.value = note.title ?? ''
@@ -396,7 +396,7 @@ watch(
   }
 )
 
-/** Áî®Á®≥ÂÆöÂ≠óÁ¨¶‰∏≤‰Ωú watch Ê∫êÔºåÈÅøÂÖç store ÊØèÊ¨° updateNote ÊõøÊç¢Êï∞ÁªÑÂºïÁî®ÂØºËá¥ËØØËß¶Âèë */
+/** ”√Œ»∂®◊÷∑˚¥Æ◊˜ watch ‘¥£¨±‹√‚ store √ø¥Œ updateNote ÃÊªª ˝◊È“˝”√µº÷¬ŒÛ¥•∑¢ */
 const noteImageIdsKey = computed(() =>
   props.note.images
     .map((img) => img.id)
@@ -587,7 +587,7 @@ onBeforeUnmount(() => {
   <section
     class="ww-notes-editor-wrap"
     :class="{ 'ww-notes-editor-wrap--popout': isPopout }"
-    aria-label="‰æøÁ¨∫ÁºñËæë"
+    aria-label="±„º„±‡º≠"
   >
     <article class="ww-notes-editor" :class="[`is-${note.color}`, { 'is-popout': isPopout }]">
       <header
@@ -615,8 +615,8 @@ onBeforeUnmount(() => {
             <WwIconButton
               icon="image"
               compact
-              ariaLabel="Ê∑ªÂä†ÂõæÁâá"
-              v-tooltip.bottom="'Ê∑ªÂä†ÂõæÁâá'"
+              ariaLabel="ÃÌº”Õº∆¨"
+              v-tooltip.bottom="'ÃÌº”Õº∆¨'"
               @click="handlePickImage"
             />
             <WwIconButton
@@ -631,28 +631,28 @@ onBeforeUnmount(() => {
             <WwIconButton
               icon="x"
               compact
-              ariaLabel="ÂÖ≥Èó≠Áã¨Á´ãÁ™óÂè£"
-              v-tooltip.bottom="'ÂÖ≥Èó≠'"
+              ariaLabel="πÿ±’∂¿¡¢¥∞ø⁄"
+              v-tooltip.bottom="'πÿ±’'"
               @click="emit('closePopout')"
             />
           </div>
         </template>
         <template v-else>
-          <div class="ww-notes-colors" role="group" aria-label="‰æøÁ¨∫È¢úËâ≤">
+          <div class="ww-notes-colors" role="group" aria-label="±„º„—’…´">
             <button
               v-for="c in noteColors"
               :key="c"
               type="button"
               class="ww-notes-color"
               :class="[`is-${c}`, { 'is-selected': note.color === c }]"
-              :aria-label="`${colorLabels[c]}${note.color === c ? 'ÔºàÂΩìÂâçÔºâ' : ''}`"
+              :aria-label="`${colorLabels[c]}${note.color === c ? '£®µ±«∞£©' : ''}`"
               :aria-pressed="note.color === c"
               @click="emit('setColor', c)"
             />
           </div>
 
           <div class="ww-notes-editor__actions">
-            <span class="ww-notes-editor__meta">Êõ¥Êñ∞‰∫é {{ updatedLabel }}</span>
+            <span class="ww-notes-editor__meta">∏¸–¬”⁄ {{ updatedLabel }}</span>
             <WwIconButton
               :icon="popoutOpen ? 'square-arrow-up-left' : 'external-link'"
               compact
@@ -674,15 +674,15 @@ onBeforeUnmount(() => {
             <WwIconButton
               icon="image"
               compact
-              ariaLabel="Ê∑ªÂä†ÂõæÁâá"
-              v-tooltip.bottom="'Ê∑ªÂä†ÂõæÁâá'"
+              ariaLabel="ÃÌº”Õº∆¨"
+              v-tooltip.bottom="'ÃÌº”Õº∆¨'"
               @click="handlePickImage"
             />
             <WwIconButton
               icon="trash-2"
               compact
-              ariaLabel="Âà†Èô§‰æøÁ¨∫"
-              v-tooltip.bottom="'Âà†Èô§'"
+              ariaLabel="…æ≥˝±„º„"
+              v-tooltip.bottom="'…æ≥˝'"
               @click="emit('removeNote')"
             />
           </div>
@@ -694,19 +694,19 @@ onBeforeUnmount(() => {
           v-model="draftTitle"
           class="ww-notes-editor__title"
           maxlength="80"
-          placeholder="Ê†áÈ¢ò"
-          aria-label="‰æøÁ¨∫Ê†áÈ¢ò"
+          placeholder="±ÍÃ‚"
+          aria-label="±„º„±ÍÃ‚"
           :spellcheck="notesSpellcheckEnabled"
           @blur="emit('flush')"
         />
         <EditorContent
           :editor="editor"
           class="ww-notes-editor__content ww-scroll-main"
-          aria-label="‰æøÁ¨∫Ê≠£Êñá"
+          aria-label="±„º„’˝Œƒ"
           @blur="emit('flush')"
         />
         <div class="ww-notes-editor__foot" :class="{ 'ww-notes-editor__foot--popout': isPopout }">
-          <span v-if="isPopout" class="ww-notes-editor__meta">Êõ¥Êñ∞‰∫é {{ updatedLabel }}</span>
+          <span v-if="isPopout" class="ww-notes-editor__meta">∏¸–¬”⁄ {{ updatedLabel }}</span>
           <span class="ww-notes-editor__stats">{{ contentStats }}</span>
         </div>
       </div>
@@ -717,478 +717,5 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.ww-notes-editor-wrap {
-  width: 100%;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex: 1;
-}
-
-.ww-notes-editor-wrap--popout {
-  flex: 1;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  background: transparent;
-}
-
-.ww-notes-editor {
-  flex: 1;
-  min-height: 0;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--ww-border-subtle);
-  border-radius: 0.875rem;
-  background: var(--ww-content);
-  overflow: hidden;
-  container-type: inline-size;
-  container-name: notes-editor;
-}
-
-.ww-notes-editor::before {
-  content: '';
-  display: block;
-  height: 3px;
-  flex-shrink: 0;
-  background: var(--ww-notes-accent, var(--ww-ink-faint));
-}
-
-.ww-notes-editor.is-yellow {
-  --ww-notes-accent: #d6a21e;
-}
-.ww-notes-editor.is-green {
-  --ww-notes-accent: #2f9b72;
-}
-.ww-notes-editor.is-blue {
-  --ww-notes-accent: #3f7ed8;
-}
-.ww-notes-editor.is-pink {
-  --ww-notes-accent: #d95f8f;
-}
-.ww-notes-editor.is-purple {
-  --ww-notes-accent: #7f63d9;
-}
-.ww-notes-editor.is-gray {
-  --ww-notes-accent: #7f8798;
-}
-.ww-notes-editor.is-orange {
-  --ww-notes-accent: #dd7b23;
-}
-.ww-notes-editor.is-teal {
-  --ww-notes-accent: #14918a;
-}
-.ww-notes-editor.is-red {
-  --ww-notes-accent: #d84f4a;
-}
-
-.ww-notes-editor.is-popout {
-  --ww-notes-popout-pad-x: 0.75rem;
-  --ww-notes-popout-toolbar-pad-y: 0.1875rem;
-  --ww-notes-popout-text-inset: 0.125rem;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  background: color-mix(in oklab, var(--ww-content) 78%, var(--ww-notes-accent) 22%);
-}
-
-.ww-notes-editor.is-popout .ww-notes-editor__bar {
-  background: color-mix(in oklab, var(--ww-content) 78%, var(--ww-notes-accent) 22%);
-}
-
-.ww-notes-editor__bar--popout {
-  -webkit-app-region: drag;
-}
-
-.ww-notes-editor__bar--popout .ww-notes-editor__color-picker {
-  flex: 0 0 auto;
-  margin-right: auto;
-  -webkit-app-region: no-drag;
-}
-
-.ww-notes-editor__bar--popout .ww-notes-editor__actions--popout {
-  flex: 0 0 auto;
-  margin-left: auto;
-  -webkit-app-region: no-drag;
-}
-
-.ww-notes-editor.is-popout .ww-notes-editor__body {
-  padding: 0.625rem var(--ww-notes-popout-pad-x) 0.5rem;
-  gap: 0.375rem;
-  background: transparent;
-}
-
-.ww-notes-editor.is-popout .ww-notes-editor__title {
-  min-height: 1.5rem;
-  margin-top: 0.125rem;
-  padding: 0.125rem 0 0 var(--ww-notes-popout-text-inset);
-  font-size: 0.9375rem;
-  line-height: 1.35;
-}
-
-.ww-notes-editor.is-popout .ww-notes-editor__content {
-  min-height: 9rem;
-  padding: 0.25rem 0 0 var(--ww-notes-popout-text-inset);
-  font-size: 0.8125rem;
-  line-height: 1.55;
-}
-
-.ww-notes-editor__foot--popout {
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.ww-notes-editor__foot--popout .ww-notes-editor__meta {
-  margin-right: 0;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.ww-notes-editor__stats {
-  flex-shrink: 0;
-}
-
-[data-theme='dark'] .ww-notes-editor.is-yellow {
-  --ww-notes-accent: #e3b236;
-}
-[data-theme='dark'] .ww-notes-editor.is-green {
-  --ww-notes-accent: #4ab68a;
-}
-[data-theme='dark'] .ww-notes-editor.is-blue {
-  --ww-notes-accent: #6ba2f0;
-}
-[data-theme='dark'] .ww-notes-editor.is-pink {
-  --ww-notes-accent: #ec84ae;
-}
-[data-theme='dark'] .ww-notes-editor.is-purple {
-  --ww-notes-accent: #a895ef;
-}
-[data-theme='dark'] .ww-notes-editor.is-gray {
-  --ww-notes-accent: #98a2b3;
-}
-[data-theme='dark'] .ww-notes-editor.is-orange {
-  --ww-notes-accent: #f2a04a;
-}
-[data-theme='dark'] .ww-notes-editor.is-teal {
-  --ww-notes-accent: #3bc3ba;
-}
-[data-theme='dark'] .ww-notes-editor.is-red {
-  --ww-notes-accent: #f58884;
-}
-
-[data-theme='dark'] .ww-notes-editor.is-popout {
-  background: color-mix(in oklab, var(--ww-content) 84%, var(--ww-notes-accent) 16%);
-}
-
-[data-theme='dark'] .ww-notes-editor.is-popout .ww-notes-editor__bar {
-  background: color-mix(in oklab, var(--ww-content) 84%, var(--ww-notes-accent) 16%);
-}
-
-.ww-notes-editor__bar {
-  flex-shrink: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  column-gap: 0.75rem;
-  row-gap: 0.5rem;
-  min-height: 3.25rem;
-  min-width: 0;
-  padding: 0.75rem 1.625rem;
-  border-bottom: 1px solid var(--ww-border-subtle);
-}
-
-/* Áã¨Á´ãÁ™óÂè£ÔºöË¶ÜÁõñ‰∏äÊñπÈÄöÁî®Â∑•ÂÖ∑Ê†èÈó¥Ë∑ùÔºå‰∏éÊ≠£ÊñáÂå∫Ê∞¥Âπ≥ËæπË∑ù‰∏ÄËá¥ */
-.ww-notes-editor.is-popout .ww-notes-editor__bar {
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  column-gap: 0;
-  row-gap: 0;
-  gap: 0.375rem;
-  min-height: 1.75rem;
-  padding: var(--ww-notes-popout-toolbar-pad-y) var(--ww-notes-popout-pad-x);
-  border-bottom: none;
-}
-
-.ww-notes-colors {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  align-content: center;
-  gap: 0.375rem;
-  flex: 1 1 auto;
-  min-width: 0;
-  margin-right: auto;
-}
-
-.ww-notes-color {
-  width: 1.125rem;
-  height: 1.125rem;
-  padding: 0;
-  border: 2px solid transparent;
-  border-radius: 50%;
-  cursor: pointer;
-  transition:
-    transform var(--ww-duration-fast) var(--ww-ease-out),
-    box-shadow var(--ww-duration-fast) var(--ww-ease-out);
-}
-
-.ww-notes-color:hover {
-  transform: scale(1.08);
-}
-
-.ww-notes-color.is-selected {
-  box-shadow: 0 0 0 1px var(--ww-content), 0 0 0 2px var(--ww-ink-muted);
-}
-
-.ww-notes-color.is-yellow {
-  background: #dfb749;
-}
-.ww-notes-color.is-green {
-  background: #4ab68a;
-}
-.ww-notes-color.is-blue {
-  background: #6a9fea;
-}
-.ww-notes-color.is-pink {
-  background: #e988b2;
-}
-.ww-notes-color.is-purple {
-  background: #aa95ea;
-}
-.ww-notes-color.is-gray {
-  background: #95a0b2;
-}
-.ww-notes-color.is-orange {
-  background: #ec9d56;
-}
-.ww-notes-color.is-teal {
-  background: #48c2ba;
-}
-.ww-notes-color.is-red {
-  background: #e9827d;
-}
-
-[data-theme='dark'] .ww-notes-color.is-yellow {
-  background: #e3b236;
-}
-[data-theme='dark'] .ww-notes-color.is-green {
-  background: #4ab68a;
-}
-[data-theme='dark'] .ww-notes-color.is-blue {
-  background: #6ba2f0;
-}
-[data-theme='dark'] .ww-notes-color.is-pink {
-  background: #ec84ae;
-}
-[data-theme='dark'] .ww-notes-color.is-purple {
-  background: #a895ef;
-}
-[data-theme='dark'] .ww-notes-color.is-gray {
-  background: #98a2b3;
-}
-[data-theme='dark'] .ww-notes-color.is-orange {
-  background: #f2a04a;
-}
-[data-theme='dark'] .ww-notes-color.is-teal {
-  background: #3bc3ba;
-}
-[data-theme='dark'] .ww-notes-color.is-red {
-  background: #f58884;
-}
-
-.ww-notes-editor__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.25rem 0.375rem;
-  flex: 0 0 auto;
-  max-width: 100%;
-}
-
-@container notes-editor (max-width: 26rem) {
-  .ww-notes-colors {
-    flex-basis: 100%;
-    margin-right: 0;
-  }
-
-  .ww-notes-editor__actions {
-    flex-basis: 100%;
-    justify-content: flex-end;
-  }
-}
-
-.ww-notes-editor__meta {
-  margin-right: 0.25rem;
-  font-size: 0.75rem;
-  color: var(--ww-ink-faint);
-  white-space: nowrap;
-  flex: 1 1 auto;
-  min-width: 0;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ÂàóË°®ÁΩÆÈ°∂ / Áã¨Á´ãÁ™óÂè£ / Á™óÂè£ÁΩÆÈ°∂Ôºö‰ªÖÊøÄÊ¥ªÊÄÅ‰ΩøÁî®‰æøÁ¨∫‰∏ªÈ¢òËâ≤ */
-:deep(.ww-notes-icon-btn--note-accent.ww-notes-icon-btn--on) {
-  color: var(--ww-notes-accent) !important;
-}
-
-:deep(.ww-notes-icon-btn--note-accent.ww-notes-icon-btn--on:hover:not(:disabled)) {
-  color: var(--ww-notes-accent) !important;
-  filter: brightness(0.92);
-}
-
-.ww-notes-editor__body {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 1.375rem 1.625rem 1.5rem;
-  gap: 0.875rem;
-}
-
-.ww-notes-editor__title,
-.ww-notes-editor__content {
-  width: 100%;
-  border: none;
-  border-radius: 0.375rem;
-  background: transparent;
-  color: var(--ww-ink);
-  padding: 0.375rem 0.25rem;
-  outline: none;
-}
-
-.ww-notes-editor__title:focus-visible,
-.ww-notes-editor__content:focus-visible {
-  box-shadow: var(--ww-focus-ring);
-}
-
-.ww-notes-editor__title {
-  flex-shrink: 0;
-  min-height: 2.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.ww-notes-editor__title::placeholder {
-  color: var(--ww-ink-faint);
-}
-
-.ww-notes-editor__content {
-  flex: 1;
-  min-height: 14rem;
-  font-size: 0.875rem;
-  line-height: 1.68;
-  overflow: auto;
-}
-
-.ww-notes-editor__content :deep(.tiptap) {
-  min-height: 100%;
-  outline: none;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-.ww-notes-editor__content :deep(.tiptap p.is-editor-empty:first-child::before) {
-  content: attr(data-placeholder);
-  color: var(--ww-ink-faint);
-  pointer-events: none;
-  float: left;
-  height: 0;
-}
-
-.ww-notes-editor__content :deep(.tiptap a) {
-  color: var(--ww-notes-accent);
-  text-decoration: underline;
-  text-underline-offset: 0.12em;
-  cursor: pointer;
-}
-
-.ww-notes-editor__content :deep(.ww-note-image-node) {
-  position: relative;
-  display: inline-block;
-  vertical-align: top;
-  max-width: 100%;
-  margin: 0.18rem 0.18rem 0.18rem 0;
-  border-radius: 0.375rem;
-  overflow: hidden;
-  line-height: 0;
-}
-
-.ww-notes-editor__content :deep(.ww-note-image-node.is-align-center),
-.ww-notes-editor__content :deep(.ww-note-image-node.is-align-right) {
-  display: block;
-  width: fit-content;
-  max-width: 100%;
-}
-
-.ww-notes-editor__content :deep(.ww-note-image-node.is-align-center) {
-  margin-inline: auto;
-}
-
-.ww-notes-editor__content :deep(.ww-note-image-node.is-align-right) {
-  margin-inline: start auto;
-}
-
-.ww-notes-editor__content :deep(.ww-note-image-node img) {
-  display: block;
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  border-radius: 0.375rem;
-  cursor: text;
-}
-
-.ww-notes-editor__content :deep(.ww-note-image-node__remove) {
-  position: absolute;
-  top: 0.3rem;
-  right: 0.3rem;
-  width: 1.25rem;
-  height: 1.25rem;
-  padding: 0;
-  border: none;
-  border-radius: 999px;
-  background: rgb(14 14 18 / 0.72);
-  color: #fff;
-  line-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  cursor: pointer;
-  transition: opacity var(--ww-duration-fast) var(--ww-ease-out);
-}
-
-.ww-notes-editor__content :deep(.ww-note-image-node__remove .ww-icon) {
-  display: block;
-}
-
-.ww-notes-editor__content :deep(.ww-note-image-node:hover .ww-note-image-node__remove),
-.ww-notes-editor__content :deep(.ww-note-image-node.ProseMirror-selectednode .ww-note-image-node__remove) {
-  opacity: 1;
-}
-
-.ww-notes-editor__content :deep(.ww-note-image-node.ProseMirror-selectednode img) {
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ww-notes-accent) 52%, transparent);
-}
-
-.ww-notes-editor__foot {
-  display: flex;
-  justify-content: flex-end;
-  font-size: 0.75rem;
-  color: var(--ww-ink-faint);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ww-notes-editor__content :deep(.ww-note-image-node__remove) {
-    transition: none;
-  }
-}
+@import './NotesEditor.css';
 </style>

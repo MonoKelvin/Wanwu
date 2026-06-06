@@ -1,6 +1,6 @@
 /** 全局唤起器 / 托盘 / 剪贴板联想 共用 */
 
-export type QuickAccessHitKind = 'library' | 'note' | 'link' | 'rss' | 'music' | 'favorite'
+export type QuickAccessHitKind = 'library' | 'note' | 'link' | 'rss' | 'music' | 'favorite' | 'diagram'
 
 export interface QuickAccessHit {
   kind: QuickAccessHitKind
@@ -11,6 +11,7 @@ export interface QuickAccessHit {
   itemSource?: 'library' | 'rss'
   itemId?: string
   noteId?: string
+  diagramFileId?: string
   linkUrl?: string
   feedId?: string
   musicVideoId?: string
@@ -42,6 +43,7 @@ export interface QuickAccessOpenTarget {
   itemSource?: 'library' | 'rss'
   itemId?: string
   noteId?: string
+  diagramFileId?: string
   linkUrl?: string
   feedId?: string
   musicVideoId?: string

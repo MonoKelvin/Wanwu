@@ -35,6 +35,7 @@ import type {
   DiagramFileMeta,
   DiagramFileRecord,
   DiagramFolder,
+  DiagramSearchHit,
   WriteResult
 } from './diagrams'
 import type {
@@ -458,12 +459,39 @@ export interface WanwuApi {
     listFolders: () => Promise<DiagramFolder[]>
     listFiles: (params: { folderId: string }) => Promise<DiagramFileMeta[]>
     listRecentFiles: (params?: { limit?: number }) => Promise<DiagramFileMeta[]>
+    searchFiles: (params: { query: string; limit?: number }) => Promise<DiagramSearchHit[]>
+    duplicateFile: (params: { fileId: string }) => Promise<DiagramFileRecord | null>
+    setFilePinned: (params: { fileId: string; pinned: boolean }) => Promise<DiagramFileMeta | null>
+    getFileContentPath: (params: { fileId: string }) => Promise<string | null>
     readFile: (params: { fileId: string }) => Promise<DiagramFileRecord | null>
     writeFile: (params: {
       fileId: string
       content: DiagramContent
       baseUpdatedAt: string
+      force?: boolean
+      patch?: import('./diagrams').DiagramWritePatch
     }) => Promise<WriteResult>
+    importDrawio: () => Promise<import('./diagrams').DiagramImportDrawioResult>
+    importDrawioAndCreate: (params: {
+      folderId: string
+    }) => Promise<DiagramFileRecord | { canceled: true } | null>
+    importWfg: () => Promise<import('./diagrams').DiagramImportWfgResult>
+    importWfgAndCreate: (params: {
+      folderId: string
+    }) => Promise<DiagramFileRecord | { canceled: true } | null>
+    importWfgFromSource: (params: {
+      folderId: string
+      sourcePath: string
+      content: import('./diagrams').DiagramContent
+    }) => Promise<DiagramFileRecord | null>
+    importNodeAsset: (params: {
+      fileId: string
+    }) => Promise<import('./diagrams').DiagramImportNodeAssetResult>
+    exportWfg: (params: {
+      fileId?: string | null
+      content?: DiagramContent
+      defaultName: string
+    }) => Promise<import('./diagrams').DiagramExportWfgResult>
     createFile: (params: {
       folderId: string
       title: string

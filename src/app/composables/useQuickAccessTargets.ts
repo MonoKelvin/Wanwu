@@ -12,6 +12,7 @@ export function hitToOpenTarget(hit: QuickAccessHit): QuickAccessOpenTarget {
     itemSource: hit.itemSource,
     itemId: hit.itemId,
     noteId: hit.noteId,
+    diagramFileId: hit.diagramFileId,
     linkUrl: hit.linkUrl,
     feedId: hit.feedId,
     musicVideoId: hit.musicVideoId,
@@ -75,6 +76,15 @@ export function useQuickAccessTargets() {
         await router.push({ name: 'library-notes' })
         await nextTick()
         notesStore.setSelected(noteId)
+        break
+      }
+      case 'diagram': {
+        const fileId = target.diagramFileId ?? target.id
+        if (!fileId) return
+        await router.push({
+          name: 'library-diagrams-editor',
+          params: { fileId }
+        })
         break
       }
       case 'link': {

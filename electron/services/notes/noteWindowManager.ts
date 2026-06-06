@@ -12,6 +12,7 @@ import { join } from 'path'
 import type { NoteItem } from '../../../src/shared/types/notes'
 import { resolveAppLogoPath } from '../media/appAssets'
 import { getMainWindow } from '../../windowState'
+import { isAppQuitting } from '../quickAccess/quickAccessManager'
 import {
   clearNotePopoutUserDismissed,
   ensureNotePopoutSession,
@@ -627,6 +628,7 @@ export function attachMainWindowNotePopoutCleanup(mainWindow: BrowserWindow): vo
 
 export function registerNotePopoutAppLifecycle(): void {
   app.on('before-quit', (event) => {
+    if (isAppQuitting()) return
     if (appQuitPopoutsHandled) return
     if (popouts.size === 0) return
     event.preventDefault()

@@ -53,6 +53,12 @@ export class PageCommandHandler implements IDiagramCommandHandler {
             return diagramError('NOT_FOUND', '页面不存在')
           }
           return { ok: true, data: { pageId: p.pageId } }
+        case 'page.prev':
+          if (!session.prevPage()) return diagramError('VALIDATION', '已是第一页')
+          return { ok: true, data: { pageId: session.activePageId } }
+        case 'page.next':
+          if (!session.nextPage()) return diagramError('VALIDATION', '已是最后一页')
+          return { ok: true, data: { pageId: session.activePageId } }
         default:
           return diagramError('UNKNOWN_COMMAND', `未支持的页面命令: ${cmd.type}`)
       }

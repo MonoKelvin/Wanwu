@@ -5,6 +5,10 @@ import type { DiagramContent, DiagramFileMeta, DiagramPage } from '@shared/types
 import type { IDiagramEditorPort } from '@modules/library/diagrams/interfaces/IDiagramEditorPort'
 import type { IDiagramRepositoryPort } from '@modules/library/diagrams/interfaces/IDiagramRepositoryPort'
 import { createBlankDiagramContent } from '@modules/library/diagrams/lib/blankContent'
+import {
+  hydrateDiagramGraphAssets,
+  stripTransientAssetUrls
+} from '@modules/library/diagrams/lib/diagramAssetRefs'
 
 export interface DiagramEditorSessionOptions {
   port: IDiagramEditorPort
@@ -18,6 +22,9 @@ export class DiagramEditorSession {
   content: DiagramContent | null = null
   activePageId: string | null = null
   dirty = false
+  readonly dirtyPageIds = new Set<string>()
+  metaDirty = false
+  readonly deletedPageIds = new Set<string>()
 
   constructor(
     private readonly port: IDiagramEditorPort,
@@ -28,24 +35,28 @@ export class DiagramEditorSession {
     return this.content?.pages ?? []
   }
 
-  async openFromTemplate(templateContent: DiagramContent): Promise<void> {
+  async openFromTemplate(
+    templateContent: DiagramContent,
+    options?: { skipViewport?: boolean }
+  ): Promise<void> {
     this.fileId = null
     this.fileMeta = null
     this.content = structuredClone(templateContent)
     this.activePageId = this.content.meta.defaultPageId
+    this.clearDirtyState()
     this.dirty = true
-    this.loadActivePageToPort()
+    this.loadActivePageToPort(options)
   }
 
-  async openFromFile(fileId: string): Promise<void> {
+  async openFromFile(fileId: string, options?: { skipViewport?: boolean }): Promise<void> {
     const record = await this.repo.readFile(fileId)
     if (!record) throw new Error('文件不存在')
     this.fileId = fileId
     this.fileMeta = record.meta
     this.content = record.content
     this.activePageId = record.content.meta.defaultPageId
-    this.dirty = false
-    this.loadActivePageToPort()
+    this.clearDirtyState()
+    this.loadActivePageToPort(options)
   }
 
   openBlank(title = '未命名流程图'): void {
@@ -53,22 +64,50 @@ export class DiagramEditorSession {
     this.fileMeta = null
     this.content = createBlankDiagramContent(title)
     this.activePageId = this.content.meta.defaultPageId
+    this.clearDirtyState()
     this.dirty = true
     this.loadActivePageToPort()
   }
 
-  flushActivePage(): void {
+  private clearDirtyState(): void {
+    this.dirtyPageIds.clear()
+    this.deletedPageIds.clear()
+    this.metaDirty = false
+    this.dirty = false
+  }
+
+  markActivePageDirty(): void {
+    if (!this.activePageId) return
+    this.dirty = true
+    this.dirtyPageIds.add(this.activePageId)
+  }
+
+  flushActivePage(options?: { markDirty?: boolean }): void {
     if (!this.content || !this.activePageId) return
     const page = this.content.pages.find((p) => p.id === this.activePageId)
     if (!page) return
-    page.graphData = this.port.getGraph() as DiagramPage['graphData']
-    this.dirty = true
+    page.graphData = stripTransientAssetUrls(
+      this.port.getGraph() as DiagramPage['graphData']
+    )
+    page.viewport = this.port.getViewport()
+    page.canvasSettings = this.port.getCanvasSettings()
+    if (options?.markDirty !== false) {
+      this.markActivePageDirty()
+    }
   }
 
-  loadActivePageToPort(): void {
+  loadActivePageToPort(options?: { skipViewport?: boolean }): void {
     const page = this.getActivePage()
     if (!page) return
-    this.port.loadGraph(page.graphData)
+    this.port.loadCanvasSettings(page.canvasSettings)
+    this.port.loadGraph(hydrateDiagramGraphAssets(page.graphData, this.fileId))
+    if (options?.skipViewport) return
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        this.port.resize()
+        this.port.applyViewport(page.viewport)
+      })
+    })
   }
 
   getActivePage(): DiagramPage | null {
@@ -83,6 +122,7 @@ export class DiagramEditorSession {
     this.flushActivePage()
     this.activePageId = pageId
     this.content.meta.defaultPageId = pageId
+    this.metaDirty = true
     this.loadActivePageToPort()
     return true
   }
@@ -103,6 +143,8 @@ export class DiagramEditorSession {
     this.activePageId = id
     this.content.meta.defaultPageId = id
     this.dirty = true
+    this.metaDirty = true
+    this.dirtyPageIds.add(id)
     this.loadActivePageToPort()
     return page
   }
@@ -113,6 +155,7 @@ export class DiagramEditorSession {
     if (!page) return false
     page.name = name
     this.dirty = true
+    this.dirtyPageIds.add(pageId)
     return true
   }
 
@@ -121,6 +164,9 @@ export class DiagramEditorSession {
     const idx = this.content.pages.findIndex((p) => p.id === pageId)
     if (idx < 0) return false
     this.content.pages.splice(idx, 1)
+    this.deletedPageIds.add(pageId)
+    this.dirtyPageIds.delete(pageId)
+    this.metaDirty = true
     if (this.activePageId === pageId) {
       this.activePageId = this.content.pages[0]?.id ?? null
       if (this.activePageId) this.content.meta.defaultPageId = this.activePageId
@@ -143,8 +189,33 @@ export class DiagramEditorSession {
       sortOrder: this.content.pages.length
     }
     this.content.pages.push(page)
+    this.activePageId = id
+    this.content.meta.defaultPageId = id
     this.dirty = true
+    this.metaDirty = true
+    this.dirtyPageIds.add(id)
+    this.loadActivePageToPort()
     return page
+  }
+
+  private sortedPages(): DiagramPage[] {
+    return [...(this.content?.pages ?? [])].sort((a, b) => a.sortOrder - b.sortOrder)
+  }
+
+  prevPage(): boolean {
+    if (!this.content || !this.activePageId) return false
+    const pages = this.sortedPages()
+    const idx = pages.findIndex((p) => p.id === this.activePageId)
+    if (idx <= 0) return false
+    return this.switchPage(pages[idx - 1].id)
+  }
+
+  nextPage(): boolean {
+    if (!this.content || !this.activePageId) return false
+    const pages = this.sortedPages()
+    const idx = pages.findIndex((p) => p.id === this.activePageId)
+    if (idx < 0 || idx >= pages.length - 1) return false
+    return this.switchPage(pages[idx + 1].id)
   }
 
   reorderPage(pageId: string, sortOrder: number): boolean {
@@ -154,6 +225,8 @@ export class DiagramEditorSession {
     page.sortOrder = sortOrder
     this.content.pages.sort((a, b) => a.sortOrder - b.sortOrder)
     this.dirty = true
+    this.metaDirty = true
+    for (const p of this.content.pages) this.dirtyPageIds.add(p.id)
     return true
   }
 
@@ -168,6 +241,14 @@ export class DiagramEditorSession {
   markSaved(meta: DiagramFileMeta): void {
     this.fileId = meta.id
     this.fileMeta = meta
-    this.dirty = false
+    this.clearDirtyState()
+  }
+
+  getWritePatch() {
+    return {
+      dirtyPageIds: [...this.dirtyPageIds],
+      metaDirty: this.metaDirty,
+      deletedPageIds: [...this.deletedPageIds]
+    }
   }
 }

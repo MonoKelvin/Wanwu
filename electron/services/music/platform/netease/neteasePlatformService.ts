@@ -30,6 +30,7 @@ import {
   pickNeteaseAlbumArtist
 } from './mapper'
 import { ensureNeteaseApiReady } from './neteaseApiBootstrap'
+import { buildNeteaseDiscoverFeed } from './neteaseDiscoverFeed'
 import {
   pickStreamFromMatchBody,
   pickStreamFromRows,
@@ -714,122 +715,7 @@ export class NeteasePlatformService implements IMusicPlatformService {
   }
 
   async buildDiscoverFeed(): Promise<MusicDiscoverFeed> {
-    const [daily, fm, personalized, newSongs, toplists, hotPlaylists] = await Promise.allSettled([
-      this.getDailyRecommend(),
-      this.getPersonalFm(),
-      this.getPersonalizedPlaylists(8),
-      this.getNewSongs(24),
-      this.getToplists(),
-      this.getPlaylistSummaries('华语', 12)
-    ])
-
-    const newSongsVal = newSongs.status === 'fulfilled' ? newSongs.value : []
-    const personalizedVal = personalized.status === 'fulfilled' ? personalized.value : []
-    const toplistSummaries = toplists.status === 'fulfilled' ? toplists.value : []
-
-    let chartTracks: NormalizedTrack[] = []
-    if (toplistSummaries[0]) {
-      chartTracks = await this.getToplistTracks(toplistSummaries[0].id, 40).catch(() => [])
-    }
-    if (!chartTracks.length && toplistSummaries[1]) {
-      chartTracks = await this.getToplistTracks(toplistSummaries[1].id, 40).catch(() => [])
-    }
-
-    const dailyVal = daily.status === 'fulfilled' ? daily.value : []
-    const fmVal = fm.status === 'fulfilled' ? fm.value : []
-
-    const trending =
-      dailyVal.length > 0
-        ? dailyVal
-        : fmVal.length > 0
-          ? fmVal
-          : chartTracks.length > 0
-            ? chartTracks
-            : newSongsVal
-
-    const forYou =
-      newSongsVal.length > 0
-        ? newSongsVal
-        : dailyVal.length > 0
-          ? dailyVal
-          : fmVal.length > 0
-            ? fmVal
-            : chartTracks
-
-    let chartTracksOut =
-      chartTracks.length > 0 ? chartTracks : newSongsVal.length > 0 ? newSongsVal.slice(0, 24) : forYou.slice(0, 16)
-
-    const chartPlaylists =
-      toplistSummaries.length > 0
-        ? mapToplistChartCards({ list: toplistSummaries })
-        : personalizedVal.map((p) => ({
-            browseId: `netease:playlist:${p.playlistId}`,
-            playlistId: p.playlistId,
-            title: p.title,
-            coverUrl: p.coverUrl
-          }))
-
-    let forYouOut = forYou.slice(0, 24)
-    let trendingOut = trending.slice(0, 32)
-    if (!forYouOut.length) {
-      forYouOut = chartTracksOut.slice(0, 16)
-    }
-    if (!trendingOut.length) {
-      trendingOut = chartTracksOut.slice(0, 16)
-    }
-
-    const hotPlaylistCards =
-      hotPlaylists.status === 'fulfilled'
-        ? hotPlaylists.value.map((p) => ({
-            browseId: `netease:playlist:${p.id}`,
-            playlistId: p.id,
-            title: p.title,
-            coverUrl: p.coverUrl
-          }))
-        : []
-
-    if (!forYouOut.length || !trendingOut.length || !chartTracksOut.length) {
-      const fallback = await this.fallbackDiscoverTracks(24)
-      if (!chartTracksOut.length && fallback.length) {
-        chartTracksOut = fallback.slice(0, 24)
-      }
-      if (!forYouOut.length && fallback.length) {
-        forYouOut = fallback.slice(0, 16)
-      }
-      if (!trendingOut.length && fallback.length) {
-        trendingOut = fallback.slice(0, 16)
-      }
-    }
-
-    return {
-      forYou: forYouOut,
-      trending: trendingOut,
-      newReleases: newSongsVal.length > 0 ? newSongsVal.slice(0, 24) : chartTracksOut.slice(0, 24),
-      chartTracks: chartTracksOut,
-      chartPlaylists: [...chartPlaylists, ...hotPlaylistCards].slice(0, 20)
-    }
-  }
-
-  /** 热搜 + 搜索兜底，避免发现页全空 */
-  private async fallbackDiscoverTracks(limit = 24): Promise<NormalizedTrack[]> {
-    try {
-      const hot = await this.searchHot(Math.min(8, limit))
-      const tracks: NormalizedTrack[] = []
-      const seen = new Set<string>()
-      for (const item of hot) {
-        if (!item.keyword.trim()) continue
-        const result = await this.cloudSearch(item.keyword, MusicSearchType.Song, 4)
-        for (const track of result.tracks) {
-          if (seen.has(track.trackKey)) continue
-          seen.add(track.trackKey)
-          tracks.push(track)
-          if (tracks.length >= limit) return tracks
-        }
-      }
-      return tracks
-    } catch {
-      return []
-    }
+    return buildNeteaseDiscoverFeed(this)
   }
 
   async getTrending(): Promise<MusicTrendingPayload> {

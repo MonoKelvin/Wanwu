@@ -45,6 +45,7 @@ const KIND_META: Record<
 > = {
   library: { label: '图鉴', wwIcon: 'book-open' },
   note: { label: '便笺', wwIcon: 'pencil' },
+  diagram: { label: '流程图', wwIcon: 'layers' },
   link: { label: '链接', wwIcon: 'link' },
   rss: { label: 'RSS', wwIcon: 'inbox' },
   music: { label: '音乐', wwIcon: 'disc-3' },

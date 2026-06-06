@@ -26,7 +26,7 @@ defineOptions({ inheritAttrs: false })
 const props = withDefaults(
   defineProps<{
     modelValue: unknown
-    options: unknown[]
+    options: readonly unknown[]
     optionLabel?: string
     optionValue?: string
     placeholder?: string

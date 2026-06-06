@@ -1,0 +1,362 @@
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import InputText from 'primevue/inputtext'
+import WwButton from '@shared/components/WwButton.vue'
+import WwContextMenu from '@shared/components/WwContextMenu.vue'
+import DiagramShortcutsDialog from '@modules/library/diagrams/components/DiagramShortcutsDialog.vue'
+import type { WwMenuItem } from '@shared/types/menu'
+import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramSaveFlow } from '@modules/library/diagrams/composables/useDiagramSaveFlow'
+import { useWanwuToast } from '@shared/composables/useWanwuToast'
+import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
+import { focusInputText } from '@modules/library/diagrams/lib/diagramInputFocus'
+
+const props = defineProps<{
+  title: string
+  dirty?: boolean
+  zoomPercent?: number
+}>()
+
+const emit = defineEmits<{ back: [] }>()
+
+const bus = useDiagramCommandBus()
+const saveFlow = useDiagramSaveFlow()
+const toast = useWanwuToast()
+const { ask } = useWanwuConfirm()
+const titleDraft = ref(props.title)
+const editingTitle = ref(false)
+const titleInputRef = ref<InstanceType<typeof InputText> | null>(null)
+const zoomLabel = computed(() => `${props.zoomPercent ?? 100}%`)
+
+watch(
+  () => props.title,
+  (value) => {
+    if (!editingTitle.value) titleDraft.value = value
+  }
+)
+
+const fileMenuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
+const exportMenuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
+const viewMenuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
+const shortcutsOpen = ref(false)
+
+async function save() {
+  await saveFlow.saveDocument({ title: titleDraft.value.trim() || undefined })
+}
+
+function saveAs() {
+  saveFlow.promptSaveAs(titleDraft.value.trim() || undefined)
+}
+
+async function exportPng() {
+  const result = await bus.dispatch({ type: 'document.export', payload: { format: 'png' } })
+  if (!result.ok || !result.data) {
+    toast.error(result.ok ? '导出失败' : (result.message ?? '导出失败'))
+    return
+  }
+  const blob = (result.data as { blob: Blob }).blob
+  const dataUrl = await blobToDataUrl(blob)
+  const saved = await window.wanwu.shell.savePngDataUrl({
+    dataUrl,
+    defaultName: `${props.title || '流程图'}.png`
+  })
+  if (saved.ok && saved.path) toast.success('已导出 PNG')
+}
+
+async function exportAllPagesPng() {
+  const result = await bus.dispatch({
+    type: 'document.export',
+    payload: { format: 'png', scope: 'all' }
+  })
+  if (!result.ok || !result.data) {
+    toast.error(result.ok ? '导出失败' : (result.message ?? '导出失败'))
+    return
+  }
+  const pages = (result.data as { pages: Array<{ pageName: string; blob: Blob }> }).pages
+  let savedCount = 0
+  const base = props.title || '流程图'
+  for (const page of pages) {
+    const dataUrl = await blobToDataUrl(page.blob)
+    const saved = await window.wanwu.shell.savePngDataUrl({
+      dataUrl,
+      defaultName: `${base}-${page.pageName}.png`
+    })
+    if (saved.canceled) break
+    if (saved.ok) savedCount++
+  }
+  if (savedCount > 0) toast.success(`已导出 ${savedCount} 页 PNG`)
+}
+
+async function importExternalFile(type: 'document.importWfg' | 'document.importDrawio', label: string) {
+  let result = await bus.dispatch({ type })
+  if (!result.ok && result.code === 'VALIDATION') {
+    const discard = await ask({
+      header: '未保存的更改',
+      message: '导入将替换当前画布内容。不保存并导入，还是取消？',
+      acceptLabel: '不保存并导入',
+      rejectLabel: '取消'
+    })
+    if (!discard) return
+    result = await bus.dispatch({ type, payload: { discard: true } })
+  }
+  if (!result.ok) {
+    if (result.message && result.code !== 'VALIDATION') toast.error(result.message)
+    return
+  }
+  const data = result.data as { canceled?: boolean; title?: string }
+  if (data.canceled) return
+  toast.success(`已导入${label}${data.title ? `：${data.title}` : ''}`)
+}
+
+async function exportWfg() {
+  const result = await bus.dispatch({ type: 'document.export', payload: { format: 'wfg' } })
+  if (!result.ok) {
+    toast.error(result.message ?? '导出失败')
+    return
+  }
+  const data = result.data as { canceled?: boolean; path?: string }
+  if (data.canceled) return
+  if (data.path) toast.success('已导出 .wfg')
+}
+
+async function exportSvg() {
+  const result = await bus.dispatch({ type: 'document.export', payload: { format: 'svg' } })
+  if (!result.ok || !result.data) {
+    toast.error(result.ok ? '导出失败' : (result.message ?? '导出失败'))
+    return
+  }
+  const svg = (result.data as { svg: string }).svg
+  const saved = await window.wanwu.shell.saveTextFile({
+    content: svg,
+    defaultName: `${props.title || '流程图'}.svg`,
+    extension: 'svg'
+  })
+  if (saved.ok && saved.path) toast.success('已导出 SVG')
+}
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result))
+    reader.onerror = () => reject(reader.error)
+    reader.readAsDataURL(blob)
+  })
+}
+
+function startTitleEdit() {
+  editingTitle.value = true
+  titleDraft.value = props.title
+  requestAnimationFrame(() => focusInputText(titleInputRef.value, { select: true }))
+}
+
+async function commitTitleEdit() {
+  editingTitle.value = false
+  const next = titleDraft.value.trim()
+  if (!next || next === props.title) {
+    titleDraft.value = props.title
+    return
+  }
+  const result = await saveFlow.saveDocument({ title: next })
+  if (!result) titleDraft.value = props.title
+}
+
+function cancelTitleEdit() {
+  editingTitle.value = false
+  titleDraft.value = props.title
+}
+
+const fileMenuItems: WwMenuItem[] = [
+  { label: '保存', wwIcon: 'save', command: () => void save() },
+  { label: '另存为', wwIcon: 'copy', command: () => void saveAs() },
+  { label: '打开 .wfg', wwIcon: 'folder-open', command: () => void importExternalFile('document.importWfg', ' .wfg') },
+  { label: '打开 draw.io', wwIcon: 'external-link', command: () => void importExternalFile('document.importDrawio', ' draw.io') },
+  { separator: true },
+  { label: '撤销', wwIcon: 'rotate-ccw', command: () => void bus.dispatch({ type: 'canvas.undo' }) },
+  { label: '重做', wwIcon: 'refresh-cw', command: () => void bus.dispatch({ type: 'canvas.redo' }) }
+]
+
+const exportMenuItems: WwMenuItem[] = [
+  { label: '导出 .wfg 文件', wwIcon: 'box', command: () => void exportWfg() },
+  { separator: true },
+  { label: '导出当前页 PNG', wwIcon: 'image', command: () => void exportPng() },
+  { label: '导出全部页 PNG', wwIcon: 'layers', command: () => void exportAllPagesPng() },
+  { label: '导出当前页 SVG', wwIcon: 'download', command: () => void exportSvg() }
+]
+
+const viewMenuItems: WwMenuItem[] = [
+  {
+    label: '放大',
+    wwIcon: 'plus',
+    command: () => void bus.dispatch({ type: 'canvas.zoom', payload: { delta: 0.1 } })
+  },
+  {
+    label: '缩小',
+    wwIcon: 'minus',
+    command: () => void bus.dispatch({ type: 'canvas.zoom', payload: { delta: -0.1 } })
+  },
+  { separator: true },
+  {
+    label: '重置缩放',
+    wwIcon: 'maximize',
+    command: () => void bus.dispatch({ type: 'canvas.zoomReset' })
+  },
+  {
+    label: '适应画布',
+    wwIcon: 'layout-grid',
+    command: () => void bus.dispatch({ type: 'canvas.zoomToFit' })
+  },
+  {
+    label: '原点居中',
+    wwIcon: 'compass',
+    command: () => void bus.dispatch({ type: 'canvas.centerOrigin' })
+  }
+]
+
+function openMenu(
+  event: MouseEvent,
+  menu: InstanceType<typeof WwContextMenu> | null
+) {
+  event.stopPropagation()
+  const anchor = event.currentTarget as HTMLElement
+  void menu?.showBelowAnchor(anchor, 6)
+}
+</script>
+
+<template>
+  <header class="dg-editor-toolbar dg-float dg-float--top-center ww-glass-blur" role="toolbar">
+    <div class="dg-editor-toolbar__lead">
+      <WwButton
+        icon="arrow-left"
+        severity="secondary"
+        text
+        rounded
+        class="dg-toolbar-icon-btn"
+        aria-label="返回"
+        @click="emit('back')"
+      />
+      <InputText
+        v-if="editingTitle"
+        ref="titleInputRef"
+        v-model="titleDraft"
+        class="dg-editor-toolbar__title-input"
+        @keydown.enter.prevent="commitTitleEdit"
+        @keydown.esc.prevent="cancelTitleEdit"
+        @blur="commitTitleEdit"
+      />
+      <button
+        v-else
+        type="button"
+        class="dg-editor-toolbar__title"
+        :title="title"
+        @click="startTitleEdit"
+      >
+        {{ title }}
+      </button>
+      <span v-if="dirty" class="dg-editor-toolbar__badge">未保存</span>
+    </div>
+
+    <div class="dg-editor-toolbar__actions">
+      <div class="dg-editor-toolbar__zoom">
+        <WwButton
+          icon="minus"
+          severity="secondary"
+          text
+          rounded
+          class="dg-toolbar-icon-btn"
+          aria-label="缩小"
+          v-tooltip.bottom="'缩小'"
+          @click="bus.dispatch({ type: 'canvas.zoom', payload: { delta: -0.1 } })"
+        />
+        <WwButton
+          icon="plus"
+          severity="secondary"
+          text
+          rounded
+          class="dg-toolbar-icon-btn"
+          aria-label="放大"
+          v-tooltip.bottom="'放大'"
+          @click="bus.dispatch({ type: 'canvas.zoom', payload: { delta: 0.1 } })"
+        />
+        <WwButton
+          icon="layout-grid"
+          severity="secondary"
+          text
+          rounded
+          class="dg-toolbar-icon-btn"
+          aria-label="适应画布"
+          v-tooltip.bottom="'适应画布'"
+          @click="bus.dispatch({ type: 'canvas.zoomToFit' })"
+        />
+        <button
+          type="button"
+          class="dg-editor-toolbar__zoom-label"
+          :title="`当前缩放 ${zoomLabel}，点击重置`"
+          @click="bus.dispatch({ type: 'canvas.zoomReset' })"
+        >
+          {{ zoomLabel }}
+        </button>
+      </div>
+
+      <div class="dg-editor-toolbar__menus">
+        <WwButton
+          icon="save"
+          severity="secondary"
+          text
+          rounded
+          class="dg-toolbar-icon-btn"
+          aria-label="保存"
+          v-tooltip.bottom="'保存 (Ctrl+S)'"
+          @click="save"
+        />
+        <WwButton
+          icon="folder"
+          severity="secondary"
+          text
+          rounded
+          class="dg-toolbar-icon-btn"
+          aria-label="文件"
+          v-tooltip.bottom="'文件'"
+          @click="openMenu($event, fileMenuRef)"
+        />
+        <WwButton
+          icon="download"
+          severity="secondary"
+          text
+          rounded
+          class="dg-toolbar-icon-btn"
+          aria-label="导出"
+          v-tooltip.bottom="'导出'"
+          @click="openMenu($event, exportMenuRef)"
+        />
+        <WwButton
+          icon="eye"
+          severity="secondary"
+          text
+          rounded
+          class="dg-toolbar-icon-btn"
+          aria-label="视图"
+          v-tooltip.bottom="'视图'"
+          @click="openMenu($event, viewMenuRef)"
+        />
+      </div>
+    </div>
+
+    <div class="dg-editor-toolbar__trail">
+      <WwButton
+        icon="circle-help"
+        severity="secondary"
+        text
+        rounded
+        class="dg-toolbar-icon-btn"
+        aria-label="快捷键"
+        v-tooltip.bottom="'快捷键'"
+        @click="shortcutsOpen = true"
+      />
+    </div>
+
+    <WwContextMenu ref="fileMenuRef" :model="fileMenuItems" />
+    <WwContextMenu ref="exportMenuRef" :model="exportMenuItems" />
+    <WwContextMenu ref="viewMenuRef" :model="viewMenuItems" />
+    <DiagramShortcutsDialog v-model:open="shortcutsOpen" />
+  </header>
+</template>
