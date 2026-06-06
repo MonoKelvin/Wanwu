@@ -9,10 +9,15 @@ import WwInputIcon from '@shared/components/WwInputIcon.vue'
 import { DIAGRAM_SHAPE_CATEGORIES } from '@modules/library/diagrams/lib/diagramShapeRegistry'
 import { filterShapeCategories } from '@modules/library/diagrams/lib/diagramShapeSearch'
 import { writeShapeDragData } from '@modules/library/diagrams/lib/diagramShapeDrag'
+import {
+  toggleAssetPanelCollapsed,
+  useDiagramEditorLayout
+} from '@modules/library/diagrams/composables/useDiagramEditorLayout'
 
 const search = ref('')
 const activeCategory = ref<string>('all')
-const collapsed = ref(false)
+const layout = useDiagramEditorLayout()
+const collapsed = layout.assetCollapsed
 
 const categoryTabs = computed(() => [
   { id: 'all', label: '全部' },
@@ -54,7 +59,7 @@ function onShapeDragStart(event: DragEvent, shapeId: string, defaultText: string
         class="dg-panel__collapse-btn"
         :aria-label="collapsed ? '展开图元面板' : '收起图元面板'"
         compact
-        @click="collapsed = !collapsed"
+        @click="toggleAssetPanelCollapsed(layout)"
       />
     </header>
 

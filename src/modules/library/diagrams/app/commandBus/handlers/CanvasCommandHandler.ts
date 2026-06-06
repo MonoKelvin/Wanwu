@@ -70,6 +70,13 @@ export class CanvasCommandHandler implements IDiagramCommandHandler {
           )
           session.markActivePageDirty()
           return { ok: true }
+        case 'canvas.batchUpdateEdges':
+          port.batchUpdateEdgeProperties(
+            p.edgeProps as Partial<import('@modules/library/diagrams/lib/diagramSelectionTypes').DiagramEdgeProperties>,
+            p.edgeIds as string[] | undefined
+          )
+          session.markActivePageDirty()
+          return { ok: true }
         case 'canvas.alignNodes':
           port.alignNodes(
             p.mode as import('@modules/library/diagrams/lib/diagramNodeLayout').DiagramAlignMode,

@@ -6,6 +6,8 @@
   --dg-gap-section: 2rem;
   --dg-gap-inner: 0.75rem;
   --dg-panel-w: 13.5rem;
+  --dg-asset-panel-w: 10.5rem;
+  --dg-panel-collapsed-w: 2.25rem;
   --dg-toolbar-h: 2.625rem;
   --dg-float-inset: 0.75rem;
   --dg-float-top: calc(var(--dg-toolbar-h) + var(--dg-float-inset));
@@ -1097,7 +1099,7 @@
 .dg-asset-panel {
   display: flex;
   flex-direction: column;
-  width: 10.5rem;
+  width: var(--dg-asset-panel-w);
   min-height: 0;
   padding: 0.5rem 0.4375rem;
   border-radius: var(--dg-radius-lg);
@@ -1967,7 +1969,7 @@
   top: var(--dg-float-top);
   right: calc(var(--dg-panel-w) + var(--dg-float-inset) + 0.5rem);
   bottom: calc(var(--dg-float-inset) + 3.25rem);
-  left: calc(10.5rem + var(--dg-float-inset) + 0.5rem);
+  left: calc(var(--dg-asset-panel-w) + var(--dg-float-inset) + 0.5rem);
   z-index: 1;
   display: flex;
   flex-direction: column;
@@ -2256,7 +2258,7 @@
   }
 
   .dg-panel {
-    width: min(var(--dg-panel-w), calc(100vw - var(--dg-float-inset) * 2 - 10.5rem));
+    width: min(var(--dg-panel-w), calc(100vw - var(--dg-float-inset) * 2 - var(--dg-asset-panel-w)));
   }
 }
 

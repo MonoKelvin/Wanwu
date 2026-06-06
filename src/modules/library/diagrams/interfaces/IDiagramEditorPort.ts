@@ -57,6 +57,8 @@ export interface IDiagramEditorPort {
   clientToCanvas(clientX: number, clientY: number): CanvasPoint
   getSelection(): DiagramEditorSelection
   getSelectedNodeIds(): string[]
+  getSelectedEdgeIds(): string[]
+  hasClipboard(): boolean
   alignNodes(mode: import('@modules/library/diagrams/lib/diagramNodeLayout').DiagramAlignMode, nodeIds?: string[]): void
   distributeNodes(
     mode: import('@modules/library/diagrams/lib/diagramNodeLayout').DiagramDistributeMode,
@@ -65,6 +67,10 @@ export interface IDiagramEditorPort {
   batchUpdateNodeProperties(
     nodeProps: Partial<DiagramNodeProperties>,
     nodeIds?: string[]
+  ): void
+  batchUpdateEdgeProperties(
+    edgeProps: Partial<DiagramEdgeProperties>,
+    edgeIds?: string[]
   ): void
   updateNodeProperties(props: Partial<DiagramNodeProperties> & { id: string }): void
   updateEdgeProperties(props: Partial<DiagramEdgeProperties> & { id: string }): void

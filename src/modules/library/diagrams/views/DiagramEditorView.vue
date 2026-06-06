@@ -23,6 +23,7 @@ import { useDiagramShortcuts } from '@modules/library/diagrams/composables/useDi
 import { useDiagramIpcBridge } from '@modules/library/diagrams/composables/useDiagramIpcBridge'
 import { pushShellRoute } from '@app/composables/shellNavigation'
 import { provideDiagramSaveFlow } from '@modules/library/diagrams/composables/useDiagramSaveFlow'
+import { provideDiagramEditorLayout } from '@modules/library/diagrams/composables/useDiagramEditorLayout'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { LIBRARY_DIAGRAMS_EDITOR_ROUTE, isDiagramEditorPath } from '@modules/library/diagrams/domain/diagramRoutes'
 import { isShapeDragEvent, readShapeDragData } from '@modules/library/diagrams/lib/diagramShapeDrag'
@@ -83,7 +84,14 @@ const bus = createDiagramCommandBus({
   repo
 })
 provideDiagramCommandBus(bus)
+const editorLayout = provideDiagramEditorLayout()
 const saveFlow = provideDiagramSaveFlow(bus, toast)
+
+const stageStyle = computed(() => ({
+  '--dg-asset-panel-w': editorLayout.assetCollapsed.value ? '2.25rem' : '10.5rem',
+  '--dg-panel-w': editorLayout.propsCollapsed.value ? '2.25rem' : '13.5rem'
+}))
+
 const { conflictOpen, folderPickerOpen, pickedFolderId } = toRefs(saveFlow)
 const { onConflictReload, onConflictOverwrite, onConflictSaveAs, onFolderPicked } = saveFlow
 useDiagramShortcuts(bus, {
@@ -258,12 +266,16 @@ async function bootstrapEditor() {
     refreshCanvasEmpty()
   })
   port.onContextMenu((detail) => {
-    canvasMenuRef.value?.show(detail.event, {
-      kind: detail.kind,
-      targetId: detail.targetId,
-      nodeIds: detail.nodeIds,
-      edgeIds: detail.edgeIds
-    })
+    canvasMenuRef.value?.show(
+      detail.event,
+      {
+        kind: detail.kind,
+        targetId: detail.targetId,
+        nodeIds: detail.nodeIds,
+        edgeIds: detail.edgeIds
+      },
+      port.hasClipboard()
+    )
   })
   editorSelection.value = port.getSelection()
 
@@ -459,7 +471,7 @@ function onCanvasDrop(event: DragEvent) {
 
 <template>
   <div class="dg-editor-root dg-fade-in flex h-full min-h-0 w-full flex-1 flex-col">
-    <div class="dg-editor-stage">
+    <div class="dg-editor-stage" :style="stageStyle">
       <div
         ref="canvasWrapRef"
         class="dg-canvas-wrap"

@@ -19,6 +19,10 @@ import {
   DIAGRAM_THEME_PRESETS
 } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import type { DiagramEditorSelection } from '@modules/library/diagrams/lib/diagramSelectionTypes'
+import {
+  togglePropsPanelCollapsed,
+  useDiagramEditorLayout
+} from '@modules/library/diagrams/composables/useDiagramEditorLayout'
 
 const props = defineProps<{
   selection: DiagramEditorSelection
@@ -29,7 +33,8 @@ const bus = useDiagramCommandBus()
 const toast = useWanwuToast()
 const imageBusy = ref(false)
 const activeTab = ref<'node' | 'edge' | 'canvas'>('canvas')
-const collapsed = ref(false)
+const layout = useDiagramEditorLayout()
+const collapsed = layout.propsCollapsed
 
 watch(
   () => ({
@@ -49,10 +54,12 @@ const showNode = computed(() => activeTab.value === 'node' && props.selection.no
 const showEdge = computed(() => activeTab.value === 'edge' && props.selection.edge)
 const canvas = computed(() => props.selection.canvas)
 const multiNode = computed(() => props.selection.selectedNodeCount > 1)
+const multiEdge = computed(() => props.selection.selectedEdgeCount > 1)
 
 const selectionBanner = computed(() => {
   const nc = props.selection.selectedNodeCount
   const ec = props.selection.selectedEdgeCount
+  if (nc > 0 && ec > 0) return `已选 ${nc} 个图元、${ec} 条连线`
   if (nc > 1) return `当前选择 ${nc} 个图形`
   if (ec > 1) return `当前选择 ${ec} 条连线`
   return ''
@@ -66,6 +73,10 @@ const dispatchNode = useDebounceFn((nodeProps: Record<string, unknown>) => {
   const id = props.selection.node?.id
   if (!id) return
   void bus.dispatch({ type: 'canvas.updateNode', payload: { nodeId: id, nodeProps } })
+}, 200)
+
+const dispatchBatchEdge = useDebounceFn((edgeProps: Record<string, unknown>) => {
+  void bus.dispatch({ type: 'canvas.batchUpdateEdges', payload: { edgeProps } })
 }, 200)
 
 const dispatchEdge = useDebounceFn((edgeProps: Record<string, unknown>) => {
@@ -99,6 +110,10 @@ function patchNodeTextStyle(patch: Record<string, unknown>) {
 }
 
 function patchEdge(patch: Record<string, unknown>) {
+  if (multiEdge.value) {
+    void dispatchBatchEdge(patch)
+    return
+  }
   void dispatchEdge(patch)
 }
 
@@ -182,7 +197,7 @@ function clearNodeImage() {
         class="dg-panel__collapse-btn"
         :aria-label="collapsed ? '展开属性面板' : '收起属性面板'"
         compact
-        @click="collapsed = !collapsed"
+        @click="togglePropsPanelCollapsed(layout)"
       />
     </header>
     <template v-if="!collapsed">
@@ -417,7 +432,7 @@ function clearNodeImage() {
 
       <!-- 连线 -->
       <template v-if="showEdge && selection.edge">
-        <section class="dg-prop-section dg-prop-group">
+        <section v-if="!multiEdge" class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">文本</p>
           <SettingsRow label="标签">
             <InputText

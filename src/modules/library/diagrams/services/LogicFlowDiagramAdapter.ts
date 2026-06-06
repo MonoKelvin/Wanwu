@@ -412,6 +412,16 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     return this.lf.getSelectElements(true).nodes.map((n) => n.id)
   }
 
+  getSelectedEdgeIds(): string[] {
+    if (!this.lf) return []
+    return this.lf.getSelectElements(true).edges.map((e) => e.id)
+  }
+
+  hasClipboard(): boolean {
+    const clip = (this as { _clipboard?: { nodes?: unknown[] } })._clipboard
+    return Boolean(clip?.nodes?.length)
+  }
+
   private readNodeBounds(nodeId: string): DiagramNodeBounds | null {
     const model = this.lf?.getNodeModelById(nodeId)
     if (!model) return null
@@ -522,6 +532,16 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     const ids = nodeIds?.length ? nodeIds : this.getSelectedNodeIds()
     for (const id of ids) {
       this.updateNodeProperties({ id, ...nodeProps })
+    }
+  }
+
+  batchUpdateEdgeProperties(
+    edgeProps: Partial<DiagramEdgeProperties>,
+    edgeIds?: string[]
+  ): void {
+    const ids = edgeIds?.length ? edgeIds : this.getSelectedEdgeIds()
+    for (const id of ids) {
+      this.updateEdgeProperties({ id, ...edgeProps })
     }
   }
 
@@ -992,12 +1012,20 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     if (!clip || !this.lf || !clip.nodes.length) return
     let offsetX = 20
     let offsetY = 20
+    const xs = clip.nodes.map((n) => n.x)
+    const ys = clip.nodes.map((n) => n.y)
+    const centerX = (Math.min(...xs) + Math.max(...xs)) / 2
+    const centerY = (Math.min(...ys) + Math.max(...ys)) / 2
     if (clientX != null && clientY != null) {
       const { x: cx, y: cy } = this.clientToCanvas(clientX, clientY)
-      const xs = clip.nodes.map((n) => n.x)
-      const ys = clip.nodes.map((n) => n.y)
-      const centerX = (Math.min(...xs) + Math.max(...xs)) / 2
-      const centerY = (Math.min(...ys) + Math.max(...ys)) / 2
+      offsetX = cx - centerX
+      offsetY = cy - centerY
+    } else if (this.container) {
+      const rect = this.container.getBoundingClientRect()
+      const { x: cx, y: cy } = this.clientToCanvas(
+        rect.left + rect.width / 2,
+        rect.top + rect.height / 2
+      )
       offsetX = cx - centerX
       offsetY = cy - centerY
     }

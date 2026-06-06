@@ -14,6 +14,7 @@ export type DiagramCanvasContextTarget = {
 const bus = useDiagramCommandBus()
 const menuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
 const menuEvent = ref<MouseEvent | null>(null)
+const clipboardReady = ref(false)
 const target = ref<DiagramCanvasContextTarget>({
   kind: 'blank',
   nodeIds: [],
@@ -42,6 +43,7 @@ const menuItems = computed<WwMenuItem[]>(() => {
       {
         label: '粘贴',
         wwIcon: 'copy',
+        disabled: !clipboardReady.value,
         command: () => pasteAtCursor()
       },
       { separator: true },
@@ -67,6 +69,7 @@ const menuItems = computed<WwMenuItem[]>(() => {
       {
         label: '粘贴',
         wwIcon: 'copy',
+        disabled: !clipboardReady.value,
         command: () => pasteAtCursor()
       },
       {
@@ -97,10 +100,11 @@ async function duplicateSelection() {
   pasteAtCursor()
 }
 
-function show(event: MouseEvent, next: DiagramCanvasContextTarget) {
+function show(event: MouseEvent, next: DiagramCanvasContextTarget, hasClipboard = false) {
   event.preventDefault()
   menuEvent.value = event
   target.value = next
+  clipboardReady.value = hasClipboard
   void menuRef.value?.show(event)
 }
 

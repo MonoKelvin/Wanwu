@@ -4,6 +4,7 @@ export const CANVAS_COMMAND_TYPES = [
   'canvas.updateEdge',
   'canvas.updateSettings',
   'canvas.batchUpdateNodes',
+  'canvas.batchUpdateEdges',
   'canvas.alignNodes',
   'canvas.distributeNodes',
   'canvas.deleteSelection',
@@ -86,6 +87,11 @@ export interface CanvasUpdateSettingsPayload {
 export interface CanvasBatchUpdateNodesPayload {
   nodeIds?: string[]
   nodeProps: Partial<import('@modules/library/diagrams/lib/diagramSelectionTypes').DiagramNodeProperties>
+}
+
+export interface CanvasBatchUpdateEdgesPayload {
+  edgeIds?: string[]
+  edgeProps: Partial<import('@modules/library/diagrams/lib/diagramSelectionTypes').DiagramEdgeProperties>
 }
 
 export interface CanvasAlignNodesPayload {
