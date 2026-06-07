@@ -17,7 +17,6 @@ import {
 const search = ref('')
 const activeCategory = ref<string>('all')
 const layout = useDiagramEditorLayout()
-const collapsed = layout.assetCollapsed
 
 const categoryTabs = computed(() => [
   { id: 'all', label: '全部' },
@@ -46,24 +45,22 @@ function onShapeDragStart(event: DragEvent, shapeId: string, defaultText: string
 <template>
   <aside
     class="dg-asset-panel dg-float dg-float--left ww-glass-blur"
-    :class="{ 'dg-asset-panel--collapsed': collapsed }"
     aria-label="素材"
   >
     <header class="dg-asset-panel__head">
       <WwIcon name="layout-grid" size="sm" class="dg-asset-panel__head-icon" />
-      <span v-if="!collapsed" class="dg-asset-panel__head-title">图元</span>
-      <span v-if="!collapsed && totalVisible" class="dg-asset-panel__count">{{ totalVisible }}</span>
+      <span class="dg-asset-panel__head-title">图元</span>
+      <span v-if="totalVisible" class="dg-asset-panel__count">{{ totalVisible }}</span>
       <WwIconButton
-        :icon="collapsed ? 'chevron-right' : 'chevron-left'"
+        icon="chevron-left"
         icon-size="sm"
         class="dg-panel__collapse-btn"
-        :aria-label="collapsed ? '展开图元面板' : '收起图元面板'"
+        aria-label="收起图元面板"
         compact
         @click="toggleAssetPanelCollapsed(layout)"
       />
     </header>
 
-    <template v-if="!collapsed">
     <div class="dg-asset-panel__search">
       <IconField class="dg-asset-panel__search-field">
         <WwInputIcon name="search" />
@@ -116,6 +113,5 @@ function onShapeDragStart(event: DragEvent, shapeId: string, defaultText: string
 
       <p v-if="!categories.length" class="dg-asset-panel__empty">无匹配图元</p>
     </div>
-    </template>
   </aside>
 </template>

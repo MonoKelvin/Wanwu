@@ -14,6 +14,9 @@ export const CANVAS_COMMAND_TYPES = [
   'canvas.clearSelection',
   'canvas.copy',
   'canvas.paste',
+  'canvas.duplicate',
+  'canvas.group',
+  'canvas.ungroup',
   'canvas.undo',
   'canvas.redo',
   'canvas.zoom',
@@ -68,6 +71,16 @@ export interface CanvasSelectPayload {
 export interface CanvasPastePayload {
   x?: number
   y?: number
+}
+
+export interface CanvasDuplicatePayload {
+  offsetX?: number
+  offsetY?: number
+}
+
+export interface CanvasGroupPayload {
+  nodeIds?: string[]
+  edgeIds?: string[]
 }
 
 export interface CanvasZoomPayload {

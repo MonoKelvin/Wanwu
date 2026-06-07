@@ -10,39 +10,38 @@ import LogicFlow, {
 import { DiamondResizeModel, DiamondResizeView } from '@logicflow/extension/lib/NodeResize/node/DiamondResize'
 import { EllipseResizeModel, EllipseResizeView } from '@logicflow/extension/lib/NodeResize/node/EllipseResize'
 import { RectResizeModel, RectResizeView } from '@logicflow/extension/lib/NodeResize/node/RectResize'
-import { diagramResizeControlStyle } from '@modules/library/diagrams/lib/diagramShapeResize'
+import {
+  applyDefaultEllipseRadii,
+  applyDefaultRectSize,
+  centerPolygonPoints,
+  diagramResizeControlStyle,
+  hasPersistedNodeSize,
+  resolvePolygonGeometry,
+  type PolyPoint
+} from '@modules/library/diagrams/lib/diagramShapeResize'
+import { registerDiagramGroupFrame } from '@modules/library/diagrams/lib/diagramGroupFrame'
 
-type Point = [number, number]
-
-function polyBasis(points: Point[]) {
-  let minX = Infinity
-  let maxX = -Infinity
-  let minY = Infinity
-  let maxY = -Infinity
-  for (const [px, py] of points) {
-    minX = Math.min(minX, px)
-    maxX = Math.max(maxX, px)
-    minY = Math.min(minY, py)
-    maxY = Math.max(maxY, py)
-  }
-  return { width: maxX - minX, height: maxY - minY }
-}
+type Point = PolyPoint
 
 function regPolygon(lf: LogicFlow, type: string, points: Point[]) {
-  const basis = polyBasis(points)
+  const template = centerPolygonPoints(points)
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = basis.width
-      this.height = basis.height
-      this.minWidth = 20
-      this.minHeight = 20
+      const geo = resolvePolygonGeometry(data, points)
       this.properties = {
         ...this.properties,
-        dgPolyPoints: points,
-        dgPolyBasisW: basis.width,
-        dgPolyBasisH: basis.height
+        dgPolyPoints: geo.points,
+        dgPolyBasisW: geo.basisW,
+        dgPolyBasisH: geo.basisH,
+        dgPolyCentered: true
       }
+      if (!hasPersistedNodeSize(data)) {
+        this.width = template.width
+        this.height = template.height
+      }
+      this.minWidth = 20
+      this.minHeight = 20
     }
     getControlPointStyle() {
       return diagramResizeControlStyle()
@@ -53,9 +52,9 @@ function regPolygon(lf: LogicFlow, type: string, points: Point[]) {
       const { model } = this.props
       const { x, y, width, height, properties } = model
       const style = model.getNodeStyle()
-      const orig = (properties.dgPolyPoints ?? points) as Point[]
-      const bw = Number(properties.dgPolyBasisW ?? basis.width)
-      const bh = Number(properties.dgPolyBasisH ?? basis.height)
+      const orig = (properties.dgPolyPoints ?? template.points) as Point[]
+      const bw = Number(properties.dgPolyBasisW ?? template.width)
+      const bh = Number(properties.dgPolyBasisH ?? template.height)
       const sx = width / bw
       const sy = height / bh
       const pts = orig.map(([px, py]) => `${x + px * sx},${y + py * sy}`).join(' ')
@@ -76,9 +75,7 @@ function regRect(lf: LogicFlow, type: string, width: number, height: number, rad
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = width
-      this.height = height
-      this.radius = radius
+      applyDefaultRectSize(this, data, { width, height, radius })
       this.minWidth = 24
       this.minHeight = 24
     }
@@ -94,8 +91,7 @@ function regCircle(lf: LogicFlow, type: string, r: number) {
   class Model extends EllipseResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.rx = r
-      this.ry = r
+      applyDefaultEllipseRadii(this, data, { rx: r, ry: r })
       this.minWidth = 16
       this.minHeight = 16
     }
@@ -111,8 +107,7 @@ function regEllipse(lf: LogicFlow, type: string, rx: number, ry: number) {
   class Model extends EllipseResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.rx = rx
-      this.ry = ry
+      applyDefaultEllipseRadii(this, data, { rx, ry })
       this.minWidth = 20
       this.minHeight = 16
     }
@@ -128,8 +123,7 @@ function regDiamond(lf: LogicFlow, type: string, rx: number, ry: number) {
   class Model extends DiamondResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.rx = rx
-      this.ry = ry
+      applyDefaultEllipseRadii(this, data, { rx, ry })
       this.minWidth = 24
       this.minHeight = 24
     }
@@ -146,9 +140,7 @@ function regDocument(lf: LogicFlow, type: string) {
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = 100
-      this.height = 72
-      this.radius = 2
+      applyDefaultRectSize(this, data, { width: 100, height: 72, radius: 2 })
       this.minWidth = 40
       this.minHeight = 32
     }
@@ -178,9 +170,7 @@ function regSubprocess(lf: LogicFlow, type: string) {
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = 120
-      this.height = 52
-      this.radius = 4
+      applyDefaultRectSize(this, data, { width: 120, height: 52, radius: 4 })
       this.minWidth = 48
       this.minHeight = 32
     }
@@ -231,8 +221,7 @@ function regMultiDocument(lf: LogicFlow, type: string) {
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = 100
-      this.height = 72
+      applyDefaultRectSize(this, data, { width: 100, height: 72 })
       this.minWidth = 40
       this.minHeight = 32
     }
@@ -267,8 +256,7 @@ function regDelay(lf: LogicFlow, type: string) {
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = 100
-      this.height = 52
+      applyDefaultRectSize(this, data, { width: 100, height: 52 })
       this.minWidth = 40
       this.minHeight = 28
     }
@@ -298,8 +286,7 @@ function regStoredData(lf: LogicFlow, type: string) {
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = 88
-      this.height = 56
+      applyDefaultRectSize(this, data, { width: 88, height: 56 })
       this.minWidth = 36
       this.minHeight = 32
     }
@@ -340,9 +327,7 @@ function regComment(lf: LogicFlow, type: string) {
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = 108
-      this.height = 48
-      this.radius = 4
+      applyDefaultRectSize(this, data, { width: 108, height: 48, radius: 4 })
       this.minWidth = 48
       this.minHeight = 28
     }
@@ -384,9 +369,7 @@ function regUmlClass(lf: LogicFlow, type: string) {
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = 112
-      this.height = 88
-      this.radius = 2
+      applyDefaultRectSize(this, data, { width: 112, height: 88, radius: 2 })
       this.minWidth = 56
       this.minHeight = 48
     }
@@ -430,9 +413,7 @@ function regSwimlane(lf: LogicFlow, type: string) {
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = 200
-      this.height = 120
-      this.radius = 4
+      applyDefaultRectSize(this, data, { width: 200, height: 120, radius: 4 })
       this.minWidth = 80
       this.minHeight = 48
     }
@@ -488,8 +469,7 @@ function regNote(lf: LogicFlow, type: string) {
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = 96
-      this.height = 72
+      applyDefaultRectSize(this, data, { width: 96, height: 72 })
       this.minWidth = 48
       this.minHeight = 40
     }
@@ -517,8 +497,7 @@ function regCloud(lf: LogicFlow, type: string) {
   class Model extends EllipseResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.rx = 56
-      this.ry = 32
+      applyDefaultEllipseRadii(this, data, { rx: 56, ry: 32 })
       this.minWidth = 40
       this.minHeight = 24
     }
@@ -545,8 +524,7 @@ function regXorGateway(lf: LogicFlow, type: string) {
   class Model extends DiamondResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.rx = 40
-      this.ry = 40
+      applyDefaultEllipseRadii(this, data, { rx: 40, ry: 40 })
       this.minWidth = 28
       this.minHeight = 28
     }
@@ -590,8 +568,7 @@ function regActor(lf: LogicFlow, type: string) {
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = 48
-      this.height = 72
+      applyDefaultRectSize(this, data, { width: 48, height: 72 })
       this.minWidth = 32
       this.minHeight = 48
     }
@@ -658,9 +635,7 @@ function regImage(lf: LogicFlow, type: string) {
   class Model extends RectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
-      this.width = 128
-      this.height = 96
-      this.radius = 4
+      applyDefaultRectSize(this, data, { width: 128, height: 96, radius: 4 })
       this.minWidth = 32
       this.minHeight = 32
     }
@@ -731,7 +706,46 @@ function regImage(lf: LogicFlow, type: string) {
   lf.register({ type, view: View, model: Model })
 }
 
+/** 可缩放文本图元 */
+function regText(lf: LogicFlow, type: string) {
+  class Model extends RectResizeModel {
+    initNodeData(data: LogicFlow.NodeConfig) {
+      super.initNodeData(data)
+      applyDefaultRectSize(this, data, { width: 120, height: 40, radius: 4 })
+      this.minWidth = 32
+      this.minHeight = 24
+      this.text.editable = true
+    }
+    getControlPointStyle() {
+      return diagramResizeControlStyle()
+    }
+  }
+  class View extends RectResizeView {
+    getResizeShape() {
+      const { model } = this.props
+      const { x, y, width, height, radius } = model
+      const style = model.getNodeStyle()
+      return h('g', {}, [
+        h('rect', {
+          x: x - width / 2,
+          y: y - height / 2,
+          width,
+          height,
+          rx: radius ?? 4,
+          ry: radius ?? 4,
+          fill: style.fill ?? 'transparent',
+          stroke: style.stroke ?? 'transparent',
+          strokeWidth: style.strokeWidth ?? 0
+        })
+      ])
+    }
+  }
+  lf.register({ type, view: View, model: Model })
+}
+
 export function registerAllDiagramShapes(lf: LogicFlow): void {
+  regText(lf, 'text')
+  regText(lf, 'dg-text')
   regRect(lf, 'dg-rect', 104, 48, 0)
   regRect(lf, 'dg-round-rect', 104, 48, 10)
   regRect(lf, 'dg-square', 56, 56, 4)
@@ -876,6 +890,7 @@ export function registerAllDiagramShapes(lf: LogicFlow): void {
     [-36, -12],
     [-12, -12]
   ])
+  registerDiagramGroupFrame(lf)
   registerDiagramEdges(lf)
 }
 

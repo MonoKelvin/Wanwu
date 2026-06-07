@@ -3,6 +3,8 @@ import { computed, ref } from 'vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import type { WwMenuItem } from '@shared/types/menu'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { DIAGRAM_ALIGN_ACTIONS } from '@modules/library/diagrams/lib/diagramAlignActions'
+import type { DiagramAlignMode } from '@modules/library/diagrams/lib/diagramNodeLayout'
 
 export type DiagramCanvasContextTarget = {
   kind: 'node' | 'edge' | 'blank'
@@ -15,6 +17,7 @@ const bus = useDiagramCommandBus()
 const menuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
 const menuEvent = ref<MouseEvent | null>(null)
 const clipboardReady = ref(false)
+const canUngroup = ref(false)
 const target = ref<DiagramCanvasContextTarget>({
   kind: 'blank',
   nodeIds: [],
@@ -33,42 +36,75 @@ function pasteAtCursor() {
   })
 }
 
+function duplicateSelection() {
+  void bus.dispatch({ type: 'canvas.duplicate' })
+}
+
+function alignSelection(mode: DiagramAlignMode) {
+  void bus.dispatch({ type: 'canvas.alignNodes', payload: { mode } })
+}
+
 const menuItems = computed<WwMenuItem[]>(() => {
   const items: WwMenuItem[] = []
   const { nodeIds, edgeIds } = target.value
+  const total = nodeIds.length + edgeIds.length
 
   if (hasSelection.value) {
+    if (nodeIds.length > 0) {
+      items.push({
+        label: '创建副本',
+        wwIcon: 'copy',
+        command: () => duplicateSelection()
+      })
+    }
     items.push(
       { label: '复制', wwIcon: 'copy', command: () => void bus.dispatch({ type: 'canvas.copy' }) },
       {
         label: '粘贴',
-        wwIcon: 'copy',
+        wwIcon: 'square-arrow-up-left',
         disabled: !clipboardReady.value,
         command: () => pasteAtCursor()
-      },
-      { separator: true },
-      {
-        label: '删除',
-        wwIcon: 'trash-2',
-        command: () =>
-          void bus.dispatch({
-            type: 'canvas.deleteSelection',
-            payload: { nodeIds, edgeIds }
-          })
       }
     )
-    if (nodeIds.length === 1 && !edgeIds.length) {
-      items.unshift({
-        label: '创建副本',
-        wwIcon: 'copy',
-        command: () => void duplicateSelection()
+    if (total >= 2 && !canUngroup.value) {
+      items.push({
+        label: '组合',
+        wwIcon: 'layers',
+        command: () => void bus.dispatch({ type: 'canvas.group' })
       })
     }
+    if (canUngroup.value) {
+      items.push({
+        label: '取消组合',
+        wwIcon: 'layers',
+        command: () => void bus.dispatch({ type: 'canvas.ungroup' })
+      })
+    }
+    if (nodeIds.length >= 2) {
+      items.push({ separator: true })
+      for (const action of DIAGRAM_ALIGN_ACTIONS) {
+        items.push({
+          label: action.label,
+          wwIcon: action.icon,
+          command: () => alignSelection(action.mode)
+        })
+      }
+    }
+    items.push({ separator: true })
+    items.push({
+      label: '删除',
+      wwIcon: 'trash-2',
+      command: () =>
+        void bus.dispatch({
+          type: 'canvas.deleteSelection',
+          payload: { nodeIds, edgeIds }
+        })
+    })
   } else {
     items.push(
       {
         label: '粘贴',
-        wwIcon: 'copy',
+        wwIcon: 'square-arrow-up-left',
         disabled: !clipboardReady.value,
         command: () => pasteAtCursor()
       },
@@ -95,16 +131,17 @@ const menuItems = computed<WwMenuItem[]>(() => {
   return items
 })
 
-async function duplicateSelection() {
-  await bus.dispatch({ type: 'canvas.copy' })
-  pasteAtCursor()
-}
-
-function show(event: MouseEvent, next: DiagramCanvasContextTarget, hasClipboard = false) {
+function show(
+  event: MouseEvent,
+  next: DiagramCanvasContextTarget,
+  hasClipboard = false,
+  ungroupReady = false
+) {
   event.preventDefault()
   menuEvent.value = event
   target.value = next
   clipboardReady.value = hasClipboard
+  canUngroup.value = ungroupReady
   void menuRef.value?.show(event)
 }
 

@@ -54,6 +54,7 @@ export interface DiagramNodeProperties {
   strokeWidth: number
   shadow: DiagramShadowPreset
   imageAsset: DiagramNodeImageAsset | null
+  strokeDasharray?: string
 }
 
 export interface DiagramEdgeProperties {

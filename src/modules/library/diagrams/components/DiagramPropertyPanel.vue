@@ -8,6 +8,7 @@ import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import WwButton from '@shared/components/WwButton.vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
+import DiagramMultiSelectTools from '@modules/library/diagrams/components/DiagramMultiSelectTools.vue'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import {
@@ -18,6 +19,7 @@ import {
   DIAGRAM_TEXT_ALIGN_OPTIONS,
   DIAGRAM_THEME_PRESETS
 } from '@modules/library/diagrams/lib/diagramEditorConstants'
+import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import type { DiagramEditorSelection } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import {
   togglePropsPanelCollapsed,
@@ -27,6 +29,7 @@ import {
 const props = defineProps<{
   selection: DiagramEditorSelection
   fileId: string | null
+  canUngroup?: boolean
 }>()
 
 const bus = useDiagramCommandBus()
@@ -34,34 +37,45 @@ const toast = useWanwuToast()
 const imageBusy = ref(false)
 const activeTab = ref<'node' | 'edge' | 'canvas'>('canvas')
 const layout = useDiagramEditorLayout()
-const collapsed = layout.propsCollapsed
 
 watch(
   () => ({
     nodeCount: props.selection.selectedNodeCount,
-    edgeCount: props.selection.selectedEdgeCount,
-    kind: props.selection.kind
+    edgeCount: props.selection.selectedEdgeCount
   }),
-  ({ nodeCount, edgeCount, kind }) => {
-    if (nodeCount > 0) activeTab.value = 'node'
-    else if (edgeCount > 0) activeTab.value = 'edge'
-    else if (kind === 'node' || kind === 'edge') activeTab.value = kind
+  (next, prev) => {
+    if (next.nodeCount === 0 && next.edgeCount === 0) {
+      activeTab.value = 'canvas'
+    } else if (next.nodeCount > 0 && (prev?.nodeCount ?? 0) === 0) {
+      activeTab.value = 'node'
+    } else if (next.edgeCount > 0 && next.nodeCount === 0 && (prev?.edgeCount ?? 0) === 0) {
+      activeTab.value = 'edge'
+    }
   },
   { immediate: true }
 )
 
-const showNode = computed(() => activeTab.value === 'node' && props.selection.node)
-const showEdge = computed(() => activeTab.value === 'edge' && props.selection.edge)
+const showNode = computed(
+  () => activeTab.value === 'node' && props.selection.selectedNodeCount > 0
+)
+const showEdge = computed(
+  () => activeTab.value === 'edge' && props.selection.selectedEdgeCount > 0
+)
 const canvas = computed(() => props.selection.canvas)
 const multiNode = computed(() => props.selection.selectedNodeCount > 1)
 const multiEdge = computed(() => props.selection.selectedEdgeCount > 1)
+const multiSelect = computed(
+  () => props.selection.selectedNodeCount + props.selection.selectedEdgeCount > 1
+)
+const isGroupFrame = computed(() => {
+  if (props.selection.selectedNodeCount !== 1) return false
+  return props.selection.node?.type === DIAGRAM_GROUP_FRAME_TYPE
+})
 
 const selectionBanner = computed(() => {
   const nc = props.selection.selectedNodeCount
   const ec = props.selection.selectedEdgeCount
   if (nc > 0 && ec > 0) return `已选 ${nc} 个图元、${ec} 条连线`
-  if (nc > 1) return `当前选择 ${nc} 个图形`
-  if (ec > 1) return `当前选择 ${ec} 条连线`
   return ''
 })
 
@@ -69,32 +83,49 @@ const dispatchBatchNode = useDebounceFn((nodeProps: Record<string, unknown>) => 
   void bus.dispatch({ type: 'canvas.batchUpdateNodes', payload: { nodeProps } })
 }, 200)
 
-const dispatchNode = useDebounceFn((nodeProps: Record<string, unknown>) => {
+const dispatchNodeText = useDebounceFn((nodeProps: Record<string, unknown>) => {
   const id = props.selection.node?.id
   if (!id) return
   void bus.dispatch({ type: 'canvas.updateNode', payload: { nodeId: id, nodeProps } })
 }, 200)
 
+function patchNodeNow(nodeProps: Record<string, unknown>) {
+  if (multiNode.value) {
+    void bus.dispatch({ type: 'canvas.batchUpdateNodes', payload: { nodeProps } })
+    return
+  }
+  const id = props.selection.node?.id
+  if (!id) return
+  void bus.dispatch({ type: 'canvas.updateNode', payload: { nodeId: id, nodeProps } })
+}
+
+function patchEdgeNow(edgeProps: Record<string, unknown>) {
+  if (multiEdge.value) {
+    void bus.dispatch({ type: 'canvas.batchUpdateEdges', payload: { edgeProps } })
+    return
+  }
+  const id = props.selection.edge?.id
+  if (!id) return
+  void bus.dispatch({ type: 'canvas.updateEdge', payload: { edgeId: id, edgeProps } })
+}
+
 const dispatchBatchEdge = useDebounceFn((edgeProps: Record<string, unknown>) => {
   void bus.dispatch({ type: 'canvas.batchUpdateEdges', payload: { edgeProps } })
 }, 200)
 
-const dispatchEdge = useDebounceFn((edgeProps: Record<string, unknown>) => {
+const dispatchEdgeText = useDebounceFn((edgeProps: Record<string, unknown>) => {
   const id = props.selection.edge?.id
   if (!id) return
   void bus.dispatch({ type: 'canvas.updateEdge', payload: { edgeId: id, edgeProps } })
 }, 200)
 
-const dispatchCanvas = useDebounceFn((settings: Record<string, unknown>) => {
-  void bus.dispatch({ type: 'canvas.updateSettings', payload: { settings } })
-}, 200)
-
 function patchNode(patch: Record<string, unknown>) {
-  if (multiNode.value) {
-    void dispatchBatchNode(patch)
+  if ('text' in patch) {
+    if (multiNode.value) void dispatchBatchNode(patch)
+    else void dispatchNodeText(patch)
     return
   }
-  void dispatchNode(patch)
+  patchNodeNow(patch)
 }
 
 function patchDefaultEdge(patch: Record<string, unknown>) {
@@ -106,16 +137,21 @@ function patchDefaultEdge(patch: Record<string, unknown>) {
 function patchNodeTextStyle(patch: Record<string, unknown>) {
   const ts = props.selection.node?.textStyle
   if (!ts) return
-  patchNode({ textStyle: { ...ts, ...patch } })
+  patchNodeNow({ textStyle: { ...ts, ...patch } })
 }
 
 function patchEdge(patch: Record<string, unknown>) {
-  if (multiEdge.value) {
-    void dispatchBatchEdge(patch)
+  if ('text' in patch) {
+    if (multiEdge.value) void dispatchBatchEdge(patch)
+    else void dispatchEdgeText(patch)
     return
   }
-  void dispatchEdge(patch)
+  patchEdgeNow(patch)
 }
+
+const dispatchCanvas = useDebounceFn((settings: Record<string, unknown>) => {
+  void bus.dispatch({ type: 'canvas.updateSettings', payload: { settings } })
+}, 200)
 
 function patchCanvas(patch: Record<string, unknown>) {
   void dispatchCanvas(patch)
@@ -180,27 +216,48 @@ function clearNodeImage() {
     payload: { nodeId, nodeProps: { imageAsset: null } }
   })
 }
+
+function patchGroupStyle(patch: Record<string, unknown>) {
+  const id = props.selection.node?.id
+  if (!id) return
+  const node = props.selection.node
+  void bus.dispatch({
+    type: 'canvas.updateNode',
+    payload: {
+      nodeId: id,
+      patch: {
+        properties: {
+          dgGroupStyle: {
+            stroke: node?.stroke,
+            strokeWidth: node?.strokeWidth,
+            strokeDasharray: node?.strokeDasharray ?? '',
+            fill: node?.fill,
+            ...patch
+          }
+        }
+      }
+    }
+  })
+}
 </script>
 
 <template>
   <aside
     class="dg-panel dg-panel--stacked dg-panel--props dg-float dg-float--right ww-glass-blur"
-    :class="{ 'dg-panel--collapsed': collapsed }"
     aria-label="属性"
   >
     <header class="dg-panel__head">
       <WwIcon name="sliders-horizontal" size="sm" class="dg-panel__head-icon" />
-      <span v-if="!collapsed" class="dg-panel__head-title">属性</span>
+      <span class="dg-panel__head-title">属性</span>
       <WwIconButton
-        :icon="collapsed ? 'chevron-left' : 'chevron-right'"
+        icon="chevron-right"
         icon-size="sm"
         class="dg-panel__collapse-btn"
-        :aria-label="collapsed ? '展开属性面板' : '收起属性面板'"
+        aria-label="收起属性面板"
         compact
         @click="togglePropsPanelCollapsed(layout)"
       />
     </header>
-    <template v-if="!collapsed">
     <div class="dg-panel-tabs" role="tablist">
       <button
         type="button"
@@ -208,9 +265,13 @@ function clearNodeImage() {
         class="dg-panel-tab"
         :class="{ 'dg-panel-tab--active': activeTab === 'node' }"
         :aria-selected="activeTab === 'node'"
+        :disabled="selection.selectedNodeCount === 0"
         @click="activeTab = 'node'"
       >
         图元
+        <span v-if="selection.selectedNodeCount > 0" class="dg-panel-tab__badge">
+          {{ selection.selectedNodeCount }}
+        </span>
       </button>
       <button
         type="button"
@@ -218,9 +279,13 @@ function clearNodeImage() {
         class="dg-panel-tab"
         :class="{ 'dg-panel-tab--active': activeTab === 'edge' }"
         :aria-selected="activeTab === 'edge'"
+        :disabled="selection.selectedEdgeCount === 0"
         @click="activeTab = 'edge'"
       >
         连线
+        <span v-if="selection.selectedEdgeCount > 0" class="dg-panel-tab__badge">
+          {{ selection.selectedEdgeCount }}
+        </span>
       </button>
       <button
         type="button"
@@ -236,49 +301,104 @@ function clearNodeImage() {
 
     <div class="dg-panel__body ww-scroll-main">
       <p v-if="selectionBanner" class="dg-prop-selection-banner">{{ selectionBanner }}</p>
+
+      <DiagramMultiSelectTools
+        v-if="multiSelect"
+        :node-count="selection.selectedNodeCount"
+        :edge-count="selection.selectedEdgeCount"
+        :can-ungroup="canUngroup ?? false"
+      />
+
+      <!-- 组合框 -->
+      <template v-if="isGroupFrame && selection.node">
+        <section class="dg-prop-section dg-prop-group">
+          <p class="dg-prop-section__title">组合框</p>
+          <SettingsRow label="边框色" class="dg-settings-row--stacked">
+            <input
+              :value="selection.node.stroke"
+              type="color"
+              class="dg-field-color dg-prop-color-block"
+              aria-label="组合框边框色"
+              @input="patchGroupStyle({ stroke: ($event.target as HTMLInputElement).value })"
+            />
+          </SettingsRow>
+          <SettingsRow label="填充色" class="dg-settings-row--stacked">
+            <input
+              :value="selection.node.fill === 'transparent' ? '#ffffff' : selection.node.fill"
+              type="color"
+              class="dg-field-color dg-prop-color-block"
+              aria-label="组合框填充色"
+              @input="patchGroupStyle({ fill: ($event.target as HTMLInputElement).value })"
+            />
+          </SettingsRow>
+          <SettingsRow label="边框粗细" class="dg-settings-row--stacked">
+            <InputText
+              :model-value="String(selection.node.strokeWidth)"
+              type="number"
+              class="dg-prop-control dg-prop-control--num"
+              @update:model-value="
+                patchGroupStyle({ strokeWidth: parseNumber($event, selection.node!.strokeWidth) })
+              "
+            />
+          </SettingsRow>
+          <SettingsRow label="虚线" class="dg-settings-row--stacked">
+            <WwSelect
+              :model-value="selection.node.strokeDasharray ?? ''"
+              :options="DIAGRAM_DASH_PRESETS"
+              option-label="label"
+              option-value="value"
+              size="narrow"
+              @update:model-value="patchGroupStyle({ strokeDasharray: String($event ?? '') })"
+            />
+          </SettingsRow>
+        </section>
+      </template>
+
       <!-- 图元 -->
-      <template v-if="showNode && selection.node">
+      <template v-if="showNode && selection.node && !isGroupFrame">
         <section v-if="!multiNode" class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">文本</p>
-          <SettingsRow label="内容">
+          <SettingsRow label="内容" class="dg-settings-row--stacked">
             <InputText
               :model-value="selection.node.text"
               class="dg-prop-control"
               @update:model-value="patchNode({ text: String($event ?? '') })"
             />
           </SettingsRow>
-          <SettingsRow label="字号">
-            <InputText
-              :model-value="String(selection.node.textStyle.fontSize)"
-              type="number"
-              class="dg-prop-control dg-prop-control--num"
-              @update:model-value="
-                patchNodeTextStyle({
-                  fontSize: parseNumber($event, selection.node!.textStyle.fontSize)
-                })
-              "
-            />
-          </SettingsRow>
-          <SettingsRow label="文字颜色">
+          <div class="dg-prop-kv-grid">
+            <SettingsRow label="字号" class="dg-settings-row--stacked">
+              <InputText
+                :model-value="String(selection.node.textStyle.fontSize)"
+                type="number"
+                class="dg-prop-control dg-prop-control--num"
+                @update:model-value="
+                  patchNodeTextStyle({
+                    fontSize: parseNumber($event, selection.node!.textStyle.fontSize)
+                  })
+                "
+              />
+            </SettingsRow>
+            <SettingsRow label="对齐" class="dg-settings-row--stacked">
+              <WwSelect
+                :model-value="selection.node.textStyle.textAlign"
+                :options="DIAGRAM_TEXT_ALIGN_OPTIONS"
+                option-label="label"
+                option-value="value"
+                size="narrow"
+                @update:model-value="patchNodeTextStyle({ textAlign: String($event ?? 'center') })"
+              />
+            </SettingsRow>
+          </div>
+          <SettingsRow label="文字颜色" class="dg-settings-row--stacked">
             <input
               :value="selection.node.textStyle.color"
               type="color"
-              class="dg-field-color dg-prop-color-swatch"
+              class="dg-field-color dg-prop-color-block"
               aria-label="文字颜色"
               @input="patchNodeTextStyle({ color: ($event.target as HTMLInputElement).value })"
             />
           </SettingsRow>
-          <SettingsRow label="对齐">
-            <WwSelect
-              :model-value="selection.node.textStyle.textAlign"
-              :options="DIAGRAM_TEXT_ALIGN_OPTIONS"
-              option-label="label"
-              option-value="value"
-              size="narrow"
-              @update:model-value="patchNodeTextStyle({ textAlign: String($event ?? 'center') })"
-            />
-          </SettingsRow>
-          <SettingsRow label="样式">
+          <SettingsRow label="样式" class="dg-settings-row--stacked">
             <div class="dg-prop-row dg-prop-row--toggles" role="group" aria-label="文本样式">
               <button
                 type="button"
@@ -320,7 +440,7 @@ function clearNodeImage() {
 
         <section v-if="!multiNode" class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">位置与尺寸</p>
-          <div class="dg-prop-kv-grid dg-prop-kv-grid--stacked">
+          <div class="dg-prop-kv-grid">
             <SettingsRow label="X">
               <InputText
                 :model-value="String(selection.node.x)"
@@ -384,25 +504,26 @@ function clearNodeImage() {
 
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">外观</p>
-          <SettingsRow label="填充色">
+          <p v-if="multiNode" class="dg-prop-multi-hint">批量修改将应用于全部选中图元</p>
+          <SettingsRow label="填充色" class="dg-settings-row--stacked">
             <input
               :value="selection.node.fill"
               type="color"
-              class="dg-field-color dg-prop-color-swatch"
+              class="dg-field-color dg-prop-color-block"
               aria-label="填充色"
               @input="patchNode({ fill: ($event.target as HTMLInputElement).value })"
             />
           </SettingsRow>
-          <SettingsRow label="边框色">
+          <SettingsRow label="边框色" class="dg-settings-row--stacked">
             <input
               :value="selection.node.stroke"
               type="color"
-              class="dg-field-color dg-prop-color-swatch"
+              class="dg-field-color dg-prop-color-block"
               aria-label="边框色"
               @input="patchNode({ stroke: ($event.target as HTMLInputElement).value })"
             />
           </SettingsRow>
-          <SettingsRow label="边框粗细">
+          <SettingsRow label="边框粗细" class="dg-settings-row--stacked">
             <InputText
               :model-value="String(selection.node.strokeWidth)"
               type="number"
@@ -412,7 +533,7 @@ function clearNodeImage() {
               "
             />
           </SettingsRow>
-          <SettingsRow label="阴影">
+          <SettingsRow label="阴影" class="dg-settings-row--stacked">
             <WwSelect
               :model-value="selection.node.shadow"
               :options="DIAGRAM_SHADOW_PRESETS"
@@ -425,7 +546,7 @@ function clearNodeImage() {
         </section>
       </template>
 
-      <div v-else-if="activeTab === 'node'" class="dg-panel__empty">
+      <div v-else-if="activeTab === 'node' && selection.selectedNodeCount === 0" class="dg-panel__empty">
         <WwIcon name="square" size="sm" class="opacity-30" />
         <p class="dg-hint">选中图元以编辑属性</p>
       </div>
@@ -434,7 +555,7 @@ function clearNodeImage() {
       <template v-if="showEdge && selection.edge">
         <section v-if="!multiEdge" class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">文本</p>
-          <SettingsRow label="标签">
+          <SettingsRow label="标签" class="dg-settings-row--stacked">
             <InputText
               :model-value="selection.edge.text"
               class="dg-prop-control"
@@ -445,7 +566,8 @@ function clearNodeImage() {
 
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">线条</p>
-          <SettingsRow label="线型">
+          <p v-if="multiEdge" class="dg-prop-multi-hint">批量修改将应用于全部选中连线</p>
+          <SettingsRow label="线型" class="dg-settings-row--stacked">
             <WwSelect
               :model-value="selection.edge.type"
               :options="DIAGRAM_EDGE_TYPES"
@@ -455,7 +577,7 @@ function clearNodeImage() {
               @update:model-value="patchEdge({ type: String($event ?? 'polyline') })"
             />
           </SettingsRow>
-          <SettingsRow label="虚线">
+          <SettingsRow label="虚线" class="dg-settings-row--stacked">
             <WwSelect
               :model-value="selection.edge.strokeDasharray"
               :options="DIAGRAM_DASH_PRESETS"
@@ -465,16 +587,16 @@ function clearNodeImage() {
               @update:model-value="patchEdge({ strokeDasharray: String($event ?? '') })"
             />
           </SettingsRow>
-          <SettingsRow label="颜色">
+          <SettingsRow label="颜色" class="dg-settings-row--stacked">
             <input
               :value="selection.edge.stroke"
               type="color"
-              class="dg-field-color dg-prop-color-swatch"
+              class="dg-field-color dg-prop-color-block"
               aria-label="线条颜色"
               @input="patchEdge({ stroke: ($event.target as HTMLInputElement).value })"
             />
           </SettingsRow>
-          <SettingsRow label="粗细">
+          <SettingsRow label="粗细" class="dg-settings-row--stacked">
             <InputText
               :model-value="String(selection.edge.strokeWidth)"
               type="number"
@@ -488,7 +610,7 @@ function clearNodeImage() {
 
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">箭头</p>
-          <SettingsRow label="起点">
+          <SettingsRow label="起点" class="dg-settings-row--stacked">
             <WwSelect
               :model-value="selection.edge.startArrowType"
               :options="DIAGRAM_ARROW_TYPES"
@@ -498,20 +620,20 @@ function clearNodeImage() {
               @update:model-value="patchEdge({ startArrowType: String($event ?? 'none') })"
             />
           </SettingsRow>
-          <SettingsRow label="终点">
+          <SettingsRow label="终点" class="dg-settings-row--stacked">
             <WwSelect
               :model-value="selection.edge.endArrowType"
               :options="DIAGRAM_ARROW_TYPES"
               option-label="label"
               option-value="value"
               size="narrow"
-              @update:model-value="patchEdge({ endArrowType: String($event ?? 'arrow') })"
+              @update:model-value="patchEdge({ endArrowType: String($event ?? 'solid') })"
             />
           </SettingsRow>
         </section>
       </template>
 
-      <div v-else-if="activeTab === 'edge'" class="dg-panel__empty">
+      <div v-else-if="activeTab === 'edge' && selection.selectedEdgeCount === 0" class="dg-panel__empty">
         <WwIcon name="link" size="sm" class="opacity-30" />
         <p class="dg-hint">选中连线以编辑样式</p>
       </div>
@@ -520,37 +642,37 @@ function clearNodeImage() {
       <template v-if="activeTab === 'canvas'">
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">画布</p>
-          <SettingsRow label="显示网格">
+          <SettingsRow label="显示网格" class="dg-settings-row--inline">
             <WwToggleSwitch
               :model-value="canvas.gridVisible"
               aria-label="显示网格"
               @update:model-value="patchCanvas({ gridVisible: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="捕捉对齐">
+          <SettingsRow label="捕捉对齐" class="dg-settings-row--inline">
             <WwToggleSwitch
               :model-value="canvas.snapGrid"
               aria-label="捕捉对齐"
               @update:model-value="patchCanvas({ snapGrid: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="导航窗口">
+          <SettingsRow label="导航窗口" class="dg-settings-row--inline">
             <WwToggleSwitch
               :model-value="canvas.miniMapVisible"
               aria-label="显示导航窗口"
               @update:model-value="patchCanvas({ miniMapVisible: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="背景色">
+          <SettingsRow label="背景色" class="dg-settings-row--stacked">
             <input
               :value="canvas.backgroundColor"
               type="color"
-              class="dg-field-color dg-prop-color-swatch"
+              class="dg-field-color dg-prop-color-block"
               aria-label="背景色"
               @input="patchCanvas({ backgroundColor: ($event.target as HTMLInputElement).value })"
             />
           </SettingsRow>
-          <SettingsRow label="主题配色">
+          <SettingsRow label="主题配色" class="dg-settings-row--stacked">
             <WwSelect
               :model-value="canvas.themePreset"
               :options="DIAGRAM_THEME_PRESETS"
@@ -564,7 +686,7 @@ function clearNodeImage() {
 
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">默认连线</p>
-          <SettingsRow label="线型">
+          <SettingsRow label="线型" class="dg-settings-row--stacked">
             <WwSelect
               :model-value="canvas.defaultEdge.type"
               :options="DIAGRAM_EDGE_TYPES"
@@ -574,16 +696,16 @@ function clearNodeImage() {
               @update:model-value="patchDefaultEdge({ type: String($event ?? 'polyline') })"
             />
           </SettingsRow>
-          <SettingsRow label="默认线条色">
+          <SettingsRow label="默认线条色" class="dg-settings-row--stacked">
             <input
               :value="canvas.defaultEdge.stroke"
               type="color"
-              class="dg-field-color dg-prop-color-swatch"
+              class="dg-field-color dg-prop-color-block"
               aria-label="默认线条颜色"
               @input="patchDefaultEdge({ stroke: ($event.target as HTMLInputElement).value })"
             />
           </SettingsRow>
-          <SettingsRow label="粗细">
+          <SettingsRow label="粗细" class="dg-settings-row--stacked">
             <InputText
               :model-value="String(canvas.defaultEdge.strokeWidth)"
               type="number"
@@ -595,7 +717,7 @@ function clearNodeImage() {
               "
             />
           </SettingsRow>
-          <SettingsRow label="虚线">
+          <SettingsRow label="虚线" class="dg-settings-row--stacked">
             <WwSelect
               :model-value="canvas.defaultEdge.strokeDasharray"
               :options="DIAGRAM_DASH_PRESETS"
@@ -605,19 +727,18 @@ function clearNodeImage() {
               @update:model-value="patchDefaultEdge({ strokeDasharray: String($event ?? '') })"
             />
           </SettingsRow>
-          <SettingsRow label="终点箭头">
+          <SettingsRow label="终点箭头" class="dg-settings-row--stacked">
             <WwSelect
               :model-value="canvas.defaultEdge.endArrowType"
               :options="DIAGRAM_ARROW_TYPES"
               option-label="label"
               option-value="value"
               size="narrow"
-              @update:model-value="patchDefaultEdge({ endArrowType: String($event ?? 'arrow') })"
+              @update:model-value="patchDefaultEdge({ endArrowType: String($event ?? 'solid') })"
             />
           </SettingsRow>
         </section>
       </template>
     </div>
-    </template>
   </aside>
 </template>

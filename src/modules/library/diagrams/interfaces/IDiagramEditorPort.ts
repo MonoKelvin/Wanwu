@@ -50,6 +50,10 @@ export interface IDiagramEditorPort {
   deleteSelection(nodeIds?: string[], edgeIds?: string[]): void
   copy(): void
   paste(x?: number, y?: number): void
+  duplicate(offsetX?: number, offsetY?: number): void
+  groupSelection(nodeIds?: string[], edgeIds?: string[]): void
+  ungroupSelection(): void
+  canUngroupSelection(): boolean
   addNode(shape: string, x: number, y: number, text?: string, style?: Record<string, unknown>): string
   connect(sourceNodeId: string, targetNodeId: string, style?: Record<string, unknown>): string
   updateNode(nodeId: string, patch: Record<string, unknown>): void

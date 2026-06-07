@@ -124,6 +124,18 @@ export class CanvasCommandHandler implements IDiagramCommandHandler {
           port.paste(p.x as number | undefined, p.y as number | undefined)
           session.markActivePageDirty()
           return { ok: true }
+        case 'canvas.duplicate':
+          port.duplicate(p.offsetX as number | undefined, p.offsetY as number | undefined)
+          session.markActivePageDirty()
+          return { ok: true }
+        case 'canvas.group':
+          port.groupSelection(p.nodeIds as string[] | undefined, p.edgeIds as string[] | undefined)
+          session.markActivePageDirty()
+          return { ok: true }
+        case 'canvas.ungroup':
+          port.ungroupSelection()
+          session.markActivePageDirty()
+          return { ok: true }
         case 'canvas.undo':
           port.undo()
           session.markActivePageDirty()

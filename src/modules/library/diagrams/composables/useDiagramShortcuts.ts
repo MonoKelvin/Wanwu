@@ -55,6 +55,12 @@ export function useDiagramShortcuts(
       void bus.dispatch({ type: 'canvas.copy' })
       return
     }
+    if (mod && e.key === 'd') {
+      if (isEditableTarget(e.target)) return
+      e.preventDefault()
+      void bus.dispatch({ type: 'canvas.duplicate' })
+      return
+    }
     if (mod && e.key === 'v') {
       if (isEditableTarget(e.target)) return
       e.preventDefault()

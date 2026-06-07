@@ -10,6 +10,7 @@ import DiagramAssetPanel from '@modules/library/diagrams/components/DiagramAsset
 import DiagramPropertyPanel from '@modules/library/diagrams/components/DiagramPropertyPanel.vue'
 import DiagramPageTabs from '@modules/library/diagrams/components/DiagramPageTabs.vue'
 import DiagramAlignBar from '@modules/library/diagrams/components/DiagramAlignBar.vue'
+import DiagramPanelRestoreButton from '@modules/library/diagrams/components/DiagramPanelRestoreButton.vue'
 import DiagramCanvasContextMenu from '@modules/library/diagrams/components/DiagramCanvasContextMenu.vue'
 import DiagramSaveConflictDialog from '@modules/library/diagrams/components/DiagramSaveConflictDialog.vue'
 import DiagramFolderPickerDialog from '@modules/library/diagrams/components/DiagramFolderPickerDialog.vue'
@@ -24,6 +25,10 @@ import { useDiagramIpcBridge } from '@modules/library/diagrams/composables/useDi
 import { pushShellRoute } from '@app/composables/shellNavigation'
 import { provideDiagramSaveFlow } from '@modules/library/diagrams/composables/useDiagramSaveFlow'
 import { provideDiagramEditorLayout } from '@modules/library/diagrams/composables/useDiagramEditorLayout'
+import {
+  toggleAssetPanelCollapsed,
+  togglePropsPanelCollapsed
+} from '@modules/library/diagrams/composables/useDiagramEditorLayout'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { LIBRARY_DIAGRAMS_EDITOR_ROUTE, isDiagramEditorPath } from '@modules/library/diagrams/domain/diagramRoutes'
 import { isShapeDragEvent, readShapeDragData } from '@modules/library/diagrams/lib/diagramShapeDrag'
@@ -37,6 +42,8 @@ const router = useRouter()
 const toast = useToast()
 const { ask } = useWanwuConfirm()
 const selectedNodeCount = ref(0)
+const selectedEdgeCount = ref(0)
+const canUngroupSelection = ref(false)
 const canvasRef = ref<HTMLElement | null>(null)
 const canvasWrapRef = ref<HTMLElement | null>(null)
 const canvasMenuRef = ref<InstanceType<typeof DiagramCanvasContextMenu> | null>(null)
@@ -88,8 +95,8 @@ const editorLayout = provideDiagramEditorLayout()
 const saveFlow = provideDiagramSaveFlow(bus, toast)
 
 const stageStyle = computed(() => ({
-  '--dg-asset-panel-w': editorLayout.assetCollapsed.value ? '2.25rem' : '10.5rem',
-  '--dg-panel-w': editorLayout.propsCollapsed.value ? '2.25rem' : '13.5rem'
+  '--dg-asset-panel-w': editorLayout.assetCollapsed.value ? '0px' : '10.5rem',
+  '--dg-panel-w': editorLayout.propsCollapsed.value ? '0px' : '13.5rem'
 }))
 
 const { conflictOpen, folderPickerOpen, pickedFolderId } = toRefs(saveFlow)
@@ -252,7 +259,9 @@ async function bootstrapEditor() {
   port.setTheme(resolvedTheme())
   port.onEditorSelectionChange((selection) => {
     editorSelection.value = selection
-    selectedNodeCount.value = port.getSelectedNodeIds().length
+    selectedNodeCount.value = selection.selectedNodeCount
+    selectedEdgeCount.value = selection.selectedEdgeCount
+    canUngroupSelection.value = port.canUngroupSelection()
   })
   const markViewportDirty = useDebounceFn(() => {
     sessionRef.value?.markActivePageDirty()
@@ -274,7 +283,8 @@ async function bootstrapEditor() {
         nodeIds: detail.nodeIds,
         edgeIds: detail.edgeIds
       },
-      port.hasClipboard()
+      port.hasClipboard(),
+      port.canUngroupSelection()
     )
   })
   editorSelection.value = port.getSelection()
@@ -516,10 +526,26 @@ function onCanvasDrop(event: DragEvent) {
           @back="goBack"
         />
         <DiagramAlignBar :node-count="selectedNodeCount" />
-        <DiagramAssetPanel />
+        <DiagramAssetPanel v-if="!editorLayout.assetCollapsed.value" />
+        <DiagramPanelRestoreButton
+          v-else
+          side="left"
+          icon="layout-grid"
+          label="展开图元面板"
+          @click="toggleAssetPanelCollapsed(editorLayout)"
+        />
         <DiagramPropertyPanel
+          v-if="!editorLayout.propsCollapsed.value"
           :selection="editorSelection"
           :file-id="sessionRef?.fileId ?? null"
+          :can-ungroup="canUngroupSelection"
+        />
+        <DiagramPanelRestoreButton
+          v-else
+          side="right"
+          icon="sliders-horizontal"
+          label="展开属性面板"
+          @click="togglePropsPanelCollapsed(editorLayout)"
         />
         <DiagramPageTabs :pages="pages" :active-page-id="activePageId" />
         <DiagramSaveConflictDialog

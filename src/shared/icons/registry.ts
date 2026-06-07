@@ -1,5 +1,9 @@
 ﻿import type { Component } from 'vue'
 import {
+    AlignHorizontalDistributeCenter,
+    AlignVerticalDistributeCenter,
+    AlignHorizontalJustifyCenter,
+    AlignVerticalJustifyCenter,
     AppWindow,
     ArrowDownAZ,
     ArrowDownFromLine,
@@ -37,6 +41,7 @@ import {
     Layers,
     LayoutGrid,
     LayoutPanelLeft,
+    LayoutPanelRight,
     Link,
     List,
     ListMusic,
@@ -83,6 +88,10 @@ import { Github } from './Github'
 export const WW_ICON_STROKE = 1.5
 
 export const wwIcons = {
+    'align-center-h': AlignHorizontalJustifyCenter,
+    'align-center-v': AlignVerticalJustifyCenter,
+    'align-distribute-h': AlignHorizontalDistributeCenter,
+    'align-distribute-v': AlignVerticalDistributeCenter,
     'app-window': AppWindow,
     'arrow-down-a-z': ArrowDownAZ,
     'arrow-down-from-line': ArrowDownFromLine,
@@ -122,6 +131,7 @@ export const wwIcons = {
     layers: Layers,
     'layout-grid': LayoutGrid,
     'layout-panel-left': LayoutPanelLeft,
+    'layout-panel-right': LayoutPanelRight,
     link: Link,
     list: List,
     'list-music': ListMusic,

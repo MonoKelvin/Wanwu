@@ -161,7 +161,10 @@ function cellToNode(cell: MxCell): Record<string, unknown> | null {
     width: Math.round(cell.width),
     height: Math.round(cell.height),
     text,
-    properties: {}
+    properties: {
+      width: Math.round(cell.width),
+      height: Math.round(cell.height)
+    }
   }
 
   if (lfType === 'dg-swimlane') {

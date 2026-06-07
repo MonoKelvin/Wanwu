@@ -73,19 +73,58 @@ export function distributeNodePositions(
   if (nodes.length < 3) return []
 
   const sorted = [...nodes].sort((a, b) => (mode === 'horizontal' ? a.x - b.x : a.y - b.y))
-  const first = sorted[0]
-  const last = sorted[sorted.length - 1]
-  const span =
-    mode === 'horizontal' ? last.x - first.x : (last.y ?? 0) - (first.y ?? 0)
-  const step = span / (sorted.length - 1)
+  const boxes = sorted.map((node) => ({ node, ...boundsOf(node) }))
+  const first = boxes[0]
+  const last = boxes[boxes.length - 1]
 
-  return sorted.map((node, index) => {
-    if (index === 0 || index === sorted.length - 1) {
+  if (mode === 'horizontal') {
+    const totalWidth = boxes.reduce((sum, b) => sum + b.node.width, 0)
+    const span = last.right - first.left
+    const gap = Math.max(0, (span - totalWidth) / (boxes.length - 1))
+    let cursor = first.left
+
+    return boxes.map(({ node, node: { width } }, index) => {
+      if (index === 0 || index === boxes.length - 1) {
+        cursor += width + gap
+        return { id: node.id, x: node.x, y: node.y }
+      }
+      const x = cursor + width / 2
+      cursor += width + gap
+      return { id: node.id, x: Math.round(x), y: node.y }
+    })
+  }
+
+  const totalHeight = boxes.reduce((sum, b) => sum + b.node.height, 0)
+  const span = last.bottom - first.top
+  const gap = Math.max(0, (span - totalHeight) / (boxes.length - 1))
+  let cursor = first.top
+
+  return boxes.map(({ node, node: { height } }, index) => {
+    if (index === 0 || index === boxes.length - 1) {
+      cursor += height + gap
       return { id: node.id, x: node.x, y: node.y }
     }
-    if (mode === 'horizontal') {
-      return { id: node.id, x: Math.round(first.x + step * index), y: node.y }
-    }
-    return { id: node.id, x: node.x, y: Math.round(first.y + step * index) }
+    const y = cursor + height / 2
+    cursor += height + gap
+    return { id: node.id, x: node.x, y: Math.round(y) }
   })
+}
+
+/** 选择集几何包围盒中心（用于粘贴定位） */
+export function selectionBoundsCenter(
+  nodes: Array<{ x: number; y: number; width?: number; height?: number }>
+): { x: number; y: number } {
+  let minL = Infinity
+  let maxR = -Infinity
+  let minT = Infinity
+  let maxB = -Infinity
+  for (const n of nodes) {
+    const w = n.width ?? 100
+    const h = n.height ?? 80
+    minL = Math.min(minL, n.x - w / 2)
+    maxR = Math.max(maxR, n.x + w / 2)
+    minT = Math.min(minT, n.y - h / 2)
+    maxB = Math.max(maxB, n.y + h / 2)
+  }
+  return { x: (minL + maxR) / 2, y: (minT + maxB) / 2 }
 }

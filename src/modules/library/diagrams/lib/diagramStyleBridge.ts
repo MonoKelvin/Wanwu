@@ -1,7 +1,9 @@
 import type LogicFlow from '@logicflow/core'
+import { applyNodeDimensions } from '@modules/library/diagrams/lib/diagramShapeResize'
 import type { DiagramArrowType, DiagramShadowPreset } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { shadowStyleForPreset } from '@modules/library/diagrams/lib/diagramCanvasPresets'
 import { readNodeImageAsset } from '@modules/library/diagrams/lib/diagramAssetRefs'
+import { DIAGRAM_GROUP_FRAME_TYPE, readGroupStyle } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import type {
   DiagramEdgeProperties,
   DiagramNodeImageAsset,
@@ -77,6 +79,33 @@ export function readNodeProperties(lf: LogicFlow, nodeId: string): DiagramNodePr
     ? { ...imageRaw, url: imageRaw.url || '' }
     : null
 
+  if (model.type === DIAGRAM_GROUP_FRAME_TYPE) {
+    const gs = readGroupStyle(model.properties as Record<string, unknown>)
+    return {
+      id: nodeId,
+      type: DIAGRAM_GROUP_FRAME_TYPE,
+      text: '',
+      textStyle: {
+        fontSize: 12,
+        color: '#121214',
+        textAlign: 'center',
+        fontWeight: 'normal',
+        underline: false,
+        strikethrough: false
+      },
+      x: Math.round(model.x),
+      y: Math.round(model.y),
+      width: Math.round(model.width),
+      height: Math.round(model.height),
+      fill: gs.fill,
+      stroke: gs.stroke,
+      strokeWidth: gs.strokeWidth,
+      strokeDasharray: gs.strokeDasharray,
+      shadow: 'none',
+      imageAsset: null
+    }
+  }
+
   return {
     id: nodeId,
     type: String(model.type ?? ''),
@@ -128,10 +157,20 @@ export function applyNodeProperties(lf: LogicFlow, props: Partial<DiagramNodePro
     })
   }
 
-  if (props.x != null) model.x = props.x
-  if (props.y != null) model.y = props.y
-  if (props.width != null) model.width = props.width
-  if (props.height != null) model.height = props.height
+  if (props.x != null || props.y != null) {
+    const nx = props.x ?? model.x
+    const ny = props.y ?? model.y
+    const dx = nx - model.x
+    const dy = ny - model.y
+    if (dx !== 0 || dy !== 0) model.move(dx, dy)
+  }
+  if (props.width != null || props.height != null) {
+    applyNodeDimensions(
+      model as Parameters<typeof applyNodeDimensions>[0],
+      props.width ?? Math.round(model.width),
+      props.height ?? Math.round(model.height)
+    )
+  }
 
   const stylePatch: Record<string, unknown> = {}
   if (props.fill != null) stylePatch.fill = props.fill

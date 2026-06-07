@@ -17,6 +17,7 @@ import {
   readEdgeProperties,
   readNodeProperties
 } from '@modules/library/diagrams/lib/diagramStyleBridge'
+import { applyNodeDimensions } from '@modules/library/diagrams/lib/diagramShapeResize'
 import {
   buildDiagramNodeConfig,
   getDiagramShapeById,
@@ -33,10 +34,15 @@ import { defaultCanvasSettings } from '@modules/library/diagrams/lib/diagramSele
 import {
   alignNodePositions,
   distributeNodePositions,
+  selectionBoundsCenter,
   type DiagramAlignMode,
   type DiagramDistributeMode,
   type DiagramNodeBounds
 } from '@modules/library/diagrams/lib/diagramNodeLayout'
+import {
+  DEFAULT_GROUP_STYLE,
+  DIAGRAM_GROUP_FRAME_TYPE
+} from '@modules/library/diagrams/lib/diagramGroupFrame'
 
 let snapshotPluginReady: Promise<void> | null = null
 let miniMapPluginReady: Promise<void> | null = null
@@ -94,6 +100,10 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         edgeIds: string[]
       }) => void)
     | null = null
+  private middlePanning = false
+  private boxSelectOverlayStart: { x: number; y: number } | null = null
+  private boxSelectOverlayEnd: { x: number; y: number } | null = null
+  private groupDragLastPos = new Map<string, { x: number; y: number }>()
 
   mount(el: HTMLElement): void {
     if (this.lf) return
@@ -139,10 +149,28 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         }
       | undefined
     ext?.setExclusiveMode?.(false)
-    ext?.setSelectionSense?.(false, false)
+    ext?.setSelectionSense?.(true, true)
     ext?.openSelectionSelect?.()
     const lfWithSelect = this.lf as LogicFlow & { openSelectionSelect?: () => void }
     lfWithSelect.openSelectionSelect?.()
+  }
+
+  private setBoxSelectionPaused(paused: boolean): void {
+    if (!this.lf) return
+    const ext = this.lf.extension?.selectionSelect as
+      | { closeSelectionSelect?: () => void; openSelectionSelect?: () => void }
+      | undefined
+    if (paused) {
+      ext?.closeSelectionSelect?.()
+      this.cleanupActiveBoxSelect()
+    } else {
+      ext?.openSelectionSelect?.()
+    }
+  }
+
+  private cleanupActiveBoxSelect(): void {
+    this.boxSelectOverlayStart = null
+    this.boxSelectOverlayEnd = null
   }
 
   /** 中键平移视图 */
@@ -154,7 +182,10 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     const onMouseDown = (event: MouseEvent) => {
       if (event.button !== 1) return
       event.preventDefault()
+      event.stopPropagation()
       panning = true
+      this.middlePanning = true
+      this.setBoxSelectionPaused(true)
       lastX = event.clientX
       lastY = event.clientY
       el.style.cursor = 'grabbing'
@@ -172,6 +203,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     const endPan = () => {
       if (!panning) return
       panning = false
+      this.middlePanning = false
+      this.setBoxSelectionPaused(false)
       el.style.cursor = ''
       this.viewportChangeHandler?.()
     }
@@ -223,15 +256,82 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       this.lf?.clearSelectElements()
       this.selectedNodeId = null
       this.selectedEdgeId = null
+      this.cleanupActiveBoxSelect()
       this.emitSelection()
+    })
+
+    this.lf.on('blank:mousedown', ({ e }) => {
+      if (e.button !== 0 || this.middlePanning) return
+      const pt = this.lf!.getPointByClient({ x: e.clientX, y: e.clientY }).domOverlayPosition
+      this.boxSelectOverlayStart = { x: pt.x, y: pt.y }
+      this.boxSelectOverlayEnd = null
+      const onUp = (ev: PointerEvent) => {
+        if (ev.button !== 0) return
+        const endPt = this.lf!.getPointByClient({ x: ev.clientX, y: ev.clientY }).domOverlayPosition
+        this.boxSelectOverlayEnd = { x: endPt.x, y: endPt.y }
+        document.removeEventListener('pointerup', onUp, true)
+      }
+      document.addEventListener('pointerup', onUp, true)
+    })
+
+    this.lf.on('selection:selected', (payload: {
+      leftTopPoint: [number, number]
+      rightBottomPoint: [number, number]
+    }) => {
+      if (!this.lf || !this.boxSelectOverlayStart || !this.boxSelectOverlayEnd) {
+        this.syncSelectionFromGraph()
+        return
+      }
+      const sx = this.boxSelectOverlayStart.x
+      const sy = this.boxSelectOverlayStart.y
+      const ex = this.boxSelectOverlayEnd.x
+      const ey = this.boxSelectOverlayEnd.y
+      const lt = payload.leftTopPoint
+      const rb = payload.rightBottomPoint
+      const isWhole = ex >= sx && ey >= sy
+
+      this.lf.clearSelectElements()
+      const elements = this.lf.graphModel.getAreaElement(lt, rb, isWhole, isWhole, true)
+      for (const el of elements) {
+        if (el.type === DIAGRAM_GROUP_FRAME_TYPE) continue
+        this.lf.selectElementById(el.id, true)
+      }
+      this.cleanupActiveBoxSelect()
+      this.syncSelectionFromGraph()
     })
 
     this.lf.on('selection:mouseup', () => {
       this.syncSelectionFromGraph()
     })
 
-    this.lf.on('selection:selected', () => {
-      this.syncSelectionFromGraph()
+    this.lf.on('node:dragstart', ({ data }) => {
+      const model = this.lf?.getNodeModelById(data.id)
+      if (model?.type === DIAGRAM_GROUP_FRAME_TYPE) {
+        this.groupDragLastPos.set(data.id, { x: model.x, y: model.y })
+      }
+    })
+
+    this.lf.on('node:drag', ({ data }) => {
+      if (!this.lf) return
+      const model = this.lf.getNodeModelById(data.id)
+      if (model?.type !== DIAGRAM_GROUP_FRAME_TYPE) return
+      const last = this.groupDragLastPos.get(data.id)
+      if (!last) return
+      const dx = model.x - last.x
+      const dy = model.y - last.y
+      if (dx === 0 && dy === 0) return
+      const members = (model.properties?.dgGroupMembers as string[] | undefined) ?? []
+      for (const memberId of members) {
+        const member = this.lf.getNodeModelById(memberId)
+        if (member) {
+          member.move(dx, dy)
+        }
+      }
+      this.groupDragLastPos.set(data.id, { x: model.x, y: model.y })
+    })
+
+    this.lf.on('node:dragend', ({ data }) => {
+      this.groupDragLastPos.delete(data.id)
     })
 
     for (const evt of [
@@ -262,9 +362,11 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   private syncSelectionFromGraph(): void {
     if (!this.lf) return
     const selected = this.lf.getSelectElements(true)
-    this.selectedNodeId = selected.nodes[0]?.id ?? null
-    this.selectedEdgeId =
-      selected.nodes.length > 0 ? null : (selected.edges[0]?.id ?? null)
+    const primaryNode =
+      selected.nodes.find((n) => !this.isGroupFrameId(n.id)) ??
+      selected.nodes.find((n) => this.isGroupFrameId(n.id))
+    this.selectedNodeId = primaryNode?.id ?? null
+    this.selectedEdgeId = selected.edges[0]?.id ?? null
     this.emitSelection()
   }
 
@@ -418,8 +520,26 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   }
 
   hasClipboard(): boolean {
-    const clip = (this as { _clipboard?: { nodes?: unknown[] } })._clipboard
-    return Boolean(clip?.nodes?.length)
+    const clip = (this as { _clipboard?: { nodes?: unknown[]; edges?: unknown[] } })._clipboard
+    return Boolean(clip?.nodes?.length || clip?.edges?.length)
+  }
+
+  private isGroupFrameId(nodeId: string): boolean {
+    return this.lf?.getNodeModelById(nodeId)?.type === DIAGRAM_GROUP_FRAME_TYPE
+  }
+
+  private filterAlignableNodeIds(nodeIds: string[]): string[] {
+    return nodeIds.filter((id) => {
+      const model = this.lf?.getNodeModelById(id)
+      return model && model.type !== DIAGRAM_GROUP_FRAME_TYPE
+    })
+  }
+
+  private countSelectedNodes(): number {
+    const ids = this.getSelectedNodeIds()
+    const content = this.filterAlignableNodeIds(ids)
+    if (content.length) return content.length
+    return ids.some((id) => this.isGroupFrameId(id)) ? 1 : 0
   }
 
   private readNodeBounds(nodeId: string): DiagramNodeBounds | null {
@@ -435,14 +555,16 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   }
 
   alignNodes(mode: DiagramAlignMode, nodeIds?: string[]): void {
-    const ids = nodeIds?.length ? nodeIds : this.getSelectedNodeIds()
+    const ids = this.filterAlignableNodeIds(nodeIds?.length ? nodeIds : this.getSelectedNodeIds())
+    if (ids.length < 2) return
     const bounds = ids.map((id) => this.readNodeBounds(id)).filter(Boolean) as DiagramNodeBounds[]
     const patches = alignNodePositions(bounds, mode)
     this.applyNodePositionPatches(patches)
   }
 
   distributeNodes(mode: DiagramDistributeMode, nodeIds?: string[]): void {
-    const ids = nodeIds?.length ? nodeIds : this.getSelectedNodeIds()
+    const ids = this.filterAlignableNodeIds(nodeIds?.length ? nodeIds : this.getSelectedNodeIds())
+    if (ids.length < 3) return
     const bounds = ids.map((id) => this.readNodeBounds(id)).filter(Boolean) as DiagramNodeBounds[]
     const patches = distributeNodePositions(bounds, mode)
     this.applyNodePositionPatches(patches)
@@ -453,8 +575,11 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     for (const patch of patches) {
       const model = this.lf.getNodeModelById(patch.id)
       if (!model) continue
-      model.x = patch.x
-      model.y = patch.y
+      const dx = patch.x - model.x
+      const dy = patch.y - model.y
+      if (dx !== 0 || dy !== 0) {
+        model.move(dx, dy)
+      }
     }
     this.scheduleGraphChange()
     this.syncSelectionFromGraph()
@@ -463,7 +588,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   getSelection(): DiagramEditorSelection {
     const lf = this.lf
     const canvas = { ...this.canvasSettings }
-    const selectedNodeCount = lf ? this.getSelectedNodeIds().length : 0
+    const selectedNodeCount = lf ? this.countSelectedNodes() : 0
     const selectedEdgeCount = lf
       ? this.lf!.getSelectElements(true).edges.length
       : 0
@@ -479,18 +604,18 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       }
     }
 
-    if (this.selectedNodeId) {
+    if (this.selectedNodeId || selectedNodeCount > 0) {
       return {
         kind: 'node',
-        node: readNodeProperties(lf, this.selectedNodeId),
-        edge: null,
+        node: this.selectedNodeId ? readNodeProperties(lf, this.selectedNodeId) : null,
+        edge: this.selectedEdgeId ? readEdgeProperties(lf, this.selectedEdgeId) : null,
         canvas,
         selectedNodeCount,
         selectedEdgeCount
       }
     }
 
-    if (this.selectedEdgeId) {
+    if (this.selectedEdgeId || selectedEdgeCount > 0) {
       return {
         kind: 'edge',
         node: null,
@@ -529,7 +654,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     nodeProps: Partial<DiagramNodeProperties>,
     nodeIds?: string[]
   ): void {
-    const ids = nodeIds?.length ? nodeIds : this.getSelectedNodeIds()
+    const ids = this.filterAlignableNodeIds(nodeIds?.length ? nodeIds : this.getSelectedNodeIds())
     for (const id of ids) {
       this.updateNodeProperties({ id, ...nodeProps })
     }
@@ -578,24 +703,50 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   loadGraph(data: unknown): void {
     const graph = normalizeGraph(data)
     this.lf?.render(graph as never)
-    this.reapplyLoadedGraphStyles()
+    this.reapplyLoadedGraphStyles(graph)
     this.refreshAxisOverlay()
     this.selectedNodeId = null
     this.selectedEdgeId = null
     this.emitSelection()
   }
 
-  private reapplyLoadedGraphStyles(): void {
+  private reapplyLoadedGraphStyles(sourceGraph?: { nodes?: unknown[]; edges?: unknown[] }): void {
     if (!this.lf) return
-    const graph = this.lf.getGraphData() as {
-      nodes?: Array<{ id: string }>
-      edges?: Array<{ id: string }>
+    const rawNodes = (sourceGraph?.nodes ?? []) as Array<{
+      id: string
+      width?: number
+      height?: number
+      properties?: Record<string, unknown>
+    }>
+    for (const raw of rawNodes) {
+      const model = this.lf.getNodeModelById(raw.id)
+      if (!model) continue
+      const props = raw.properties ?? {}
+      const nodeSize = props.nodeSize as Record<string, unknown> | undefined
+      const rx = Number(nodeSize?.rx ?? props.rx)
+      const ry = Number(nodeSize?.ry ?? props.ry)
+      if (Number.isFinite(rx) && rx > 0 && Number.isFinite(ry) && ry > 0) {
+        applyNodeDimensions(
+          model as Parameters<typeof applyNodeDimensions>[0],
+          Math.round(rx * 2),
+          Math.round(ry * 2)
+        )
+      } else {
+        const w = Number(raw.width ?? props.width ?? nodeSize?.width)
+        const h = Number(raw.height ?? props.height ?? nodeSize?.height)
+        if (Number.isFinite(w) && w > 0 && Number.isFinite(h) && h > 0) {
+          applyNodeDimensions(
+            model as Parameters<typeof applyNodeDimensions>[0],
+            Math.round(w),
+            Math.round(h)
+          )
+        }
+      }
+      const readProps = readNodeProperties(this.lf, raw.id)
+      if (readProps) applyNodeProperties(this.lf, readProps)
     }
-    for (const node of graph.nodes ?? []) {
-      const props = readNodeProperties(this.lf, node.id)
-      if (props) applyNodeProperties(this.lf, props)
-    }
-    for (const edge of graph.edges ?? []) {
+    const edges = (sourceGraph?.edges ?? []) as Array<{ id: string }>
+    for (const edge of edges) {
       const props = readEdgeProperties(this.lf, edge.id)
       if (props) applyEdgeProperties(this.lf, props)
     }
@@ -889,8 +1040,19 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
             edges: (edgeIds ?? []).map((id) => ({ id }))
           }
         : this.lf.getSelectElements(true)
-    for (const node of targets.nodes) this.lf.deleteNode(node.id)
-    for (const edge of targets.edges) this.lf.deleteEdge(edge.id)
+    for (const node of targets.nodes) {
+      const model = this.lf.getNodeModelById(node.id)
+      if (model?.type === DIAGRAM_GROUP_FRAME_TYPE) {
+        this.releaseGroupFrame(node.id)
+        continue
+      }
+      this.detachNodeFromGroup(node.id)
+      this.lf.deleteNode(node.id)
+    }
+    for (const edge of targets.edges) {
+      this.detachEdgeFromGroup(edge.id)
+      this.lf.deleteEdge(edge.id)
+    }
     this.selectedNodeId = null
     this.selectedEdgeId = null
     this.emitSelection()
@@ -900,7 +1062,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   copy(): void {
     if (!this.lf) return
     const clip = this.buildClipboardSnapshot()
-    if (!clip?.nodes.length) return
+    if (!clip) return
     ;(this as { _clipboard?: unknown })._clipboard = clip
   }
 
@@ -927,12 +1089,12 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     | null {
     if (!this.lf) return null
     const selected = this.lf.getSelectElements(true)
-    if (!selected.nodes.length) return null
+    if (!selected.nodes.length && !selected.edges.length) return null
 
     const nodes = selected.nodes
       .map((n) => {
         const model = this.lf!.getNodeModelById(n.id)
-        if (!model) return null
+        if (!model || model.type === DIAGRAM_GROUP_FRAME_TYPE) return null
         return {
           id: model.id,
           type: String(model.type),
@@ -941,7 +1103,11 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
           width: model.width,
           height: model.height,
           text: this.clipboardTextValue(model.text),
-          properties: structuredClone(model.properties ?? {}) as Record<string, unknown>
+          properties: (() => {
+            const p = structuredClone(model.properties ?? {}) as Record<string, unknown>
+            delete p.dgGroupId
+            return p
+          })()
         }
       })
       .filter(Boolean) as Array<{
@@ -988,6 +1154,186 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   }
 
   paste(clientX?: number, clientY?: number): void {
+    this.pasteClipboard(clientX, clientY)
+  }
+
+  duplicate(offsetX = 20, offsetY = 20): void {
+    const clip = this.buildClipboardSnapshot()
+    if (!clip?.nodes.length) return
+    ;(this as { _clipboard?: unknown })._clipboard = clip
+    this.pasteClipboard(undefined, undefined, offsetX, offsetY)
+  }
+
+  canUngroupSelection(): boolean {
+    if (!this.lf) return false
+    const selected = this.lf.getSelectElements(true)
+    if (
+      selected.nodes.some((n) => this.lf!.getNodeModelById(n.id)?.type === DIAGRAM_GROUP_FRAME_TYPE)
+    ) {
+      return true
+    }
+    return selected.nodes.some((n) =>
+      Boolean(this.lf!.getNodeModelById(n.id)?.properties?.dgGroupId)
+    )
+  }
+
+  groupSelection(nodeIds?: string[], edgeIds?: string[]): void {
+    if (!this.lf) return
+    const nodes = (nodeIds?.length ? nodeIds : this.getSelectedNodeIds()).filter((id) => {
+      const model = this.lf!.getNodeModelById(id)
+      return model && model.type !== DIAGRAM_GROUP_FRAME_TYPE && !model.properties?.dgGroupId
+    })
+    const edges = edgeIds?.length ? edgeIds : this.getSelectedEdgeIds()
+    if (nodes.length + edges.length < 2) return
+
+    let minX = Infinity
+    let maxX = -Infinity
+    let minY = Infinity
+    let maxY = -Infinity
+    for (const id of nodes) {
+      const bounds = this.readNodeBounds(id)
+      if (!bounds) continue
+      minX = Math.min(minX, bounds.x - bounds.width / 2)
+      maxX = Math.max(maxX, bounds.x + bounds.width / 2)
+      minY = Math.min(minY, bounds.y - bounds.height / 2)
+      maxY = Math.max(maxY, bounds.y + bounds.height / 2)
+    }
+    if (!nodes.length) {
+      for (const edgeId of edges) {
+        const model = this.lf.getEdgeModelById(edgeId)
+        for (const pt of model?.pointsList ?? []) {
+          minX = Math.min(minX, pt.x)
+          maxX = Math.max(maxX, pt.x)
+          minY = Math.min(minY, pt.y)
+          maxY = Math.max(maxY, pt.y)
+        }
+      }
+    }
+    const pad = 12
+    if (!Number.isFinite(minX)) {
+      minX = 0
+      maxX = 120
+      minY = 0
+      maxY = 80
+    }
+    const cx = (minX + maxX) / 2
+    const cy = (minY + maxY) / 2
+    const w = Math.max(maxX - minX + pad * 2, 80)
+    const h = Math.max(maxY - minY + pad * 2, 60)
+
+    const groupId = `${DIAGRAM_GROUP_FRAME_TYPE}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
+    this.lf.addNode({
+      id: groupId,
+      type: DIAGRAM_GROUP_FRAME_TYPE,
+      x: cx,
+      y: cy,
+      properties: {
+        dgGroupMembers: nodes,
+        dgGroupEdges: edges,
+        dgGroupStyle: { ...DEFAULT_GROUP_STYLE }
+      }
+    })
+    const groupModel = this.lf.getNodeModelById(groupId)
+    if (groupModel) {
+      groupModel.width = w
+      groupModel.height = h
+      const zIndexes = nodes
+        .map((id) => this.lf!.getNodeModelById(id)?.zIndex ?? 0)
+        .filter((z) => Number.isFinite(z))
+      groupModel.zIndex = (zIndexes.length ? Math.min(...zIndexes) : 0) - 1
+    }
+    for (const id of nodes) {
+      this.lf.setProperties(id, { dgGroupId: groupId })
+    }
+    for (const id of edges) {
+      this.lf.setProperties(id, { dgGroupId: groupId })
+    }
+    this.lf.selectElementById(groupId)
+    this.syncSelectionFromGraph()
+    this.scheduleGraphChange()
+  }
+
+  ungroupSelection(): void {
+    if (!this.lf) return
+    const selected = this.lf.getSelectElements(true)
+    const groupIds = new Set<string>()
+    for (const node of selected.nodes) {
+      const model = this.lf.getNodeModelById(node.id)
+      if (model?.type === DIAGRAM_GROUP_FRAME_TYPE) {
+        groupIds.add(node.id)
+        continue
+      }
+      const parentId = model?.properties?.dgGroupId
+      if (typeof parentId === 'string' && parentId) groupIds.add(parentId)
+    }
+    for (const groupId of groupIds) {
+      this.releaseGroupFrame(groupId)
+    }
+    this.syncSelectionFromGraph()
+    this.scheduleGraphChange()
+  }
+
+  private detachNodeFromGroup(nodeId: string): void {
+    if (!this.lf) return
+    const model = this.lf.getNodeModelById(nodeId)
+    const groupId = model?.properties?.dgGroupId
+    if (typeof groupId !== 'string' || !groupId) return
+    const group = this.lf.getNodeModelById(groupId)
+    if (!group || group.type !== DIAGRAM_GROUP_FRAME_TYPE) {
+      this.lf.setProperties(nodeId, { dgGroupId: undefined })
+      return
+    }
+    const members = ((group.properties?.dgGroupMembers as string[] | undefined) ?? []).filter(
+      (id) => id !== nodeId
+    )
+    this.lf.setProperties(groupId, { dgGroupMembers: members })
+    this.lf.setProperties(nodeId, { dgGroupId: undefined })
+    if (!members.length && !((group.properties?.dgGroupEdges as string[] | undefined) ?? []).length) {
+      this.lf.deleteNode(groupId)
+    }
+  }
+
+  private detachEdgeFromGroup(edgeId: string): void {
+    if (!this.lf) return
+    const model = this.lf.getEdgeModelById(edgeId)
+    const groupId = model?.properties?.dgGroupId
+    if (typeof groupId !== 'string' || !groupId) return
+    const group = this.lf.getNodeModelById(groupId)
+    if (!group || group.type !== DIAGRAM_GROUP_FRAME_TYPE) {
+      this.lf.setProperties(edgeId, { dgGroupId: undefined })
+      return
+    }
+    const edges = ((group.properties?.dgGroupEdges as string[] | undefined) ?? []).filter(
+      (id) => id !== edgeId
+    )
+    this.lf.setProperties(groupId, { dgGroupEdges: edges })
+    this.lf.setProperties(edgeId, { dgGroupId: undefined })
+    if (!edges.length && !((group.properties?.dgGroupMembers as string[] | undefined) ?? []).length) {
+      this.lf.deleteNode(groupId)
+    }
+  }
+
+  private releaseGroupFrame(groupId: string): void {
+    if (!this.lf) return
+    const model = this.lf.getNodeModelById(groupId)
+    if (!model || model.type !== DIAGRAM_GROUP_FRAME_TYPE) return
+    const members = (model.properties?.dgGroupMembers as string[] | undefined) ?? []
+    const edgeMembers = (model.properties?.dgGroupEdges as string[] | undefined) ?? []
+    for (const memberId of members) {
+      this.lf.setProperties(memberId, { dgGroupId: undefined })
+    }
+    for (const edgeId of edgeMembers) {
+      this.lf.setProperties(edgeId, { dgGroupId: undefined })
+    }
+    this.lf.deleteNode(groupId)
+  }
+
+  private pasteClipboard(
+    clientX?: number,
+    clientY?: number,
+    fixedOffsetX?: number,
+    fixedOffsetY?: number
+  ): void {
     const clip = (this as {
       _clipboard?: {
         nodes: Array<{
@@ -1009,25 +1355,28 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         }>
       }
     })._clipboard
-    if (!clip || !this.lf || !clip.nodes.length) return
+    if (!clip || !this.lf) return
+    if (!clip.nodes.length && !clip.edges?.length) return
     let offsetX = 20
     let offsetY = 20
-    const xs = clip.nodes.map((n) => n.x)
-    const ys = clip.nodes.map((n) => n.y)
-    const centerX = (Math.min(...xs) + Math.max(...xs)) / 2
-    const centerY = (Math.min(...ys) + Math.max(...ys)) / 2
-    if (clientX != null && clientY != null) {
-      const { x: cx, y: cy } = this.clientToCanvas(clientX, clientY)
-      offsetX = cx - centerX
-      offsetY = cy - centerY
-    } else if (this.container) {
-      const rect = this.container.getBoundingClientRect()
-      const { x: cx, y: cy } = this.clientToCanvas(
-        rect.left + rect.width / 2,
-        rect.top + rect.height / 2
-      )
-      offsetX = cx - centerX
-      offsetY = cy - centerY
+    if (clip.nodes.length) {
+      const { x: centerX, y: centerY } = selectionBoundsCenter(clip.nodes)
+      if (fixedOffsetX != null && fixedOffsetY != null) {
+        offsetX = fixedOffsetX
+        offsetY = fixedOffsetY
+      } else if (clientX != null && clientY != null) {
+        const { x: cx, y: cy } = this.clientToCanvas(clientX, clientY)
+        offsetX = cx - centerX
+        offsetY = cy - centerY
+      } else if (this.container) {
+        const rect = this.container.getBoundingClientRect()
+        const { x: cx, y: cy } = this.clientToCanvas(
+          rect.left + rect.width / 2,
+          rect.top + rect.height / 2
+        )
+        offsetX = cx - centerX
+        offsetY = cy - centerY
+      }
     }
     const idMap = new Map<string, string>()
     const newNodeIds: string[] = []
@@ -1036,26 +1385,29 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       const newId = `${node.type}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
       idMap.set(node.id, newId)
       newNodeIds.push(newId)
+      const nodeProperties = structuredClone(node.properties ?? {}) as Record<string, unknown>
+      delete nodeProperties.dgGroupId
       this.lf.addNode({
         id: newId,
         type: node.type,
         x: node.x + offsetX,
         y: node.y + offsetY,
         text: node.text,
-        properties: structuredClone(node.properties ?? {})
+        properties: nodeProperties
       })
       const model = this.lf.getNodeModelById(newId)
-      if (model) {
-        if (node.width != null) model.width = node.width
-        if (node.height != null) model.height = node.height
+      if (model && (node.width != null || node.height != null)) {
+        applyNodeDimensions(
+          model as Parameters<typeof applyNodeDimensions>[0],
+          node.width ?? Math.round(model.width),
+          node.height ?? Math.round(model.height)
+        )
       }
-      const props = readNodeProperties(this.lf, newId)
-      if (props) applyNodeProperties(this.lf, props)
     }
     for (const edge of clip.edges ?? []) {
-      const sourceNodeId = idMap.get(edge.sourceNodeId)
-      const targetNodeId = idMap.get(edge.targetNodeId)
-      if (!sourceNodeId || !targetNodeId) continue
+      const sourceNodeId = idMap.get(edge.sourceNodeId) ?? edge.sourceNodeId
+      const targetNodeId = idMap.get(edge.targetNodeId) ?? edge.targetNodeId
+      if (!this.lf.getNodeModelById(sourceNodeId) || !this.lf.getNodeModelById(targetNodeId)) continue
       const newId = `${edge.type}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
       newEdgeIds.push(newId)
       this.lf.addEdge({
@@ -1112,10 +1464,28 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     if ('text' in patch && typeof patch.text === 'string') {
       model.updateText(patch.text)
     }
-    if ('x' in patch && typeof patch.x === 'number') model.x = patch.x
-    if ('y' in patch && typeof patch.y === 'number') model.y = patch.y
+    if ('x' in patch || 'y' in patch) {
+      const nx = typeof patch.x === 'number' ? patch.x : model.x
+      const ny = typeof patch.y === 'number' ? patch.y : model.y
+      const dx = nx - model.x
+      const dy = ny - model.y
+      if (dx !== 0 || dy !== 0) model.move(dx, dy)
+    }
     const props = patch.properties ?? patch.style
-    if (props && typeof props === 'object') this.lf.setProperties(nodeId, props as Record<string, unknown>)
+    if (props && typeof props === 'object') {
+      const incoming = { ...(props as Record<string, unknown>) }
+      if (incoming.dgGroupStyle && model.properties?.dgGroupStyle) {
+        incoming.dgGroupStyle = {
+          ...(model.properties.dgGroupStyle as Record<string, unknown>),
+          ...(incoming.dgGroupStyle as Record<string, unknown>)
+        }
+      }
+      this.lf.setProperties(nodeId, incoming)
+    }
+    this.scheduleGraphChange()
+    if (model.type === DIAGRAM_GROUP_FRAME_TYPE) {
+      this.syncSelectionFromGraph()
+    }
   }
 
   updateEdge(edgeId: string, patch: Record<string, unknown>): void {
