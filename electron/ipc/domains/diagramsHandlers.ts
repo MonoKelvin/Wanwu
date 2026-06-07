@@ -16,6 +16,9 @@ export function registerDiagramsHandlers(services: AppServices): void {
   ipcMain.handle('diagrams:searchFiles', (_e, params: { query: string; limit?: number }) => {
     return services.diagrams?.searchFiles(params.query, params.limit ?? 40) ?? []
   })
+  ipcMain.handle('diagrams:countRecycleFiles', () => {
+    return services.diagrams?.countRecycleFiles() ?? 0
+  })
   ipcMain.handle('diagrams:duplicateFile', (_e, params: { fileId: string }) => {
     return services.diagrams?.duplicateFile(params.fileId) ?? null
   })
@@ -101,6 +104,16 @@ export function registerDiagramsHandlers(services: AppServices): void {
       return services.diagrams.createFile(params.folderId, params.title, params.content)
     }
   )
+  ipcMain.handle(
+    'diagrams:saveNewWithDialog',
+    (
+      _e,
+      params: { folderId: string; content: DiagramContent; defaultName: string }
+    ) => {
+      if (!services.diagrams) throw new Error('流程图服务未就绪')
+      return services.diagrams.saveNewWithDialog(params)
+    }
+  )
   ipcMain.handle('diagrams:renameFile', (_e, params: { fileId: string; title: string }) => {
     return services.diagrams?.renameFile(params.fileId, params.title) ?? null
   })
@@ -108,13 +121,13 @@ export function registerDiagramsHandlers(services: AppServices): void {
     return services.diagrams?.moveFile(params.fileId, params.folderId) ?? null
   })
   ipcMain.handle('diagrams:softDeleteFile', (_e, params: { fileId: string }) => {
-    services.diagrams?.softDeleteFile(params.fileId)
+    return services.diagrams?.softDeleteFile(params.fileId) ?? false
   })
   ipcMain.handle('diagrams:restoreFile', (_e, params: { fileId: string }) => {
-    services.diagrams?.restoreFile(params.fileId)
+    return services.diagrams?.restoreFile(params.fileId) ?? null
   })
   ipcMain.handle('diagrams:purgeFile', (_e, params: { fileId: string }) => {
-    services.diagrams?.purgeFile(params.fileId)
+    return services.diagrams?.purgeFile(params.fileId) ?? false
   })
   ipcMain.handle('diagrams:createFolder', (_e, params: { name: string }) => {
     if (!services.diagrams) throw new Error('流程图服务未就绪')

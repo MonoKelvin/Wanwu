@@ -4,8 +4,6 @@ import type { DiagramFileMeta, DiagramFolder } from '@shared/types/diagrams'
 import { DiagramRepositoryIpcAdapter } from '@modules/library/diagrams/infrastructure/DiagramRepositoryIpcAdapter'
 import { createDiagramCommandBus } from '@modules/library/diagrams/app/commandBus/createDiagramCommandBus'
 import { setDiagramCatalogCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
-import { DG_RECYCLE } from '@modules/library/diagrams/domain/diagramFolderIds'
-
 const repo = new DiagramRepositoryIpcAdapter()
 
 export const useDiagramsStore = defineStore('library-diagrams', () => {
@@ -39,9 +37,7 @@ export const useDiagramsStore = defineStore('library-diagrams', () => {
   const recycleBinCount = ref(0)
 
   async function refreshRecycleCount() {
-    const list = await repo.listFiles(DG_RECYCLE)
-    recycleBinCount.value = list.length
-    filesByFolder.value = { ...filesByFolder.value, [DG_RECYCLE]: list }
+    recycleBinCount.value = await window.wanwu.diagrams.countRecycleFiles()
   }
 
   function folderById(id: string): DiagramFolder | undefined {

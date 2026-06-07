@@ -1,7 +1,6 @@
 import type { TreeNode } from 'primevue/treenode'
 import type { DiagramFolder } from '@shared/types/diagrams'
 import {
-  DG_DRAFTS,
   DG_FILES,
   DG_HOME,
   DG_RECYCLE,
@@ -11,7 +10,7 @@ import {
 const CATALOG_SELECTION_KEY = 'wanwu:library:diagrams-catalog-selection'
 
 export function buildDiagramCatalogTree(folders: DiagramFolder[]): TreeNode[] {
-  const systemOrder = [DG_HOME, DG_DRAFTS, DG_FILES, DG_RECYCLE]
+  const systemOrder = [DG_HOME, DG_FILES, DG_RECYCLE]
   const systemNodes: TreeNode[] = []
   for (const id of systemOrder) {
     const folder = folders.find((f) => f.id === id)

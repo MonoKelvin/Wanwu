@@ -55,3 +55,9 @@ export const DIAGRAM_TEXT_ALIGN_OPTIONS = [
   { value: 'left', label: '左对齐' },
   { value: 'right', label: '右对齐' }
 ] as const
+
+export const DIAGRAM_TEXT_ALIGN_ACTIONS = [
+  { value: 'left' as const, icon: 'align-left' as const, label: '左对齐' },
+  { value: 'center' as const, icon: 'align-center-h' as const, label: '居中' },
+  { value: 'right' as const, icon: 'align-right' as const, label: '右对齐' }
+]

@@ -26,13 +26,23 @@ export class CanvasCommandHandler implements IDiagramCommandHandler {
     try {
       switch (cmd.type) {
         case 'canvas.addNode': {
-          const nodeId = port.addNode(
-            p.shape as string,
-            p.x as number,
-            p.y as number,
-            p.text as string | undefined,
-            p.style as Record<string, unknown> | undefined
-          )
+          const insertEdgeId = p.insertEdgeId as string | undefined
+          const nodeId = insertEdgeId
+            ? port.addNodeOnEdge(
+                p.shape as string,
+                p.x as number,
+                p.y as number,
+                insertEdgeId,
+                p.text as string | undefined,
+                p.style as Record<string, unknown> | undefined
+              )
+            : port.addNode(
+                p.shape as string,
+                p.x as number,
+                p.y as number,
+                p.text as string | undefined,
+                p.style as Record<string, unknown> | undefined
+              )
           port.select([nodeId])
           session.markActivePageDirty()
           return { ok: true, data: { nodeId } }
@@ -125,7 +135,12 @@ export class CanvasCommandHandler implements IDiagramCommandHandler {
           session.markActivePageDirty()
           return { ok: true }
         case 'canvas.duplicate':
-          port.duplicate(p.offsetX as number | undefined, p.offsetY as number | undefined)
+          port.duplicate(
+            p.offsetX as number | undefined,
+            p.offsetY as number | undefined,
+            p.nodeIds as string[] | undefined,
+            p.edgeIds as string[] | undefined
+          )
           session.markActivePageDirty()
           return { ok: true }
         case 'canvas.group':
@@ -134,6 +149,14 @@ export class CanvasCommandHandler implements IDiagramCommandHandler {
           return { ok: true }
         case 'canvas.ungroup':
           port.ungroupSelection()
+          session.markActivePageDirty()
+          return { ok: true }
+        case 'canvas.bringToFront':
+          port.bringNodesToFront(p.nodeIds as string[] | undefined)
+          session.markActivePageDirty()
+          return { ok: true }
+        case 'canvas.sendToBack':
+          port.sendNodesToBack(p.nodeIds as string[] | undefined)
           session.markActivePageDirty()
           return { ok: true }
         case 'canvas.undo':

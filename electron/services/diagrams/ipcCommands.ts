@@ -4,10 +4,10 @@ import type { DiagramCommandResult } from '../../../src/modules/library/diagrams
 import { validateDiagramCommand } from './commandValidation'
 import type { DiagramContent } from '../../../src/shared/types/diagrams'
 
-export function executeMainDiagramCommand(
+export async function executeMainDiagramCommand(
   service: DiagramService,
   cmd: DiagramCommandEnvelope
-): DiagramCommandResult {
+): Promise<DiagramCommandResult> {
   const validation = validateDiagramCommand(cmd)
   if (validation) return validation
 
@@ -38,19 +38,19 @@ export function executeMainDiagramCommand(
       case 'file.create':
         return {
           ok: true,
-          data: service.createFile(
+          data: await service.createFile(
             payload.folderId as string,
             payload.title as string,
             payload.content as DiagramContent | undefined
           )
         }
       case 'file.read': {
-        const record = service.readFile(payload.fileId as string)
+        const record = await service.readFile(payload.fileId as string)
         if (!record) return { ok: false, code: 'NOT_FOUND', message: '文件不存在' }
         return { ok: true, data: record }
       }
       case 'file.rename': {
-        const meta = service.renameFile(payload.fileId as string, payload.title as string)
+        const meta = await service.renameFile(payload.fileId as string, payload.title as string)
         if (!meta) return { ok: false, code: 'NOT_FOUND', message: '文件不存在' }
         return { ok: true, data: meta }
       }
@@ -59,16 +59,26 @@ export function executeMainDiagramCommand(
         if (!meta) return { ok: false, code: 'NOT_FOUND', message: '文件不存在' }
         return { ok: true, data: meta }
       }
+      case 'file.duplicate': {
+        const record = await service.duplicateFile(payload.fileId as string)
+        if (!record) return { ok: false, code: 'NOT_FOUND', message: '文件不存在' }
+        return { ok: true, data: record }
+      }
+      case 'file.setPinned': {
+        const meta = service.setFilePinned(payload.fileId as string, Boolean(payload.pinned))
+        if (!meta) return { ok: false, code: 'NOT_FOUND', message: '文件不存在' }
+        return { ok: true, data: meta }
+      }
       case 'file.softDelete':
         if (!service.softDeleteFile(payload.fileId as string)) {
           return { ok: false, code: 'NOT_FOUND', message: '文件不存在' }
         }
         return { ok: true }
-      case 'file.restore':
-        if (!service.restoreFile(payload.fileId as string)) {
-          return { ok: false, code: 'NOT_FOUND', message: '文件不存在' }
-        }
-        return { ok: true }
+      case 'file.restore': {
+        const meta = service.restoreFile(payload.fileId as string)
+        if (!meta) return { ok: false, code: 'NOT_FOUND', message: '文件不存在' }
+        return { ok: true, data: meta }
+      }
       case 'file.purge':
         if (!service.purgeFile(payload.fileId as string)) {
           return { ok: false, code: 'NOT_FOUND', message: '文件不存在' }

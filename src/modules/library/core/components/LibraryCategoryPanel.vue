@@ -19,11 +19,13 @@ import { useIllustratedHandbookStore } from '@shared/stores/illustratedHandbook'
 import { LINKS_RECYCLE_BIN_ID, LOCAL_COLLECTIONS_ROOT_ID, useLinksStore } from '@shared/stores/links'
 import { useDiagramsStore } from '@shared/stores/diagrams'
 import {
+  DG_FILES,
   DG_HOME,
   DG_RECYCLE,
   isDiagramCustomFolderId,
   isDiagramSystemFolderId
 } from '@modules/library/diagrams/domain/diagramFolderIds'
+import { useDiagramFolderDialogs } from '@modules/library/diagrams/lib/useDiagramFolderDialogs'
 import { isDiagramEditorRoute } from '@modules/library/diagrams/domain/diagramRoutes'
 import {
   defaultDiagramsCatalogExpanded,
@@ -59,6 +61,11 @@ const linksContextMenuOpen = ref(false)
 const linksContextParentId = ref<string | null>(null)
 const linksContextDeleteId = ref<string | null>(null)
 
+const diagramsContextMenu = ref<InstanceType<typeof WwContextMenu> | null>(null)
+const diagramsContextMenuOpen = ref(false)
+const diagramsContextFolderId = ref<string | null>(null)
+const diagramsContextMode = ref<'major' | 'custom-folder' | null>(null)
+
 const {
   folderDialogVisible,
   folderDeleteVisible,
@@ -71,6 +78,26 @@ const {
 } = useLinksFolderDialogs({
   navigateFolder: (id) => {
     void pushLibraryRoute({ name: 'library-links', params: { folderId: id } })
+  }
+})
+
+const {
+  folderDialogVisible: diagramFolderDialogVisible,
+  folderDialogTitle: diagramFolderDialogTitle,
+  folderDialogInitialName: diagramFolderDialogInitialName,
+  openCreateFolderDialog: openDiagramCreateFolderDialog,
+  openRenameFolderDialog: openDiagramRenameFolderDialog,
+  openDeleteFolderDialog: openDiagramDeleteFolderDialog,
+  onFolderDialogConfirm: onDiagramFolderDialogConfirm
+} = useDiagramFolderDialogs({
+  navigateFolder: (id) => {
+    void pushLibraryRoute({ name: 'library-diagrams-folder', params: { folderId: id } })
+  },
+  onDeleted: (deletedId) => {
+    const current = route.params.folderId as string | undefined
+    if (current === deletedId) {
+      void pushLibraryRoute({ name: 'library-diagrams-folder', params: { folderId: DG_FILES } })
+    }
   }
 })
 
@@ -101,13 +128,6 @@ const catalogDefaultExpanded = computed(() => {
   if (activeMajor.value === 'links') return defaultLinksCatalogExpanded()
   if (activeMajor.value === 'diagrams') return defaultDiagramsCatalogExpanded()
   return {}
-})
-
-const catalogChildIconPrefix = computed(() => {
-  if (activeMajor.value === 'links') return 'ln:'
-  if (activeMajor.value === 'diagrams') return 'dg:'
-  if (activeMajor.value === 'illustrated-handbook') return 'hb:'
-  return ''
 })
 
 function selectionFromRoute(): Record<string, boolean> | null {
@@ -293,10 +313,55 @@ const linksFolderContextItems = computed((): WwMenuItem[] => {
   return items
 })
 
-function onLinksNodeContextMenu(event: MouseEvent, node: TreeNode) {
+const diagramsFolderContextItems = computed((): WwMenuItem[] => {
+  if (diagramsContextMode.value === 'major') {
+    return [
+      {
+        label: '新建分组',
+        wwIcon: 'folder-plus',
+        command: () => openDiagramCreateFolderDialog()
+      }
+    ]
+  }
+  if (diagramsContextMode.value === 'custom-folder' && diagramsContextFolderId.value) {
+    const folderId = diagramsContextFolderId.value
+    return [
+      {
+        label: '重命名',
+        wwIcon: 'pencil',
+        command: () => openDiagramRenameFolderDialog(folderId)
+      },
+      { separator: true },
+      {
+        label: '删除分组',
+        wwIcon: 'trash-2',
+        command: () => void openDiagramDeleteFolderDialog(folderId)
+      }
+    ]
+  }
+  return []
+})
+
+function onCatalogNodeContextMenu(event: MouseEvent, node: TreeNode) {
   event.stopPropagation()
   const key = String(node.key)
-  if (!key.startsWith('ln:') || isCatalogLoadingNodeKey(key)) return
+  if (isCatalogLoadingNodeKey(key)) return
+
+  if (key === 'major:diagrams') {
+    diagramsContextMode.value = 'major'
+    diagramsContextFolderId.value = null
+    diagramsContextMenu.value?.show(event)
+    return
+  }
+
+  if (key.startsWith('dg:folder:')) {
+    diagramsContextMode.value = 'custom-folder'
+    diagramsContextFolderId.value = key.slice('dg:folder:'.length)
+    diagramsContextMenu.value?.show(event)
+    return
+  }
+
+  if (!key.startsWith('ln:')) return
 
   const kind = linksCatalogNodeKind(node)
   if (kind !== 'local-root') return
@@ -367,12 +432,11 @@ async function onNodeSelect(node: TreeNode) {
         :default-expanded-keys="catalogDefaultExpanded"
         major-key-prefix="major:"
         :show-child-icons="true"
-        :child-icon-key-prefix="catalogChildIconPrefix"
         child-icon="folder"
         :node-badge="catalogNodeBadge"
         tree-class="ww-catalog-tree--library-majors"
         @select="onNodeSelect"
-        @contextmenu="onLinksNodeContextMenu"
+        @contextmenu="onCatalogNodeContextMenu"
         @node-expand="onCatalogNodeExpand"
       />
       <WwContextMenu
@@ -380,12 +444,23 @@ async function onNodeSelect(node: TreeNode) {
         v-model:open="linksContextMenuOpen"
         :model="linksFolderContextItems"
       />
+      <WwContextMenu
+        ref="diagramsContextMenu"
+        v-model:open="diagramsContextMenuOpen"
+        :model="diagramsFolderContextItems"
+      />
     </div>
 
     <LinkFolderNameDialog
       v-model:visible="folderDialogVisible"
       title="新建目录"
       @confirm="onFolderDialogConfirm"
+    />
+    <LinkFolderNameDialog
+      v-model:visible="diagramFolderDialogVisible"
+      :title="diagramFolderDialogTitle"
+      :initial-name="diagramFolderDialogInitialName"
+      @confirm="onDiagramFolderDialogConfirm"
     />
     <LinkFolderDeleteDialog
       v-model:visible="folderDeleteVisible"

@@ -9,6 +9,7 @@ import {
   hydrateDiagramGraphAssets,
   stripTransientAssetUrls
 } from '@modules/library/diagrams/lib/diagramAssetRefs'
+import { cloneForIpc } from '@shared/lib/cloneForIpc'
 
 export interface DiagramEditorSessionOptions {
   port: IDiagramEditorPort
@@ -41,7 +42,7 @@ export class DiagramEditorSession {
   ): Promise<void> {
     this.fileId = null
     this.fileMeta = null
-    this.content = structuredClone(templateContent)
+    this.content = cloneForIpc(templateContent)
     this.activePageId = this.content.meta.defaultPageId
     this.clearDirtyState()
     this.dirty = true
@@ -183,7 +184,7 @@ export class DiagramEditorSession {
     this.flushActivePage()
     const id = newId('page')
     const page: DiagramPage = {
-      ...structuredClone(source),
+      ...cloneForIpc(source),
       id,
       name: `${source.name} 副本`,
       sortOrder: this.content.pages.length

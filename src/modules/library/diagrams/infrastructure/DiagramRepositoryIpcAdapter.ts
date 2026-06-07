@@ -1,5 +1,6 @@
 import type { IDiagramRepositoryPort } from '@modules/library/diagrams/interfaces/IDiagramRepositoryPort'
 import type { DiagramContent, DiagramWritePatch } from '@shared/types/diagrams'
+import { cloneForIpc } from '@shared/lib/cloneForIpc'
 
 export class DiagramRepositoryIpcAdapter implements IDiagramRepositoryPort {
   listFolders() {
@@ -25,7 +26,13 @@ export class DiagramRepositoryIpcAdapter implements IDiagramRepositoryPort {
     force?: boolean,
     patch?: DiagramWritePatch
   ) {
-    return window.wanwu.diagrams.writeFile({ fileId, content, baseUpdatedAt, force, patch })
+    return window.wanwu.diagrams.writeFile({
+      fileId,
+      content: cloneForIpc(content),
+      baseUpdatedAt,
+      force,
+      patch
+    })
   }
 
   importWfg() {
@@ -33,7 +40,11 @@ export class DiagramRepositoryIpcAdapter implements IDiagramRepositoryPort {
   }
 
   importWfgFromSource(folderId: string, sourcePath: string, content: DiagramContent) {
-    return window.wanwu.diagrams.importWfgFromSource({ folderId, sourcePath, content })
+    return window.wanwu.diagrams.importWfgFromSource({
+      folderId,
+      sourcePath,
+      content: cloneForIpc(content)
+    })
   }
 
   importDrawio() {
@@ -41,11 +52,29 @@ export class DiagramRepositoryIpcAdapter implements IDiagramRepositoryPort {
   }
 
   exportWfg(input: { fileId?: string | null; content?: DiagramContent; defaultName: string }) {
-    return window.wanwu.diagrams.exportWfg(input)
+    return window.wanwu.diagrams.exportWfg({
+      ...input,
+      content: input.content ? cloneForIpc(input.content) : undefined
+    })
   }
 
   createFile(folderId: string, title: string, content?: DiagramContent) {
-    return window.wanwu.diagrams.createFile({ folderId, title, content })
+    return window.wanwu.diagrams.createFile({
+      folderId,
+      title,
+      content: content ? cloneForIpc(content) : undefined
+    })
+  }
+
+  saveNewWithDialog(input: {
+    folderId: string
+    content: DiagramContent
+    defaultName: string
+  }) {
+    return window.wanwu.diagrams.saveNewWithDialog({
+      ...input,
+      content: cloneForIpc(input.content)
+    })
   }
 
   renameFile(fileId: string, title: string) {
@@ -56,16 +85,24 @@ export class DiagramRepositoryIpcAdapter implements IDiagramRepositoryPort {
     return window.wanwu.diagrams.moveFile({ fileId, folderId })
   }
 
-  async softDeleteFile(fileId: string) {
-    await window.wanwu.diagrams.softDeleteFile({ fileId })
+  duplicateFile(fileId: string) {
+    return window.wanwu.diagrams.duplicateFile({ fileId })
   }
 
-  async restoreFile(fileId: string) {
-    await window.wanwu.diagrams.restoreFile({ fileId })
+  setFilePinned(fileId: string, pinned: boolean) {
+    return window.wanwu.diagrams.setFilePinned({ fileId, pinned })
   }
 
-  async purgeFile(fileId: string) {
-    await window.wanwu.diagrams.purgeFile({ fileId })
+  softDeleteFile(fileId: string) {
+    return window.wanwu.diagrams.softDeleteFile({ fileId })
+  }
+
+  restoreFile(fileId: string) {
+    return window.wanwu.diagrams.restoreFile({ fileId })
+  }
+
+  purgeFile(fileId: string) {
+    return window.wanwu.diagrams.purgeFile({ fileId })
   }
 
   createFolder(name: string) {

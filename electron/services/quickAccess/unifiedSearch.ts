@@ -165,10 +165,10 @@ export function searchRssHits(services: AppServices, term: string): QuickAccessH
   return hits
 }
 
-export function searchDiagramHits(services: AppServices, term: string): QuickAccessHit[] {
+export async function searchDiagramHits(services: AppServices, term: string): Promise<QuickAccessHit[]> {
   const hits: QuickAccessHit[] = []
   const perKind = new Map<QuickAccessHitKind, number>()
-  const rows = services.diagrams?.searchFiles(term, KIND_LIMIT.diagram) ?? []
+  const rows = (await services.diagrams?.searchFiles(term, KIND_LIMIT.diagram)) ?? []
   for (const row of rows) {
     pushHit(
       hits,
@@ -241,7 +241,7 @@ export async function searchMusicHits(services: AppServices, term: string): Prom
 
 const SEARCH_BY_KIND: Record<
   Exclude<QuickAccessHitKind, 'music'>,
-  (services: AppServices, term: string) => QuickAccessHit[]
+  (services: AppServices, term: string) => QuickAccessHit[] | Promise<QuickAccessHit[]>
 > = {
   library: searchLibraryHits,
   note: searchNoteHits,
@@ -259,7 +259,7 @@ export async function searchHitsByKind(
   const term = query.trim()
   if (!term) return []
   if (kind === 'music') return searchMusicHits(services, term)
-  return SEARCH_BY_KIND[kind](services, term)
+  return await SEARCH_BY_KIND[kind](services, term)
 }
 
 /** 各数据源并行搜索后合并（单次 IPC 仍可用） */

@@ -49,7 +49,7 @@ export function registerDiagramCommandBridge(getService: () => DiagramService | 
 
       for (const cmd of params.cmds) {
         if (isMainProcessCommand(cmd.type)) {
-          const result = executeMainDiagramCommand(service, cmd)
+          const result = await executeMainDiagramCommand(service, cmd)
           results.push(result)
           if (stopOnError && !result.ok) break
         } else if (isRendererProcessCommand(cmd.type)) {

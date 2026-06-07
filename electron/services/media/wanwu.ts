@@ -5,12 +5,13 @@ import { getBundledAssetsRoot } from '../core/assetsRoot'
 import { getWanwuPathLayout } from '../data/paths'
 import { ILLUSTRATED_HANDBOOK_MEDIA_DIR } from '../library/paths'
 import { resolveLibraryMediaAbsolute } from '../media/library'
+import { resolveDiagramMediaAbsolute } from '../diagrams/diagramMediaResolver'
 
 function normalizeRel(path: string): string {
   return path.replace(/^\/+/, '').replace(/\\/g, '/').split(/[?#]/)[0]
 }
 
-/** 解析 wanwu-media:// 相对路径为绝对路径 */
+/** 解析 wanwu-media:// 相对路径为绝对路径（同步：仅已落盘的松散文件） */
 export function resolveWanwuMediaAbsolute(relativePath: string): string | null {
   const rel = normalizeRel(relativePath)
   if (!rel) return null
@@ -54,6 +55,21 @@ export function toWanwuMediaUrl(relativePath: string | null | undefined): string
   const rel = relativePath?.trim()
   if (!rel) return null
   const normalized = normalizeRel(rel)
+  if (normalized.startsWith('diagrams/')) {
+    return `wanwu-media://${encodeURI(normalized)}`
+  }
   if (!resolveWanwuMediaAbsolute(normalized)) return null
   return `wanwu-media://${encodeURI(normalized)}`
+}
+
+/** 异步解析（含从 .wfg 解压资源到缓存） */
+export async function resolveWanwuMediaAbsoluteAsync(
+  relativePath: string
+): Promise<string | null> {
+  const sync = resolveWanwuMediaAbsolute(relativePath)
+  if (sync) return sync
+  const rel = normalizeRel(relativePath)
+  if (!rel) return null
+  const layout = getWanwuPathLayout()
+  return resolveDiagramMediaAbsolute(rel, layout)
 }

@@ -64,6 +64,7 @@ const tabMenuItems = computed<WwMenuItem[]>(() => {
 })
 
 let resizeObserver: ResizeObserver | null = null
+let resizeRaf = 0
 
 function recalcInlineCapacity() {
   const bar = barRef.value
@@ -78,7 +79,13 @@ function recalcInlineCapacity() {
 onMounted(() => {
   recalcInlineCapacity()
   if (barRef.value) {
-    resizeObserver = new ResizeObserver(() => recalcInlineCapacity())
+    resizeObserver = new ResizeObserver(() => {
+      if (resizeRaf) cancelAnimationFrame(resizeRaf)
+      resizeRaf = requestAnimationFrame(() => {
+        resizeRaf = 0
+        recalcInlineCapacity()
+      })
+    })
     resizeObserver.observe(barRef.value)
   }
   document.addEventListener('pointerdown', onDocPointerDown)

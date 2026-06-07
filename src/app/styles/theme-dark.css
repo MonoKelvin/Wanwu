@@ -315,20 +315,23 @@
   border-bottom-color: var(--ww-elevated) !important;
 }
 
-/* 全库工具栏：排序按钮 */
-[data-theme='dark'] .ww-page-toolbar .p-button-outlined {
+/* 全库工具栏 / 流程图列表顶栏：排序等描边按钮 */
+[data-theme='dark'] .ww-page-toolbar .p-button-outlined,
+[data-theme='dark'] .dg-page-header-actions .p-button-outlined {
   border-color: var(--ww-border-subtle) !important;
   color: var(--ww-ink-muted) !important;
   background: var(--ww-inset) !important;
 }
 
-[data-theme='dark'] .ww-page-toolbar .p-button-outlined:not(:disabled):hover {
+[data-theme='dark'] .ww-page-toolbar .p-button-outlined:not(:disabled):hover,
+[data-theme='dark'] .dg-page-header-actions .p-button-outlined:not(:disabled):hover {
   border-color: rgb(255 255 255 / 0.12) !important;
   color: var(--ww-ink) !important;
   background: var(--ww-list-hover-bg) !important;
 }
 
-[data-theme='dark'] .ww-page-toolbar .p-button-outlined:not(:disabled):active {
+[data-theme='dark'] .ww-page-toolbar .p-button-outlined:not(:disabled):active,
+[data-theme='dark'] .dg-page-header-actions .p-button-outlined:not(:disabled):active {
   background: var(--ww-elevated) !important;
 }
 

@@ -9,7 +9,9 @@ import DiagramEditorToolbar from '@modules/library/diagrams/components/DiagramEd
 import DiagramAssetPanel from '@modules/library/diagrams/components/DiagramAssetPanel.vue'
 import DiagramPropertyPanel from '@modules/library/diagrams/components/DiagramPropertyPanel.vue'
 import DiagramPageTabs from '@modules/library/diagrams/components/DiagramPageTabs.vue'
-import DiagramAlignBar from '@modules/library/diagrams/components/DiagramAlignBar.vue'
+import DiagramAlignBar, {
+  type DiagramAlignBarAnchor
+} from '@modules/library/diagrams/components/DiagramAlignBar.vue'
 import DiagramPanelRestoreButton from '@modules/library/diagrams/components/DiagramPanelRestoreButton.vue'
 import DiagramCanvasContextMenu from '@modules/library/diagrams/components/DiagramCanvasContextMenu.vue'
 import DiagramSaveConflictDialog from '@modules/library/diagrams/components/DiagramSaveConflictDialog.vue'
@@ -23,6 +25,7 @@ import { useDiagramAutosave } from '@modules/library/diagrams/composables/useDia
 import { useDiagramShortcuts } from '@modules/library/diagrams/composables/useDiagramShortcuts'
 import { useDiagramIpcBridge } from '@modules/library/diagrams/composables/useDiagramIpcBridge'
 import { pushShellRoute } from '@app/composables/shellNavigation'
+import { DG_HOME, DG_RECYCLE } from '@modules/library/diagrams/domain/diagramFolderIds'
 import { provideDiagramSaveFlow } from '@modules/library/diagrams/composables/useDiagramSaveFlow'
 import { provideDiagramEditorLayout } from '@modules/library/diagrams/composables/useDiagramEditorLayout'
 import {
@@ -43,7 +46,11 @@ const toast = useToast()
 const { ask } = useWanwuConfirm()
 const selectedNodeCount = ref(0)
 const selectedEdgeCount = ref(0)
+const alignBarAnchor = ref<DiagramAlignBarAnchor | null>(null)
+const alignBarStageWidth = ref(0)
 const canUngroupSelection = ref(false)
+const canGroupSelection = ref(false)
+const alignBarStageHeight = ref(600)
 const canvasRef = ref<HTMLElement | null>(null)
 const canvasWrapRef = ref<HTMLElement | null>(null)
 const canvasMenuRef = ref<InstanceType<typeof DiagramCanvasContextMenu> | null>(null)
@@ -59,7 +66,10 @@ const editorSelection = ref<DiagramEditorSelection>({
   edge: null,
   canvas: defaultCanvasSettings(resolvedTheme()),
   selectedNodeCount: 0,
-  selectedEdgeCount: 0
+  selectedEdgeCount: 0,
+  selectedNodeIds: [],
+  selectedEdgeIds: [],
+  mixedNodeFields: []
 })
 const isCanvasDragOver = ref(false)
 const dropIndicator = ref<{ x: number; y: number } | null>(null)
@@ -83,6 +93,29 @@ function refreshCanvasEmpty() {
   }
   const graph = port.getGraph() as { nodes?: unknown[] }
   canvasEmpty.value = !(graph.nodes?.length)
+}
+
+function refreshAlignBarAnchor() {
+  const port = portRef.value
+  const wrap = canvasWrapRef.value
+  if (wrap) {
+    alignBarStageWidth.value = wrap.clientWidth
+    alignBarStageHeight.value = wrap.clientHeight
+  }
+  if (!port || selectedNodeCount.value < 2) {
+    alignBarAnchor.value = null
+    return
+  }
+  alignBarAnchor.value = port.getMultiSelectOverlayRect()
+}
+
+let alignBarRaf = 0
+function scheduleAlignBarRefresh() {
+  if (alignBarRaf) return
+  alignBarRaf = requestAnimationFrame(() => {
+    alignBarRaf = 0
+    refreshAlignBarAnchor()
+  })
 }
 
 const repo = new DiagramRepositoryIpcAdapter()
@@ -110,10 +143,18 @@ useDiagramAutosave({
   bus,
   session: sessionRef,
   isBlocked: () => conflictOpen.value || folderPickerOpen.value,
+  savePayload: () => ({ folderId: pickedFolderId.value }),
   onSaveError: (detail) => {
     toast.add({ severity: 'warn', summary: '自动保存失败', detail, life: 3500 })
   }
 })
+
+function applyFolderIdFromRoute() {
+  const raw = route.query.folderId
+  if (typeof raw !== 'string' || !raw) return
+  if (raw === DG_HOME || raw === DG_RECYCLE) return
+  pickedFolderId.value = raw
+}
 
 const unsubscribeBusResult = bus.onResult((cmd, result) => {
   if (!result.ok) return
@@ -184,6 +225,18 @@ function waitForLayout(): Promise<void> {
   })
 }
 
+async function waitForCanvasEl(): Promise<HTMLElement> {
+  for (let attempt = 0; attempt < 12; attempt += 1) {
+    await nextTick()
+    await waitForLayout()
+    const el = canvasRef.value
+    if (el && el.clientWidth > 0 && el.clientHeight > 0) return el
+  }
+  const el = canvasRef.value
+  if (el) return el
+  throw new Error('画布容器未就绪')
+}
+
 async function applyFitView() {
   await waitForLayout()
   portRef.value?.resize()
@@ -193,6 +246,7 @@ async function applyFitView() {
 
 async function openDocument() {
   loadError.value = null
+  if (isNewDraft.value) applyFolderIdFromRoute()
   const wantFitView = route.query.fitView === '1'
   const payload: Record<string, string | boolean> = {}
   if (!isNewDraft.value) {
@@ -247,13 +301,7 @@ async function bootstrapEditor() {
   portRef.value = port
 
   // 等 AppShell 侧栏等 async 子树卸载完成，避免与 nextTick 同帧触发 ref 空引用
-  await waitForLayout()
-  await nextTick()
-
-  const el = canvasRef.value
-  if (!el) {
-    throw new Error('画布容器未就绪')
-  }
+  const el = await waitForCanvasEl()
 
   port.mount(el)
   port.setTheme(resolvedTheme())
@@ -262,6 +310,8 @@ async function bootstrapEditor() {
     selectedNodeCount.value = selection.selectedNodeCount
     selectedEdgeCount.value = selection.selectedEdgeCount
     canUngroupSelection.value = port.canUngroupSelection()
+    canGroupSelection.value = port.canGroupSelection()
+    refreshAlignBarAnchor()
   })
   const markViewportDirty = useDebounceFn(() => {
     sessionRef.value?.markActivePageDirty()
@@ -269,10 +319,22 @@ async function bootstrapEditor() {
 
   port.onViewportChange(() => {
     void markViewportDirty()
+    scheduleAlignBarRefresh()
   })
-  port.onGraphChange(() => {
+  port.onOverlayLayoutChange(() => {
+    scheduleAlignBarRefresh()
+  })
+  const markGraphDirty = useDebounceFn(() => {
     sessionRef.value?.markActivePageDirty()
-    refreshCanvasEmpty()
+  }, 400)
+  const refreshCanvasEmptyDebounced = useDebounceFn(() => refreshCanvasEmpty(), 400)
+
+  port.onGraphChange(() => {
+    void markGraphDirty()
+    void refreshCanvasEmptyDebounced()
+    if (selectedNodeCount.value >= 2) {
+      scheduleAlignBarRefresh()
+    }
   })
   port.onContextMenu((detail) => {
     canvasMenuRef.value?.show(
@@ -294,6 +356,7 @@ async function bootstrapEditor() {
     resizeRaf = requestAnimationFrame(() => {
       resizeRaf = 0
       port.resize()
+      refreshAlignBarAnchor()
     })
   })
   resizeObserver.observe(el)
@@ -303,6 +366,7 @@ async function bootstrapEditor() {
     zoomWheelRaf = requestAnimationFrame(() => {
       zoomWheelRaf = 0
       refreshViewportZoom()
+      refreshAlignBarAnchor()
     })
   }
   el.addEventListener('wheel', onZoomWheel, { passive: true })
@@ -410,6 +474,7 @@ onBeforeUnmount(() => {
   removeBeforeUnload = null
   if (resizeRaf) cancelAnimationFrame(resizeRaf)
   if (zoomWheelRaf) cancelAnimationFrame(zoomWheelRaf)
+  if (alignBarRaf) cancelAnimationFrame(alignBarRaf)
   resizeObserver?.disconnect()
   resizeObserver = null
   teardownZoomWheel?.()
@@ -420,24 +485,27 @@ onBeforeUnmount(() => {
 })
 
 async function goBack() {
-  const ok = await confirmDirtyLeave()
-  if (!ok) return
   await pushShellRoute(router, { name: 'library-diagrams-home' })
 }
 
 function updateDropIndicator(event: DragEvent) {
   const el = canvasRef.value
+  const port = portRef.value
   if (!el) return
   const rect = el.getBoundingClientRect()
   dropIndicator.value = {
     x: event.clientX - rect.left,
     y: event.clientY - rect.top
   }
+  if (!port) return
+  const { x, y } = port.clientToCanvas(event.clientX, event.clientY)
+  port.setEdgeInsertHighlight(port.findEdgeAtCanvasPoint(x, y))
 }
 
 function resetCanvasDragState() {
   isCanvasDragOver.value = false
   dropIndicator.value = null
+  portRef.value?.setEdgeInsertHighlight(null)
 }
 
 function onCanvasDragEnter(event: DragEvent) {
@@ -462,18 +530,24 @@ function onCanvasDragLeave(event: DragEvent) {
 }
 
 function onCanvasDrop(event: DragEvent) {
-  resetCanvasDragState()
   const payload = readShapeDragData(event)
-  if (!payload || !portRef.value) return
+  const port = portRef.value
+  if (!payload || !port) {
+    resetCanvasDragState()
+    return
+  }
   event.preventDefault()
-  const { x, y } = portRef.value.clientToCanvas(event.clientX, event.clientY)
+  const { x, y } = port.clientToCanvas(event.clientX, event.clientY)
+  const insertEdgeId = port.findEdgeAtCanvasPoint(x, y) ?? undefined
+  resetCanvasDragState()
   void bus.dispatch({
     type: 'canvas.addNode',
     payload: {
       shape: payload.shapeId,
       x,
       y,
-      text: payload.defaultText || undefined
+      text: payload.defaultText || undefined,
+      insertEdgeId
     }
   })
 }
@@ -518,14 +592,24 @@ function onCanvasDrop(event: DragEvent) {
         </div>
       </div>
 
+      <DiagramEditorToolbar
+        :title="editorReady ? title : loading ? '加载中…' : '流程图'"
+        :dirty="editorReady && dirty"
+        :zoom-percent="viewportZoomPercent"
+        :folder-id="pickedFolderId"
+        :booting="!editorReady"
+        @back="goBack"
+      />
+
       <template v-if="editorReady">
-        <DiagramEditorToolbar
-          :title="title"
-          :dirty="dirty"
-          :zoom-percent="viewportZoomPercent"
-          @back="goBack"
+        <DiagramAlignBar
+          :node-count="selectedNodeCount"
+          :anchor-rect="alignBarAnchor"
+          :stage-width="alignBarStageWidth"
+          :stage-height="alignBarStageHeight"
+          :node-ids="editorSelection.selectedNodeIds"
+          :edge-ids="editorSelection.selectedEdgeIds"
         />
-        <DiagramAlignBar :node-count="selectedNodeCount" />
         <DiagramAssetPanel v-if="!editorLayout.assetCollapsed.value" />
         <DiagramPanelRestoreButton
           v-else
@@ -539,6 +623,7 @@ function onCanvasDrop(event: DragEvent) {
           :selection="editorSelection"
           :file-id="sessionRef?.fileId ?? null"
           :can-ungroup="canUngroupSelection"
+          :can-group="canGroupSelection"
         />
         <DiagramPanelRestoreButton
           v-else
@@ -561,11 +646,6 @@ function onCanvasDrop(event: DragEvent) {
         />
         <DiagramCanvasContextMenu ref="canvasMenuRef" />
       </template>
-      <DiagramEditorToolbar
-        v-else-if="!loading"
-        title="流程图"
-        @back="goBack"
-      />
     </div>
   </div>
 </template>

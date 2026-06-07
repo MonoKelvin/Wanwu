@@ -17,6 +17,8 @@ export const CANVAS_COMMAND_TYPES = [
   'canvas.duplicate',
   'canvas.group',
   'canvas.ungroup',
+  'canvas.bringToFront',
+  'canvas.sendToBack',
   'canvas.undo',
   'canvas.redo',
   'canvas.zoom',
@@ -76,6 +78,8 @@ export interface CanvasPastePayload {
 export interface CanvasDuplicatePayload {
   offsetX?: number
   offsetY?: number
+  nodeIds?: string[]
+  edgeIds?: string[]
 }
 
 export interface CanvasGroupPayload {
@@ -114,5 +118,9 @@ export interface CanvasAlignNodesPayload {
 
 export interface CanvasDistributeNodesPayload {
   mode: import('@modules/library/diagrams/lib/diagramNodeLayout').DiagramDistributeMode
+  nodeIds?: string[]
+}
+
+export interface CanvasLayerOrderPayload {
   nodeIds?: string[]
 }

@@ -114,17 +114,48 @@ export function distributeNodePositions(
 export function selectionBoundsCenter(
   nodes: Array<{ x: number; y: number; width?: number; height?: number }>
 ): { x: number; y: number } {
-  let minL = Infinity
-  let maxR = -Infinity
-  let minT = Infinity
-  let maxB = -Infinity
+  const rect = selectionUnionBounds(nodes)
+  if (!rect) return { x: 0, y: 0 }
+  return { x: rect.cx, y: rect.cy }
+}
+
+export type DiagramSelectionRect = {
+  minX: number
+  minY: number
+  maxX: number
+  maxY: number
+  width: number
+  height: number
+  cx: number
+  cy: number
+}
+
+export function selectionUnionBounds(
+  nodes: Array<{ x: number; y: number; width?: number; height?: number }>
+): DiagramSelectionRect | null {
+  if (!nodes.length) return null
+  let minX = Infinity
+  let minY = Infinity
+  let maxX = -Infinity
+  let maxY = -Infinity
   for (const n of nodes) {
     const w = n.width ?? 100
     const h = n.height ?? 80
-    minL = Math.min(minL, n.x - w / 2)
-    maxR = Math.max(maxR, n.x + w / 2)
-    minT = Math.min(minT, n.y - h / 2)
-    maxB = Math.max(maxB, n.y + h / 2)
+    minX = Math.min(minX, n.x - w / 2)
+    maxX = Math.max(maxX, n.x + w / 2)
+    minY = Math.min(minY, n.y - h / 2)
+    maxY = Math.max(maxY, n.y + h / 2)
   }
-  return { x: (minL + maxR) / 2, y: (minT + maxB) / 2 }
+  const width = maxX - minX
+  const height = maxY - minY
+  return {
+    minX,
+    minY,
+    maxX,
+    maxY,
+    width,
+    height,
+    cx: (minX + maxX) / 2,
+    cy: (minY + maxY) / 2
+  }
 }

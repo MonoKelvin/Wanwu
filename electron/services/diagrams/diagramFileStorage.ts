@@ -1,166 +1,68 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } from 'fs'
+import { existsSync, rmSync } from 'node:fs'
 import { join } from 'path'
 import {
-  extractInlineImageAssets,
-  materializeGraphInlineAssets
-} from '../../../src/modules/library/diagrams/lib/diagramInlineAssets'
-import type { DiagramContent, DiagramWritePatch } from '../../../src/shared/types/diagrams'
+  createTempWfgPath,
+  publishTempWfgFile
+} from '../core/fsEnsure'
 import {
-  isPackageLayoutDir,
+  extractInlineImageAssets
+} from '../../../src/modules/library/diagrams/lib/diagramInlineAssets'
+import type { DiagramContent } from '../../../src/shared/types/diagrams'
+import {
+  diagramContentDir,
+  findDiagramWfgPath,
+  relativeDiagramWfgPath
+} from './diagramWfgPaths'
+import {
   WfgDiagramDocument,
   diagramContentFromLegacy
 } from './wfgDiagramDocument'
+import {
+  copyDiagramPackageAssets,
+  deleteDiagramContent,
+  diagramContentSizeBytes,
+  ensureDiagramWfgFile,
+  migrateAllDiagramStorageToWfg,
+  readDiagramContent,
+  renameDiagramWfgFile,
+  writeDiagramAsset,
+  writeDiagramContent,
+  writeDiagramContentPatch,
+  writeDiagramContentWithAssets,
+  registerDiagramWfgPath
+} from './diagramWfgStore'
 
-export function diagramContentDir(mediaDir: string, fileId: string): string {
-  return join(mediaDir, 'diagrams', fileId)
+export {
+  diagramContentDir,
+  diagramWfgPath,
+  findDiagramWfgPath,
+  relativeDiagramWfgPath
+} from './diagramWfgPaths'
+
+export {
+  copyDiagramPackageAssets,
+  deleteDiagramContent,
+  diagramContentSizeBytes,
+  ensureDiagramWfgFile,
+  migrateAllDiagramStorageToWfg,
+  readDiagramContent,
+  renameDiagramWfgFile,
+  writeDiagramAsset,
+  writeDiagramContent,
+  writeDiagramContentPatch,
+  writeDiagramContentWithAssets,
+  registerDiagramWfgPath
 }
 
-/** 旧版单文件路径（只读兼容） */
+export function relativeContentPath(fileId: string, title = '未命名流程图'): string {
+  return relativeDiagramWfgPath(fileId, title)
+}
+
+/** @deprecated 仅兼容旧引用 */
 export function diagramContentPath(mediaDir: string, fileId: string): string {
+  const wfg = findDiagramWfgPath(mediaDir, fileId)
+  if (wfg) return wfg
   return join(diagramContentDir(mediaDir, fileId), 'content.json')
-}
-
-export function relativeContentPath(fileId: string): string {
-  return `diagrams/${fileId}/manifest.json`
-}
-
-function readLegacyContent(mediaDir: string, fileId: string): DiagramContent | null {
-  const path = diagramContentPath(mediaDir, fileId)
-  if (!existsSync(path)) return null
-  const raw = readFileSync(path, 'utf8')
-  return JSON.parse(raw) as DiagramContent
-}
-
-export function readDiagramContent(mediaDir: string, fileId: string): DiagramContent | null {
-  const dir = diagramContentDir(mediaDir, fileId)
-  if (isPackageLayoutDir(dir)) {
-    return WfgDiagramDocument.openFolder(fileId, dir).readContent()
-  }
-  const legacy = readLegacyContent(mediaDir, fileId)
-  return legacy ? diagramContentFromLegacy(legacy) : null
-}
-
-export function writeDiagramContentPatch(
-  mediaDir: string,
-  fileId: string,
-  content: DiagramContent,
-  patch: DiagramWritePatch
-): void {
-  const dir = diagramContentDir(mediaDir, fileId)
-  if (!isPackageLayoutDir(dir)) {
-    writeDiagramContent(mediaDir, fileId, content)
-    return
-  }
-
-  const doc = WfgDiagramDocument.openFolder(fileId, dir)
-  const normalized = diagramContentFromLegacy(content)
-
-  if (patch.metaDirty) {
-    doc.writeMeta({
-      format: 'wanwu-diagram',
-      formatVersion: 2,
-      engine: normalized.engine,
-      engineVersion: normalized.engineVersion,
-      title: normalized.meta.title,
-      defaultPageId: normalized.meta.defaultPageId
-    })
-  }
-
-  for (const pageId of patch.deletedPageIds ?? []) {
-    doc.deletePageEntry(pageId)
-  }
-
-  for (const pageId of patch.dirtyPageIds) {
-    const page = normalized.pages.find((p) => p.id === pageId)
-    if (!page) continue
-    const { graph, assets } = materializeGraphInlineAssets(page.graphData)
-    for (const asset of assets) {
-      doc.writeAsset(asset.assetId, asset.ext, Buffer.from(asset.bytes))
-    }
-    doc.writePage({ ...page, graphData: graph })
-  }
-
-  doc.flushDirtyToFolder(dir)
-}
-
-export function writeDiagramContent(
-  mediaDir: string,
-  fileId: string,
-  content: DiagramContent
-): void {
-  writeDiagramContentWithAssets(mediaDir, fileId, content)
-}
-
-/** 写入文档包，并将图中 data URL 内嵌图落盘到 assets/ */
-export function writeDiagramContentWithAssets(
-  mediaDir: string,
-  fileId: string,
-  content: DiagramContent
-): DiagramContent {
-  const { content: stripped, assets } = extractInlineImageAssets(content)
-  const dir = diagramContentDir(mediaDir, fileId)
-  mkdirSync(dir, { recursive: true })
-
-  const legacyPath = diagramContentPath(mediaDir, fileId)
-  if (existsSync(legacyPath) && !isPackageLayoutDir(dir)) {
-    rmSync(legacyPath, { force: true })
-  }
-
-  const normalized = diagramContentFromLegacy(stripped)
-  const doc = isPackageLayoutDir(dir)
-    ? WfgDiagramDocument.openFolder(fileId, dir)
-    : WfgDiagramDocument.create(fileId, normalized.meta.title, normalized)
-
-  if (isPackageLayoutDir(dir)) {
-    doc.replaceContent(normalized)
-  }
-
-  for (const asset of assets) {
-    doc.writeAsset(asset.assetId, asset.ext, Buffer.from(asset.bytes))
-  }
-
-  if (isPackageLayoutDir(dir)) {
-    doc.flushDirtyToFolder(dir)
-  } else {
-    doc.saveFolder(dir)
-  }
-
-  return doc.readContent()
-}
-
-export function deleteDiagramContent(mediaDir: string, fileId: string): void {
-  const dir = diagramContentDir(mediaDir, fileId)
-  if (existsSync(dir)) rmSync(dir, { recursive: true, force: true })
-}
-
-function dirSizeBytes(dir: string): number {
-  let total = 0
-  for (const name of readdirSync(dir)) {
-    const full = join(dir, name)
-    const st = statSync(full)
-    if (st.isDirectory()) total += dirSizeBytes(full)
-    else total += st.size
-  }
-  return total
-}
-
-export function diagramContentSizeBytes(mediaDir: string, fileId: string): number | null {
-  const dir = diagramContentDir(mediaDir, fileId)
-  if (!existsSync(dir)) return null
-  if (isPackageLayoutDir(dir)) {
-    try {
-      return dirSizeBytes(dir)
-    } catch {
-      return null
-    }
-  }
-  const path = diagramContentPath(mediaDir, fileId)
-  if (!existsSync(path)) return null
-  try {
-    return statSync(path).size
-  } catch {
-    return null
-  }
 }
 
 export function createBlankContent(title = '未命名流程图'): DiagramContent {
@@ -202,7 +104,6 @@ export async function readWfgFile(wfgPath: string): Promise<DiagramContent> {
   return doc.readContent()
 }
 
-/** 从 .wfg 导入并落盘到新 fileId（含 assets/ 内嵌资源） */
 export async function materializeImportedWfg(
   mediaDir: string,
   wfgPath: string,
@@ -210,9 +111,11 @@ export async function materializeImportedWfg(
   content: DiagramContent
 ): Promise<void> {
   const src = await WfgDiagramDocument.openWfg('import', wfgPath)
-  const dir = diagramContentDir(mediaDir, newFileId)
-  mkdirSync(dir, { recursive: true })
-  const dest = WfgDiagramDocument.create(newFileId, content.meta.title, diagramContentFromLegacy(content))
+  const dest = WfgDiagramDocument.create(
+    newFileId,
+    content.meta.title,
+    diagramContentFromLegacy(content)
+  )
 
   for (const path of src.getPackage().listEntryPaths()) {
     if (!path.startsWith('assets/')) continue
@@ -226,61 +129,52 @@ export async function materializeImportedWfg(
   }
 
   dest.replaceContent(diagramContentFromLegacy(content))
-  dest.saveFolder(dir)
+  await writeDiagramContentWithAssets(
+    mediaDir,
+    newFileId,
+    relativeDiagramWfgPath(newFileId, content.meta.title),
+    dest.readContent()
+  )
 }
 
 export async function exportContentWfg(content: DiagramContent, wfgPath: string): Promise<void> {
-  const { content: stripped, assets } = extractInlineImageAssets(content)
-  const doc = WfgDiagramDocument.create('export', stripped.meta.title, diagramContentFromLegacy(stripped))
-  for (const asset of assets) {
-    doc.writeAsset(asset.assetId, asset.ext, Buffer.from(asset.bytes))
+  const tempPath = createTempWfgPath()
+  try {
+    const { content: stripped, assets } = extractInlineImageAssets(content)
+    const doc = WfgDiagramDocument.create(
+      'export',
+      stripped.meta.title,
+      diagramContentFromLegacy(stripped)
+    )
+    for (const asset of assets) {
+      doc.writeAsset(asset.assetId, asset.ext, Buffer.from(asset.bytes))
+    }
+    await doc.exportWfg(tempPath)
+    await publishTempWfgFile(tempPath, wfgPath)
+  } finally {
+    if (existsSync(tempPath)) rmSync(tempPath, { force: true })
   }
-  await doc.exportWfg(wfgPath)
 }
 
-export function writeDiagramAsset(
+export async function ensureDiagramPackageDir(
   mediaDir: string,
   fileId: string,
-  assetId: string,
-  ext: string,
-  data: Buffer
-): void {
-  const dir = diagramContentDir(mediaDir, fileId)
-  if (!isPackageLayoutDir(dir)) {
-    const legacy = readLegacyContent(mediaDir, fileId)
-    if (legacy) {
-      writeDiagramContent(mediaDir, fileId, legacy)
-    } else {
-      mkdirSync(dir, { recursive: true })
-      WfgDiagramDocument.create(fileId, '未命名流程图').saveFolder(dir)
-    }
-  }
-
-  const doc = WfgDiagramDocument.openFolder(fileId, dir)
-  doc.writeAsset(assetId, ext, data)
-  doc.flushDirtyToFolder(dir)
-}
-
-/** 将未保存文档的临时资源写入包内 assets（新建后首次插图） */
-export function ensureDiagramPackageDir(mediaDir: string, fileId: string, title: string): void {
-  const dir = diagramContentDir(mediaDir, fileId)
-  if (isPackageLayoutDir(dir)) return
-  mkdirSync(dir, { recursive: true })
-  WfgDiagramDocument.create(fileId, title).saveFolder(dir)
+  contentPath: string,
+  title: string
+): Promise<void> {
+  await ensureDiagramWfgFile(mediaDir, fileId, contentPath, title)
 }
 
 export async function exportDiagramWfg(
   mediaDir: string,
   fileId: string,
+  contentPath: string,
   wfgPath: string
 ): Promise<void> {
-  const dir = diagramContentDir(mediaDir, fileId)
-  const doc = isPackageLayoutDir(dir)
-    ? WfgDiagramDocument.openFolder(fileId, dir)
-    : WfgDiagramDocument.create(
-        fileId,
-        '未命名流程图',
-        readLegacyContent(mediaDir, fileId) ?? createBlankContent()
-      )
-  await doc.exportWfg(wfgPath)
+  const content = await readDiagramContent(mediaDir, fileId, contentPath)
+  if (!content) {
+    await exportContentWfg(createBlankContent(), wfgPath)
+    return
+  }
+  await exportContentWfg(content, wfgPath)
 }

@@ -4,7 +4,7 @@ import { existsSync, statSync } from 'fs'
 import { createReadStream } from 'fs'
 import { extname, join } from 'path'
 import { Readable } from 'stream'
-import { resolveWanwuMediaAbsolute } from './services/media/wanwu'
+import { resolveWanwuMediaAbsoluteAsync } from './services/media/wanwu'
 import { resolveAppLogoPath } from './services/media/appAssets'
 import { registerIpcHandlers } from './ipc/handlers'
 import { setMainWindow, broadcastMaximizedState } from './windowState'
@@ -239,6 +239,9 @@ async function initServices(): Promise<void> {
   services.library = new LibraryService(services.db)
   services.links = new LinksService(userData)
   services.diagrams = new DiagramService(userData)
+  void services.diagrams.migrateStorageToWfg().catch((err) => {
+    console.error('[wanwu:diagrams] 启动迁移失败', err)
+  })
   services.rss = new RssService(services.db)
   services.music = new MusicService(services.db, userData)
   services.media = new MediaService(userData)
@@ -287,7 +290,7 @@ app.whenReady().then(async () => {
 
   protocol.handle('wanwu-media', async (request) => {
     const raw = decodeURIComponent(request.url.replace(/^wanwu-media:\/\//i, '')).split(/[?#]/)[0]
-    const abs = resolveWanwuMediaAbsolute(raw)
+    const abs = await resolveWanwuMediaAbsoluteAsync(raw)
     if (!abs) {
       return new Response('Not Found', { status: 404 })
     }

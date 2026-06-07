@@ -7,6 +7,7 @@ import type {
 import type { IDiagramRepositoryPort } from '@modules/library/diagrams/interfaces/IDiagramRepositoryPort'
 import { diagramError } from '@modules/library/diagrams/app/diagramCommandErrors'
 import type { DiagramContent } from '@shared/types/diagrams'
+import { DG_HOME, DG_RECYCLE } from '@modules/library/diagrams/domain/diagramFolderIds'
 
 export class FileCommandHandler implements IDiagramCommandHandler {
   readonly domain = 'file' as const
@@ -43,19 +44,39 @@ export class FileCommandHandler implements IDiagramCommandHandler {
           return { ok: true, data: meta }
         }
         case 'file.move': {
-          const meta = await this.repo.moveFile(p.fileId as string, p.folderId as string)
+          const targetFolderId = p.folderId as string
+          if (targetFolderId === DG_HOME || targetFolderId === DG_RECYCLE) {
+            return diagramError('VALIDATION', '不能移动到该分组')
+          }
+          const meta = await this.repo.moveFile(p.fileId as string, targetFolderId)
           if (!meta) return diagramError('NOT_FOUND', '文件不存在')
           return { ok: true, data: meta }
         }
-        case 'file.softDelete':
-          await this.repo.softDeleteFile(p.fileId as string)
+        case 'file.duplicate': {
+          const record = await this.repo.duplicateFile(p.fileId as string)
+          if (!record) return diagramError('NOT_FOUND', '文件不存在')
+          return { ok: true, data: record }
+        }
+        case 'file.setPinned': {
+          const meta = await this.repo.setFilePinned(p.fileId as string, Boolean(p.pinned))
+          if (!meta) return diagramError('NOT_FOUND', '文件不存在')
+          return { ok: true, data: meta }
+        }
+        case 'file.softDelete': {
+          const deleted = await this.repo.softDeleteFile(p.fileId as string)
+          if (!deleted) return diagramError('NOT_FOUND', '文件不存在')
           return { ok: true }
-        case 'file.restore':
-          await this.repo.restoreFile(p.fileId as string)
+        }
+        case 'file.restore': {
+          const meta = await this.repo.restoreFile(p.fileId as string)
+          if (!meta) return diagramError('NOT_FOUND', '文件不存在')
+          return { ok: true, data: meta }
+        }
+        case 'file.purge': {
+          const purged = await this.repo.purgeFile(p.fileId as string)
+          if (!purged) return diagramError('NOT_FOUND', '文件不存在')
           return { ok: true }
-        case 'file.purge':
-          await this.repo.purgeFile(p.fileId as string)
-          return { ok: true }
+        }
         default:
           return diagramError('UNKNOWN_COMMAND', `未支持的文件命令: ${cmd.type}`)
       }

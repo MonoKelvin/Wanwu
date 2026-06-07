@@ -6,8 +6,9 @@ import type {
 } from '@modules/library/diagrams/domain/commands/types'
 import type { DiagramEditorSession } from '@modules/library/diagrams/app/DiagramEditorSession'
 import { diagramError } from '@modules/library/diagrams/app/diagramCommandErrors'
-import { DG_DRAFTS, DG_FILES } from '@modules/library/diagrams/domain/diagramFolderIds'
+import { DG_FILES } from '@modules/library/diagrams/domain/diagramFolderIds'
 import { getDiagramTemplate } from '@modules/library/diagrams/lib/diagramTemplates'
+import { cloneForIpc } from '@shared/lib/cloneForIpc'
 
 export class DocumentCommandHandler implements IDiagramCommandHandler {
   readonly domain = 'document' as const
@@ -43,7 +44,7 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
         case 'document.save':
           return this.save(
             session,
-            (p.folderId as string) || DG_DRAFTS,
+            (p.folderId as string) || DG_FILES,
             p.title as string | undefined,
             p.force as boolean | undefined
           )
@@ -63,12 +64,14 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
             if (imported.canceled) return { ok: true, data: { canceled: true } }
             return diagramError('INTERNAL', imported.error ?? '导入失败')
           }
+          const folderId = (p.folderId as string) || DG_FILES
           const record = await session.repository.importWfgFromSource(
-            DG_DRAFTS,
+            folderId,
             imported.sourcePath,
             imported.content
           )
           if (!record) return diagramError('INTERNAL', '导入保存失败')
+          await session.openFromFile(record.meta.id, { skipViewport: true })
           return { ok: true, data: { fileId: record.meta.id, title: record.meta.title } }
         }
         case 'document.importDrawio': {
@@ -81,11 +84,13 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
             if (imported.canceled) return { ok: true, data: { canceled: true } }
             return diagramError('INTERNAL', imported.error ?? '导入失败')
           }
+          const folderId = (p.folderId as string) || DG_FILES
           const record = await session.repository.createFile(
-            DG_DRAFTS,
+            folderId,
             imported.content.meta.title,
             imported.content
           )
+          await session.openFromFile(record.meta.id, { skipViewport: true })
           return { ok: true, data: { fileId: record.meta.id, title: record.meta.title } }
         }
         case 'document.reload': {
@@ -185,13 +190,17 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
     }
 
     if (!session.fileId) {
-      const record = await session.repository.createFile(
-        folderId || DG_DRAFTS,
-        content.meta.title,
-        content
-      )
-      session.markSaved(record.meta)
-      return { ok: true, data: record }
+      const saved = await session.repository.saveNewWithDialog({
+        folderId: folderId || DG_FILES,
+        content,
+        defaultName: content.meta.title
+      })
+      if (!saved.ok) {
+        if (saved.canceled) return diagramError('CANCELED', '已取消保存')
+        return diagramError('INTERNAL', saved.error ?? '保存失败')
+      }
+      session.markSaved(saved.record.meta)
+      return { ok: true, data: saved.record }
     }
 
     const result = await session.repository.writeFile(
@@ -224,7 +233,7 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
     if (!session || !session.content) return diagramError('NO_SESSION', '无活跃编辑器会话')
     session.flushActivePage()
 
-    const content = structuredClone(session.content)
+    const content = cloneForIpc(session.content)
     if (title) content.meta.title = title
 
     const record = await session.repository.createFile(

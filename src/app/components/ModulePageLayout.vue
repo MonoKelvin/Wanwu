@@ -38,11 +38,11 @@
   align-items: center;
   justify-content: center;
   min-height: 0;
-  padding: 2rem var(--ww-page-padding);
-  padding-bottom: clamp(3.5rem, 14vh, 8rem);
+  padding: clamp(2.5rem, 10vh, 4rem) var(--ww-page-padding) clamp(3rem, 14vh, 8rem);
+  overflow: visible;
 }
 
 .ww-module-layout__body > .ww-empty-state .ww-empty-state__card {
-  transform: translateY(calc(-1 * clamp(0.75rem, 5vh, 2.5rem)));
+  transform: none;
 }
 </style>

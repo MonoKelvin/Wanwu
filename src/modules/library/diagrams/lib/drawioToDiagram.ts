@@ -1,4 +1,8 @@
 import { createBlankDiagramContent } from './blankContent'
+import {
+  normalizeEdgeStyleProperties,
+  normalizeNodeStyleProperties
+} from '@modules/library/diagrams/lib/diagramStyleBridge'
 import type { DiagramContent, DiagramGraphData, DiagramPage } from '@shared/types/diagrams'
 
 export interface DrawioParsePage {
@@ -186,7 +190,7 @@ function cellToNode(cell: MxCell): Record<string, unknown> | null {
   if (flags.fontSize) {
     props.textStyle = { fontSize: Number(flags.fontSize) }
   }
-  node.properties = props
+  node.properties = normalizeNodeStyleProperties(props)
 
   return node
 }
@@ -211,7 +215,7 @@ function cellToEdge(cell: MxCell): Record<string, unknown> | null {
     sourceNodeId: `n-${cell.source}`,
     targetNodeId: `n-${cell.target}`,
     text: decodeXmlEntities(cell.value.replace(/<br\s*\/?>/gi, '\n')),
-    properties: props
+    properties: normalizeEdgeStyleProperties(props)
   }
 }
 

@@ -2,20 +2,91 @@ import type LogicFlow from '@logicflow/core'
 
 export type PolyPoint = [number, number]
 
-/** 图元缩放控制点样式（适配深浅主题） */
+/** 图元缩放主题色（SVG 属性须用实色，不能用 CSS color-mix） */
+export function diagramResizeTheme(): {
+  outlineStroke: string
+  handleFill: string
+  handleStroke: string
+} {
+  const isDark = document.documentElement.dataset.theme === 'dark'
+  return {
+    outlineStroke: isDark ? '#8a8a92' : '#9a9aa2',
+    handleFill: isDark ? '#2a2a2e' : '#ffffff',
+    handleStroke: isDark ? '#6a6a72' : '#8a8a92'
+  }
+}
+
+/** 自定义 SVG 图元共用的 fill/stroke/虚线属性 */
+export function diagramNodeShapeAttrs(style: Record<string, unknown>): Record<string, unknown> {
+  const attrs: Record<string, unknown> = {
+    fill: style.fill,
+    stroke: style.stroke,
+    strokeWidth: style.strokeWidth
+  }
+  const dash = style.strokeDasharray
+  if (dash != null && String(dash).length > 0) {
+    attrs.strokeDasharray = dash
+  }
+  return attrs
+}
+
+/** 图元缩放控制点样式 */
 export function diagramResizeControlStyle(): {
   width: number
   height: number
   fill: string
   stroke: string
 } {
-  const isDark = document.documentElement.dataset.theme === 'dark'
+  const t = diagramResizeTheme()
   return {
-    width: 6,
-    height: 6,
-    fill: isDark ? '#2a2a2e' : '#ffffff',
-    stroke: isDark ? '#6a6a72' : '#8a8a92'
+    width: 8,
+    height: 8,
+    fill: t.handleFill,
+    stroke: t.handleStroke
   }
+}
+
+/** 选中虚线框样式 */
+export function diagramResizeOutlineStyle(): {
+  fill: string
+  stroke: string
+  strokeWidth: number
+  strokeDasharray: string
+  radius: number
+} {
+  const t = diagramResizeTheme()
+  return {
+    fill: 'none',
+    stroke: t.outlineStroke,
+    strokeWidth: 1,
+    strokeDasharray: '4,4',
+    radius: 4
+  }
+}
+
+/** resize 后同步 nodeSize 到 properties，供属性面板与持久化 */
+export function syncNodeSizeProperties(model: {
+  width: number
+  height: number
+  rx?: number
+  ry?: number
+  setProperties: (p: Record<string, unknown>) => void
+}): void {
+  if (typeof model.rx === 'number' && typeof model.ry === 'number') {
+    model.setProperties({
+      nodeSize: { rx: model.rx, ry: model.ry },
+      rx: model.rx,
+      ry: model.ry,
+      width: model.width,
+      height: model.height
+    })
+    return
+  }
+  model.setProperties({
+    nodeSize: { width: model.width, height: model.height },
+    width: model.width,
+    height: model.height
+  })
 }
 
 /** 是否已有持久化尺寸（拖拽缩放、属性面板、保存重开） */

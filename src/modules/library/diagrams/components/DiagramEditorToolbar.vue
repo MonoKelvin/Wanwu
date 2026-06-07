@@ -10,11 +10,19 @@ import { useDiagramSaveFlow } from '@modules/library/diagrams/composables/useDia
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { focusInputText } from '@modules/library/diagrams/lib/diagramInputFocus'
+import {
+  DIAGRAM_WFG_EXT,
+  diagramTitleBase,
+  normalizeDiagramTitleInput
+} from '@modules/library/diagrams/lib/diagramHomeUtils'
 
 const props = defineProps<{
   title: string
   dirty?: boolean
   zoomPercent?: number
+  folderId?: string
+  /** 画布尚未就绪时禁用编辑操作，保留工具栏布局 */
+  booting?: boolean
 }>()
 
 const emit = defineEmits<{ back: [] }>()
@@ -23,7 +31,8 @@ const bus = useDiagramCommandBus()
 const saveFlow = useDiagramSaveFlow()
 const toast = useWanwuToast()
 const { ask } = useWanwuConfirm()
-const titleDraft = ref(props.title)
+const titleDraft = ref(diagramTitleBase(props.title))
+const displayTitleBase = computed(() => diagramTitleBase(props.title))
 const editingTitle = ref(false)
 const titleInputRef = ref<InstanceType<typeof InputText> | null>(null)
 const zoomLabel = computed(() => `${props.zoomPercent ?? 100}%`)
@@ -31,7 +40,7 @@ const zoomLabel = computed(() => `${props.zoomPercent ?? 100}%`)
 watch(
   () => props.title,
   (value) => {
-    if (!editingTitle.value) titleDraft.value = value
+    if (!editingTitle.value) titleDraft.value = diagramTitleBase(value)
   }
 )
 
@@ -88,7 +97,7 @@ async function exportAllPagesPng() {
 }
 
 async function importExternalFile(type: 'document.importWfg' | 'document.importDrawio', label: string) {
-  let result = await bus.dispatch({ type })
+  let result = await bus.dispatch({ type, payload: { folderId: props.folderId } })
   if (!result.ok && result.code === 'VALIDATION') {
     const discard = await ask({
       header: '未保存的更改',
@@ -97,7 +106,10 @@ async function importExternalFile(type: 'document.importWfg' | 'document.importD
       rejectLabel: '取消'
     })
     if (!discard) return
-    result = await bus.dispatch({ type, payload: { discard: true } })
+    result = await bus.dispatch({
+      type,
+      payload: { discard: true, folderId: props.folderId }
+    })
   }
   if (!result.ok) {
     if (result.message && result.code !== 'VALIDATION') toast.error(result.message)
@@ -145,24 +157,24 @@ function blobToDataUrl(blob: Blob): Promise<string> {
 
 function startTitleEdit() {
   editingTitle.value = true
-  titleDraft.value = props.title
+  titleDraft.value = displayTitleBase.value
   requestAnimationFrame(() => focusInputText(titleInputRef.value, { select: true }))
 }
 
 async function commitTitleEdit() {
   editingTitle.value = false
-  const next = titleDraft.value.trim()
-  if (!next || next === props.title) {
-    titleDraft.value = props.title
+  const next = normalizeDiagramTitleInput(titleDraft.value)
+  if (!next || next === displayTitleBase.value) {
+    titleDraft.value = displayTitleBase.value
     return
   }
   const result = await saveFlow.saveDocument({ title: next })
-  if (!result) titleDraft.value = props.title
+  if (!result) titleDraft.value = displayTitleBase.value
 }
 
 function cancelTitleEdit() {
   editingTitle.value = false
-  titleDraft.value = props.title
+  titleDraft.value = displayTitleBase.value
 }
 
 const fileMenuItems: WwMenuItem[] = [
@@ -223,7 +235,12 @@ function openMenu(
 </script>
 
 <template>
-  <header class="dg-editor-toolbar dg-float dg-float--top-center ww-glass-blur" role="toolbar">
+  <header
+    class="dg-editor-toolbar dg-float dg-float--top-center ww-glass-blur"
+    :class="{ 'dg-editor-toolbar--booting': booting }"
+    role="toolbar"
+    :aria-busy="booting || undefined"
+  >
     <div class="dg-editor-toolbar__lead">
       <WwButton
         icon="arrow-left"
@@ -234,25 +251,34 @@ function openMenu(
         aria-label="返回"
         @click="emit('back')"
       />
-      <InputText
-        v-if="editingTitle"
-        ref="titleInputRef"
-        v-model="titleDraft"
-        class="dg-editor-toolbar__title-input"
-        @keydown.enter.prevent="commitTitleEdit"
-        @keydown.esc.prevent="cancelTitleEdit"
-        @blur="commitTitleEdit"
-      />
+      <div v-if="editingTitle" class="dg-editor-toolbar__title-edit">
+        <InputText
+          ref="titleInputRef"
+          v-model="titleDraft"
+          class="dg-editor-toolbar__title-input"
+          @keydown.enter.prevent="commitTitleEdit"
+          @keydown.esc.prevent="cancelTitleEdit"
+          @blur="commitTitleEdit"
+        />
+        <span class="dg-editor-toolbar__title-ext">{{ DIAGRAM_WFG_EXT }}</span>
+      </div>
       <button
-        v-else
+        v-else-if="!booting"
         type="button"
         class="dg-editor-toolbar__title"
-        :title="title"
+        :title="`${displayTitleBase}${DIAGRAM_WFG_EXT}`"
         @click="startTitleEdit"
       >
-        {{ title }}
+        <span class="dg-editor-toolbar__title-name">{{ displayTitleBase }}</span
+        ><span class="dg-editor-toolbar__title-ext">{{ DIAGRAM_WFG_EXT }}</span>
       </button>
-      <span v-if="dirty" class="dg-editor-toolbar__badge">未保存</span>
+      <span v-else class="dg-editor-toolbar__title dg-editor-toolbar__title--static">
+        <span class="dg-editor-toolbar__title-name">{{ displayTitleBase }}</span
+        ><span v-if="displayTitleBase !== '加载中…'" class="dg-editor-toolbar__title-ext">{{
+          DIAGRAM_WFG_EXT
+        }}</span>
+      </span>
+      <span v-if="dirty && !booting" class="dg-editor-toolbar__badge">未保存</span>
     </div>
 
     <div class="dg-editor-toolbar__actions">
@@ -264,6 +290,7 @@ function openMenu(
           rounded
           class="dg-toolbar-icon-btn"
           aria-label="缩小"
+          :disabled="booting"
           v-tooltip.bottom="'缩小'"
           @click="bus.dispatch({ type: 'canvas.zoom', payload: { delta: -0.1 } })"
         />
@@ -274,6 +301,7 @@ function openMenu(
           rounded
           class="dg-toolbar-icon-btn"
           aria-label="放大"
+          :disabled="booting"
           v-tooltip.bottom="'放大'"
           @click="bus.dispatch({ type: 'canvas.zoom', payload: { delta: 0.1 } })"
         />
@@ -284,13 +312,15 @@ function openMenu(
           rounded
           class="dg-toolbar-icon-btn"
           aria-label="适应画布"
+          :disabled="booting"
           v-tooltip.bottom="'适应画布'"
           @click="bus.dispatch({ type: 'canvas.zoomToFit' })"
         />
         <button
           type="button"
           class="dg-editor-toolbar__zoom-label"
-          :title="`当前缩放 ${zoomLabel}，点击重置`"
+          :disabled="booting"
+          :title="booting ? undefined : `当前缩放 ${zoomLabel}，点击重置`"
           @click="bus.dispatch({ type: 'canvas.zoomReset' })"
         >
           {{ zoomLabel }}
@@ -305,6 +335,7 @@ function openMenu(
           rounded
           class="dg-toolbar-icon-btn"
           aria-label="保存"
+          :disabled="booting"
           v-tooltip.bottom="'保存 (Ctrl+S)'"
           @click="save"
         />
@@ -315,6 +346,7 @@ function openMenu(
           rounded
           class="dg-toolbar-icon-btn"
           aria-label="文件"
+          :disabled="booting"
           v-tooltip.bottom="'文件'"
           @click="openMenu($event, fileMenuRef)"
         />
@@ -325,6 +357,7 @@ function openMenu(
           rounded
           class="dg-toolbar-icon-btn"
           aria-label="导出"
+          :disabled="booting"
           v-tooltip.bottom="'导出'"
           @click="openMenu($event, exportMenuRef)"
         />
@@ -335,6 +368,7 @@ function openMenu(
           rounded
           class="dg-toolbar-icon-btn"
           aria-label="视图"
+          :disabled="booting"
           v-tooltip.bottom="'视图'"
           @click="openMenu($event, viewMenuRef)"
         />
@@ -349,6 +383,7 @@ function openMenu(
         rounded
         class="dg-toolbar-icon-btn"
         aria-label="快捷键"
+        :disabled="booting"
         v-tooltip.bottom="'快捷键'"
         @click="shortcutsOpen = true"
       />

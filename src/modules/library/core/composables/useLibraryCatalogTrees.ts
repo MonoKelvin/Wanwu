@@ -157,9 +157,11 @@ export function useLibraryCatalogTrees(options: {
   )
 
   watch(
-    () => options.diagramsStore.folders,
-    () => refreshSection('diagrams'),
-    { deep: true }
+    () =>
+      options.diagramsStore.folders
+        .map((f) => `${f.id}:${f.name}:${f.sortOrder}:${f.deletedAt ?? ''}`)
+        .join('|'),
+    () => refreshSection('diagrams')
   )
 
   watch(

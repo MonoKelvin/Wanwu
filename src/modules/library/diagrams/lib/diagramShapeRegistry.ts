@@ -1,5 +1,6 @@
 import type LogicFlow from '@logicflow/core'
 import { DIAGRAM_SHAPE_CATEGORIES } from '@modules/library/diagrams/lib/diagramShapeCatalog'
+import { normalizeNodeStyleProperties } from '@modules/library/diagrams/lib/diagramStyleBridge'
 import type { DiagramShapeItem } from '@modules/library/diagrams/lib/diagramShapeTypes'
 
 export { registerAllDiagramShapes } from '@modules/library/diagrams/lib/diagramShapeRegs'
@@ -29,7 +30,7 @@ export function buildDiagramNodeConfig(
     x,
     y,
     text: text ?? item.defaultText,
-    properties: { ...properties }
+    properties: normalizeNodeStyleProperties(properties)
   }
 
   if (item.lfType === 'text') {

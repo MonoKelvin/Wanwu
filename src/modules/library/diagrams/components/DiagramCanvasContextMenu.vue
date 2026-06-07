@@ -3,8 +3,8 @@ import { computed, ref } from 'vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import type { WwMenuItem } from '@shared/types/menu'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
-import { DIAGRAM_ALIGN_ACTIONS } from '@modules/library/diagrams/lib/diagramAlignActions'
-import type { DiagramAlignMode } from '@modules/library/diagrams/lib/diagramNodeLayout'
+import { DIAGRAM_ALIGN_ACTIONS, DIAGRAM_DISTRIBUTE_ACTIONS } from '@modules/library/diagrams/lib/diagramAlignActions'
+import type { DiagramAlignMode, DiagramDistributeMode } from '@modules/library/diagrams/lib/diagramNodeLayout'
 
 export type DiagramCanvasContextTarget = {
   kind: 'node' | 'edge' | 'blank'
@@ -37,11 +37,19 @@ function pasteAtCursor() {
 }
 
 function duplicateSelection() {
-  void bus.dispatch({ type: 'canvas.duplicate' })
+  const { nodeIds, edgeIds } = target.value
+  void bus.dispatch({
+    type: 'canvas.duplicate',
+    payload: { nodeIds, edgeIds }
+  })
 }
 
 function alignSelection(mode: DiagramAlignMode) {
   void bus.dispatch({ type: 'canvas.alignNodes', payload: { mode } })
+}
+
+function distributeSelection(mode: DiagramDistributeMode) {
+  void bus.dispatch({ type: 'canvas.distributeNodes', payload: { mode } })
 }
 
 const menuItems = computed<WwMenuItem[]>(() => {
@@ -50,7 +58,7 @@ const menuItems = computed<WwMenuItem[]>(() => {
   const total = nodeIds.length + edgeIds.length
 
   if (hasSelection.value) {
-    if (nodeIds.length > 0) {
+    if (nodeIds.length > 0 || edgeIds.length > 0) {
       items.push({
         label: '创建副本',
         wwIcon: 'copy',
@@ -89,6 +97,38 @@ const menuItems = computed<WwMenuItem[]>(() => {
           command: () => alignSelection(action.mode)
         })
       }
+    }
+    if (nodeIds.length >= 3) {
+      for (const action of DIAGRAM_DISTRIBUTE_ACTIONS) {
+        items.push({
+          label: action.label,
+          wwIcon: action.icon,
+          command: () => distributeSelection(action.mode)
+        })
+      }
+    }
+    if (nodeIds.length > 0) {
+      items.push({ separator: true })
+      items.push(
+        {
+          label: '置于顶层',
+          wwIcon: 'arrow-up-to-line',
+          command: () =>
+            void bus.dispatch({
+              type: 'canvas.bringToFront',
+              payload: { nodeIds }
+            })
+        },
+        {
+          label: '置于底层',
+          wwIcon: 'arrow-down-from-line',
+          command: () =>
+            void bus.dispatch({
+              type: 'canvas.sendToBack',
+              payload: { nodeIds }
+            })
+        }
+      )
     }
     items.push({ separator: true })
     items.push({

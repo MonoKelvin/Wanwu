@@ -4,6 +4,8 @@ export const FILE_COMMAND_TYPES = [
   'file.create',
   'file.rename',
   'file.move',
+  'file.duplicate',
+  'file.setPinned',
   'file.softDelete',
   'file.restore',
   'file.purge',
@@ -47,4 +49,13 @@ export interface FileListPayload {
 
 export interface FileReadPayload {
   fileId: string
+}
+
+export interface FileDuplicatePayload {
+  fileId: string
+}
+
+export interface FileSetPinnedPayload {
+  fileId: string
+  pinned: boolean
 }

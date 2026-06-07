@@ -1,10 +1,11 @@
 /** 系统分组 ID（TRD §2.4） */
 export const DG_HOME = 'dg-home'
+/** @deprecated 草稿分组已移除，仅用于数据迁移 */
 export const DG_DRAFTS = 'dg-drafts'
 export const DG_FILES = 'dg-files'
 export const DG_RECYCLE = 'dg-recycle'
 
-export const DG_SYSTEM_FOLDER_IDS = [DG_HOME, DG_DRAFTS, DG_FILES, DG_RECYCLE] as const
+export const DG_SYSTEM_FOLDER_IDS = [DG_HOME, DG_FILES, DG_RECYCLE] as const
 
 export type DiagramSystemFolderId = (typeof DG_SYSTEM_FOLDER_IDS)[number]
 

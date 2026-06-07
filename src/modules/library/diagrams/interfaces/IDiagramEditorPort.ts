@@ -50,15 +50,43 @@ export interface IDiagramEditorPort {
   deleteSelection(nodeIds?: string[], edgeIds?: string[]): void
   copy(): void
   paste(x?: number, y?: number): void
-  duplicate(offsetX?: number, offsetY?: number): void
+  duplicate(
+    offsetX?: number,
+    offsetY?: number,
+    nodeIds?: string[],
+    edgeIds?: string[]
+  ): void
   groupSelection(nodeIds?: string[], edgeIds?: string[]): void
   ungroupSelection(): void
   canUngroupSelection(): boolean
+  canGroupSelection(): boolean
   addNode(shape: string, x: number, y: number, text?: string, style?: Record<string, unknown>): string
+  addNodeOnEdge(
+    shape: string,
+    x: number,
+    y: number,
+    edgeId: string,
+    text?: string,
+    style?: Record<string, unknown>
+  ): string
+  findEdgeAtCanvasPoint(
+    x: number,
+    y: number,
+    threshold?: number,
+    options?: { excludeNodeIds?: string[] }
+  ): string | null
+  insertExistingNodeOnEdge(nodeId: string, edgeId: string): boolean
+  setEdgeInsertHighlight(edgeId: string | null): void
   connect(sourceNodeId: string, targetNodeId: string, style?: Record<string, unknown>): string
   updateNode(nodeId: string, patch: Record<string, unknown>): void
   updateEdge(edgeId: string, patch: Record<string, unknown>): void
   clientToCanvas(clientX: number, clientY: number): CanvasPoint
+  getMultiSelectOverlayRect(): {
+    left: number
+    top: number
+    width: number
+    height: number
+  } | null
   getSelection(): DiagramEditorSelection
   getSelectedNodeIds(): string[]
   getSelectedEdgeIds(): string[]
@@ -68,6 +96,8 @@ export interface IDiagramEditorPort {
     mode: import('@modules/library/diagrams/lib/diagramNodeLayout').DiagramDistributeMode,
     nodeIds?: string[]
   ): void
+  bringNodesToFront(nodeIds?: string[]): void
+  sendNodesToBack(nodeIds?: string[]): void
   batchUpdateNodeProperties(
     nodeProps: Partial<DiagramNodeProperties>,
     nodeIds?: string[]
@@ -83,6 +113,8 @@ export interface IDiagramEditorPort {
   loadCanvasSettings(settings: DiagramCanvasSettings | undefined): void
   onEditorSelectionChange?(handler: (selection: DiagramEditorSelection) => void): void
   onGraphChange?(handler: () => void): void
+  onViewportChange?(handler: () => void): void
+  onOverlayLayoutChange?(handler: () => void): void
   onContextMenu?(
     handler: (detail: {
       event: MouseEvent

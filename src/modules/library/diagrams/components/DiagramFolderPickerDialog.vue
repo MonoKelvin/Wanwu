@@ -3,7 +3,27 @@ import { computed, onMounted, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import WwButton from '@shared/components/WwButton.vue'
 import { useDiagramsStore } from '@shared/stores/diagrams'
-import { DG_DRAFTS, DG_FILES, DG_HOME, DG_RECYCLE } from '@modules/library/diagrams/domain/diagramFolderIds'
+import {
+  DG_DRAFTS,
+  DG_FILES,
+  DG_HOME,
+  DG_RECYCLE
+} from '@modules/library/diagrams/domain/diagramFolderIds'
+import type { DiagramFolder } from '@shared/types/diagrams'
+
+const props = withDefaults(
+  defineProps<{
+    header?: string
+    confirmLabel?: string
+    emptyHint?: string
+    folders?: DiagramFolder[]
+  }>(),
+  {
+    header: '选择保存位置',
+    confirmLabel: '确定',
+    emptyHint: '没有可选分组'
+  }
+)
 
 const emit = defineEmits<{
   confirm: []
@@ -13,11 +33,12 @@ const selectedFolderId = defineModel<string>('folderId', { default: DG_FILES })
 const store = useDiagramsStore()
 const loading = ref(false)
 
-const folders = computed(() =>
-  store.folders.filter(
-    (f) => f.id !== DG_HOME && f.id !== DG_RECYCLE && !f.deletedAt
+const folderOptions = computed(() => {
+  if (props.folders) return props.folders
+  return store.folders.filter(
+    (f) => f.id !== DG_HOME && f.id !== DG_RECYCLE && f.id !== DG_DRAFTS && !f.deletedAt
   )
-)
+})
 
 watch(open, (visible) => {
   if (visible && !store.loaded) {
@@ -33,7 +54,6 @@ onMounted(() => {
 })
 
 function folderLabel(id: string, name: string) {
-  if (id === DG_DRAFTS) return `${name}（草稿）`
   if (id === DG_FILES) return `${name}（默认）`
   return name
 }
@@ -42,7 +62,7 @@ function folderLabel(id: string, name: string) {
 <template>
   <Dialog
     v-model:visible="open"
-    header="选择保存位置"
+    :header="header"
     modal
     append-to="body"
     class="ww-glass-dialog w-[min(22rem,92vw)]"
@@ -53,8 +73,9 @@ function folderLabel(id: string, name: string) {
     }"
   >
     <p v-if="loading" class="dg-hint">加载分组…</p>
+    <p v-else-if="!folderOptions.length" class="dg-hint">{{ emptyHint }}</p>
     <ul v-else class="dg-folder-picker">
-      <li v-for="folder in folders" :key="folder.id">
+      <li v-for="folder in folderOptions" :key="folder.id">
         <button
           type="button"
           class="dg-folder-picker__item"
@@ -67,7 +88,11 @@ function folderLabel(id: string, name: string) {
     </ul>
     <template #footer>
       <WwButton label="取消" severity="secondary" text @click="open = false" />
-      <WwButton label="确定" @click="emit('confirm'); open = false" />
+      <WwButton
+        :label="confirmLabel"
+        :disabled="!folderOptions.length"
+        @click="emit('confirm')"
+      />
     </template>
   </Dialog>
 </template>

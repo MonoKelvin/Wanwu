@@ -13,6 +13,7 @@ import { randomUUID } from 'node:crypto'
 import extract from 'extract-zip'
 import { MANIFEST_ENTRY_PATH, normalizeEntryPath } from '@shared/documentPackage'
 import { ZipArchive } from '../zipArchive'
+import { ensureParentDirForFile } from '../core/fsEnsure'
 import { WanwuDocumentPackage } from './WanwuDocumentPackage'
 
 function listFilesRecursive(dir: string, base = ''): string[] {
@@ -29,7 +30,7 @@ function listFilesRecursive(dir: string, base = ''): string[] {
   return out
 }
 
-async function extractZipToDir(zipPath: string, dir: string): Promise<void> {
+export async function extractZipToDir(zipPath: string, dir: string): Promise<void> {
   mkdirSync(dir, { recursive: true })
   await extract(zipPath, { dir })
 }
@@ -79,7 +80,7 @@ export async function savePackageToZip(
   options?: { password?: string }
 ): Promise<void> {
   const materialized = pkg.materializeEntriesForWrite({ password: options?.password })
-  mkdirSync(dirname(zipPath), { recursive: true })
+  ensureParentDirForFile(zipPath)
 
   await new Promise<void>((resolve, reject) => {
     const archive = new ZipArchive({ zlib: { level: 6 } })

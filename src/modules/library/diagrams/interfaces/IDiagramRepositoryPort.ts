@@ -2,6 +2,7 @@ import type {
   DiagramContent,
   DiagramExportWfgResult,
   DiagramImportWfgResult,
+  DiagramSaveNewResult,
   DiagramFileMeta,
   DiagramFileRecord,
   DiagramFolder,
@@ -34,11 +35,18 @@ export interface IDiagramRepositoryPort {
     defaultName: string
   }): Promise<DiagramExportWfgResult>
   createFile(folderId: string, title: string, content?: DiagramContent): Promise<DiagramFileRecord>
+  saveNewWithDialog(input: {
+    folderId: string
+    content: DiagramContent
+    defaultName: string
+  }): Promise<DiagramSaveNewResult>
   renameFile(fileId: string, title: string): Promise<DiagramFileMeta | null>
   moveFile(fileId: string, folderId: string): Promise<DiagramFileMeta | null>
-  softDeleteFile(fileId: string): Promise<void>
-  restoreFile(fileId: string): Promise<void>
-  purgeFile(fileId: string): Promise<void>
+  duplicateFile(fileId: string): Promise<DiagramFileRecord | null>
+  setFilePinned(fileId: string, pinned: boolean): Promise<DiagramFileMeta | null>
+  softDeleteFile(fileId: string): Promise<boolean>
+  restoreFile(fileId: string): Promise<DiagramFileMeta | null>
+  purgeFile(fileId: string): Promise<boolean>
   createFolder(name: string): Promise<DiagramFolder>
   renameFolder(folderId: string, name: string): Promise<void>
   deleteFolder(folderId: string): Promise<void>

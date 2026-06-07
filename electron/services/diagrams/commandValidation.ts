@@ -1,5 +1,4 @@
 import {
-  DG_DRAFTS,
   DG_FILES,
   DG_HOME,
   DG_RECYCLE,
@@ -42,6 +41,8 @@ export function validateDiagramCommand(cmd: DiagramCommandEnvelope): DiagramComm
     }
     case 'file.rename':
     case 'file.move':
+    case 'file.duplicate':
+    case 'file.setPinned':
     case 'file.softDelete':
     case 'file.restore':
     case 'file.purge':
@@ -55,6 +56,9 @@ export function validateDiagramCommand(cmd: DiagramCommandEnvelope): DiagramComm
       }
       if (cmd.type === 'file.rename' && !isNonEmptyString(payload.title)) {
         return fail('VALIDATION', 'title 不能为空')
+      }
+      if (cmd.type === 'file.setPinned' && typeof payload.pinned !== 'boolean') {
+        return fail('VALIDATION', 'pinned 必须为 boolean')
       }
       return null
     }

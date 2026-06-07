@@ -55,11 +55,15 @@ export function provideDiagramSaveFlow(
   }
 
   async function saveDocument(payload?: { title?: string; folderId?: string }): Promise<boolean> {
-    const result = await dispatchSave(payload)
+    const result = await dispatchSave({
+      ...payload,
+      folderId: payload?.folderId ?? pickedFolderId.value
+    })
     if (result.ok) {
       toast.add({ severity: 'success', summary: '已保存', life: 2000 })
       return true
     }
+    if (result.code === 'CANCELED') return false
     if (result.code !== 'CONFLICT') {
       toast.add({
         severity: 'error',
@@ -126,6 +130,7 @@ export function provideDiagramSaveFlow(
       folderId: pickedFolderId.value,
       title: pendingSaveAsTitle.value
     })
+    if (ok) folderPickerOpen.value = false
     if (folderPickPurpose.value === 'conflict') {
       conflictResolve?.(ok)
       conflictResolve = null

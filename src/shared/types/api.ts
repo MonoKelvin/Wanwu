@@ -460,6 +460,7 @@ export interface WanwuApi {
     listFiles: (params: { folderId: string }) => Promise<DiagramFileMeta[]>
     listRecentFiles: (params?: { limit?: number }) => Promise<DiagramFileMeta[]>
     searchFiles: (params: { query: string; limit?: number }) => Promise<DiagramSearchHit[]>
+    countRecycleFiles: () => Promise<number>
     duplicateFile: (params: { fileId: string }) => Promise<DiagramFileRecord | null>
     setFilePinned: (params: { fileId: string; pinned: boolean }) => Promise<DiagramFileMeta | null>
     getFileContentPath: (params: { fileId: string }) => Promise<string | null>
@@ -497,11 +498,16 @@ export interface WanwuApi {
       title: string
       content?: DiagramContent
     }) => Promise<DiagramFileRecord>
+    saveNewWithDialog: (params: {
+      folderId: string
+      content: import('./diagrams').DiagramContent
+      defaultName: string
+    }) => Promise<import('./diagrams').DiagramSaveNewResult>
     renameFile: (params: { fileId: string; title: string }) => Promise<DiagramFileMeta | null>
     moveFile: (params: { fileId: string; folderId: string }) => Promise<DiagramFileMeta | null>
-    softDeleteFile: (params: { fileId: string }) => Promise<void>
-    restoreFile: (params: { fileId: string }) => Promise<void>
-    purgeFile: (params: { fileId: string }) => Promise<void>
+    softDeleteFile: (params: { fileId: string }) => Promise<boolean>
+    restoreFile: (params: { fileId: string }) => Promise<DiagramFileMeta | null>
+    purgeFile: (params: { fileId: string }) => Promise<boolean>
     createFolder: (params: { name: string }) => Promise<DiagramFolder>
     renameFolder: (params: { folderId: string; name: string }) => Promise<void>
     deleteFolder: (params: { folderId: string }) => Promise<void>

@@ -15,6 +15,8 @@ export interface DiagramFolder {
 export interface DiagramFileMeta {
   id: string
   folderId: string
+  /** 移入回收站前所在分组（仅回收站条目有值） */
+  previousFolderId?: string | null
   title: string
   pageCount: number
   thumbnailPath: string | null
@@ -29,6 +31,8 @@ export interface DiagramSearchHit {
   meta: DiagramFileMeta
   matchedInTitle: boolean
   matchedInContent: boolean
+  /** 主进程生成的正文摘要，避免渲染进程二次 readFile */
+  contentPreview?: string
 }
 
 import type { DiagramCanvasSettings } from '@modules/library/diagrams/lib/diagramSelectionTypes'
@@ -81,6 +85,10 @@ export interface DiagramWritePatch {
 
 export type DiagramExportWfgResult =
   | { ok: true; path: string }
+  | { ok: false; canceled?: boolean; error?: string }
+
+export type DiagramSaveNewResult =
+  | { ok: true; record: DiagramFileRecord; path: string }
   | { ok: false; canceled?: boolean; error?: string }
 
 export type DiagramImportWfgResult =

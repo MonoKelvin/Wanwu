@@ -31,11 +31,42 @@ export function diagramCanvasBackground(resolved: DiagramCanvasTheme) {
   return resolved === 'dark' ? '#161618' : '#ffffff'
 }
 
+function diagramTextTheme(resolved: DiagramCanvasTheme) {
+  const isDark = resolved === 'dark'
+  const textColor = isDark ? '#e8e8ec' : '#121214'
+  return {
+    fill: textColor,
+    color: textColor,
+    fontSize: 12,
+    overflowMode: 'autoWrap' as const,
+    lineHeight: 1.2,
+    wrapPadding: '4, 8'
+  }
+}
+
+/** LogicFlow 连线标签：SVG 文本用 fill，且需单独配置 background */
+function diagramEdgeTextTheme(resolved: DiagramCanvasTheme) {
+  const isDark = resolved === 'dark'
+  const textColor = isDark ? '#e8e8ec' : '#121214'
+  return {
+    fill: textColor,
+    color: textColor,
+    fontSize: 12,
+    textWidth: 100,
+    overflowMode: 'default' as const,
+    lineHeight: 1.2,
+    background: {
+      fill: isDark ? 'rgb(42 42 46 / 0.92)' : 'rgb(255 255 255 / 0.94)',
+      wrapPadding: '2, 4'
+    }
+  }
+}
+
 export function diagramLogicFlowTheme(resolved: DiagramCanvasTheme): Record<string, unknown> {
   const isDark = resolved === 'dark'
   const nodeFill = isDark ? '#2a2a2e' : '#ffffff'
   const nodeStroke = isDark ? '#5a5a62' : '#d0d0d4'
-  const textColor = isDark ? '#e8e8ec' : '#121214'
+  const textTheme = diagramTextTheme(resolved)
   const edgeStroke = isDark ? '#707078' : '#5a5a62'
 
   return {
@@ -68,18 +99,12 @@ export function diagramLogicFlowTheme(resolved: DiagramCanvasTheme): Record<stri
       strokeWidth: 1
     },
     text: {
-      color: textColor,
+      ...textTheme,
       fontSize: 14,
       fontWeight: 500
     },
-    nodeText: {
-      color: textColor,
-      fontSize: 12
-    },
-    edgeText: {
-      color: textColor,
-      fontSize: 12
-    },
+    nodeText: textTheme,
+    edgeText: diagramEdgeTextTheme(resolved),
     polyline: {
       stroke: edgeStroke,
       strokeWidth: 1.5

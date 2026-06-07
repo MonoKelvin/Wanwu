@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed } from 'vue'
+import { useMinuteClock } from '@shared/composables/useMinuteClock'
 import IconField from 'primevue/iconfield'
 import InputText from 'primevue/inputtext'
 import WwInputIcon from '@shared/components/WwInputIcon.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
+import WwIconButton from '@shared/components/WwIconButton.vue'
 import type { DiagramSearchHit } from '@shared/types/diagrams'
 import { prepareDiagramSearchDisplay } from '@modules/library/diagrams/lib/diagramSearchText'
 import { formatFileSize, formatRelativeTime } from '@modules/library/diagrams/lib/diagramHomeUtils'
@@ -13,34 +15,32 @@ const searchQuery = defineModel<string>('searchQuery', { required: true })
 const props = defineProps<{
   hits: DiagramSearchHit[]
   loading?: boolean
-  contentCache: Map<string, import('@shared/types/diagrams').DiagramContent | null>
+  folderNameById?: (id: string) => string | undefined
 }>()
 
 const emit = defineEmits<{ select: [fileId: string] }>()
 
-const nowTs = ref(Date.now())
-let minuteTicker: ReturnType<typeof setInterval> | null = null
+const nowTs = useMinuteClock()
 
 const trimmedQuery = computed(() => searchQuery.value.trim())
 const isActive = computed(() => Boolean(trimmedQuery.value))
 
 const displayHits = computed(() =>
   props.hits.map((hit) => {
-    const content = props.contentCache.get(hit.meta.id) ?? null
-    const display = prepareDiagramSearchDisplay(hit.meta.title, content, trimmedQuery.value)
+    const display = prepareDiagramSearchDisplay(hit.meta.title, null, trimmedQuery.value, {
+      contentPreviewPlain: hit.contentPreview
+    })
     return { hit, ...display }
   })
 )
 
-onMounted(() => {
-  minuteTicker = setInterval(() => {
-    nowTs.value = Date.now()
-  }, 60_000)
-})
+function clearSearch() {
+  searchQuery.value = ''
+}
 
-onBeforeUnmount(() => {
-  if (minuteTicker) clearInterval(minuteTicker)
-})
+function folderLabel(folderId: string) {
+  return props.folderNameById?.(folderId) ?? folderId
+}
 
 defineExpose({ isActive })
 </script>
@@ -51,9 +51,17 @@ defineExpose({ isActive })
       <WwInputIcon name="search" />
       <InputText
         v-model="searchQuery"
-        placeholder="搜索流程图…"
+        placeholder="搜索 .wfg 文件…"
         class="w-full"
         aria-label="搜索流程图"
+      />
+      <WwIconButton
+        v-if="trimmedQuery"
+        icon="x"
+        icon-size="xs"
+        class="dg-home-search__clear"
+        ariaLabel="清除搜索"
+        @click="clearSearch"
       />
     </IconField>
 
@@ -72,6 +80,7 @@ defineExpose({ isActive })
               <span class="dg-home-search-hit__title" v-html="row.titleHtml" />
               <span class="dg-home-search-hit__preview" v-html="row.previewHtml" />
               <span class="dg-home-search-hit__meta">
+                {{ folderLabel(row.hit.meta.folderId) }} ·
                 {{ formatFileSize(row.hit.meta.sizeBytes) }} ·
                 {{ formatRelativeTime(row.hit.meta.updatedAt, nowTs) }}
               </span>
@@ -84,6 +93,18 @@ defineExpose({ isActive })
 </template>
 
 <style scoped>
+.dg-home-search__clear {
+  position: absolute;
+  right: 0.375rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ww-ink-faint);
+}
+
+.dg-home-search__clear:hover {
+  color: var(--ww-ink-muted);
+}
+
 .dg-home-search-hit__title :deep(.ww-notes-hit),
 .dg-home-search-hit__preview :deep(.ww-notes-hit) {
   padding: 0 0.12em;

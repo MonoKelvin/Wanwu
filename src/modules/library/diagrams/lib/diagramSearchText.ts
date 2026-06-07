@@ -1,6 +1,10 @@
 import { diagramBodyPlainText } from '@modules/library/diagrams/lib/diagramContentText'
 import type { DiagramContent } from '@shared/types/diagrams'
 import {
+  formatDiagramFileName,
+  diagramTitleBase
+} from '@modules/library/diagrams/lib/diagramHomeUtils'
+import {
   buildSearchSnippet,
   escapePlainText,
   findMatchRange,
@@ -22,23 +26,27 @@ export function prepareDiagramSearchDisplay(
   title: string,
   content: DiagramContent | null,
   query: string,
-  previewMax = 56
+  options?: { previewMax?: number; contentPreviewPlain?: string }
 ): DiagramSearchDisplay {
+  const previewMax = options?.previewMax ?? 56
   const q = query.trim()
-  const titleText = title.trim() || '未命名流程图'
-  const bodyPlain = content ? diagramBodyPlainText(content) : ''
+  const titleText = formatDiagramFileName(title)
+  const titleBase = diagramTitleBase(title)
+  const bodyPlain =
+    options?.contentPreviewPlain ?? (content ? diagramBodyPlainText(content) : '')
 
   if (!q) {
     const preview = bodyPlain.length > previewMax ? `${bodyPlain.slice(0, previewMax)}…` : bodyPlain
     return {
       titleHtml: escapeHtml(titleText),
-      previewHtml: escapeHtml(preview || `${titleText} · 流程图`),
+      previewHtml: escapeHtml(preview || `${titleBase}.wfg`),
       matchedInTitle: false,
       matchedInContent: false
     }
   }
 
-  const titleMatch = findMatchRange(titleText, q)
+  const titleMatch =
+    findMatchRange(titleText, q) ?? findMatchRange(titleBase, q)
   const contentMatch = bodyPlain ? findMatchRange(bodyPlain, q) : null
   const matchedInTitle = titleMatch !== null
   const matchedInContent = contentMatch !== null

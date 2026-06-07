@@ -2,14 +2,16 @@
  * 流程图增量保存自测
  * 运行：npx tsx --tsconfig tsconfig.node.json electron/services/diagrams/verifyDiagramIncrementalSave.ts
  */
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { WFG_PATHS } from '@shared/documentPackage'
 import {
   exportContentWfg,
+  findDiagramWfgPath,
   readDiagramContent,
   readWfgFile,
+  relativeContentPath,
   writeDiagramContent,
   writeDiagramContentPatch
 } from './diagramFileStorage'
@@ -36,68 +38,57 @@ async function run(): Promise<void> {
           sortOrder: 0,
           viewport: { x: 0, y: 0, zoom: 1 },
           graphData: { nodes: [], edges: [] }
-        },
-        {
-          id: 'page-2',
-          name: '页2',
-          sortOrder: 1,
-          viewport: { x: 0, y: 0, zoom: 1 },
-          graphData: { nodes: [], edges: [] }
         }
       ]
     }
 
-    writeDiagramContent(mediaDir, fileId, initial)
-    const dir = join(mediaDir, 'diagrams', fileId)
-    const page1Path = join(dir, WFG_PATHS.page('page-1'))
-    const page2Path = join(dir, WFG_PATHS.page('page-2'))
-    const page2Before = readFileSync(page2Path, 'utf-8')
+    const contentPath = relativeContentPath(fileId, initial.meta.title)
+    await writeDiagramContent(mediaDir, fileId, contentPath, initial)
+    const wfgPath = findDiagramWfgPath(mediaDir, fileId)
+    assert(Boolean(wfgPath), '应落盘为 .wfg 文件')
+    assert(wfgPath!.endsWith('.wfg'), '物理文件应为 .wfg')
 
     const updated = structuredClone(initial)
-    updated.pages[0] = {
-      ...updated.pages[0],
-      graphData: { nodes: [{ id: 'n1', type: 'rect' }], edges: [] }
-    }
+    updated.meta.title = '新标题'
+    updated.pages[0].graphData.nodes = [{ id: 'n1', type: 'rect', x: 0, y: 0 }]
 
-    writeDiagramContentPatch(mediaDir, fileId, updated, {
+    await writeDiagramContentPatch(mediaDir, fileId, contentPath, updated, {
       dirtyPageIds: ['page-1'],
+      metaDirty: true
+    })
+
+    const reloaded = await readDiagramContent(mediaDir, fileId, contentPath, updated.meta.title)
+    assert(reloaded?.meta.title === '新标题', '增量保存后标题应更新')
+    assert(reloaded?.pages[0].graphData.nodes.length === 1, '增量保存后节点应保留')
+
+    await writeDiagramContentPatch(mediaDir, fileId, contentPath, updated, {
+      dirtyPageIds: [],
       metaDirty: false
     })
 
-    const page1After = readFileSync(page1Path, 'utf-8')
-    const page2After = readFileSync(page2Path, 'utf-8')
-    assert(page1After.includes('n1'), 'page-1 应写入新节点')
-    assert(page2After === page2Before, 'page-2 内容应保持不变')
-
-    const reloaded = readDiagramContent(mediaDir, fileId)
-    assert(reloaded?.pages[0].graphData.nodes.length === 1, '重读应包含节点')
-
-    updated.meta.title = '新标题'
-    writeDiagramContentPatch(mediaDir, fileId, updated, {
-      dirtyPageIds: [],
-      metaDirty: true
-    })
-    const meta = JSON.parse(readFileSync(join(dir, WFG_PATHS.meta), 'utf-8')) as { title: string }
-    assert(meta.title === '新标题', 'meta.json 标题应更新')
-
     const wfgDir = mkdtempSync(join(tmpdir(), 'wanwu-dg-wfg-'))
-    const wfgPath = join(wfgDir, 'roundtrip.wfg')
+    const roundtripPath = join(wfgDir, 'roundtrip.wfg')
     try {
-      await exportContentWfg(updated, wfgPath)
-      const imported = await readWfgFile(wfgPath)
+      await exportContentWfg(updated, roundtripPath)
+      const imported = await readWfgFile(roundtripPath)
       assert(imported.meta.title === '新标题', 'wfg 往返标题应一致')
       assert(imported.pages[0].graphData.nodes.length === 1, 'wfg 往返节点应保留')
     } finally {
       rmSync(wfgDir, { recursive: true, force: true })
     }
 
-    console.log('[verifyDiagramIncrementalSave] 全部通过')
+    const finalWfg = findDiagramWfgPath(mediaDir, fileId)
+    assert(Boolean(finalWfg), '重命名后仍应有 .wfg 文件')
+    const wfgSize = statSync(finalWfg!).size
+    assert(wfgSize > 0, '.wfg 文件大小应大于 0')
+
+    console.log('[verifyDiagramIncrementalSave] OK')
   } finally {
     rmSync(mediaDir, { recursive: true, force: true })
   }
 }
 
-run().catch((err) => {
-  console.error('[verifyDiagramIncrementalSave] 失败:', err)
+void run().catch((err) => {
+  console.error('[verifyDiagramIncrementalSave] FAILED', err)
   process.exit(1)
 })

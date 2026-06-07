@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import WwButton from '@shared/components/WwButton.vue'
+import WwIconButton from '@shared/components/WwIconButton.vue'
 import { computed } from 'vue'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
 
 const props = defineProps<{
   nodeCount: number
   edgeCount: number
+  canGroup: boolean
   canUngroup: boolean
 }>()
 
 const bus = useDiagramCommandBus()
 
-const canGroup = computed(() => props.nodeCount + props.edgeCount >= 2)
+const showSection = computed(() => props.canGroup || props.canUngroup)
 
 function group() {
   void bus.dispatch({ type: 'canvas.group' })
@@ -20,41 +21,27 @@ function group() {
 function ungroup() {
   void bus.dispatch({ type: 'canvas.ungroup' })
 }
-
-function duplicate() {
-  void bus.dispatch({ type: 'canvas.duplicate' })
-}
 </script>
 
 <template>
-  <section v-if="canGroup || canUngroup" class="dg-prop-section dg-prop-group">
-    <p class="dg-prop-section__title">多选操作</p>
-    <p v-if="nodeCount >= 2" class="dg-prop-multi-hint">对齐与分布请使用画布顶栏</p>
-    <div class="dg-multi-tools__actions">
-      <WwButton
-        v-if="canGroup && !canUngroup"
-        label="组合"
-        icon="layers"
-        size="small"
-        severity="secondary"
-        @click="group"
-      />
-      <WwButton
-        v-if="canUngroup"
-        label="取消组合"
-        icon="layers"
-        size="small"
-        severity="secondary"
-        @click="ungroup"
-      />
-      <WwButton
-        v-if="nodeCount > 0"
-        label="创建副本"
-        icon="copy"
-        size="small"
-        severity="secondary"
-        @click="duplicate"
-      />
-    </div>
-  </section>
+  <div v-if="showSection" class="dg-multi-tools">
+    <WwIconButton
+      v-if="canGroup"
+      icon="layers"
+      compact
+      ariaLabel="组合"
+      v-tooltip.bottom="'组合'"
+      @mousedown.prevent
+      @click="group"
+    />
+    <WwIconButton
+      v-if="canUngroup"
+      icon="layers"
+      compact
+      ariaLabel="取消组合"
+      v-tooltip.bottom="'取消组合'"
+      @mousedown.prevent
+      @click="ungroup"
+    />
+  </div>
 </template>

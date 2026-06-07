@@ -135,6 +135,20 @@ function nodeIconSrc(node: TreeNode): string | null {
   return src || null
 }
 
+function shouldShowChildIcon(node: TreeNode): boolean {
+  const key = String(node.key)
+  if ((node.data as { kind?: string } | undefined)?.kind === 'loading') return false
+
+  const explicitPrefix = props.childIconKeyPrefix
+  if (explicitPrefix) return key.startsWith(explicitPrefix)
+
+  // 全库侧栏：图鉴分类不显示图标；链接/流程图子节点始终显示
+  if (key.startsWith('hb:')) return false
+  if (key.startsWith('ln:') || key.startsWith('dg:')) return true
+
+  return true
+}
+
 function nodeIcon(node: TreeNode): WwIconName | null {
   if (nodeIconSrc(node)) return null
   const data = node.data as { icon?: string } | undefined
@@ -142,9 +156,7 @@ function nodeIcon(node: TreeNode): WwIconName | null {
   if (isMajorNode(node)) {
     return resolvedIcon || 'folder'
   }
-  if (!props.showChildIcons) return null
-  const prefix = props.childIconKeyPrefix
-  if (prefix && !String(node.key).startsWith(prefix)) return null
+  if (!props.showChildIcons || !shouldShowChildIcon(node)) return null
   return resolvedIcon || props.childIcon
 }
 

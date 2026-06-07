@@ -30,6 +30,7 @@ export interface DiagramNodeTextStyle {
   color: string
   textAlign: 'left' | 'center' | 'right'
   fontWeight: 'normal' | 'bold'
+  fontStyle: 'normal' | 'italic'
   underline: boolean
   strikethrough: boolean
 }
@@ -75,6 +76,10 @@ export interface DiagramEditorSelection {
   canvas: DiagramCanvasSettings
   selectedNodeCount: number
   selectedEdgeCount: number
+  selectedNodeIds: string[]
+  selectedEdgeIds: string[]
+  /** 多选图元时值不一致的字段路径，如 fill、textStyle.fontSize */
+  mixedNodeFields: string[]
 }
 
 export function defaultDefaultEdgeStyle(resolved: 'light' | 'dark'): DiagramDefaultEdgeStyle {

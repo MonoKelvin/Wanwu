@@ -8,6 +8,7 @@ export function useDiagramAutosave(options: {
   debounceMs?: number
   isBlocked?: () => boolean
   onSaveError?: (message: string) => void
+  savePayload?: () => Record<string, unknown> | undefined
 }) {
   let timer: ReturnType<typeof setTimeout> | null = null
   let saving = false
@@ -23,11 +24,14 @@ export function useDiagramAutosave(options: {
   async function runSave() {
     if (saving || options.isBlocked?.()) return
     const session = options.session.value
-    if (!session?.dirty) return
+    if (!session?.fileId || !session.dirty) return
 
     saving = true
     try {
-      const result = await options.bus.dispatch({ type: 'document.save' })
+      const result = await options.bus.dispatch({
+        type: 'document.save',
+        payload: options.savePayload?.()
+      })
       if (!result.ok && result.code !== 'CONFLICT') {
         options.onSaveError?.(result.message ?? '自动保存失败')
       }
@@ -38,6 +42,7 @@ export function useDiagramAutosave(options: {
 
   function scheduleSave() {
     if (options.isBlocked?.()) return
+    if (!options.session.value?.fileId) return
     cancelScheduledSave()
     timer = setTimeout(() => {
       timer = null
@@ -52,6 +57,17 @@ export function useDiagramAutosave(options: {
     }
   )
 
+  const stopDirtyPages = watch(
+    () => {
+      const session = options.session.value
+      if (!session?.dirty) return null
+      return [session.dirtyPageIds.size, session.metaDirty] as const
+    },
+    (state) => {
+      if (state) scheduleSave()
+    }
+  )
+
   const stopFile = watch(
     () => options.session.value?.fileId,
     () => cancelScheduledSave()
@@ -59,6 +75,7 @@ export function useDiagramAutosave(options: {
 
   onUnmounted(() => {
     stopDirty()
+    stopDirtyPages()
     stopFile()
     cancelScheduledSave()
   })

@@ -1,6 +1,9 @@
 import LogicFlow, { h } from '@logicflow/core'
-import { RectResizeModel, RectResizeView } from '@logicflow/extension/lib/NodeResize/node/RectResize'
-import { applyDefaultRectSize, diagramResizeControlStyle } from '@modules/library/diagrams/lib/diagramShapeResize'
+import {
+  DiagramRectResizeModel,
+  DiagramRectResizeView
+} from '@modules/library/diagrams/lib/diagramRectResizeBase'
+import { applyDefaultRectSize } from '@modules/library/diagrams/lib/diagramShapeResize'
 
 export const DIAGRAM_GROUP_FRAME_TYPE = 'dg-group-frame'
 
@@ -29,7 +32,7 @@ export function readGroupStyle(properties: Record<string, unknown>): DiagramGrou
 }
 
 export function registerDiagramGroupFrame(lf: LogicFlow): void {
-  class GroupFrameModel extends RectResizeModel {
+  class GroupFrameModel extends DiagramRectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
       super.initNodeData(data)
       applyDefaultRectSize(this, data, { width: 120, height: 80 })
@@ -42,10 +45,6 @@ export function registerDiagramGroupFrame(lf: LogicFlow): void {
         dgGroupStyle: { ...DEFAULT_GROUP_STYLE },
         ...data.properties
       }
-    }
-
-    getControlPointStyle() {
-      return diagramResizeControlStyle()
     }
 
     getNodeStyle() {
@@ -66,7 +65,7 @@ export function registerDiagramGroupFrame(lf: LogicFlow): void {
     }
   }
 
-  class GroupFrameView extends RectResizeView {
+  class GroupFrameView extends DiagramRectResizeView {
     getResizeShape() {
       const { model } = this.props
       const { x, y, width, height } = model
