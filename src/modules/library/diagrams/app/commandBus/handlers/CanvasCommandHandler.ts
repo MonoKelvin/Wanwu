@@ -6,6 +6,8 @@ import type {
 } from '@modules/library/diagrams/domain/commands/types'
 import type { DiagramEditorSession } from '@modules/library/diagrams/app/DiagramEditorSession'
 import { diagramError } from '@modules/library/diagrams/app/diagramCommandErrors'
+import { DIAGRAM_GRID_SIZE } from '@modules/library/diagrams/lib/diagramCanvasTheme'
+import type { CanvasNudgeDirection } from '@modules/library/diagrams/domain/commands/canvas'
 
 export class CanvasCommandHandler implements IDiagramCommandHandler {
   readonly domain = 'canvas' as const
@@ -183,6 +185,37 @@ export class CanvasCommandHandler implements IDiagramCommandHandler {
           port.setGrid(p.visible as boolean, p.snap as boolean | undefined)
           session.markActivePageDirty()
           return { ok: true }
+        case 'canvas.nudgeSelection': {
+          const direction = p.direction as CanvasNudgeDirection
+          const large = Boolean(p.large)
+          const snap = port.getCanvasSettings().snapGrid
+          const step = snap
+            ? DIAGRAM_GRID_SIZE * (large ? 5 : 1)
+            : large
+              ? 10
+              : 1
+          let dx = 0
+          let dy = 0
+          switch (direction) {
+            case 'left':
+              dx = -step
+              break
+            case 'right':
+              dx = step
+              break
+            case 'up':
+              dy = -step
+              break
+            case 'down':
+              dy = step
+              break
+            default:
+              return diagramError('VALIDATION', '无效的移动方向')
+          }
+          port.nudgeSelection(dx, dy, p.nodeIds as string[] | undefined)
+          session.markActivePageDirty()
+          return { ok: true }
+        }
         default:
           return diagramError('UNKNOWN_COMMAND', `未支持的画布命令: ${cmd.type}`)
       }

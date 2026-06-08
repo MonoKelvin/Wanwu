@@ -8,7 +8,20 @@ const emit = defineEmits<{
   reload: []
   overwrite: []
   saveAs: []
+  dismiss: []
 }>()
+
+let closingByAction = false
+
+function onSaveAs() {
+  closingByAction = true
+  emit('saveAs')
+}
+
+function onHide() {
+  if (!closingByAction) emit('dismiss')
+  closingByAction = false
+}
 </script>
 
 <template>
@@ -18,6 +31,7 @@ const emit = defineEmits<{
     modal
     append-to="body"
     class="ww-glass-dialog w-[min(26rem,92vw)]"
+    @hide="onHide"
     :pt="{
       root: { class: 'ww-glass-dialog-root' },
       header: { class: 'ww-glass-dialog__header' },
@@ -28,9 +42,9 @@ const emit = defineEmits<{
       磁盘上的文件已被其他位置修改。你可以重新加载远程版本、覆盖保存，或另存为新文件。
     </p>
     <div class="dg-conflict-actions">
-      <WwButton label="重新加载" severity="secondary" @click="emit('reload'); open = false" />
-      <WwButton label="覆盖保存" severity="danger" @click="emit('overwrite'); open = false" />
-      <WwButton label="另存为" @click="emit('saveAs'); open = false" />
+      <WwButton label="重新加载" severity="secondary" @click="emit('reload')" />
+      <WwButton label="覆盖保存" severity="danger" @click="emit('overwrite')" />
+      <WwButton label="另存为" @click="onSaveAs" />
     </div>
   </Dialog>
 </template>

@@ -22,6 +22,8 @@ export interface DocumentSavePayload {
   folderId?: string
   title?: string
   force?: boolean
+  /** 自动保存：新文档静默创建文件，不弹系统对话框 */
+  auto?: boolean
 }
 
 export interface DocumentSaveAsPayload {

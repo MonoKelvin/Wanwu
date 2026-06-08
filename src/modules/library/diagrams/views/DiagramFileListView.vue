@@ -381,10 +381,8 @@ function toggleSortMenu(event: MouseEvent) {
                   v-tooltip.bottom="`排序：${currentSort.label}`"
                   @click="toggleSortMenu"
                 />
-                <WwContextMenu ref="sortMenuRef" :model="sortMenuItems" />
-              </div>
-              <div v-if="!isRecycle" class="dg-page-header-actions__tool-group">
                 <WwButton
+                  v-if="!isRecycle"
                   type="button"
                   icon="plus"
                   size="small"
@@ -396,6 +394,7 @@ function toggleSortMenu(event: MouseEvent) {
                   @click="createNewDiagram"
                 />
                 <WwButton
+                  v-if="!isRecycle"
                   type="button"
                   icon="folder-plus"
                   size="small"
@@ -430,6 +429,7 @@ function toggleSortMenu(event: MouseEvent) {
                   v-tooltip.bottom="'删除分组'"
                   @click="openDeleteFolderDialog(folderId)"
                 />
+                <WwContextMenu ref="sortMenuRef" :model="sortMenuItems" />
               </div>
             </div>
           </div>

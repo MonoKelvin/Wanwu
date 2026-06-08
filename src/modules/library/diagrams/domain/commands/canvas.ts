@@ -25,7 +25,8 @@ export const CANVAS_COMMAND_TYPES = [
   'canvas.zoomToFit',
   'canvas.zoomReset',
   'canvas.centerOrigin',
-  'canvas.setGrid'
+  'canvas.setGrid',
+  'canvas.nudgeSelection'
 ] as const
 
 export type CanvasCommandType = (typeof CANVAS_COMMAND_TYPES)[number]
@@ -122,5 +123,13 @@ export interface CanvasDistributeNodesPayload {
 }
 
 export interface CanvasLayerOrderPayload {
+  nodeIds?: string[]
+}
+
+export type CanvasNudgeDirection = 'left' | 'right' | 'up' | 'down'
+
+export interface CanvasNudgeSelectionPayload {
+  direction: CanvasNudgeDirection
+  large?: boolean
   nodeIds?: string[]
 }

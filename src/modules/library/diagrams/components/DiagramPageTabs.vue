@@ -7,6 +7,7 @@ import WwIconButton from '@shared/components/WwIconButton.vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import type { WwMenuItem } from '@shared/types/menu'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramEditorGuard } from '@modules/library/diagrams/composables/useDiagramEditorGuard'
 import { focusInputText } from '@modules/library/diagrams/lib/diagramInputFocus'
 
 const props = defineProps<{
@@ -15,6 +16,7 @@ const props = defineProps<{
 }>()
 
 const bus = useDiagramCommandBus()
+const editorGuard = useDiagramEditorGuard()
 const barRef = ref<HTMLElement | null>(null)
 const inlineRef = ref<HTMLElement | null>(null)
 const contextPageId = ref<string | null>(null)
@@ -104,14 +106,16 @@ function onDocPointerDown(event: PointerEvent) {
   overflowOpen.value = false
 }
 
-function switchPage(pageId: string) {
-  if (renamingPageId.value) return
+async function switchPage(pageId: string) {
+  if (renamingPageId.value || pageId === props.activePageId) return
   overflowOpen.value = false
+  await editorGuard?.flushSave()
   void bus.dispatch({ type: 'page.switch', payload: { pageId } })
 }
 
-function addPage() {
+async function addPage() {
   overflowOpen.value = false
+  await editorGuard?.flushSave()
   void bus.dispatch({ type: 'page.add' })
 }
 
@@ -130,6 +134,7 @@ async function commitRename() {
   const name = renameValue.value.trim()
   renamingPageId.value = null
   if (!name) return
+  await editorGuard?.flushSave()
   await bus.dispatch({ type: 'page.rename', payload: { pageId, name } })
 }
 
@@ -138,10 +143,12 @@ function cancelRename() {
 }
 
 async function deletePage(pageId: string) {
+  await editorGuard?.flushSave()
   await bus.dispatch({ type: 'page.delete', payload: { pageId } })
 }
 
 async function duplicatePage(pageId: string) {
+  await editorGuard?.flushSave()
   await bus.dispatch({ type: 'page.duplicate', payload: { pageId } })
 }
 

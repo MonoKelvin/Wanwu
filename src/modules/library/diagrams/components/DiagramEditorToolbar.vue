@@ -6,6 +6,8 @@ import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import DiagramShortcutsDialog from '@modules/library/diagrams/components/DiagramShortcutsDialog.vue'
 import type { WwMenuItem } from '@shared/types/menu'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramEditorGuard } from '@modules/library/diagrams/composables/useDiagramEditorGuard'
+import { useDiagramCatalogFileActions } from '@modules/library/diagrams/composables/useDiagramCatalogFileActions'
 import { useDiagramSaveFlow } from '@modules/library/diagrams/composables/useDiagramSaveFlow'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
@@ -19,16 +21,26 @@ import {
 const props = defineProps<{
   title: string
   dirty?: boolean
+  saving?: boolean
   zoomPercent?: number
   folderId?: string
+  fileId?: string | null
   /** 画布尚未就绪时禁用编辑操作，保留工具栏布局 */
   booting?: boolean
 }>()
+
+const saveBadge = computed(() => {
+  if (props.saving) return { text: '保存中…', tone: 'saving' as const }
+  if (props.dirty) return { text: '未保存', tone: 'dirty' as const }
+  return null
+})
 
 const emit = defineEmits<{ back: [] }>()
 
 const bus = useDiagramCommandBus()
 const saveFlow = useDiagramSaveFlow()
+const editorGuard = useDiagramEditorGuard()
+const catalogActions = useDiagramCatalogFileActions()
 const toast = useWanwuToast()
 const { ask } = useWanwuConfirm()
 const titleDraft = ref(diagramTitleBase(props.title))
@@ -50,6 +62,8 @@ const viewMenuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
 const shortcutsOpen = ref(false)
 
 async function save() {
+  if (!props.dirty && !props.saving) return
+  await editorGuard?.flushSave()
   await saveFlow.saveDocument({ title: titleDraft.value.trim() || undefined })
 }
 
@@ -58,6 +72,7 @@ function saveAs() {
 }
 
 async function exportPng() {
+  await editorGuard?.flushSave()
   const result = await bus.dispatch({ type: 'document.export', payload: { format: 'png' } })
   if (!result.ok || !result.data) {
     toast.error(result.ok ? '导出失败' : (result.message ?? '导出失败'))
@@ -73,6 +88,7 @@ async function exportPng() {
 }
 
 async function exportAllPagesPng() {
+  await editorGuard?.flushSave()
   const result = await bus.dispatch({
     type: 'document.export',
     payload: { format: 'png', scope: 'all' }
@@ -97,6 +113,7 @@ async function exportAllPagesPng() {
 }
 
 async function importExternalFile(type: 'document.importWfg' | 'document.importDrawio', label: string) {
+  await editorGuard?.flushSave()
   let result = await bus.dispatch({ type, payload: { folderId: props.folderId } })
   if (!result.ok && result.code === 'VALIDATION') {
     const discard = await ask({
@@ -121,6 +138,7 @@ async function importExternalFile(type: 'document.importWfg' | 'document.importD
 }
 
 async function exportWfg() {
+  await editorGuard?.flushSave()
   const result = await bus.dispatch({ type: 'document.export', payload: { format: 'wfg' } })
   if (!result.ok) {
     toast.error(result.message ?? '导出失败')
@@ -132,6 +150,7 @@ async function exportWfg() {
 }
 
 async function exportSvg() {
+  await editorGuard?.flushSave()
   const result = await bus.dispatch({ type: 'document.export', payload: { format: 'svg' } })
   if (!result.ok || !result.data) {
     toast.error(result.ok ? '导出失败' : (result.message ?? '导出失败'))
@@ -168,6 +187,7 @@ async function commitTitleEdit() {
     titleDraft.value = displayTitleBase.value
     return
   }
+  await editorGuard?.flushSave()
   const result = await saveFlow.saveDocument({ title: next })
   if (!result) titleDraft.value = displayTitleBase.value
 }
@@ -177,15 +197,33 @@ function cancelTitleEdit() {
   titleDraft.value = displayTitleBase.value
 }
 
-const fileMenuItems: WwMenuItem[] = [
-  { label: '保存', wwIcon: 'save', command: () => void save() },
-  { label: '另存为', wwIcon: 'copy', command: () => void saveAs() },
-  { label: '打开 .wfg', wwIcon: 'folder-open', command: () => void importExternalFile('document.importWfg', ' .wfg') },
-  { label: '打开 draw.io', wwIcon: 'external-link', command: () => void importExternalFile('document.importDrawio', ' draw.io') },
-  { separator: true },
-  { label: '撤销', wwIcon: 'rotate-ccw', command: () => void bus.dispatch({ type: 'canvas.undo' }) },
-  { label: '重做', wwIcon: 'refresh-cw', command: () => void bus.dispatch({ type: 'canvas.redo' }) }
-]
+const fileMenuItems = computed<WwMenuItem[]>(() => {
+  const items: WwMenuItem[] = [
+    {
+      label: '保存',
+      wwIcon: 'save',
+      disabled: !props.dirty && !props.saving,
+      command: () => void save()
+    },
+    { label: '另存为', wwIcon: 'copy', command: () => void saveAs() }
+  ]
+  if (props.fileId) {
+    items.push({
+      label: '在文件夹中显示',
+      wwIcon: 'folder-open',
+      command: () => void catalogActions.revealFile(props.fileId!)
+    })
+  }
+  items.push(
+    { separator: true },
+    { label: '打开 .wfg', wwIcon: 'inbox', command: () => void importExternalFile('document.importWfg', ' .wfg') },
+    { label: '打开 draw.io', wwIcon: 'external-link', command: () => void importExternalFile('document.importDrawio', ' draw.io') },
+    { separator: true },
+    { label: '撤销', wwIcon: 'rotate-ccw', command: () => void bus.dispatch({ type: 'canvas.undo' }) },
+    { label: '重做', wwIcon: 'refresh-cw', command: () => void bus.dispatch({ type: 'canvas.redo' }) }
+  )
+  return items
+})
 
 const exportMenuItems: WwMenuItem[] = [
   { label: '导出 .wfg 文件', wwIcon: 'box', command: () => void exportWfg() },
@@ -278,7 +316,14 @@ function openMenu(
           DIAGRAM_WFG_EXT
         }}</span>
       </span>
-      <span v-if="dirty && !booting" class="dg-editor-toolbar__badge">未保存</span>
+      <span
+        v-if="saveBadge && !booting"
+        class="dg-editor-toolbar__badge"
+        :class="`dg-editor-toolbar__badge--${saveBadge.tone}`"
+        :aria-live="saveBadge.tone === 'saving' ? 'polite' : undefined"
+      >
+        {{ saveBadge.text }}
+      </span>
     </div>
 
     <div class="dg-editor-toolbar__actions">
@@ -335,7 +380,7 @@ function openMenu(
           rounded
           class="dg-toolbar-icon-btn"
           aria-label="保存"
-          :disabled="booting"
+          :disabled="booting || (!dirty && !saving)"
           v-tooltip.bottom="'保存 (Ctrl+S)'"
           @click="save"
         />

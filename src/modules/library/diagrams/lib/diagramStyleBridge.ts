@@ -329,7 +329,7 @@ export function applyNodeProperties(lf: LogicFlow, props: Partial<DiagramNodePro
     const dx = nx - model.x
     const dy = ny - model.y
     if (dx !== 0 || dy !== 0) {
-      model.move(dx, dy)
+      lf.graphModel.moveNode(props.id, dx, dy, true)
       syncNodeTextLayout(model)
     }
   }
@@ -348,7 +348,7 @@ export function applyNodeProperties(lf: LogicFlow, props: Partial<DiagramNodePro
       const ny = top + newH / 2
       const dx = nx - model.x
       const dy = ny - model.y
-      if (dx !== 0 || dy !== 0) model.move(dx, dy)
+      if (dx !== 0 || dy !== 0) lf.graphModel.moveNode(props.id, dx, dy, true)
     }
     syncNodeTextLayout(model)
   }

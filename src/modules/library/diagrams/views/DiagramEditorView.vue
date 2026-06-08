@@ -26,6 +26,7 @@ import { useDiagramShortcuts } from '@modules/library/diagrams/composables/useDi
 import { useDiagramIpcBridge } from '@modules/library/diagrams/composables/useDiagramIpcBridge'
 import { pushShellRoute } from '@app/composables/shellNavigation'
 import { DG_HOME, DG_RECYCLE } from '@modules/library/diagrams/domain/diagramFolderIds'
+import { provideDiagramEditorGuard } from '@modules/library/diagrams/composables/useDiagramEditorGuard'
 import { provideDiagramSaveFlow } from '@modules/library/diagrams/composables/useDiagramSaveFlow'
 import { provideDiagramEditorLayout } from '@modules/library/diagrams/composables/useDiagramEditorLayout'
 import {
@@ -73,6 +74,7 @@ const editorSelection = ref<DiagramEditorSelection>({
 })
 const isCanvasDragOver = ref(false)
 const dropIndicator = ref<{ x: number; y: number } | null>(null)
+const dropIndicatorSnapped = ref(false)
 const canvasEmpty = ref(false)
 const viewportZoomPercent = ref(100)
 let resizeObserver: ResizeObserver | null = null
@@ -133,20 +135,65 @@ const stageStyle = computed(() => ({
 }))
 
 const { conflictOpen, folderPickerOpen, pickedFolderId } = toRefs(saveFlow)
-const { onConflictReload, onConflictOverwrite, onConflictSaveAs, onFolderPicked } = saveFlow
-useDiagramShortcuts(bus, {
-  onSaveAs: () => saveFlow.promptSaveAs(sessionRef.value?.content?.meta.title),
-  isActive: () => isDiagramEditorPath(route.path)
-})
+const {
+  onConflictDismiss,
+  onConflictReload,
+  onConflictOverwrite,
+  onConflictSaveAs,
+  onFolderPicked,
+  onFolderPickerCancel,
+  openConflictDialog
+} = saveFlow
 useDiagramIpcBridge(bus)
-useDiagramAutosave({
+const autosave = useDiagramAutosave({
   bus,
   session: sessionRef,
   isBlocked: () => conflictOpen.value || folderPickerOpen.value,
   savePayload: () => ({ folderId: pickedFolderId.value }),
   onSaveError: (detail) => {
     toast.add({ severity: 'warn', summary: '自动保存失败', detail, life: 3500 })
+  },
+  onConflict: () => {
+    toast.add({
+      severity: 'warn',
+      summary: '保存冲突',
+      detail: '文件已被其他位置修改，请处理冲突后再继续',
+      life: 5000
+    })
+    openConflictDialog(sessionRef.value?.content?.meta.title)
   }
+})
+
+async function switchPageWithFlush(dispatch: () => Promise<unknown>) {
+  await autosave.flush()
+  await dispatch()
+}
+
+useDiagramShortcuts(bus, {
+  onSave: () => {
+    if (!sessionRef.value?.dirty) return
+    void saveFlow.saveDocument({ folderId: pickedFolderId.value })
+  },
+  onSaveAs: () => saveFlow.promptSaveAs(sessionRef.value?.content?.meta.title),
+  onPagePrev: () => switchPageWithFlush(() => bus.dispatch({ type: 'page.prev' })),
+  onPageNext: () => switchPageWithFlush(() => bus.dispatch({ type: 'page.next' })),
+  isActive: () => isDiagramEditorPath(route.path),
+  isBlocked: () => conflictOpen.value || folderPickerOpen.value
+})
+
+const isSaving = computed(
+  () => autosave.isSaving.value || saveFlow.isSaving.value
+)
+
+watch([conflictOpen, folderPickerOpen], ([conflict, folder], [prevConflict, prevFolder]) => {
+  const unblocked = (prevConflict && !conflict) || (prevFolder && !folder)
+  if (unblocked && sessionRef.value?.dirty) {
+    autosave.scheduleSave()
+  }
+})
+
+provideDiagramEditorGuard({
+  flushSave: () => autosave.flush()
 })
 
 function applyFolderIdFromRoute() {
@@ -168,13 +215,19 @@ const unsubscribeBusResult = bus.onResult((cmd, result) => {
     const data = result.data as { meta?: { id: string } } | undefined
     const id = data?.meta?.id ?? (data as { fileId?: string } | undefined)?.fileId
     if (id && id !== fileId.value) {
+      const folderId =
+        typeof route.query.folderId === 'string' ? route.query.folderId : pickedFolderId.value
+      const query: Record<string, string> = {}
+      if (folderId && folderId !== DG_HOME && folderId !== DG_RECYCLE) {
+        query.folderId = folderId
+      }
+      if (cmd.type === 'document.importWfg' || cmd.type === 'document.importDrawio') {
+        query.fitView = '1'
+      }
       void router.replace({
         name: LIBRARY_DIAGRAMS_EDITOR_ROUTE,
         params: { fileId: id },
-        query:
-          cmd.type === 'document.importWfg' || cmd.type === 'document.importDrawio'
-            ? { fitView: '1' }
-            : {}
+        query
       })
     }
   }
@@ -313,24 +366,21 @@ async function bootstrapEditor() {
     canGroupSelection.value = port.canGroupSelection()
     refreshAlignBarAnchor()
   })
-  const markViewportDirty = useDebounceFn(() => {
-    sessionRef.value?.markActivePageDirty()
-  }, 500)
+  const syncViewport = useDebounceFn(() => {
+    sessionRef.value?.syncActivePageViewport()
+  }, 300)
 
   port.onViewportChange(() => {
-    void markViewportDirty()
+    void syncViewport()
     scheduleAlignBarRefresh()
   })
   port.onOverlayLayoutChange(() => {
     scheduleAlignBarRefresh()
   })
-  const markGraphDirty = useDebounceFn(() => {
-    sessionRef.value?.markActivePageDirty()
-  }, 400)
   const refreshCanvasEmptyDebounced = useDebounceFn(() => refreshCanvasEmpty(), 400)
 
   port.onGraphChange(() => {
-    void markGraphDirty()
+    sessionRef.value?.markActivePageDirty()
     void refreshCanvasEmptyDebounced()
     if (selectedNodeCount.value >= 2) {
       scheduleAlignBarRefresh()
@@ -383,19 +433,30 @@ async function bootstrapEditor() {
 
 async function confirmDirtyLeave(): Promise<boolean> {
   if (!sessionRef.value?.dirty) return true
+
+  const leave = await ask({
+    header: '未保存的更改',
+    message: '自动保存尚未完成。确定要离开吗？',
+    acceptLabel: '离开',
+    rejectLabel: '取消'
+  })
+  if (!leave) return false
+
   const shouldSave = await ask({
     header: '未保存的更改',
-    message: '文档有未保存的更改。保存并离开，还是不保存直接离开？',
+    message: '保存后离开，还是不保存直接离开？',
     acceptLabel: '保存并离开',
     rejectLabel: '不保存离开'
   })
   if (shouldSave) {
-    return saveFlow.saveDocument()
+    return saveFlow.saveDocument({ folderId: pickedFolderId.value })
   }
   return true
 }
 
 async function flushBeforeLeave(): Promise<NavigationGuardReturn> {
+  await autosave.flush()
+  if (!sessionRef.value?.dirty) return true
   return confirmDirtyLeave()
 }
 
@@ -410,10 +471,19 @@ onMounted(() => {
 
   function onBeforeUnload(e: BeforeUnloadEvent) {
     if (!sessionRef.value?.dirty) return
+    void autosave.flush()
+    if (!sessionRef.value?.dirty) return
     e.preventDefault()
   }
+  function onPageHide() {
+    void autosave.flush()
+  }
   window.addEventListener('beforeunload', onBeforeUnload)
-  removeBeforeUnload = () => window.removeEventListener('beforeunload', onBeforeUnload)
+  window.addEventListener('pagehide', onPageHide)
+  removeBeforeUnload = () => {
+    window.removeEventListener('beforeunload', onBeforeUnload)
+    window.removeEventListener('pagehide', onPageHide)
+  }
 
   void (async () => {
     try {
@@ -434,12 +504,17 @@ onMounted(() => {
 
 watch(fileId, async (id, prev) => {
   if (!portRef.value || !sessionRef.value || id === prev) return
-  const ok = await confirmDirtyLeave()
-  if (!ok) {
-    if (prev) {
-      await router.replace({ name: LIBRARY_DIAGRAMS_EDITOR_ROUTE, params: { fileId: prev } })
+  // 自动/手动保存后仅更新 URL 时，会话已持有同一文件，无需重载
+  if (sessionRef.value.fileId === id) return
+  await autosave.flush()
+  if (sessionRef.value.dirty) {
+    const ok = await confirmDirtyLeave()
+    if (!ok) {
+      if (prev) {
+        await router.replace({ name: LIBRARY_DIAGRAMS_EDITOR_ROUTE, params: { fileId: prev } })
+      }
+      return
     }
-    return
   }
   loading.value = true
   loadError.value = null
@@ -485,19 +560,17 @@ onBeforeUnmount(() => {
 })
 
 async function goBack() {
+  const nav = await flushBeforeLeave()
+  if (nav !== true) return
   await pushShellRoute(router, { name: 'library-diagrams-home' })
 }
 
 function updateDropIndicator(event: DragEvent) {
-  const el = canvasRef.value
   const port = portRef.value
-  if (!el) return
-  const rect = el.getBoundingClientRect()
-  dropIndicator.value = {
-    x: event.clientX - rect.left,
-    y: event.clientY - rect.top
-  }
   if (!port) return
+  const pos = port.dropIndicatorPosition(event.clientX, event.clientY)
+  dropIndicator.value = { x: pos.x, y: pos.y }
+  dropIndicatorSnapped.value = pos.snapped
   const { x, y } = port.clientToCanvas(event.clientX, event.clientY)
   port.setEdgeInsertHighlight(port.findEdgeAtCanvasPoint(x, y))
 }
@@ -505,6 +578,7 @@ function updateDropIndicator(event: DragEvent) {
 function resetCanvasDragState() {
   isCanvasDragOver.value = false
   dropIndicator.value = null
+  dropIndicatorSnapped.value = false
   portRef.value?.setEdgeInsertHighlight(null)
 }
 
@@ -537,7 +611,7 @@ function onCanvasDrop(event: DragEvent) {
     return
   }
   event.preventDefault()
-  const { x, y } = port.clientToCanvas(event.clientX, event.clientY)
+  const { x, y } = port.canvasDropPoint(event.clientX, event.clientY)
   const insertEdgeId = port.findEdgeAtCanvasPoint(x, y) ?? undefined
   resetCanvasDragState()
   void bus.dispatch({
@@ -575,6 +649,7 @@ function onCanvasDrop(event: DragEvent) {
         <div
           v-if="isCanvasDragOver && dropIndicator"
           class="dg-drop-indicator"
+          :class="{ 'dg-drop-indicator--snapped': dropIndicatorSnapped }"
           :style="{ left: `${dropIndicator.x}px`, top: `${dropIndicator.y}px` }"
           aria-hidden="true"
         />
@@ -595,8 +670,10 @@ function onCanvasDrop(event: DragEvent) {
       <DiagramEditorToolbar
         :title="editorReady ? title : loading ? '加载中…' : '流程图'"
         :dirty="editorReady && dirty"
+        :saving="editorReady && isSaving"
         :zoom-percent="viewportZoomPercent"
         :folder-id="pickedFolderId"
+        :file-id="sessionRef?.fileId ?? null"
         :booting="!editorReady"
         @back="goBack"
       />
@@ -635,6 +712,7 @@ function onCanvasDrop(event: DragEvent) {
         <DiagramPageTabs :pages="pages" :active-page-id="activePageId" />
         <DiagramSaveConflictDialog
           v-model:open="conflictOpen"
+          @dismiss="onConflictDismiss"
           @reload="onConflictReload"
           @overwrite="onConflictOverwrite"
           @save-as="onConflictSaveAs"
@@ -643,6 +721,7 @@ function onCanvasDrop(event: DragEvent) {
           v-model:open="folderPickerOpen"
           v-model:folder-id="pickedFolderId"
           @confirm="onFolderPicked"
+          @cancel="onFolderPickerCancel"
         />
         <DiagramCanvasContextMenu ref="canvasMenuRef" />
       </template>

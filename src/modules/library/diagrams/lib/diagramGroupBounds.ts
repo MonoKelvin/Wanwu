@@ -49,7 +49,7 @@ export function syncGroupFrameBounds(lf: LogicFlow, groupId: string): void {
   const dx = cx - group.x
   const dy = cy - group.y
   if (dx !== 0 || dy !== 0) {
-    group.move(dx, dy)
+    lf.graphModel.moveNode(groupId, dx, dy, true)
   }
 }
 

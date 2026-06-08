@@ -12,7 +12,10 @@ const rows = [
   { keys: 'Ctrl + A', action: '全选' },
   { keys: 'Ctrl + 0 / 1', action: '适应画布 / 重置缩放' },
   { keys: 'Ctrl + PageUp/Down', action: '上一页 / 下一页' },
+  { keys: '方向键', action: '微移选中图元（吸附开启时按网格步进）' },
+  { keys: 'Shift + 方向键', action: '大步微移选中图元' },
   { keys: 'Delete', action: '删除选中' },
+  { keys: 'Esc', action: '取消选中' },
   { keys: '滚轮', action: '缩放画布' },
   { keys: '左键拖拽空白', action: '框选图元' },
   { keys: '中键拖拽', action: '平移画布' }

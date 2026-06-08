@@ -916,6 +916,20 @@ export function setEdgeInsertHighlightId(edgeId: string | null): void {
 
 function hideEdgeOutlineModel<T extends typeof PolylineEdgeModel>(Base: T) {
   return class DiagramEdgeModel extends Base {
+    getAdjustStart() {
+      const pt = super.getAdjustStart()
+      if (pt && Number.isFinite(pt.x) && Number.isFinite(pt.y)) return pt
+      const { x, y } = this.startPoint
+      return { x, y }
+    }
+
+    getAdjustEnd() {
+      const pt = super.getAdjustEnd()
+      if (pt && Number.isFinite(pt.x) && Number.isFinite(pt.y)) return pt
+      const { x, y } = this.endPoint
+      return { x, y }
+    }
+
     getOutlineStyle() {
       const style = super.getOutlineStyle()
       style.stroke = 'none'

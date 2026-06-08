@@ -27,11 +27,13 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   confirm: []
+  cancel: []
 }>()
 const open = defineModel<boolean>('open', { default: false })
 const selectedFolderId = defineModel<string>('folderId', { default: DG_FILES })
 const store = useDiagramsStore()
 const loading = ref(false)
+let closingByAction = false
 
 const folderOptions = computed(() => {
   if (props.folders) return props.folders
@@ -57,6 +59,21 @@ function folderLabel(id: string, name: string) {
   if (id === DG_FILES) return `${name}（默认）`
   return name
 }
+
+function onConfirm() {
+  closingByAction = true
+  emit('confirm')
+}
+
+function onCancel() {
+  closingByAction = true
+  emit('cancel')
+}
+
+function onHide() {
+  if (!closingByAction) emit('cancel')
+  closingByAction = false
+}
 </script>
 
 <template>
@@ -66,6 +83,7 @@ function folderLabel(id: string, name: string) {
     modal
     append-to="body"
     class="ww-glass-dialog w-[min(22rem,92vw)]"
+    @hide="onHide"
     :pt="{
       root: { class: 'ww-glass-dialog-root' },
       header: { class: 'ww-glass-dialog__header' },
@@ -87,11 +105,11 @@ function folderLabel(id: string, name: string) {
       </li>
     </ul>
     <template #footer>
-      <WwButton label="取消" severity="secondary" text @click="open = false" />
+      <WwButton label="取消" severity="secondary" text @click="onCancel" />
       <WwButton
         :label="confirmLabel"
         :disabled="!folderOptions.length"
-        @click="emit('confirm')"
+        @click="onConfirm"
       />
     </template>
   </Dialog>

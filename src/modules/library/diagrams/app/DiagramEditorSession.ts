@@ -83,6 +83,14 @@ export class DiagramEditorSession {
     this.dirtyPageIds.add(this.activePageId)
   }
 
+  /** 仅同步视口到内存页数据，不触发 dirty / 自动保存 */
+  syncActivePageViewport(): void {
+    if (!this.content || !this.activePageId) return
+    const page = this.content.pages.find((p) => p.id === this.activePageId)
+    if (!page) return
+    page.viewport = this.port.getViewport()
+  }
+
   flushActivePage(options?: { markDirty?: boolean }): void {
     if (!this.content || !this.activePageId) return
     const page = this.content.pages.find((p) => p.id === this.activePageId)

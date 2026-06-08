@@ -1,4 +1,4 @@
-import { onUnmounted, watch, type Ref } from 'vue'
+import { onUnmounted, ref, watch, type Ref } from 'vue'
 import type { IDiagramCommandBus } from '@modules/library/diagrams/interfaces/IDiagramCommandBus'
 import type { DiagramEditorSession } from '@modules/library/diagrams/app/DiagramEditorSession'
 
@@ -8,11 +8,14 @@ export function useDiagramAutosave(options: {
   debounceMs?: number
   isBlocked?: () => boolean
   onSaveError?: (message: string) => void
+  onConflict?: () => void
   savePayload?: () => Record<string, unknown> | undefined
 }) {
   let timer: ReturnType<typeof setTimeout> | null = null
-  let saving = false
-  const debounceMs = options.debounceMs ?? 2000
+  const isSaving = ref(false)
+  let saveChain: Promise<boolean> = Promise.resolve(true)
+  const debounceMs = options.debounceMs ?? 800
+  let retryBackoffMs = debounceMs
 
   function cancelScheduledSave() {
     if (timer) {
@@ -21,39 +24,68 @@ export function useDiagramAutosave(options: {
     }
   }
 
-  async function runSave() {
-    if (saving || options.isBlocked?.()) return
+  async function runSave(): Promise<boolean> {
+    if (options.isBlocked?.()) return false
     const session = options.session.value
-    if (!session?.fileId || !session.dirty) return
+    if (!session?.dirty) return true
 
-    saving = true
+    isSaving.value = true
     try {
       const result = await options.bus.dispatch({
         type: 'document.save',
-        payload: options.savePayload?.()
+        payload: { ...options.savePayload?.(), auto: true }
       })
-      if (!result.ok && result.code !== 'CONFLICT') {
-        options.onSaveError?.(result.message ?? '自动保存失败')
+      if (!result.ok) {
+        if (result.code === 'CONFLICT') {
+          options.onConflict?.()
+        } else {
+          options.onSaveError?.(result.message ?? '自动保存失败')
+          scheduleSave(true)
+        }
+        return false
       }
+      retryBackoffMs = debounceMs
+      return true
     } finally {
-      saving = false
+      isSaving.value = false
     }
   }
 
-  function scheduleSave() {
+  function enqueueSave(): Promise<boolean> {
+    saveChain = saveChain.then(() => runSave())
+    return saveChain
+  }
+
+  function scheduleSave(isRetry = false) {
     if (options.isBlocked?.()) return
-    if (!options.session.value?.fileId) return
+    if (!options.session.value?.dirty) return
     cancelScheduledSave()
+    const delay = isRetry ? retryBackoffMs : debounceMs
+    if (isRetry) {
+      retryBackoffMs = Math.min(retryBackoffMs * 2, 8000)
+    }
     timer = setTimeout(() => {
       timer = null
-      void runSave()
-    }, debounceMs)
+      void enqueueSave()
+    }, delay)
+  }
+
+  /** 离开页面前调用：取消防抖并等待进行中的保存完成 */
+  async function flush(): Promise<boolean> {
+    cancelScheduledSave()
+    if (!options.session.value?.dirty) return true
+    if (isSaving.value) {
+      await saveChain
+      return !options.session.value?.dirty
+    }
+    return enqueueSave()
   }
 
   const stopDirty = watch(
     () => options.session.value?.dirty,
     (dirty) => {
       if (dirty) scheduleSave()
+      else cancelScheduledSave()
     }
   )
 
@@ -80,5 +112,5 @@ export function useDiagramAutosave(options: {
     cancelScheduledSave()
   })
 
-  return { scheduleSave, cancelScheduledSave }
+  return { scheduleSave, cancelScheduledSave, flush, isSaving }
 }

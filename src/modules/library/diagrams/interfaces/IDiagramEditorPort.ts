@@ -96,6 +96,7 @@ export interface IDiagramEditorPort {
     mode: import('@modules/library/diagrams/lib/diagramNodeLayout').DiagramDistributeMode,
     nodeIds?: string[]
   ): void
+  nudgeSelection(dx: number, dy: number, nodeIds?: string[]): void
   bringNodesToFront(nodeIds?: string[]): void
   sendNodesToBack(nodeIds?: string[]): void
   batchUpdateNodeProperties(

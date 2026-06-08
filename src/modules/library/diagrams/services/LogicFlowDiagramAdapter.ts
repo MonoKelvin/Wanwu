@@ -6,6 +6,7 @@ import {
   resolveThemeFromPreset
 } from '@modules/library/diagrams/lib/diagramCanvasPresets'
 import {
+  DIAGRAM_GRID_SIZE,
   diagramAxisStyle,
   diagramCanvasBackground,
   type DiagramCanvasTheme
@@ -59,6 +60,21 @@ import {
   DIAGRAM_GROUP_FRAME_TYPE
 } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import { syncGroupFramesForNodes } from '@modules/library/diagrams/lib/diagramGroupBounds'
+import {
+  refreshSnapAlignGuide,
+  snapCanvasPoint,
+  snapNodesAfterDrag,
+  softSnapNodesDuringDrag
+} from '@modules/library/diagrams/lib/diagramGridSnap'
+import { snapCoordinateToGrid } from '@modules/library/diagrams/lib/diagramCanvasTheme'
+import {
+  activateEdgeEndpointPriority,
+  finishAdjustPointDrag,
+  refreshEdgeEndpointPriorityFromPointer,
+  resetEdgeEndpointPriority,
+  setAdjustPointDragging,
+  suppressNodeAnchorIfEdgePriority
+} from '@modules/library/diagrams/lib/diagramEdgeEndpointPriority'
 import { computeMixedNodeFields } from '@modules/library/diagrams/lib/diagramSelectionMixed'
 
 let snapshotPluginReady: Promise<void> | null = null
@@ -100,6 +116,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   private selectionHandler: ((selection: DiagramEditorSelection) => void) | null = null
   private graphChangeHandler: (() => void) | null = null
   private graphChangeRaf: number | null = null
+  private selectionEmitRaf: number | null = null
+  private edgeInsertDragRaf: number | null = null
+  private resizeSnapTimer: ReturnType<typeof setTimeout> | null = null
   private viewportChangeHandler: (() => void) | null = null
   private resolvedTheme: DiagramCanvasTheme = 'light'
   private canvasSettings: DiagramCanvasSettings = defaultCanvasSettings('light')
@@ -111,6 +130,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   private overlayLayoutHandler: (() => void) | null = null
   private teardownMiddlePan: (() => void) | null = null
   private teardownContextMenu: (() => void) | null = null
+  private teardownEdgeEndpointPriority: (() => void) | null = null
   private contextMenuHandler:
     | ((detail: {
         event: MouseEvent
@@ -144,6 +164,27 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     })
   }
 
+  private scheduleEmitSelection(): void {
+    if (this.selectionEmitRaf != null) return
+    this.selectionEmitRaf = requestAnimationFrame(() => {
+      this.selectionEmitRaf = null
+      this.emitSelection()
+    })
+  }
+
+  /** 单图元缩放结束：仅同步组合框，不吸附中心点（吸附会偏移对角锚定位置） */
+  private scheduleResizeFollowUp(nodeId: string): void {
+    if (this.resizeSnapTimer) clearTimeout(this.resizeSnapTimer)
+    this.resizeSnapTimer = setTimeout(() => {
+      this.resizeSnapTimer = null
+      if (!this.lf) return
+      syncGroupFramesForNodes(this.lf, [nodeId])
+      this.refreshMultiSelectResize?.()
+      this.scheduleOverlayLayout()
+      this.scheduleGraphChange()
+    }, 120)
+  }
+
   private overlayLayoutRaf: number | null = null
 
   private scheduleOverlayLayout(): void {
@@ -157,8 +198,11 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   private initLogicFlow(el: HTMLElement): void {
     this.lf = new LogicFlow({
       container: el,
-      grid: { size: 20, visible: true, type: 'mesh' },
-      snapGrid: true,
+      grid: { size: DIAGRAM_GRID_SIZE, visible: true, type: 'mesh' },
+      // 关闭 LogicFlow 内置强吸附（每帧 round 导致不跟手），改用轻吸附 + 松手对齐
+      snapGrid: false,
+      snapline: true,
+      snaplineEpsilon: 6,
       keyboard: { enabled: false },
       edgeType: 'polyline',
       adjustEdgeStartAndEnd: true,
@@ -344,6 +388,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       if (append && this.lastSelectedEdgeIds.includes(data.id)) {
         this.lf?.deselectElementById(data.id)
       }
+      activateEdgeEndpointPriority(this.lf!, data.id, this.container)
       this.syncSelectionFromGraph()
     })
 
@@ -355,13 +400,19 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       this.emitSelection()
     })
 
+    this.lf.on('edge:delete', () => {
+      resetEdgeEndpointPriority(this.lf, this.container)
+    })
+
     this.lf.on('blank:click', () => {
       this.lf?.clearSelectElements()
+      this.lf?.removeNodeSnapLine()
       this.selectedNodeId = null
       this.selectedEdgeId = null
       this.lastSelectedNodeIds = []
       this.lastSelectedEdgeIds = []
       this.cleanupActiveBoxSelect()
+      resetEdgeEndpointPriority(this.lf, this.container)
       this.emitSelection()
     })
 
@@ -420,10 +471,20 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       if (!this.lf) return
       const model = this.lf.getNodeModelById(data.id)
       if (model && model.type !== DIAGRAM_GROUP_FRAME_TYPE) {
-        const edgeId = this.findEdgeAtCanvasPoint(model.x, model.y, 16, {
-          excludeNodeIds: this.edgeInsertDragNodeIds
-        })
-        this.setEdgeInsertHighlight(edgeId)
+        if (this.edgeInsertDragRaf == null) {
+          const nodeId = data.id
+          const dragIds = this.edgeInsertDragNodeIds
+          this.edgeInsertDragRaf = requestAnimationFrame(() => {
+            this.edgeInsertDragRaf = null
+            if (!this.lf) return
+            const dragged = this.lf.getNodeModelById(nodeId)
+            if (!dragged) return
+            const edgeId = this.findEdgeAtCanvasPoint(dragged.x, dragged.y, 16, {
+              excludeNodeIds: dragIds
+            })
+            this.setEdgeInsertHighlight(edgeId)
+          })
+        }
       }
       if (model?.type === DIAGRAM_GROUP_FRAME_TYPE) {
         const last = this.groupDragLastPos.get(data.id)
@@ -432,17 +493,23 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         const dy = model.y - last.y
         if (dx === 0 && dy === 0) return
         const members = (model.properties?.dgGroupMembers as string[] | undefined) ?? []
-        for (const memberId of members) {
-          const member = this.lf.getNodeModelById(memberId)
-          if (member) {
-            member.move(dx, dy)
-          }
+        if (members.length) {
+          this.lf.graphModel.moveNodes(members, dx, dy, true)
         }
         this.groupDragLastPos.set(data.id, { x: model.x, y: model.y })
       }
+      if (this.countSelectedNodes() === 1 && this.selectedNodeId === data.id) {
+        this.scheduleEmitSelection()
+      }
+      if (this.canvasSettings.snapGrid) {
+        const affected = this.getSelectedNodeIds()
+        const snapTargets = affected.includes(data.id) ? affected : [data.id]
+        softSnapNodesDuringDrag(this.lf, snapTargets, true, data.id)
+        refreshSnapAlignGuide(this.lf, data.id, true)
+      }
     })
 
-    this.lf.on('node:dragend', ({ data }) => {
+    this.lf.on('node:drop', ({ data }) => {
       const highlightEdgeId = this.edgeInsertHighlightId
       const dragNodeIds = [...this.edgeInsertDragNodeIds]
       this.edgeInsertDragNodeIds = []
@@ -453,19 +520,21 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       } else {
         this.setEdgeInsertHighlight(null)
       }
+      this.lf.removeNodeSnapLine()
       const affected = this.getSelectedNodeIds()
-      if (affected.includes(data.id)) {
-        syncGroupFramesForNodes(this.lf, affected)
-        this.scheduleOverlayLayout()
-        this.refreshMultiSelectResize?.()
-      }
+      const snapTargets = affected.includes(data.id) ? affected : [data.id]
+      snapNodesAfterDrag(this.lf, snapTargets, this.canvasSettings.snapGrid, data.id)
+      const syncIds = affected.includes(data.id) ? affected : [data.id]
+      syncGroupFramesForNodes(this.lf, syncIds)
+      this.scheduleOverlayLayout()
+      this.refreshMultiSelectResize?.()
     })
 
     for (const evt of [
       'node:add',
       'node:delete',
       'edge:delete',
-      'node:dragend',
+      'node:drop',
       'node:resize',
       'node:rotate',
       'node:properties-change',
@@ -474,17 +543,22 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     ] as const) {
       this.lf.on(evt, (arg: unknown) => {
         this.scheduleGraphChange()
-        if (evt === 'node:dragend') {
+        if (evt === 'node:drop') {
           for (const id of this.getSelectedNodeIds()) {
             const model = this.lf?.getNodeModelById(id)
             if (model) syncNodeTextLayout(model)
           }
         }
-        if (evt === 'node:resize') {
-          const model = (arg as { model?: LogicFlow.BaseNodeModel } | undefined)?.model
-          if (model) syncNodeTextLayout(model)
+        if (evt === 'node:resize' && this.lf) {
+          const payload = arg as { data?: { id: string }; model?: { id: string } } | undefined
+          const nodeId = payload?.data?.id ?? payload?.model?.id
+          const model = nodeId ? this.lf.getNodeModelById(nodeId) : undefined
+          if (model) {
+            syncNodeTextLayout(model)
+            this.scheduleResizeFollowUp(model.id)
+          }
         }
-        if (evt === 'node:dragend' || evt === 'node:resize' || evt === 'history:change') {
+        if (evt === 'node:drop' || evt === 'node:resize' || evt === 'history:change') {
           this.syncSelectionFromGraph()
         }
       })
@@ -497,9 +571,56 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
     this.lf.on('graph:transform', () => {
       this.viewportChangeHandler?.()
-      this.scheduleOverlayLayout()
-      this.refreshMultiSelectResize?.()
+      if (this.countSelectedNodes() >= 2) {
+        this.scheduleOverlayLayout()
+        this.refreshMultiSelectResize?.()
+      }
     })
+
+    this.bindEdgeEndpointPriority()
+  }
+
+  private bindEdgeEndpointPriority(): void {
+    if (!this.lf || !this.container) return
+    const lf = this.lf
+    const container = this.container
+    let pointerRaf = 0
+
+    const onEdgeMouseEnter = ({ data }: { data: { id: string } }) => {
+      activateEdgeEndpointPriority(lf, data.id, container)
+    }
+
+    const onNodeMouseEnter = ({ data }: { data: { id: string } }) => {
+      suppressNodeAnchorIfEdgePriority(lf, data.id)
+    }
+
+    const onAdjustDragStart = () => {
+      setAdjustPointDragging(true)
+    }
+
+    const onAdjustDragEnd = () => {
+      finishAdjustPointDrag(lf, container)
+    }
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (pointerRaf) return
+      pointerRaf = requestAnimationFrame(() => {
+        pointerRaf = 0
+        refreshEdgeEndpointPriorityFromPointer(lf, e.clientX, e.clientY, container)
+      })
+    }
+
+    lf.on('edge:mouseenter', onEdgeMouseEnter)
+    lf.on('node:mouseenter', onNodeMouseEnter)
+    lf.on('adjustPoint:dragstart', onAdjustDragStart)
+    lf.on('adjustPoint:dragend', onAdjustDragEnd)
+    container.addEventListener('pointermove', onPointerMove, { passive: true })
+
+    this.teardownEdgeEndpointPriority = () => {
+      if (pointerRaf) cancelAnimationFrame(pointerRaf)
+      container.removeEventListener('pointermove', onPointerMove)
+      resetEdgeEndpointPriority(lf, container)
+    }
   }
 
   private syncSelectionFromGraph(): void {
@@ -512,7 +633,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       selected.nodes.find((n) => this.isGroupFrameId(n.id))
     this.selectedNodeId = primaryNode?.id ?? null
     this.selectedEdgeId = selected.edges[0]?.id ?? null
-    this.emitSelection()
+    this.scheduleEmitSelection()
   }
 
   private emitSelection(): void {
@@ -698,6 +819,48 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.applyNodePositionPatches(patches)
   }
 
+  nudgeSelection(dx: number, dy: number, nodeIds?: string[]): void {
+    if (!this.lf || (dx === 0 && dy === 0)) return
+    const selected = nodeIds?.length ? nodeIds : this.getSelectedNodeIds()
+    if (!selected.length) return
+
+    const toMove: string[] = []
+    const seen = new Set<string>()
+    const add = (id: string) => {
+      if (seen.has(id) || !this.lf!.getNodeModelById(id)) return
+      seen.add(id)
+      toMove.push(id)
+    }
+
+    for (const id of selected) {
+      const model = this.lf.getNodeModelById(id)
+      if (!model) continue
+
+      if (model.type === DIAGRAM_GROUP_FRAME_TYPE) {
+        add(id)
+        for (const memberId of (model.properties?.dgGroupMembers as string[] | undefined) ?? []) {
+          add(memberId)
+        }
+        continue
+      }
+
+      const inSelectedGroup = selected.some((groupId) => {
+        const group = this.lf!.getNodeModelById(groupId)
+        if (group?.type !== DIAGRAM_GROUP_FRAME_TYPE) return false
+        return ((group.properties?.dgGroupMembers as string[] | undefined) ?? []).includes(id)
+      })
+      if (!inSelectedGroup) add(id)
+    }
+
+    if (!toMove.length) return
+    this.lf.graphModel.moveNodes(toMove, dx, dy, true)
+    syncGroupFramesForNodes(this.lf, toMove)
+    this.scheduleGraphChange()
+    this.syncSelectionFromGraph()
+    this.refreshMultiSelectResize?.()
+    this.scheduleOverlayLayout()
+  }
+
   bringNodesToFront(nodeIds?: string[]): void {
     if (!this.lf) return
     const ids = (nodeIds?.length ? nodeIds : this.getSelectedNodeIds()).filter((id) =>
@@ -737,13 +900,19 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
   private applyNodePositionPatches(patches: Array<{ id: string; x: number; y: number }>): void {
     if (!this.lf || !patches.length) return
+    const snap = this.canvasSettings.snapGrid
     for (const patch of patches) {
       const model = this.lf.getNodeModelById(patch.id)
       if (!model) continue
-      const dx = patch.x - model.x
-      const dy = patch.y - model.y
+      let { x, y } = patch
+      if (snap) {
+        x = snapCoordinateToGrid(x)
+        y = snapCoordinateToGrid(y)
+      }
+      const dx = x - model.x
+      const dy = y - model.y
       if (dx !== 0 || dy !== 0) {
-        model.move(dx, dy)
+        this.lf.graphModel.moveNode(patch.id, dx, dy, true)
       }
     }
     syncGroupFramesForNodes(
@@ -889,6 +1058,33 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     return point.canvasOverlayPosition
   }
 
+  /** 画布落点坐标，开启吸附时对齐网格 */
+  canvasDropPoint(clientX: number, clientY: number): { x: number; y: number } {
+    const point = this.clientToCanvas(clientX, clientY)
+    return snapCanvasPoint(point.x, point.y, this.canvasSettings.snapGrid)
+  }
+
+  /** 拖放预览点（容器内坐标），开启吸附时对齐网格 */
+  dropIndicatorPosition(
+    clientX: number,
+    clientY: number
+  ): { x: number; y: number; snapped: boolean } {
+    if (!this.lf) return { x: 0, y: 0, snapped: false }
+    const point = this.lf.getPointByClient({ x: clientX, y: clientY })
+    const canvas = point.canvasOverlayPosition
+    const dom = point.domOverlayPosition
+    if (!this.canvasSettings.snapGrid) {
+      return { x: dom.x, y: dom.y, snapped: false }
+    }
+    const snapped = snapCanvasPoint(canvas.x, canvas.y, true)
+    const scale = this.lf.getTransform().SCALE_X
+    return {
+      x: dom.x + (snapped.x - canvas.x) * scale,
+      y: dom.y + (snapped.y - canvas.y) * scale,
+      snapped: snapped.x !== canvas.x || snapped.y !== canvas.y
+    }
+  }
+
   destroy(): void {
     this.setEdgeInsertHighlight(null)
     this.hideMiniMap()
@@ -902,6 +1098,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.teardownMultiSelectResize?.()
     this.teardownMultiSelectResize = null
     this.refreshMultiSelectResize = null
+    this.teardownEdgeEndpointPriority?.()
+    this.teardownEdgeEndpointPriority = null
     this.overlayLayoutHandler = null
     this.lf?.destroy()
     this.lf = null
@@ -916,6 +1114,19 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       cancelAnimationFrame(this.overlayLayoutRaf)
       this.overlayLayoutRaf = null
     }
+    if (this.selectionEmitRaf != null) {
+      cancelAnimationFrame(this.selectionEmitRaf)
+      this.selectionEmitRaf = null
+    }
+    if (this.edgeInsertDragRaf != null) {
+      cancelAnimationFrame(this.edgeInsertDragRaf)
+      this.edgeInsertDragRaf = null
+    }
+    if (this.resizeSnapTimer) {
+      clearTimeout(this.resizeSnapTimer)
+      this.resizeSnapTimer = null
+    }
+    this.groupDragLastPos.clear()
     this.viewportChangeHandler = null
     this.selectedNodeId = null
     this.selectedEdgeId = null
@@ -1085,9 +1296,13 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.canvasSettings = { ...this.canvasSettings, ...settings, defaultEdge: nextDefaultEdge }
     if (!this.lf) return
 
-    const { gridVisible, snapGrid, backgroundColor, miniMapVisible, themePreset } = this.canvasSettings
+    const { gridVisible, backgroundColor, miniMapVisible, themePreset } = this.canvasSettings
 
-    this.lf.updateEditConfig({ snapGrid })
+    // snapGrid 由本适配器处理：拖拽轻吸附 + 松手对齐，不交给 LogicFlow 全程强吸附
+    this.lf.updateEditConfig({ snapGrid: false })
+    if (!this.canvasSettings.snapGrid) {
+      this.lf.removeNodeSnapLine()
+    }
     const theme = this.lf.getTheme()
     this.lf.setTheme({
       ...theme,
@@ -1128,7 +1343,14 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
   updateNodeProperties(props: Partial<DiagramNodeProperties> & { id: string }): void {
     if (!this.lf) return
+    const affectsLayout =
+      props.x != null || props.y != null || props.width != null || props.height != null
     applyNodeProperties(this.lf, props)
+    if (affectsLayout) {
+      syncGroupFramesForNodes(this.lf, [props.id])
+      this.refreshMultiSelectResize?.()
+      this.scheduleOverlayLayout()
+    }
     this.scheduleGraphChange()
     this.emitSelection()
   }
@@ -1763,6 +1985,10 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     }
     if (newNodeIds.length) {
       this.select(newNodeIds)
+      if (this.canvasSettings.snapGrid) {
+        snapNodesAfterDrag(this.lf, newNodeIds, true, newNodeIds[0])
+        syncGroupFramesForNodes(this.lf, newNodeIds)
+      }
     } else if (newEdgeIds.length) {
       this.select([], newEdgeIds)
     }
@@ -1771,6 +1997,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
   addNode(shape: string, x: number, y: number, text?: string, style?: Record<string, unknown>): string {
     if (!this.lf) throw new Error('画布未挂载')
+    ;({ x, y } = snapCanvasPoint(x, y, this.canvasSettings.snapGrid))
     const shapeId = resolveDiagramShapeId(shape)
     const meta = getDiagramShapeById(shapeId)
     const lfType = meta?.lfType ?? shapeId
@@ -1922,7 +2149,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       const ny = typeof patch.y === 'number' ? patch.y : model.y
       const dx = nx - model.x
       const dy = ny - model.y
-      if (dx !== 0 || dy !== 0) model.move(dx, dy)
+      if (dx !== 0 || dy !== 0) this.lf.graphModel.moveNode(nodeId, dx, dy, true)
     }
     const props = patch.properties ?? patch.style
     if (props && typeof props === 'object') {

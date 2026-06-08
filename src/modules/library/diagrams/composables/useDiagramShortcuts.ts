@@ -13,12 +13,24 @@ function isEditableTarget(target: EventTarget | null): boolean {
 export function useDiagramShortcuts(
   bus: IDiagramCommandBus,
   options?: {
+    onSave?: () => void | Promise<void>
     onSaveAs?: () => void
+    onPagePrev?: () => void | Promise<void>
+    onPageNext?: () => void | Promise<void>
     isActive?: () => boolean
+    isBlocked?: () => boolean
   }
 ) {
+  const arrowDirections: Record<string, 'left' | 'right' | 'up' | 'down'> = {
+    ArrowLeft: 'left',
+    ArrowRight: 'right',
+    ArrowUp: 'up',
+    ArrowDown: 'down'
+  }
+
   function onKeyDown(e: KeyboardEvent) {
     if (options?.isActive && !options.isActive()) return
+    if (options?.isBlocked?.()) return
 
     const mod = e.ctrlKey || e.metaKey
     if (mod && e.shiftKey && e.key.toLowerCase() === 's') {
@@ -29,7 +41,8 @@ export function useDiagramShortcuts(
     }
     if (mod && e.key === 's') {
       e.preventDefault()
-      void bus.dispatch({ type: 'document.save' })
+      if (options?.onSave) void options.onSave()
+      else void bus.dispatch({ type: 'document.save' })
       return
     }
     if (mod && e.key === 'z' && !e.shiftKey) {
@@ -85,12 +98,30 @@ export function useDiagramShortcuts(
     }
     if (mod && e.key === 'PageUp') {
       e.preventDefault()
-      void bus.dispatch({ type: 'page.prev' })
+      if (options?.onPagePrev) void options.onPagePrev()
+      else void bus.dispatch({ type: 'page.prev' })
       return
     }
     if (mod && e.key === 'PageDown') {
       e.preventDefault()
-      void bus.dispatch({ type: 'page.next' })
+      if (options?.onPageNext) void options.onPageNext()
+      else void bus.dispatch({ type: 'page.next' })
+      return
+    }
+    const nudgeDirection = arrowDirections[e.key]
+    if (!mod && nudgeDirection) {
+      if (isEditableTarget(e.target)) return
+      e.preventDefault()
+      void bus.dispatch({
+        type: 'canvas.nudgeSelection',
+        payload: { direction: nudgeDirection, large: e.shiftKey }
+      })
+      return
+    }
+    if (e.key === 'Escape') {
+      if (isEditableTarget(e.target)) return
+      e.preventDefault()
+      void bus.dispatch({ type: 'canvas.clearSelection' })
       return
     }
     if (e.key === 'Delete' || e.key === 'Backspace') {

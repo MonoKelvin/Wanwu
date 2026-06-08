@@ -780,13 +780,16 @@ function patchGroupStyle(patch: Record<string, unknown>) {
               @update:model-value="patchCanvas({ gridVisible: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="捕捉对齐" class="dg-settings-row--inline">
+          <SettingsRow label="吸附网格" class="dg-settings-row--inline">
             <WwToggleSwitch
               :model-value="canvas.snapGrid"
-              aria-label="捕捉对齐"
+              aria-label="吸附网格"
               @update:model-value="patchCanvas({ snapGrid: $event })"
             />
           </SettingsRow>
+          <p v-if="canvas.snapGrid" class="dg-prop-hint">
+            拖动时显示对齐线，接近网格时轻吸附，松手后对齐网格
+          </p>
           <SettingsRow label="导航窗口" class="dg-settings-row--inline">
             <WwToggleSwitch
               :model-value="canvas.miniMapVisible"

@@ -7,6 +7,7 @@ import type {
 import type { DiagramEditorSession } from '@modules/library/diagrams/app/DiagramEditorSession'
 import { diagramError } from '@modules/library/diagrams/app/diagramCommandErrors'
 import { DG_FILES } from '@modules/library/diagrams/domain/diagramFolderIds'
+import { diagramTitleBase } from '@modules/library/diagrams/lib/diagramHomeUtils'
 import { getDiagramTemplate } from '@modules/library/diagrams/lib/diagramTemplates'
 import { cloneForIpc } from '@shared/lib/cloneForIpc'
 
@@ -46,7 +47,8 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
             session,
             (p.folderId as string) || DG_FILES,
             p.title as string | undefined,
-            p.force as boolean | undefined
+            p.force as boolean | undefined,
+            p.auto as boolean | undefined
           )
         case 'document.saveAs':
           return this.saveAsNew(
@@ -178,18 +180,33 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
     session: DiagramEditorSession | null,
     folderId: string,
     title?: string,
-    force?: boolean
+    force?: boolean,
+    auto?: boolean
   ): Promise<DiagramCommandResult> {
     if (!session || !session.content) return diagramError('NO_SESSION', '无活跃编辑器会话')
     session.flushActivePage()
 
     const content = session.content
+    const prevTitle = session.fileMeta?.title
     if (title) {
       content.meta.title = title
       session.metaDirty = true
     }
 
+    if (!session.dirty && !title && !force) {
+      return { ok: true, data: { noop: true, fileId: session.fileId } }
+    }
+
     if (!session.fileId) {
+      if (auto) {
+        const record = await session.repository.createFile(
+          folderId || DG_FILES,
+          content.meta.title,
+          content
+        )
+        session.markSaved(record.meta)
+        return { ok: true, data: record }
+      }
       const saved = await session.repository.saveNewWithDialog({
         folderId: folderId || DG_FILES,
         content,
@@ -213,16 +230,26 @@ export class DocumentCommandHandler implements IDiagramCommandHandler {
     if (!result.ok) {
       return diagramError('CONFLICT', result.message ?? '保存冲突')
     }
-    if (session.fileMeta) {
-      session.fileMeta = {
-        ...session.fileMeta,
+    let meta = session.fileMeta
+    if (meta) {
+      meta = {
+        ...meta,
         title: content.meta.title,
         pageCount: content.pages.length,
         updatedAt: result.updatedAt
       }
     }
-    session.markSaved(session.fileMeta!)
-    return { ok: true, data: { fileId: session.fileId, updatedAt: result.updatedAt } }
+    const titleChanged =
+      Boolean(title) &&
+      Boolean(prevTitle) &&
+      diagramTitleBase(prevTitle!) !== diagramTitleBase(content.meta.title)
+    if (session.fileId && titleChanged) {
+      const renamed = await session.repository.renameFile(session.fileId, content.meta.title)
+      if (!renamed) return diagramError('INTERNAL', '重命名失败')
+      meta = renamed
+    }
+    if (meta) session.markSaved(meta)
+    return { ok: true, data: { fileId: session.fileId, updatedAt: meta?.updatedAt ?? result.updatedAt, meta } }
   }
 
   private async saveAsNew(

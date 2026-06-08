@@ -228,7 +228,11 @@ function applyUniformGroupScale(
       }
     }
 
-    model.move(newCx - model.x, newCy - model.y)
+    const dx = newCx - model.x
+    const dy = newCy - model.y
+    if (dx !== 0 || dy !== 0) {
+      lf.graphModel.moveNode(snap.id, dx, dy, true)
+    }
 
     if (persist) {
       syncNodeTextLayout(model)
@@ -526,7 +530,7 @@ export function mountDiagramMultiSelectResize(
   lf.on('node:click', onRefresh)
   lf.on('edge:click', onRefresh)
   lf.on('node:drag', onDragRefresh)
-  lf.on('node:dragend', onRefresh)
+  lf.on('node:drop', onRefresh)
   lf.on('node:resize', onRefresh)
   lf.on('node:delete', onRefresh)
   lf.on('selection:selected', onRefresh)
@@ -539,7 +543,7 @@ export function mountDiagramMultiSelectResize(
     lf.off('node:click', onRefresh)
     lf.off('edge:click', onRefresh)
     lf.off('node:drag', onDragRefresh)
-    lf.off('node:dragend', onRefresh)
+    lf.off('node:drop', onRefresh)
     lf.off('node:resize', onRefresh)
     lf.off('node:delete', onRefresh)
     lf.off('selection:selected', onRefresh)

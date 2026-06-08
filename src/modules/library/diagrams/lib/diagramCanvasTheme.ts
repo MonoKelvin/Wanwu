@@ -1,11 +1,39 @@
 export type DiagramCanvasTheme = 'light' | 'dark'
 
-const GRID_SIZE = 20
+export const DIAGRAM_GRID_SIZE = 20
+/** 拖拽时接近网格线的轻吸附阈值（px），避免全程强吸附不跟手 */
+export const DIAGRAM_SOFT_SNAP_THRESHOLD = 8
+
+/** 将坐标对齐到网格交点（LogicFlow 拖拽中实时 snap 会导致不跟手，应在 dragend 使用） */
+export function snapCoordinateToGrid(value: number, gridSize = DIAGRAM_GRID_SIZE): number {
+  return gridSize * Math.round(value / gridSize)
+}
+
+/** 拖拽过程中：仅当接近网格时轻吸附 */
+export function softSnapCoordinate(
+  value: number,
+  gridSize = DIAGRAM_GRID_SIZE,
+  threshold = DIAGRAM_SOFT_SNAP_THRESHOLD
+): number {
+  const snapped = snapCoordinateToGrid(value, gridSize)
+  return Math.abs(value - snapped) <= threshold ? snapped : value
+}
+
+export function diagramSnaplineTheme(resolved: DiagramCanvasTheme) {
+  const isDark = resolved === 'dark'
+  return {
+    stroke: isDark ? '#5a5a64' : '#dcdce2',
+    strokeWidth: 1,
+    strokeDasharray: '3,3',
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const
+  }
+}
 
 export function diagramGridOptions(resolved: DiagramCanvasTheme) {
   const isDark = resolved === 'dark'
   return {
-    size: GRID_SIZE,
+    size: DIAGRAM_GRID_SIZE,
     visible: true,
     type: 'mesh' as const,
     majorBold: false,
@@ -72,6 +100,7 @@ export function diagramLogicFlowTheme(resolved: DiagramCanvasTheme): Record<stri
   return {
     background: { backgroundColor: diagramCanvasBackground(resolved) },
     grid: diagramGridOptions(resolved),
+    snapline: diagramSnaplineTheme(resolved),
     rect: {
       fill: nodeFill,
       stroke: nodeStroke,
@@ -120,6 +149,12 @@ export function diagramLogicFlowTheme(resolved: DiagramCanvasTheme): Record<stri
     anchorLine: {
       stroke: edgeStroke,
       strokeWidth: 1
+    },
+    edgeAdjust: {
+      r: 5,
+      fill: nodeFill,
+      stroke: edgeStroke,
+      strokeWidth: 1.5
     }
   }
 }
