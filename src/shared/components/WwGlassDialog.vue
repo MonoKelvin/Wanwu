@@ -10,6 +10,11 @@ const props = defineProps<{
   strongBlur?: boolean
   /** 仅遮罩变暗、不模糊页面（用于 Markdown 编辑确认等） */
   dimMask?: boolean
+  /** 遮罩仅变暗；面板保留毛玻璃（快捷键等） */
+  panelBlurOnly?: boolean
+  dismissableMask?: boolean
+  closable?: boolean
+  closeOnEscape?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -17,7 +22,7 @@ const emit = defineEmits<{
 }>()
 
 const maskClass = computed(() => {
-  if (props.dimMask) return 'ww-glass-dialog-mask ww-glass-dialog-mask--dim'
+  if (props.dimMask || props.panelBlurOnly) return 'ww-glass-dialog-mask ww-glass-dialog-mask--dim'
   if (props.strongBlur) return 'ww-glass-dialog-mask ww-glass-dialog-mask--strong'
   return 'ww-glass-dialog-mask'
 })
@@ -34,6 +39,9 @@ const rootClass = computed(() => {
     :header="header"
     modal
     append-to="body"
+    :dismissable-mask="dismissableMask"
+    :closable="closable ?? true"
+    :close-on-escape="closeOnEscape ?? true"
     :class="['ww-glass-dialog', widthClass ?? 'w-[min(22rem,92vw)]']"
     :pt="{
       mask: { class: maskClass },

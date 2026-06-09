@@ -126,7 +126,12 @@ const {
 
 const catalogDefaultExpanded = computed(() => {
   if (activeMajor.value === 'links') return defaultLinksCatalogExpanded()
-  if (activeMajor.value === 'diagrams') return defaultDiagramsCatalogExpanded()
+  if (activeMajor.value === 'diagrams') {
+    const expanded = defaultDiagramsCatalogExpanded()
+    const hasCustom = diagramsStore.folders.some((f) => isDiagramCustomFolderId(f.id))
+    if (hasCustom) expanded[`dg:sys:${DG_FILES}`] = true
+    return expanded
+  }
   return {}
 })
 
@@ -347,7 +352,7 @@ function onCatalogNodeContextMenu(event: MouseEvent, node: TreeNode) {
   const key = String(node.key)
   if (isCatalogLoadingNodeKey(key)) return
 
-  if (key === 'major:diagrams') {
+  if (key === `dg:sys:${DG_FILES}`) {
     diagramsContextMode.value = 'major'
     diagramsContextFolderId.value = null
     diagramsContextMenu.value?.show(event)

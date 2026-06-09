@@ -39,6 +39,7 @@ export interface IDiagramEditorPort {
   zoom(delta?: number, scale?: number): void
   zoomToFit(): void
   zoomReset(): void
+  centerContent(): void
   resize(): void
   centerOrigin(): void
   getViewport(): DiagramViewport

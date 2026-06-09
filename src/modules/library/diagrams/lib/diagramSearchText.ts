@@ -38,20 +38,20 @@ export function prepareDiagramSearchDisplay(
   if (!q) {
     const preview = bodyPlain.length > previewMax ? `${bodyPlain.slice(0, previewMax)}…` : bodyPlain
     return {
-      titleHtml: escapeHtml(titleText),
-      previewHtml: escapeHtml(preview || `${titleBase}.wfg`),
+      titleHtml: escapeHtml(titleBase),
+      previewHtml: escapeHtml(preview || '流程图文档'),
       matchedInTitle: false,
       matchedInContent: false
     }
   }
 
   const titleMatch =
-    findMatchRange(titleText, q) ?? findMatchRange(titleBase, q)
+    findMatchRange(titleBase, q) ?? findMatchRange(titleText, q)
   const contentMatch = bodyPlain ? findMatchRange(bodyPlain, q) : null
   const matchedInTitle = titleMatch !== null
   const matchedInContent = contentMatch !== null
 
-  const titleHtml = matchedInTitle ? highlightQueryHtml(titleText, q) : escapeHtml(titleText)
+  const titleHtml = matchedInTitle ? highlightQueryHtml(titleBase, q) : escapeHtml(titleBase)
 
   let previewHtml: string
   if (matchedInContent && bodyPlain) {

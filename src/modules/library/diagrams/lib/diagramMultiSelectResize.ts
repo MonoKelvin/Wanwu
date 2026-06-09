@@ -371,6 +371,7 @@ export function mountDiagramMultiSelectResize(
   let pendingLayout = false
   let groupResizing = false
   let aspectLock = false
+  let nodeDragMoveListener: ((e: PointerEvent) => void) | null = null
 
   const syncAspectLock = (e: KeyboardEvent) => {
     aspectLock = e.shiftKey
@@ -518,19 +519,43 @@ export function mountDiagramMultiSelectResize(
     mountTarget.appendChild(root)
   }
 
-  const onRefresh = () => scheduleRefresh(true)
-  const onDragRefresh = () => {
-    scheduleRefresh(false)
-    onLayoutChange?.()
+  const onDragMoveDuringNode = () => {
+    if (groupResizing) return
+    if (refreshRaf != null) return
+    refreshRaf = requestAnimationFrame(() => {
+      refreshRaf = null
+      refresh(true)
+    })
   }
+
+  const onNodeDragStart = () => {
+    if (getMultiSelectNodes(lf.graphModel).length >= 2) {
+      root.classList.add('dg-multi-select-resize--dragging')
+    }
+    if (nodeDragMoveListener) return
+    nodeDragMoveListener = onDragMoveDuringNode
+    window.addEventListener('pointermove', nodeDragMoveListener, { passive: true })
+  }
+
+  const onNodeDragEnd = () => {
+    root.classList.remove('dg-multi-select-resize--dragging')
+    if (nodeDragMoveListener) {
+      window.removeEventListener('pointermove', nodeDragMoveListener)
+      nodeDragMoveListener = null
+    }
+    scheduleRefresh(true)
+  }
+
+  const onRefresh = () => scheduleRefresh(true)
 
   scheduleRefresh(true)
 
   lf.on('graph:transform', onRefresh)
   lf.on('node:click', onRefresh)
   lf.on('edge:click', onRefresh)
-  lf.on('node:drag', onDragRefresh)
-  lf.on('node:drop', onRefresh)
+  lf.on('node:dragstart', onNodeDragStart)
+  lf.on('node:drag', onDragMoveDuringNode)
+  lf.on('node:drop', onNodeDragEnd)
   lf.on('node:resize', onRefresh)
   lf.on('node:delete', onRefresh)
   lf.on('selection:selected', onRefresh)
@@ -539,11 +564,13 @@ export function mountDiagramMultiSelectResize(
   lf.on('history:change', onRefresh)
 
   const destroy = () => {
+    onNodeDragEnd()
     lf.off('graph:transform', onRefresh)
     lf.off('node:click', onRefresh)
     lf.off('edge:click', onRefresh)
-    lf.off('node:drag', onDragRefresh)
-    lf.off('node:drop', onRefresh)
+    lf.off('node:dragstart', onNodeDragStart)
+    lf.off('node:drag', onDragMoveDuringNode)
+    lf.off('node:drop', onNodeDragEnd)
     lf.off('node:resize', onRefresh)
     lf.off('node:delete', onRefresh)
     lf.off('selection:selected', onRefresh)

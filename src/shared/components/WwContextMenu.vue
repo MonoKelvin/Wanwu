@@ -10,6 +10,7 @@ const props = defineProps<{
 const open = defineModel<boolean>('open', { default: false })
 
 const menuRef = ref<HTMLElement | null>(null)
+const wrapRef = ref<HTMLElement | null>(null)
 const pos = ref({ x: 0, y: 0 })
 const menuOrigin = ref('0% 0%')
 
@@ -73,6 +74,10 @@ function hide() {
   open.value = false
 }
 
+function containsTarget(node: Node | null | undefined): boolean {
+  return Boolean(node && wrapRef.value?.contains(node))
+}
+
 function itemDisabled(item: WwMenuItem): boolean {
   const disabled = item.disabled
   return typeof disabled === 'function' ? disabled() : Boolean(disabled)
@@ -112,7 +117,7 @@ watch(open, (v) => {
 
 onUnmounted(unbindGlobal)
 
-defineExpose({ show, hide, placeAt, showBelowAnchor, showBelowAnchorLeft, toggleAnchor })
+defineExpose({ show, hide, placeAt, showBelowAnchor, showBelowAnchorLeft, toggleAnchor, containsTarget })
 </script>
 
 <template>
@@ -120,6 +125,7 @@ defineExpose({ show, hide, placeAt, showBelowAnchor, showBelowAnchorLeft, toggle
     <Transition name="ww-action-menu-pop">
       <div
         v-if="open"
+        ref="wrapRef"
         class="ww-action-menu-wrap"
         :style="wrapStyle"
         @click.stop
@@ -146,6 +152,7 @@ defineExpose({ show, hide, placeAt, showBelowAnchor, showBelowAnchorLeft, toggle
               </span>
               <WwIcon v-if="item.wwIcon" :name="item.wwIcon" size="sm" />
               <span class="ww-action-menu__label">{{ item.label }}</span>
+              <kbd v-if="item.shortcut" class="ww-action-menu__shortcut">{{ item.shortcut }}</kbd>
             </button>
           </template>
         </div>
@@ -254,6 +261,21 @@ defineExpose({ show, hide, placeAt, showBelowAnchor, showBelowAnchorLeft, toggle
 .ww-action-menu__label {
   flex: 1;
   min-width: 0;
+}
+
+.ww-action-menu__shortcut {
+  flex-shrink: 0;
+  margin-left: 1.375rem;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  font: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: var(--ww-ink-muted);
+  letter-spacing: normal;
 }
 
 .ww-action-menu__sep {

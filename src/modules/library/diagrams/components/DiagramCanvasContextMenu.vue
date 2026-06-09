@@ -3,8 +3,7 @@ import { computed, ref } from 'vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import type { WwMenuItem } from '@shared/types/menu'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
-import { DIAGRAM_ALIGN_ACTIONS, DIAGRAM_DISTRIBUTE_ACTIONS } from '@modules/library/diagrams/lib/diagramAlignActions'
-import type { DiagramAlignMode, DiagramDistributeMode } from '@modules/library/diagrams/lib/diagramNodeLayout'
+import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
 
 export type DiagramCanvasContextTarget = {
   kind: 'node' | 'edge' | 'blank'
@@ -18,6 +17,7 @@ const menuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
 const menuEvent = ref<MouseEvent | null>(null)
 const clipboardReady = ref(false)
 const canUngroup = ref(false)
+const canGroup = ref(false)
 const target = ref<DiagramCanvasContextTarget>({
   kind: 'blank',
   nodeIds: [],
@@ -44,69 +44,48 @@ function duplicateSelection() {
   })
 }
 
-function alignSelection(mode: DiagramAlignMode) {
-  void bus.dispatch({ type: 'canvas.alignNodes', payload: { mode } })
-}
-
-function distributeSelection(mode: DiagramDistributeMode) {
-  void bus.dispatch({ type: 'canvas.distributeNodes', payload: { mode } })
-}
-
 const menuItems = computed<WwMenuItem[]>(() => {
   const items: WwMenuItem[] = []
   const { nodeIds, edgeIds } = target.value
-  const total = nodeIds.length + edgeIds.length
 
   if (hasSelection.value) {
     if (nodeIds.length > 0 || edgeIds.length > 0) {
       items.push({
         label: '创建副本',
         wwIcon: 'copy',
+        shortcut: DG_SHORTCUT.duplicate,
         command: () => duplicateSelection()
       })
     }
     items.push(
-      { label: '复制', wwIcon: 'copy', command: () => void bus.dispatch({ type: 'canvas.copy' }) },
+      {
+        label: '复制',
+        wwIcon: 'copy',
+        shortcut: DG_SHORTCUT.copy,
+        command: () => void bus.dispatch({ type: 'canvas.copy' })
+      },
       {
         label: '粘贴',
-        wwIcon: 'square-arrow-up-left',
+        wwIcon: 'clipboard-paste',
+        shortcut: DG_SHORTCUT.paste,
         disabled: !clipboardReady.value,
         command: () => pasteAtCursor()
       }
     )
-    if (total >= 2 && !canUngroup.value) {
-      items.push({
-        label: '组合',
-        wwIcon: 'layers',
-        command: () => void bus.dispatch({ type: 'canvas.group' })
-      })
-    }
-    if (canUngroup.value) {
-      items.push({
-        label: '取消组合',
-        wwIcon: 'layers',
-        command: () => void bus.dispatch({ type: 'canvas.ungroup' })
-      })
-    }
-    if (nodeIds.length >= 2) {
-      items.push({ separator: true })
-      for (const action of DIAGRAM_ALIGN_ACTIONS) {
-        items.push({
-          label: action.label,
-          wwIcon: action.icon,
-          command: () => alignSelection(action.mode)
-        })
-      }
-    }
-    if (nodeIds.length >= 3) {
-      for (const action of DIAGRAM_DISTRIBUTE_ACTIONS) {
-        items.push({
-          label: action.label,
-          wwIcon: action.icon,
-          command: () => distributeSelection(action.mode)
-        })
-      }
-    }
+    items.push({
+      label: '组合',
+      wwIcon: 'layers',
+      shortcut: DG_SHORTCUT.group,
+      disabled: !canGroup.value,
+      command: () => void bus.dispatch({ type: 'canvas.group' })
+    })
+    items.push({
+      label: '取消组合',
+      wwIcon: 'ungroup',
+      shortcut: DG_SHORTCUT.ungroup,
+      disabled: !canUngroup.value,
+      command: () => void bus.dispatch({ type: 'canvas.ungroup' })
+    })
     if (nodeIds.length > 0) {
       items.push({ separator: true })
       items.push(
@@ -134,6 +113,7 @@ const menuItems = computed<WwMenuItem[]>(() => {
     items.push({
       label: '删除',
       wwIcon: 'trash-2',
+      shortcut: DG_SHORTCUT.delete,
       command: () =>
         void bus.dispatch({
           type: 'canvas.deleteSelection',
@@ -144,19 +124,22 @@ const menuItems = computed<WwMenuItem[]>(() => {
     items.push(
       {
         label: '粘贴',
-        wwIcon: 'square-arrow-up-left',
+        wwIcon: 'clipboard-paste',
+        shortcut: DG_SHORTCUT.paste,
         disabled: !clipboardReady.value,
         command: () => pasteAtCursor()
       },
       {
         label: '全选',
         wwIcon: 'layers',
+        shortcut: DG_SHORTCUT.selectAll,
         command: () => void bus.dispatch({ type: 'canvas.selectAll' })
       },
       { separator: true },
       {
         label: '适应画布',
         wwIcon: 'layout-grid',
+        shortcut: DG_SHORTCUT.zoomFit,
         command: () => void bus.dispatch({ type: 'canvas.zoomToFit' })
       }
     )
@@ -164,8 +147,18 @@ const menuItems = computed<WwMenuItem[]>(() => {
 
   items.push(
     { separator: true },
-    { label: '撤销', wwIcon: 'rotate-ccw', command: () => void bus.dispatch({ type: 'canvas.undo' }) },
-    { label: '重做', wwIcon: 'refresh-cw', command: () => void bus.dispatch({ type: 'canvas.redo' }) }
+    {
+      label: '撤销',
+      wwIcon: 'undo',
+      shortcut: DG_SHORTCUT.undo,
+      command: () => void bus.dispatch({ type: 'canvas.undo' })
+    },
+    {
+      label: '重做',
+      wwIcon: 'redo',
+      shortcut: DG_SHORTCUT.redo,
+      command: () => void bus.dispatch({ type: 'canvas.redo' })
+    }
   )
 
   return items
@@ -175,12 +168,14 @@ function show(
   event: MouseEvent,
   next: DiagramCanvasContextTarget,
   hasClipboard = false,
+  groupReady = false,
   ungroupReady = false
 ) {
   event.preventDefault()
   menuEvent.value = event
   target.value = next
   clipboardReady.value = hasClipboard
+  canGroup.value = groupReady
   canUngroup.value = ungroupReady
   void menuRef.value?.show(event)
 }

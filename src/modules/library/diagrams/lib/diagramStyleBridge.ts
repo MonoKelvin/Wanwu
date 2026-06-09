@@ -3,7 +3,7 @@ import { applyNodeDimensions } from '@modules/library/diagrams/lib/diagramShapeR
 import type { DiagramArrowType, DiagramShadowPreset } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { shadowStyleForPreset } from '@modules/library/diagrams/lib/diagramCanvasPresets'
 import { readNodeImageAsset } from '@modules/library/diagrams/lib/diagramAssetRefs'
-import { DIAGRAM_GROUP_FRAME_TYPE, readGroupStyle } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { DIAGRAM_GROUP_FRAME_TYPE, readGroupStyle, readGroupAlwaysVisible } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import type {
   DiagramEdgeProperties,
   DiagramNodeImageAsset,
@@ -231,6 +231,8 @@ export function readNodeProperties(lf: LogicFlow, nodeId: string): DiagramNodePr
 
   if (model.type === DIAGRAM_GROUP_FRAME_TYPE) {
     const gs = readGroupStyle(model.properties as Record<string, unknown>)
+    const members = (model.properties?.dgGroupMembers as string[] | undefined) ?? []
+    const groupEdges = (model.properties?.dgGroupEdges as string[] | undefined) ?? []
     return {
       id: nodeId,
       type: DIAGRAM_GROUP_FRAME_TYPE,
@@ -253,7 +255,10 @@ export function readNodeProperties(lf: LogicFlow, nodeId: string): DiagramNodePr
       strokeWidth: gs.strokeWidth,
       strokeDasharray: gs.strokeDasharray,
       shadow: 'none',
-      imageAsset: null
+      imageAsset: null,
+      groupMemberCount: members.length,
+      groupEdgeCount: groupEdges.length,
+      groupAlwaysVisible: readGroupAlwaysVisible(model.properties as Record<string, unknown>)
     }
   }
 
@@ -271,7 +276,9 @@ export function readNodeProperties(lf: LogicFlow, nodeId: string): DiagramNodePr
     strokeWidth: Number(propsStyle.strokeWidth ?? style.strokeWidth ?? 1),
     strokeDasharray: String(propsStyle.strokeDasharray ?? style.strokeDasharray ?? ''),
     shadow: readShadowPreset(model.properties as Record<string, unknown>),
-    imageAsset
+    imageAsset,
+    groupId:
+      typeof model.properties?.dgGroupId === 'string' ? model.properties.dgGroupId : undefined
   }
 }
 

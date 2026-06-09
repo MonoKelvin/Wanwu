@@ -2,6 +2,7 @@
 import WwIconButton from '@shared/components/WwIconButton.vue'
 import { computed } from 'vue'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
 
 const props = defineProps<{
   nodeCount: number
@@ -12,7 +13,9 @@ const props = defineProps<{
 
 const bus = useDiagramCommandBus()
 
-const showSection = computed(() => props.canGroup || props.canUngroup)
+const showSection = computed(
+  () => props.nodeCount + props.edgeCount > 1 || props.canGroup || props.canUngroup
+)
 
 function group() {
   void bus.dispatch({ type: 'canvas.group' })
@@ -26,20 +29,20 @@ function ungroup() {
 <template>
   <div v-if="showSection" class="dg-multi-tools">
     <WwIconButton
-      v-if="canGroup"
       icon="layers"
       compact
       ariaLabel="组合"
-      v-tooltip.bottom="'组合'"
+      :disabled="!canGroup"
+      v-tooltip.bottom="`组合 (${DG_SHORTCUT.group})`"
       @mousedown.prevent
       @click="group"
     />
     <WwIconButton
-      v-if="canUngroup"
-      icon="layers"
+      icon="ungroup"
       compact
       ariaLabel="取消组合"
-      v-tooltip.bottom="'取消组合'"
+      :disabled="!canUngroup"
+      v-tooltip.bottom="`取消组合 (${DG_SHORTCUT.ungroup})`"
       @mousedown.prevent
       @click="ungroup"
     />

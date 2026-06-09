@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 108" fill="none" aria-hidden="true">
+  <rect x="44" y="12" width="32" height="14" rx="4" stroke="var(--dg-tpl-s)" stroke-width="2"/>
+  <line x1="44" y1="20" x2="76" y2="20" stroke="var(--dg-tpl-s-m)" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="60" y1="26" x2="60" y2="36" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="28" y1="36" x2="92" y2="36" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="36" x2="32" y2="44" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="88" y1="36" x2="88" y2="44" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linecap="round"/>
+  <rect x="18" y="44" width="28" height="14" rx="4" stroke="var(--dg-tpl-s)" stroke-width="2"/>
+  <rect x="74" y="44" width="28" height="14" rx="4" stroke="var(--dg-tpl-s)" stroke-width="2"/>
+  <ellipse cx="60" cy="84" rx="22" ry="6" stroke="var(--dg-tpl-s-m)" stroke-width="2"/>
+  <path d="M38 84 V90 C38 93 48 96 60 96 C72 96 82 93 82 90 V84" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linejoin="round"/>
+  <line x1="32" y1="58" x2="48" y2="78" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="88" y1="58" x2="72" y2="78" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linecap="round"/>
+</svg>

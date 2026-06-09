@@ -15,7 +15,7 @@ export function diagramTitleBase(title: string): string {
     : trimmed
 }
 
-/** 列表/搜索展示的物理文件名（始终带 .wfg） */
+/** 列表/搜索匹配的物理文件名（含扩展名，仅内部逻辑使用） */
 export function formatDiagramFileName(title: string): string {
   return `${diagramTitleBase(title)}${DIAGRAM_WFG_EXT}`
 }
@@ -98,12 +98,27 @@ export function formatDiagramListCountLabel(options: {
   shown: number
   searching: boolean
   recycle?: boolean
+  folderCount?: number
+  foldersShown?: number
 }): string {
-  const { total, shown, searching, recycle } = options
-  if (!total) return ''
-  const unit = recycle ? '个已删除' : '个 .wfg'
-  if (searching && shown !== total) return `显示 ${shown} / 共 ${total} ${unit}`
-  return `共 ${total} ${unit}`
+  const { total, shown, searching, recycle, folderCount = 0, foldersShown = folderCount } = options
+  if (!folderCount && !total) return ''
+  const parts: string[] = []
+  if (folderCount > 0) {
+    const folderUnit = `${folderCount} 个分组`
+    parts.push(
+      searching && foldersShown !== folderCount ?
+        `显示 ${foldersShown} / 共 ${folderUnit}`
+      : `共 ${folderUnit}`
+    )
+  }
+  if (total > 0) {
+    const unit = recycle ? '个已删除流程图' : '个流程图'
+    parts.push(
+      searching && shown !== total ? `显示 ${shown} / 共 ${total} ${unit}` : `共 ${total} ${unit}`
+    )
+  }
+  return parts.join(' · ')
 }
 
 export function formatRelativeTime(iso: string, nowTs = Date.now()): string {

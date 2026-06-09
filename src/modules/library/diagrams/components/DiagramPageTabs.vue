@@ -8,7 +8,10 @@ import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import type { WwMenuItem } from '@shared/types/menu'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
 import { useDiagramEditorGuard } from '@modules/library/diagrams/composables/useDiagramEditorGuard'
+import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
+import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { focusInputText } from '@modules/library/diagrams/lib/diagramInputFocus'
+import { isDuplicatePageName } from '@modules/library/diagrams/lib/diagramPageNames'
 
 const props = defineProps<{
   pages: DiagramPage[]
@@ -17,12 +20,15 @@ const props = defineProps<{
 
 const bus = useDiagramCommandBus()
 const editorGuard = useDiagramEditorGuard()
+const { ask } = useWanwuConfirm()
+const toast = useWanwuToast()
 const barRef = ref<HTMLElement | null>(null)
 const inlineRef = ref<HTMLElement | null>(null)
 const contextPageId = ref<string | null>(null)
 const renamingPageId = ref<string | null>(null)
 const renameValue = ref('')
 const renameInputRef = ref<InstanceType<typeof InputText> | null>(null)
+const skipRenameBlurCommit = ref(false)
 const tabMenuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
 const overflowOpen = ref(false)
 const maxInlineTabs = ref(6)
@@ -53,6 +59,8 @@ const canDeletePage = computed(() => props.pages.length > 1)
 const tabMenuItems = computed<WwMenuItem[]>(() => {
   const pageId = contextPageId.value
   if (!pageId) return []
+  const page = props.pages.find((p) => p.id === pageId)
+  if (!page) return []
   return [
     { label: '重命名', wwIcon: 'pencil', command: () => startRename(pageId) },
     { label: '复制页', wwIcon: 'copy', command: () => void duplicatePage(pageId) },
@@ -106,17 +114,40 @@ function onDocPointerDown(event: PointerEvent) {
   overflowOpen.value = false
 }
 
+function focusRenameInput(pageId: string) {
+  void nextTick(() => {
+    focusInputText(renameInputRef.value, { select: true })
+    if (overflowPages.value.some((p) => p.id === pageId)) {
+      const el = barRef.value?.querySelector('.dg-tab-rename--overflow input') as HTMLInputElement | null
+      el?.focus()
+      el?.select()
+    }
+  })
+}
+
 async function switchPage(pageId: string) {
-  if (renamingPageId.value || pageId === props.activePageId) return
+  if (renamingPageId.value) {
+    await commitRename()
+  }
+  if (pageId === editorGuard?.getActivePageId()) return
   overflowOpen.value = false
   await editorGuard?.flushSave()
-  void bus.dispatch({ type: 'page.switch', payload: { pageId } })
+  const result = await bus.dispatch({ type: 'page.switch', payload: { pageId } })
+  if (!result.ok) {
+    toast.error(result.message ?? '切换页面失败')
+  }
 }
 
 async function addPage() {
+  if (renamingPageId.value) {
+    await commitRename()
+  }
   overflowOpen.value = false
   await editorGuard?.flushSave()
-  void bus.dispatch({ type: 'page.add' })
+  const result = await bus.dispatch({ type: 'page.add' })
+  if (!result.ok) {
+    toast.error(result.message ?? '新建页面失败')
+  }
 }
 
 function startRename(pageId: string) {
@@ -124,36 +155,88 @@ function startRename(pageId: string) {
   if (!page) return
   renamingPageId.value = pageId
   renameValue.value = page.name
-  overflowOpen.value = false
-  void nextTick(() => focusInputText(renameInputRef.value, { select: true }))
+  overflowOpen.value = overflowPages.value.some((p) => p.id === pageId)
+  focusRenameInput(pageId)
 }
 
 async function commitRename() {
   const pageId = renamingPageId.value
   if (!pageId) return
-  const name = renameValue.value.trim()
+  const page = props.pages.find((p) => p.id === pageId)
+  const trimmed = renameValue.value.trim()
+  const name = trimmed || page?.name || ''
   renamingPageId.value = null
-  if (!name) return
+
+  if (!trimmed) return
+  if (!page || name === page.name) return
+
+  if (isDuplicatePageName(props.pages, name, pageId)) {
+    toast.info('页面名称已存在', '无法重命名')
+    renamingPageId.value = pageId
+    renameValue.value = page.name
+    focusRenameInput(pageId)
+    return
+  }
+
   await editorGuard?.flushSave()
-  await bus.dispatch({ type: 'page.rename', payload: { pageId, name } })
+  const result = await bus.dispatch({ type: 'page.rename', payload: { pageId, name } })
+  if (!result.ok) {
+    toast.info(result.message ?? '重命名失败', '无法重命名')
+    renamingPageId.value = pageId
+    renameValue.value = page.name
+    focusRenameInput(pageId)
+  }
+}
+
+function onRenameBlur() {
+  if (skipRenameBlurCommit.value) {
+    skipRenameBlurCommit.value = false
+    return
+  }
+  void commitRename()
 }
 
 function cancelRename() {
+  skipRenameBlurCommit.value = true
   renamingPageId.value = null
 }
 
 async function deletePage(pageId: string) {
+  const page = props.pages.find((p) => p.id === pageId)
+  if (!page || !canDeletePage.value) return
+
+  const confirmed = await ask({
+    header: '删除页面',
+    message: `确定删除「${page.name}」？此操作不可撤销，页面内所有图元将一并删除。`,
+    acceptLabel: '删除',
+    rejectLabel: '取消',
+    danger: true,
+    width: 'min(92vw, 24rem)'
+  })
+  if (!confirmed) return
+
+  if (renamingPageId.value === pageId) {
+    renamingPageId.value = null
+  }
+
   await editorGuard?.flushSave()
-  await bus.dispatch({ type: 'page.delete', payload: { pageId } })
+  const result = await bus.dispatch({ type: 'page.delete', payload: { pageId } })
+  if (!result.ok) {
+    toast.error(result.message ?? '删除页面失败')
+  }
 }
 
 async function duplicatePage(pageId: string) {
   await editorGuard?.flushSave()
-  await bus.dispatch({ type: 'page.duplicate', payload: { pageId } })
+  const result = await bus.dispatch({ type: 'page.duplicate', payload: { pageId } })
+  if (!result.ok) {
+    toast.error(result.message ?? '复制页面失败')
+  }
 }
 
 function onTabContextMenu(event: MouseEvent, pageId: string) {
   event.preventDefault()
+  event.stopPropagation()
   contextPageId.value = pageId
   void tabMenuRef.value?.show(event)
 }
@@ -188,7 +271,7 @@ function toggleOverflow() {
           @click.stop
           @keydown.enter.prevent="commitRename"
           @keydown.esc.prevent="cancelRename"
-          @blur="commitRename"
+          @blur="onRenameBlur"
         />
         <span v-else class="dg-tab__label">{{ page.name }}</span>
       </button>
@@ -214,9 +297,19 @@ function toggleOverflow() {
           class="dg-tabs-overflow-item"
           :class="{ 'dg-tabs-overflow-item--active': page.id === activePageId }"
           @click="switchPage(page.id)"
+          @dblclick.prevent="onTabDblClick(page.id)"
           @contextmenu="onTabContextMenu($event, page.id)"
         >
-          {{ page.name }}
+          <InputText
+            v-if="renamingPageId === page.id"
+            v-model="renameValue"
+            class="dg-tab-rename dg-tab-rename--overflow"
+            @click.stop
+            @keydown.enter.prevent="commitRename"
+            @keydown.esc.prevent="cancelRename"
+            @blur="onRenameBlur"
+          />
+          <span v-else>{{ page.name }}</span>
         </button>
       </div>
     </div>

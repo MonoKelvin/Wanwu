@@ -13,6 +13,7 @@ import DiagramRecentTable from '@modules/library/diagrams/components/DiagramRece
 import DiagramFolderPickerDialog from '@modules/library/diagrams/components/DiagramFolderPickerDialog.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import { listDiagramTemplates } from '@modules/library/diagrams/lib/diagramTemplates'
+import type { DiagramTemplateArtVariant } from '@modules/library/diagrams/lib/diagramTemplateArt'
 import {
   dismissRecentFile,
   loadDismissedRecentIds,
@@ -51,15 +52,15 @@ const dismissedIds = ref(loadDismissedRecentIds())
 const searchQuery = ref('')
 const searchHits = ref<DiagramSearchHit[]>([])
 const searchLoading = ref(false)
-const TEMPLATE_VARIANTS: Record<string, 'flow' | 'decision' | 'steps' | 'org' | 'uml' | 'arch'> = {
+const TEMPLATE_VARIANTS: Record<string, DiagramTemplateArtVariant> = {
   'tpl-flow': 'flow',
   'tpl-decision': 'decision',
   'tpl-swimlane': 'steps',
   'tpl-mind': 'org',
   'tpl-uml-class': 'uml',
-  'tpl-use-case': 'uml',
+  'tpl-use-case': 'use-case',
   'tpl-architecture': 'arch',
-  'tpl-bpmn': 'steps'
+  'tpl-bpmn': 'bpmn'
 }
 
 const importPickerOpen = ref(false)
@@ -73,7 +74,6 @@ const importBusy = ref(false)
 
 const importPickerHeader = computed(() => {
   if (pendingImport.value?.kind === 'drawio') return '选择 draw.io 导入位置'
-  if (pendingImport.value?.kind === 'wfg') return '选择 .wfg 保存位置'
   return '选择保存位置'
 })
 
@@ -148,10 +148,7 @@ async function openTemplate(templateId: string) {
   await pushShellRoute(router, {
     name: 'library-diagrams-editor',
     params: { fileId: 'new' },
-    query: {
-      template: templateId,
-      ...(templateId !== 'tpl-blank' ? { fitView: '1' } : {})
-    }
+    query: { template: templateId }
   })
 }
 
@@ -232,7 +229,7 @@ async function openAllFiles() {
   })
 }
 
-function templateVariant(id: string): 'flow' | 'decision' | 'steps' | 'org' | 'uml' | 'arch' {
+function templateVariant(id: string): DiagramTemplateArtVariant {
   return TEMPLATE_VARIANTS[id] ?? 'flow'
 }
 
@@ -339,7 +336,7 @@ async function confirmImportToFolder() {
               @click="startImportWfg"
             >
               <WwIcon name="folder-open" size="sm" />
-              <span>打开 .wfg 文件</span>
+              <span>打开流程图文件</span>
             </button>
             <button
               type="button"
@@ -426,7 +423,6 @@ async function confirmImportToFolder() {
             placeholder="未命名流程图"
             @keydown.enter.prevent="commitRename"
           />
-          <span class="dg-rename-filename__ext">.wfg</span>
         </div>
       </label>
       <template #footer>

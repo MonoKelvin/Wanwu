@@ -51,7 +51,7 @@ defineExpose({ isActive })
       <WwInputIcon name="search" />
       <InputText
         v-model="searchQuery"
-        placeholder="搜索 .wfg 文件…"
+        placeholder="搜索流程图…"
         class="w-full"
         aria-label="搜索流程图"
       />

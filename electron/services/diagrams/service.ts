@@ -166,6 +166,12 @@ export class DiagramService {
     this.db
       .prepare(`UPDATE diagram_folders SET deleted_at = ? WHERE id = ? AND deleted_at IS NULL`)
       .run(now, DG_DRAFTS)
+    // 自定义分组归入「文件」目录下
+    this.db
+      .prepare(
+        `UPDATE diagram_folders SET parent_id = ? WHERE kind = 'custom' AND (parent_id IS NULL OR parent_id = '')`
+      )
+      .run(DG_FILES)
   }
 
   private ensureSystemFolders(): void {
@@ -212,22 +218,24 @@ export class DiagramService {
     const id = `dg-custom-${randomUUID()}`
     const now = new Date().toISOString()
     const maxOrder = this.db
-      .prepare(`SELECT COALESCE(MAX(sort_order), 0) AS m FROM diagram_folders WHERE kind = 'custom'`)
-      .get() as { m: number }
+      .prepare(
+        `SELECT COALESCE(MAX(sort_order), 0) AS m FROM diagram_folders WHERE kind = 'custom' AND parent_id = ?`
+      )
+      .get(DG_FILES) as { m: number }
     const sortOrder = maxOrder.m + 10
 
     this.db
       .prepare(
         `INSERT INTO diagram_folders (id, name, kind, parent_id, sort_order, created_at, deleted_at)
-         VALUES (?, ?, 'custom', NULL, ?, ?, NULL)`
+         VALUES (?, ?, 'custom', ?, ?, ?, NULL)`
       )
-      .run(id, name.trim(), sortOrder, now)
+      .run(id, name.trim(), DG_FILES, sortOrder, now)
 
     return {
       id,
       name: name.trim(),
       kind: 'custom',
-      parentId: null,
+      parentId: DG_FILES,
       sortOrder,
       createdAt: now,
       deletedAt: null
@@ -338,7 +346,9 @@ export class DiagramService {
     const sourceRow = this.getFileRow(fileId)
     const record = await this.readFile(fileId)
     if (!sourceRow || !record || record.meta.deletedAt) return null
-    const newTitle = `${record.meta.title.trim() || '未命名流程图'} 副本`
+
+    const folderId = record.meta.folderId
+    const newTitle = resolveUniqueDuplicateTitle(this.db, folderId, record.meta.title)
     const content = cloneForIpc(record.content)
     content.meta.title = newTitle
 
@@ -363,10 +373,10 @@ export class DiagramService {
       )
       .run(
         id,
-        record.meta.folderId,
+        folderId,
         newTitle,
         content.pages.length,
-        relativeContentPath(id, newTitle),
+        newContentPath,
         now,
         now
       )
@@ -858,6 +868,27 @@ function stripWfgExtension(title: string): string {
   const trimmed = title.trim()
   if (!trimmed) return '未命名流程图'
   return /\.wfg$/i.test(trimmed) ? trimmed.slice(0, -4) : trimmed
+}
+
+/** 在同一分组内生成不重复的副本标题 */
+function resolveUniqueDuplicateTitle(
+  db: Database,
+  folderId: string,
+  sourceTitle: string
+): string {
+  const base = stripWfgExtension(sourceTitle)
+  const rows = db
+    .prepare(`SELECT title FROM diagram_files WHERE folder_id = ? AND deleted_at IS NULL`)
+    .all(folderId) as Array<{ title: string }>
+  const existing = new Set(rows.map((r) => stripWfgExtension(r.title).toLowerCase()))
+
+  const suffix = ' 副本'
+  const primary = `${base}${suffix}`
+  if (!existing.has(primary.toLowerCase())) return primary
+
+  let n = 2
+  while (existing.has(`${base}${suffix} (${n})`.toLowerCase())) n++
+  return `${base}${suffix} (${n})`
 }
 
 function mapFileRow(r: DiagramFileRow, mediaDir: string): DiagramFileMeta {

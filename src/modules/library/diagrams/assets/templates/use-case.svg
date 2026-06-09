@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 108" fill="none" aria-hidden="true">
+  <circle cx="22" cy="30" r="6" stroke="var(--dg-tpl-s)" stroke-width="2"/>
+  <line x1="22" y1="36" x2="22" y2="56" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="22" y1="44" x2="14" y2="52" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="22" y1="44" x2="30" y2="52" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="22" y1="56" x2="16" y2="68" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="22" y1="56" x2="28" y2="68" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="80" cy="48" rx="28" ry="14" stroke="var(--dg-tpl-s)" stroke-width="2"/>
+  <line x1="32" y1="46" x2="52" y2="48" stroke="var(--dg-tpl-s-m)" stroke-width="2" stroke-linecap="round"/>
+</svg>

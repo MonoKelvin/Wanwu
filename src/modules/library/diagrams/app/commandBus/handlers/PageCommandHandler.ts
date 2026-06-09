@@ -28,11 +28,13 @@ export class PageCommandHandler implements IDiagramCommandHandler {
           const page = session.addPage(p.name as string | undefined)
           return { ok: true, data: { pageId: page.id, name: page.name } }
         }
-        case 'page.rename':
-          if (!session.renamePage(p.pageId as string, p.name as string)) {
-            return diagramError('NOT_FOUND', '页面不存在')
-          }
+        case 'page.rename': {
+          const verdict = session.renamePage(p.pageId as string, p.name as string)
+          if (verdict === 'not_found') return diagramError('NOT_FOUND', '页面不存在')
+          if (verdict === 'empty') return diagramError('VALIDATION', '页面名称不能为空')
+          if (verdict === 'duplicate') return diagramError('VALIDATION', '页面名称已存在')
           return { ok: true }
+        }
         case 'page.delete':
           if (!session.deletePage(p.pageId as string)) {
             return diagramError('VALIDATION', '无法删除页面')

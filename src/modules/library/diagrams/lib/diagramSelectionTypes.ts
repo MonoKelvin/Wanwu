@@ -56,6 +56,13 @@ export interface DiagramNodeProperties {
   shadow: DiagramShadowPreset
   imageAsset: DiagramNodeImageAsset | null
   strokeDasharray?: string
+  /** 所属组合框 id（已组合图元） */
+  groupId?: string
+  /** 组合框内图元/连线数量（仅组合框） */
+  groupMemberCount?: number
+  groupEdgeCount?: number
+  /** 组合框是否始终显示边框（仅组合框） */
+  groupAlwaysVisible?: boolean
 }
 
 export interface DiagramEdgeProperties {

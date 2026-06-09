@@ -19,6 +19,8 @@ export function useDiagramShortcuts(
     onPageNext?: () => void | Promise<void>
     isActive?: () => boolean
     isBlocked?: () => boolean
+    canGroup?: () => boolean
+    canUngroup?: () => boolean
   }
 ) {
   const arrowDirections: Record<string, 'left' | 'right' | 'up' | 'down'> = {
@@ -50,7 +52,7 @@ export function useDiagramShortcuts(
       void bus.dispatch({ type: 'canvas.undo' })
       return
     }
-    if (mod && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+    if (mod && e.key.toLowerCase() === 'y') {
       e.preventDefault()
       void bus.dispatch({ type: 'canvas.redo' })
       return
@@ -78,6 +80,20 @@ export function useDiagramShortcuts(
       if (isEditableTarget(e.target)) return
       e.preventDefault()
       void bus.dispatch({ type: 'canvas.paste' })
+      return
+    }
+    if (mod && e.shiftKey && e.key.toLowerCase() === 'g') {
+      if (isEditableTarget(e.target)) return
+      if (!options?.canUngroup?.()) return
+      e.preventDefault()
+      void bus.dispatch({ type: 'canvas.ungroup' })
+      return
+    }
+    if (mod && !e.shiftKey && e.key.toLowerCase() === 'g') {
+      if (isEditableTarget(e.target)) return
+      if (!options?.canGroup?.()) return
+      e.preventDefault()
+      void bus.dispatch({ type: 'canvas.group' })
       return
     }
     if (mod && e.key === 'a') {

@@ -178,6 +178,9 @@ export class CanvasCommandHandler implements IDiagramCommandHandler {
         case 'canvas.zoomReset':
           port.zoomReset()
           return { ok: true }
+        case 'canvas.centerContent':
+          port.centerContent()
+          return { ok: true }
         case 'canvas.centerOrigin':
           port.centerOrigin()
           return { ok: true }

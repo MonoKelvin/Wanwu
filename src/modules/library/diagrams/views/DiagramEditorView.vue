@@ -15,6 +15,7 @@ import DiagramAlignBar, {
 import DiagramPanelRestoreButton from '@modules/library/diagrams/components/DiagramPanelRestoreButton.vue'
 import DiagramCanvasContextMenu from '@modules/library/diagrams/components/DiagramCanvasContextMenu.vue'
 import DiagramSaveConflictDialog from '@modules/library/diagrams/components/DiagramSaveConflictDialog.vue'
+import DiagramUnsavedLeaveDialog from '@modules/library/diagrams/components/DiagramUnsavedLeaveDialog.vue'
 import DiagramFolderPickerDialog from '@modules/library/diagrams/components/DiagramFolderPickerDialog.vue'
 import type { LogicFlowDiagramAdapter } from '@modules/library/diagrams/services/LogicFlowDiagramAdapter'
 import { DiagramEditorSession } from '@modules/library/diagrams/app/DiagramEditorSession'
@@ -33,7 +34,6 @@ import {
   toggleAssetPanelCollapsed,
   togglePropsPanelCollapsed
 } from '@modules/library/diagrams/composables/useDiagramEditorLayout'
-import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { LIBRARY_DIAGRAMS_EDITOR_ROUTE, isDiagramEditorPath } from '@modules/library/diagrams/domain/diagramRoutes'
 import { isShapeDragEvent, readShapeDragData } from '@modules/library/diagrams/lib/diagramShapeDrag'
 import {
@@ -44,7 +44,6 @@ import {
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
-const { ask } = useWanwuConfirm()
 const selectedNodeCount = ref(0)
 const selectedEdgeCount = ref(0)
 const alignBarAnchor = ref<DiagramAlignBarAnchor | null>(null)
@@ -75,8 +74,9 @@ const editorSelection = ref<DiagramEditorSelection>({
 const isCanvasDragOver = ref(false)
 const dropIndicator = ref<{ x: number; y: number } | null>(null)
 const dropIndicatorSnapped = ref(false)
-const canvasEmpty = ref(false)
 const viewportZoomPercent = ref(100)
+const unsavedLeaveOpen = ref(false)
+let unsavedLeaveResolve: ((choice: 'save' | 'discard' | 'cancel') => void) | null = null
 let resizeObserver: ResizeObserver | null = null
 let teardownZoomWheel: (() => void) | null = null
 let resizeRaf = 0
@@ -85,16 +85,6 @@ let zoomWheelRaf = 0
 function refreshViewportZoom() {
   const zoom = portRef.value?.getViewport().zoom ?? 1
   viewportZoomPercent.value = Math.round(zoom * 100)
-}
-
-function refreshCanvasEmpty() {
-  const port = portRef.value
-  if (!port) {
-    canvasEmpty.value = false
-    return
-  }
-  const graph = port.getGraph() as { nodes?: unknown[] }
-  canvasEmpty.value = !(graph.nodes?.length)
 }
 
 function refreshAlignBarAnchor() {
@@ -118,6 +108,25 @@ function scheduleAlignBarRefresh() {
     alignBarRaf = 0
     refreshAlignBarAnchor()
   })
+}
+
+/** shallowRef session 内部变更不会触发视图更新，页操作成功后递增 */
+const sessionRevision = ref(0)
+function bumpSessionView() {
+  sessionRevision.value += 1
+}
+
+function syncAfterPageCommand() {
+  bumpSessionView()
+  refreshViewportZoom()
+  const port = portRef.value
+  if (!port) return
+  editorSelection.value = port.getSelection()
+  selectedNodeCount.value = editorSelection.value.selectedNodeCount
+  selectedEdgeCount.value = editorSelection.value.selectedEdgeCount
+  canUngroupSelection.value = port.canUngroupSelection()
+  canGroupSelection.value = port.canGroupSelection()
+  scheduleAlignBarRefresh()
 }
 
 const repo = new DiagramRepositoryIpcAdapter()
@@ -148,7 +157,7 @@ useDiagramIpcBridge(bus)
 const autosave = useDiagramAutosave({
   bus,
   session: sessionRef,
-  isBlocked: () => conflictOpen.value || folderPickerOpen.value,
+  isBlocked: () => conflictOpen.value || folderPickerOpen.value || unsavedLeaveOpen.value,
   savePayload: () => ({ folderId: pickedFolderId.value }),
   onSaveError: (detail) => {
     toast.add({ severity: 'warn', summary: '自动保存失败', detail, life: 3500 })
@@ -178,7 +187,9 @@ useDiagramShortcuts(bus, {
   onPagePrev: () => switchPageWithFlush(() => bus.dispatch({ type: 'page.prev' })),
   onPageNext: () => switchPageWithFlush(() => bus.dispatch({ type: 'page.next' })),
   isActive: () => isDiagramEditorPath(route.path),
-  isBlocked: () => conflictOpen.value || folderPickerOpen.value
+  isBlocked: () => conflictOpen.value || folderPickerOpen.value,
+  canGroup: () => portRef.value?.canGroupSelection() ?? false,
+  canUngroup: () => portRef.value?.canUngroupSelection() ?? false
 })
 
 const isSaving = computed(
@@ -193,7 +204,11 @@ watch([conflictOpen, folderPickerOpen], ([conflict, folder], [prevConflict, prev
 })
 
 provideDiagramEditorGuard({
-  flushSave: () => autosave.flush()
+  flushSave: () => autosave.flush(),
+  getActivePageId: () => {
+    void sessionRevision.value
+    return sessionRef.value?.activePageId ?? null
+  }
 })
 
 function applyFolderIdFromRoute() {
@@ -212,6 +227,9 @@ const unsubscribeBusResult = bus.onResult((cmd, result) => {
     cmd.type === 'document.importWfg' ||
     cmd.type === 'document.importDrawio'
   ) {
+    if (cmd.type === 'document.save' || cmd.type === 'document.saveAs') {
+      bumpSessionView()
+    }
     const data = result.data as { meta?: { id: string } } | undefined
     const id = data?.meta?.id ?? (data as { fileId?: string } | undefined)?.fileId
     if (id && id !== fileId.value) {
@@ -236,19 +254,24 @@ const unsubscribeBusResult = bus.onResult((cmd, result) => {
     cmd.type === 'canvas.zoom' ||
     cmd.type === 'canvas.zoomToFit' ||
     cmd.type === 'canvas.zoomReset' ||
+    cmd.type === 'canvas.centerContent' ||
     cmd.type === 'document.open' ||
     cmd.type === 'document.importWfg' ||
     cmd.type === 'document.importDrawio' ||
     cmd.type.startsWith('page.')
   ) {
-    refreshViewportZoom()
-    refreshCanvasEmpty()
+    if (cmd.type.startsWith('page.')) {
+      syncAfterPageCommand()
+    } else {
+      refreshViewportZoom()
+    }
     if (
       (cmd.type === 'document.open' ||
         cmd.type === 'document.importWfg' ||
         cmd.type === 'document.importDrawio') &&
       portRef.value
     ) {
+      bumpSessionView()
       editorSelection.value = portRef.value.getSelection()
     }
   }
@@ -258,10 +281,28 @@ const fileId = computed(() => route.params.fileId as string)
 const templateQuery = computed(() => route.query.template as string | undefined)
 const isNewDraft = computed(() => fileId.value === 'new' || fileId.value === 'draft')
 
-const pages = computed(() => sessionRef.value?.pages ?? [])
-const activePageId = computed(() => sessionRef.value?.activePageId ?? null)
-const title = computed(() => sessionRef.value?.content?.meta.title ?? '未命名流程图')
-const dirty = computed(() => sessionRef.value?.dirty ?? false)
+const pages = computed(() => {
+  void sessionRevision.value
+  const list = sessionRef.value?.content?.pages
+  return list ? [...list] : []
+})
+const activePageId = computed(() => {
+  void sessionRevision.value
+  return sessionRef.value?.activePageId ?? null
+})
+const pageTabsKey = computed(() => {
+  void sessionRevision.value
+  const list = sessionRef.value?.content?.pages
+  return list?.map((p) => p.id).join('|') ?? ''
+})
+const title = computed(() => {
+  void sessionRevision.value
+  return sessionRef.value?.content?.meta.title ?? '未命名流程图'
+})
+const dirty = computed(() => {
+  void sessionRevision.value
+  return sessionRef.value?.dirty ?? false
+})
 
 function resolvedTheme(): 'light' | 'dark' {
   return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
@@ -297,18 +338,33 @@ async function applyFitView() {
   refreshViewportZoom()
 }
 
+async function applyCenterContentView(resetZoom: boolean) {
+  await waitForLayout()
+  portRef.value?.resize()
+  if (resetZoom) {
+    portRef.value?.zoomReset()
+  } else {
+    const zoom = sessionRef.value?.getActivePage()?.viewport?.zoom ?? 1
+    if (Math.abs(zoom - 1) > 0.001) {
+      portRef.value?.zoom(undefined, zoom)
+    } else {
+      portRef.value?.zoomReset()
+    }
+  }
+  portRef.value?.centerContent()
+  sessionRef.value?.syncActivePageViewport()
+  refreshViewportZoom()
+}
+
 async function openDocument() {
   loadError.value = null
   if (isNewDraft.value) applyFolderIdFromRoute()
   const wantFitView = route.query.fitView === '1'
-  const payload: Record<string, string | boolean> = {}
+  const payload: Record<string, string | boolean> = { skipViewport: true }
   if (!isNewDraft.value) {
     payload.fileId = fileId.value
   } else if (templateQuery.value) {
     payload.templateId = templateQuery.value
-  }
-  if (wantFitView) {
-    payload.skipViewport = true
   }
   const result = await bus.dispatch({ type: 'document.open', payload })
   if (!result.ok) {
@@ -331,16 +387,14 @@ async function openDocument() {
     const nextQuery = { ...route.query }
     delete nextQuery.fitView
     void router.replace({ query: nextQuery })
-  } else if (isNewDraft.value && templateQuery.value) {
-    await applyFitView()
-    sessionRef.value?.flushActivePage()
   } else {
-    portRef.value?.centerOrigin()
+    await applyCenterContentView(isNewDraft.value)
   }
 }
 
 async function bootstrapEditor() {
-  await import('@logicflow/core/es/index.css')
+  await import('@logicflow/core/lib/style/index.css')
+  await import('@logicflow/extension/lib/style/index.css')
   const { LogicFlowDiagramAdapter: Adapter, ensureSnapshotPlugin, ensureMiniMapPlugin, ensureSelectionSelectPlugin } = await import(
     '@modules/library/diagrams/services/LogicFlowDiagramAdapter'
   )
@@ -377,11 +431,8 @@ async function bootstrapEditor() {
   port.onOverlayLayoutChange(() => {
     scheduleAlignBarRefresh()
   })
-  const refreshCanvasEmptyDebounced = useDebounceFn(() => refreshCanvasEmpty(), 400)
-
   port.onGraphChange(() => {
     sessionRef.value?.markActivePageDirty()
-    void refreshCanvasEmptyDebounced()
     if (selectedNodeCount.value >= 2) {
       scheduleAlignBarRefresh()
     }
@@ -396,6 +447,7 @@ async function bootstrapEditor() {
         edgeIds: detail.edgeIds
       },
       port.hasClipboard(),
+      port.canGroupSelection(),
       port.canUngroupSelection()
     )
   })
@@ -425,39 +477,44 @@ async function bootstrapEditor() {
   port.resize()
   await openDocument()
   editorReady.value = true
-  refreshCanvasEmpty()
   refreshViewportZoom()
   await waitForLayout()
   port.resize()
 }
 
-async function confirmDirtyLeave(): Promise<boolean> {
+function askUnsavedLeave(): Promise<'save' | 'discard' | 'cancel'> {
+  unsavedLeaveOpen.value = true
+  return new Promise((resolve) => {
+    unsavedLeaveResolve = resolve
+  })
+}
+
+function finishUnsavedLeave(choice: 'save' | 'discard' | 'cancel') {
+  unsavedLeaveOpen.value = false
+  unsavedLeaveResolve?.(choice)
+  unsavedLeaveResolve = null
+}
+
+async function confirmUnsavedLeave(): Promise<boolean> {
   if (!sessionRef.value?.dirty) return true
-
-  const leave = await ask({
-    header: '未保存的更改',
-    message: '自动保存尚未完成。确定要离开吗？',
-    acceptLabel: '离开',
-    rejectLabel: '取消'
-  })
-  if (!leave) return false
-
-  const shouldSave = await ask({
-    header: '未保存的更改',
-    message: '保存后离开，还是不保存直接离开？',
-    acceptLabel: '保存并离开',
-    rejectLabel: '不保存离开'
-  })
-  if (shouldSave) {
-    return saveFlow.saveDocument({ folderId: pickedFolderId.value })
-  }
-  return true
+  const choice = await askUnsavedLeave()
+  if (choice === 'cancel') return false
+  if (choice === 'discard') return true
+  return saveFlow.saveDocument({ folderId: pickedFolderId.value })
 }
 
 async function flushBeforeLeave(): Promise<NavigationGuardReturn> {
-  await autosave.flush()
-  if (!sessionRef.value?.dirty) return true
-  return confirmDirtyLeave()
+  const session = sessionRef.value
+  if (!session?.dirty) return true
+
+  if (session.fileId) {
+    await autosave.flush()
+    if (!sessionRef.value?.dirty) return true
+  } else {
+    autosave.cancelScheduledSave()
+  }
+
+  return confirmUnsavedLeave()
 }
 
 let removeLeaveGuard: (() => void) | null = null
@@ -471,12 +528,12 @@ onMounted(() => {
 
   function onBeforeUnload(e: BeforeUnloadEvent) {
     if (!sessionRef.value?.dirty) return
-    void autosave.flush()
+    if (sessionRef.value.fileId) void autosave.flush()
     if (!sessionRef.value?.dirty) return
     e.preventDefault()
   }
   function onPageHide() {
-    void autosave.flush()
+    if (sessionRef.value?.fileId) void autosave.flush()
   }
   window.addEventListener('beforeunload', onBeforeUnload)
   window.addEventListener('pagehide', onPageHide)
@@ -506,21 +563,17 @@ watch(fileId, async (id, prev) => {
   if (!portRef.value || !sessionRef.value || id === prev) return
   // 自动/手动保存后仅更新 URL 时，会话已持有同一文件，无需重载
   if (sessionRef.value.fileId === id) return
-  await autosave.flush()
-  if (sessionRef.value.dirty) {
-    const ok = await confirmDirtyLeave()
-    if (!ok) {
-      if (prev) {
-        await router.replace({ name: LIBRARY_DIAGRAMS_EDITOR_ROUTE, params: { fileId: prev } })
-      }
-      return
+  const nav = await flushBeforeLeave()
+  if (nav !== true) {
+    if (prev) {
+      await router.replace({ name: LIBRARY_DIAGRAMS_EDITOR_ROUTE, params: { fileId: prev } })
     }
+    return
   }
   loading.value = true
   loadError.value = null
   try {
     await openDocument()
-    refreshCanvasEmpty()
     refreshViewportZoom()
     await waitForLayout()
     portRef.value.resize()
@@ -560,8 +613,6 @@ onBeforeUnmount(() => {
 })
 
 async function goBack() {
-  const nav = await flushBeforeLeave()
-  if (nav !== true) return
   await pushShellRoute(router, { name: 'library-diagrams-home' })
 }
 
@@ -653,14 +704,6 @@ function onCanvasDrop(event: DragEvent) {
           :style="{ left: `${dropIndicator.x}px`, top: `${dropIndicator.y}px` }"
           aria-hidden="true"
         />
-        <div
-          v-if="!loading && !loadError && editorReady && canvasEmpty"
-          class="dg-canvas-empty"
-          aria-hidden="true"
-        >
-          <p class="dg-canvas-empty__title">画布为空</p>
-          <p class="dg-canvas-empty__hint">从左侧素材拖入图形，或使用顶部「文件」菜单导入</p>
-        </div>
         <div v-if="loading" class="dg-canvas-wrap__overlay">加载画布…</div>
         <div v-else-if="loadError" class="dg-canvas-wrap__overlay dg-canvas-wrap__overlay--error">
           {{ loadError }}
@@ -684,8 +727,8 @@ function onCanvasDrop(event: DragEvent) {
           :anchor-rect="alignBarAnchor"
           :stage-width="alignBarStageWidth"
           :stage-height="alignBarStageHeight"
-          :node-ids="editorSelection.selectedNodeIds"
-          :edge-ids="editorSelection.selectedEdgeIds"
+          :can-group="canGroupSelection"
+          :can-ungroup="canUngroupSelection"
         />
         <DiagramAssetPanel v-if="!editorLayout.assetCollapsed.value" />
         <DiagramPanelRestoreButton
@@ -709,13 +752,19 @@ function onCanvasDrop(event: DragEvent) {
           label="展开属性面板"
           @click="togglePropsPanelCollapsed(editorLayout)"
         />
-        <DiagramPageTabs :pages="pages" :active-page-id="activePageId" />
+        <DiagramPageTabs :key="pageTabsKey" :pages="pages" :active-page-id="activePageId" />
         <DiagramSaveConflictDialog
           v-model:open="conflictOpen"
           @dismiss="onConflictDismiss"
           @reload="onConflictReload"
           @overwrite="onConflictOverwrite"
           @save-as="onConflictSaveAs"
+        />
+        <DiagramUnsavedLeaveDialog
+          v-model:open="unsavedLeaveOpen"
+          @save="finishUnsavedLeave('save')"
+          @discard="finishUnsavedLeave('discard')"
+          @cancel="finishUnsavedLeave('cancel')"
         />
         <DiagramFolderPickerDialog
           v-model:open="folderPickerOpen"

@@ -4,10 +4,9 @@ import { useMinuteClock } from '@shared/composables/useMinuteClock'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
-import type { DiagramFileMeta } from '@shared/types/diagrams'
+import type { DiagramFileMeta, DiagramFolder } from '@shared/types/diagrams'
 import type { WwMenuItem } from '@shared/types/menu'
 import {
-  DIAGRAM_WFG_EXT,
   diagramTitleBase,
   formatFileSize,
   formatRelativeTime
@@ -19,15 +18,18 @@ export type DiagramFileTableVariant = 'recent' | 'folder' | 'recycle'
 const props = withDefaults(
   defineProps<{
     files: DiagramFileMeta[]
+    folders?: DiagramFolder[]
+    fileCountByFolderId?: (folderId: string) => number
     folderNameById: (id: string) => string | undefined
     variant?: DiagramFileTableVariant
     showMove?: boolean
   }>(),
-  { variant: 'recent', showMove: true }
+  { variant: 'recent', showMove: true, folders: () => [] }
 )
 
 const emit = defineEmits<{
   open: [fileId: string]
+  openFolder: [folderId: string]
   copy: [fileId: string]
   togglePin: [file: DiagramFileMeta]
   reveal: [fileId: string]
@@ -37,10 +39,14 @@ const emit = defineEmits<{
   move: [file: DiagramFileMeta]
   restore: [fileId: string]
   purge: [fileId: string]
+  renameFolder: [folderId: string]
+  deleteFolder: [folderId: string]
 }>()
 
 const menuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
 const menuTarget = ref<DiagramFileMeta | null>(null)
+const folderMenuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
+const folderMenuTarget = ref<DiagramFolder | null>(null)
 const nowTs = useMinuteClock()
 
 const isRecycle = computed(() => props.variant === 'recycle')
@@ -110,11 +116,53 @@ const menuItems = computed<WwMenuItem[]>(() => {
   return items
 })
 
+const folderMenuItems = computed<WwMenuItem[]>(() => {
+  const folder = folderMenuTarget.value
+  if (!folder) return []
+  return [
+    { label: '打开', wwIcon: 'folder-open', command: () => emit('openFolder', folder.id) },
+    { label: '重命名', wwIcon: 'pencil', command: () => emit('renameFolder', folder.id) },
+    { separator: true },
+    {
+      label: '删除分组',
+      wwIcon: 'trash-2',
+      command: () => emit('deleteFolder', folder.id)
+    }
+  ]
+})
+
 function openMenu(event: MouseEvent, file: DiagramFileMeta) {
   event.stopPropagation()
   menuTarget.value = file
   const anchor = event.currentTarget as HTMLElement
   void menuRef.value?.showBelowAnchorLeft(anchor, 4, 10)
+}
+
+function openFolderMenu(event: MouseEvent, folder: DiagramFolder) {
+  event.stopPropagation()
+  folderMenuTarget.value = folder
+  const anchor = event.currentTarget as HTMLElement
+  void folderMenuRef.value?.showBelowAnchorLeft(anchor, 4, 10)
+}
+
+function folderFileCount(folderId: string): number {
+  return props.fileCountByFolderId?.(folderId) ?? 0
+}
+
+function folderSizeLabel(folderId: string): string {
+  const count = folderFileCount(folderId)
+  return count > 0 ? `${count} 个` : '—'
+}
+
+function onFolderRowClick(folder: DiagramFolder) {
+  emit('openFolder', folder.id)
+}
+
+function onFolderRowKeydown(event: KeyboardEvent, folder: DiagramFolder) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    emit('openFolder', folder.id)
+  }
 }
 
 function locationLabel(file: DiagramFileMeta) {
@@ -169,6 +217,45 @@ function onRowKeydown(event: KeyboardEvent, file: DiagramFileMeta) {
 
       <ul class="dg-recent-table__body">
         <li
+          v-for="folder in folders"
+          :key="`folder:${folder.id}`"
+          class="dg-recent-table__row dg-recent-table__row--folder"
+          tabindex="0"
+          role="button"
+          @click="onFolderRowClick(folder)"
+          @keydown="onFolderRowKeydown($event, folder)"
+        >
+          <span class="dg-recent-table__cell dg-recent-table__cell--name">
+            <span class="dg-recent-table__icon dg-recent-table__icon--folder">
+              <WwIcon name="folder" size="sm" />
+            </span>
+            <span class="dg-recent-table__title">
+              <span class="dg-recent-table__name">{{ folder.name }}</span>
+            </span>
+          </span>
+          <span
+            v-if="showLocationColumn"
+            class="dg-recent-table__cell dg-recent-table__cell--loc"
+          >
+            分组
+          </span>
+          <span class="dg-recent-table__cell dg-recent-table__cell--time">
+            {{ formatRelativeTime(folder.createdAt, nowTs) }}
+          </span>
+          <span class="dg-recent-table__cell dg-recent-table__cell--size">
+            {{ folderSizeLabel(folder.id) }}
+          </span>
+          <button
+            type="button"
+            class="dg-recent-table__menu"
+            aria-label="更多操作"
+            @click="openFolderMenu($event, folder)"
+          >
+            <WwIcon name="ellipsis-vertical" size="sm" />
+          </button>
+        </li>
+
+        <li
           v-for="file in files"
           :key="file.id"
           class="dg-recent-table__row"
@@ -198,8 +285,7 @@ function onRowKeydown(event: KeyboardEvent, file: DiagramFileMeta) {
                 class="dg-recent-table__pin"
                 aria-hidden="true"
               />
-              <span class="dg-recent-table__name">{{ diagramTitleBase(file.title) }}</span
-              ><span class="dg-recent-table__ext">{{ DIAGRAM_WFG_EXT }}</span>
+              <span class="dg-recent-table__name">{{ diagramTitleBase(file.title) }}</span>
             </span>
           </span>
           <span
@@ -252,6 +338,7 @@ function onRowKeydown(event: KeyboardEvent, file: DiagramFileMeta) {
       </ul>
 
       <WwContextMenu ref="menuRef" :model="menuItems" />
+      <WwContextMenu ref="folderMenuRef" :model="folderMenuItems" />
     </div>
   </div>
 </template>

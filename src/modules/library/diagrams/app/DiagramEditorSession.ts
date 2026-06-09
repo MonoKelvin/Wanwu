@@ -10,6 +10,12 @@ import {
   stripTransientAssetUrls
 } from '@modules/library/diagrams/lib/diagramAssetRefs'
 import { cloneForIpc } from '@shared/lib/cloneForIpc'
+import {
+  normalizePageName,
+  uniquePageName,
+  validatePageRename,
+  type PageRenameResult
+} from '@modules/library/diagrams/lib/diagramPageNames'
 
 export interface DiagramEditorSessionOptions {
   port: IDiagramEditorPort
@@ -66,7 +72,6 @@ export class DiagramEditorSession {
     this.content = createBlankDiagramContent(title)
     this.activePageId = this.content.meta.defaultPageId
     this.clearDirtyState()
-    this.dirty = true
     this.loadActivePageToPort()
   }
 
@@ -112,10 +117,8 @@ export class DiagramEditorSession {
     this.port.loadGraph(hydrateDiagramGraphAssets(page.graphData, this.fileId))
     if (options?.skipViewport) return
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        this.port.resize()
-        this.port.applyViewport(page.viewport)
-      })
+      this.port.resize()
+      this.port.applyViewport(page.viewport)
     })
   }
 
@@ -128,6 +131,7 @@ export class DiagramEditorSession {
     if (!this.content) return false
     const target = this.content.pages.find((p) => p.id === pageId)
     if (!target) return false
+    if (this.activePageId === pageId) return true
     this.flushActivePage()
     this.activePageId = pageId
     this.content.meta.defaultPageId = pageId
@@ -141,9 +145,12 @@ export class DiagramEditorSession {
     this.flushActivePage()
     const id = newId('page')
     const sortOrder = this.content.pages.length
+    const pageName = name
+      ? uniquePageName(this.content.pages, name)
+      : uniquePageName(this.content.pages, `页${sortOrder + 1}`)
     const page: DiagramPage = {
       id,
-      name: name ?? `页${sortOrder + 1}`,
+      name: pageName,
       sortOrder,
       viewport: { x: 0, y: 0, zoom: 1 },
       graphData: { nodes: [], edges: [] }
@@ -158,14 +165,19 @@ export class DiagramEditorSession {
     return page
   }
 
-  renamePage(pageId: string, name: string): boolean {
-    if (!this.content) return false
+  renamePage(pageId: string, name: string): PageRenameResult {
+    if (!this.content) return 'not_found'
+    const verdict = validatePageRename(this.content.pages, pageId, name)
+    if (verdict !== 'ok') return verdict
     const page = this.content.pages.find((p) => p.id === pageId)
-    if (!page) return false
-    page.name = name
+    if (!page) return 'not_found'
+    const normalized = normalizePageName(name)
+    if (normalizePageName(page.name) === normalized) return 'ok'
+    page.name = normalized
     this.dirty = true
     this.dirtyPageIds.add(pageId)
-    return true
+    this.metaDirty = true
+    return 'ok'
   }
 
   deletePage(pageId: string): boolean {
@@ -194,7 +206,7 @@ export class DiagramEditorSession {
     const page: DiagramPage = {
       ...cloneForIpc(source),
       id,
-      name: `${source.name} 副本`,
+      name: uniquePageName(this.content.pages, `${source.name} 副本`),
       sortOrder: this.content.pages.length
     }
     this.content.pages.push(page)

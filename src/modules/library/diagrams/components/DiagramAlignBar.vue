@@ -7,6 +7,7 @@ import {
   DIAGRAM_ALIGN_VERTICAL,
   DIAGRAM_DISTRIBUTE_ACTIONS
 } from '@modules/library/diagrams/lib/diagramAlignActions'
+import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
 import type { DiagramAlignMode, DiagramDistributeMode } from '@modules/library/diagrams/lib/diagramNodeLayout'
 
 export type DiagramAlignBarAnchor = {
@@ -21,8 +22,8 @@ const props = defineProps<{
   anchorRect?: DiagramAlignBarAnchor | null
   stageWidth?: number
   stageHeight?: number
-  nodeIds?: string[]
-  edgeIds?: string[]
+  canGroup?: boolean
+  canUngroup?: boolean
 }>()
 
 const bus = useDiagramCommandBus()
@@ -69,19 +70,13 @@ function distribute(mode: DiagramDistributeMode) {
   void bus.dispatch({ type: 'canvas.distributeNodes', payload: { mode } })
 }
 
-function duplicate() {
-  void bus.dispatch({
-    type: 'canvas.duplicate',
-    payload: {
-      nodeIds: props.nodeIds,
-      edgeIds: props.edgeIds
-    }
-  })
+function group() {
+  void bus.dispatch({ type: 'canvas.group' })
 }
 
-const canDuplicate = computed(
-  () => (props.nodeIds?.length ?? 0) > 0 || (props.edgeIds?.length ?? 0) > 0
-)
+function ungroup() {
+  void bus.dispatch({ type: 'canvas.ungroup' })
+}
 
 const barStyle = computed(() => {
   const rect = props.anchorRect
@@ -182,18 +177,30 @@ const barStyle = computed(() => {
       </div>
     </template>
 
-    <template v-if="canDuplicate">
-      <span class="dg-align-bar__sep" aria-hidden="true" />
+    <span class="dg-align-bar__sep" aria-hidden="true" />
+    <div class="dg-align-bar__actions">
       <WwIconButton
-        icon="copy"
+        icon="layers"
         icon-size="xs"
         compact
-        aria-label="创建副本"
-        v-tooltip.bottom="'创建副本 (Ctrl+D)'"
+        aria-label="组合"
+        :disabled="!canGroup"
+        v-tooltip.bottom="`组合 (${DG_SHORTCUT.group})`"
         class="dg-align-bar__btn dg-toolbar-icon-btn"
         @mousedown.prevent
-        @click="duplicate"
+        @click="group"
       />
-    </template>
+      <WwIconButton
+        icon="ungroup"
+        icon-size="xs"
+        compact
+        aria-label="取消组合"
+        :disabled="!canUngroup"
+        v-tooltip.bottom="`取消组合 (${DG_SHORTCUT.ungroup})`"
+        class="dg-align-bar__btn dg-toolbar-icon-btn"
+        @mousedown.prevent
+        @click="ungroup"
+      />
+    </div>
   </div>
 </template>

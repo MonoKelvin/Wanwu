@@ -3,7 +3,7 @@ import {
   softSnapCoordinate,
   snapCoordinateToGrid
 } from '@modules/library/diagrams/lib/diagramCanvasTheme'
-import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { isGroupFrameType } from '@modules/library/diagrams/lib/diagramGroupFrame'
 
 /** 通过 LogicFlow graphModel 移动节点，同步更新连线锚点 */
 function moveNodesDelta(lf: LogicFlow, nodeIds: string[], dx: number, dy: number): void {
@@ -26,7 +26,7 @@ function collectSnapMoveIds(lf: LogicFlow, nodeIds: string[]): string[] {
     const model = lf.getNodeModelById(id)
     if (!model) continue
 
-    if (model.type === DIAGRAM_GROUP_FRAME_TYPE) {
+    if (isGroupFrameType(model.type)) {
       add(id)
       for (const memberId of (model.properties?.dgGroupMembers as string[] | undefined) ?? []) {
         add(memberId)
@@ -36,7 +36,7 @@ function collectSnapMoveIds(lf: LogicFlow, nodeIds: string[]): string[] {
 
     const inSelectedGroup = nodeIds.some((groupId) => {
       const group = lf.getNodeModelById(groupId)
-      if (group?.type !== DIAGRAM_GROUP_FRAME_TYPE) return false
+      if (!isGroupFrameType(group?.type)) return false
       return ((group.properties?.dgGroupMembers as string[] | undefined) ?? []).includes(id)
     })
     if (!inSelectedGroup) add(id)
@@ -47,7 +47,7 @@ function collectSnapMoveIds(lf: LogicFlow, nodeIds: string[]): string[] {
 
 function softSnapGroupFrameWithMembers(lf: LogicFlow, groupId: string): boolean {
   const model = lf.getNodeModelById(groupId)
-  if (!model || model.type !== DIAGRAM_GROUP_FRAME_TYPE) return false
+  if (!model || !isGroupFrameType(model.type)) return false
   const nx = softSnapCoordinate(model.x)
   const ny = softSnapCoordinate(model.y)
   const dx = nx - model.x
@@ -71,7 +71,7 @@ export function softSnapNodesDuringDrag(
   const anchor = lf.getNodeModelById(anchorId ?? uniqueIds[0] ?? '')
   if (!anchor) return
 
-  if (anchor.type === DIAGRAM_GROUP_FRAME_TYPE) {
+  if (isGroupFrameType(anchor.type)) {
     softSnapGroupFrameWithMembers(lf, anchor.id)
     return
   }
@@ -98,7 +98,7 @@ export function refreshSnapAlignGuide(lf: LogicFlow, nodeId: string, enabled: bo
 
 function snapGroupFrameWithMembers(lf: LogicFlow, groupId: string): boolean {
   const model = lf.getNodeModelById(groupId)
-  if (!model || model.type !== DIAGRAM_GROUP_FRAME_TYPE) return false
+  if (!model || !isGroupFrameType(model.type)) return false
   const nx = snapCoordinateToGrid(model.x)
   const ny = snapCoordinateToGrid(model.y)
   const dx = nx - model.x
@@ -125,7 +125,7 @@ export function snapNodesAfterDrag(
   const anchor = lf.getNodeModelById(anchorId ?? uniqueIds[0] ?? '')
   if (!anchor) return
 
-  if (anchor.type === DIAGRAM_GROUP_FRAME_TYPE) {
+  if (isGroupFrameType(anchor.type)) {
     snapGroupFrameWithMembers(lf, anchor.id)
     return
   }

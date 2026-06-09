@@ -13,10 +13,10 @@ import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { focusInputText } from '@modules/library/diagrams/lib/diagramInputFocus'
 import {
-  DIAGRAM_WFG_EXT,
   diagramTitleBase,
   normalizeDiagramTitleInput
 } from '@modules/library/diagrams/lib/diagramHomeUtils'
+import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
 
 const props = defineProps<{
   title: string
@@ -146,7 +146,7 @@ async function exportWfg() {
   }
   const data = result.data as { canceled?: boolean; path?: string }
   if (data.canceled) return
-  if (data.path) toast.success('已导出 .wfg')
+  if (data.path) toast.success('已导出流程图')
 }
 
 async function exportSvg() {
@@ -202,10 +202,11 @@ const fileMenuItems = computed<WwMenuItem[]>(() => {
     {
       label: '保存',
       wwIcon: 'save',
+      shortcut: DG_SHORTCUT.save,
       disabled: !props.dirty && !props.saving,
       command: () => void save()
     },
-    { label: '另存为', wwIcon: 'copy', command: () => void saveAs() }
+    { label: '另存为', wwIcon: 'copy', shortcut: DG_SHORTCUT.saveAs, command: () => void saveAs() }
   ]
   if (props.fileId) {
     items.push({
@@ -216,17 +217,14 @@ const fileMenuItems = computed<WwMenuItem[]>(() => {
   }
   items.push(
     { separator: true },
-    { label: '打开 .wfg', wwIcon: 'inbox', command: () => void importExternalFile('document.importWfg', ' .wfg') },
-    { label: '打开 draw.io', wwIcon: 'external-link', command: () => void importExternalFile('document.importDrawio', ' draw.io') },
-    { separator: true },
-    { label: '撤销', wwIcon: 'rotate-ccw', command: () => void bus.dispatch({ type: 'canvas.undo' }) },
-    { label: '重做', wwIcon: 'refresh-cw', command: () => void bus.dispatch({ type: 'canvas.redo' }) }
+    { label: '打开流程图文件', wwIcon: 'inbox', command: () => void importExternalFile('document.importWfg', '流程图') },
+    { label: '打开 draw.io', wwIcon: 'external-link', command: () => void importExternalFile('document.importDrawio', ' draw.io') }
   )
   return items
 })
 
 const exportMenuItems: WwMenuItem[] = [
-  { label: '导出 .wfg 文件', wwIcon: 'box', command: () => void exportWfg() },
+  { label: '导出流程图', wwIcon: 'box', command: () => void exportWfg() },
   { separator: true },
   { label: '导出当前页 PNG', wwIcon: 'image', command: () => void exportPng() },
   { label: '导出全部页 PNG', wwIcon: 'layers', command: () => void exportAllPagesPng() },
@@ -248,11 +246,13 @@ const viewMenuItems: WwMenuItem[] = [
   {
     label: '重置缩放',
     wwIcon: 'maximize',
+    shortcut: DG_SHORTCUT.zoomReset,
     command: () => void bus.dispatch({ type: 'canvas.zoomReset' })
   },
   {
     label: '适应画布',
     wwIcon: 'layout-grid',
+    shortcut: DG_SHORTCUT.zoomFit,
     command: () => void bus.dispatch({ type: 'canvas.zoomToFit' })
   },
   {
@@ -298,23 +298,18 @@ function openMenu(
           @keydown.esc.prevent="cancelTitleEdit"
           @blur="commitTitleEdit"
         />
-        <span class="dg-editor-toolbar__title-ext">{{ DIAGRAM_WFG_EXT }}</span>
       </div>
       <button
         v-else-if="!booting"
         type="button"
         class="dg-editor-toolbar__title"
-        :title="`${displayTitleBase}${DIAGRAM_WFG_EXT}`"
+        :title="displayTitleBase"
         @click="startTitleEdit"
       >
-        <span class="dg-editor-toolbar__title-name">{{ displayTitleBase }}</span
-        ><span class="dg-editor-toolbar__title-ext">{{ DIAGRAM_WFG_EXT }}</span>
+        <span class="dg-editor-toolbar__title-name">{{ displayTitleBase }}</span>
       </button>
       <span v-else class="dg-editor-toolbar__title dg-editor-toolbar__title--static">
-        <span class="dg-editor-toolbar__title-name">{{ displayTitleBase }}</span
-        ><span v-if="displayTitleBase !== '加载中…'" class="dg-editor-toolbar__title-ext">{{
-          DIAGRAM_WFG_EXT
-        }}</span>
+        <span class="dg-editor-toolbar__title-name">{{ displayTitleBase }}</span>
       </span>
       <span
         v-if="saveBadge && !booting"
@@ -329,26 +324,26 @@ function openMenu(
     <div class="dg-editor-toolbar__actions">
       <div class="dg-editor-toolbar__zoom">
         <WwButton
-          icon="minus"
+          icon="undo"
           severity="secondary"
           text
           rounded
           class="dg-toolbar-icon-btn"
-          aria-label="缩小"
+          aria-label="撤销"
           :disabled="booting"
-          v-tooltip.bottom="'缩小'"
-          @click="bus.dispatch({ type: 'canvas.zoom', payload: { delta: -0.1 } })"
+          v-tooltip.bottom="'撤销 (Ctrl+Z)'"
+          @click="bus.dispatch({ type: 'canvas.undo' })"
         />
         <WwButton
-          icon="plus"
+          icon="redo"
           severity="secondary"
           text
           rounded
           class="dg-toolbar-icon-btn"
-          aria-label="放大"
+          aria-label="重做"
           :disabled="booting"
-          v-tooltip.bottom="'放大'"
-          @click="bus.dispatch({ type: 'canvas.zoom', payload: { delta: 0.1 } })"
+          v-tooltip.bottom="'重做 (Ctrl+Y)'"
+          @click="bus.dispatch({ type: 'canvas.redo' })"
         />
         <WwButton
           icon="layout-grid"

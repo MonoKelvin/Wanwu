@@ -28,6 +28,8 @@ export function useDiagramAutosave(options: {
     if (options.isBlocked?.()) return false
     const session = options.session.value
     if (!session?.dirty) return true
+    // 未首次保存的文档不自动落盘，须用户显式选择保存位置
+    if (!session.fileId) return true
 
     isSaving.value = true
     try {

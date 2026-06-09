@@ -9,26 +9,19 @@ import {
 
 const CATALOG_SELECTION_KEY = 'wanwu:library:diagrams-catalog-selection'
 
-export function buildDiagramCatalogTree(folders: DiagramFolder[]): TreeNode[] {
-  const systemOrder = [DG_HOME, DG_FILES, DG_RECYCLE]
-  const systemNodes: TreeNode[] = []
-  for (const id of systemOrder) {
-    const folder = folders.find((f) => f.id === id)
-    if (!folder) continue
-    systemNodes.push({
-      key: `dg:sys:${folder.id}`,
-      label: folder.name,
-      icon: folderIcon(folder.id),
-      leaf: true,
-      selectable: true,
-      data: { kind: 'system-folder', folderId: folder.id }
-    })
-  }
+export function listDiagramChildFolders(folders: DiagramFolder[], parentId: string): DiagramFolder[] {
+  return folders
+    .filter(
+      (f) =>
+        isDiagramCustomFolderId(f.id) &&
+        !f.deletedAt &&
+        (f.parentId === parentId || (parentId === DG_FILES && f.parentId == null))
+    )
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name, 'zh-CN'))
+}
 
-  const custom = folders
-    .filter((f) => isDiagramCustomFolderId(f.id))
-    .sort((a, b) => a.sortOrder - b.sortOrder)
-    .map(
+function buildCustomFolderNodes(folders: DiagramFolder[]): TreeNode[] {
+  return listDiagramChildFolders(folders, DG_FILES).map(
       (f): TreeNode => ({
         key: `dg:folder:${f.id}`,
         label: f.name,
@@ -38,8 +31,29 @@ export function buildDiagramCatalogTree(folders: DiagramFolder[]): TreeNode[] {
         data: { kind: 'custom-folder', folderId: f.id }
       })
     )
+}
 
-  return [...systemNodes, ...custom]
+export function buildDiagramCatalogTree(folders: DiagramFolder[]): TreeNode[] {
+  const systemOrder = [DG_HOME, DG_FILES, DG_RECYCLE]
+  const customNodes = buildCustomFolderNodes(folders)
+  const systemNodes: TreeNode[] = []
+
+  for (const id of systemOrder) {
+    const folder = folders.find((f) => f.id === id)
+    if (!folder) continue
+    const isFiles = id === DG_FILES
+    systemNodes.push({
+      key: `dg:sys:${folder.id}`,
+      label: folder.name,
+      icon: folderIcon(folder.id),
+      leaf: isFiles ? customNodes.length === 0 : true,
+      selectable: true,
+      children: isFiles && customNodes.length ? customNodes : undefined,
+      data: { kind: 'system-folder', folderId: folder.id }
+    })
+  }
+
+  return systemNodes
 }
 
 function folderIcon(id: string): string {

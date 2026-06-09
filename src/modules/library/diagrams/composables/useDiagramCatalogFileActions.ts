@@ -1,7 +1,8 @@
 import { useDiagramCatalogCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { diagramTitleBase } from '@modules/library/diagrams/lib/diagramHomeUtils'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
-import type { DiagramFileMeta } from '@shared/types/diagrams'
+import type { DiagramFileMeta, DiagramFileRecord } from '@shared/types/diagrams'
 
 export function useDiagramCatalogFileActions(options?: {
   afterMutate?: () => void | Promise<void>
@@ -30,7 +31,9 @@ export function useDiagramCatalogFileActions(options?: {
       toast.error(result.message ?? '复制失败')
       return false
     }
-    toast.success('已创建副本')
+    const record = result.data as DiagramFileRecord | undefined
+    const name = record?.meta?.title ? diagramTitleBase(record.meta.title) : ''
+    toast.success(name ? `已创建副本「${name}」` : '已创建副本')
     await runAfterMutate()
     return true
   }
@@ -53,7 +56,7 @@ export function useDiagramCatalogFileActions(options?: {
   async function softDeleteFile(fileId: string): Promise<boolean> {
     const ok = await confirm.ask({
       header: '移入回收站？',
-      message: '.wfg 文件可在回收站中恢复至原分组。',
+      message: '删除后可在回收站恢复，并回到原来的分组。',
       danger: true,
       acceptLabel: '移入回收站',
       width: 'min(92vw, 22rem)'

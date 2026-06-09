@@ -17,6 +17,7 @@
   /* 全屏/模态叠层（数值越大越靠上） */
   --ww-z-image-viewer: 9999;
   --ww-z-command-palette: 10000;
+  --ww-z-popover: 10045;
   --ww-z-context-menu: 10050;
   --ww-z-dialog: 10100;
 

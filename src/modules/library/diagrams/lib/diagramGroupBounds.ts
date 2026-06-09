@@ -1,12 +1,12 @@
 import type LogicFlow from '@logicflow/core'
-import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { isGroupFrameType } from '@modules/library/diagrams/lib/diagramGroupFrame'
 
 const GROUP_PAD = 12
 
 /** 根据成员与组内连线重算组合框位置与尺寸 */
 export function syncGroupFrameBounds(lf: LogicFlow, groupId: string): void {
   const group = lf.getNodeModelById(groupId)
-  if (!group || group.type !== DIAGRAM_GROUP_FRAME_TYPE) return
+  if (!group || !isGroupFrameType(group.type)) return
 
   const members = (group.properties?.dgGroupMembers as string[] | undefined) ?? []
   const groupEdges = (group.properties?.dgGroupEdges as string[] | undefined) ?? []
@@ -51,6 +51,33 @@ export function syncGroupFrameBounds(lf: LogicFlow, groupId: string): void {
   if (dx !== 0 || dy !== 0) {
     lf.graphModel.moveNode(groupId, dx, dy, true)
   }
+  ensureGroupFrameAtBottom(lf, groupId)
+}
+
+/** 组合框始终置于最底层，避免填充色遮挡其他图元 */
+export function ensureGroupFrameAtBottom(lf: LogicFlow, groupId: string): void {
+  const group = lf.getNodeModelById(groupId)
+  if (!group || !isGroupFrameType(group.type)) return
+  let minZ = Infinity
+  for (const node of lf.graphModel.nodes) {
+    if (node.id === groupId) continue
+    minZ = Math.min(minZ, node.zIndex ?? 0)
+  }
+  for (const edge of lf.graphModel.edges) {
+    minZ = Math.min(minZ, edge.zIndex ?? 0)
+  }
+  const target = minZ === Infinity ? 0 : minZ - 1
+  if ((group.zIndex ?? 0) !== target) {
+    lf.setElementZIndex(groupId, target)
+  }
+}
+
+export function ensureAllGroupFramesAtBottom(lf: LogicFlow): void {
+  for (const node of lf.graphModel.nodes) {
+    if (isGroupFrameType(node.type)) {
+      ensureGroupFrameAtBottom(lf, node.id)
+    }
+  }
 }
 
 export function collectGroupIdsForNodes(lf: LogicFlow, nodeIds: string[]): Set<string> {
@@ -58,7 +85,7 @@ export function collectGroupIdsForNodes(lf: LogicFlow, nodeIds: string[]): Set<s
   for (const id of nodeIds) {
     const model = lf.getNodeModelById(id)
     if (!model) continue
-    if (model.type === DIAGRAM_GROUP_FRAME_TYPE) {
+    if (isGroupFrameType(model.type)) {
       groupIds.add(id)
       continue
     }

@@ -1,11 +1,12 @@
 import type LogicFlow from '@logicflow/core'
 
 const CANVAS_ACTIVE_CLASS = 'dg-edge-adjust-active'
-const ENDPOINT_HIT_RADIUS = 16
+const ENDPOINT_HIT_RADIUS = 18
 
 let activeEdgeId: string | null = null
 let adjustPointDragging = false
 let suppressedNodeIds: string[] = []
+const suppressedNodeZIndex = new Map<string, number>()
 
 function distSq(ax: number, ay: number, bx: number, by: number): number {
   const dx = ax - bx
@@ -38,8 +39,13 @@ function restoreNodeAnchors(lf: LogicFlow, nodeIds: string[]) {
   for (const id of nodeIds) {
     const node = lf.getNodeModelById(id)
     if (!node) continue
+    const savedZ = suppressedNodeZIndex.get(id)
+    if (savedZ != null) {
+      node.setZIndex(savedZ)
+    }
     node.setIsShowAnchor(node.isHovered || node.isSelected)
   }
+  suppressedNodeZIndex.clear()
 }
 
 export function activateEdgeEndpointPriority(
@@ -62,7 +68,11 @@ export function activateEdgeEndpointPriority(
 
   suppressedNodeIds = [edge.sourceNodeId, edge.targetNodeId].filter(Boolean)
   for (const id of suppressedNodeIds) {
-    lf.getNodeModelById(id)?.setIsShowAnchor(false)
+    const node = lf.getNodeModelById(id)
+    if (!node) continue
+    suppressedNodeZIndex.set(id, node.zIndex)
+    node.setZIndex(Math.max(0, edge.zIndex - 1))
+    node.setIsShowAnchor(false)
   }
   container?.classList.add(CANVAS_ACTIVE_CLASS)
 }
@@ -118,8 +128,15 @@ export function finishAdjustPointDrag(lf: LogicFlow, container: HTMLElement | nu
   if (!activeEdgeId) return
   const edge = lf.getEdgeModelById(activeEdgeId)
   if (edge?.isHovered || edge?.isSelected) {
+    lf.graphModel.toFront(activeEdgeId)
     for (const id of suppressedNodeIds) {
-      lf.getNodeModelById(id)?.setIsShowAnchor(false)
+      const node = lf.getNodeModelById(id)
+      if (!node) continue
+      if (!suppressedNodeZIndex.has(id)) {
+        suppressedNodeZIndex.set(id, node.zIndex)
+      }
+      node.setZIndex(Math.max(0, edge.zIndex - 1))
+      node.setIsShowAnchor(false)
     }
     container?.classList.add(CANVAS_ACTIVE_CLASS)
     return
@@ -135,6 +152,7 @@ export function resetEdgeEndpointPriority(
   if (!lf || !activeEdgeId) {
     activeEdgeId = null
     suppressedNodeIds = []
+    suppressedNodeZIndex.clear()
     container?.classList.remove(CANVAS_ACTIVE_CLASS)
     return
   }

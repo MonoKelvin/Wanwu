@@ -5,6 +5,7 @@ import InputText from 'primevue/inputtext'
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwSelect from '@shared/components/WwSelect/WwSelect.vue'
 import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
+import WwColorInput from '@shared/components/WwColorInput.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import WwButton from '@shared/components/WwButton.vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
@@ -20,6 +21,7 @@ import {
   DIAGRAM_THEME_PRESETS
 } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
 import type { DiagramEditorSelection } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import {
   togglePropsPanelCollapsed,
@@ -72,6 +74,13 @@ const isGroupFrame = computed(() => {
   if (props.selection.selectedNodeCount !== 1) return false
   return props.selection.node?.type === DIAGRAM_GROUP_FRAME_TYPE
 })
+const isGroupedMember = computed(
+  () => !multiNode.value && Boolean(props.selection.node?.groupId)
+)
+
+function ungroupSelection() {
+  void bus.dispatch({ type: 'canvas.ungroup' })
+}
 
 const selectionBanner = computed(() => {
   const nc = props.selection.selectedNodeCount
@@ -94,11 +103,6 @@ function isTextAlignActive(value: string): boolean {
 function isFontWeightActive(): boolean {
   if (isMixed('textStyle.fontWeight')) return false
   return props.selection.node?.textStyle.fontWeight === 'bold'
-}
-
-function fillColorForPicker(fill: string): string {
-  if (!fill || fill === 'transparent' || fill === 'none') return '#ffffff'
-  return fill
 }
 
 const dispatchBatchNode = useDebounceFn((nodeProps: Record<string, unknown>) => {
@@ -312,6 +316,22 @@ function patchGroupStyle(patch: Record<string, unknown>) {
     }
   })
 }
+
+function patchGroupAlwaysVisible(value: boolean) {
+  const id = props.selection.node?.id
+  if (!id) return
+  void bus.dispatch({
+    type: 'canvas.updateNode',
+    payload: {
+      nodeId: id,
+      patch: {
+        properties: {
+          dgGroupAlwaysVisible: value
+        }
+      }
+    }
+  })
+}
 </script>
 
 <template>
@@ -381,22 +401,36 @@ function patchGroupStyle(patch: Record<string, unknown>) {
       <template v-if="isGroupFrame && selection.node">
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">组合框</p>
+          <p v-if="selection.node.groupMemberCount != null" class="dg-prop-hint">
+            含 {{ selection.node.groupMemberCount }} 个图元
+            <template v-if="selection.node.groupEdgeCount">
+              · {{ selection.node.groupEdgeCount }} 条连线
+            </template>
+            。点击空白区域拖动整体；点击内部图元可单独编辑。
+          </p>
+          <SettingsRow label="始终显示" class="dg-settings-row--inline">
+            <WwToggleSwitch
+              :model-value="selection.node.groupAlwaysVisible ?? false"
+              aria-label="始终显示组合框"
+              @update:model-value="patchGroupAlwaysVisible($event)"
+            />
+          </SettingsRow>
+          <p v-if="!(selection.node.groupAlwaysVisible ?? false)" class="dg-prop-hint">
+            关闭时仅在悬停、选中或选中内部图元时显示边框
+          </p>
           <SettingsRow label="边框色" class="dg-settings-row--stacked">
-            <input
-              :value="selection.node.stroke"
-              type="color"
-              class="dg-field-color dg-prop-color-block"
+            <WwColorInput
+              :model-value="selection.node.stroke"
               aria-label="组合框边框色"
-              @input="patchGroupStyle({ stroke: ($event.target as HTMLInputElement).value })"
+              @update:model-value="patchGroupStyle({ stroke: $event })"
             />
           </SettingsRow>
           <SettingsRow label="填充色" class="dg-settings-row--stacked">
-            <input
-              :value="selection.node.fill === 'transparent' ? '#ffffff' : selection.node.fill"
-              type="color"
-              class="dg-field-color dg-prop-color-block"
+            <WwColorInput
+              :model-value="selection.node.fill"
+              allow-transparent
               aria-label="组合框填充色"
-              @input="patchGroupStyle({ fill: ($event.target as HTMLInputElement).value })"
+              @update:model-value="patchGroupStyle({ fill: $event })"
             />
           </SettingsRow>
           <SettingsRow label="边框粗细" class="dg-settings-row--stacked">
@@ -421,6 +455,21 @@ function patchGroupStyle(patch: Record<string, unknown>) {
           </SettingsRow>
         </section>
       </template>
+
+      <!-- 已组合图元 -->
+      <section
+        v-if="showNode && selection.node && isGroupedMember && !isGroupFrame"
+        class="dg-prop-section dg-prop-group dg-prop-grouped-banner"
+      >
+        <p class="dg-prop-grouped-banner__text">该图元已在组合内，可直接编辑；需要拆分时可取消组合。</p>
+        <WwButton
+          v-if="canUngroup"
+          size="small"
+          severity="secondary"
+          :label="`取消组合 (${DG_SHORTCUT.ungroup})`"
+          @click="ungroupSelection"
+        />
+      </section>
 
       <!-- 图元 -->
       <template v-if="showNode && selection.node && !isGroupFrame">
@@ -466,13 +515,11 @@ function patchGroupStyle(patch: Record<string, unknown>) {
             </div>
           </SettingsRow>
           <SettingsRow label="文字颜色" class="dg-settings-row--stacked">
-            <input
-              :value="isMixed('textStyle.color') ? '#b0b0b0' : selection.node.textStyle.color"
-              type="color"
-              class="dg-field-color dg-prop-color-block"
-              :class="{ 'dg-prop-color-block--mixed': isMixed('textStyle.color') }"
+            <WwColorInput
+              :model-value="selection.node.textStyle.color"
+              :mixed="isMixed('textStyle.color')"
               aria-label="文字颜色"
-              @input="patchNodeTextStyle({ color: ($event.target as HTMLInputElement).value })"
+              @update:model-value="patchNodeTextStyle({ color: $event })"
             />
           </SettingsRow>
           <SettingsRow label="样式" class="dg-settings-row--stacked">
@@ -614,23 +661,20 @@ function patchGroupStyle(patch: Record<string, unknown>) {
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">外观</p>
           <SettingsRow label="填充色" class="dg-settings-row--stacked">
-            <input
-              :value="isMixed('fill') ? '#b0b0b0' : fillColorForPicker(selection.node.fill)"
-              type="color"
-              class="dg-field-color dg-prop-color-block"
-              :class="{ 'dg-prop-color-block--mixed': isMixed('fill') }"
+            <WwColorInput
+              :model-value="selection.node.fill"
+              :mixed="isMixed('fill')"
+              allow-transparent
               aria-label="填充色"
-              @input="patchNode({ fill: ($event.target as HTMLInputElement).value })"
+              @update:model-value="patchNode({ fill: $event })"
             />
           </SettingsRow>
           <SettingsRow label="边框色" class="dg-settings-row--stacked">
-            <input
-              :value="isMixed('stroke') ? '#b0b0b0' : selection.node.stroke"
-              type="color"
-              class="dg-field-color dg-prop-color-block"
-              :class="{ 'dg-prop-color-block--mixed': isMixed('stroke') }"
+            <WwColorInput
+              :model-value="selection.node.stroke"
+              :mixed="isMixed('stroke')"
               aria-label="边框色"
-              @input="patchNode({ stroke: ($event.target as HTMLInputElement).value })"
+              @update:model-value="patchNode({ stroke: $event })"
             />
           </SettingsRow>
           <SettingsRow label="边框粗细" class="dg-settings-row--stacked">
@@ -715,12 +759,10 @@ function patchGroupStyle(patch: Record<string, unknown>) {
             />
           </SettingsRow>
           <SettingsRow label="颜色" class="dg-settings-row--stacked">
-            <input
-              :value="selection.edge.stroke"
-              type="color"
-              class="dg-field-color dg-prop-color-block"
+            <WwColorInput
+              :model-value="selection.edge.stroke"
               aria-label="线条颜色"
-              @input="patchEdge({ stroke: ($event.target as HTMLInputElement).value })"
+              @update:model-value="patchEdge({ stroke: $event })"
             />
           </SettingsRow>
           <SettingsRow label="粗细" class="dg-settings-row--stacked">
@@ -798,12 +840,10 @@ function patchGroupStyle(patch: Record<string, unknown>) {
             />
           </SettingsRow>
           <SettingsRow label="背景色" class="dg-settings-row--stacked">
-            <input
-              :value="canvas.backgroundColor"
-              type="color"
-              class="dg-field-color dg-prop-color-block"
+            <WwColorInput
+              :model-value="canvas.backgroundColor"
               aria-label="背景色"
-              @input="patchCanvas({ backgroundColor: ($event.target as HTMLInputElement).value })"
+              @update:model-value="patchCanvas({ backgroundColor: $event })"
             />
           </SettingsRow>
           <SettingsRow label="主题配色" class="dg-settings-row--stacked">
@@ -831,12 +871,10 @@ function patchGroupStyle(patch: Record<string, unknown>) {
             />
           </SettingsRow>
           <SettingsRow label="默认线条色" class="dg-settings-row--stacked">
-            <input
-              :value="canvas.defaultEdge.stroke"
-              type="color"
-              class="dg-field-color dg-prop-color-block"
+            <WwColorInput
+              :model-value="canvas.defaultEdge.stroke"
               aria-label="默认线条颜色"
-              @input="patchDefaultEdge({ stroke: ($event.target as HTMLInputElement).value })"
+              @update:model-value="patchDefaultEdge({ stroke: $event })"
             />
           </SettingsRow>
           <SettingsRow label="粗细" class="dg-settings-row--stacked">

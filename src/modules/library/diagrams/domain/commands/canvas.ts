@@ -24,6 +24,7 @@ export const CANVAS_COMMAND_TYPES = [
   'canvas.zoom',
   'canvas.zoomToFit',
   'canvas.zoomReset',
+  'canvas.centerContent',
   'canvas.centerOrigin',
   'canvas.setGrid',
   'canvas.nudgeSelection'

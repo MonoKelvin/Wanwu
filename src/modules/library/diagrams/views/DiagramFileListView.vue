@@ -42,6 +42,7 @@ import {
   isDiagramCustomFolderId
 } from '@modules/library/diagrams/domain/diagramFolderIds'
 import { useDiagramFolderDialogs } from '@modules/library/diagrams/lib/useDiagramFolderDialogs'
+import { listDiagramChildFolders } from '@modules/library/diagrams/lib/diagramCatalogTree'
 import { pushShellRoute } from '@app/composables/shellNavigation'
 
 const route = useRoute()
@@ -63,6 +64,10 @@ const {
   onFolderDialogConfirm
 } = useDiagramFolderDialogs({
   navigateFolder: (id) => {
+    if (folderId.value === DG_FILES) {
+      void load()
+      return
+    }
     void pushShellRoute(router, {
       name: 'library-diagrams-folder',
       params: { folderId: id }
@@ -111,11 +116,22 @@ const moveFolderId = ref(DG_FILES)
 const folderId = computed(() => route.params.folderId as string)
 const folderName = computed(() => store.folderById(folderId.value)?.name ?? '文件')
 const isRecycle = computed(() => folderId.value === DG_RECYCLE)
+const isFilesRoot = computed(() => folderId.value === DG_FILES)
 const isCustomFolder = computed(() => isDiagramCustomFolderId(folderId.value))
 const pageSubtitle = computed(() => {
-  if (isRecycle.value) return '已删除的 .wfg 文件可恢复或永久清除'
-  if (isCustomFolder.value) return '自定义分组 · .wfg 压缩包'
-  return '.wfg 压缩包 · 可移至自定义分组'
+  if (isRecycle.value) return '删除后保留在此，可恢复至原分组，或永久清除'
+  if (isCustomFolder.value) return '此分组中的流程图'
+  return '包含子分组与未分组的流程图，点击分组可进入查看'
+})
+
+const childFolders = computed(() =>
+  isFilesRoot.value ? listDiagramChildFolders(store.folders, DG_FILES) : []
+)
+
+const visibleChildFolders = computed(() => {
+  const q = search.value.trim().toLowerCase()
+  if (!q) return childFolders.value
+  return childFolders.value.filter((f) => f.name.toLowerCase().includes(q))
 })
 
 const movableFolders = computed(() =>
@@ -144,9 +160,26 @@ const listCountLabel = computed(() =>
     total: allFilesInFolder.value.length,
     shown: files.value.length,
     searching: Boolean(search.value.trim()),
-    recycle: isRecycle.value
+    recycle: isRecycle.value,
+    folderCount: childFolders.value.length,
+    foldersShown: visibleChildFolders.value.length
   })
 )
+
+const hasListContent = computed(
+  () => visibleChildFolders.value.length > 0 || files.value.length > 0
+)
+
+function fileCountByFolderId(id: string): number {
+  return store.filesByFolder[id]?.length ?? 0
+}
+
+async function openFolder(targetFolderId: string) {
+  await pushShellRoute(router, {
+    name: 'library-diagrams-folder',
+    params: { folderId: targetFolderId }
+  })
+}
 
 const { revealFile, duplicateFile, softDeleteFile } = useDiagramCatalogFileActions({
   afterMutate: async () => {
@@ -162,8 +195,11 @@ function folderNameById(id: string) {
 async function load() {
   loading.value = true
   try {
-    await store.loadFiles(folderId.value)
     if (!store.loaded) await store.loadFolders()
+    await store.loadFiles(folderId.value)
+    if (isFilesRoot.value) {
+      await Promise.all(childFolders.value.map((f) => store.loadFiles(f.id)))
+    }
     if (isRecycle.value) await store.refreshRecycleCount()
   } finally {
     loading.value = false
@@ -325,7 +361,7 @@ function toggleSortMenu(event: MouseEvent) {
       <PageHeader :title="folderName" :subtitle="pageSubtitle" stacked-titles>
         <template #leading>
           <span
-            v-if="isRecycle || isCustomFolder"
+            v-if="isRecycle || isCustomFolder || isFilesRoot"
             class="dg-page-header-mark"
             :class="{ 'dg-page-header-mark--danger': isRecycle }"
             aria-hidden="true"
@@ -340,7 +376,7 @@ function toggleSortMenu(event: MouseEvent) {
                 <WwInputIcon name="search" />
                 <InputText
                   v-model="search"
-                  :placeholder="isRecycle ? '搜索回收站…' : '搜索 .wfg 文件…'"
+                  :placeholder="isRecycle ? '搜索回收站…' : '搜索流程图…'"
                   class="w-full"
                   aria-label="搜索流程图"
                 />
@@ -439,19 +475,21 @@ function toggleSortMenu(event: MouseEvent) {
 
     <div
       class="dg-page-inner dg-page-inner--wide dg-page-inner--list dg-fade-in"
-      :class="{ 'dg-page-inner--empty': !loading && !files.length }"
+      :class="{ 'dg-page-inner--empty': !loading && !hasListContent }"
     >
       <p v-if="loading" class="dg-hint dg-hint--center">加载中…</p>
 
-      <div v-else-if="!files.length" class="dg-list-empty">
+      <div v-else-if="!hasListContent" class="dg-list-empty">
         <EmptyState
           :variant="isRecycle && !search.trim() ? 'ghost' : 'empty'"
-          :title="isRecycle ? '回收站为空' : search.trim() ? '无匹配文件' : '暂无文件'"
+          :title="isRecycle ? '回收站为空' : search.trim() ? '无匹配结果' : '暂无内容'"
           :description="
             isRecycle ?
               '删除的流程图会显示在这里，可恢复或永久清除。'
             : search.trim() ?
               '尝试更换关键词。'
+            : isFilesRoot ?
+              '可新建分组整理流程图，或从首页选择模板创建'
             : '从首页选择模板或打开文件'
           "
         >
@@ -468,10 +506,13 @@ function toggleSortMenu(event: MouseEvent) {
         <p v-if="listCountLabel" class="dg-list-panel__meta">{{ listCountLabel }}</p>
         <DiagramRecentTable
           :files="files"
+          :folders="visibleChildFolders"
+          :file-count-by-folder-id="fileCountByFolderId"
           :folder-name-by-id="folderNameById"
           :variant="isRecycle ? 'recycle' : 'folder'"
           :show-move="movableFolders.length > 0"
           @open="openFile"
+          @open-folder="openFolder"
           @rename="openRename"
           @copy="duplicateFile"
           @move="openMove"
@@ -479,6 +520,8 @@ function toggleSortMenu(event: MouseEvent) {
           @soft-delete="softDeleteFile"
           @restore="restore"
           @purge="purge"
+          @rename-folder="openRenameFolderDialog"
+          @delete-folder="openDeleteFolderDialog"
         />
       </div>
     </div>
@@ -500,7 +543,6 @@ function toggleSortMenu(event: MouseEvent) {
             placeholder="未命名流程图"
             @keydown.enter.prevent="commitRename"
           />
-          <span class="dg-rename-filename__ext">.wfg</span>
         </div>
       </label>
       <template #footer>
