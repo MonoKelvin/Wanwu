@@ -353,7 +353,8 @@ export type DiagramMultiSelectResizeHandle = {
 export function mountDiagramMultiSelectResize(
   lf: LogicFlow,
   onGraphChange: () => void,
-  onLayoutChange?: () => void
+  onLayoutChange?: () => void,
+  onNodesTransform?: () => void
 ): DiagramMultiSelectResizeHandle {
   const root = document.createElement('div')
   root.className = 'dg-multi-select-resize'
@@ -467,6 +468,7 @@ export function mountDiagramMultiSelectResize(
         if (!next) return
         applyUniformGroupScale(lf, snaps, startBounds, next, fixedAnchor, false)
         applyOutlineBoxFromBounds(paddedBounds(next, OUTLINE_PAD))
+        onNodesTransform?.()
         onLayoutChange?.()
       },
       onDragEnd: () => {
@@ -521,6 +523,7 @@ export function mountDiagramMultiSelectResize(
 
   const onDragMoveDuringNode = () => {
     if (groupResizing) return
+    onNodesTransform?.()
     if (refreshRaf != null) return
     refreshRaf = requestAnimationFrame(() => {
       refreshRaf = null
@@ -528,16 +531,20 @@ export function mountDiagramMultiSelectResize(
     })
   }
 
-  const onNodeDragStart = () => {
+  const onSelectionDragStart = () => {
     if (getMultiSelectNodes(lf.graphModel).length >= 2) {
       root.classList.add('dg-multi-select-resize--dragging')
     }
+  }
+
+  const onNodeDragStart = () => {
+    onSelectionDragStart()
     if (nodeDragMoveListener) return
     nodeDragMoveListener = onDragMoveDuringNode
     window.addEventListener('pointermove', nodeDragMoveListener, { passive: true })
   }
 
-  const onNodeDragEnd = () => {
+  const onDragEnd = () => {
     root.classList.remove('dg-multi-select-resize--dragging')
     if (nodeDragMoveListener) {
       window.removeEventListener('pointermove', nodeDragMoveListener)
@@ -553,9 +560,12 @@ export function mountDiagramMultiSelectResize(
   lf.on('graph:transform', onRefresh)
   lf.on('node:click', onRefresh)
   lf.on('edge:click', onRefresh)
+  lf.on('selection:dragstart', onSelectionDragStart)
+  lf.on('selection:drag', onDragMoveDuringNode)
+  lf.on('selection:drop', onDragEnd)
   lf.on('node:dragstart', onNodeDragStart)
   lf.on('node:drag', onDragMoveDuringNode)
-  lf.on('node:drop', onNodeDragEnd)
+  lf.on('node:drop', onDragEnd)
   lf.on('node:resize', onRefresh)
   lf.on('node:delete', onRefresh)
   lf.on('selection:selected', onRefresh)
@@ -564,13 +574,16 @@ export function mountDiagramMultiSelectResize(
   lf.on('history:change', onRefresh)
 
   const destroy = () => {
-    onNodeDragEnd()
+    onDragEnd()
     lf.off('graph:transform', onRefresh)
     lf.off('node:click', onRefresh)
     lf.off('edge:click', onRefresh)
+    lf.off('selection:dragstart', onSelectionDragStart)
+    lf.off('selection:drag', onDragMoveDuringNode)
+    lf.off('selection:drop', onDragEnd)
     lf.off('node:dragstart', onNodeDragStart)
     lf.off('node:drag', onDragMoveDuringNode)
-    lf.off('node:drop', onNodeDragEnd)
+    lf.off('node:drop', onDragEnd)
     lf.off('node:resize', onRefresh)
     lf.off('node:delete', onRefresh)
     lf.off('selection:selected', onRefresh)

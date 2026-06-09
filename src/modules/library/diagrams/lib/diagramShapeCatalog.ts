@@ -40,7 +40,21 @@ export const DIAGRAM_SHAPE_CATEGORIES: DiagramShapeCategory[] = [
       { id: 'dg-or', label: '或者', lfType: 'dg-or', defaultText: '或', preview: { kind: 'polygon', points: [[0, -0.85], [0.75, -0.25], [0.75, 0.25], [0, 0.85], [-0.75, 0.25], [-0.75, -0.25]] } },
       { id: 'dg-off-page', label: '离页连接', lfType: 'dg-off-page', defaultText: '离页', preview: { kind: 'polygon', points: [[-0.8, -0.7], [0.8, -0.7], [0.8, 0.1], [0.35, 0.85], [-0.8, 0.85]] } },
       { id: 'dg-merge', label: '合并', lfType: 'dg-merge', defaultText: '合并', preview: { kind: 'polygon', points: [[0, 0.85], [0.95, -0.75], [-0.95, -0.75]] } },
-      { id: 'dg-connector', label: '连接点', lfType: 'dg-connector', defaultText: '', preview: { kind: 'circle', r: 0.22 } }
+      { id: 'dg-connector', label: '连接点', lfType: 'dg-connector', defaultText: '', preview: { kind: 'circle', r: 0.22 } },
+      {
+        id: 'dg-summing-junction',
+        label: '求和连接',
+        lfType: 'dg-circle',
+        defaultText: '+',
+        preview: { kind: 'circle', r: 0.32 }
+      },
+      {
+        id: 'dg-internal-storage',
+        label: '内部存储',
+        lfType: 'dg-stored-data',
+        defaultText: '存储',
+        preview: { kind: 'path', d: 'M6 9 A6 2 0 0 1 18 9 V15 A6 2 0 0 1 6 15 Z M6 9 A6 2 0 0 0 18 9' }
+      }
     ]
   },
   {
@@ -75,7 +89,21 @@ export const DIAGRAM_SHAPE_CATEGORIES: DiagramShapeCategory[] = [
         preview: { kind: 'path', d: 'M4 5 H18 V15 H4 Z M4 8 H18' }
       },
       { id: 'dg-actor', label: '参与者', lfType: 'dg-actor', defaultText: '参与者', preview: { kind: 'path', d: 'M12 5 A2.5 2.5 0 1 1 12 10 A2.5 2.5 0 1 1 12 5 M12 10 V14 M8 12 H16 M12 14 L9 18 M12 14 L15 18' } },
-      { id: 'dg-note', label: '便签', lfType: 'dg-note', defaultText: '说明', preview: { kind: 'path', d: 'M5 5 H15 L17 7 V17 H5 Z' } }
+      { id: 'dg-note', label: '便签', lfType: 'dg-note', defaultText: '说明', preview: { kind: 'path', d: 'M5 5 H15 L17 7 V17 H5 Z' } },
+      {
+        id: 'dg-uml-package',
+        label: '包',
+        lfType: 'dg-uml-class',
+        defaultText: 'package',
+        preview: { kind: 'path', d: 'M4 7 H10 V5 H18 V15 H4 Z' }
+      },
+      {
+        id: 'dg-uml-component',
+        label: '组件',
+        lfType: 'dg-rect',
+        defaultText: '组件',
+        preview: { kind: 'path', d: 'M6 6 H14 V14 H6 Z M4 8 H5 V12 H4 Z M17 8 H18 V12 H17 Z' }
+      }
     ]
   },
   {
@@ -83,6 +111,27 @@ export const DIAGRAM_SHAPE_CATEGORIES: DiagramShapeCategory[] = [
     label: '架构',
     items: [
       { id: 'dg-cloud', label: '云服务', lfType: 'dg-cloud', defaultText: '云服务', preview: { kind: 'path', d: 'M7 12 A3 2 0 0 1 10 9 A4 3 0 0 1 16 10 A3 2.5 0 0 1 14 14 H8 A3 2 0 0 1 7 12 Z' } },
+      {
+        id: 'dg-server',
+        label: '服务器',
+        lfType: 'dg-rect',
+        defaultText: '服务器',
+        preview: { kind: 'rect', w: 1.35, h: 0.85, r: 0.08 }
+      },
+      {
+        id: 'dg-api',
+        label: 'API',
+        lfType: 'dg-round-rect',
+        defaultText: 'API',
+        preview: { kind: 'rect', w: 1.55, h: 0.62, r: 0.22 }
+      },
+      {
+        id: 'dg-queue',
+        label: '消息队列',
+        lfType: 'dg-data',
+        defaultText: '队列',
+        preview: { kind: 'polygon', points: [[-1, -0.7], [0.75, -0.7], [1, 0.7], [-0.8, 0.7]] }
+      },
       { id: 'dg-swimlane', label: '泳道', lfType: 'dg-swimlane', defaultText: '泳道', preview: { kind: 'path', d: 'M3 6 H19 V16 H3 Z M3 9 H19' } },
       { id: 'dg-xor-gateway', label: 'XOR 网关', lfType: 'dg-xor-gateway', defaultText: '', preview: { kind: 'diamond', rx: 0.85, ry: 0.85 } },
       {
@@ -91,6 +140,37 @@ export const DIAGRAM_SHAPE_CATEGORIES: DiagramShapeCategory[] = [
         lfType: 'dg-stored-data',
         defaultText: '数据库',
         preview: { kind: 'path', d: 'M5 8 A7 2 0 0 1 19 8 V16 A7 2 0 0 1 5 16 Z M5 8 A7 2 0 0 0 19 8' }
+      },
+      {
+        id: 'dg-cache',
+        label: '缓存',
+        lfType: 'dg-round-rect',
+        defaultText: '缓存',
+        preview: { kind: 'rect', w: 1.4, h: 0.68, r: 0.14 }
+      },
+      {
+        id: 'dg-load-balancer',
+        label: '负载均衡',
+        lfType: 'dg-hexagon',
+        defaultText: 'LB',
+        preview: {
+          kind: 'polygon',
+          points: [[0, -0.85], [0.95, -0.42], [0.95, 0.42], [0, 0.85], [-0.95, 0.42], [-0.95, -0.42]]
+        }
+      },
+      {
+        id: 'dg-container',
+        label: '容器',
+        lfType: 'dg-round-rect',
+        defaultText: '容器',
+        preview: { kind: 'rect', w: 1.35, h: 0.95, r: 0.1 }
+      },
+      {
+        id: 'dg-client',
+        label: '客户端',
+        lfType: 'dg-actor',
+        defaultText: '用户',
+        preview: { kind: 'path', d: 'M12 5 A2.5 2.5 0 1 1 12 10 A2.5 2.5 0 1 1 12 5 M12 10 V14 M8 12 H16 M12 14 L9 18 M12 14 L15 18' }
       }
     ]
   },
@@ -132,6 +212,27 @@ export const DIAGRAM_SHAPE_CATEGORIES: DiagramShapeCategory[] = [
         lfType: 'dg-swimlane',
         defaultText: '泳道',
         preview: { kind: 'path', d: 'M3 6 H19 V16 H3 Z M3 9 H19' }
+      },
+      {
+        id: 'dg-bpmn-intermediate',
+        label: '中间事件',
+        lfType: 'dg-circle',
+        defaultText: '',
+        preview: { kind: 'path', d: 'M12 7 A5 5 0 1 1 12 17 A5 5 0 1 1 12 7 M12 8.5 A3.5 3.5 0 1 0 12 15.5 A3.5 3.5 0 1 0 12 8.5' }
+      },
+      {
+        id: 'dg-bpmn-subprocess',
+        label: '子流程',
+        lfType: 'dg-subprocess',
+        defaultText: '子流程',
+        preview: { kind: 'path', d: 'M4 6 H18 V16 H4 Z M7 8 V14 M15 8 V14' }
+      },
+      {
+        id: 'dg-bpmn-message',
+        label: '消息',
+        lfType: 'dg-document',
+        defaultText: '消息',
+        preview: { kind: 'path', d: 'M4 5 H16 L18 7 V19 H4 Z' }
       }
     ]
   },
@@ -147,7 +248,14 @@ export const DIAGRAM_SHAPE_CATEGORIES: DiagramShapeCategory[] = [
         preview: { kind: 'rect', w: 1.5, h: 1.1, r: 0.08 }
       },
       { id: 'dg-text', label: '文本', lfType: 'text', defaultText: '文本', preview: { kind: 'text' } },
-      { id: 'dg-comment', label: '注释', lfType: 'dg-comment', defaultText: '注释', preview: { kind: 'rect', w: 1.6, h: 0.65, r: 0.06 } }
+      { id: 'dg-comment', label: '注释', lfType: 'dg-comment', defaultText: '注释', preview: { kind: 'rect', w: 1.6, h: 0.65, r: 0.06 } },
+      {
+        id: 'dg-callout',
+        label: '标注框',
+        lfType: 'dg-comment',
+        defaultText: '说明',
+        preview: { kind: 'path', d: 'M5 5 H15 L17 7 V14 H10 L7 17 V14 H5 Z' }
+      }
     ]
   }
 ]

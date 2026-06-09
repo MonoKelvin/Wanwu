@@ -1,61 +1,109 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import IconField from 'primevue/iconfield'
 import InputText from 'primevue/inputtext'
-import DiagramShapePreview from '@modules/library/diagrams/components/DiagramShapePreview.vue'
+import DiagramShapeGroup from '@modules/library/diagrams/components/DiagramShapeGroup.vue'
+import DiagramShapePaletteItem from '@modules/library/diagrams/components/DiagramShapePaletteItem.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
 import WwInputIcon from '@shared/components/WwInputIcon.vue'
-import { DIAGRAM_SHAPE_CATEGORIES } from '@modules/library/diagrams/lib/diagramShapeRegistry'
+import { useDiagramRecentShapes } from '@modules/library/diagrams/composables/useDiagramRecentShapes'
+import {
+  isAssetSectionExpanded,
+  setAssetSectionExpanded
+} from '@modules/library/diagrams/lib/diagramAssetPanelSections'
+import {
+  DIAGRAM_SHAPE_CATEGORIES,
+  getDiagramShapeById
+} from '@modules/library/diagrams/lib/diagramShapeRegistry'
+import { getRecommendedShapes } from '@modules/library/diagrams/lib/diagramShapeRecommendations'
 import { filterShapeCategories } from '@modules/library/diagrams/lib/diagramShapeSearch'
-import { writeShapeDragData } from '@modules/library/diagrams/lib/diagramShapeDrag'
+import type { DiagramShapeItem } from '@modules/library/diagrams/lib/diagramShapeTypes'
 import {
   toggleAssetPanelCollapsed,
   useDiagramEditorLayout
 } from '@modules/library/diagrams/composables/useDiagramEditorLayout'
 
+const CATEGORY_ICONS: Record<string, string> = {
+  basic: 'square',
+  flowchart: 'rows',
+  polygon: 'star',
+  uml: 'box',
+  architecture: 'cloud-abode',
+  bpmn: 'layers',
+  annotation: 'message-circle'
+}
+
 const search = ref('')
-const activeCategory = ref<string>('all')
 const layout = useDiagramEditorLayout()
+const { recentIds } = useDiagramRecentShapes()
 
-const categoryTabs = computed(() => [
-  { id: 'all', label: '全部' },
-  ...DIAGRAM_SHAPE_CATEGORIES.map((c) => ({ id: c.id, label: c.label }))
-])
+const sectionExpanded = reactive<Record<string, boolean>>({})
 
-const categories = computed(() => {
-  const filtered = filterShapeCategories(DIAGRAM_SHAPE_CATEGORIES, search.value)
-  if (activeCategory.value === 'all') return filtered
-  return filtered.filter((c) => c.id === activeCategory.value)
-})
+function initSectionState() {
+  for (const id of ['recent', 'recommend', ...DIAGRAM_SHAPE_CATEGORIES.map((c) => c.id)]) {
+    if (sectionExpanded[id] == null) {
+      sectionExpanded[id] = isAssetSectionExpanded(id)
+    }
+  }
+}
 
-const totalVisible = computed(() =>
-  categories.value.reduce((sum, cat) => sum + cat.items.length, 0)
+initSectionState()
+
+const filteredCategories = computed(() =>
+  filterShapeCategories(DIAGRAM_SHAPE_CATEGORIES, search.value)
 )
 
-watch(search, (q) => {
-  if (q.trim()) activeCategory.value = 'all'
+const recentShapes = computed(() =>
+  recentIds.value
+    .map((id) => getDiagramShapeById(id))
+    .filter((item): item is DiagramShapeItem => Boolean(item))
+)
+
+const recommendedShapes = computed(() =>
+  getRecommendedShapes(DIAGRAM_SHAPE_CATEGORIES, recentIds.value)
+)
+
+const totalVisible = computed(() => {
+  if (search.value.trim()) {
+    return filteredCategories.value.reduce((sum, cat) => sum + cat.items.length, 0)
+  }
+  return (
+    recentShapes.value.length +
+    recommendedShapes.value.length +
+    DIAGRAM_SHAPE_CATEGORIES.reduce((sum, cat) => sum + cat.items.length, 0)
+  )
 })
 
-function onShapeDragStart(event: DragEvent, shapeId: string, defaultText: string) {
-  writeShapeDragData(event, { shapeId, defaultText })
+const isSearching = computed(() => Boolean(search.value.trim()))
+
+watch(isSearching, (searching) => {
+  if (!searching) return
+  for (const cat of filteredCategories.value) {
+    sectionExpanded[cat.id] = true
+  }
+})
+
+function toggleSection(id: string) {
+  sectionExpanded[id] = !sectionExpanded[id]
+  setAssetSectionExpanded(id, sectionExpanded[id])
 }
 </script>
 
 <template>
   <aside
     class="dg-asset-panel dg-float dg-float--left ww-glass-blur"
-    aria-label="素材"
+    aria-label="图形"
   >
     <header class="dg-asset-panel__head">
       <WwIcon name="layout-grid" size="sm" class="dg-asset-panel__head-icon" />
-      <span class="dg-asset-panel__head-title">图元</span>
+      <span class="dg-asset-panel__head-title">图形</span>
       <span v-if="totalVisible" class="dg-asset-panel__count">{{ totalVisible }}</span>
       <WwIconButton
         icon="chevron-left"
         icon-size="sm"
         class="dg-panel__collapse-btn"
-        aria-label="收起图元面板"
+        aria-label="收起图形面板"
         compact
         @click="toggleAssetPanelCollapsed(layout)"
       />
@@ -66,52 +114,72 @@ function onShapeDragStart(event: DragEvent, shapeId: string, defaultText: string
         <WwInputIcon name="search" />
         <InputText
           v-model="search"
-          placeholder="搜索图元…"
+          placeholder="搜索图形…"
           class="w-full"
-          aria-label="搜索图元"
+          aria-label="搜索图形"
         />
       </IconField>
     </div>
 
-    <div v-if="!search.trim()" class="dg-asset-panel__tabs" role="tablist" aria-label="图元分类">
-      <button
-        v-for="tab in categoryTabs"
-        :key="tab.id"
-        type="button"
-        role="tab"
-        class="dg-asset-tab"
-        :class="{ 'dg-asset-tab--active': activeCategory === tab.id }"
-        :aria-selected="activeCategory === tab.id"
-        @click="activeCategory = tab.id"
-      >
-        {{ tab.label }}
-      </button>
-    </div>
-
     <div class="dg-asset-panel__body ww-scroll-main">
-      <p class="dg-asset-panel__hint">拖拽图元到画布创建</p>
-      <section v-for="group in categories" :key="group.id" class="dg-shape-group">
-        <h4 v-if="activeCategory === 'all' || search.trim()" class="dg-shape-group__label">
-          {{ group.label }}
-        </h4>
-        <div class="dg-shape-group__grid dg-shape-group__grid--compact">
-          <div
+      <template v-if="!isSearching">
+        <DiagramShapeGroup
+          v-if="recentShapes.length"
+          title="最近使用"
+          icon="clock"
+          variant="recent"
+          :expanded="sectionExpanded.recent ?? false"
+          :count="recentShapes.length"
+          @toggle="toggleSection('recent')"
+        >
+          <div class="dg-shape-group__grid">
+            <DiagramShapePaletteItem
+              v-for="item in recentShapes"
+              :key="`recent-${item.id}`"
+              :item="item"
+            />
+          </div>
+        </DiagramShapeGroup>
+
+        <DiagramShapeGroup
+          title="智能推荐"
+          icon="sparkles"
+          variant="recommend"
+          :expanded="sectionExpanded.recommend ?? false"
+          :count="recommendedShapes.length"
+          @toggle="toggleSection('recommend')"
+        >
+          <div class="dg-shape-group__grid">
+            <DiagramShapePaletteItem
+              v-for="item in recommendedShapes"
+              :key="`rec-${item.id}`"
+              :item="item"
+            />
+          </div>
+        </DiagramShapeGroup>
+      </template>
+
+      <DiagramShapeGroup
+        v-for="group in filteredCategories"
+        :key="group.id"
+        :title="group.label"
+        :icon="CATEGORY_ICONS[group.id]"
+        :expanded="sectionExpanded[group.id] ?? group.id === 'basic'"
+        :count="group.items.length"
+        @toggle="toggleSection(group.id)"
+      >
+        <div class="dg-shape-group__grid">
+          <DiagramShapePaletteItem
             v-for="item in group.items"
             :key="item.id"
-            class="dg-shape-item dg-shape-item--draggable"
-            draggable="true"
-            role="listitem"
-            :title="`${item.label} — 拖到画布`"
-            :aria-label="`拖拽${item.label}到画布`"
-            @dragstart="onShapeDragStart($event, item.id, item.defaultText)"
-          >
-            <DiagramShapePreview :spec="item.preview" />
-            <span class="dg-shape-item__label">{{ item.label }}</span>
-          </div>
+            :item="item"
+          />
         </div>
-      </section>
+      </DiagramShapeGroup>
 
-      <p v-if="!categories.length" class="dg-asset-panel__empty">无匹配图元</p>
+      <p v-if="!filteredCategories.length && isSearching" class="dg-asset-panel__empty">
+        无匹配图形
+      </p>
     </div>
   </aside>
 </template>

@@ -51,6 +51,9 @@ export function syncGroupFrameBounds(lf: LogicFlow, groupId: string): void {
   if (dx !== 0 || dy !== 0) {
     lf.graphModel.moveNode(groupId, dx, dy, true)
   }
+  if ('setAttributes' in group && typeof group.setAttributes === 'function') {
+    ;(group as { setAttributes: () => void }).setAttributes()
+  }
   ensureGroupFrameAtBottom(lf, groupId)
 }
 

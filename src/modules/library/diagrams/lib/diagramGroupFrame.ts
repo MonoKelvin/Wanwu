@@ -70,6 +70,36 @@ export function isPointInsideGroupFrame(
   )
 }
 
+/** 根据图元/连线解析所属组合框 id */
+export function resolveGroupFrameIdForElement(
+  lf: LogicFlow,
+  elementId: string,
+  kind: 'node' | 'edge'
+): string | null {
+  if (kind === 'node') {
+    const model = lf.getNodeModelById(elementId)
+    if (!model) return null
+    if (isGroupFrameType(model.type)) return elementId
+    const gid = model.properties?.dgGroupId
+    return typeof gid === 'string' && gid ? gid : null
+  }
+  const gid = lf.getEdgeModelById(elementId)?.properties?.dgGroupId
+  return typeof gid === 'string' && gid ? gid : null
+}
+
+/** 按画布坐标同步各组合框的悬停状态 */
+export function syncGroupFramePointerHover(
+  lf: LogicFlow,
+  canvasX: number,
+  canvasY: number
+): void {
+  for (const model of lf.graphModel.nodes) {
+    if (model.type !== DIAGRAM_GROUP_FRAME_TYPE) continue
+    const inside = isPointInsideGroupFrame(model, canvasX, canvasY)
+    setGroupFramePointerInside(model.id, inside)
+  }
+}
+
 export function registerDiagramGroupFrame(lf: LogicFlow): void {
   class GroupFrameModel extends DiagramRectResizeModel {
     initNodeData(data: LogicFlow.NodeConfig) {

@@ -35,6 +35,7 @@ import {
   togglePropsPanelCollapsed
 } from '@modules/library/diagrams/composables/useDiagramEditorLayout'
 import { LIBRARY_DIAGRAMS_EDITOR_ROUTE, isDiagramEditorPath } from '@modules/library/diagrams/domain/diagramRoutes'
+import { useDiagramRecentShapes } from '@modules/library/diagrams/composables/useDiagramRecentShapes'
 import { isShapeDragEvent, readShapeDragData } from '@modules/library/diagrams/lib/diagramShapeDrag'
 import {
   defaultCanvasSettings,
@@ -136,10 +137,11 @@ const bus = createDiagramCommandBus({
 })
 provideDiagramCommandBus(bus)
 const editorLayout = provideDiagramEditorLayout()
+const { record: recordRecentShape } = useDiagramRecentShapes()
 const saveFlow = provideDiagramSaveFlow(bus, toast)
 
 const stageStyle = computed(() => ({
-  '--dg-asset-panel-w': editorLayout.assetCollapsed.value ? '0px' : '10.5rem',
+  '--dg-asset-panel-w': editorLayout.assetCollapsed.value ? '0px' : '11.75rem',
   '--dg-panel-w': editorLayout.propsCollapsed.value ? '0px' : '13.5rem'
 }))
 
@@ -665,6 +667,7 @@ function onCanvasDrop(event: DragEvent) {
   const { x, y } = port.canvasDropPoint(event.clientX, event.clientY)
   const insertEdgeId = port.findEdgeAtCanvasPoint(x, y) ?? undefined
   resetCanvasDragState()
+  recordRecentShape(payload.shapeId)
   void bus.dispatch({
     type: 'canvas.addNode',
     payload: {
@@ -735,7 +738,7 @@ function onCanvasDrop(event: DragEvent) {
           v-else
           side="left"
           icon="layout-grid"
-          label="展开图元面板"
+          label="展开图形面板"
           @click="toggleAssetPanelCollapsed(editorLayout)"
         />
         <DiagramPropertyPanel

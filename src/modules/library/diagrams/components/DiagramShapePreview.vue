@@ -86,16 +86,21 @@ const polygonPoints = computed(() =>
 <style scoped>
 .dg-shape-preview {
   display: block;
-  width: 1.375rem;
-  height: 1.375rem;
+  width: 1.5rem;
+  height: 1.5rem;
   flex-shrink: 0;
 }
 
 .dg-shape-preview__stroke {
-  fill: var(--ww-inset);
-  stroke: var(--ww-ink-muted);
-  stroke-width: 1.25;
+  fill: color-mix(in srgb, var(--ww-inset) 88%, var(--ww-content));
+  stroke: color-mix(in srgb, var(--ww-ink-muted) 92%, var(--ww-ink));
+  stroke-width: 1.35;
   vector-effect: non-scaling-stroke;
+}
+
+:global([data-theme='dark']) .dg-shape-preview__stroke {
+  fill: rgb(255 255 255 / 0.06);
+  stroke: rgb(255 255 255 / 0.52);
 }
 
 .dg-shape-preview__text {
