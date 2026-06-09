@@ -137,6 +137,7 @@ export function useDiagramShortcuts(
     if (e.key === 'Escape') {
       if (isEditableTarget(e.target)) return
       e.preventDefault()
+      void bus.dispatch({ type: 'canvas.formatPainterCancel' })
       void bus.dispatch({ type: 'canvas.clearSelection' })
       return
     }

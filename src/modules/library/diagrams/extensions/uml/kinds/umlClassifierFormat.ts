@@ -13,7 +13,9 @@ const CLASSIFIER_KINDS: readonly UmlClassifierKind[] = [
   'class',
   'interface',
   'abstractClass',
-  'enum'
+  'enum',
+  'component',
+  'package'
 ]
 
 const VISIBILITIES: readonly UmlVisibility[] = ['public', 'protected', 'private', 'package']
@@ -67,11 +69,28 @@ export function normalizeUmlClassifierData(raw: unknown): UmlClassifierData {
   return {
     classifierKind,
     name: typeof item.name === 'string' && item.name.trim() ? item.name : 'ClassName',
-    attributes: Array.isArray(item.attributes) ? item.attributes.map(normalizeAttribute) : [],
-    operations: Array.isArray(item.operations) ? item.operations.map(normalizeOperation) : [],
+    attributes: dedupeMemberIds(
+      Array.isArray(item.attributes) ? item.attributes.map(normalizeAttribute) : []
+    ),
+    operations: dedupeMemberIds(
+      Array.isArray(item.operations) ? item.operations.map(normalizeOperation) : []
+    ),
     showAttributes: item.showAttributes !== false,
     showOperations: item.showOperations !== false
   }
+}
+
+function dedupeMemberIds<T extends { id: string }>(items: T[]): T[] {
+  const seen = new Set<string>()
+  return items.map((item) => {
+    if (!item.id || seen.has(item.id)) {
+      const id = createMemberId()
+      seen.add(id)
+      return { ...item, id }
+    }
+    seen.add(item.id)
+    return item
+  })
 }
 
 export function visibilityChar(visibility: UmlVisibility): string {
@@ -226,6 +245,10 @@ export function classifierStereotype(kind: UmlClassifierData['classifierKind']):
       return '«abstract»'
     case 'enum':
       return '«enumeration»'
+    case 'component':
+      return '«component»'
+    case 'package':
+      return '«package»'
     default:
       return null
   }

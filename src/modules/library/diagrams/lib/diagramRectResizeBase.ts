@@ -1,4 +1,4 @@
-import { DiamondNode, EllipseNode } from '@logicflow/core'
+import LogicFlow, { DiamondNode, EllipseNode } from '@logicflow/core'
 import { DiamondResizeModel } from '@logicflow/extension/lib/NodeResize/node/DiamondResize'
 import { EllipseResizeModel } from '@logicflow/extension/lib/NodeResize/node/EllipseResize'
 import { RectResizeModel, RectResizeView } from '@logicflow/extension/lib/NodeResize/node/RectResize'
@@ -14,7 +14,7 @@ export { diagramResizeOutlineStyle } from '@modules/library/diagrams/lib/diagram
 
 /** 矩形类图元 Model */
 export class DiagramRectResizeModel extends RectResizeModel {
-  getTextStyle() {
+  getTextStyle(): LogicFlow.TextNodeTheme {
     return buildDiagramNodeTextStyle(this)
   }
 
@@ -36,7 +36,7 @@ export class DiagramRectResizeModel extends RectResizeModel {
 
 /** 椭圆/圆图元 Model（含自动换行） */
 export class DiagramEllipseResizeModel extends EllipseResizeModel {
-  getTextStyle() {
+  getTextStyle(): LogicFlow.TextNodeTheme {
     return buildDiagramNodeTextStyle(this)
   }
 
@@ -50,7 +50,7 @@ export class DiagramEllipseResizeModel extends EllipseResizeModel {
 
 /** 菱形图元 Model（含自动换行） */
 export class DiagramDiamondResizeModel extends DiamondResizeModel {
-  getTextStyle() {
+  getTextStyle(): LogicFlow.TextNodeTheme {
     return buildDiagramNodeTextStyle(this)
   }
 

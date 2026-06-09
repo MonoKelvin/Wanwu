@@ -1,10 +1,15 @@
-import type { DiagramNodeShapeExtensionView } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'
 import type {
   DiagramArrowType,
   DiagramEdgeType,
   DiagramShadowPreset,
   DiagramThemePreset
 } from '@modules/library/diagrams/lib/diagramEditorConstants'
+
+/** 结构化图形扩展载荷视图（由扩展框架投影到选择集） */
+export interface DiagramNodeShapeExtensionView {
+  kind: string
+  data: unknown
+}
 
 export type DiagramSelectionKind = 'node' | 'edge' | 'canvas'
 
@@ -91,6 +96,8 @@ export interface DiagramEditorSelection {
   selectedEdgeIds: string[]
   /** 多选图元时值不一致的字段路径，如 fill、textStyle.fontSize */
   mixedNodeFields: string[]
+  /** 格式刷是否处于激活状态 */
+  formatPainterActive?: boolean
 }
 
 export function defaultDefaultEdgeStyle(resolved: 'light' | 'dark'): DiagramDefaultEdgeStyle {

@@ -3,7 +3,7 @@
  * 统一数字输入（PrimeVue InputNumber 封装）
  * 样式见 ww-number-input.css
  */
-import { computed, useAttrs } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useAttrs } from 'vue'
 import InputNumber from 'primevue/inputnumber'
 import WwIcon from '@shared/components/WwIcon.vue'
 import type { WwNumberInputSize } from './types'
@@ -43,6 +43,8 @@ const emit = defineEmits<{
 }>()
 
 const attrs = useAttrs()
+const rootRef = ref<HTMLElement | null>(null)
+const pointerInside = ref(false)
 
 const rootClass = computed(() => [
   attrs.class,
@@ -51,6 +53,13 @@ const rootClass = computed(() => [
 ])
 
 const inputClass = computed(() => ['ww-number-input', `ww-number-input--${props.size}`])
+
+/** 仅作 Lucide 初始尺寸；实际显示由 ww-number-input.css 的 --ww-number-icon-size 控制 */
+const buttonIconSize = computed((): number => {
+  if (props.size === 'compact') return 11
+  if (props.size === 'block') return 12
+  return 14
+})
 
 const passthroughAttrs = computed(() => {
   const { class: _class, ...rest } = attrs
@@ -89,24 +98,44 @@ function wheelBaseValue(): number {
   return 0
 }
 
+function canAdjustByWheel(): boolean {
+  const root = rootRef.value
+  if (!root) return false
+  if (pointerInside.value) return true
+  const active = document.activeElement
+  return active instanceof HTMLElement && root.contains(active)
+}
+
 function onWheel(event: WheelEvent) {
   if (!props.wheelAdjust || props.disabled) return
-
-  const root = event.currentTarget
-  if (!(root instanceof HTMLElement) || !root.matches(':focus-within')) return
+  if (!canAdjustByWheel()) return
   if (event.deltaY === 0) return
 
   event.preventDefault()
+  event.stopPropagation()
 
   const direction = event.deltaY < 0 ? 1 : -1
   const next = clampWheelValue(wheelBaseValue() + direction * props.step)
   if (next === props.modelValue) return
   emit('update:modelValue', next)
 }
+
+onMounted(() => {
+  rootRef.value?.addEventListener('wheel', onWheel, { passive: false })
+})
+
+onBeforeUnmount(() => {
+  rootRef.value?.removeEventListener('wheel', onWheel)
+})
 </script>
 
 <template>
-  <div :class="rootClass" @wheel="onWheel">
+  <div
+    ref="rootRef"
+    :class="rootClass"
+    @mouseenter="pointerInside = true"
+    @mouseleave="pointerInside = false"
+  >
     <InputNumber
       :input-id="inputId"
       :model-value="modelValue"
@@ -128,10 +157,10 @@ function onWheel(event: WheelEvent) {
       @update:model-value="onUpdate"
     >
       <template #incrementbuttonicon>
-        <WwIcon name="chevron-up" size="sm" />
+        <WwIcon name="chevron-up" :size="buttonIconSize" />
       </template>
       <template #decrementbuttonicon>
-        <WwIcon name="chevron-down" size="sm" />
+        <WwIcon name="chevron-down" :size="buttonIconSize" />
       </template>
     </InputNumber>
   </div>

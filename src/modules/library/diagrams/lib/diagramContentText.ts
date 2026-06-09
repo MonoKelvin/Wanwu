@@ -1,3 +1,5 @@
+import { readDgShapeFromProperties } from '@modules/library/diagrams/domain/shape-extension/diagramShapePayload'
+import { serializeDiagramShapeEnvelopeText } from '@modules/library/diagrams/lib/diagramShapeTextCodecs'
 import type { DiagramContent } from '@shared/types/diagrams'
 
 function nodeTextValue(text: unknown): string {
@@ -8,12 +10,20 @@ function nodeTextValue(text: unknown): string {
   return ''
 }
 
+function extractShapeExtensionText(properties: Record<string, unknown> | undefined): string {
+  const envelope = readDgShapeFromProperties(properties)
+  if (!envelope) return ''
+  return serializeDiagramShapeEnvelopeText(envelope)
+}
+
 function extractNodeText(node: unknown): string {
   if (!node || typeof node !== 'object') return ''
   const n = node as Record<string, unknown>
+  const props = n.properties as Record<string, unknown> | undefined
+  const fromShape = extractShapeExtensionText(props)
+  if (fromShape) return fromShape
   const direct = nodeTextValue(n.text)
   if (direct) return direct
-  const props = n.properties as Record<string, unknown> | undefined
   if (props) {
     const fromProps = nodeTextValue(props.text)
     if (fromProps) return fromProps

@@ -1,191 +1,102 @@
 /* WwSelect — 触发器 + 下拉面板 */
 
-
+.ww-select-root {
+  --ww-select-chevron-w: calc(var(--ww-select-height, 2.3125rem) * 0.5);
+  --ww-select-chevron-size: calc(var(--ww-select-height, 2.3125rem) * 0.42);
+  --ww-select-chevron-inset: max(0.3125rem, calc(var(--ww-select-height, 2.3125rem) * 0.15));
+}
 
 /* ── 触发器 ── */
 
 .ww-select.p-select {
-
   display: inline-flex;
-
   align-items: center;
-
   width: max-content;
-
   min-width: var(--ww-select-min-w, 12.5rem);
-
   max-width: 100%;
-
   min-height: var(--ww-select-height, 2.3125rem);
-
   border: 1px solid var(--ww-border-faint) !important;
-
   border-radius: var(--ww-select-radius, 0.4375rem) !important;
-
   background: var(--ww-inset) !important;
-
   box-shadow: none !important;
-
   transition:
-
     border-color var(--ww-duration-fast) var(--ww-ease-out),
-
     background var(--ww-duration-fast) var(--ww-ease-out),
-
     box-shadow var(--ww-duration-fast) var(--ww-ease-out);
-
 }
-
-
 
 .ww-select--narrow.p-select {
-
   min-width: var(--ww-select-min-w, 10rem);
-
 }
-
-
 
 .ww-select--block.p-select {
-
   width: 100% !important;
-
   min-width: 0 !important;
-
   max-width: none;
-
 }
-
-
 
 .ww-select.p-select:not(.p-disabled):hover {
-
   border-color: var(--ww-border-subtle) !important;
-
   background: var(--ww-list-hover-bg) !important;
-
 }
-
-
 
 .ww-select.p-select.p-focus,
-
 .ww-select.p-select.p-select-open {
-
   border-color: var(--ww-list-hover-ring) !important;
-
   background: var(--ww-content) !important;
-
   box-shadow: 0 0 0 1px var(--ww-list-hover-ring) !important;
-
 }
-
-
 
 .ww-select .p-select-label {
-
   flex: 1 1 auto;
-
   min-width: 0;
-
   overflow: hidden;
-
   text-overflow: ellipsis;
-
   white-space: nowrap;
-
   display: flex;
-
   align-items: center;
-
   padding: var(--ww-select-label-py, 0.5rem) var(--ww-select-label-pr, 0.25rem)
-
     var(--ww-select-label-py, 0.5rem) var(--ww-select-label-pl, 0.625rem) !important;
-
   font-size: var(--ww-select-font-size, 0.8125rem) !important;
-
   line-height: 1.35 !important;
-
   text-align: left !important;
-
   color: var(--ww-ink) !important;
-
 }
-
-
 
 .ww-select .p-select-dropdown {
-
   display: inline-flex !important;
-
   align-items: center !important;
-
   justify-content: center !important;
-
-  width: var(--ww-select-chevron-w, 1.5rem) !important;
-
+  width: calc(var(--ww-select-chevron-w) + var(--ww-select-chevron-inset)) !important;
   flex-shrink: 0;
-
-  margin-inline-end: 0.125rem;
-
-  padding: 0 !important;
-
+  margin-inline-end: 0;
+  padding: 0 var(--ww-select-chevron-inset) 0 0 !important;
+  box-sizing: border-box;
   color: var(--ww-ink-faint) !important;
-
 }
-
-
 
 .ww-select.p-select-open .p-select-dropdown {
-
   color: var(--ww-ink-muted) !important;
-
 }
 
-
-
-.ww-select .p-select-dropdown-icon {
-
-  display: flex !important;
-
-  align-items: center;
-
-  justify-content: center;
-
-  width: 0.75rem !important;
-
-  height: 0.75rem !important;
-
+.ww-select .p-select-dropdown-icon,
+.ww-select .p-select-dropdown-icon.ww-icon {
+  display: block !important;
+  flex-shrink: 0;
+  width: var(--ww-select-chevron-size) !important;
+  height: var(--ww-select-chevron-size) !important;
   transform-origin: center center;
-
   transition: transform 0.32s var(--ww-ease-out);
-
 }
-
-
-
-.ww-select .p-select-dropdown-icon svg {
-
-  display: block;
-
-}
-
-
 
 .ww-select.p-select-open .p-select-dropdown-icon {
-
   transform: rotate(180deg);
-
 }
-
-
 
 /* ── 下拉面板 ── */
 
 .ww-select-overlay.p-select-overlay {
-
   --ww-select-panel-shadow: 0 22px 46px -8px rgb(18 18 22 / 0.1), 0 12px 26px -6px rgb(18 18 22 / 0.06);
-
   --ww-select-panel-inset: 0.3125rem;
   --ww-select-option-inset: 0.4375rem;
   --ww-select-option-min-h: 2rem;
@@ -199,32 +110,18 @@
   max-width: var(--ww-select-panel-max-w, calc(100vw - 2rem)) !important;
   margin-top: 0.25rem !important;
   padding: var(--ww-select-panel-inset) !important;
-
   border: none !important;
-
   border-radius: 0.625rem !important;
-
   overflow: hidden;
-
   background: var(--ww-select-overlay-bg, color-mix(in srgb, var(--ww-glass-bg-soft) 72%, transparent)) !important;
-
   backdrop-filter: blur(var(--ww-select-overlay-blur, 40px)) saturate(1.5);
-
   -webkit-backdrop-filter: blur(var(--ww-select-overlay-blur, 40px)) saturate(1.5);
-
   box-shadow: var(--ww-select-panel-shadow) !important;
-
 }
-
-
 
 [data-theme='dark'] .ww-select-overlay.p-select-overlay {
-
   --ww-select-panel-shadow: 0 22px 46px -8px rgb(0 0 0 / 0.36), 0 12px 26px -6px rgb(0 0 0 / 0.24);
-
 }
-
-
 
 /* 对角弹出：左上锚点，先快后慢 */
 .ww-select-overlay.ww-select-panel-enter-active {
@@ -261,113 +158,58 @@
   transform: translate(4px, 6px) scale(0.94);
 }
 
-
-
 .ww-select-overlay .p-hidden-accessible,
-
 .ww-select-overlay .p-hidden-focusable {
-
   position: absolute !important;
-
   width: 1px !important;
-
   height: 1px !important;
-
   padding: 0 !important;
-
   margin: 0 !important;
-
   overflow: hidden !important;
-
   clip: rect(0, 0, 0, 0) !important;
-
   white-space: nowrap !important;
-
   border: 0 !important;
-
   pointer-events: none !important;
-
 }
-
-
 
 .ww-select-overlay.ww-select-panel-enter-active .p-select-list-container,
-
 .ww-select-overlay.ww-select-panel-leave-active .p-select-list-container {
-
   overflow: hidden !important;
-
 }
-
-
 
 .ww-select-overlay .p-select-list-container {
-
   padding: 0 !important;
-
   overflow-x: hidden;
-
   overflow-y: auto;
-
   scrollbar-width: none;
-
   -ms-overflow-style: none;
-
 }
-
-
 
 .ww-select-overlay .p-select-list-container::-webkit-scrollbar {
-
   width: 0;
-
   height: 0;
-
 }
-
-
 
 .ww-select-overlay .p-select-list-container.ww-select-list--scrollable {
-
   scrollbar-width: thin;
-
   scrollbar-color: var(--ww-border-subtle) transparent;
-
 }
-
-
 
 .ww-select-overlay .p-select-list-container.ww-select-list--scrollable::-webkit-scrollbar {
-
   width: 6px;
-
 }
-
-
 
 .ww-select-overlay .p-select-list-container.ww-select-list--scrollable::-webkit-scrollbar-thumb {
-
   border-radius: 999px;
-
   background: var(--ww-border-subtle);
-
 }
-
-
 
 .ww-select-overlay .p-select-list {
-
   padding: 0 !important;
-
   margin: 0 !important;
-
   gap: var(--ww-select-option-gap) !important;
-
   background: transparent !important;
-
 }
-
-
 
 /* 选项：::before 层做背景色渐显（避免 background 简写冲突、transparent 无法过渡） */
 .ww-select-overlay .ww-select-option-label {
@@ -461,54 +303,29 @@
   transition-duration: 0.12s;
 }
 
-
-
 @media (prefers-reduced-motion: reduce) {
-
   .ww-select .p-select-dropdown-icon {
-
     transition-duration: 0.01ms !important;
-
   }
-
-
 
   .ww-select.p-select-open .p-select-dropdown-icon {
-
     transform: none;
-
   }
-
-
 
   .ww-select-overlay.ww-select-panel-enter-active,
-
   .ww-select-overlay.ww-select-panel-leave-active {
-
     transition-duration: 0.01ms !important;
-
   }
-
-
 
   .ww-select-overlay.ww-select-panel-enter-from,
-
   .ww-select-overlay.ww-select-panel-leave-to,
-
   .ww-select-overlay.ww-select-panel-leave-from,
-
   .ww-select-overlay.ww-select-panel-enter-to {
-
     transform: none;
-
   }
-
-
 
   .ww-select-overlay .p-select-option,
   .ww-select-overlay .p-select-option::before {
     transition-duration: 0.01ms !important;
   }
 }
-
-

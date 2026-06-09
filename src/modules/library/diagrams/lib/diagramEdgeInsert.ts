@@ -81,14 +81,7 @@ export function findNearestEdgeIdAtPoint(
   return bestId
 }
 
-export function getNodeAnchors(model: {
-  x: number
-  y: number
-  width: number
-  height: number
-  id: string
-  anchors?: DiagramEdgeAnchor[]
-}): DiagramEdgeAnchor[] {
+export function getNodeAnchors(model: DiagramEdgeInsertNode): DiagramEdgeAnchor[] {
   const anchors = model.anchors
   if (anchors?.length) return anchors
   const { x, y, width, height, id } = model
@@ -125,16 +118,20 @@ export interface DiagramSplitEdgeInput {
   text?: unknown
 }
 
+export interface DiagramEdgeInsertNode {
+  id: string
+  x: number
+  y: number
+  width: number
+  height: number
+  anchors?: DiagramEdgeAnchor[]
+}
+
 export function buildSplitEdgeConfigs(
   edge: DiagramSplitEdgeInput,
-  insertNode: {
-    id: string
-    x: number
-    y: number
-    anchors?: DiagramEdgeAnchor[]
-  },
-  sourceNode: { id: string; x: number; y: number; width: number; height: number; anchors?: DiagramEdgeAnchor[] },
-  targetNode: { id: string; x: number; y: number; width: number; height: number; anchors?: DiagramEdgeAnchor[] }
+  insertNode: DiagramEdgeInsertNode,
+  sourceNode: DiagramEdgeInsertNode,
+  targetNode: DiagramEdgeInsertNode
 ): [
   {
     type: string

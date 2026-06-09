@@ -17,6 +17,7 @@ import {
   normalizeDiagramTitleInput
 } from '@modules/library/diagrams/lib/diagramHomeUtils'
 import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
+import type { DiagramEditorSelection } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 
 const props = defineProps<{
   title: string
@@ -27,6 +28,7 @@ const props = defineProps<{
   fileId?: string | null
   /** 画布尚未就绪时禁用编辑操作，保留工具栏布局 */
   booting?: boolean
+  selection?: DiagramEditorSelection
 }>()
 
 const saveBadge = computed(() => {
@@ -48,6 +50,37 @@ const displayTitleBase = computed(() => diagramTitleBase(props.title))
 const editingTitle = ref(false)
 const titleInputRef = ref<InstanceType<typeof InputText> | null>(null)
 const zoomLabel = computed(() => `${props.zoomPercent ?? 100}%`)
+
+const canFormatPaint = computed(() => {
+  if (props.booting) return false
+  const s = props.selection
+  if (!s) return false
+  return (
+    (s.selectedNodeCount === 1 && s.selectedEdgeCount === 0) ||
+    (s.selectedEdgeCount === 1 && s.selectedNodeCount === 0)
+  )
+})
+
+const canClearStyle = computed(() => {
+  if (props.booting) return false
+  const s = props.selection
+  if (!s) return false
+  return s.selectedNodeCount + s.selectedEdgeCount > 0
+})
+
+const formatPainterActive = computed(() => props.selection?.formatPainterActive ?? false)
+
+function toggleFormatPainter() {
+  if (formatPainterActive.value) {
+    void bus.dispatch({ type: 'canvas.formatPainterCancel' })
+    return
+  }
+  void bus.dispatch({ type: 'canvas.formatPainterStart' })
+}
+
+function clearStyles() {
+  void bus.dispatch({ type: 'canvas.clearStyles' })
+}
 
 watch(
   () => props.title,
@@ -323,6 +356,29 @@ function openMenu(
 
     <div class="dg-editor-toolbar__actions">
       <div class="dg-editor-toolbar__zoom">
+        <WwButton
+          icon="paintbrush"
+          severity="secondary"
+          text
+          rounded
+          class="dg-toolbar-icon-btn"
+          :class="{ 'dg-toolbar-icon-btn--active': formatPainterActive }"
+          aria-label="格式刷"
+          :disabled="booting || (!formatPainterActive && !canFormatPaint)"
+          v-tooltip.bottom="'格式刷'"
+          @click="toggleFormatPainter"
+        />
+        <WwButton
+          icon="eraser"
+          severity="secondary"
+          text
+          rounded
+          class="dg-toolbar-icon-btn"
+          aria-label="清空样式"
+          :disabled="booting || !canClearStyle"
+          v-tooltip.bottom="'清空样式'"
+          @click="clearStyles"
+        />
         <WwButton
           icon="undo"
           severity="secondary"

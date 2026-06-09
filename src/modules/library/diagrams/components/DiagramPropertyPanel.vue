@@ -52,16 +52,29 @@ const layout = useDiagramEditorLayout()
 
 watch(
   () => ({
+    kind: props.selection.kind,
     nodeCount: props.selection.selectedNodeCount,
-    edgeCount: props.selection.selectedEdgeCount
+    edgeCount: props.selection.selectedEdgeCount,
+    nodeId: props.selection.node?.id ?? null,
+    edgeId: props.selection.edge?.id ?? null
   }),
   (next, prev) => {
-    if (next.nodeCount === 0 && next.edgeCount === 0) {
+    if (next.kind === 'canvas' || (next.nodeCount === 0 && next.edgeCount === 0)) {
       activeTab.value = 'canvas'
-    } else if (next.nodeCount > 0 && (prev?.nodeCount ?? 0) === 0) {
-      activeTab.value = 'node'
-    } else if (next.edgeCount > 0 && next.nodeCount === 0 && (prev?.edgeCount ?? 0) === 0) {
+      return
+    }
+    if (next.edgeCount > 0 && next.nodeCount === 0) {
       activeTab.value = 'edge'
+      return
+    }
+    if (next.nodeCount > 0) {
+      if (
+        (prev?.nodeCount ?? 0) === 0 ||
+        next.nodeId !== prev?.nodeId ||
+        next.edgeCount !== prev?.edgeCount
+      ) {
+        activeTab.value = 'node'
+      }
     }
   },
   { immediate: true }
@@ -83,6 +96,7 @@ const isGroupFrame = computed(() => {
   if (props.selection.selectedNodeCount !== 1) return false
   return props.selection.node?.type === DIAGRAM_GROUP_FRAME_TYPE
 })
+const showGroupFrame = computed(() => isGroupFrame.value && showNode.value)
 const isGroupedMember = computed(
   () => !multiNode.value && Boolean(props.selection.node?.groupId)
 )
@@ -285,7 +299,7 @@ const hideGenericTextContent = computed(
 )
 
 const nodeTextSectionTitle = computed(() =>
-  props.selection.node?.shapeExtension?.kind === UML_CLASSIFIER_KIND ? '标题文字' : '文本'
+  props.selection.node?.shapeExtension?.kind === UML_CLASSIFIER_KIND ? '标题样式' : '文本'
 )
 
 async function pickNodeImage() {
@@ -429,7 +443,7 @@ function patchGroupAlwaysVisible(value: boolean) {
       />
 
       <!-- 组合框 -->
-      <template v-if="isGroupFrame && selection.node">
+      <template v-if="showGroupFrame && selection.node">
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">组合框</p>
           <p v-if="selection.node.groupMemberCount != null" class="dg-prop-hint">
@@ -439,7 +453,7 @@ function patchGroupAlwaysVisible(value: boolean) {
             </template>
             。点击空白区域拖动整体；点击内部图元可单独编辑。
           </p>
-          <SettingsRow label="始终显示" class="dg-settings-row--inline">
+          <SettingsRow label="始终显示" class="dg-settings-row--inline dg-settings-row--toggle">
             <WwToggleSwitch
               :model-value="selection.node.groupAlwaysVisible ?? false"
               aria-label="始终显示组合框"
@@ -449,14 +463,14 @@ function patchGroupAlwaysVisible(value: boolean) {
           <p v-if="!(selection.node.groupAlwaysVisible ?? false)" class="dg-prop-hint">
             关闭时仅在悬停、选中或选中内部图元时显示边框
           </p>
-          <SettingsRow label="边框色" class="dg-settings-row--stacked">
+          <SettingsRow label="边框色" class="dg-settings-row--inline dg-settings-row--control">
             <WwColorInput
               :model-value="selection.node.stroke"
               aria-label="组合框边框色"
               @update:model-value="patchGroupStyle({ stroke: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="填充色" class="dg-settings-row--stacked">
+          <SettingsRow label="填充色" class="dg-settings-row--inline dg-settings-row--control">
             <WwColorInput
               :model-value="selection.node.fill"
               allow-transparent
@@ -464,7 +478,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchGroupStyle({ fill: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="边框粗细" class="dg-settings-row--stacked">
+          <SettingsRow label="边框粗细" class="dg-settings-row--inline dg-settings-row--control">
             <WwNumberInput
               :model-value="selection.node.strokeWidth"
               :min="0"
@@ -478,7 +492,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               "
             />
           </SettingsRow>
-          <SettingsRow label="虚线" class="dg-settings-row--stacked">
+          <SettingsRow label="虚线" class="dg-settings-row--inline dg-settings-row--control">
             <WwSelect
               :model-value="selection.node.strokeDasharray ?? ''"
               :options="DIAGRAM_DASH_PRESETS"
@@ -510,6 +524,7 @@ function patchGroupAlwaysVisible(value: boolean) {
       <template v-if="showNode && selection.node && !isGroupFrame">
         <DiagramShapePropertyHost
           v-if="showShapeExtensionHost"
+          :key="selection.node.id"
           :node="selection.node"
         />
         <section class="dg-prop-section dg-prop-group">
@@ -527,7 +542,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchNode({ text: String($event ?? '') })"
             />
           </SettingsRow>
-          <SettingsRow label="字号" class="dg-settings-row--inline dg-settings-row--font-size">
+          <SettingsRow label="字号" class="dg-settings-row--inline dg-settings-row--control dg-settings-row--font-size">
             <WwNumberInput
               :model-value="isMixed('textStyle.fontSize') ? null : selection.node.textStyle.fontSize"
               :placeholder="isMixed('textStyle.fontSize') ? '多种' : undefined"
@@ -541,7 +556,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               "
             />
           </SettingsRow>
-          <SettingsRow label="字体" class="dg-settings-row--inline dg-settings-row--font">
+          <SettingsRow label="字体" class="dg-settings-row--inline dg-settings-row--control dg-settings-row--font">
             <WwFontSelect
               :model-value="
                 isMixed('textStyle.fontFamily') ? null : selection.node.textStyle.fontFamily
@@ -551,7 +566,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchNodeTextStyle({ fontFamily: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="颜色" class="dg-settings-row--stacked">
+          <SettingsRow label="颜色" class="dg-settings-row--inline dg-settings-row--control">
             <WwColorInput
               :model-value="selection.node.textStyle.color"
               :mixed="isMixed('textStyle.color')"
@@ -559,7 +574,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchNodeTextStyle({ color: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="对齐" class="dg-settings-row--inline">
+          <SettingsRow label="对齐" class="dg-settings-row--inline dg-settings-row--modifier">
             <div class="dg-prop-row dg-prop-row--toggles" role="group" aria-label="文本对齐">
               <button
                 v-for="action in DIAGRAM_TEXT_ALIGN_ACTIONS"
@@ -575,7 +590,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               </button>
             </div>
           </SettingsRow>
-          <SettingsRow label="样式" class="dg-settings-row--inline">
+          <SettingsRow label="样式" class="dg-settings-row--inline dg-settings-row--modifier">
             <div class="dg-prop-row dg-prop-row--toggles" role="group" aria-label="文本样式">
               <button
                 type="button"
@@ -709,7 +724,7 @@ function patchGroupAlwaysVisible(value: boolean) {
 
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">外观</p>
-          <SettingsRow label="填充色" class="dg-settings-row--stacked">
+          <SettingsRow label="填充色" class="dg-settings-row--inline dg-settings-row--control">
             <WwColorInput
               :model-value="selection.node.fill"
               :mixed="isMixed('fill')"
@@ -718,7 +733,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchNode({ fill: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="边框色" class="dg-settings-row--stacked">
+          <SettingsRow label="边框色" class="dg-settings-row--inline dg-settings-row--control">
             <WwColorInput
               :model-value="selection.node.stroke"
               :mixed="isMixed('stroke')"
@@ -726,7 +741,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchNode({ stroke: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="边框粗细" class="dg-settings-row--stacked">
+          <SettingsRow label="边框粗细" class="dg-settings-row--inline dg-settings-row--control">
             <WwNumberInput
               :model-value="isMixed('strokeWidth') ? null : selection.node.strokeWidth"
               :placeholder="isMixed('strokeWidth') ? '多种' : undefined"
@@ -741,7 +756,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               "
             />
           </SettingsRow>
-          <SettingsRow label="虚线" class="dg-settings-row--stacked">
+          <SettingsRow label="虚线" class="dg-settings-row--inline dg-settings-row--control">
             <WwSelect
               :model-value="isMixed('strokeDasharray') ? null : (selection.node.strokeDasharray ?? '')"
               :placeholder="isMixed('strokeDasharray') ? '多种' : undefined"
@@ -752,7 +767,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchNode({ strokeDasharray: String($event ?? '') })"
             />
           </SettingsRow>
-          <SettingsRow label="阴影" class="dg-settings-row--stacked">
+          <SettingsRow label="阴影" class="dg-settings-row--inline dg-settings-row--control">
             <WwSelect
               :model-value="isMixed('shadow') ? null : selection.node.shadow"
               :placeholder="isMixed('shadow') ? '多种' : undefined"
@@ -775,7 +790,7 @@ function patchGroupAlwaysVisible(value: boolean) {
       <template v-if="showEdge && selection.edge">
         <section v-if="!multiEdge" class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">文本</p>
-          <SettingsRow label="标签" class="dg-settings-row--stacked">
+          <SettingsRow label="标签" class="dg-settings-row--inline dg-settings-row--control">
             <InputText
               :model-value="selection.edge.text"
               class="dg-prop-control"
@@ -786,7 +801,7 @@ function patchGroupAlwaysVisible(value: boolean) {
 
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">线条</p>
-          <SettingsRow label="线型" class="dg-settings-row--stacked">
+          <SettingsRow label="线型" class="dg-settings-row--inline dg-settings-row--control">
             <WwSelect
               :model-value="selection.edge.type"
               :options="DIAGRAM_EDGE_TYPES"
@@ -796,7 +811,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchEdge({ type: String($event ?? 'polyline') })"
             />
           </SettingsRow>
-          <SettingsRow label="虚线" class="dg-settings-row--stacked">
+          <SettingsRow label="虚线" class="dg-settings-row--inline dg-settings-row--control">
             <WwSelect
               :model-value="selection.edge.strokeDasharray"
               :options="DIAGRAM_DASH_PRESETS"
@@ -806,14 +821,14 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchEdge({ strokeDasharray: String($event ?? '') })"
             />
           </SettingsRow>
-          <SettingsRow label="颜色" class="dg-settings-row--stacked">
+          <SettingsRow label="颜色" class="dg-settings-row--inline dg-settings-row--control">
             <WwColorInput
               :model-value="selection.edge.stroke"
               aria-label="线条颜色"
               @update:model-value="patchEdge({ stroke: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="粗细" class="dg-settings-row--stacked">
+          <SettingsRow label="粗细" class="dg-settings-row--inline dg-settings-row--control">
             <WwNumberInput
               :model-value="selection.edge.strokeWidth"
               :min="0"
@@ -831,7 +846,7 @@ function patchGroupAlwaysVisible(value: boolean) {
 
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">箭头</p>
-          <SettingsRow label="起点" class="dg-settings-row--stacked">
+          <SettingsRow label="起点" class="dg-settings-row--inline dg-settings-row--control">
             <WwSelect
               :model-value="selection.edge.startArrowType"
               :options="DIAGRAM_ARROW_TYPES"
@@ -841,7 +856,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchEdge({ startArrowType: String($event ?? 'none') })"
             />
           </SettingsRow>
-          <SettingsRow label="终点" class="dg-settings-row--stacked">
+          <SettingsRow label="终点" class="dg-settings-row--inline dg-settings-row--control">
             <WwSelect
               :model-value="selection.edge.endArrowType"
               :options="DIAGRAM_ARROW_TYPES"
@@ -887,14 +902,14 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchCanvas({ miniMapVisible: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="背景色" class="dg-settings-row--stacked">
+          <SettingsRow label="背景色" class="dg-settings-row--inline dg-settings-row--control">
             <WwColorInput
               :model-value="canvas.backgroundColor"
               aria-label="背景色"
               @update:model-value="patchCanvas({ backgroundColor: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="主题配色" class="dg-settings-row--stacked">
+          <SettingsRow label="主题配色" class="dg-settings-row--inline dg-settings-row--control">
             <WwSelect
               :model-value="canvas.themePreset"
               :options="DIAGRAM_THEME_PRESETS"
@@ -908,7 +923,7 @@ function patchGroupAlwaysVisible(value: boolean) {
 
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">默认连线</p>
-          <SettingsRow label="线型" class="dg-settings-row--stacked">
+          <SettingsRow label="线型" class="dg-settings-row--inline dg-settings-row--control">
             <WwSelect
               :model-value="canvas.defaultEdge.type"
               :options="DIAGRAM_EDGE_TYPES"
@@ -918,14 +933,14 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchDefaultEdge({ type: String($event ?? 'polyline') })"
             />
           </SettingsRow>
-          <SettingsRow label="默认线条色" class="dg-settings-row--stacked">
+          <SettingsRow label="默认线条色" class="dg-settings-row--inline dg-settings-row--control">
             <WwColorInput
               :model-value="canvas.defaultEdge.stroke"
               aria-label="默认线条颜色"
               @update:model-value="patchDefaultEdge({ stroke: $event })"
             />
           </SettingsRow>
-          <SettingsRow label="粗细" class="dg-settings-row--stacked">
+          <SettingsRow label="粗细" class="dg-settings-row--inline dg-settings-row--control">
             <WwNumberInput
               :model-value="canvas.defaultEdge.strokeWidth"
               :min="0"
@@ -939,7 +954,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               "
             />
           </SettingsRow>
-          <SettingsRow label="虚线" class="dg-settings-row--stacked">
+          <SettingsRow label="虚线" class="dg-settings-row--inline dg-settings-row--control">
             <WwSelect
               :model-value="canvas.defaultEdge.strokeDasharray"
               :options="DIAGRAM_DASH_PRESETS"
@@ -949,7 +964,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchDefaultEdge({ strokeDasharray: String($event ?? '') })"
             />
           </SettingsRow>
-          <SettingsRow label="终点箭头" class="dg-settings-row--stacked">
+          <SettingsRow label="终点箭头" class="dg-settings-row--inline dg-settings-row--control">
             <WwSelect
               :model-value="canvas.defaultEdge.endArrowType"
               :options="DIAGRAM_ARROW_TYPES"

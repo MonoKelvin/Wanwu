@@ -1,4 +1,5 @@
 import LogicFlow, {
+  BaseEdgeModel,
   BezierEdgeModel,
   h,
   LineEdgeModel,
@@ -871,8 +872,14 @@ export function setEdgeInsertHighlightId(edgeId: string | null): void {
   if (edgeId) edgeInsertHighlightIds.add(edgeId)
 }
 
-function hideEdgeOutlineModel<T extends typeof PolylineEdgeModel>(Base: T) {
+type EdgeModelConstructor = new (...args: any[]) => BaseEdgeModel
+
+function hideEdgeOutlineModel<T extends EdgeModelConstructor>(Base: T): T {
   return class DiagramEdgeModel extends Base {
+    constructor(...args: any[]) {
+      super(...args)
+    }
+
     getAdjustStart() {
       const pt = super.getAdjustStart()
       if (pt && Number.isFinite(pt.x) && Number.isFinite(pt.y)) return pt
@@ -920,18 +927,19 @@ function hideEdgeOutlineModel<T extends typeof PolylineEdgeModel>(Base: T) {
       }
     }
 
-    getTextStyle() {
-      const style = super.getTextStyle() as Record<string, unknown>
-      const propsStyle = (this.properties?.textStyle ?? {}) as Record<string, unknown>
-      const merged = { ...style, ...propsStyle }
-      const ink = merged.fill ?? merged.color
-      if (ink != null) {
-        merged.fill = ink
-        merged.color = ink
+    getTextStyle(): LogicFlow.EdgeTextTheme {
+      const style = super.getTextStyle()
+      const propsStyle = (this.properties?.textStyle ?? {}) as Partial<LogicFlow.EdgeTextTheme>
+      const ink = propsStyle.fill ?? propsStyle.color ?? style.fill ?? style.color
+      return {
+        ...style,
+        ...propsStyle,
+        textWidth: propsStyle.textWidth ?? style.textWidth,
+        fontSize: propsStyle.fontSize ?? style.fontSize,
+        ...(ink != null ? { fill: ink, color: ink } : {})
       }
-      return merged
     }
-  }
+  } as T
 }
 
 function registerDiagramEdges(lf: LogicFlow): void {

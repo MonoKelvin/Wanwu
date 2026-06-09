@@ -127,7 +127,8 @@ export class DiagramShapeExtensionRegistry {
     const envelope = kindReg?.codec.migrateLegacyNode?.(node) ?? null
 
     if (envelope) {
-      const text = kindReg?.codec.serializeText?.(envelope.data)
+      const writeText = kindReg?.codec.syncLfText !== false
+      const text = writeText ? kindReg?.codec.serializeText?.(envelope.data) : undefined
       return {
         ...node,
         ...(text != null ? { text } : {}),

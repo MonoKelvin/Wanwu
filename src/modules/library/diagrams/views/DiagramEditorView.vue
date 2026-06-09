@@ -41,8 +41,9 @@ import {
   defaultCanvasSettings,
   type DiagramEditorSelection
 } from '@modules/library/diagrams/lib/diagramSelectionTypes'
+import { registerBuiltinShapePanelFocusHandlers } from '@modules/library/diagrams/app/diagramShapePanelFocusBootstrap'
+import { provideDiagramShapePanelFocus } from '@modules/library/diagrams/composables/useDiagramShapePanelFocus'
 import { provideUmlClassifierEditFocus } from '@modules/library/diagrams/extensions/uml/composables/useUmlClassifierEditFocus'
-import { mapHitToPanelFocus } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierInteraction'
 
 const route = useRoute()
 const router = useRouter()
@@ -138,8 +139,18 @@ const bus = createDiagramCommandBus({
   repo
 })
 provideDiagramCommandBus(bus)
-const { setPanelFocus } = provideUmlClassifierEditFocus()
+const { setPanelFocus, panelFocus } = provideUmlClassifierEditFocus()
+const shapePanelFocus = provideDiagramShapePanelFocus()
 const editorLayout = provideDiagramEditorLayout()
+
+registerBuiltinShapePanelFocusHandlers(shapePanelFocus, {
+  setUmlPanelFocus: setPanelFocus,
+  onOpenPropertyPanel: () => {
+    if (editorLayout.propsCollapsed.value) {
+      togglePropsPanelCollapsed(editorLayout)
+    }
+  }
+})
 const { record: recordRecentShape } = useDiagramRecentShapes()
 const saveFlow = provideDiagramSaveFlow(bus, toast)
 
@@ -424,6 +435,16 @@ async function bootstrapEditor() {
     canUngroupSelection.value = port.canUngroupSelection()
     canGroupSelection.value = port.canGroupSelection()
     refreshAlignBarAnchor()
+    const focus = panelFocus.value
+    if (
+      focus &&
+      (selection.kind === 'canvas' ||
+        selection.selectedNodeCount !== 1 ||
+        selection.node?.id !== focus.nodeId)
+    ) {
+      setPanelFocus(null)
+      shapePanelFocus.clear()
+    }
   })
   const syncViewport = useDebounceFn(() => {
     sessionRef.value?.syncActivePageViewport()
@@ -456,11 +477,8 @@ async function bootstrapEditor() {
       port.canUngroupSelection()
     )
   })
-  port.onUmlPanelFocus((request) => {
-    if (editorLayout.propsCollapsed.value) {
-      togglePropsPanelCollapsed(editorLayout)
-    }
-    setPanelFocus(mapHitToPanelFocus(request.nodeId, request.hit))
+  port.onShapePanelFocus((request) => {
+    shapePanelFocus.route(request)
   })
   editorSelection.value = port.getSelection()
 
@@ -730,6 +748,7 @@ function onCanvasDrop(event: DragEvent) {
         :folder-id="pickedFolderId"
         :file-id="sessionRef?.fileId ?? null"
         :booting="!editorReady"
+        :selection="editorSelection"
         @back="goBack"
       />
 

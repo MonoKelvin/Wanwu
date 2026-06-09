@@ -8,12 +8,13 @@ export type {
 } from '@modules/library/diagrams/domain/shape-extension/interfaces'
 
 export type {
+  DiagramShapeHitPayload,
   DiagramShapeInteractionMode,
   DiagramShapePayloadEnvelope,
   DiagramShapePropertyEditorOrder
 } from '@modules/library/diagrams/domain/shape-extension/types'
 
-export { DG_SHAPE_PAYLOAD_KEY } from '@modules/library/diagrams/domain/shape-extension/types'
+export { DG_SHAPE_HIT_EVENT, DG_SHAPE_PAYLOAD_KEY } from '@modules/library/diagrams/domain/shape-extension/types'
 
 export {
   DiagramShapeExtensionRegistry,
@@ -27,9 +28,14 @@ export {
   readDgShapeFromProperties
 } from '@modules/library/diagrams/domain/shape-extension/diagramShapePayload'
 
+export type { DiagramNodeShapeExtensionView } from '@modules/library/diagrams/lib/diagramSelectionTypes'
+
 export {
   applyNodeShapeExtension,
+  DG_SHAPE_RENDER_REV_KEY,
+  patchNodeDgShape,
   readNodeShapeExtension,
+  refreshLayoutHandledShapeView,
   syncNodeShapeExtensionEffects,
-  type DiagramNodeShapeExtensionView
+  syncShapeExtensionNodeAfterLoad
 } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'

@@ -3,6 +3,7 @@ import type { IDiagramShapePayloadCodec } from '@modules/library/diagrams/domain
 import type { DiagramShapePayloadEnvelope } from '@modules/library/diagrams/domain/shape-extension/types'
 import type { DiagramShapeItem } from '@modules/library/diagrams/lib/diagramShapeTypes'
 import {
+  classifierStereotype,
   formatUmlAttributeLine,
   formatUmlOperationLine,
   normalizeUmlClassifierData
@@ -18,7 +19,8 @@ import {
 const PALETTE_CLASSIFIER_KIND: Record<string, UmlClassifierKind> = {
   'dg-uml-class': 'class',
   'dg-uml-interface': 'interface',
-  'dg-uml-package': 'class'
+  'dg-uml-package': 'package',
+  'dg-uml-component': 'component'
 }
 
 export function createDefaultUmlClassifierData(
@@ -39,6 +41,8 @@ export function createDefaultUmlClassifierData(
 
 export const umlClassifierCodec: IDiagramShapePayloadCodec<UmlClassifierData> = {
   kind: UML_CLASSIFIER_KIND,
+  syncLfText: false,
+  layoutHandledByModel: true,
 
   createDefault(paletteItem, overrides) {
     return createDefaultUmlClassifierData(paletteItem, overrides)
@@ -58,11 +62,8 @@ export const umlClassifierCodec: IDiagramShapePayloadCodec<UmlClassifierData> = 
 
   serializeText(data) {
     const lines: string[] = []
-    if (data.classifierKind === 'interface') {
-      lines.push('«interface»')
-    } else if (data.classifierKind === 'abstractClass') {
-      lines.push('«abstract»')
-    }
+    const stereotype = classifierStereotype(data.classifierKind)
+    if (stereotype) lines.push(stereotype)
     lines.push(data.name || 'ClassName')
     if (data.showAttributes) {
       lines.push('—')
@@ -105,6 +106,15 @@ export const umlClassifierCodec: IDiagramShapePayloadCodec<UmlClassifierData> = 
       i++
     } else if (lines[0]?.startsWith('«abstract»')) {
       data.classifierKind = 'abstractClass'
+      i++
+    } else if (lines[0]?.startsWith('«enumeration»')) {
+      data.classifierKind = 'enum'
+      i++
+    } else if (lines[0]?.startsWith('«component»')) {
+      data.classifierKind = 'component'
+      i++
+    } else if (lines[0]?.startsWith('«package»')) {
+      data.classifierKind = 'package'
       i++
     }
     if (lines[i] && lines[i] !== '—') {

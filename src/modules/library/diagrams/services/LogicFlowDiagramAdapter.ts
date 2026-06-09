@@ -26,15 +26,20 @@ import { applyNodeDimensions } from '@modules/library/diagrams/lib/diagramShapeR
 import { ensureDiagramShapeExtensions } from '@modules/library/diagrams/app/diagramShapeExtensions'
 import {
   isDiagramShapePayloadEnvelope,
-  syncNodeShapeExtensionEffects
+  patchNodeDgShape,
+  syncShapeExtensionNodeAfterLoad
 } from '@modules/library/diagrams/domain/shape-extension'
+import type { DiagramShapePayloadEnvelope } from '@modules/library/diagrams/domain/shape-extension/types'
 import {
   buildDiagramNodeConfig,
   getDiagramShapeById,
   registerAllDiagramShapes
 } from '@modules/library/diagrams/lib/diagramShapeRegistry'
-import { readUmlClassifierData } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierFormat'
-import type { UmlClassifierPanelFocusRequest } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierInteractionTypes'
+import { readNodeShapeExtension } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'
+import {
+  DG_SHAPE_HIT_EVENT,
+  type DiagramShapeHitPayload
+} from '@modules/library/diagrams/domain/shape-extension/types'
 import {
   isEdgeInSelectionBox,
   isForwardBoxSelect,
@@ -91,7 +96,20 @@ import {
   setAdjustPointDragging,
   suppressNodeAnchorIfEdgePriority
 } from '@modules/library/diagrams/lib/diagramEdgeEndpointPriority'
-import { computeMixedNodeFields } from '@modules/library/diagrams/lib/diagramSelectionMixed'
+import {
+  cancelAllPendingUmlClassifierHitClicks
+} from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierRegs'
+import {
+  applyEdgeStyleSnapshot,
+  applyNodeStyleSnapshot,
+  clearEdgeStyle,
+  clearNodeStyle,
+  type DiagramEdgeStyleSnapshot,
+  type DiagramFormatPainterKind,
+  type DiagramNodeStyleSnapshot,
+  readEdgeStyleSnapshot,
+  readNodeStyleSnapshot
+} from '@modules/library/diagrams/lib/diagramStyleClipboard'
 
 let snapshotPluginReady: Promise<void> | null = null
 let miniMapPluginReady: Promise<void> | null = null
@@ -157,8 +175,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         edgeIds: string[]
       }) => void)
     | null = null
-  private umlPanelFocusHandler: ((request: UmlClassifierPanelFocusRequest) => void) | null = null
-  private teardownUmlClassifierHit: (() => void) | null = null
+  private shapePanelFocusHandler: ((request: DiagramShapeHitPayload) => void) | null = null
+  private teardownShapeHit: (() => void) | null = null
   private middlePanning = false
   private boxSelectOverlayStart: { x: number; y: number } | null = null
   private boxSelectOverlayEnd: { x: number; y: number } | null = null
@@ -172,6 +190,13 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   private groupFrameHoverRaf = 0
   private teardownGroupFrameHover: (() => void) | null = null
   private lastPointerClient = { x: 0, y: 0 }
+  private formatPainterState: {
+    active: boolean
+    kind: DiagramFormatPainterKind
+    sourceId: string
+    nodeSnapshot?: DiagramNodeStyleSnapshot
+    edgeSnapshot?: DiagramEdgeStyleSnapshot
+  } | null = null
 
   mount(el: HTMLElement): void {
     if (this.lf) return
@@ -188,7 +213,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   }
 
   private scheduleEmitSelection(): void {
-    if (this.selectionEmitRaf != null) return
+    if (this.selectionEmitRaf != null) {
+      cancelAnimationFrame(this.selectionEmitRaf)
+    }
     this.selectionEmitRaf = requestAnimationFrame(() => {
       this.selectionEmitRaf = null
       this.emitSelection()
@@ -438,24 +465,44 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   private bindEvents(): void {
     if (!this.lf) return
 
-    this.lf.on('node:click', () => {
+    this.lf.on('node:click', ({ data, e }) => {
+      if (this.lf) cancelAllPendingUmlClassifierHitClicks(this.lf)
+      const append = Boolean(e?.ctrlKey || e?.metaKey || e?.shiftKey)
+      if (!append && this.lf) {
+        for (const edge of this.lf.getSelectElements(true).edges) {
+          this.lf.deselectElementById(edge.id)
+        }
+      }
+      if (this.formatPainterState?.active && this.formatPainterState.kind === 'node' && this.lf) {
+        applyNodeStyleSnapshot(this.lf, data.id, this.formatPainterState.nodeSnapshot!)
+        syncGroupFramesForNodes(this.lf, [data.id])
+        this.refreshGroupFrameDisplay()
+        this.scheduleGraphChange()
+      }
       this.syncSelectionFromGraph()
       this.scheduleGroupFramesToBottom()
     })
 
-    const onUmlClassifierHit = (payload: {
-      nodeId: string
-      hit: UmlClassifierPanelFocusRequest['hit']
-    }) => {
-      this.handleUmlClassifierInteraction(payload)
+    const onShapeHit = (payload: DiagramShapeHitPayload) => {
+      this.handleShapeExtensionHit(payload)
     }
-    this.lf.graphModel.eventCenter.on('uml:classifier-hit', onUmlClassifierHit)
-    this.teardownUmlClassifierHit = () => {
-      this.lf?.graphModel.eventCenter.off('uml:classifier-hit', onUmlClassifierHit)
+    this.lf.graphModel.eventCenter.on(DG_SHAPE_HIT_EVENT, onShapeHit)
+    this.teardownShapeHit = () => {
+      this.lf?.graphModel.eventCenter.off(DG_SHAPE_HIT_EVENT, onShapeHit)
     }
 
     this.lf.on('edge:click', ({ data, e }) => {
+      if (this.lf) cancelAllPendingUmlClassifierHitClicks(this.lf)
+      if (this.formatPainterState?.active && this.formatPainterState.kind === 'edge' && this.lf) {
+        applyEdgeStyleSnapshot(this.lf, data.id, this.formatPainterState.edgeSnapshot!)
+        this.scheduleGraphChange()
+      }
       const append = Boolean(e?.ctrlKey || e?.metaKey || e?.shiftKey)
+      if (!append && this.lf) {
+        for (const node of this.lf.getSelectElements(true).nodes) {
+          this.lf.deselectElementById(node.id)
+        }
+      }
       if (append && this.lastSelectedEdgeIds.includes(data.id)) {
         this.lf?.deselectElementById(data.id)
       }
@@ -479,6 +526,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       if (this.middlePanning) return
       const button = (e as MouseEvent | PointerEvent | undefined)?.button
       if (button !== undefined && button !== 0) return
+      if (this.lf) cancelAllPendingUmlClassifierHitClicks(this.lf)
+      this.cancelFormatPainter()
       this.lf?.clearSelectElements()
       this.lf?.removeNodeSnapLine()
       this.cleanupActiveBoxSelect()
@@ -745,16 +794,42 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     }
   }
 
-  private syncSelectionFromGraph(): void {
-    if (!this.lf) return
+  /** 从 LogicFlow 当前选区读取主节点/连线（属性面板须以此为准，勿用陈旧缓存） */
+  private readLiveSelection(): {
+    selectedNodeIds: string[]
+    selectedEdgeIds: string[]
+    primaryNodeId: string | null
+    primaryEdgeId: string | null
+  } {
+    if (!this.lf) {
+      return {
+        selectedNodeIds: [],
+        selectedEdgeIds: [],
+        primaryNodeId: null,
+        primaryEdgeId: null
+      }
+    }
     const selected = this.lf.getSelectElements(true)
-    this.lastSelectedNodeIds = selected.nodes.map((n) => n.id)
-    this.lastSelectedEdgeIds = selected.edges.map((e) => e.id)
+    const selectedNodeIds = selected.nodes.map((n) => n.id)
+    const selectedEdgeIds = selected.edges.map((e) => e.id)
     const primaryNode =
       selected.nodes.find((n) => !this.isGroupFrameId(n.id)) ??
       selected.nodes.find((n) => this.isGroupFrameId(n.id))
-    this.selectedNodeId = primaryNode?.id ?? null
-    this.selectedEdgeId = selected.edges[0]?.id ?? null
+    return {
+      selectedNodeIds,
+      selectedEdgeIds,
+      primaryNodeId: primaryNode?.id ?? null,
+      primaryEdgeId: selected.edges[0]?.id ?? null
+    }
+  }
+
+  private syncSelectionFromGraph(): void {
+    if (!this.lf) return
+    const live = this.readLiveSelection()
+    this.lastSelectedNodeIds = live.selectedNodeIds
+    this.lastSelectedEdgeIds = live.selectedEdgeIds
+    this.selectedNodeId = live.primaryNodeId
+    this.selectedEdgeId = live.primaryEdgeId
     this.refreshGroupFrameDisplay()
     this.scheduleEmitSelection()
     this.scheduleGroupFramesToBottom()
@@ -780,6 +855,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       this.groupFrameHoverRaf = requestAnimationFrame(() => {
         this.groupFrameHoverRaf = 0
         this.updateGroupFramePointerHover(this.lastPointerClient.x, this.lastPointerClient.y)
+        this.updateFormatPainterCursor(this.lastPointerClient.x, this.lastPointerClient.y)
       })
     }
     const onMove = (event: PointerEvent) => {
@@ -793,6 +869,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       pending = null
       clearGroupFramePointerInside()
       this.refreshGroupFrameDisplay()
+      this.updateFormatPainterCursor(0, 0)
     }
     const onNodeEnter = ({ data }: { data: { id: string } }) => {
       this.markGroupFrameHoverFromElement(data.id, 'node')
@@ -921,22 +998,26 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.contextMenuHandler = handler
   }
 
-  onUmlPanelFocus(handler: ((request: UmlClassifierPanelFocusRequest) => void) | null): void {
-    this.umlPanelFocusHandler = handler
+  onShapePanelFocus(handler: ((request: DiagramShapeHitPayload) => void) | null): void {
+    this.shapePanelFocusHandler = handler
   }
 
-  private handleUmlClassifierInteraction(payload: {
-    nodeId: string
-    hit: UmlClassifierPanelFocusRequest['hit']
-  }): void {
+  /** @deprecated 使用 onShapePanelFocus */
+  onUmlPanelFocus(handler: ((request: DiagramShapeHitPayload) => void) | null): void {
+    this.onShapePanelFocus(handler)
+  }
+
+  private handleShapeExtensionHit(payload: DiagramShapeHitPayload): void {
     if (!this.lf) return
     const model = this.lf.getNodeModelById(payload.nodeId)
-    if (!model || !readUmlClassifierData(model)) return
+    if (!model) return
+    const ext = readNodeShapeExtension(model.properties as Record<string, unknown>)
+    if (!ext || ext.kind !== payload.kind) return
     if (!model.isSelected) {
       this.lf.selectElementById(payload.nodeId)
       this.syncSelectionFromGraph()
     }
-    this.umlPanelFocusHandler?.({ nodeId: payload.nodeId, hit: payload.hit })
+    this.shapePanelFocusHandler?.(payload)
   }
 
   focusCanvas(): void {
@@ -1034,6 +1115,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     const onContextMenu = (event: MouseEvent) => {
       if (!this.lf || !this.contextMenuHandler) return
       event.preventDefault()
+      this.cancelFormatPainter()
       const domPick = this.pickElementFromDom(event.target)
       const picked = domPick ?? this.pickElementAt(event.clientX, event.clientY)
       if ((picked.kind === 'node' || picked.kind === 'edge') && picked.targetId) {
@@ -1231,10 +1313,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   getSelection(): DiagramEditorSelection {
     const lf = this.lf
     const canvas = { ...this.canvasSettings }
-    const selectedNodeCount = lf ? this.countSelectedNodes() : 0
-    const selectedEdgeCount = lf
-      ? this.lf!.getSelectElements(true).edges.length
-      : 0
+
+    const formatPainterActive = this.isFormatPainterActive()
 
     if (!lf) {
       return {
@@ -1246,45 +1326,53 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         selectedEdgeCount: 0,
         selectedNodeIds: [],
         selectedEdgeIds: [],
-        mixedNodeFields: []
+        mixedNodeFields: [],
+        formatPainterActive
       }
     }
 
-    const selectedNodeIds = this.lastSelectedNodeIds.length
-      ? this.lastSelectedNodeIds
-      : this.getSelectedNodeIds()
-    const selectedEdgeIds = this.lastSelectedEdgeIds.length
-      ? this.lastSelectedEdgeIds
-      : this.getSelectedEdgeIds()
+    const live = this.readLiveSelection()
+    const selectedNodeIds = live.selectedNodeIds
+    const selectedEdgeIds = live.selectedEdgeIds
+    const selectedNodeCount = this.countSelectedNodes()
+    const selectedEdgeCount = selectedEdgeIds.length
     const alignableIds = this.filterAlignableNodeIds(selectedNodeIds)
     const mixedNodeFields =
       alignableIds.length >= 2 ? computeMixedNodeFields(lf, alignableIds) : []
 
-    if (this.selectedNodeId || selectedNodeCount > 0) {
+    if (selectedNodeCount > 0) {
+      const primaryNodeId = live.primaryNodeId
+      const primaryEdgeId =
+        live.primaryEdgeId && selectedEdgeIds.includes(live.primaryEdgeId)
+          ? live.primaryEdgeId
+          : null
       return {
         kind: 'node',
-        node: this.selectedNodeId ? readNodeProperties(lf, this.selectedNodeId) : null,
-        edge: this.selectedEdgeId ? readEdgeProperties(lf, this.selectedEdgeId) : null,
+        node: primaryNodeId ? readNodeProperties(lf, primaryNodeId) : null,
+        edge: primaryEdgeId ? readEdgeProperties(lf, primaryEdgeId) : null,
         canvas,
         selectedNodeCount,
         selectedEdgeCount,
         selectedNodeIds,
         selectedEdgeIds,
-        mixedNodeFields
+        mixedNodeFields,
+        formatPainterActive
       }
     }
 
-    if (this.selectedEdgeId || selectedEdgeCount > 0) {
+    if (selectedEdgeCount > 0) {
+      const primaryEdgeId = live.primaryEdgeId ?? selectedEdgeIds[0] ?? null
       return {
         kind: 'edge',
         node: null,
-        edge: readEdgeProperties(lf, this.selectedEdgeId),
+        edge: primaryEdgeId ? readEdgeProperties(lf, primaryEdgeId) : null,
         canvas,
         selectedNodeCount,
         selectedEdgeCount,
         selectedNodeIds,
         selectedEdgeIds,
-        mixedNodeFields
+        mixedNodeFields,
+        formatPainterActive
       }
     }
 
@@ -1293,11 +1381,12 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       node: null,
       edge: null,
       canvas,
-      selectedNodeCount,
-      selectedEdgeCount,
-      selectedNodeIds,
-      selectedEdgeIds,
-      mixedNodeFields
+      selectedNodeCount: 0,
+      selectedEdgeCount: 0,
+      selectedNodeIds: [],
+      selectedEdgeIds: [],
+      mixedNodeFields: [],
+      formatPainterActive
     }
   }
 
@@ -1388,16 +1477,117 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     }
   }
 
+  isFormatPainterActive(): boolean {
+    return Boolean(this.formatPainterState?.active)
+  }
+
+  startFormatPainter(): boolean {
+    if (!this.lf) return false
+    const nodeIds = this.getSelectedNodeIds()
+    const edgeIds = this.getSelectedEdgeIds()
+    const nodeCount = this.countSelectedNodes()
+    const edgeCount = edgeIds.length
+
+    if (nodeCount === 1 && edgeCount === 0) {
+      const nodeId = this.selectedNodeId ?? nodeIds[0]
+      if (!nodeId) return false
+      const snapshot = readNodeStyleSnapshot(this.lf, nodeId)
+      if (!snapshot) return false
+      this.formatPainterState = {
+        active: true,
+        kind: 'node',
+        sourceId: nodeId,
+        nodeSnapshot: snapshot
+      }
+      this.syncFormatPainterCursor()
+      this.emitSelection()
+      return true
+    }
+
+    if (edgeCount === 1 && nodeCount === 0) {
+      const edgeId = edgeIds[0]
+      const snapshot = readEdgeStyleSnapshot(this.lf, edgeId)
+      if (!snapshot) return false
+      this.formatPainterState = {
+        active: true,
+        kind: 'edge',
+        sourceId: edgeId,
+        edgeSnapshot: snapshot
+      }
+      this.syncFormatPainterCursor()
+      this.emitSelection()
+      return true
+    }
+
+    return false
+  }
+
+  cancelFormatPainter(): void {
+    if (!this.formatPainterState?.active) return
+    this.formatPainterState = null
+    this.syncFormatPainterCursor()
+    this.emitSelection()
+  }
+
+  clearSelectionStyles(): void {
+    if (!this.lf) return
+    const nodeIds = this.getSelectedNodeIds()
+    const edgeIds = this.getSelectedEdgeIds()
+    for (const id of nodeIds) {
+      clearNodeStyle(this.lf, id, this.resolvedTheme)
+    }
+    if (nodeIds.length) {
+      syncGroupFramesForNodes(this.lf, nodeIds)
+    }
+    for (const id of edgeIds) {
+      clearEdgeStyle(this.lf, id, this.resolvedTheme)
+    }
+    this.refreshGroupFrameDisplay()
+    this.scheduleGraphChange()
+    this.emitSelection()
+  }
+
+  private getCanvasFrameEl(): HTMLElement | null {
+    return this.container?.closest('.dg-canvas-frame') ?? null
+  }
+
+  private syncFormatPainterCursor(): void {
+    const frame = this.getCanvasFrameEl()
+    if (!frame) return
+    frame.classList.toggle('dg-canvas-frame--format-painter', this.isFormatPainterActive())
+    frame.classList.remove('dg-canvas-frame--format-painter-blocked')
+  }
+
+  private updateFormatPainterCursor(clientX: number, clientY: number): void {
+    const frame = this.getCanvasFrameEl()
+    if (!frame) return
+    if (!this.formatPainterState?.active) {
+      frame.classList.remove('dg-canvas-frame--format-painter', 'dg-canvas-frame--format-painter-blocked')
+      return
+    }
+    frame.classList.add('dg-canvas-frame--format-painter')
+    if (clientX === 0 && clientY === 0) {
+      frame.classList.remove('dg-canvas-frame--format-painter-blocked')
+      return
+    }
+    const picked = this.pickElementAt(clientX, clientY)
+    const blocked =
+      (this.formatPainterState.kind === 'node' && picked.kind === 'edge') ||
+      (this.formatPainterState.kind === 'edge' && picked.kind === 'node')
+    frame.classList.toggle('dg-canvas-frame--format-painter-blocked', blocked)
+  }
+
   destroy(): void {
+    this.cancelFormatPainter()
     this.setEdgeInsertHighlight(null)
     this.hideMiniMap()
     this.teardownMiddlePan?.()
     this.teardownMiddlePan = null
     this.teardownContextMenu?.()
     this.teardownContextMenu = null
-    this.teardownUmlClassifierHit?.()
-    this.teardownUmlClassifierHit = null
-    this.umlPanelFocusHandler = null
+    this.teardownShapeHit?.()
+    this.teardownShapeHit = null
+    this.shapePanelFocusHandler = null
     this.teardownGroupFrameHover?.()
     this.teardownGroupFrameHover = null
     clearGroupFramePointerInside()
@@ -1478,7 +1668,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     }>
     for (const raw of rawNodes) {
       if (!isDiagramShapePayloadEnvelope(raw.properties?.dgShape)) continue
-      syncNodeShapeExtensionEffects(this.lf, raw.id)
+      syncShapeExtensionNodeAfterLoad(this.lf, raw.id)
     }
   }
 
@@ -1552,7 +1742,16 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       this.lf.addNode(node as never)
     }
     for (const item of patch.updateNodes ?? []) {
-      this.lf.setProperties(item.id, item.patch)
+      const dgShape = item.patch.dgShape
+      if (isDiagramShapePayloadEnvelope(dgShape)) {
+        patchNodeDgShape(this.lf, item.id, dgShape as DiagramShapePayloadEnvelope)
+        const { dgShape: _dgShape, ...rest } = item.patch
+        if (Object.keys(rest).length > 0) {
+          this.lf.setProperties(item.id, rest)
+        }
+      } else {
+        this.lf.setProperties(item.id, item.patch)
+      }
     }
     for (const id of patch.deleteNodeIds ?? []) {
       this.lf.deleteNode(id)
@@ -1868,6 +2067,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   }
 
   clearSelection(): void {
+    if (this.lf) cancelAllPendingUmlClassifierHitClicks(this.lf)
     this.lf?.clearSelectElements()
     this.syncSelectionFromGraph()
     this.refreshMultiSelectResize?.()
@@ -2598,6 +2798,12 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     if (!this.lf) return
     const model = this.lf.getNodeModelById(nodeId)
     if (!model) return
+    if (typeof patch.lfType === 'string' && patch.lfType !== model.type) {
+      ;(model as { type: string }).type = patch.lfType
+      if ('setAttributes' in model && typeof model.setAttributes === 'function') {
+        ;(model as { setAttributes: () => void }).setAttributes()
+      }
+    }
     if ('text' in patch && typeof patch.text === 'string') {
       model.updateText(patch.text)
     }
@@ -2617,13 +2823,18 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
           ...(incoming.dgGroupStyle as Record<string, unknown>)
         }
       }
-      this.lf.setProperties(nodeId, incoming)
-      if ('setAttributes' in model && typeof model.setAttributes === 'function') {
-        ;(model as { setAttributes: () => void }).setAttributes()
+
+      const dgShapePatch = incoming.dgShape
+      if (isDiagramShapePayloadEnvelope(dgShapePatch)) {
+        patchNodeDgShape(this.lf, nodeId, dgShapePatch as DiagramShapePayloadEnvelope)
+        const { dgShape: _dgShape, ...rest } = incoming
+        if (Object.keys(rest).length > 0) {
+          this.lf.setProperties(nodeId, rest)
+        }
+      } else {
+        this.lf.setProperties(nodeId, incoming)
       }
-      if (isDiagramShapePayloadEnvelope(incoming.dgShape)) {
-        syncNodeShapeExtensionEffects(this.lf, nodeId)
-      }
+
       if (model.type === DIAGRAM_GROUP_FRAME_TYPE) {
         ensureGroupFrameAtBottom(this.lf, nodeId)
       }

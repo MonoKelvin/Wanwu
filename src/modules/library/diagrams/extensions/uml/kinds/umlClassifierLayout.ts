@@ -15,7 +15,9 @@ export const UML_LAYOUT = {
   STEREOTYPE_H: 14,
   NAME_H: 18,
   SECTION_PAD: 4,
-  CHAR_W: 6.2
+  CHAR_W: 6.2,
+  /** 组件图元两侧耳片宽度（绘制在节点内部） */
+  COMPONENT_TAB_W: 6
 } as const
 
 export type UmlLayoutHitTarget =
@@ -29,6 +31,7 @@ export interface UmlLayoutLine {
   kind: 'text' | 'divider'
   y: number
   text?: string
+  role?: 'stereotype' | 'name'
   italic?: boolean
   underline?: boolean
   hit?: UmlLayoutHitTarget
@@ -40,11 +43,81 @@ export interface UmlLayoutLine {
 export interface UmlClassifierLayout {
   width: number
   height: number
+  minWidth: number
+  minHeight: number
   renderLines: UmlLayoutLine[]
 }
 
+export interface UmlClassifierLayoutModel {
+  width: number
+  height: number
+  minWidth?: number
+  minHeight?: number
+}
+
+/** 将内容最小尺寸应用到 LF Model（随内容增高/增宽；高度可随成员删减回落） */
+export function applyUmlClassifierLayoutToModel(
+  model: UmlClassifierLayoutModel,
+  data: UmlClassifierData
+): boolean {
+  const layout = computeUmlClassifierLayout(data, model.width)
+  model.minWidth = Math.max(80, layout.minWidth)
+  model.minHeight = Math.max(48, layout.minHeight)
+
+  let changed = false
+  if (model.height < layout.height - 0.5) {
+    model.height = layout.height
+    changed = true
+  } else if (model.height > layout.height + 0.5) {
+    model.height = layout.height
+    changed = true
+  }
+  if (model.width < layout.width - 0.5) {
+    model.width = layout.width
+    changed = true
+  }
+  return changed
+}
+
+function charWidth(ch: string): number {
+  return ch.charCodeAt(0) > 255 ? UML_LAYOUT.CHAR_W * 1.75 : UML_LAYOUT.CHAR_W
+}
+
 function estimateTextWidth(text: string): number {
-  return Math.max(UML_LAYOUT.MIN_WIDTH - UML_LAYOUT.PAD_X * 2, text.length * UML_LAYOUT.CHAR_W)
+  let width = 0
+  for (const ch of text) {
+    width += charWidth(ch)
+  }
+  return Math.max(UML_LAYOUT.MIN_WIDTH - UML_LAYOUT.PAD_X * 2, width)
+}
+
+/** 画布单行文本截断（成员区），避免超出节点宽度 */
+export function truncateUmlCanvasLine(text: string, nodeWidth: number): string {
+  const inner = nodeWidth - UML_LAYOUT.PAD_X * 2
+  if (inner <= 0 || !text) return text
+
+  let width = 0
+  let cut = text.length
+  for (let i = 0; i < text.length; i++) {
+    const cw = charWidth(text[i]!)
+    if (width + cw > inner) {
+      cut = i
+      break
+    }
+    width += cw
+  }
+  if (cut >= text.length) return text
+
+  const ellipsis = '…'
+  let end = cut
+  while (end > 0) {
+    let w = 0
+    for (let j = 0; j < end; j++) w += charWidth(text[j]!)
+    w += charWidth(ellipsis)
+    if (w <= inner) return text.slice(0, end) + ellipsis
+    end -= 1
+  }
+  return ellipsis
 }
 
 export function computeUmlClassifierLayout(
@@ -57,7 +130,15 @@ export function computeUmlClassifierLayout(
 
   const stereotype = classifierStereotype(data.classifierKind)
   if (stereotype) {
-    lines.push({ kind: 'text', y: y + UML_LAYOUT.STEREOTYPE_H / 2, text: stereotype })
+    lines.push({
+      kind: 'text',
+      y: y + UML_LAYOUT.STEREOTYPE_H / 2,
+      text: stereotype,
+      role: 'stereotype',
+      hit: { region: 'name' },
+      hitTop: y,
+      hitHeight: UML_LAYOUT.STEREOTYPE_H
+    })
     contentMaxW = Math.max(contentMaxW, estimateTextWidth(stereotype))
     y += UML_LAYOUT.STEREOTYPE_H
   }
@@ -67,6 +148,7 @@ export function computeUmlClassifierLayout(
     kind: 'text',
     y: y + UML_LAYOUT.NAME_H / 2,
     text: name,
+    role: 'name',
     italic: isClassifierNameItalic(data),
     hit: { region: 'name' },
     hitTop: y,
@@ -146,8 +228,18 @@ export function computeUmlClassifierLayout(
     y += UML_LAYOUT.SECTION_PAD
   }
 
-  const computedWidth = Math.max(width, Math.ceil(contentMaxW + UML_LAYOUT.PAD_X * 2), UML_LAYOUT.MIN_WIDTH)
-  const height = Math.max(y + UML_LAYOUT.HEADER_PAD, UML_LAYOUT.MIN_HEIGHT)
+  const contentMinWidth = Math.max(
+    Math.ceil(contentMaxW + UML_LAYOUT.PAD_X * 2),
+    UML_LAYOUT.MIN_WIDTH
+  )
+  const contentHeight = Math.max(y + UML_LAYOUT.HEADER_PAD, UML_LAYOUT.MIN_HEIGHT)
+  const layoutWidth = Math.max(width, contentMinWidth)
 
-  return { width: computedWidth, height, renderLines: lines }
+  return {
+    width: layoutWidth,
+    height: contentHeight,
+    minWidth: contentMinWidth,
+    minHeight: contentHeight,
+    renderLines: lines
+  }
 }

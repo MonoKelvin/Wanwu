@@ -1,4 +1,4 @@
-import LogicFlow, { Component, h, observer, Rect } from '@logicflow/core'
+import LogicFlow, { BaseNodeModel, Component, GraphModel, h, observer, Rect } from '@logicflow/core'
 import { StepDrag } from '@logicflow/core/lib/util/drag'
 import { getNodeBBox } from '@logicflow/core/lib/util/node'
 import { handleResize } from '@logicflow/core/lib/util/resize'
@@ -19,7 +19,7 @@ const HANDLE_INDEX: Record<HandleDir, number> = {
 
 function cornerPoint(
   dir: HandleDir,
-  model: LogicFlow.BaseNodeModel
+  model: BaseNodeModel
 ): { x: number; y: number } {
   const { minX, minY, maxX, maxY } = getNodeBBox(model)
   switch (dir) {
@@ -50,8 +50,8 @@ function handleViewPos(dir: HandleDir, cornerX: number, cornerY: number, w: numb
 /** 单角缩放锚点：可见方块 + 更大透明热区，使用 onPointerDown + core handleResize */
 class DiagramResizeHandleInner extends Component {
   private index = 0
-  private nodeModel!: LogicFlow.BaseNodeModel
-  private graphModel!: LogicFlow.GraphModel
+  private nodeModel!: BaseNodeModel
+  private graphModel!: GraphModel
   private dragHandler!: StepDrag
   private direction: HandleDir = 'nw'
 
@@ -59,8 +59,8 @@ class DiagramResizeHandleInner extends Component {
     super(props)
     this.direction = props.direction as HandleDir
     this.index = HANDLE_INDEX[this.direction]
-    this.nodeModel = props.model as LogicFlow.BaseNodeModel
-    this.graphModel = props.graphModel as LogicFlow.GraphModel
+    this.nodeModel = props.model as BaseNodeModel
+    this.graphModel = props.graphModel as GraphModel
     this.dragHandler = new StepDrag({
       onDragStart: () => {
         this.graphModel.selectNodeById(this.nodeModel.id)
@@ -84,13 +84,13 @@ class DiagramResizeHandleInner extends Component {
   private onPointerDown = (e: PointerEvent) => {
     e.stopPropagation()
     e.preventDefault()
-    this.dragHandler.handleMouseDown(e as unknown as MouseEvent)
+    this.dragHandler.handleMouseDown(e)
   }
 
   render() {
     const { direction, model } = this.props as {
       direction: HandleDir
-      model: LogicFlow.BaseNodeModel
+      model: BaseNodeModel
     }
     const { x: cornerX, y: cornerY } = cornerPoint(direction, model)
     const style = model.getResizeControlStyle()
@@ -128,8 +128,8 @@ class DiagramResizeHandleInner extends Component {
 class DiagramResizeControlGroupInner extends Component {
   render() {
     const { model, graphModel } = this.props as {
-      model: LogicFlow.BaseNodeModel & { x: number; y: number; width: number; height: number }
-      graphModel: LogicFlow.GraphModel
+      model: BaseNodeModel & { x: number; y: number; width: number; height: number }
+      graphModel: GraphModel
     }
     const outline = model.getResizeOutlineStyle()
     const dirs: HandleDir[] = ['nw', 'ne', 'se', 'sw']
@@ -165,9 +165,9 @@ const DiagramResizeControlGroup = observer(DiagramResizeControlGroupInner)
 
 /** 供各图元 View 覆盖 getResizeControl() 使用 */
 export function diagramGetResizeControl(
-  model: LogicFlow.BaseNodeModel,
-  graphModel: LogicFlow.GraphModel
-): ReturnType<typeof h> | null {
+  model: BaseNodeModel,
+  graphModel: GraphModel
+) {
   const { isSilentMode, allowResize } = graphModel.editConfigModel
   if (
     isSilentMode ||

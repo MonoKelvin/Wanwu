@@ -663,7 +663,8 @@ onBeforeUnmount(() => {
   display: block;
   width: 100%;
   min-width: 100%;
-  height: 2.125rem;
+  height: var(--ww-select-height, 2.125rem);
+  min-height: var(--ww-select-height, 2.125rem);
   padding: 0;
   border: 1px solid var(--ww-border-subtle);
   border-radius: var(--dg-prop-radius, var(--dg-radius, 0.4375rem));

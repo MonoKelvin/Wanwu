@@ -1,4 +1,4 @@
-import type LogicFlow from '@logicflow/core'
+import LogicFlow, { BaseNodeModel } from '@logicflow/core'
 import { readNodeShapeExtension } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'
 import { applyNodeDimensions } from '@modules/library/diagrams/lib/diagramShapeResize'
 import type { DiagramArrowType, DiagramShadowPreset } from '@modules/library/diagrams/lib/diagramEditorConstants'
@@ -62,18 +62,36 @@ export function nodeTextWrapWidth(model: { width: number; type?: string }): numb
   return Math.max(24, Math.round(w - NODE_TEXT_WRAP_X_PAD))
 }
 
+function resolveLfFontSize(value: unknown, fallback = 12): number {
+  const n = typeof value === 'number' ? value : Number(value)
+  if (!Number.isFinite(n)) return fallback
+  return Math.min(128, Math.max(8, n))
+}
+
 /** LogicFlow 节点文本：按图元宽度自动换行（overflowMode: autoWrap） */
-export function buildDiagramNodeTextStyle(model: LogicFlow.BaseNodeModel): Record<string, unknown> {
-  const nodeText = model.graphModel.theme.nodeText as Record<string, unknown>
+export function buildDiagramNodeTextStyle(model: BaseNodeModel): LogicFlow.NodeTextTheme {
+  const nodeText = model.graphModel.theme.nodeText
   const propsStyle = (model.properties?.textStyle ?? {}) as Record<string, unknown>
-  const merged = { ...nodeText, ...propsStyle }
-  const ink = merged.fill ?? merged.color
+  const ink = propsStyle.fill ?? propsStyle.color ?? nodeText.fill ?? nodeText.color
   return {
-    ...merged,
-    overflowMode: propsStyle.overflowMode ?? 'autoWrap',
-    textWidth: propsStyle.textWidth ?? nodeTextWrapWidth(model),
-    wrapPadding: merged.wrapPadding ?? '4, 8',
-    lineHeight: merged.lineHeight ?? 1.2,
+    ...nodeText,
+    ...propsStyle,
+    fontSize: resolveLfFontSize(propsStyle.fontSize ?? nodeText.fontSize),
+    overflowMode:
+      propsStyle.overflowMode === 'default' ||
+      propsStyle.overflowMode === 'autoWrap' ||
+      propsStyle.overflowMode === 'ellipsis'
+        ? propsStyle.overflowMode
+        : 'autoWrap',
+    textWidth:
+      typeof propsStyle.textWidth === 'number' ? propsStyle.textWidth : nodeTextWrapWidth(model),
+    wrapPadding: String(propsStyle.wrapPadding ?? '4, 8'),
+    lineHeight:
+      typeof propsStyle.lineHeight === 'number'
+        ? propsStyle.lineHeight
+        : typeof nodeText.lineHeight === 'number'
+          ? nodeText.lineHeight
+          : 1.2,
     ...(ink != null ? { fill: ink, color: ink } : {})
   }
 }
@@ -111,7 +129,7 @@ function buildLfTextStyle(ts: Partial<DiagramNodeTextStyle>): Record<string, unk
   return out
 }
 
-function readTextAlignFromModel(model: LogicFlow.BaseNodeModel): DiagramNodeTextStyle['textAlign'] {
+function readTextAlignFromModel(model: BaseNodeModel): DiagramNodeTextStyle['textAlign'] {
   const propsStyle = (model.properties?.textStyle ?? {}) as Record<string, unknown>
   const align = propsStyle.textAlign
   if (align === 'left' || align === 'center' || align === 'right') return align
@@ -131,7 +149,7 @@ export function textXForAlign(
 }
 
 /** 按对齐方式更新文本锚点坐标（LogicFlow 仅 textAnchor 无法在图元内对齐） */
-export function syncNodeTextLayout(model: LogicFlow.BaseNodeModel): void {
+export function syncNodeTextLayout(model: BaseNodeModel): void {
   if (!model.text) return
   const style = model.getTextStyle() as Record<string, unknown>
   if (style.overflowMode === 'autoWrap') {

@@ -2,22 +2,51 @@
 
 .ww-number-input-root {
   --ww-number-height: var(--ww-select-height, 2.3125rem);
-  --ww-number-btn-w: 1.625rem;
+  /* 与 compact 同比例（颜色面板已验证），随 --ww-number-height 缩放 */
+  --ww-number-btn-w: calc(var(--ww-number-height) * 0.654);
   --ww-number-radius: var(--dg-prop-radius, var(--ww-select-radius, 0.4375rem));
   --ww-number-arrow-color: color-mix(in srgb, var(--ww-ink-faint) 88%, transparent);
-  --ww-number-arrow-nudge: 0.25rem;
+  --ww-number-arrow-nudge: calc(var(--ww-number-height) * 0.077);
+  --ww-number-input-px: calc(var(--ww-number-height) * 0.192);
+  --ww-number-icon-size: calc(var(--ww-number-height) * 0.423);
+  --ww-number-btn-pad: calc(var(--ww-number-height) * 0.046);
   display: inline-flex;
   max-width: 100%;
+  container-type: inline-size;
 }
 
 .ww-number-input-root.ww-number-input--block {
   width: 100%;
+  /* 属性面板 block：略加宽按钮列，给上下箭头更多横向空间 */
+  --ww-number-btn-w: calc(var(--ww-number-height) * 0.743);
+  --ww-number-arrow-nudge: calc(var(--ww-number-height) * 0.055);
+  --ww-number-btn-pad: calc(var(--ww-number-height) * 0.057);
 }
 
 .ww-number-input-root.ww-number-input--compact {
   --ww-number-height: 1.625rem;
-  --ww-number-btn-w: 1.25rem;
-  --ww-number-arrow-nudge: 0.1875rem;
+  --ww-number-btn-w: 1.0625rem;
+  --ww-number-arrow-nudge: 0.125rem;
+  --ww-number-input-px: 0.3125rem;
+  --ww-number-icon-size: 0.6875rem;
+}
+
+@container (max-width: 4.75rem) {
+  .ww-number-input-root.ww-number-input--compact {
+    --ww-number-btn-w: 0.9375rem;
+    --ww-number-arrow-nudge: 0.09375rem;
+    --ww-number-input-px: 0.25rem;
+    --ww-number-icon-size: 0.625rem;
+  }
+}
+
+@container (max-width: 3.75rem) {
+  .ww-number-input-root.ww-number-input--compact {
+    --ww-number-btn-w: 0.8125rem;
+    --ww-number-arrow-nudge: 0.0625rem;
+    --ww-number-input-px: 0.1875rem;
+    --ww-number-icon-size: 0.5625rem;
+  }
 }
 
 .ww-number-input.p-inputnumber {
@@ -61,7 +90,7 @@
   width: 100%;
   height: var(--ww-number-height);
   min-height: var(--ww-number-height);
-  padding: 0 var(--ww-number-input-px, 0.625rem);
+  padding: 0 var(--ww-number-input-px);
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
@@ -74,7 +103,6 @@
 }
 
 .ww-number-input-root.ww-number-input--compact .ww-number-input.p-inputnumber .p-inputnumber-input {
-  padding: 0 0.375rem;
   font-size: 0.6875rem;
 }
 
@@ -102,7 +130,8 @@
   align-items: stretch;
   justify-content: stretch;
   gap: 0;
-  padding: 0;
+  padding: var(--ww-number-btn-pad) 0;
+  box-sizing: border-box;
   overflow: hidden;
   border-top-right-radius: var(--ww-number-radius);
   border-bottom-right-radius: var(--ww-number-radius);
@@ -145,14 +174,12 @@
 }
 
 .ww-number-input.p-inputnumber .p-inputnumber-button .ww-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.ww-number-input.p-inputnumber .p-inputnumber-button .ww-icon svg {
   display: block;
+  flex-shrink: 0;
+  width: var(--ww-number-icon-size) !important;
+  height: var(--ww-number-icon-size) !important;
+  min-width: var(--ww-number-icon-size);
+  min-height: var(--ww-number-icon-size);
 }
 
 .ww-number-input.p-inputnumber .p-inputnumber-button:hover:not(:disabled) {

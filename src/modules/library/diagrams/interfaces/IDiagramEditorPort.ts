@@ -127,4 +127,8 @@ export interface IDiagramEditorPort {
     }) => void
   ): void
   focusCanvas?(): void
+  startFormatPainter(): boolean
+  cancelFormatPainter(): void
+  isFormatPainterActive(): boolean
+  clearSelectionStyles(): void
 }

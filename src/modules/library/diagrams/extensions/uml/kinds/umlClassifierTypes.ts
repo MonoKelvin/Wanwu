@@ -1,6 +1,6 @@
 export type UmlVisibility = 'public' | 'protected' | 'private' | 'package'
 
-export type UmlClassifierKind = 'class' | 'interface' | 'abstractClass' | 'enum'
+export type UmlClassifierKind = 'class' | 'interface' | 'abstractClass' | 'enum' | 'component' | 'package'
 
 export interface UmlClassifierMemberBase {
   id: string

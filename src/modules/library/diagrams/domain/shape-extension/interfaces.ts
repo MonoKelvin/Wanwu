@@ -23,8 +23,17 @@ export interface IDiagramShapePayloadCodec<TData = unknown> {
   /** 可选：导出/搜索用纯文本 */
   serializeText?(data: TData): string
 
+  /**
+   * 属性更新时是否同步 LogicFlow 内置 text。
+   * 自定义 View 自行绘制文本时应为 false，避免多余重绘。
+   */
+  readonly syncLfText?: boolean
+
+  /** Model.setAttributes 已处理布局时，bridge 跳过重复 layout */
+  readonly layoutHandledByModel?: boolean
+
   /** 可选：按数据计算节点尺寸 */
-  computeLayout?(data: TData, width: number): { width: number; height: number }
+  computeLayout?(data: TData, width: number): { width: number; height: number; minWidth?: number; minHeight?: number }
 }
 
 /** LogicFlow Model/View 注册 */

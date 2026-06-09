@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { ensureDiagramShapeExtensions } from '@modules/library/diagrams/app/diagramShapeExtensions'
 import type { DiagramNodeProperties } from '@modules/library/diagrams/lib/diagramSelectionTypes'
@@ -23,7 +23,20 @@ const editorProvider = computed(() => kindRegistration.value?.propertyEditor)
 
 const EditorComponent = computed(() => editorProvider.value?.component)
 
-const dispatchShapePatch = useDebounceFn((nodeId: string, kind: string, data: unknown) => {
+/** 待 flush 的 debounced patch，切换节点前先落到原 nodeId */
+const pendingPatch = ref<{
+  nodeId: string
+  kind: string
+  data: unknown
+  lfType?: string
+} | null>(null)
+
+function dispatchShapePatchNow(
+  nodeId: string,
+  kind: string,
+  data: unknown,
+  lfType?: string
+) {
   const kindReg = registry.getKind(kind)
   if (!kindReg) return
   void bus.dispatch({
@@ -33,17 +46,62 @@ const dispatchShapePatch = useDebounceFn((nodeId: string, kind: string, data: un
       patch: {
         properties: {
           dgShape: kindReg.codec.toEnvelope(data)
-        }
+        },
+        ...(lfType ? { lfType } : {})
       }
     }
   })
+}
+
+function flushPendingPatch() {
+  const pending = pendingPatch.value
+  if (!pending) return
+  pendingPatch.value = null
+  dispatchShapePatchNow(pending.nodeId, pending.kind, pending.data, pending.lfType)
+}
+
+const dispatchShapePatchDebounced = useDebounceFn(() => {
+  flushPendingPatch()
 }, 200)
 
-function onPatch(data: unknown) {
+function onPatch(
+  data: unknown,
+  immediate = false,
+  meta?: { lfType?: string }
+) {
   const kind = shapeExtension.value?.kind
   if (!kind) return
-  void dispatchShapePatch(props.node.id, kind, data)
+  if (immediate) {
+    dispatchShapePatchDebounced.cancel()
+    pendingPatch.value = null
+    dispatchShapePatchNow(props.node.id, kind, data, meta?.lfType)
+    return
+  }
+  pendingPatch.value = { nodeId: props.node.id, kind, data, lfType: meta?.lfType }
+  void dispatchShapePatchDebounced()
 }
+
+watch(
+  () => props.node.id,
+  (nextId, prevId) => {
+    if (!prevId || nextId === prevId) return
+    dispatchShapePatchDebounced.cancel()
+    if (pendingPatch.value?.nodeId === prevId) {
+      flushPendingPatch()
+    } else {
+      pendingPatch.value = null
+    }
+  }
+)
+
+onBeforeUnmount(() => {
+  dispatchShapePatchDebounced.cancel()
+  flushPendingPatch()
+})
+
+const hasPendingPatch = computed(() => pendingPatch.value != null)
+
+defineExpose({ flushPendingPatch })
 </script>
 
 <template>
@@ -52,6 +110,7 @@ function onPatch(data: unknown) {
     v-if="EditorComponent && shapeExtension"
     :node-id="node.id"
     :shape-extension="shapeExtension"
-    @patch="onPatch"
+    :has-pending-patch="hasPendingPatch"
+    @patch="(data, immediate, meta) => onPatch(data, immediate, meta)"
   />
 </template>

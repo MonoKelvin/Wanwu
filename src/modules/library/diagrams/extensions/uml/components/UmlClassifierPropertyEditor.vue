@@ -15,9 +15,12 @@ import {
   formatUmlAttributeExpression,
   formatUmlOperationExpression,
   formatParametersInput,
+  normalizeUmlClassifierData,
   parseParametersInput
 } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierFormat'
 import {
+  classifierKindChangePatch,
+  lfTypeForClassifierKind,
   UML_CLASSIFIER_KIND_OPTIONS,
   UML_VISIBILITY_OPTIONS
 } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierUi'
@@ -34,29 +37,57 @@ import {
 const props = defineProps<{
   nodeId: string
   shapeExtension: DiagramNodeShapeExtensionView
+  /** Host 有未落盘的 debounced patch 时，跳过外部 data 回写以免覆盖编辑中内容 */
+  hasPendingPatch?: boolean
 }>()
 
 const emit = defineEmits<{
-  patch: [data: UmlClassifierData]
+  patch: [data: UmlClassifierData, immediate?: boolean, meta?: { lfType?: string }]
 }>()
 
 const { panelFocus, setPanelFocus } = useUmlClassifierEditFocus()
 const memberRefs = ref(new Map<string, HTMLElement>())
 const nameRowRef = ref<HTMLElement | null>(null)
 
-const data = computed(() => props.shapeExtension.data as UmlClassifierData)
+const localData = ref(normalizeUmlClassifierData(props.shapeExtension.data))
+
+watch(
+  () => props.shapeExtension.data,
+  (next) => {
+    if (props.hasPendingPatch) return
+    const normalized = normalizeUmlClassifierData(next)
+    if (JSON.stringify(normalized) === JSON.stringify(localData.value)) return
+    localData.value = normalized
+  }
+)
+
+const data = computed(() => localData.value)
 
 const visibilityOptions = UML_VISIBILITY_OPTIONS.map((item) => ({
   label: `${item.symbol} ${item.label}`,
   value: item.value
 }))
 
-function patch(partial: Partial<UmlClassifierData>) {
-  emit('patch', { ...data.value, ...partial })
+function patch(
+  partial: Partial<UmlClassifierData>,
+  immediate = false,
+  meta?: { lfType?: string }
+) {
+  localData.value = { ...localData.value, ...partial }
+  emit('patch', localData.value, immediate, meta)
+}
+
+function patchNow(partial: Partial<UmlClassifierData>) {
+  patch(partial, true)
+}
+
+/** 文本输入失焦时立即同步画布，避免 debounce 期间切换节点丢数据 */
+function flushTextPatch() {
+  patch({}, true)
 }
 
 function onClassifierKind(value: UmlClassifierKind) {
-  patch({ classifierKind: value })
+  patch(classifierKindChangePatch(value), true, { lfType: lfTypeForClassifierKind(value) })
 }
 
 function setMemberRef(id: string, el: Element | null) {
@@ -67,16 +98,24 @@ function setMemberRef(id: string, el: Element | null) {
 const expandedAttributes = ref(new Set<string>())
 const expandedOperations = ref(new Set<string>())
 
-const isNameFocused = computed(() => {
-  const focus = panelFocus.value
-  return focus?.nodeId === props.nodeId && focus.region === 'name'
-})
-
 function focusInputIn(container: HTMLElement | null | undefined) {
   const input = container?.querySelector('input')
   if (!(input instanceof HTMLInputElement)) return
   input.focus()
   input.select()
+}
+
+function focusMemberNameInput(container: HTMLElement | null | undefined) {
+  const input = container?.querySelector('.dg-uml-member-name-input')
+  if (!(input instanceof HTMLInputElement)) return
+  input.focus()
+  input.select()
+}
+
+function isMemberFocused(memberId: string, kind: 'attribute' | 'operation'): boolean {
+  const focus = panelFocus.value
+  if (!focus || focus.nodeId !== props.nodeId) return false
+  return focus.region === kind && focus.memberId === memberId
 }
 
 async function applyPanelFocus(focus: UmlClassifierPanelFocus) {
@@ -100,11 +139,11 @@ async function applyPanelFocus(focus: UmlClassifierPanelFocus) {
   }
 
   if (focus.region === 'attribute' || focus.region === 'operation') {
-    expandMember(focus.memberId, focus.region)
+    expandMember(focus.memberId, focus.region, true)
     await nextTick()
     const el = memberRefs.value.get(focus.memberId)
     el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
-    focusInputIn(el)
+    focusMemberNameInput(el)
   }
 }
 
@@ -115,8 +154,13 @@ watch(() => panelFocus.value, (focus) => {
 watch(
   () => props.nodeId,
   () => {
+    localData.value = normalizeUmlClassifierData(props.shapeExtension.data)
     expandedAttributes.value = new Set()
     expandedOperations.value = new Set()
+    const focus = panelFocus.value
+    if (focus && focus.nodeId !== props.nodeId) {
+      setPanelFocus(null)
+    }
   }
 )
 
@@ -128,8 +172,16 @@ function isMemberExpanded(memberId: string, kind: 'attribute' | 'operation'): bo
   return memberExpandedSet(kind).value.has(memberId)
 }
 
-function expandMember(memberId: string, kind: 'attribute' | 'operation') {
+function expandMember(
+  memberId: string,
+  kind: 'attribute' | 'operation',
+  exclusive = false
+) {
   const set = memberExpandedSet(kind)
+  if (exclusive) {
+    set.value = new Set([memberId])
+    return
+  }
   if (set.value.has(memberId)) return
   set.value = new Set([...set.value, memberId])
 }
@@ -145,6 +197,24 @@ function collapseMember(memberId: string, kind: 'attribute' | 'operation') {
 function toggleMemberExpanded(memberId: string, kind: 'attribute' | 'operation') {
   if (isMemberExpanded(memberId, kind)) collapseMember(memberId, kind)
   else expandMember(memberId, kind)
+}
+
+function onMemberBarClick(
+  memberId: string,
+  kind: 'attribute' | 'operation',
+  event: MouseEvent
+) {
+  if (event.detail > 1) return
+  toggleMemberExpanded(memberId, kind)
+}
+
+function onMemberBarDblClick(
+  memberId: string,
+  kind: 'attribute' | 'operation',
+  event: MouseEvent
+) {
+  event.preventDefault()
+  openMember(memberId, kind)
 }
 
 function openMember(memberId: string, kind: 'attribute' | 'operation') {
@@ -168,16 +238,23 @@ function addAttribute() {
     isStatic: false,
     type: 'string'
   }
-  patch({ attributes: [...data.value.attributes, next] })
+  const partial: Partial<UmlClassifierData> = {
+    attributes: [...data.value.attributes, next]
+  }
+  if (!data.value.showAttributes) partial.showAttributes = true
+  patchNow(partial)
   openMember(next.id, 'attribute')
 }
 
-function updateAttribute(id: string, partial: Partial<UmlAttribute>) {
-  patch({
-    attributes: data.value.attributes.map((item) =>
-      item.id === id ? { ...item, ...partial } : item
-    )
-  })
+function updateAttribute(id: string, partial: Partial<UmlAttribute>, immediate = false) {
+  patch(
+    {
+      attributes: data.value.attributes.map((item) =>
+        item.id === id ? { ...item, ...partial } : item
+      )
+    },
+    immediate
+  )
 }
 
 function removeAttribute(id: string) {
@@ -185,7 +262,7 @@ function removeAttribute(id: string) {
     setPanelFocus(null)
   }
   collapseMember(id, 'attribute')
-  patch({ attributes: data.value.attributes.filter((item) => item.id !== id) })
+  patchNow({ attributes: data.value.attributes.filter((item) => item.id !== id) })
 }
 
 function moveAttribute(id: string, dir: -1 | 1) {
@@ -195,7 +272,7 @@ function moveAttribute(id: string, dir: -1 | 1) {
   const target = index + dir
   if (target < 0 || target >= list.length) return
   ;[list[index], list[target]] = [list[target], list[index]]
-  patch({ attributes: list })
+  patchNow({ attributes: list })
 }
 
 function addOperation() {
@@ -208,16 +285,23 @@ function addOperation() {
     parameters: [],
     returnType: 'void'
   }
-  patch({ operations: [...data.value.operations, next] })
+  const partial: Partial<UmlClassifierData> = {
+    operations: [...data.value.operations, next]
+  }
+  if (!data.value.showOperations) partial.showOperations = true
+  patchNow(partial)
   openMember(next.id, 'operation')
 }
 
-function updateOperation(id: string, partial: Partial<UmlOperation>) {
-  patch({
-    operations: data.value.operations.map((item) =>
-      item.id === id ? { ...item, ...partial } : item
-    )
-  })
+function updateOperation(id: string, partial: Partial<UmlOperation>, immediate = false) {
+  patch(
+    {
+      operations: data.value.operations.map((item) =>
+        item.id === id ? { ...item, ...partial } : item
+      )
+    },
+    immediate
+  )
 }
 
 function removeOperation(id: string) {
@@ -225,7 +309,7 @@ function removeOperation(id: string) {
     setPanelFocus(null)
   }
   collapseMember(id, 'operation')
-  patch({ operations: data.value.operations.filter((item) => item.id !== id) })
+  patchNow({ operations: data.value.operations.filter((item) => item.id !== id) })
 }
 
 function moveOperation(id: string, dir: -1 | 1) {
@@ -235,11 +319,34 @@ function moveOperation(id: string, dir: -1 | 1) {
   const target = index + dir
   if (target < 0 || target >= list.length) return
   ;[list[index], list[target]] = [list[target], list[index]]
-  patch({ operations: list })
+  patchNow({ operations: list })
 }
 
 function onParametersInput(id: string, raw: string) {
   updateOperation(id, { parameters: parseParametersInput(raw) })
+}
+
+/** 至少保留一个分区可见，避免空白类图 */
+function onShowAttributes(value: boolean) {
+  if (!value && !data.value.showOperations) {
+    patchNow({ showAttributes: false, showOperations: true })
+    return
+  }
+  if (!value) {
+    expandedAttributes.value = new Set()
+  }
+  patchNow({ showAttributes: value })
+}
+
+function onShowOperations(value: boolean) {
+  if (!value && !data.value.showAttributes) {
+    patchNow({ showOperations: false, showAttributes: true })
+    return
+  }
+  if (!value) {
+    expandedOperations.value = new Set()
+  }
+  patchNow({ showOperations: value })
 }
 </script>
 
@@ -249,50 +356,60 @@ function onParametersInput(id: string, raw: string) {
     class="dg-prop-section dg-prop-group dg-uml"
   >
     <p class="dg-prop-section__title">UML</p>
-      <SettingsRow label="类型" class="dg-settings-row--stacked">
+      <SettingsRow label="类型" class="dg-settings-row--inline dg-settings-row--control dg-uml-field-row">
         <WwSelect
           :model-value="data.classifierKind"
           :options="UML_CLASSIFIER_KIND_OPTIONS"
           option-label="label"
           option-value="value"
           size="block"
-          class="dg-prop-control dg-prop-control--full"
+          class="dg-prop-control"
           @update:model-value="onClassifierKind($event as UmlClassifierKind)"
         />
       </SettingsRow>
-      <div
-        ref="nameRowRef"
-        class="dg-uml-name"
-        :class="{ 'dg-uml-name--active': isNameFocused }"
-        @click="focusName"
-      >
-        <SettingsRow label="名称" class="dg-settings-row--stacked">
+      <div ref="nameRowRef" @click="focusName">
+        <SettingsRow label="名称" class="dg-settings-row--inline dg-settings-row--control dg-uml-field-row">
           <InputText
             :model-value="data.name"
             class="dg-prop-control"
             placeholder="ClassName"
             @update:model-value="patch({ name: String($event ?? '') })"
             @focus="focusName"
+            @blur="flushTextPatch"
           />
         </SettingsRow>
       </div>
 
-      <div class="dg-uml-subsection dg-uml-members">
+      <p
+        v-if="!data.showAttributes"
+        class="dg-uml-subsection dg-uml-block__empty dg-uml-block__empty--action"
+        @click="onShowAttributes(true)"
+      >
+        属性区已隐藏 · 点击显示
+      </p>
+      <div v-else class="dg-uml-subsection dg-uml-members">
         <div class="dg-uml-block__head">
-        <span class="dg-uml-block__label">属性</span>
+        <span class="dg-uml-block__label">
+          属性<span v-if="data.attributes.length" class="dg-uml-block__count"> ({{ data.attributes.length }})</span>
+        </span>
         <WwIconButton icon="plus" icon-size="sm" compact ariaLabel="添加属性" @click="addAttribute" />
       </div>
-
-      <p v-if="!data.attributes.length" class="dg-uml-block__empty">暂无属性</p>
 
       <div
         v-for="(attr, index) in data.attributes"
         :key="attr.id"
         :ref="(el) => setMemberRef(attr.id, el as Element | null)"
         class="dg-uml-member"
-        :class="{ 'dg-uml-member--expanded': isMemberExpanded(attr.id, 'attribute') }"
+        :class="{
+          'dg-uml-member--expanded': isMemberExpanded(attr.id, 'attribute'),
+          'dg-uml-member--active': isMemberFocused(attr.id, 'attribute')
+        }"
       >
-        <div class="dg-uml-member__bar" @click="toggleMemberExpanded(attr.id, 'attribute')">
+        <div
+          class="dg-uml-member__bar"
+          @click="onMemberBarClick(attr.id, 'attribute', $event)"
+          @dblclick="onMemberBarDblClick(attr.id, 'attribute', $event)"
+        >
           <WwTruncatedText
             :text="formatUmlAttributeExpression(attr)"
             class="dg-uml-member__expr"
@@ -324,41 +441,43 @@ function onParametersInput(id: string, raw: string) {
           </div>
         </div>
         <div v-show="isMemberExpanded(attr.id, 'attribute')" class="dg-uml-member__fields">
-          <SettingsRow label="可见性" class="dg-settings-row--inline dg-uml-field-row dg-uml-vis-row">
+          <SettingsRow label="可见性" class="dg-settings-row--inline dg-settings-row--control dg-uml-member-field-row">
             <WwSelect
               :model-value="attr.visibility"
               :options="visibilityOptions"
               option-label="label"
               option-value="value"
-              size="narrow"
-              class="dg-prop-control dg-uml-vis-select"
-              @update:model-value="updateAttribute(attr.id, { visibility: $event as UmlVisibility })"
+              size="block"
+              class="dg-prop-control"
+              @update:model-value="updateAttribute(attr.id, { visibility: $event as UmlVisibility }, true)"
             />
           </SettingsRow>
-          <SettingsRow label="名称" class="dg-settings-row--stacked dg-uml-field-row">
+          <SettingsRow label="名称" class="dg-settings-row--inline dg-settings-row--control dg-uml-member-field-row">
             <InputText
               :model-value="attr.name"
               placeholder="field"
-              class="dg-prop-control"
+              class="dg-prop-control dg-uml-member-name-input"
               @update:model-value="updateAttribute(attr.id, { name: String($event ?? '') })"
+              @blur="flushTextPatch"
             />
           </SettingsRow>
-          <SettingsRow label="类型" class="dg-settings-row--stacked dg-uml-field-row">
+          <SettingsRow label="类型" class="dg-settings-row--inline dg-settings-row--control dg-uml-member-field-row">
             <InputText
               :model-value="attr.type ?? ''"
               placeholder="string"
               class="dg-prop-control"
               @update:model-value="updateAttribute(attr.id, { type: String($event ?? '') })"
+              @blur="flushTextPatch"
             />
           </SettingsRow>
-          <SettingsRow label="修饰" class="dg-settings-row--inline dg-uml-field-row">
+          <SettingsRow label="修饰" class="dg-settings-row--inline dg-settings-row--modifier dg-uml-field-row">
             <div class="dg-prop-row--toggles dg-uml-modifier-toggles">
               <button
                 type="button"
                 class="dg-prop-toggle dg-prop-toggle--icon"
                 :class="{ 'dg-prop-toggle--active': attr.isStatic }"
                 title="静态"
-                @click="updateAttribute(attr.id, { isStatic: !attr.isStatic })"
+                @click="updateAttribute(attr.id, { isStatic: !attr.isStatic }, true)"
               >
                 S
               </button>
@@ -368,22 +487,36 @@ function onParametersInput(id: string, raw: string) {
       </div>
       </div>
 
-      <div class="dg-uml-subsection dg-uml-members">
+      <p
+        v-if="!data.showOperations"
+        class="dg-uml-subsection dg-uml-block__empty dg-uml-block__empty--action"
+        @click="onShowOperations(true)"
+      >
+        操作区已隐藏 · 点击显示
+      </p>
+      <div v-else class="dg-uml-subsection dg-uml-members">
         <div class="dg-uml-block__head">
-        <span class="dg-uml-block__label">操作</span>
+        <span class="dg-uml-block__label">
+          操作<span v-if="data.operations.length" class="dg-uml-block__count"> ({{ data.operations.length }})</span>
+        </span>
         <WwIconButton icon="plus" icon-size="sm" compact ariaLabel="添加操作" @click="addOperation" />
       </div>
-
-      <p v-if="!data.operations.length" class="dg-uml-block__empty">暂无操作</p>
 
       <div
         v-for="(op, index) in data.operations"
         :key="op.id"
         :ref="(el) => setMemberRef(op.id, el as Element | null)"
         class="dg-uml-member"
-        :class="{ 'dg-uml-member--expanded': isMemberExpanded(op.id, 'operation') }"
+        :class="{
+          'dg-uml-member--expanded': isMemberExpanded(op.id, 'operation'),
+          'dg-uml-member--active': isMemberFocused(op.id, 'operation')
+        }"
       >
-        <div class="dg-uml-member__bar" @click="toggleMemberExpanded(op.id, 'operation')">
+        <div
+          class="dg-uml-member__bar"
+          @click="onMemberBarClick(op.id, 'operation', $event)"
+          @dblclick="onMemberBarDblClick(op.id, 'operation', $event)"
+        >
           <WwTruncatedText
             :text="formatUmlOperationExpression(op)"
             class="dg-uml-member__expr"
@@ -415,49 +548,52 @@ function onParametersInput(id: string, raw: string) {
           </div>
         </div>
         <div v-show="isMemberExpanded(op.id, 'operation')" class="dg-uml-member__fields">
-          <SettingsRow label="可见性" class="dg-settings-row--inline dg-uml-field-row dg-uml-vis-row">
+          <SettingsRow label="可见性" class="dg-settings-row--inline dg-settings-row--control dg-uml-member-field-row">
             <WwSelect
               :model-value="op.visibility"
               :options="visibilityOptions"
               option-label="label"
               option-value="value"
-              size="narrow"
-              class="dg-prop-control dg-uml-vis-select"
-              @update:model-value="updateOperation(op.id, { visibility: $event as UmlVisibility })"
+              size="block"
+              class="dg-prop-control"
+              @update:model-value="updateOperation(op.id, { visibility: $event as UmlVisibility }, true)"
             />
           </SettingsRow>
-          <SettingsRow label="名称" class="dg-settings-row--stacked dg-uml-field-row">
+          <SettingsRow label="名称" class="dg-settings-row--inline dg-settings-row--control dg-uml-member-field-row">
             <InputText
               :model-value="op.name"
               placeholder="method"
-              class="dg-prop-control"
+              class="dg-prop-control dg-uml-member-name-input"
               @update:model-value="updateOperation(op.id, { name: String($event ?? '') })"
+              @blur="flushTextPatch"
             />
           </SettingsRow>
-          <SettingsRow label="参数" class="dg-settings-row--stacked dg-uml-field-row">
+          <SettingsRow label="参数" class="dg-settings-row--inline dg-settings-row--control dg-uml-member-field-row">
             <InputText
               :model-value="formatParametersInput(op)"
               placeholder="a: int, b: string"
               class="dg-prop-control"
               @update:model-value="onParametersInput(op.id, String($event ?? ''))"
+              @blur="flushTextPatch"
             />
           </SettingsRow>
-          <SettingsRow label="返回类型" class="dg-settings-row--stacked dg-uml-field-row">
+          <SettingsRow label="返回类型" class="dg-settings-row--inline dg-settings-row--control dg-uml-member-field-row">
             <InputText
               :model-value="op.returnType ?? ''"
               placeholder="void"
               class="dg-prop-control"
               @update:model-value="updateOperation(op.id, { returnType: String($event ?? '') })"
+              @blur="flushTextPatch"
             />
           </SettingsRow>
-          <SettingsRow label="修饰" class="dg-settings-row--inline dg-uml-field-row">
+          <SettingsRow label="修饰" class="dg-settings-row--inline dg-settings-row--modifier dg-uml-field-row">
             <div class="dg-prop-row--toggles dg-uml-modifier-toggles">
               <button
                 type="button"
                 class="dg-prop-toggle dg-prop-toggle--icon"
                 :class="{ 'dg-prop-toggle--active': op.isStatic }"
                 title="静态"
-                @click="updateOperation(op.id, { isStatic: !op.isStatic })"
+                @click="updateOperation(op.id, { isStatic: !op.isStatic }, true)"
               >
                 S
               </button>
@@ -466,7 +602,7 @@ function onParametersInput(id: string, raw: string) {
                 class="dg-prop-toggle dg-prop-toggle--icon dg-prop-toggle--italic"
                 :class="{ 'dg-prop-toggle--active': op.isAbstract }"
                 title="抽象"
-                @click="updateOperation(op.id, { isAbstract: !op.isAbstract })"
+                @click="updateOperation(op.id, { isAbstract: !op.isAbstract }, true)"
               >
                 A
               </button>
@@ -477,18 +613,18 @@ function onParametersInput(id: string, raw: string) {
       </div>
 
       <div class="dg-uml-subsection dg-uml-display">
-        <SettingsRow label="显示属性区" class="dg-settings-row--inline">
+        <SettingsRow label="显示属性区" class="dg-settings-row--inline dg-settings-row--toggle">
           <WwToggleSwitch
             :model-value="data.showAttributes"
             aria-label="显示属性区"
-            @update:model-value="patch({ showAttributes: $event })"
+            @update:model-value="onShowAttributes($event)"
           />
         </SettingsRow>
-        <SettingsRow label="显示操作区" class="dg-settings-row--inline">
+        <SettingsRow label="显示操作区" class="dg-settings-row--inline dg-settings-row--toggle">
           <WwToggleSwitch
             :model-value="data.showOperations"
             aria-label="显示操作区"
-            @update:model-value="patch({ showOperations: $event })"
+            @update:model-value="onShowOperations($event)"
           />
         </SettingsRow>
       </div>
@@ -496,22 +632,6 @@ function onParametersInput(id: string, raw: string) {
 </template>
 
 <style scoped>
-.dg-uml {
-  gap: 0.375rem;
-}
-
-.dg-uml :deep(.ww-select.p-select) {
-  --ww-select-height: 1.75rem;
-  --ww-select-min-w: 0;
-  min-height: 1.75rem;
-  font-size: 0.75rem;
-}
-
-.dg-uml :deep(.ww-select .p-select-label) {
-  font-size: 0.75rem;
-  padding-block: 0.25rem;
-}
-
 .dg-uml-subsection {
   margin-top: 0.5rem;
   padding-top: 0.5rem;
@@ -554,15 +674,33 @@ function onParametersInput(id: string, raw: string) {
   text-overflow: ellipsis;
 }
 
-.dg-uml-block__empty {
-  margin: 0;
-  padding: 0 0 0.25rem;
-  font-size: 0.6875rem;
+.dg-uml-block__count {
+  font-weight: 400;
   color: var(--ww-ink-faint);
 }
 
-.dg-uml-name--active :deep(.ww-settings-row__title) {
+.dg-uml-block__empty {
+  margin: 0;
+  padding: 0.3125rem 0.375rem;
+  font-size: 0.6875rem;
+  color: var(--ww-ink-faint);
+  text-align: left;
+}
+
+.dg-uml-block__empty--action {
+  width: 100%;
+  border: none;
+  border-radius: var(--dg-prop-radius);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    color var(--ww-duration-fast) var(--ww-ease-out),
+    background var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.dg-uml-block__empty--action:hover {
   color: var(--ww-accent);
+  background: color-mix(in srgb, var(--ww-ink-faint) 8%, transparent);
 }
 
 .dg-uml-member {
@@ -573,8 +711,13 @@ function onParametersInput(id: string, raw: string) {
 }
 
 .dg-uml-member:hover,
-.dg-uml-member--expanded {
+.dg-uml-member--expanded,
+.dg-uml-member--active {
   background: color-mix(in srgb, var(--ww-ink-faint) 7.5%, transparent);
+}
+
+.dg-uml-member--active:not(.dg-uml-member--expanded) .dg-uml-member__expr {
+  color: var(--ww-accent);
 }
 
 .dg-uml-member__bar {
@@ -583,7 +726,7 @@ function onParametersInput(id: string, raw: string) {
   align-items: center;
   min-width: 0;
   min-height: 1.5rem;
-  padding-right: 3.25rem;
+  padding-right: 5.5rem;
   cursor: pointer;
 }
 
@@ -608,7 +751,7 @@ function onParametersInput(id: string, raw: string) {
 
 .dg-uml-member__tools {
   position: absolute;
-  right: 0;
+  right: -0.25rem;
   top: 50%;
   z-index: 1;
   display: flex;
@@ -645,43 +788,9 @@ function onParametersInput(id: string, raw: string) {
   text-overflow: ellipsis;
 }
 
-.dg-uml-member__fields :deep(.dg-uml-field-row.dg-settings-row--inline) {
-  min-height: 1.75rem;
-  padding: 0.1875rem 0;
-}
-
-.dg-uml-vis-row :deep(.ww-settings-row__label) {
-  flex: 1 1 auto;
-  min-width: 0;
-  padding-right: 0.375rem;
-}
-
-.dg-uml-vis-row :deep(.ww-settings-row__control) {
-  flex: 0 0 auto;
-  width: auto;
-  max-width: none;
-  padding-right: 0.125rem;
-}
-
-.dg-uml-vis-row :deep(.dg-uml-vis-select.ww-select-root) {
-  width: 6.875rem;
-  max-width: 100%;
-}
-
-.dg-uml-vis-row :deep(.ww-select.p-select) {
-  width: 6.875rem !important;
-  min-width: 6.875rem !important;
-  max-width: 100%;
-}
-
-.dg-uml-modifier-toggles {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 [data-theme='dark'] .dg-uml-member:hover,
-[data-theme='dark'] .dg-uml-member--expanded {
+[data-theme='dark'] .dg-uml-member--expanded,
+[data-theme='dark'] .dg-uml-member--active {
   background: rgb(255 255 255 / 0.07);
 }
 </style>

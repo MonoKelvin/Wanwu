@@ -5,6 +5,7 @@
  */
 import { computed, onBeforeUnmount, onMounted, ref, useAttrs, watch } from 'vue'
 import Select from 'primevue/select'
+import WwIcon from '@shared/components/WwIcon.vue'
 import {
   buildPanelOverlayStyle,
   minWidthRemForSelectTrigger
@@ -202,6 +203,14 @@ watch(
       @hide="onPanelHide"
       @update:model-value="emit('update:modelValue', $event)"
     >
+      <template #dropdownicon="slotProps">
+        <WwIcon
+          name="chevron-down"
+          :class="slotProps.class"
+          :size="14"
+          :stroke-width="1.35"
+        />
+      </template>
       <template #option="slotProps">
         <span
           class="ww-select-option-label"

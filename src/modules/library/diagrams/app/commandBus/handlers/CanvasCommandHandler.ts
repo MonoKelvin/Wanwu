@@ -188,6 +188,18 @@ export class CanvasCommandHandler implements IDiagramCommandHandler {
           port.setGrid(p.visible as boolean, p.snap as boolean | undefined)
           session.markActivePageDirty()
           return { ok: true }
+        case 'canvas.formatPainterStart':
+          if (!port.startFormatPainter()) {
+            return diagramError('VALIDATION', '请选中单个图元或连线后使用格式刷')
+          }
+          return { ok: true }
+        case 'canvas.formatPainterCancel':
+          port.cancelFormatPainter()
+          return { ok: true }
+        case 'canvas.clearStyles':
+          port.clearSelectionStyles()
+          session.markActivePageDirty()
+          return { ok: true }
         case 'canvas.nudgeSelection': {
           const direction = p.direction as CanvasNudgeDirection
           const large = Boolean(p.large)

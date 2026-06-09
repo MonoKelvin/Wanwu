@@ -27,7 +27,10 @@ export const CANVAS_COMMAND_TYPES = [
   'canvas.centerContent',
   'canvas.centerOrigin',
   'canvas.setGrid',
-  'canvas.nudgeSelection'
+  'canvas.nudgeSelection',
+  'canvas.formatPainterStart',
+  'canvas.formatPainterCancel',
+  'canvas.clearStyles'
 ] as const
 
 export type CanvasCommandType = (typeof CANVAS_COMMAND_TYPES)[number]

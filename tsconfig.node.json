@@ -26,5 +26,8 @@
     "src/shared/documentPackage/**/*",
     "src/modules/library/diagrams/lib/**/*.ts"
   ],
-  "exclude": ["src/shared/types/menu.ts"]
+  "exclude": [
+    "src/shared/types/menu.ts",
+    "src/modules/library/diagrams/lib/useDiagramFolderDialogs.ts"
+  ]
 }

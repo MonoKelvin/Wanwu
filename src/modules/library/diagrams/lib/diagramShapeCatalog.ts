@@ -100,8 +100,8 @@ export const DIAGRAM_SHAPE_CATEGORIES: DiagramShapeCategory[] = [
       {
         id: 'dg-uml-component',
         label: '组件',
-        lfType: 'dg-rect',
-        defaultText: '组件',
+        lfType: 'dg-uml-class',
+        defaultText: 'Component',
         preview: { kind: 'path', d: 'M6 6 H14 V14 H6 Z M4 8 H5 V12 H4 Z M17 8 H18 V12 H17 Z' }
       }
     ]

@@ -25,7 +25,17 @@ export const umlShapeExtension: DiagramShapeExtension = {
     {
       paletteId: 'dg-uml-package',
       kind: UML_CLASSIFIER_KIND,
-      defaultOverrides: { name: 'package' }
+      defaultOverrides: { classifierKind: 'package', name: 'package' }
+    },
+    {
+      paletteId: 'dg-uml-component',
+      kind: UML_CLASSIFIER_KIND,
+      defaultOverrides: {
+        classifierKind: 'component',
+        name: 'Component',
+        showAttributes: false,
+        showOperations: true
+      }
     }
   ]
 }
