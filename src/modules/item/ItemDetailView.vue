@@ -28,15 +28,15 @@ import {
 } from '@shared/composables/usePopTip'
 
 const U = {
-  toastUnfav: '\u5df2\u53d6\u6d88\u6536\u85cf',
-  toastFav: '\u5df2\u52a0\u5165\u6536\u85cf',
-  toastUnlike: '\u5df2\u53d6\u6d88\u70b9\u8d5e',
-  toastLike: '\u5df2\u70b9\u8d5e',
-  toastUploaded: '\u56fe\u7247\u5df2\u4e0a\u4f20',
-  toastUploadFail: '\u4e0a\u4f20\u5931\u8d25',
-  toastSaved: '\u5df2\u4fdd\u5b58\u8be6\u60c5',
-  toastSaveFail: '\u4fdd\u5b58\u5931\u8d25',
-  loading: '\u52a0\u8f7d\u4e2d\u2026',
+  toastUnfav: 'å·²å–æ¶ˆæ”¶è—',
+  toastFav: 'å·²åŠ å…¥æ”¶è—',
+  toastUnlike: 'å·²å–æ¶ˆç‚¹èµ',
+  toastLike: 'å·²ç‚¹èµ',
+  toastUploaded: 'å›¾ç‰‡å·²ä¸Šä¼ ',
+  toastUploadFail: 'ä¸Šä¼ å¤±è´¥',
+  toastSaved: 'å·²ä¿å­˜è¯¦æƒ…',
+  toastSaveFail: 'ä¿å­˜å¤±è´¥',
+  loading: 'åŠ è½½ä¸­â€¦',
 } as const
 
 const route = useRoute()
@@ -100,7 +100,7 @@ function bindThumbsStrip() {
 const isLibrary = computed(() => (route.params.source as string) === 'library')
 
 const specEntries = computed(() =>
-  Object.entries(item.value?.specs ?? {}).filter(([key]) => key !== 'ÕªÒª')
+  Object.entries(item.value?.specs ?? {}).filter(([key]) => key !== 'æ‘˜è¦')
 )
 
 const gallerySlides = computed(() => {
@@ -322,10 +322,10 @@ function startDescEdit() {
 async function cancelDescEdit() {
   const ok = await dismissConfirm.ask({
     id: DISMISSIBLE_PROMPT_IDS.itemDescCancel,
-    header: '·ÅÆú±à¼­',
-    message: 'µ±Ç°ĞŞ¸ÄÉĞÎ´±£´æ£¬È·¶¨ÒªÍË³ö±à¼­Âğ£¿',
-    acceptLabel: '·ÅÆúĞŞ¸Ä',
-    rejectLabel: '¼ÌĞø±à¼­',
+    header: 'æ”¾å¼ƒç¼–è¾‘',
+    message: 'å½“å‰ä¿®æ”¹å°šæœªä¿å­˜ï¼Œç¡®å®šè¦é€€å‡ºç¼–è¾‘å—ï¼Ÿ',
+    acceptLabel: 'æ”¾å¼ƒä¿®æ”¹',
+    rejectLabel: 'ç»§ç»­ç¼–è¾‘',
     danger: true
   })
   if (!ok) return
@@ -337,10 +337,10 @@ async function saveDescEdit() {
   if (!item.value) return
   const ok = await dismissConfirm.ask({
     id: DISMISSIBLE_PROMPT_IDS.itemDescSave,
-    header: '±£´æÏêÇé',
-    message: 'È·¶¨½«µ±Ç° Markdown ÕıÎÄĞ´Èë¸ÃÎïÆ·Âğ£¿',
-    acceptLabel: '±£´æ',
-    rejectLabel: '¼ÌĞø±à¼­'
+    header: 'ä¿å­˜è¯¦æƒ…',
+    message: 'ç¡®å®šå°†å½“å‰ Markdown æ­£æ–‡å†™å…¥è¯¥ç‰©å“å—ï¼Ÿ',
+    acceptLabel: 'ä¿å­˜',
+    rejectLabel: 'ç»§ç»­ç¼–è¾‘'
   })
   if (!ok) return
   descSaving.value = true
@@ -386,7 +386,7 @@ async function revealInFolder() {
       <button
         type="button"
         class="ww-product-detail__back ww-glass-btn ww-glass-btn--icon ww-glass-btn--on-light"
-        aria-label="·µ»Ø"
+        aria-label="è¿”å›"
         @click="goBack"
       >
         <WwIcon name="arrow-left" size="sm" />
@@ -396,12 +396,12 @@ async function revealInFolder() {
         <span v-if="item?.subCategoryName" class="ww-product-detail__crumb-sep" aria-hidden="true">/</span>
         <span class="ww-product-detail__crumb-current">{{ item?.name ?? U.loading }}</span>
       </nav>
-      <div v-if="item" class="ww-product-detail__page-meta" aria-label="Ê±¼äĞÅÏ¢">
+      <div v-if="item" class="ww-product-detail__page-meta" aria-label="æ—¶é—´ä¿¡æ¯">
         <span v-if="item.createdAt" class="ww-product-detail__page-meta-item">
-          ´´½¨Ê±¼ä: {{ formatDateTime(item.createdAt) }}
+          åˆ›å»ºæ—¶é—´: {{ formatDateTime(item.createdAt) }}
         </span>
         <span v-if="item.updatedAt" class="ww-product-detail__page-meta-item">
-          ¸üĞÂÊ±¼ä: {{ formatDateTime(item.updatedAt) }}
+          æ›´æ–°æ—¶é—´: {{ formatDateTime(item.updatedAt) }}
         </span>
       </div>
     </header>
@@ -417,18 +417,18 @@ async function revealInFolder() {
     <EmptyState
       v-else-if="!item"
       variant="not-found"
-      title="Î´ÕÒµ½ÎïÆ·"
-      description="¸ÃÌõÄ¿¿ÉÄÜÒÑ±»É¾³ı»ò ID ²»ÕıÈ·¡£"
+      title="æœªæ‰¾åˆ°ç‰©å“"
+      description="è¯¥æ¡ç›®å¯èƒ½å·²è¢«åˆ é™¤æˆ– ID ä¸æ­£ç¡®ã€‚"
     />
 
     <div v-else class="ww-product-detail__scroll">
       <article ref="shareCaptureRef" class="ww-product-detail__inner" data-share-capture>
         <div class="ww-product-detail__main">
-          <section class="ww-product-detail__gallery" aria-label="Í¼Æ¬">
+          <section class="ww-product-detail__gallery" aria-label="å›¾ç‰‡">
             <button
               type="button"
               class="ww-product-detail__id-outside ww-product-detail__id-link"
-              :title="'µã»÷¸´ÖÆ ID£º' + item.id"
+              :title="'ç‚¹å‡»å¤åˆ¶ IDï¼š' + item.id"
               @click="copyItemId"
             >
               ID: {{ item.id }}
@@ -480,7 +480,7 @@ async function revealInFolder() {
                 v-show="thumbsCanScrollLeft"
                 type="button"
                 class="ww-product-detail__thumbs-nav ww-product-detail__thumbs-nav--prev"
-                aria-label="ÉÏÒ»×éÍ¼Æ¬"
+                aria-label="ä¸Šä¸€ç»„å›¾ç‰‡"
                 @click="scrollThumbs(-1)"
               >
                 <WwIcon name="chevron-left" size="sm" />
@@ -489,7 +489,7 @@ async function revealInFolder() {
                 ref="thumbsStripRef"
                 class="ww-product-detail__thumbs"
                 role="tablist"
-                aria-label="Í¼¼¯"
+                aria-label="å›¾é›†"
                 @scroll.passive="updateThumbsScrollState"
               >
                 <button
@@ -500,7 +500,7 @@ async function revealInFolder() {
                   class="ww-product-detail__thumb"
                   :class="{ 'ww-product-detail__thumb--active': activeImage === slide.url }"
                   :aria-selected="activeImage === slide.url"
-                  :aria-label="`Í¼ ${i + 1}`"
+                  :aria-label="`å›¾ ${i + 1}`"
                   @click="selectImage(slide.url)"
                 >
                   <img :src="slide.url" alt="" />
@@ -510,7 +510,7 @@ async function revealInFolder() {
                   type="button"
                   class="ww-product-detail__thumb ww-product-detail__thumb--add"
                   :disabled="uploading"
-                  aria-label="ÉÏ´«Í¼Æ¬"
+                  aria-label="ä¸Šä¼ å›¾ç‰‡"
                   @click="uploadImage"
                 >
                   <WwIcon name="plus" size="sm" />
@@ -520,7 +520,7 @@ async function revealInFolder() {
                 v-show="thumbsCanScrollRight"
                 type="button"
                 class="ww-product-detail__thumbs-nav ww-product-detail__thumbs-nav--next"
-                aria-label="ÏÂÒ»×éÍ¼Æ¬"
+                aria-label="ä¸‹ä¸€ç»„å›¾ç‰‡"
                 @click="scrollThumbs(1)"
               >
                 <WwIcon name="chevron-right" size="sm" />
@@ -541,7 +541,7 @@ async function revealInFolder() {
             </div>
 
             <div v-if="specEntries.length" class="ww-product-detail__spec-block">
-              <h2 class="ww-section-label">¹æ¸ñ²ÎÊı</h2>
+              <h2 class="ww-section-label">è§„æ ¼å‚æ•°</h2>
               <dl class="ww-product-detail__specs">
                 <div v-for="[key, val] in specEntries" :key="key" class="ww-product-detail__spec-row">
                   <dt>{{ key }}</dt>
@@ -554,12 +554,12 @@ async function revealInFolder() {
 
         <section v-if="isLibrary" class="ww-product-detail__desc">
           <div class="ww-product-detail__desc-head">
-            <h2 class="ww-section-label">ÏêÏ¸½éÉÜ</h2>
+            <h2 class="ww-section-label">è¯¦ç»†ä»‹ç»</h2>
             <div v-if="!descEditing" class="ww-product-detail__desc-actions">
               <button
                 type="button"
                 class="ww-product-detail__desc-btn"
-                aria-label="±à¼­ÏêÇé"
+                aria-label="ç¼–è¾‘è¯¦æƒ…"
                 @click="startDescEdit"
               >
                 <WwIcon name="pencil" size="sm" />
@@ -570,7 +570,7 @@ async function revealInFolder() {
                 type="button"
                 class="ww-product-detail__desc-btn ww-product-detail__desc-btn--primary"
                 :disabled="descSaving"
-                aria-label="Íê³É"
+                aria-label="å®Œæˆ"
                 @click="void saveDescEdit()"
               >
                 <WwIcon name="check" size="sm" />
@@ -579,7 +579,7 @@ async function revealInFolder() {
                 type="button"
                 class="ww-product-detail__desc-btn"
                 :disabled="descSaving"
-                aria-label="È¡Ïû"
+                aria-label="å–æ¶ˆ"
                 @click="void cancelDescEdit()"
               >
                 <WwIcon name="x" size="sm" />
@@ -593,7 +593,7 @@ async function revealInFolder() {
               class="w-full"
               rows="12"
               auto-resize
-              placeholder="Markdown ÕıÎÄ"
+              placeholder="Markdown æ­£æ–‡"
             />
           </div>
           <WwMarkdownReader
@@ -601,11 +601,11 @@ async function revealInFolder() {
             :content="item.description"
             class="ww-product-detail__prose"
           />
-          <p v-else class="ww-product-detail__desc-empty">ÔİÎŞÏêÏ¸½éÉÜ£¬µã»÷ÉÏ·½±à¼­°´Å¥Ìí¼Ó¡£</p>
+          <p v-else class="ww-product-detail__desc-empty">æš‚æ— è¯¦ç»†ä»‹ç»ï¼Œç‚¹å‡»ä¸Šæ–¹ç¼–è¾‘æŒ‰é’®æ·»åŠ ã€‚</p>
         </section>
 
         <section v-else-if="item.description" class="ww-product-detail__desc">
-          <h2 class="ww-section-label">ÏêÏ¸½éÉÜ</h2>
+          <h2 class="ww-section-label">è¯¦ç»†ä»‹ç»</h2>
           <WwMarkdownReader :content="item.description" class="ww-product-detail__prose" />
         </section>
       </article>
@@ -615,53 +615,53 @@ async function revealInFolder() {
       v-if="item && !loading"
       class="ww-product-detail__float-dock ww-product-detail__dock ww-glass-blur"
       role="toolbar"
-      aria-label="ÎïÆ·²Ù×÷"
+      aria-label="ç‰©å“æ“ä½œ"
     >
       <button
-        v-tooltip.bottom="isLiked ? 'È¡ÏûµãÔŞ' : 'µãÔŞ'"
+        v-tooltip.bottom="isLiked ? 'å–æ¶ˆç‚¹èµ' : 'ç‚¹èµ'"
         type="button"
         class="ww-product-detail__dock-btn"
         :class="{ 'ww-product-detail__dock-btn--liked': isLiked }"
         :aria-pressed="isLiked"
-        :aria-label="isLiked ? 'È¡ÏûµãÔŞ' : 'µãÔŞ'"
+        :aria-label="isLiked ? 'å–æ¶ˆç‚¹èµ' : 'ç‚¹èµ'"
         @click="onLikeClick"
       >
         <WwIcon name="thumbs-up" size="sm" :filled="isLiked" />
       </button>
       <button
-        v-tooltip.bottom="isFavorited ? 'È¡ÏûÊÕ²Ø' : 'ÊÕ²Ø'"
+        v-tooltip.bottom="isFavorited ? 'å–æ¶ˆæ”¶è—' : 'æ”¶è—'"
         type="button"
         class="ww-product-detail__dock-btn"
         :class="{ 'ww-product-detail__dock-btn--active': isFavorited }"
         :aria-pressed="isFavorited"
-        :aria-label="isFavorited ? 'È¡ÏûÊÕ²Ø' : 'ÊÕ²Ø'"
+        :aria-label="isFavorited ? 'å–æ¶ˆæ”¶è—' : 'æ”¶è—'"
         @click="onFavoriteClick"
       >
         <WwIcon name="heart" size="sm" :filled="isFavorited" />
       </button>
       <button
-        v-tooltip.bottom="'·ÖÏí³¤Í¼'"
+        v-tooltip.bottom="'åˆ†äº«é•¿å›¾'"
         type="button"
         class="ww-product-detail__dock-btn"
-        aria-label="·ÖÏí³¤Í¼"
+        aria-label="åˆ†äº«é•¿å›¾"
         @click="openShareImageDialog"
       >
         <WwIcon name="share" size="sm" />
       </button>
       <button
-        v-tooltip.bottom="'¶¨ÖÆ¿¨Æ¬'"
+        v-tooltip.bottom="'å®šåˆ¶å¡ç‰‡'"
         type="button"
         class="ww-product-detail__dock-btn"
-        aria-label="¶¨ÖÆ¿¨Æ¬"
+        aria-label="å®šåˆ¶å¡ç‰‡"
         @click="shareCardOpen = true"
       >
         <WwIcon name="sparkles" size="sm" />
       </button>
       <button
-        v-tooltip.bottom="'¸´ÖÆÏêÇé'"
+        v-tooltip.bottom="'å¤åˆ¶è¯¦æƒ…'"
         type="button"
         class="ww-product-detail__dock-btn"
-        aria-label="¸´ÖÆÏêÇé"
+        aria-label="å¤åˆ¶è¯¦æƒ…"
         @click="copyItemDetails"
       >
         <WwIcon name="copy" size="sm" />

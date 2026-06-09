@@ -1,19 +1,15 @@
 import type LogicFlow from '@logicflow/core'
+import { ensureDiagramShapeExtensions } from '@modules/library/diagrams/app/diagramShapeExtensions'
+import { mergeDgShapeIntoProperties } from '@modules/library/diagrams/domain/shape-extension'
 import { DIAGRAM_SHAPE_CATEGORIES } from '@modules/library/diagrams/lib/diagramShapeCatalog'
+import { getDiagramShapeById } from '@modules/library/diagrams/lib/diagramShapeLookup'
 import { normalizeNodeStyleProperties } from '@modules/library/diagrams/lib/diagramStyleBridge'
 import type { DiagramShapeItem } from '@modules/library/diagrams/lib/diagramShapeTypes'
 
 export { registerAllDiagramShapes } from '@modules/library/diagrams/lib/diagramShapeRegs'
 export type { DiagramShapeCategory, DiagramShapeItem } from '@modules/library/diagrams/lib/diagramShapeTypes'
 export { DIAGRAM_SHAPE_CATEGORIES } from '@modules/library/diagrams/lib/diagramShapeCatalog'
-
-const SHAPE_BY_ID = new Map<string, DiagramShapeItem>(
-  DIAGRAM_SHAPE_CATEGORIES.flatMap((c) => c.items).map((item) => [item.id, item])
-)
-
-export function getDiagramShapeById(id: string): DiagramShapeItem | undefined {
-  return SHAPE_BY_ID.get(id)
-}
+export { getDiagramShapeById } from '@modules/library/diagrams/lib/diagramShapeLookup'
 
 export function buildDiagramNodeConfig(
   shapeId: string,
@@ -44,6 +40,20 @@ export function buildDiagramNodeConfig(
     base.properties = {
       dgLane: true,
       ...base.properties
+    }
+  }
+
+  const registry = ensureDiagramShapeExtensions()
+  const bootstrapEnvelope = registry.createBootstrapEnvelope(shapeId)
+  if (bootstrapEnvelope) {
+    base.properties = mergeDgShapeIntoProperties(
+      base.properties as Record<string, unknown>,
+      bootstrapEnvelope
+    )
+    const kindReg = registry.getKind(bootstrapEnvelope.kind)
+    const text = kindReg?.codec.serializeText?.(bootstrapEnvelope.data)
+    if (text != null) {
+      base.text = text
     }
   }
 

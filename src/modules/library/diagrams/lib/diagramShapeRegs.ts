@@ -374,47 +374,6 @@ function regComment(lf: LogicFlow, type: string) {
   lf.register({ type, view: View, model: Model })
 }
 
-/** UML 类 */
-function regUmlClass(lf: LogicFlow, type: string) {
-  class Model extends DiagramRectResizeModel {
-    initNodeData(data: LogicFlow.NodeConfig) {
-      super.initNodeData(data)
-      applyDefaultRectSize(this, data, { width: 112, height: 88, radius: 2 })
-      this.minWidth = 56
-      this.minHeight = 48
-    }
-  }
-  class View extends DiagramRectResizeView {
-    getResizeShape() {
-      const { model } = this.props
-      const { x, y, width, height, radius } = model
-      const style = model.getNodeStyle()
-      const top = y - height / 2
-      const header = height * 0.3
-      return h('g', {}, [
-        h('rect', {
-          ...style,
-          x: x - width / 2,
-          y: top,
-          width,
-          height,
-          rx: radius,
-          ry: radius
-        }),
-        h('line', {
-          x1: x - width / 2,
-          y1: top + header,
-          x2: x + width / 2,
-          y2: top + header,
-          stroke: style.stroke,
-          strokeWidth: style.strokeWidth
-        })
-      ])
-    }
-  }
-  lf.register({ type, view: View, model: Model })
-}
-
 /** 泳道 */
 function regSwimlane(lf: LogicFlow, type: string) {
   class Model extends DiagramRectResizeModel {
@@ -769,8 +728,6 @@ export function registerAllDiagramShapes(lf: LogicFlow): void {
   regStoredData(lf, 'dg-stored-data')
   regComment(lf, 'dg-comment')
   regCircle(lf, 'dg-connector', 10)
-  regUmlClass(lf, 'dg-uml-class')
-  regUmlClass(lf, 'dg-uml-interface')
   regSwimlane(lf, 'dg-swimlane')
   regNote(lf, 'dg-note')
   regCloud(lf, 'dg-cloud')

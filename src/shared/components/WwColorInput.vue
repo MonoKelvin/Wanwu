@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import WwNumberInput from '@shared/components/WwNumberInput/WwNumberInput.vue'
 import { usePopTip } from '@shared/composables/usePopTip'
+import { useSettingsStore } from '@shared/stores/settings'
 import { describeColor } from '@shared/lib/colorDescriptiveName'
 import {
   colorPreviewCss,
@@ -41,6 +44,8 @@ const emit = defineEmits<{
 const FORMATS: ColorValueFormat[] = ['hex', 'rgb', 'hsl']
 
 const popTip = usePopTip()
+const settingsStore = useSettingsStore()
+const { settings } = storeToRefs(settingsStore)
 const open = ref(false)
 const rootRef = ref<HTMLElement | null>(null)
 const triggerRef = ref<HTMLButtonElement | null>(null)
@@ -118,6 +123,8 @@ const alphaTrackStyle = computed(() => {
   }
 })
 
+const recentColors = computed(() => settings.value.recentColors)
+
 watch(
   () => props.modelValue,
   (value) => {
@@ -183,7 +190,21 @@ async function toggleOpen() {
   }
 }
 
+function rememberRecentColor() {
+  if (props.mixed) return
+  const value = formatHsva(hsva.value, { transparentKeyword: props.allowTransparent })
+  if (!value) return
+  void settingsStore.appendRecentColor(value)
+}
+
+function applyRecentColor(color: string) {
+  hsva.value = parseColorToHsva(color)
+  emitFromHsva()
+  void settingsStore.appendRecentColor(color)
+}
+
 function closePanel() {
+  if (open.value) rememberRecentColor()
   open.value = false
 }
 
@@ -203,9 +224,9 @@ function onHexInput(event: Event) {
   applyParsed(parseColor(text))
 }
 
-function onRgbInput(channel: 'r' | 'g' | 'b' | 'a', event: Event) {
-  const n = Number((event.target as HTMLInputElement).value)
-  if (!Number.isFinite(n)) return
+function onRgbInput(channel: 'r' | 'g' | 'b' | 'a', value: number | null) {
+  if (value === null || !Number.isFinite(value)) return
+  const n = value
   const base = rgbFields.value
   const next = {
     ...base,
@@ -215,9 +236,9 @@ function onRgbInput(channel: 'r' | 'g' | 'b' | 'a', event: Event) {
   patchHsva({ h, s, v, a: next.a / 100 })
 }
 
-function onHslInput(channel: 'h' | 's' | 'l' | 'a', event: Event) {
-  const n = Number((event.target as HTMLInputElement).value)
-  if (!Number.isFinite(n)) return
+function onHslInput(channel: 'h' | 's' | 'l' | 'a', value: number | null) {
+  if (value === null || !Number.isFinite(value)) return
+  const n = value
   const base = hslFields.value
   const next = {
     ...base,
@@ -491,6 +512,22 @@ onBeforeUnmount(() => {
             </div>
           </div>
 
+          <div v-if="recentColors.length" class="ww-color-input__recent">
+            <span class="ww-color-input__recent-label">最近</span>
+            <div class="ww-color-input__recent-row" role="list">
+              <button
+                v-for="color in recentColors"
+                :key="color"
+                type="button"
+                role="listitem"
+                class="ww-color-input__recent-swatch"
+                :style="{ backgroundColor: colorPreviewCss(color) }"
+                :aria-label="`最近颜色 ${color}`"
+                @click="applyRecentColor(color)"
+              />
+            </div>
+          </div>
+
           <footer class="ww-color-input__footer">
             <div class="ww-color-input__formats" role="tablist" aria-label="输入格式">
               <button
@@ -521,46 +558,42 @@ onBeforeUnmount(() => {
             <div v-else-if="valueFormat === 'rgb'" class="ww-color-input__fields ww-color-input__fields--grid">
               <label class="ww-color-input__field-wrap">
                 <span>R</span>
-                <input
-                  class="ww-color-input__field"
-                  type="number"
-                  min="0"
-                  max="255"
-                  :value="rgbFields.r"
-                  @change="onRgbInput('r', $event)"
+                <WwNumberInput
+                  :model-value="rgbFields.r"
+                  size="compact"
+                  :min="0"
+                  :max="255"
+                  @update:model-value="onRgbInput('r', $event)"
                 />
               </label>
               <label class="ww-color-input__field-wrap">
                 <span>G</span>
-                <input
-                  class="ww-color-input__field"
-                  type="number"
-                  min="0"
-                  max="255"
-                  :value="rgbFields.g"
-                  @change="onRgbInput('g', $event)"
+                <WwNumberInput
+                  :model-value="rgbFields.g"
+                  size="compact"
+                  :min="0"
+                  :max="255"
+                  @update:model-value="onRgbInput('g', $event)"
                 />
               </label>
               <label class="ww-color-input__field-wrap">
                 <span>B</span>
-                <input
-                  class="ww-color-input__field"
-                  type="number"
-                  min="0"
-                  max="255"
-                  :value="rgbFields.b"
-                  @change="onRgbInput('b', $event)"
+                <WwNumberInput
+                  :model-value="rgbFields.b"
+                  size="compact"
+                  :min="0"
+                  :max="255"
+                  @update:model-value="onRgbInput('b', $event)"
                 />
               </label>
               <label class="ww-color-input__field-wrap">
                 <span>A</span>
-                <input
-                  class="ww-color-input__field"
-                  type="number"
-                  min="0"
-                  max="100"
-                  :value="rgbFields.a"
-                  @change="onRgbInput('a', $event)"
+                <WwNumberInput
+                  :model-value="rgbFields.a"
+                  size="compact"
+                  :min="0"
+                  :max="100"
+                  @update:model-value="onRgbInput('a', $event)"
                 />
               </label>
             </div>
@@ -568,46 +601,42 @@ onBeforeUnmount(() => {
             <div v-else class="ww-color-input__fields ww-color-input__fields--grid">
               <label class="ww-color-input__field-wrap">
                 <span>H</span>
-                <input
-                  class="ww-color-input__field"
-                  type="number"
-                  min="0"
-                  max="360"
-                  :value="hslFields.h"
-                  @change="onHslInput('h', $event)"
+                <WwNumberInput
+                  :model-value="hslFields.h"
+                  size="compact"
+                  :min="0"
+                  :max="360"
+                  @update:model-value="onHslInput('h', $event)"
                 />
               </label>
               <label class="ww-color-input__field-wrap">
                 <span>S</span>
-                <input
-                  class="ww-color-input__field"
-                  type="number"
-                  min="0"
-                  max="100"
-                  :value="hslFields.s"
-                  @change="onHslInput('s', $event)"
+                <WwNumberInput
+                  :model-value="hslFields.s"
+                  size="compact"
+                  :min="0"
+                  :max="100"
+                  @update:model-value="onHslInput('s', $event)"
                 />
               </label>
               <label class="ww-color-input__field-wrap">
                 <span>L</span>
-                <input
-                  class="ww-color-input__field"
-                  type="number"
-                  min="0"
-                  max="100"
-                  :value="hslFields.l"
-                  @change="onHslInput('l', $event)"
+                <WwNumberInput
+                  :model-value="hslFields.l"
+                  size="compact"
+                  :min="0"
+                  :max="100"
+                  @update:model-value="onHslInput('l', $event)"
                 />
               </label>
               <label class="ww-color-input__field-wrap">
                 <span>A</span>
-                <input
-                  class="ww-color-input__field"
-                  type="number"
-                  min="0"
-                  max="100"
-                  :value="hslFields.a"
-                  @change="onHslInput('a', $event)"
+                <WwNumberInput
+                  :model-value="hslFields.a"
+                  size="compact"
+                  :min="0"
+                  :max="100"
+                  @update:model-value="onHslInput('a', $event)"
                 />
               </label>
             </div>
@@ -637,7 +666,7 @@ onBeforeUnmount(() => {
   height: 2.125rem;
   padding: 0;
   border: 1px solid var(--ww-border-subtle);
-  border-radius: var(--dg-radius, 0.375rem);
+  border-radius: var(--dg-prop-radius, var(--dg-radius, 0.4375rem));
   background: transparent;
   overflow: hidden;
   cursor: pointer;
@@ -862,6 +891,45 @@ onBeforeUnmount(() => {
   pointer-events: none;
 }
 
+.ww-color-input__recent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.625rem;
+}
+
+.ww-color-input__recent-label {
+  flex: 0 0 auto;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--ww-ink-faint);
+  letter-spacing: 0.04em;
+}
+
+.ww-color-input__recent-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3125rem;
+  min-width: 0;
+}
+
+.ww-color-input__recent-swatch {
+  width: 1.125rem;
+  height: 1.125rem;
+  padding: 0;
+  border: 1px solid var(--ww-border-subtle);
+  border-radius: 0.3125rem;
+  cursor: pointer;
+  transition:
+    transform var(--ww-duration-fast, 0.16s) var(--ww-ease-out, ease),
+    border-color var(--ww-duration-fast, 0.16s) var(--ww-ease-out, ease);
+}
+
+.ww-color-input__recent-swatch:hover {
+  transform: scale(1.08);
+  border-color: var(--ww-accent);
+}
+
 .ww-color-input__footer {
   margin-top: 0.6875rem;
   padding-top: 0.6875rem;
@@ -914,6 +982,10 @@ onBeforeUnmount(() => {
   font-size: 0.625rem;
   font-weight: 600;
   color: var(--ww-ink-muted);
+}
+
+.ww-color-input__field-wrap .ww-number-input-root {
+  width: 100%;
 }
 
 .ww-color-input__field {

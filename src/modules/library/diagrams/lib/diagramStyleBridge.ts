@@ -1,9 +1,11 @@
 import type LogicFlow from '@logicflow/core'
+import { readNodeShapeExtension } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'
 import { applyNodeDimensions } from '@modules/library/diagrams/lib/diagramShapeResize'
 import type { DiagramArrowType, DiagramShadowPreset } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { shadowStyleForPreset } from '@modules/library/diagrams/lib/diagramCanvasPresets'
 import { readNodeImageAsset } from '@modules/library/diagrams/lib/diagramAssetRefs'
 import { DIAGRAM_GROUP_FRAME_TYPE, readGroupStyle, readGroupAlwaysVisible } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { cssFontFamilyStack } from '@shared/lib/fontCatalog'
 import type {
   DiagramEdgeProperties,
   DiagramNodeImageAsset,
@@ -98,6 +100,11 @@ function buildLfTextStyle(ts: Partial<DiagramNodeTextStyle>): Record<string, unk
   }
   if (ts.fontStyle != null) {
     out.fontStyle = ts.fontStyle === 'italic' ? 'italic' : 'normal'
+  }
+  if (ts.fontFamily != null) {
+    const stack = cssFontFamilyStack(ts.fontFamily)
+    if (stack) out.fontFamily = stack
+    else out.fontFamily = ''
   }
   if (textDecoration) out.textDecoration = textDecoration
   else if (ts.underline === false && ts.strikethrough === false) out.textDecoration = ''
@@ -213,9 +220,12 @@ export function readNodeProperties(lf: LogicFlow, nodeId: string): DiagramNodePr
   const mergedText = { ...lfTextStyle, ...textStyleRaw }
   const decoration = String(mergedText.textDecoration ?? '')
 
+  const rawFontFamily = String(mergedText.fontFamily ?? '').replace(/^["']|["']$/g, '').trim()
+
   const textStyle: DiagramNodeTextStyle = {
     fontSize: Number(mergedText.fontSize ?? 12),
     color: String(mergedText.fill ?? mergedText.color ?? '#121214'),
+    fontFamily: rawFontFamily,
     textAlign: readTextAlignFromModel(model),
     fontWeight:
       mergedText.fontWeight === 'bold' || mergedText.fontWeight === 700 ? 'bold' : 'normal',
@@ -240,6 +250,7 @@ export function readNodeProperties(lf: LogicFlow, nodeId: string): DiagramNodePr
       textStyle: {
         fontSize: 12,
         color: '#121214',
+        fontFamily: '',
         textAlign: 'center',
         fontWeight: 'normal',
         fontStyle: 'normal',
@@ -278,7 +289,8 @@ export function readNodeProperties(lf: LogicFlow, nodeId: string): DiagramNodePr
     shadow: readShadowPreset(model.properties as Record<string, unknown>),
     imageAsset,
     groupId:
-      typeof model.properties?.dgGroupId === 'string' ? model.properties.dgGroupId : undefined
+      typeof model.properties?.dgGroupId === 'string' ? model.properties.dgGroupId : undefined,
+    shapeExtension: readNodeShapeExtension(model.properties as Record<string, unknown>)
   }
 }
 

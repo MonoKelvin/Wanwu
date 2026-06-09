@@ -41,6 +41,8 @@ import {
   defaultCanvasSettings,
   type DiagramEditorSelection
 } from '@modules/library/diagrams/lib/diagramSelectionTypes'
+import { provideUmlClassifierEditFocus } from '@modules/library/diagrams/extensions/uml/composables/useUmlClassifierEditFocus'
+import { mapHitToPanelFocus } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierInteraction'
 
 const route = useRoute()
 const router = useRouter()
@@ -136,13 +138,14 @@ const bus = createDiagramCommandBus({
   repo
 })
 provideDiagramCommandBus(bus)
+const { setPanelFocus } = provideUmlClassifierEditFocus()
 const editorLayout = provideDiagramEditorLayout()
 const { record: recordRecentShape } = useDiagramRecentShapes()
 const saveFlow = provideDiagramSaveFlow(bus, toast)
 
 const stageStyle = computed(() => ({
   '--dg-asset-panel-w': editorLayout.assetCollapsed.value ? '0px' : '11.75rem',
-  '--dg-panel-w': editorLayout.propsCollapsed.value ? '0px' : '13.5rem'
+  '--dg-panel-w': editorLayout.propsCollapsed.value ? '0px' : '14.5rem'
 }))
 
 const { conflictOpen, folderPickerOpen, pickedFolderId } = toRefs(saveFlow)
@@ -452,6 +455,12 @@ async function bootstrapEditor() {
       port.canGroupSelection(),
       port.canUngroupSelection()
     )
+  })
+  port.onUmlPanelFocus((request) => {
+    if (editorLayout.propsCollapsed.value) {
+      togglePropsPanelCollapsed(editorLayout)
+    }
+    setPanelFocus(mapHitToPanelFocus(request.nodeId, request.hit))
   })
   editorSelection.value = port.getSelection()
 

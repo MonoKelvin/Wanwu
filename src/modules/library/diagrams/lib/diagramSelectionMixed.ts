@@ -11,6 +11,7 @@ const MIXED_NODE_CHECKS: Array<{ field: string; get: MixedGetter }> = [
   { field: 'strokeWidth', get: (n) => n.strokeWidth },
   { field: 'strokeDasharray', get: (n) => n.strokeDasharray ?? '' },
   { field: 'textStyle.fontSize', get: (n) => n.textStyle.fontSize },
+  { field: 'textStyle.fontFamily', get: (n) => n.textStyle.fontFamily },
   { field: 'textStyle.color', get: (n) => n.textStyle.color },
   { field: 'textStyle.textAlign', get: (n) => n.textStyle.textAlign },
   { field: 'textStyle.fontWeight', get: (n) => n.textStyle.fontWeight },

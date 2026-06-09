@@ -2,7 +2,7 @@
 
 短日照开花多肉，节日盆栽常见。
 
-![闀垮鑺盷(https://upload.wikimedia.org/wikipedia/commons/6/67/Kalanchoe.blossfeldiana.jpg)
+![闀垮鑺盷(https://upload.wikimedia.org/wikipedia/commons/6/67/Kalanchoe.blossfeldiana.jpg)
 
 ## 关键信息
 

@@ -2,14 +2,22 @@
 import { computed, ref, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import InputText from 'primevue/inputtext'
+import Textarea from 'primevue/textarea'
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwSelect from '@shared/components/WwSelect/WwSelect.vue'
+import WwNumberInput from '@shared/components/WwNumberInput/WwNumberInput.vue'
 import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import WwColorInput from '@shared/components/WwColorInput.vue'
+import WwFontSelect from '@shared/components/WwFontSelect/WwFontSelect.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import WwButton from '@shared/components/WwButton.vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
 import DiagramMultiSelectTools from '@modules/library/diagrams/components/DiagramMultiSelectTools.vue'
+import DiagramShapePropertyHost from '@modules/library/diagrams/components/shape-properties/DiagramShapePropertyHost.vue'
+import { registerDiagramShapeExtensionUi } from '@modules/library/diagrams/app/diagramShapeExtensionUi'
+import { ensureDiagramShapeExtensions } from '@modules/library/diagrams/app/diagramShapeExtensions'
+
+registerDiagramShapeExtensionUi()
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import {
@@ -21,6 +29,7 @@ import {
   DIAGRAM_THEME_PRESETS
 } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { UML_CLASSIFIER_KIND } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierTypes'
 import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
 import type { DiagramEditorSelection } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import {
@@ -257,6 +266,28 @@ const showImageSection = computed(() => {
   return node.type === 'dg-image' || Boolean(node.imageAsset?.url)
 })
 
+const shapeKindRegistration = computed(() => {
+  const ext = props.selection.node?.shapeExtension
+  if (!ext?.kind) return null
+  return ensureDiagramShapeExtensions().getKind(ext.kind) ?? null
+})
+
+const showShapeExtensionHost = computed(
+  () =>
+    showNode.value &&
+    !multiNode.value &&
+    Boolean(props.selection.node?.shapeExtension) &&
+    Boolean(shapeKindRegistration.value?.propertyEditor)
+)
+
+const hideGenericTextContent = computed(
+  () => shapeKindRegistration.value?.propertyEditor?.order === 'replace-text'
+)
+
+const nodeTextSectionTitle = computed(() =>
+  props.selection.node?.shapeExtension?.kind === UML_CLASSIFIER_KIND ? '标题文字' : '文本'
+)
+
 async function pickNodeImage() {
   if (!props.fileId) {
     toast.info('请先保存文档后再插入图片')
@@ -434,12 +465,16 @@ function patchGroupAlwaysVisible(value: boolean) {
             />
           </SettingsRow>
           <SettingsRow label="边框粗细" class="dg-settings-row--stacked">
-            <InputText
-              :model-value="String(selection.node.strokeWidth)"
-              type="number"
-              class="dg-prop-control dg-prop-control--num"
+            <WwNumberInput
+              :model-value="selection.node.strokeWidth"
+              :min="0"
+              :step="0.5"
+              :max-fraction-digits="1"
+              size="block"
               @update:model-value="
-                patchGroupStyle({ strokeWidth: parseNumber($event, selection.node!.strokeWidth) })
+                patchGroupStyle({
+                  strokeWidth: parseNumber($event, selection.node!.strokeWidth, 0)
+                })
               "
             />
           </SettingsRow>
@@ -449,7 +484,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               :options="DIAGRAM_DASH_PRESETS"
               option-label="label"
               option-value="value"
-              size="narrow"
+              size="block"
               @update:model-value="patchGroupStyle({ strokeDasharray: String($event ?? '') })"
             />
           </SettingsRow>
@@ -471,26 +506,34 @@ function patchGroupAlwaysVisible(value: boolean) {
         />
       </section>
 
-      <!-- 图元 -->
+      <!-- 图形 -->
       <template v-if="showNode && selection.node && !isGroupFrame">
+        <DiagramShapePropertyHost
+          v-if="showShapeExtensionHost"
+          :node="selection.node"
+        />
         <section class="dg-prop-section dg-prop-group">
-          <p class="dg-prop-section__title">文本</p>
-          <SettingsRow v-if="!multiNode" label="内容" class="dg-settings-row--stacked">
-            <InputText
+          <p class="dg-prop-section__title">{{ nodeTextSectionTitle }}</p>
+          <SettingsRow
+            v-if="!multiNode && !hideGenericTextContent"
+            label="内容"
+            class="dg-settings-row--stacked"
+          >
+            <Textarea
               :model-value="selection.node.text"
-              class="dg-prop-control"
+              class="dg-prop-control dg-prop-textarea"
+              auto-resize
+              rows="1"
               @update:model-value="patchNode({ text: String($event ?? '') })"
             />
           </SettingsRow>
-          <SettingsRow label="字号" class="dg-settings-row--stacked">
-            <InputText
-              :model-value="isMixed('textStyle.fontSize') ? '' : String(selection.node.textStyle.fontSize)"
+          <SettingsRow label="字号" class="dg-settings-row--inline dg-settings-row--font-size">
+            <WwNumberInput
+              :model-value="isMixed('textStyle.fontSize') ? null : selection.node.textStyle.fontSize"
               :placeholder="isMixed('textStyle.fontSize') ? '多种' : undefined"
-              type="number"
-              min="8"
-              max="128"
-              class="dg-prop-control dg-prop-control--num dg-prop-control--full"
-              :class="{ 'dg-prop-control--mixed': isMixed('textStyle.fontSize') }"
+              :min="8"
+              :max="128"
+              size="block"
               @update:model-value="
                 patchNodeTextStyle({
                   fontSize: parseNumber($event, selection.node!.textStyle.fontSize, 8, 128)
@@ -498,7 +541,25 @@ function patchGroupAlwaysVisible(value: boolean) {
               "
             />
           </SettingsRow>
-          <SettingsRow label="对齐" class="dg-settings-row--stacked">
+          <SettingsRow label="字体" class="dg-settings-row--inline dg-settings-row--font">
+            <WwFontSelect
+              :model-value="
+                isMixed('textStyle.fontFamily') ? null : selection.node.textStyle.fontFamily
+              "
+              :placeholder="isMixed('textStyle.fontFamily') ? '多种' : '默认'"
+              size="block"
+              @update:model-value="patchNodeTextStyle({ fontFamily: $event })"
+            />
+          </SettingsRow>
+          <SettingsRow label="颜色" class="dg-settings-row--stacked">
+            <WwColorInput
+              :model-value="selection.node.textStyle.color"
+              :mixed="isMixed('textStyle.color')"
+              aria-label="颜色"
+              @update:model-value="patchNodeTextStyle({ color: $event })"
+            />
+          </SettingsRow>
+          <SettingsRow label="对齐" class="dg-settings-row--inline">
             <div class="dg-prop-row dg-prop-row--toggles" role="group" aria-label="文本对齐">
               <button
                 v-for="action in DIAGRAM_TEXT_ALIGN_ACTIONS"
@@ -510,19 +571,11 @@ function patchGroupAlwaysVisible(value: boolean) {
                 :aria-pressed="isTextAlignActive(action.value)"
                 @click="setTextAlign(action.value)"
               >
-                <WwIcon :name="action.icon" size="sm" />
+                <WwIcon :name="action.icon" size="xs" />
               </button>
             </div>
           </SettingsRow>
-          <SettingsRow label="文字颜色" class="dg-settings-row--stacked">
-            <WwColorInput
-              :model-value="selection.node.textStyle.color"
-              :mixed="isMixed('textStyle.color')"
-              aria-label="文字颜色"
-              @update:model-value="patchNodeTextStyle({ color: $event })"
-            />
-          </SettingsRow>
-          <SettingsRow label="样式" class="dg-settings-row--stacked">
+          <SettingsRow label="样式" class="dg-settings-row--inline">
             <div class="dg-prop-row dg-prop-row--toggles" role="group" aria-label="文本样式">
               <button
                 type="button"
@@ -576,10 +629,9 @@ function patchGroupAlwaysVisible(value: boolean) {
           <p class="dg-prop-section__title">位置与尺寸</p>
           <div class="dg-prop-kv-grid dg-prop-kv-grid--metrics">
             <SettingsRow label="X" class="dg-settings-row--stacked dg-settings-row--compact">
-              <InputText
-                :model-value="String(nodeTopLeft(selection.node).left)"
-                type="number"
-                class="dg-prop-control dg-prop-control--num dg-prop-control--full"
+              <WwNumberInput
+                :model-value="nodeTopLeft(selection.node).left"
+                size="block"
                 @update:model-value="
                   patchNodePositionFromTopLeft(
                     parseNumber($event, nodeTopLeft(selection.node!).left),
@@ -589,10 +641,9 @@ function patchGroupAlwaysVisible(value: boolean) {
               />
             </SettingsRow>
             <SettingsRow label="Y" class="dg-settings-row--stacked dg-settings-row--compact">
-              <InputText
-                :model-value="String(nodeTopLeft(selection.node).top)"
-                type="number"
-                class="dg-prop-control dg-prop-control--num dg-prop-control--full"
+              <WwNumberInput
+                :model-value="nodeTopLeft(selection.node).top"
+                size="block"
                 @update:model-value="
                   patchNodePositionFromTopLeft(
                     nodeTopLeft(selection.node!).left,
@@ -602,11 +653,10 @@ function patchGroupAlwaysVisible(value: boolean) {
               />
             </SettingsRow>
             <SettingsRow label="宽" class="dg-settings-row--stacked dg-settings-row--compact">
-              <InputText
-                :model-value="String(selection.node.width)"
-                type="number"
-                min="1"
-                class="dg-prop-control dg-prop-control--num dg-prop-control--full"
+              <WwNumberInput
+                :model-value="selection.node.width"
+                :min="1"
+                size="block"
                 @update:model-value="
                   patchNodeSizeKeepTopLeft(
                     parseNumber($event, selection.node!.width, 1),
@@ -616,11 +666,10 @@ function patchGroupAlwaysVisible(value: boolean) {
               />
             </SettingsRow>
             <SettingsRow label="高" class="dg-settings-row--stacked dg-settings-row--compact">
-              <InputText
-                :model-value="String(selection.node.height)"
-                type="number"
-                min="1"
-                class="dg-prop-control dg-prop-control--num dg-prop-control--full"
+              <WwNumberInput
+                :model-value="selection.node.height"
+                :min="1"
+                size="block"
                 @update:model-value="
                   patchNodeSizeKeepTopLeft(
                     selection.node!.width,
@@ -678,14 +727,13 @@ function patchGroupAlwaysVisible(value: boolean) {
             />
           </SettingsRow>
           <SettingsRow label="边框粗细" class="dg-settings-row--stacked">
-            <InputText
-              :model-value="isMixed('strokeWidth') ? '' : String(selection.node.strokeWidth)"
+            <WwNumberInput
+              :model-value="isMixed('strokeWidth') ? null : selection.node.strokeWidth"
               :placeholder="isMixed('strokeWidth') ? '多种' : undefined"
-              type="number"
-              min="0"
-              step="0.5"
-              class="dg-prop-control dg-prop-control--num dg-prop-control--full"
-              :class="{ 'dg-prop-control--mixed': isMixed('strokeWidth') }"
+              :min="0"
+              :step="0.5"
+              :max-fraction-digits="1"
+              size="block"
               @update:model-value="
                 patchNodeNumeric({
                   strokeWidth: parseNumber($event, selection.node!.strokeWidth, 0)
@@ -700,7 +748,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               :options="DIAGRAM_DASH_PRESETS"
               option-label="label"
               option-value="value"
-              size="narrow"
+              size="block"
               @update:model-value="patchNode({ strokeDasharray: String($event ?? '') })"
             />
           </SettingsRow>
@@ -711,7 +759,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               :options="DIAGRAM_SHADOW_PRESETS"
               option-label="label"
               option-value="value"
-              size="narrow"
+              size="block"
               @update:model-value="patchNode({ shadow: String($event ?? 'none') })"
             />
           </SettingsRow>
@@ -744,7 +792,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               :options="DIAGRAM_EDGE_TYPES"
               option-label="label"
               option-value="value"
-              size="narrow"
+              size="block"
               @update:model-value="patchEdge({ type: String($event ?? 'polyline') })"
             />
           </SettingsRow>
@@ -754,7 +802,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               :options="DIAGRAM_DASH_PRESETS"
               option-label="label"
               option-value="value"
-              size="narrow"
+              size="block"
               @update:model-value="patchEdge({ strokeDasharray: String($event ?? '') })"
             />
           </SettingsRow>
@@ -766,12 +814,12 @@ function patchGroupAlwaysVisible(value: boolean) {
             />
           </SettingsRow>
           <SettingsRow label="粗细" class="dg-settings-row--stacked">
-            <InputText
-              :model-value="String(selection.edge.strokeWidth)"
-              type="number"
-              min="0"
-              step="0.5"
-              class="dg-prop-control dg-prop-control--num dg-prop-control--full"
+            <WwNumberInput
+              :model-value="selection.edge.strokeWidth"
+              :min="0"
+              :step="0.5"
+              :max-fraction-digits="1"
+              size="block"
               @update:model-value="
                 dispatchEdgeNumeric({
                   strokeWidth: parseNumber($event, selection.edge!.strokeWidth, 0)
@@ -789,7 +837,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               :options="DIAGRAM_ARROW_TYPES"
               option-label="label"
               option-value="value"
-              size="narrow"
+              size="block"
               @update:model-value="patchEdge({ startArrowType: String($event ?? 'none') })"
             />
           </SettingsRow>
@@ -799,7 +847,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               :options="DIAGRAM_ARROW_TYPES"
               option-label="label"
               option-value="value"
-              size="narrow"
+              size="block"
               @update:model-value="patchEdge({ endArrowType: String($event ?? 'solid') })"
             />
           </SettingsRow>
@@ -852,7 +900,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               :options="DIAGRAM_THEME_PRESETS"
               option-label="label"
               option-value="value"
-              size="narrow"
+              size="block"
               @update:model-value="patchCanvas({ themePreset: String($event ?? 'default') })"
             />
           </SettingsRow>
@@ -866,7 +914,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               :options="DIAGRAM_EDGE_TYPES"
               option-label="label"
               option-value="value"
-              size="narrow"
+              size="block"
               @update:model-value="patchDefaultEdge({ type: String($event ?? 'polyline') })"
             />
           </SettingsRow>
@@ -878,12 +926,12 @@ function patchGroupAlwaysVisible(value: boolean) {
             />
           </SettingsRow>
           <SettingsRow label="粗细" class="dg-settings-row--stacked">
-            <InputText
-              :model-value="String(canvas.defaultEdge.strokeWidth)"
-              type="number"
-              min="0"
-              step="0.5"
-              class="dg-prop-control dg-prop-control--num dg-prop-control--full"
+            <WwNumberInput
+              :model-value="canvas.defaultEdge.strokeWidth"
+              :min="0"
+              :step="0.5"
+              :max-fraction-digits="1"
+              size="block"
               @update:model-value="
                 patchDefaultEdge({
                   strokeWidth: parseNumber($event, canvas.defaultEdge.strokeWidth, 0)
@@ -897,7 +945,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               :options="DIAGRAM_DASH_PRESETS"
               option-label="label"
               option-value="value"
-              size="narrow"
+              size="block"
               @update:model-value="patchDefaultEdge({ strokeDasharray: String($event ?? '') })"
             />
           </SettingsRow>
@@ -907,7 +955,7 @@ function patchGroupAlwaysVisible(value: boolean) {
               :options="DIAGRAM_ARROW_TYPES"
               option-label="label"
               option-value="value"
-              size="narrow"
+              size="block"
               @update:model-value="patchDefaultEdge({ endArrowType: String($event ?? 'solid') })"
             />
           </SettingsRow>

@@ -23,11 +23,18 @@ import {
   syncNodeTextLayout
 } from '@modules/library/diagrams/lib/diagramStyleBridge'
 import { applyNodeDimensions } from '@modules/library/diagrams/lib/diagramShapeResize'
+import { ensureDiagramShapeExtensions } from '@modules/library/diagrams/app/diagramShapeExtensions'
+import {
+  isDiagramShapePayloadEnvelope,
+  syncNodeShapeExtensionEffects
+} from '@modules/library/diagrams/domain/shape-extension'
 import {
   buildDiagramNodeConfig,
   getDiagramShapeById,
   registerAllDiagramShapes
 } from '@modules/library/diagrams/lib/diagramShapeRegistry'
+import { readUmlClassifierData } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierFormat'
+import type { UmlClassifierPanelFocusRequest } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierInteractionTypes'
 import {
   isEdgeInSelectionBox,
   isForwardBoxSelect,
@@ -150,6 +157,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         edgeIds: string[]
       }) => void)
     | null = null
+  private umlPanelFocusHandler: ((request: UmlClassifierPanelFocusRequest) => void) | null = null
+  private teardownUmlClassifierHit: (() => void) | null = null
   private middlePanning = false
   private boxSelectOverlayStart: { x: number; y: number } | null = null
   private boxSelectOverlayEnd: { x: number; y: number } | null = null
@@ -226,6 +235,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       overlapMode: OverlapMode.INCREASE
     })
     registerAllDiagramShapes(this.lf)
+    ensureDiagramShapeExtensions().registerExtensionRenderers(this.lf)
     this.applyCanvasSettings(this.canvasSettings)
     this.lf.render({ nodes: [], edges: [] })
     this.refreshAxisOverlay()
@@ -336,7 +346,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     return { leftTop: [tl[0], tl[1]], rightBottom: [rb[0], rb[1]] }
   }
 
-  /** 中键平移视图 */
+  /** 中键平移视图（捕获阶段拦截，避免 LogicFlow blank pointerup 误清选区） */
   private bindMiddleMousePan(el: HTMLElement): () => void {
     let panning = false
     let lastX = 0
@@ -345,10 +355,15 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     let lastMiddleDownX = 0
     let lastMiddleDownY = 0
 
-    const onMouseDown = (event: MouseEvent) => {
+    const blockMiddlePointer = (event: PointerEvent) => {
       if (event.button !== 1) return
       event.preventDefault()
-      event.stopPropagation()
+      event.stopImmediatePropagation()
+    }
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.button !== 1) return
+      blockMiddlePointer(event)
 
       const now = Date.now()
       const isDoubleClick =
@@ -373,7 +388,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       el.style.cursor = 'grabbing'
     }
 
-    const onMouseMove = (event: MouseEvent) => {
+    const onPointerMove = (event: PointerEvent) => {
       if (!panning || !this.lf) return
       const dx = event.clientX - lastX
       const dy = event.clientY - lastY
@@ -391,21 +406,32 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       this.viewportChangeHandler?.()
     }
 
-    const onAuxClick = (event: MouseEvent) => {
-      if (event.button === 1) event.preventDefault()
+    const onPointerUp = (event: PointerEvent) => {
+      if (event.button !== 1) return
+      blockMiddlePointer(event)
+      endPan()
     }
 
-    el.addEventListener('mousedown', onMouseDown)
-    el.addEventListener('auxclick', onAuxClick)
-    window.addEventListener('mousemove', onMouseMove)
-    window.addEventListener('mouseup', endPan)
+    const onAuxClick = (event: MouseEvent) => {
+      if (event.button !== 1) return
+      event.preventDefault()
+      event.stopImmediatePropagation()
+    }
+
+    el.addEventListener('pointerdown', onPointerDown, true)
+    el.addEventListener('pointerup', onPointerUp, true)
+    el.addEventListener('auxclick', onAuxClick, true)
+    window.addEventListener('pointermove', onPointerMove)
+    window.addEventListener('pointerup', onPointerUp)
 
     return () => {
-      el.removeEventListener('mousedown', onMouseDown)
-      el.removeEventListener('auxclick', onAuxClick)
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mouseup', endPan)
+      el.removeEventListener('pointerdown', onPointerDown, true)
+      el.removeEventListener('pointerup', onPointerUp, true)
+      el.removeEventListener('auxclick', onAuxClick, true)
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerup', onPointerUp)
       el.style.cursor = ''
+      this.middlePanning = false
     }
   }
 
@@ -416,6 +442,17 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       this.syncSelectionFromGraph()
       this.scheduleGroupFramesToBottom()
     })
+
+    const onUmlClassifierHit = (payload: {
+      nodeId: string
+      hit: UmlClassifierPanelFocusRequest['hit']
+    }) => {
+      this.handleUmlClassifierInteraction(payload)
+    }
+    this.lf.graphModel.eventCenter.on('uml:classifier-hit', onUmlClassifierHit)
+    this.teardownUmlClassifierHit = () => {
+      this.lf?.graphModel.eventCenter.off('uml:classifier-hit', onUmlClassifierHit)
+    }
 
     this.lf.on('edge:click', ({ data, e }) => {
       const append = Boolean(e?.ctrlKey || e?.metaKey || e?.shiftKey)
@@ -438,7 +475,10 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       resetEdgeEndpointPriority(this.lf, this.container)
     })
 
-    this.lf.on('blank:click', () => {
+    this.lf.on('blank:click', ({ e }) => {
+      if (this.middlePanning) return
+      const button = (e as MouseEvent | PointerEvent | undefined)?.button
+      if (button !== undefined && button !== 0) return
       this.lf?.clearSelectElements()
       this.lf?.removeNodeSnapLine()
       this.cleanupActiveBoxSelect()
@@ -879,6 +919,24 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     }) => void
   ): void {
     this.contextMenuHandler = handler
+  }
+
+  onUmlPanelFocus(handler: ((request: UmlClassifierPanelFocusRequest) => void) | null): void {
+    this.umlPanelFocusHandler = handler
+  }
+
+  private handleUmlClassifierInteraction(payload: {
+    nodeId: string
+    hit: UmlClassifierPanelFocusRequest['hit']
+  }): void {
+    if (!this.lf) return
+    const model = this.lf.getNodeModelById(payload.nodeId)
+    if (!model || !readUmlClassifierData(model)) return
+    if (!model.isSelected) {
+      this.lf.selectElementById(payload.nodeId)
+      this.syncSelectionFromGraph()
+    }
+    this.umlPanelFocusHandler?.({ nodeId: payload.nodeId, hit: payload.hit })
   }
 
   focusCanvas(): void {
@@ -1337,6 +1395,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.teardownMiddlePan = null
     this.teardownContextMenu?.()
     this.teardownContextMenu = null
+    this.teardownUmlClassifierHit?.()
+    this.teardownUmlClassifierHit = null
+    this.umlPanelFocusHandler = null
     this.teardownGroupFrameHover?.()
     this.teardownGroupFrameHover = null
     clearGroupFramePointerInside()
@@ -1391,8 +1452,14 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
   loadGraph(data: unknown): void {
     const graph = normalizeGraph(data)
+    const registry = ensureDiagramShapeExtensions()
+    const rawNodes = (graph.nodes ?? []) as Array<Record<string, unknown>>
+    if (rawNodes.length) {
+      graph.nodes = registry.migrateLegacyNodes(rawNodes as never)
+    }
     this.lf?.render(graph as never)
     this.reapplyLoadedGraphStyles(graph)
+    this.syncShapeExtensionsAfterLoad(graph)
     this.refreshAxisOverlay()
     this.refreshMultiSelectResize?.()
     this.selectedNodeId = null
@@ -1400,6 +1467,19 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.emitSelection()
     requestAnimationFrame(() => this.resize())
     ensureAllGroupFramesAtBottom(this.lf!)
+  }
+
+  /** 加载后为带 dgShape 的节点同步布局与文本 */
+  private syncShapeExtensionsAfterLoad(sourceGraph?: { nodes?: unknown[] }): void {
+    if (!this.lf) return
+    const rawNodes = (sourceGraph?.nodes ?? []) as Array<{
+      id: string
+      properties?: Record<string, unknown>
+    }>
+    for (const raw of rawNodes) {
+      if (!isDiagramShapePayloadEnvelope(raw.properties?.dgShape)) continue
+      syncNodeShapeExtensionEffects(this.lf, raw.id)
+    }
   }
 
   private reapplyLoadedGraphStyles(sourceGraph?: { nodes?: unknown[]; edges?: unknown[] }): void {
@@ -2540,6 +2620,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       this.lf.setProperties(nodeId, incoming)
       if ('setAttributes' in model && typeof model.setAttributes === 'function') {
         ;(model as { setAttributes: () => void }).setAttributes()
+      }
+      if (isDiagramShapePayloadEnvelope(incoming.dgShape)) {
+        syncNodeShapeExtensionEffects(this.lf, nodeId)
       }
       if (model.type === DIAGRAM_GROUP_FRAME_TYPE) {
         ensureGroupFrameAtBottom(this.lf, nodeId)

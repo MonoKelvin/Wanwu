@@ -2,11 +2,11 @@
 
 | 项 | 内容 |
 |----|------|
-| 文档版本 | v1.0 |
+| 文档版本 | v1.1 |
 | 日期 | 2026-06-09 |
 | 目标版本 | Wanwu **v1.2.x → v1.3**（大功能，第三位版本已升至 **1.2.2** 作为基线） |
 | 项目代号 | `library-diagrams` / `shape-extension` |
-| 状态 | **设计评审 · Phase 0 待开发** |
+| 状态 | **Phase 0 已实现 · Phase 1a 已实现** |
 | 参考 | [StarUML Class Diagram](https://docs.staruml.io/working-with-uml-diagrams/class-diagram)、LogicFlow 自定义节点 |
 
 ---
@@ -90,25 +90,55 @@ flowchart LR
 
 ---
 
-## 2. 总体架构：Shape Extension Framework
+## 2. 总体架构：Shape Extension Framework（v1.1 可插拔扩展包）
 
-### 2.1 核心概念
+### 2.1 设计目标：新增领域 ≈ 只加代码，不改核心
+
+| 允许改动（组合根） | 禁止改动（稳定核心） |
+|--------------------|----------------------|
+| `app/diagramShapeExtensions.ts` 增加一行 `registry.register(xxxExtension)` | `DiagramPropertyPanel.vue` 主逻辑 |
+| 新建 `extensions/{domain}/` 目录 | `diagramStyleBridge` 通用样式读写 |
+| 可选：`diagramShapeCatalog.ts` 增加 palette 项（未来将改为 extension.catalogCategories） | `LogicFlowDiagramAdapter` 除扩展挂点外的业务 |
+
+**领域扩展示例（均独立扩展包）：**
+
+| 扩展包 id | 场景 | interactionMode | 首期 |
+|-----------|------|-----------------|------|
+| `uml` | 类/接口 compartment | `node` | ✓ |
+| `table` | 表格行列编辑 | `node` | 规划 |
+| `sequence` | 时序图 lifeline + message | `composite` | 规划 |
+| `bpmn` | 任务/事件结构化属性 | `node` | 规划 |
+| `user.*` | 用户自定义 Shape Pack | `node` / `fragment` | 远期 |
+
+### 2.2 核心概念
 
 ```
-DiagramShapeItem (palette)     → 用户拖入时的 catalog 元数据（已有）
-LogicFlow type (lfType)        → 运行时节点 type（已有）
-ShapeKind (新)                 → 结构化语义类型，如 'uml.classifier' | 'bpmn.task' | 'generic'
-ShapeDefinition (新)           → 一种 ShapeKind 的完整扩展描述（注册表条目）
-dgShape payload (新)           → 节点 properties 内结构化数据信封
+DiagramShapeExtension (扩展包)  → 一个领域模块，如 extensions/uml/
+  ├── kinds[]                   → 多种结构化图形 kind
+  ├── paletteBindings[]         → paletteId → 默认 dgShape
+  └── catalogCategories?        → 未来贡献图形面板分类
+
+DiagramShapeKindRegistration    → 单种 kind：codec + propertyEditor + renderer?
+IDiagramShapePayloadCodec       → 载荷编解码、迁移、布局、文本序列化（接口隔离）
+properties.dgShape              → 统一持久化信封
 ```
 
 **关系：**
 
-- 一个 `lfType` 可对应一个或多个 palette `id`（已有，如 `dg-uml-package` → `dg-uml-class`）；
-- 一个 `lfType` 绑定 **一个** `ShapeDefinition`（渲染 + 默认 payload）；
-- palette `id` 可在 `buildDiagramNodeConfig` 时注入 **不同的默认 dgShape**（如 interface 预设 `classifierKind: 'interface'`）。
+- 一个 `lfType` 可对应多个 palette `id`；palette 通过 `paletteBindings` 注入不同默认 `data`；
+- 一个 kind 可绑定多个 `lfType`（如 `uml.classifier` → `dg-uml-class` / `dg-uml-interface`）；
+- `interactionMode` 预留 `node` | `composite` | `fragment`，时序图等多节点场景不在 UML 特例里硬编码。
 
-### 2.2 `properties.dgShape` 信封格式
+### 2.3 已实现目录（Phase 0）
+
+```
+domain/shape-extension/     # 框架内核（稳定）
+extensions/uml/             # UML 领域扩展包（可再拆 table/sequence）
+app/diagramShapeExtensions.ts  # 组合根：唯一注册入口
+components/shape-properties/DiagramShapePropertyHost.vue  # 动态挂载编辑器
+```
+
+### 2.4 `properties.dgShape` 信封格式
 
 ```typescript
 /** 所有特殊图形的统一根结构 */
@@ -133,61 +163,46 @@ interface DiagramShapePayloadEnvelope {
 
 **formatVersion：** `DiagramContent.formatVersion` 保持 `2`，不强制升 `3`。迁移在 **加载 graph** 时按节点 `type` + 缺失 `dgShape` 触发（与 draw.io 导入同理）。若未来需要文档级特性再升 `formatVersion`。
 
-### 2.3 ShapeDefinition 接口
-
-建议路径：`src/modules/library/diagrams/domain/shapes/`
+### 2.5 接口拆分（接口隔离，便于 table/sequence 按需实现）
 
 ```typescript
-/** 图形扩展定义 — 注册表核心接口 */
-export interface IDiagramShapeDefinition<TData = unknown> {
-  /** 全局唯一 kind，如 'uml.classifier' */
-  readonly kind: string
+/** 载荷编解码 — 每种 kind 必须实现 */
+interface IDiagramShapePayloadCodec<TData> {
+  kind: string
+  createDefault(paletteItem?, overrides?): TData
+  read(envelope): TData
+  toEnvelope(data): DiagramShapePayloadEnvelope<TData>
+  migrateLegacyNode?(node): DiagramShapePayloadEnvelope<TData> | null
+  serializeText?(data): string
+  computeLayout?(data, width): { width, height }
+}
 
-  /** 绑定的 LogicFlow type(s) */
-  readonly lfTypes: readonly string[]
-
-  /** palette 创建时的默认结构化数据 */
-  createDefaultData(paletteItem?: DiagramShapeItem): TData
-
-  /** 从旧 text 迁移（可选） */
-  migrateFromLegacy?(node: LogicFlow.NodeConfig): TData | null
-
-  /** 注册 LogicFlow Model/View（可继承基础图形） */
+/** LogicFlow 渲染 — 可选；无则沿用 diagramShapeRegs 内置 regXxx */
+interface IDiagramShapeRenderer {
+  lfTypes: readonly string[]
   register(lf: LogicFlow): void
+}
 
-  /** LF Model → 属性面板投影（合并到 DiagramNodeProperties 或子对象） */
-  readPayload(model: LogicFlow.BaseNodeModel): TData
+/** 属性面板 — 可选 Vue 组件插件 */
+interface IDiagramShapePropertyEditorProvider {
+  kind: string
+  order: 'before-common' | 'after-common' | 'replace-text'
+  component: Component
+}
 
-  /** 属性面板 → LF properties（返回需 setProperties 的片段） */
-  applyPayload(model: LogicFlow.BaseNodeModel, data: TData): void
-
-  /** 根据 data 计算推荐尺寸（动态 compartment 高度） */
-  computeLayout?(data: TData, width: number): { width: number; height: number }
-
-  /** 同步 text 用于搜索/导出/无障碍（可选） */
-  serializeText?(data: TData): string
-
-  /** 属性面板 Vue 组件（异步加载） */
-  readonly PropertyEditor: Component
-
-  /** 是否在通用「文本」区块之前渲染（StarUML 式类型设置优先） */
-  readonly propertyEditorOrder?: 'before-common' | 'after-common' | 'replace-text'
+/** 领域扩展包 — 新增 table/sequence 时实现此对象并 register 一次 */
+interface DiagramShapeExtension {
+  id: string          // 'uml' | 'table' | 'sequence'
+  label: string
+  kinds: DiagramShapeKindRegistration[]
+  paletteBindings?: DiagramShapePaletteBinding[]
+  catalogCategories?: DiagramShapeCategory[]  // 未来
 }
 ```
 
-**注册表：**
+**注册表：** `DiagramShapeExtensionRegistry`（`domain/shape-extension/`）
 
-```typescript
-// domain/shapes/DiagramShapeDefinitionRegistry.ts
-class DiagramShapeDefinitionRegistry {
-  register(def: IDiagramShapeDefinition): void
-  getByLfType(lfType: string): IDiagramShapeDefinition | undefined
-  getByKind(kind: string): IDiagramShapeDefinition | undefined
-  registerAllLogicFlowShapes(lf: LogicFlow): void
-}
-```
-
-组合根（`diagramEditorBootstrap` 或 `registerAllDiagramShapes` 旁）统一 `registry.register(new UmlClassifierShapeDefinition())`。
+组合根：`app/diagramShapeExtensions.ts` → `registry.register(umlShapeExtension)`。
 
 ### 2.4 基础图形继承层次（LogicFlow 层）
 
@@ -490,3 +505,4 @@ src/modules/library/diagrams/
 | 版本 | 日期 | 说明 |
 |------|------|------|
 | v1.0 | 2026-06-09 | 初稿：Shape Extension Framework + UML Classifier 详细设计 |
+| v1.1 | 2026-06-09 | 升级为可插拔扩展包架构；Phase 0 代码落地（Registry/Bridge/PropertyHost/uml 桩） |

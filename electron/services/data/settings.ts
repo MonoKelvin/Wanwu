@@ -4,6 +4,12 @@
   type ModuleId
 } from '../../../src/shared/constants/modules'
 import {
+  MAX_RECENT_COLORS,
+  MAX_RECENT_DIAGRAM_SHAPES,
+  MAX_RECENT_FONTS,
+  normalizeRecentStringList
+} from '../../../src/shared/lib/recentPreferences'
+import {
   DEFAULT_APP_SETTINGS,
   type AppSettings,
   type NavAlign,
@@ -112,7 +118,13 @@ export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppS
       raw.musicNeteaseQuality === 'dolby' ||
       raw.musicNeteaseQuality === 'jymaster'
         ? raw.musicNeteaseQuality
-        : DEFAULT_APP_SETTINGS.musicNeteaseQuality
+        : DEFAULT_APP_SETTINGS.musicNeteaseQuality,
+    recentFonts: normalizeRecentStringList(raw.recentFonts, MAX_RECENT_FONTS),
+    recentColors: normalizeRecentStringList(raw.recentColors, MAX_RECENT_COLORS),
+    diagramRecentShapes: normalizeRecentStringList(
+      raw.diagramRecentShapes,
+      MAX_RECENT_DIAGRAM_SHAPES
+    )
   }
 }
 

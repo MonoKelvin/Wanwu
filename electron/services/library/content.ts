@@ -1,5 +1,6 @@
 ﻿import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { dirname } from 'path'
+import { normalizeMarkdownLabels } from '@shared/markdown/utils/sanitizeMarkdownSource'
 import { resolveLibraryMediaAbsolute } from '../media/library'
 
 /** 由 cover 路径推导 content.md 相对路径 */
@@ -11,14 +12,6 @@ export function contentPathFromCover(coverRel: string | null | undefined): strin
   }
   const dir = coverRel.replace(/\/[^/]+$/, '')
   return dir ? `${dir}/content.md` : null
-}
-
-/** 修复历史 content / 描述中重复的 **** 加粗 */
-export function normalizeMarkdownLabels(text: string): string {
-  if (!text?.trim()) return ''
-  return text
-    .replace(/\*{4,}([^*]+?)\*{4,}/g, '**$1**')
-    .replace(/\*{3}([^*]+?)\*{3}/g, '**$1**')
 }
 
 /** 优先 contentFile 路径，其次 cover 同目录 content.md，最后回退数据库 description（遗留） */

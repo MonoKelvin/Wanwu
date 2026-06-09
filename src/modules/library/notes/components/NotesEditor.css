@@ -181,7 +181,7 @@
   border-bottom: 1px solid var(--ww-border-subtle);
 }
 
-/* ¶ÀÁ¢´°¿Ú£º¸²¸ÇÉÏ·½Í¨ÓÃ¹¤¾ßÀ¸¼ä¾à£¬ÓëÕıÎÄÇøË®Æ½±ß¾àÒ»ÖÂ */
+/* ç‹¬ç«‹çª—å£ï¼šè¦†ç›–ä¸Šæ–¹é€šç”¨å·¥å…·æ é—´è·ï¼Œä¸æ­£æ–‡åŒºæ°´å¹³è¾¹è·ä¸€è‡´ */
 .ww-notes-editor.is-popout .ww-notes-editor__bar {
   flex-wrap: nowrap;
   justify-content: flex-start;
@@ -314,7 +314,7 @@
   text-overflow: ellipsis;
 }
 
-/* ÁĞ±íÖÃ¶¥ / ¶ÀÁ¢´°¿Ú / ´°¿ÚÖÃ¶¥£º½ö¼¤»îÌ¬Ê¹ÓÃ±ã¼ãÖ÷ÌâÉ« */
+/* åˆ—è¡¨ç½®é¡¶ / ç‹¬ç«‹çª—å£ / çª—å£ç½®é¡¶ï¼šä»…æ¿€æ´»æ€ä½¿ç”¨ä¾¿ç¬ºä¸»é¢˜è‰² */
 :deep(.ww-notes-icon-btn--note-accent.ww-notes-icon-btn--on) {
   color: var(--ww-notes-accent) !important;
 }

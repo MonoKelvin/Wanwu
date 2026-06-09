@@ -1,5 +1,6 @@
 ﻿import { marked } from 'marked'
 import { cleanBlockquoteInnerHtml } from './blockquoteMarkers'
+import { normalizeMarkdownLabels } from './sanitizeMarkdownSource'
 
 marked.setOptions({
   gfm: true,
@@ -93,7 +94,7 @@ function enhanceObsidianCallouts(html: string): string {
 
 /** Markdown 源码 → 阅读器 HTML（不含 DOM 增强，增强由 enhanceMarkdownDom 完成） */
 export function renderMarkdown(source: string): string {
-  const text = stripYamlFrontmatter(source?.trim() ?? '')
+  const text = stripYamlFrontmatter(normalizeMarkdownLabels(source?.trim() ?? ''))
   if (!text) return ''
   let html = marked.parse(text, { async: false }) as string
   html = removeQuoteMarkerArtifacts(html)

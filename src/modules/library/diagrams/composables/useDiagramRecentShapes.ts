@@ -1,20 +1,17 @@
-import { ref } from 'vue'
-import {
-  loadRecentShapeIds,
-  recordRecentShape
-} from '@modules/library/diagrams/lib/diagramRecentShapes'
-
-const recentIds = ref<string[]>(loadRecentShapeIds())
+import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSettingsStore } from '@shared/stores/settings'
+import { recordRecentShape } from '@modules/library/diagrams/lib/diagramRecentShapes'
 
 export function useDiagramRecentShapes() {
+  const settingsStore = useSettingsStore()
+  const { settings } = storeToRefs(settingsStore)
+
+  const recentIds = computed(() => settings.value.diagramRecentShapes)
+
   function record(shapeId: string) {
     recordRecentShape(shapeId)
-    recentIds.value = loadRecentShapeIds()
   }
 
-  function refresh() {
-    recentIds.value = loadRecentShapeIds()
-  }
-
-  return { recentIds, record, refresh }
+  return { recentIds, record }
 }

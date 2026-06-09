@@ -17,6 +17,15 @@ import {
 } from '@shared/types/settings'
 import { isModuleId } from '@app/config/modules'
 import { applyColorScheme, readStoredColorScheme, watchSystemColorScheme } from '@app/theme/applyTheme'
+import {
+  bumpRecentString,
+  clearLegacyDiagramRecentShapes,
+  MAX_RECENT_COLORS,
+  MAX_RECENT_DIAGRAM_SHAPES,
+  MAX_RECENT_FONTS,
+  normalizeRecentStringList,
+  readLegacyDiagramRecentShapes
+} from '@shared/lib/recentPreferences'
 
 function normalizeSettings(data: Partial<AppSettings>): AppSettings {
   const limit = data.rssFetchLimit
@@ -114,7 +123,13 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
       data.musicNeteaseQuality === 'lossless' ||
       data.musicNeteaseQuality === 'hires'
         ? data.musicNeteaseQuality
-        : DEFAULT_APP_SETTINGS.musicNeteaseQuality
+        : DEFAULT_APP_SETTINGS.musicNeteaseQuality,
+    recentFonts: normalizeRecentStringList(data.recentFonts, MAX_RECENT_FONTS),
+    recentColors: normalizeRecentStringList(data.recentColors, MAX_RECENT_COLORS),
+    diagramRecentShapes: normalizeRecentStringList(
+      data.diagramRecentShapes,
+      MAX_RECENT_DIAGRAM_SHAPES
+    )
   }
 }
 
@@ -151,7 +166,16 @@ export const useSettingsStore = defineStore('settings', () => {
       merged = { ...merged, trayEnabled: true }
       void window.wanwu.app.patchSettings({ trayEnabled: true })
     }
-    settings.value = merged
+    let next = merged
+    if (!next.diagramRecentShapes.length) {
+      const legacy = readLegacyDiagramRecentShapes()
+      if (legacy.length) {
+        next = { ...next, diagramRecentShapes: legacy }
+        clearLegacyDiagramRecentShapes()
+        void window.wanwu.app.patchSettings({ diagramRecentShapes: legacy })
+      }
+    }
+    settings.value = next
     loaded.value = true
     applySettingsToDocument(settings.value)
     if (storedScheme && storedScheme !== data.colorScheme) {
@@ -246,6 +270,28 @@ export const useSettingsStore = defineStore('settings', () => {
     await save({ clipboardAssistEnabled })
   }
 
+  async function appendRecentFont(family: string) {
+    const next = bumpRecentString(settings.value.recentFonts, family, MAX_RECENT_FONTS)
+    if (next.join('\u0000') === settings.value.recentFonts.join('\u0000')) return
+    await save({ recentFonts: next })
+  }
+
+  async function appendRecentColor(color: string) {
+    const next = bumpRecentString(settings.value.recentColors, color, MAX_RECENT_COLORS)
+    if (next.join('\u0000') === settings.value.recentColors.join('\u0000')) return
+    await save({ recentColors: next })
+  }
+
+  async function appendDiagramRecentShape(shapeId: string) {
+    const next = bumpRecentString(
+      settings.value.diagramRecentShapes,
+      shapeId,
+      MAX_RECENT_DIAGRAM_SHAPES
+    )
+    if (next.join('\u0000') === settings.value.diagramRecentShapes.join('\u0000')) return
+    await save({ diagramRecentShapes: next })
+  }
+
   async function resetAll() {
     const defaults = await window.wanwu.app.resetSettings()
     settings.value = normalizeSettings(defaults)
@@ -290,6 +336,9 @@ export const useSettingsStore = defineStore('settings', () => {
     setCloseBehavior,
     setDailyWidgetEnabled,
     setClipboardAssistEnabled,
+    appendRecentFont,
+    appendRecentColor,
+    appendDiagramRecentShape,
     resetAll,
     syncFromRemote
   }

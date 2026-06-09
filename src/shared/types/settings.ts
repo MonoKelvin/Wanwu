@@ -74,6 +74,12 @@ export interface AppSettings {
     | 'sky'
     | 'dolby'
     | 'jymaster'
+  /** 最近使用的字体（CSS font-family） */
+  recentFonts: string[]
+  /** 最近使用的颜色值 */
+  recentColors: string[]
+  /** 流程图最近使用的图元 id */
+  diagramRecentShapes: string[]
 }
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -102,7 +108,10 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   musicNeteasePort: 25884,
   musicNeteaseRealIp: '',
   musicNeteaseProxy: '',
-  musicNeteaseQuality: 'standard'
+  musicNeteaseQuality: 'standard',
+  recentFonts: [],
+  recentColors: [],
+  diagramRecentShapes: []
 }
 
 export const COLOR_SCHEME_OPTIONS: Array<{ label: string; value: ColorScheme }> = [

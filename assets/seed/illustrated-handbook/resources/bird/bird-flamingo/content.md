@@ -2,7 +2,7 @@
 
 粉红滤食水鸟。
 
-![鐏儓楦焆(https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Flamingos_Laguna_Colorada.jpg/960px-Flamingos_Laguna_Colorada.jpg)
+![鐏儓楦焆(https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Flamingos_Laguna_Colorada.jpg/960px-Flamingos_Laguna_Colorada.jpg)
 
 ## 关键信息
 

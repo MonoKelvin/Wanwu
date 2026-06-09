@@ -1,3 +1,4 @@
+import type { DiagramNodeShapeExtensionView } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'
 import type {
   DiagramArrowType,
   DiagramEdgeType,
@@ -28,6 +29,7 @@ export interface DiagramCanvasSettings {
 export interface DiagramNodeTextStyle {
   fontSize: number
   color: string
+  fontFamily: string
   textAlign: 'left' | 'center' | 'right'
   fontWeight: 'normal' | 'bold'
   fontStyle: 'normal' | 'italic'
@@ -63,6 +65,8 @@ export interface DiagramNodeProperties {
   groupEdgeCount?: number
   /** 组合框是否始终显示边框（仅组合框） */
   groupAlwaysVisible?: boolean
+  /** 结构化图形扩展载荷（由扩展框架投影） */
+  shapeExtension?: DiagramNodeShapeExtensionView | null
 }
 
 export interface DiagramEdgeProperties {

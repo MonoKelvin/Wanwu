@@ -59,6 +59,15 @@ declare module 'three-mesh-bvh/worker' {
 
 import type { WanwuApi } from '@shared/types/api'
 
+interface QueryLocalFont {
+  family: string
+  fullName: string
+  postscriptName: string
+  style: string
+}
+
+declare function queryLocalFonts(): Promise<QueryLocalFont[]>
+
 declare global {
   interface Window {
     wanwu: WanwuApi

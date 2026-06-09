@@ -51,7 +51,7 @@ const props = withDefaults(
     variant: 'embedded',
     popoutAlwaysOnTop: false,
     popoutOpen: false,
-    popoutToggleLabel: '´ò¿ª¶ÀÁ¢´°¿Ú'
+    popoutToggleLabel: 'æ‰“å¼€ç‹¬ç«‹çª—å£'
   }
 )
 
@@ -69,12 +69,12 @@ const emit = defineEmits<{
 
 const isPopout = computed(() => props.variant === 'popout')
 
-/** ÕıÏòÎª½«ÒªÖ´ĞĞµÄ²Ù×÷£»¼¤»îÌ¬Îªµã»÷ºóµÄ³·Ïú/¹Ø±Õ */
+/** æ­£å‘ä¸ºå°†è¦æ‰§è¡Œçš„æ“ä½œï¼›æ¿€æ´»æ€ä¸ºç‚¹å‡»åçš„æ’¤é”€/å…³é—­ */
 const listPinActionLabel = computed(() =>
-  props.note.pinned ? 'È¡ÏûÖÃ¶¥' : 'ÖÃ¶¥µ½ÁĞ±í'
+  props.note.pinned ? 'å–æ¶ˆç½®é¡¶' : 'ç½®é¡¶åˆ°åˆ—è¡¨'
 )
 const windowTopActionLabel = computed(() =>
-  props.popoutAlwaysOnTop ? 'È¡Ïû´°¿ÚÖÃ¶¥' : '´°¿ÚÖÃ¶¥'
+  props.popoutAlwaysOnTop ? 'å–æ¶ˆçª—å£ç½®é¡¶' : 'çª—å£ç½®é¡¶'
 )
 const popoutOpenActionLabel = computed(() => props.popoutToggleLabel)
 
@@ -84,8 +84,8 @@ function noteMediaUrl(relativePath: string): string | null {
 
 const contentStats = computed(() => {
   const raw = normalizeNotePlainText(draftContent.value)
-  if (!raw) return '0 ×Ö'
-  return `${raw.length} ×Ö`
+  if (!raw) return '0 å­—'
+  return `${raw.length} å­—`
 })
 
 const updatedLabel = computed(() =>
@@ -112,7 +112,7 @@ const viewerSlides = ref<ImageViewerSlide[]>([])
 const viewerRevoke = ref<(() => void) | null>(null)
 const imageMenuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
 const imageMenuTarget = ref<NoteImageMenuTarget | null>(null)
-/** ÕıÔÚ°Ñ store/²İ¸åĞ´Èë±à¼­Æ÷£¬±ÜÃâ onUpdate »ØĞ´Òı·¢Ñ­»· */
+/** æ­£åœ¨æŠŠ store/è‰ç¨¿å†™å…¥ç¼–è¾‘å™¨ï¼Œé¿å… onUpdate å›å†™å¼•å‘å¾ªç¯ */
 let applyingRemote = false
 
 function releaseViewerResource() {
@@ -132,7 +132,7 @@ async function openImageViewerAt(imageId?: string, fallbackSrc?: string) {
     entries.push({ src: fallbackSrc.trim() })
   }
   if (!entries.length) {
-    toast.error('ÎŞ·¨´ò¿ª´óÍ¼')
+    toast.error('æ— æ³•æ‰“å¼€å¤§å›¾')
     return
   }
 
@@ -173,7 +173,7 @@ async function openImageViewerAt(imageId?: string, fallbackSrc?: string) {
   }
 
   if (!slides.length) {
-    toast.error('ÎŞ·¨´ò¿ª´óÍ¼')
+    toast.error('æ— æ³•æ‰“å¼€å¤§å›¾')
     return
   }
 
@@ -188,9 +188,9 @@ async function saveImageAs(src: string) {
   const ext = /\.png/i.test(src) ? 'png' : /\.webp/i.test(src) ? 'webp' : 'jpg'
   const result = await window.wanwu.shell.downloadFile({ url: src, defaultName: `image.${ext}` })
   if (result.ok && result.path) {
-    toast.success('Í¼Æ¬ÒÑ±£´æ', undefined, { action: toast.revealInFolderAction(result.path) })
+    toast.success('å›¾ç‰‡å·²ä¿å­˜', undefined, { action: toast.revealInFolderAction(result.path) })
   } else if (!result.canceled) {
-    toast.error(result.error ?? '±£´æÊ§°Ü')
+    toast.error(result.error ?? 'ä¿å­˜å¤±è´¥')
   }
 }
 
@@ -202,9 +202,9 @@ async function copyImageToClipboard(src: string) {
       popTip.show(POP_TIP_COPY_MESSAGES.image)
       return
     }
-    toast.error(result.error === 'not_found' ? 'ÕÒ²»µ½Í¼Æ¬ÎÄ¼ş' : '¸´ÖÆÊ§°Ü')
+    toast.error(result.error === 'not_found' ? 'æ‰¾ä¸åˆ°å›¾ç‰‡æ–‡ä»¶' : 'å¤åˆ¶å¤±è´¥')
   } catch {
-    toast.error('¸´ÖÆÊ§°Ü')
+    toast.error('å¤åˆ¶å¤±è´¥')
   }
 }
 
@@ -219,38 +219,38 @@ const imageMenuItems = computed((): WwMenuItem[] => {
   const align = target.align
   return [
     {
-      label: '²é¿´´óÍ¼',
+      label: 'æŸ¥çœ‹å¤§å›¾',
       wwIcon: 'maximize',
       command: () => void openImageViewerAt(target.imageId || undefined, target.src || undefined)
     },
     {
-      label: '¸´ÖÆ',
+      label: 'å¤åˆ¶',
       wwIcon: 'copy',
       command: () => void copyImageToClipboard(target.src)
     },
     {
-      label: 'Áí´æÎª',
+      label: 'å¦å­˜ä¸º',
       wwIcon: 'download',
       command: () => void saveImageAs(target.src)
     },
     {
-      label: 'É¾³ı',
+      label: 'åˆ é™¤',
       wwIcon: 'trash-2',
       command: () => target.remove()
     },
     { separator: true },
     {
-      label: '×ó¶ÔÆë',
+      label: 'å·¦å¯¹é½',
       checked: align === 'left',
       command: () => target.updateAlign('left')
     },
     {
-      label: '¾ÓÖĞ¶ÔÆë',
+      label: 'å±…ä¸­å¯¹é½',
       checked: align === 'center',
       command: () => target.updateAlign('center')
     },
     {
-      label: 'ÓÒ¶ÔÆë',
+      label: 'å³å¯¹é½',
       checked: align === 'right',
       command: () => target.updateAlign('right')
     }
@@ -264,7 +264,7 @@ provide(NOTE_IMAGE_EDITOR_KEY, {
   openImageMenu
 })
 
-/** ÇĞ»»±ã¼ãÊ±ÖØĞÂ³éÈ¡£»Í¬Ò»Ìõ±ã¼ãÄÚ±£³Öµ±Ç°ÌáÊ¾²»±ä */
+/** åˆ‡æ¢ä¾¿ç¬ºæ—¶é‡æ–°æŠ½å–ï¼›åŒä¸€æ¡ä¾¿ç¬ºå†…ä¿æŒå½“å‰æç¤ºä¸å˜ */
 const bodyPlaceholder = ref(pickNotePlaceholder())
 
 function refreshBodyPlaceholder() {
@@ -333,7 +333,7 @@ function syncToDraftFromEditor(
   draftContent.value = next
 }
 
-/** ÂäÅÌÇ°ÓÉ¸¸¼¶µ÷ÓÃ£¬È·±£²İ¸åÓë±à¼­Æ÷ ProseMirror ×´Ì¬Ò»ÖÂ */
+/** è½ç›˜å‰ç”±çˆ¶çº§è°ƒç”¨ï¼Œç¡®ä¿è‰ç¨¿ä¸ç¼–è¾‘å™¨ ProseMirror çŠ¶æ€ä¸€è‡´ */
 function syncToDraft() {
   if (!editor.value) return
   syncToDraftFromEditor(editor.value, { force: true })
@@ -366,7 +366,7 @@ async function hydrateEditorFromDraft() {
   applyingRemote = false
 }
 
-/** ÒÔ props.note£¨store£©Îª×¼Í¬²½²İ¸å²¢¹àÈë Tiptap£¬±ÜÃâËÑË÷³¡¾°ÏÂ¸¸¼¶²İ¸åÊ±ĞòÎÊÌâ */
+/** ä»¥ props.noteï¼ˆstoreï¼‰ä¸ºå‡†åŒæ­¥è‰ç¨¿å¹¶çŒå…¥ Tiptapï¼Œé¿å…æœç´¢åœºæ™¯ä¸‹çˆ¶çº§è‰ç¨¿æ—¶åºé—®é¢˜ */
 function applyNoteToEditor(note: NoteItem) {
   applyingRemote = true
   draftTitle.value = note.title ?? ''
@@ -396,7 +396,7 @@ watch(
   }
 )
 
-/** ÓÃÎÈ¶¨×Ö·û´®×÷ watch Ô´£¬±ÜÃâ store Ã¿´Î updateNote Ìæ»»Êı×éÒıÓÃµ¼ÖÂÎó´¥·¢ */
+/** ç”¨ç¨³å®šå­—ç¬¦ä¸²ä½œ watch æºï¼Œé¿å… store æ¯æ¬¡ updateNote æ›¿æ¢æ•°ç»„å¼•ç”¨å¯¼è‡´è¯¯è§¦å‘ */
 const noteImageIdsKey = computed(() =>
   props.note.images
     .map((img) => img.id)
@@ -587,7 +587,7 @@ onBeforeUnmount(() => {
   <section
     class="ww-notes-editor-wrap"
     :class="{ 'ww-notes-editor-wrap--popout': isPopout }"
-    aria-label="±ã¼ã±à¼­"
+    aria-label="ä¾¿ç¬ºç¼–è¾‘"
   >
     <article class="ww-notes-editor" :class="[`is-${note.color}`, { 'is-popout': isPopout }]">
       <header
@@ -615,8 +615,8 @@ onBeforeUnmount(() => {
             <WwIconButton
               icon="image"
               compact
-              ariaLabel="Ìí¼ÓÍ¼Æ¬"
-              v-tooltip.bottom="'Ìí¼ÓÍ¼Æ¬'"
+              ariaLabel="æ·»åŠ å›¾ç‰‡"
+              v-tooltip.bottom="'æ·»åŠ å›¾ç‰‡'"
               @click="handlePickImage"
             />
             <WwIconButton
@@ -631,28 +631,28 @@ onBeforeUnmount(() => {
             <WwIconButton
               icon="x"
               compact
-              ariaLabel="¹Ø±Õ¶ÀÁ¢´°¿Ú"
-              v-tooltip.bottom="'¹Ø±Õ'"
+              ariaLabel="å…³é—­ç‹¬ç«‹çª—å£"
+              v-tooltip.bottom="'å…³é—­'"
               @click="emit('closePopout')"
             />
           </div>
         </template>
         <template v-else>
-          <div class="ww-notes-colors" role="group" aria-label="±ã¼ãÑÕÉ«">
+          <div class="ww-notes-colors" role="group" aria-label="ä¾¿ç¬ºé¢œè‰²">
             <button
               v-for="c in noteColors"
               :key="c"
               type="button"
               class="ww-notes-color"
               :class="[`is-${c}`, { 'is-selected': note.color === c }]"
-              :aria-label="`${colorLabels[c]}${note.color === c ? '£¨µ±Ç°£©' : ''}`"
+              :aria-label="`${colorLabels[c]}${note.color === c ? 'ï¼ˆå½“å‰ï¼‰' : ''}`"
               :aria-pressed="note.color === c"
               @click="emit('setColor', c)"
             />
           </div>
 
           <div class="ww-notes-editor__actions">
-            <span class="ww-notes-editor__meta">¸üĞÂÓÚ {{ updatedLabel }}</span>
+            <span class="ww-notes-editor__meta">æ›´æ–°äº {{ updatedLabel }}</span>
             <WwIconButton
               :icon="popoutOpen ? 'square-arrow-up-left' : 'external-link'"
               compact
@@ -674,15 +674,15 @@ onBeforeUnmount(() => {
             <WwIconButton
               icon="image"
               compact
-              ariaLabel="Ìí¼ÓÍ¼Æ¬"
-              v-tooltip.bottom="'Ìí¼ÓÍ¼Æ¬'"
+              ariaLabel="æ·»åŠ å›¾ç‰‡"
+              v-tooltip.bottom="'æ·»åŠ å›¾ç‰‡'"
               @click="handlePickImage"
             />
             <WwIconButton
               icon="trash-2"
               compact
-              ariaLabel="É¾³ı±ã¼ã"
-              v-tooltip.bottom="'É¾³ı'"
+              ariaLabel="åˆ é™¤ä¾¿ç¬º"
+              v-tooltip.bottom="'åˆ é™¤'"
               @click="emit('removeNote')"
             />
           </div>
@@ -694,19 +694,19 @@ onBeforeUnmount(() => {
           v-model="draftTitle"
           class="ww-notes-editor__title"
           maxlength="80"
-          placeholder="±êÌâ"
-          aria-label="±ã¼ã±êÌâ"
+          placeholder="æ ‡é¢˜"
+          aria-label="ä¾¿ç¬ºæ ‡é¢˜"
           :spellcheck="notesSpellcheckEnabled"
           @blur="emit('flush')"
         />
         <EditorContent
           :editor="editor"
           class="ww-notes-editor__content ww-scroll-main"
-          aria-label="±ã¼ãÕıÎÄ"
+          aria-label="ä¾¿ç¬ºæ­£æ–‡"
           @blur="emit('flush')"
         />
         <div class="ww-notes-editor__foot" :class="{ 'ww-notes-editor__foot--popout': isPopout }">
-          <span v-if="isPopout" class="ww-notes-editor__meta">¸üĞÂÓÚ {{ updatedLabel }}</span>
+          <span v-if="isPopout" class="ww-notes-editor__meta">æ›´æ–°äº {{ updatedLabel }}</span>
           <span class="ww-notes-editor__stats">{{ contentStats }}</span>
         </div>
       </div>

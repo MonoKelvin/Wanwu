@@ -2,7 +2,7 @@
 
 银斑藤本，与绿萝近缘但叶质厚实。
 
-![缁胯悵钘(https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Scindapsus_pictus_01.jpg/960px-Scindapsus_pictus_01.jpg)
+![缁胯悵钘(https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Scindapsus_pictus_01.jpg/960px-Scindapsus_pictus_01.jpg)
 
 ## 关键信息
 

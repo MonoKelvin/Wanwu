@@ -2,7 +2,7 @@
 
 多肉质叶，地被或盆栽，繁殖极易。
 
-![鏅ぉ](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Sedum_acre_single_-_Niitv%C3%A4lja.jpg/960px-Sedum_acre_single_-_Niitv%C3%A4lja.jpg)
+![鏅ぉ](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Sedum_acre_single_-_Niitv%C3%A4lja.jpg/960px-Sedum_acre_single_-_Niitv%C3%A4lja.jpg)
 
 ## 关键信息
 

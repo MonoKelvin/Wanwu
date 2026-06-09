@@ -3,9 +3,11 @@
 :root {
   --dg-radius: 0.75rem;
   --dg-radius-lg: 1rem;
+  /* 属性面板控件圆角：与 WwSelect 触发器默认一致 */
+  --dg-prop-radius: 0.4375rem;
   --dg-gap-section: 2rem;
   --dg-gap-inner: 0.75rem;
-  --dg-panel-w: 13.5rem;
+  --dg-panel-w: 14.5rem;
   --dg-asset-panel-w: 11.75rem;
   --dg-panel-collapsed-w: 2.25rem;
   --dg-toolbar-h: 2.625rem;
@@ -1324,7 +1326,7 @@
 .dg-prop-multi-hint {
   margin: 0 0 0.625rem;
   padding: 0.375rem 0.5rem;
-  border-radius: var(--dg-radius);
+  border-radius: var(--dg-prop-radius);
   font-size: 0.6875rem;
   line-height: 1.45;
   color: var(--ww-ink-muted);
@@ -2285,7 +2287,7 @@
   height: 1.75rem;
   padding: 0.125rem;
   border: 1px solid var(--ww-border-subtle);
-  border-radius: var(--dg-radius);
+  border-radius: var(--dg-prop-radius);
   background: var(--ww-inset);
   cursor: pointer;
 }
@@ -2313,6 +2315,23 @@
   width: var(--dg-panel-w);
   max-height: calc(100% - var(--dg-float-top) - var(--dg-float-inset));
   padding: 0.5rem 0.5625rem 0.625rem;
+  --ww-select-radius: var(--dg-prop-radius);
+  --ww-select-font-size: 0.75rem;
+}
+
+/* 属性面板内圆角控件统一 */
+.dg-panel--props .dg-panel-tab,
+.dg-panel--props .dg-prop-group,
+.dg-panel--props .dg-prop-multi-hint,
+.dg-panel--props .p-inputtext,
+.dg-panel--props .dg-prop-control,
+.dg-panel--props .dg-prop-toggle,
+.dg-panel--props .dg-prop-image-preview,
+.dg-panel--props .dg-field-color,
+.dg-panel--props .dg-prop-color-block,
+.dg-panel--props .ww-color-input__trigger,
+.dg-panel--props .p-button {
+  border-radius: var(--dg-prop-radius);
 }
 
 .dg-panel__body {
@@ -2336,7 +2355,7 @@
   flex: 1;
   padding: 0.3125rem 0.375rem;
   border: none;
-  border-radius: var(--dg-radius);
+  border-radius: var(--dg-prop-radius);
   background: transparent;
   font-size: 0.6875rem;
   font-weight: 500;
@@ -2439,7 +2458,7 @@
 .dg-prop-group {
   margin-bottom: 0.5rem;
   padding: 0.5rem 0.5rem 0.5625rem;
-  border-radius: var(--dg-radius);
+  border-radius: var(--dg-prop-radius);
   background: color-mix(in srgb, var(--ww-inset) 55%, transparent);
   border: 1px solid transparent;
   transition:
@@ -2515,7 +2534,24 @@
 
 .dg-prop-control.p-inputtext {
   padding: 0.3125rem 0.5rem;
-  border-radius: var(--dg-radius);
+  border-radius: var(--dg-prop-radius);
+}
+
+.dg-prop-control.p-textarea:not(.dg-prop-textarea) {
+  padding: 0.3125rem 0.5rem;
+  border-radius: var(--dg-prop-radius);
+}
+
+.dg-prop-textarea.p-textarea {
+  box-sizing: border-box;
+  min-height: var(--ww-select-height, 2.3125rem);
+  padding: var(--ww-select-label-py, 0.5rem) 0.5rem var(--ww-select-label-py, 0.5rem) 0.625rem;
+  font-size: var(--ww-select-font-size, 0.75rem);
+  line-height: 1.35;
+  color: var(--ww-ink);
+  resize: none;
+  overflow: hidden;
+  field-sizing: content;
 }
 
 .dg-prop-control--num {
@@ -2575,6 +2611,13 @@
   justify-content: flex-end;
 }
 
+.dg-panel--props .dg-settings-row--inline.dg-settings-row--font .ww-settings-row__control,
+.dg-panel--props .dg-settings-row--inline.dg-settings-row--font-size .ww-settings-row__control {
+  flex: 1 1 7.5rem;
+  min-width: 5.5rem;
+  max-width: 62%;
+}
+
 .dg-panel--props .ww-settings-row__label,
 .dg-panel--props .dg-settings-row--stacked .ww-settings-row__label {
   flex: none;
@@ -2600,16 +2643,22 @@
   max-width: none;
 }
 
+.dg-panel--props .ww-settings-row__control .ww-number-input-root {
+  width: 100%;
+  max-width: none;
+}
+
+.dg-panel--props .ww-settings-row__control .ww-font-select-root {
+  width: 100%;
+  max-width: none;
+}
+
 .dg-panel--props .dg-field-color,
 .dg-panel--props .dg-prop-color-swatch,
 .dg-panel--props .dg-prop-color-block,
 .dg-panel--props .ww-color-input {
   width: 100%;
   flex-shrink: 0;
-}
-
-.dg-panel--props .dg-prop-color-block::-webkit-color-swatch {
-  border-radius: calc(var(--dg-radius) - 5px);
 }
 
 .dg-panel--props .dg-field-label {
@@ -2623,7 +2672,7 @@
 
 .dg-prop-image-preview {
   margin-bottom: 0.5rem;
-  border-radius: var(--dg-radius);
+  border-radius: var(--dg-prop-radius);
   overflow: hidden;
   border: 1px solid var(--ww-border-subtle);
   background: color-mix(in srgb, var(--ww-ink) 4%, transparent);
@@ -2652,9 +2701,9 @@
   margin-top: 0.125rem;
 }
 
-.dg-panel--props .p-inputtext {
-  border-radius: var(--dg-radius);
-  font-size: 0.8125rem;
+.dg-panel--props .p-inputtext,
+.dg-panel--props .p-textarea {
+  font-size: 0.75rem;
 }
 
 .dg-panel--props .dg-prop-input--sm {
@@ -2677,14 +2726,16 @@
   background: rgb(255 255 255 / 0.04);
 }
 
-.dg-field-color::-webkit-color-swatch-wrapper {
+.dg-panel--props .dg-field-color::-webkit-color-swatch-wrapper,
+.dg-panel--props .dg-prop-color-block::-webkit-color-swatch-wrapper {
   padding: 0.125rem;
-  border-radius: calc(var(--dg-radius) - 2px);
+  border-radius: max(0px, calc(var(--dg-prop-radius) - 1px));
 }
 
-.dg-field-color::-webkit-color-swatch {
+.dg-panel--props .dg-field-color::-webkit-color-swatch,
+.dg-panel--props .dg-prop-color-block::-webkit-color-swatch {
   border: none;
-  border-radius: calc(var(--dg-radius) - 4px);
+  border-radius: max(0px, calc(var(--dg-prop-radius) - 2px));
 }
 
 .dg-prop-row {
@@ -2699,9 +2750,14 @@
   flex-wrap: wrap;
 }
 
-.dg-panel--props .ww-settings-row__control .dg-prop-row--toggles {
+.dg-panel--props .dg-settings-row--stacked .ww-settings-row__control .dg-prop-row--toggles {
   justify-content: flex-start;
   width: 100%;
+}
+
+.dg-panel--props .dg-settings-row--inline .ww-settings-row__control .dg-prop-row--toggles {
+  justify-content: flex-end;
+  width: auto;
 }
 
 .dg-prop-toggle {
@@ -2712,10 +2768,11 @@
   height: 1.75rem;
   padding: 0 0.375rem;
   border: 1px solid var(--ww-border-subtle);
-  border-radius: var(--dg-radius);
+  border-radius: var(--dg-prop-radius);
   background: var(--ww-inset);
   font-size: 0.75rem;
   font-weight: 600;
+  line-height: 1;
   color: var(--ww-ink-muted);
   cursor: pointer;
 }
@@ -2727,8 +2784,21 @@
 }
 
 .dg-prop-toggle--icon {
-  min-width: 1.875rem;
+  min-width: 1.75rem;
+  width: 1.75rem;
   padding: 0;
+  line-height: 0;
+}
+
+.dg-panel--props .dg-prop-toggle--icon .ww-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dg-panel--props .dg-prop-toggle--icon .ww-icon svg {
+  display: block;
 }
 
 .dg-prop-toggle--italic {
@@ -2768,6 +2838,21 @@
 
 [data-theme='dark'] .dg-prop-toggle--active {
   background: color-mix(in srgb, var(--ww-accent) 18%, transparent);
+}
+
+.dg-canvas-frame .dg-uml-hit {
+  pointer-events: all;
+}
+
+.dg-canvas-frame .dg-uml-member-text {
+  fill: var(--ww-ink);
+  font-weight: 400;
+}
+
+.dg-canvas-frame .dg-uml-placeholder {
+  fill: var(--ww-ink-faint);
+  font-weight: 400;
+  opacity: 0.48;
 }
 
 /* 画布拖放 */

@@ -1,0 +1,185 @@
+/* WwNumberInput — PrimeVue InputNumber 封装（高度对齐 WwSelect） */
+
+.ww-number-input-root {
+  --ww-number-height: var(--ww-select-height, 2.3125rem);
+  --ww-number-btn-w: 1.625rem;
+  --ww-number-radius: var(--dg-prop-radius, var(--ww-select-radius, 0.4375rem));
+  --ww-number-arrow-color: color-mix(in srgb, var(--ww-ink-faint) 88%, transparent);
+  --ww-number-arrow-nudge: 0.25rem;
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.ww-number-input-root.ww-number-input--block {
+  width: 100%;
+}
+
+.ww-number-input-root.ww-number-input--compact {
+  --ww-number-height: 1.625rem;
+  --ww-number-btn-w: 1.25rem;
+  --ww-number-arrow-nudge: 0.1875rem;
+}
+
+.ww-number-input.p-inputnumber {
+  display: inline-flex;
+  align-items: stretch;
+  width: max-content;
+  max-width: 100%;
+  min-height: var(--ww-number-height);
+  border: 1px solid var(--ww-border-faint) !important;
+  border-radius: var(--ww-number-radius) !important;
+  background: var(--ww-inset) !important;
+  box-shadow: none !important;
+  overflow: hidden;
+  transition:
+    border-color var(--ww-duration-fast) var(--ww-ease-out),
+    background var(--ww-duration-fast) var(--ww-ease-out),
+    box-shadow var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-number-input--block.p-inputnumber,
+.ww-number-input-root.ww-number-input--block .ww-number-input.p-inputnumber {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.ww-number-input.p-inputnumber:not(.p-disabled):hover {
+  border-color: var(--ww-border-subtle) !important;
+  background: var(--ww-list-hover-bg) !important;
+}
+
+.ww-number-input.p-inputnumber.p-inputwrapper-focus,
+.ww-number-input.p-inputnumber.p-focus {
+  border-color: var(--ww-list-hover-ring) !important;
+  background: var(--ww-content) !important;
+  box-shadow: 0 0 0 1px var(--ww-list-hover-ring) !important;
+}
+
+.ww-number-input.p-inputnumber .p-inputnumber-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  height: var(--ww-number-height);
+  min-height: var(--ww-number-height);
+  padding: 0 var(--ww-number-input-px, 0.625rem);
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  font-size: var(--ww-select-font-size, 0.8125rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.35;
+  color: var(--ww-ink);
+  text-align: left;
+}
+
+.ww-number-input-root.ww-number-input--compact .ww-number-input.p-inputnumber .p-inputnumber-input {
+  padding: 0 0.375rem;
+  font-size: 0.6875rem;
+}
+
+.ww-number-input.p-inputnumber .p-inputnumber-input::placeholder {
+  color: var(--ww-ink-faint);
+}
+
+/* stacked：输入框左、上下箭头右 */
+.ww-number-input.p-inputnumber.p-inputnumber-stacked {
+  flex-direction: row;
+}
+
+.ww-number-input.p-inputnumber.p-inputnumber-stacked .p-inputnumber-input {
+  order: 1;
+}
+
+.ww-number-input.p-inputnumber.p-inputnumber-stacked .p-inputnumber-button-group {
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 var(--ww-number-btn-w);
+  width: var(--ww-number-btn-w);
+  min-width: var(--ww-number-btn-w);
+  align-self: stretch;
+  align-items: stretch;
+  justify-content: stretch;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border-top-right-radius: var(--ww-number-radius);
+  border-bottom-right-radius: var(--ww-number-radius);
+}
+
+.ww-number-input.p-inputnumber .p-inputnumber-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 50%;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+  padding: 0;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--ww-number-arrow-color);
+  box-shadow: none !important;
+  line-height: 0;
+  cursor: pointer;
+  transition: color var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.ww-number-input.p-inputnumber.p-inputnumber-stacked .p-inputnumber-increment-button .ww-icon {
+  transform: translateY(var(--ww-number-arrow-nudge));
+}
+
+.ww-number-input.p-inputnumber.p-inputnumber-stacked .p-inputnumber-decrement-button .ww-icon {
+  transform: translateY(calc(var(--ww-number-arrow-nudge) * -1));
+}
+
+.ww-number-input.p-inputnumber.p-inputnumber-stacked .p-inputnumber-increment-button {
+  border-top-right-radius: var(--ww-number-radius) !important;
+}
+
+.ww-number-input.p-inputnumber.p-inputnumber-stacked .p-inputnumber-decrement-button {
+  border-bottom-right-radius: var(--ww-number-radius) !important;
+}
+
+.ww-number-input.p-inputnumber .p-inputnumber-button .ww-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ww-number-input.p-inputnumber .p-inputnumber-button .ww-icon svg {
+  display: block;
+}
+
+.ww-number-input.p-inputnumber .p-inputnumber-button:hover:not(:disabled) {
+  background: transparent !important;
+  color: var(--ww-ink-muted);
+}
+
+.ww-number-input.p-inputnumber .p-inputnumber-button:active:not(:disabled) {
+  background: transparent !important;
+  color: var(--ww-ink);
+}
+
+[data-theme='dark'] .ww-number-input-root {
+  --ww-number-arrow-color: color-mix(in srgb, var(--ww-ink-faint) 72%, var(--ww-ink-muted));
+}
+
+.ww-number-input.p-inputnumber .p-inputnumber-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ww-number-input.p-inputnumber.p-disabled {
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-number-input.p-inputnumber .p-inputnumber-button {
+    transition: none;
+  }
+}
