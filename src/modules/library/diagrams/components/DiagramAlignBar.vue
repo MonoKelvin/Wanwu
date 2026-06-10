@@ -121,7 +121,7 @@ const barStyle = computed(() => {
 
 <template>
   <div
-    v-if="nodeCount >= 2 && anchorRect"
+    v-if="anchorRect"
     ref="barRef"
     class="dg-align-bar dg-align-bar--anchored dg-float ww-glass-blur"
     :style="barStyle"

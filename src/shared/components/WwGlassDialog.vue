@@ -12,6 +12,12 @@ const props = defineProps<{
   dimMask?: boolean
   /** 遮罩仅变暗；面板保留毛玻璃（快捷键等） */
   panelBlurOnly?: boolean
+  /** 面板低透明度 + 高强模糊（仅面板，不模糊遮罩后景） */
+  frostedPanel?: boolean
+  /** 附加在对话框根节点上的类名 */
+  dialogClass?: string
+  /** 附加在遮罩上的类名（如快捷键轻遮罩） */
+  maskClass?: string
   dismissableMask?: boolean
   closable?: boolean
   closeOnEscape?: boolean
@@ -22,14 +28,18 @@ const emit = defineEmits<{
 }>()
 
 const maskClass = computed(() => {
-  if (props.dimMask || props.panelBlurOnly) return 'ww-glass-dialog-mask ww-glass-dialog-mask--dim'
-  if (props.strongBlur) return 'ww-glass-dialog-mask ww-glass-dialog-mask--strong'
-  return 'ww-glass-dialog-mask'
+  const parts = ['ww-glass-dialog-mask']
+  if (props.dimMask || props.panelBlurOnly) parts.push('ww-glass-dialog-mask--dim')
+  else if (props.strongBlur) parts.push('ww-glass-dialog-mask--strong')
+  if (props.maskClass) parts.push(props.maskClass)
+  return parts.join(' ')
 })
 const rootClass = computed(() => {
-  if (props.dimMask) return 'ww-glass-dialog-root ww-glass-dialog-root--dim'
-  if (props.strongBlur) return 'ww-glass-dialog-root ww-glass-dialog-root--strong'
-  return 'ww-glass-dialog-root'
+  const parts = ['ww-glass-dialog-root']
+  if (props.dimMask) parts.push('ww-glass-dialog-root--dim')
+  else if (props.strongBlur) parts.push('ww-glass-dialog-root--strong')
+  if (props.frostedPanel) parts.push('ww-glass-dialog-root--frosted')
+  return parts.join(' ')
 })
 </script>
 
@@ -42,7 +52,7 @@ const rootClass = computed(() => {
     :dismissable-mask="dismissableMask"
     :closable="closable ?? true"
     :close-on-escape="closeOnEscape ?? true"
-    :class="['ww-glass-dialog', widthClass ?? 'w-[min(22rem,92vw)]']"
+    :class="['ww-glass-dialog', widthClass ?? 'w-[min(22rem,92vw)]', dialogClass]"
     :pt="{
       mask: { class: maskClass },
       root: { class: rootClass },

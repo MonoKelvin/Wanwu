@@ -50,6 +50,7 @@ const router = useRouter()
 const toast = useToast()
 const selectedNodeCount = ref(0)
 const selectedEdgeCount = ref(0)
+const alignBarNodeCount = ref(0)
 const alignBarAnchor = ref<DiagramAlignBarAnchor | null>(null)
 const alignBarStageWidth = ref(0)
 const canUngroupSelection = ref(false)
@@ -98,16 +99,28 @@ function refreshAlignBarAnchor() {
     alignBarStageWidth.value = wrap.clientWidth
     alignBarStageHeight.value = wrap.clientHeight
   }
-  if (!port || selectedNodeCount.value < 2) {
+  if (!port) {
+    alignBarNodeCount.value = 0
+    alignBarAnchor.value = null
+    return
+  }
+  const liveCount = port.getSelection().selectedNodeCount
+  alignBarNodeCount.value = liveCount
+  if (liveCount < 2) {
     alignBarAnchor.value = null
     return
   }
   alignBarAnchor.value = port.getMultiSelectOverlayRect()
 }
 
+function applyAlignBarLayout(rect: DiagramAlignBarAnchor | null, nodeCount: number) {
+  alignBarNodeCount.value = nodeCount
+  alignBarAnchor.value = rect
+}
+
 let alignBarRaf = 0
 function scheduleAlignBarRefresh() {
-  if (alignBarRaf) return
+  if (alignBarRaf) cancelAnimationFrame(alignBarRaf)
   alignBarRaf = requestAnimationFrame(() => {
     alignBarRaf = 0
     refreshAlignBarAnchor()
@@ -434,7 +447,7 @@ async function bootstrapEditor() {
     selectedEdgeCount.value = selection.selectedEdgeCount
     canUngroupSelection.value = port.canUngroupSelection()
     canGroupSelection.value = port.canGroupSelection()
-    refreshAlignBarAnchor()
+    scheduleAlignBarRefresh()
     const focus = panelFocus.value
     if (
       focus &&
@@ -454,8 +467,8 @@ async function bootstrapEditor() {
     void syncViewport()
     scheduleAlignBarRefresh()
   })
-  port.onOverlayLayoutChange(() => {
-    scheduleAlignBarRefresh()
+  port.onOverlayLayoutChange((layout) => {
+    applyAlignBarLayout(layout.rect, layout.nodeCount)
   })
   port.onGraphChange(() => {
     sessionRef.value?.markActivePageDirty()
@@ -734,6 +747,15 @@ function onCanvasDrop(event: DragEvent) {
           :style="{ left: `${dropIndicator.x}px`, top: `${dropIndicator.y}px` }"
           aria-hidden="true"
         />
+        <DiagramAlignBar
+          v-if="editorReady"
+          :node-count="alignBarNodeCount"
+          :anchor-rect="alignBarAnchor"
+          :stage-width="alignBarStageWidth"
+          :stage-height="alignBarStageHeight"
+          :can-group="canGroupSelection"
+          :can-ungroup="canUngroupSelection"
+        />
         <div v-if="loading" class="dg-canvas-wrap__overlay">加载画布…</div>
         <div v-else-if="loadError" class="dg-canvas-wrap__overlay dg-canvas-wrap__overlay--error">
           {{ loadError }}
@@ -753,14 +775,6 @@ function onCanvasDrop(event: DragEvent) {
       />
 
       <template v-if="editorReady">
-        <DiagramAlignBar
-          :node-count="selectedNodeCount"
-          :anchor-rect="alignBarAnchor"
-          :stage-width="alignBarStageWidth"
-          :stage-height="alignBarStageHeight"
-          :can-group="canGroupSelection"
-          :can-ungroup="canUngroupSelection"
-        />
         <DiagramAssetPanel v-if="!editorLayout.assetCollapsed.value" />
         <DiagramPanelRestoreButton
           v-else

@@ -110,11 +110,16 @@ function applyDefaultUmlTitleTextStyle(model: DiagramRectResizeModel): void {
   }
 }
 
-function emitUmlClassifierHit(model: DiagramRectResizeModel, hit: UmlLayoutHitTarget): void {
+function emitUmlClassifierHit(
+  model: DiagramRectResizeModel,
+  hit: UmlLayoutHitTarget,
+  event?: MouseEvent
+): void {
   model.graphModel.eventCenter.emit(DG_SHAPE_HIT_EVENT, {
     nodeId: model.id,
     kind: UML_CLASSIFIER_KIND,
-    hit
+    hit,
+    append: Boolean(event?.ctrlKey || event?.metaKey || event?.shiftKey)
   })
 }
 
@@ -129,7 +134,7 @@ function onUmlClassifierHitClick(
   if (pending) clearTimeout(pending)
   const timer = setTimeout(() => {
     hitClickTimers.delete(model)
-    emitUmlClassifierHit(model, hit)
+    emitUmlClassifierHit(model, hit, event)
   }, HIT_CLICK_DELAY_MS)
   hitClickTimers.set(model, timer)
 }
@@ -146,7 +151,7 @@ function onUmlClassifierHitDblClick(
     clearTimeout(pending)
     hitClickTimers.delete(model)
   }
-  emitUmlClassifierHit(model, hit)
+  emitUmlClassifierHit(model, hit, event)
 }
 
 /** 内容最小尺寸（不含用户手动放大的宽高）；minWidth 不得用 max(当前宽, 内容宽) 否则放大后无法缩小 */

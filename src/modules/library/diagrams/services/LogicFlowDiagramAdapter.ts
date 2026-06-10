@@ -12,7 +12,14 @@ import {
   type DiagramCanvasTheme
 } from '@modules/library/diagrams/lib/diagramCanvasTheme'
 import { mountDiagramAxisOverlay } from '@modules/library/diagrams/lib/diagramAxisOverlay'
-import { mountDiagramMultiSelectResize, getMultiSelectOverlayRect } from '@modules/library/diagrams/lib/diagramMultiSelectResize'
+import {
+  mountDiagramMultiSelectResize,
+  getMultiSelectOverlayRect,
+  countSelectedDiagramNodes,
+  setLiveMultiSelectCount,
+  isDiagramGroupMultiResizing,
+  type DiagramMultiSelectLayout
+} from '@modules/library/diagrams/lib/diagramMultiSelectResize'
 import {
   applyEdgeProperties,
   applyNodeProperties,
@@ -40,11 +47,21 @@ import {
   DG_SHAPE_HIT_EVENT,
   type DiagramShapeHitPayload
 } from '@modules/library/diagrams/domain/shape-extension/types'
+import { isForwardBoxSelect } from '@modules/library/diagrams/lib/diagramBoxSelection'
 import {
-  isEdgeInSelectionBox,
-  isForwardBoxSelect,
-  isNodeInSelectionBox
-} from '@modules/library/diagrams/lib/diagramBoxSelection'
+  absorbKeyboardModifiers,
+  absorbPointerModifiers,
+  applyBoxSelectForPointer,
+  collectElementsInCanvasBox,
+  isBoxModifierGesture,
+  isBoxSubtractKey,
+  isModifierSelectionGesture,
+  isToggleSelectKey,
+  readPointerModifiers,
+  reconcileModifierNodeClick,
+  type DiagramBoxSelectSnapshot,
+  type DiagramPointerModifiers
+} from '@modules/library/diagrams/lib/diagramSelectionInteraction'
 import {
   buildSplitEdgeConfigs,
   findNearestEdgeIdAtPoint,
@@ -162,8 +179,11 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   private teardownAxis: (() => void) | null = null
   private teardownMultiSelectResize: (() => void) | null = null
   private refreshMultiSelectResize: (() => void) | null = null
-  private overlayLayoutHandler: (() => void) | null = null
+  private refreshMultiSelectResizeNow: (() => DiagramMultiSelectLayout) | null = null
+  private overlayLayoutHandler: ((layout: DiagramMultiSelectLayout) => void) | null = null
+  private overlayLayoutPayload: DiagramMultiSelectLayout = { rect: null, nodeCount: 0 }
   private teardownMiddlePan: (() => void) | null = null
+  private teardownShiftWheelPan: (() => void) | null = null
   private teardownContextMenu: (() => void) | null = null
   private teardownEdgeEndpointPriority: (() => void) | null = null
   private contextMenuHandler:
@@ -181,9 +201,41 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   private boxSelectOverlayStart: { x: number; y: number } | null = null
   private boxSelectOverlayEnd: { x: number; y: number } | null = null
   private boxSelectTeardown: (() => void) | null = null
+  /** 正向框选（左上→右下）为包含模式；逆向为相交模式 */
+  private boxSelectUseContainMode = true
+  /** 框选结束时的指针修饰键（用于判断加选/减选/替换） */
+  private boxSelectPointerEvent: PointerEvent | null = null
+  /** 框选手势中累积的修饰键（mousedown / move / up） */
+  private boxSelectModifierFlags: DiagramPointerModifiers = {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false
+  }
+  /** 框选开始前的选区快照（用于加选 / 减选重建） */
+  private boxSelectPreSnapshot: DiagramBoxSelectSnapshot = { nodeIds: [], edgeIds: [] }
+  /** 最近一次框选是否带修饰键（供框选后 click 恢复逻辑使用） */
+  private boxSelectLastHadModifierGesture = false
+  /** 框选 apply 后的目标选区（用于抵消 LF 紧随其后的 click 覆盖） */
+  private boxSelectAppliedResult: DiagramBoxSelectSnapshot | null = null
+  /** 本次框选手势开始时的选区快照（冻结，仅用于 Ctrl/Shift 加减选） */
+  private boxSelectGestureSnapshot: DiagramBoxSelectSnapshot = { nodeIds: [], edgeIds: [] }
+  private boxSelectFinalized = false
+  private boxSelectKeyTeardown: (() => void) | null = null
+  /** 框选刚结束：抵消松手落在节点上时 LogicFlow 合成的 node:click 把多选收成单选 */
+  private suppressPostBoxSelectClickUntil = 0
+  private lastBoxSelectNodeIds: string[] = []
   private groupDragLastPos = new Map<string, { x: number; y: number }>()
   private lastSelectedNodeIds: string[] = []
   private lastSelectedEdgeIds: string[] = []
+  /** pointerdown 时选区快照（点击前），避免 mouseup→sync 与 click→reconcile 之间的竞态 */
+  private selectionSnapshotByPointer = new Map<number, string[]>()
+  /** pointerdown 时完整选区（含边），供框选加选/减选使用 */
+  private selectionFullSnapshotByPointer = new Map<number, DiagramBoxSelectSnapshot>()
+  private lastPointerDownSelection: string[] = []
+  private teardownSelectionSnapshot: (() => void) | null = null
+  private teardownBoxSelectRubberGuard: (() => void) | null = null
+  private overlayLayoutRetryRaf: number | null = null
+  private overlayLayoutMicrotaskQueued = false
   private edgeInsertHighlightId: string | null = null
   private edgeInsertDragNodeIds: string[] = []
   private groupFramesBottomRaf: number | null = null
@@ -237,11 +289,35 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
   private overlayLayoutRaf: number | null = null
 
-  private scheduleOverlayLayout(): void {
+  private flushOverlayLayout(layout?: DiagramMultiSelectLayout): void {
+    if (layout) {
+      this.overlayLayoutPayload = layout
+    } else if (this.lf) {
+      this.overlayLayoutPayload = {
+        rect: getMultiSelectOverlayRect(this.lf),
+        nodeCount: countSelectedDiagramNodes(this.lf.graphModel, this.lf)
+      }
+    }
+    if (this.overlayLayoutRaf != null) {
+      cancelAnimationFrame(this.overlayLayoutRaf)
+      this.overlayLayoutRaf = null
+    }
+    this.overlayLayoutHandler?.(this.overlayLayoutPayload)
+  }
+
+  private scheduleOverlayLayout(layout?: DiagramMultiSelectLayout): void {
+    if (layout) {
+      this.overlayLayoutPayload = layout
+    } else if (this.lf) {
+      this.overlayLayoutPayload = {
+        rect: getMultiSelectOverlayRect(this.lf),
+        nodeCount: countSelectedDiagramNodes(this.lf.graphModel, this.lf)
+      }
+    }
     if (this.overlayLayoutRaf != null) return
     this.overlayLayoutRaf = requestAnimationFrame(() => {
       this.overlayLayoutRaf = null
-      this.overlayLayoutHandler?.()
+      this.overlayLayoutHandler?.(this.overlayLayoutPayload)
     })
   }
 
@@ -269,8 +345,11 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.bindEvents()
     this.enableBoxSelection()
     this.teardownMiddlePan = this.bindMiddleMousePan(el)
+    this.teardownShiftWheelPan = this.bindShiftWheelPan(el)
     this.teardownContextMenu = this.bindContextMenu(el)
     this.teardownGroupFrameHover = this.bindGroupFramePointerHover(el)
+    this.teardownSelectionSnapshot = this.bindSelectionSnapshotCapture(el)
+    this.teardownBoxSelectRubberGuard = this.bindBoxSelectRubberBandGuard(el)
     const multiSelectResize = mountDiagramMultiSelectResize(
       this.lf,
       () => {
@@ -278,11 +357,16 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         this.scheduleGraphChange()
         this.syncSelectionFromGraph()
       },
-      () => this.scheduleOverlayLayout(),
-      () => this.scheduleGroupFrameSyncDuringDrag()
+      (layout) => {
+        this.syncMultiSelectDomFlags(layout.nodeCount)
+        this.flushOverlayLayout(layout)
+      },
+      () => this.scheduleGroupFrameSyncDuringDrag(),
+      el
     )
     this.teardownMultiSelectResize = multiSelectResize.destroy
     this.refreshMultiSelectResize = multiSelectResize.refresh
+    this.refreshMultiSelectResizeNow = multiSelectResize.refreshNow
   }
 
   /** 左键框选：禁用左键拖动画布后由 SelectionSelect 接管空白区拖拽 */
@@ -296,7 +380,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         }
       | undefined
     ext?.setExclusiveMode?.(false)
-    // 正向框选要求整节点/整边落入选区；反向框选由 selection:selected 中按方向覆盖
+    // 命中规则由 finalizeBoxSelect 按方向处理；LF 内置预选不再参与最终选区
     ext?.setSelectionSense?.(true, true)
     ext?.openSelectionSelect?.()
     const lfWithSelect = this.lf as LogicFlow & { openSelectionSelect?: () => void }
@@ -311,6 +395,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     if (paused) {
       ext?.closeSelectionSelect?.()
       this.cleanupActiveBoxSelect()
+      this.scheduleDismissSelectionRubberBand()
     } else {
       ext?.openSelectionSelect?.()
     }
@@ -319,8 +404,198 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   private cleanupActiveBoxSelect(): void {
     this.boxSelectOverlayStart = null
     this.boxSelectOverlayEnd = null
+    this.boxSelectPointerEvent = null
+    this.boxSelectUseContainMode = true
+    this.boxSelectModifierFlags = { ctrlKey: false, metaKey: false, shiftKey: false }
+    this.boxSelectPreSnapshot = { nodeIds: [], edgeIds: [] }
+    this.boxSelectGestureSnapshot = { nodeIds: [], edgeIds: [] }
+    this.boxSelectKeyTeardown?.()
+    this.boxSelectKeyTeardown = null
     this.boxSelectTeardown?.()
     this.boxSelectTeardown = null
+  }
+
+  /**
+   * 应用框选结果。正向/逆向仅影响命中（contain / intersect）；
+   * 加减选仅由 Ctrl/Meta（加选）与 Shift（减选）决定。
+   */
+  private finalizeBoxSelect(
+    domLeftTop?: [number, number],
+    domRightBottom?: [number, number]
+  ): void {
+    if (!this.lf || this.boxSelectFinalized) return
+
+    let leftTop: [number, number]
+    let rightBottom: [number, number]
+    if (domLeftTop && domRightBottom) {
+      leftTop = domLeftTop
+      rightBottom = domRightBottom
+    } else {
+      const start = this.boxSelectOverlayStart
+      const end = this.boxSelectOverlayEnd
+      if (!start || !end) return
+      if (Math.abs(end.x - start.x) < 10 && Math.abs(end.y - start.y) < 10) return
+      leftTop = [Math.min(start.x, end.x), Math.min(start.y, end.y)]
+      rightBottom = [Math.max(start.x, end.x), Math.max(start.y, end.y)]
+    }
+
+    const canvasBox = this.domSelectionBoxToCanvas(leftTop, rightBottom)
+    const { nodeIds, edgeIds } = collectElementsInCanvasBox(
+      this.lf,
+      canvasBox.leftTop,
+      canvasBox.rightBottom,
+      this.boxSelectUseContainMode
+    )
+    const boxSelectModifiers = { ...this.boxSelectModifierFlags }
+    absorbPointerModifiers(boxSelectModifiers, this.boxSelectPointerEvent)
+    this.boxSelectLastHadModifierGesture = isBoxModifierGesture(boxSelectModifiers)
+    applyBoxSelectForPointer(this.lf, nodeIds, edgeIds, this.boxSelectPointerEvent, {
+      modifiers: boxSelectModifiers,
+      preSelection: this.boxSelectGestureSnapshot
+    })
+
+    const applied = this.lf.getSelectElements(true)
+    this.boxSelectAppliedResult = {
+      nodeIds: applied.nodes.map((node) => node.id),
+      edgeIds: applied.edges.map((edge) => edge.id)
+    }
+    this.lastBoxSelectNodeIds = this.filterAlignableNodeIds(this.getSelectedNodeIds())
+    this.suppressPostBoxSelectClickUntil = performance.now() + 360
+    this.boxSelectFinalized = true
+    this.afterSelectionMutation()
+    this.scheduleBoxSelectResultReapply()
+  }
+
+  private setBoxSelectingActive(active: boolean): void {
+    const frame = this.container ?? this.getCanvasFrameEl()
+    if (!frame) return
+    if (active) {
+      frame.setAttribute('data-dg-box-dragging', '')
+      frame.classList.add('dg-box-selecting')
+    } else {
+      frame.removeAttribute('data-dg-box-dragging')
+      frame.classList.remove('dg-box-selecting')
+    }
+  }
+
+  /** 结束框选拖拽：清除显示标记并移除 LF 选框 DOM */
+  private clearBoxSelectRubberBand(): void {
+    this.setBoxSelectingActive(false)
+    const lf = this.lf
+    const ext = lf?.extension?.selectionSelect as
+      | { cleanupSelectionState?: () => void; wrapper?: HTMLElement }
+      | undefined
+    ext?.wrapper?.remove()
+    ext?.cleanupSelectionState?.()
+    this.removeSelectionRubberBandDom()
+  }
+
+  /** 画布 pointerup 兜底：无论 LF 是否完成 drawOff 都清理选框 */
+  private bindBoxSelectRubberBandGuard(el: HTMLElement): () => void {
+    const onPointerEnd = (e: PointerEvent) => {
+      if (e.button !== 0) return
+      this.clearBoxSelectRubberBand()
+    }
+    el.addEventListener('pointerup', onPointerEnd, true)
+    el.addEventListener('pointercancel', onPointerEnd, true)
+    return () => {
+      el.removeEventListener('pointerup', onPointerEnd, true)
+      el.removeEventListener('pointercancel', onPointerEnd, true)
+    }
+  }
+
+  /** 仅移除残留选框 DOM（不触碰 SelectionSelect 内部状态，可在 drawOff 之后安全调用） */
+  private removeSelectionRubberBandDom(): void {
+    const lf = this.lf
+    const roots: Array<ParentNode | null | undefined> = [
+      this.container,
+      lf?.container,
+      lf ? document.getElementById(`ToolOverlay_${lf.graphModel.flowId}`) : null
+    ]
+    const seen = new Set<Element>()
+    for (const root of roots) {
+      root?.querySelectorAll('.lf-selection-select').forEach((el) => {
+        if (seen.has(el)) return
+        seen.add(el)
+        el.remove()
+      })
+    }
+    document.querySelectorAll('.lf-selection-select').forEach((el) => {
+      if (seen.has(el)) return
+      seen.add(el)
+      el.remove()
+    })
+  }
+
+  /** 框选流程完全结束后重置 SelectionSelect 并移除 DOM */
+  private dismissSelectionRubberBand(): void {
+    this.clearBoxSelectRubberBand()
+  }
+
+  /**
+   * 延迟仅移除选框 DOM（不调用 cleanupSelectionState，避免打断框选或后续多选）。
+   */
+  private scheduleDismissSelectionRubberBand(): void {
+    this.setBoxSelectingActive(false)
+    const run = () => this.removeSelectionRubberBandDom()
+    run()
+    setTimeout(run, 0)
+    requestAnimationFrame(() => {
+      run()
+      requestAnimationFrame(run)
+    })
+  }
+
+  private getBoxSelectPreSnapshot(): DiagramBoxSelectSnapshot {
+    const pointerId = this.boxSelectPointerEvent?.pointerId
+    if (pointerId != null) {
+      const snap = this.selectionFullSnapshotByPointer.get(pointerId)
+      if (snap) {
+        return { nodeIds: [...snap.nodeIds], edgeIds: [...snap.edgeIds] }
+      }
+    }
+    return {
+      nodeIds: [...this.boxSelectPreSnapshot.nodeIds],
+      edgeIds: [...this.boxSelectPreSnapshot.edgeIds]
+    }
+  }
+
+  /** 将框选结果写回 LF，抵消其 click 阶段对选区的覆盖 */
+  private reapplyBoxSelectResult(): void {
+    if (!this.lf || !this.boxSelectAppliedResult) return
+    const { nodeIds, edgeIds } = this.boxSelectAppliedResult
+    this.lf.clearSelectElements()
+    for (const id of nodeIds) this.lf.selectElementById(id, true)
+    for (const id of edgeIds) this.lf.selectElementById(id, true)
+    this.afterSelectionMutation()
+  }
+
+  /** 框选结束后 click 会异步覆盖选区，延迟多帧重放目标选区 */
+  private scheduleBoxSelectResultReapply(): void {
+    const reapply = () => {
+      if (!this.lf || !this.boxSelectAppliedResult) return
+      if (performance.now() >= this.suppressPostBoxSelectClickUntil) return
+      this.reapplyBoxSelectResult()
+    }
+    queueMicrotask(reapply)
+    requestAnimationFrame(reapply)
+    requestAnimationFrame(() => requestAnimationFrame(reapply))
+    window.setTimeout(reapply, 0)
+    window.setTimeout(() => {
+      this.boxSelectAppliedResult = null
+    }, 420)
+  }
+
+  /** 框选松手落在节点上时，LogicFlow 可能把多选收成单选，按最近一次框选结果恢复 */
+  private restoreBoxSelectIfCollapsed(): void {
+    if (!this.lf || this.lastBoxSelectNodeIds.length < 2) return
+    const current = this.filterAlignableNodeIds(this.getSelectedNodeIds())
+    if (current.length >= 2) return
+    this.lf.clearSelectElements()
+    for (const id of this.lastBoxSelectNodeIds) {
+      this.lf.selectElementById(id, true)
+    }
+    this.afterSelectionMutation()
   }
 
   private updateBoxSelectVisual(isContain: boolean): void {
@@ -330,30 +605,194 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     wrap.classList.toggle('dg-selection-box--intersect', !isContain)
   }
 
+  private syncMultiSelectDomFlags(nodeCount?: number): void {
+    const frame = this.getCanvasFrameEl()
+    if (!frame || !this.lf) return
+    const count =
+      nodeCount ?? countSelectedDiagramNodes(this.lf.graphModel, this.lf)
+    setLiveMultiSelectCount(count)
+    if (count >= 2) {
+      frame.setAttribute('data-dg-multi-active', '')
+    } else {
+      frame.removeAttribute('data-dg-multi-active')
+    }
+  }
+
+  private flushMultiSelectOverlayNow(): void {
+    if (!this.lf) return
+    const layout = this.refreshMultiSelectResizeNow?.()
+    this.syncMultiSelectDomFlags(layout?.nodeCount)
+    this.flushOverlayLayout(layout)
+  }
+
+  /**
+   * 多选包围盒刷新：同步 + microtask + 双 rAF。
+   * mouseup 早于 click，LogicFlow 在 click 阶段才更新 isSelected，需延迟到选区稳定后再读。
+   */
+  private scheduleMultiSelectOverlayRefresh(): void {
+    this.flushMultiSelectOverlayNow()
+
+    if (!this.overlayLayoutMicrotaskQueued) {
+      this.overlayLayoutMicrotaskQueued = true
+      queueMicrotask(() => {
+        this.overlayLayoutMicrotaskQueued = false
+        this.flushMultiSelectOverlayNow()
+      })
+    }
+
+    if (this.overlayLayoutRetryRaf != null) {
+      cancelAnimationFrame(this.overlayLayoutRetryRaf)
+    }
+    this.overlayLayoutRetryRaf = requestAnimationFrame(() => {
+      this.flushMultiSelectOverlayNow()
+      requestAnimationFrame(() => {
+        this.overlayLayoutRetryRaf = null
+        this.flushMultiSelectOverlayNow()
+      })
+    })
+  }
+
+  private afterSelectionMutation(): void {
+    this.syncSelectionFromGraph()
+    this.scheduleGroupFramesToBottom()
+    this.scheduleMultiSelectOverlayRefresh()
+  }
+
+  /** 点击修饰键点选时使用的「点击前」选区快照 */
+  private getClickSelectionSnapshot(e?: MouseEvent | PointerEvent | null): string[] {
+    const pointerId = e?.pointerId
+    if (pointerId != null) {
+      const snap = this.selectionSnapshotByPointer.get(pointerId)
+      if (snap) return [...snap]
+    }
+    if (this.lastPointerDownSelection.length) return [...this.lastPointerDownSelection]
+    return [...this.lastSelectedNodeIds]
+  }
+
+  private reconcileModifierSelection(
+    nodeId: string,
+    e?: MouseEvent | PointerEvent | null
+  ): void {
+    if (!this.lf || !isToggleSelectKey(e) || isBoxSubtractKey(e)) return
+    reconcileModifierNodeClick(this.lf, nodeId, this.getClickSelectionSnapshot(e))
+  }
+
+  private bindSelectionSnapshotCapture(el: HTMLElement): () => void {
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.button !== 0 || this.middlePanning || !this.lf) return
+      const selected = this.lf.getSelectElements(true)
+      const ids = selected.nodes.map((node) => node.id)
+      this.lastPointerDownSelection = ids
+      this.selectionSnapshotByPointer.set(e.pointerId, ids)
+      this.selectionFullSnapshotByPointer.set(e.pointerId, {
+        nodeIds: ids,
+        edgeIds: selected.edges.map((edge) => edge.id)
+      })
+    }
+    const onPointerUp = (e: PointerEvent) => {
+      if (e.button === 0 && this.lf) {
+        queueMicrotask(() => this.scheduleMultiSelectOverlayRefresh())
+      }
+      const pointerId = e.pointerId
+      window.setTimeout(() => {
+        this.selectionSnapshotByPointer.delete(pointerId)
+        this.selectionFullSnapshotByPointer.delete(pointerId)
+      }, 400)
+    }
+    el.addEventListener('pointerdown', onPointerDown, true)
+    el.addEventListener('pointerup', onPointerUp, true)
+    return () => {
+      el.removeEventListener('pointerdown', onPointerDown, true)
+      el.removeEventListener('pointerup', onPointerUp, true)
+      this.selectionSnapshotByPointer.clear()
+      this.selectionFullSnapshotByPointer.clear()
+      this.lastPointerDownSelection = []
+    }
+  }
+
   private armBoxSelectOverlay(e: MouseEvent): void {
-    if (!this.lf || e.button !== 0 || this.middlePanning || this.boxSelectTeardown) return
+    if (!this.lf || e.button !== 0 || this.middlePanning) return
+    if (this.boxSelectTeardown) {
+      this.boxSelectTeardown()
+      this.boxSelectTeardown = null
+    }
+    this.boxSelectLastHadModifierGesture = false
+    this.boxSelectFinalized = false
+    this.boxSelectPointerEvent = e
+    this.boxSelectModifierFlags = readPointerModifiers(e)
+    absorbPointerModifiers(this.boxSelectModifierFlags, e)
+    const selected = this.lf.getSelectElements(true)
+    this.boxSelectPreSnapshot = {
+      nodeIds: selected.nodes.map((node) => node.id),
+      edgeIds: selected.edges.map((edge) => edge.id)
+    }
+    this.boxSelectGestureSnapshot = this.getBoxSelectPreSnapshot()
+    this.boxSelectUseContainMode = true
+    this.setBoxSelectingActive(true)
+
+    const onKeyDown = (keyEv: KeyboardEvent) => {
+      absorbKeyboardModifiers(this.boxSelectModifierFlags, keyEv)
+    }
+    window.addEventListener('keydown', onKeyDown, true)
+    this.boxSelectKeyTeardown = () => {
+      window.removeEventListener('keydown', onKeyDown, true)
+    }
     const pt = this.lf.getPointByClient({ x: e.clientX, y: e.clientY }).domOverlayPosition
     this.boxSelectOverlayStart = { x: pt.x, y: pt.y }
     this.boxSelectOverlayEnd = { x: pt.x, y: pt.y }
 
+    const applyBoxSelectDirection = (endX: number, endY: number) => {
+      const contain = isForwardBoxSelect(pt.x, pt.y, endX, endY)
+      this.boxSelectUseContainMode = contain
+      this.updateBoxSelectVisual(contain)
+    }
+
     const onMove = (ev: PointerEvent) => {
+      absorbPointerModifiers(this.boxSelectModifierFlags, ev)
       const endPt = this.lf!.getPointByClient({ x: ev.clientX, y: ev.clientY }).domOverlayPosition
       this.boxSelectOverlayEnd = { x: endPt.x, y: endPt.y }
-      this.updateBoxSelectVisual(isForwardBoxSelect(pt.x, pt.y, endPt.x, endPt.y))
+      applyBoxSelectDirection(endPt.x, endPt.y)
     }
     const onUp = (ev: PointerEvent) => {
       if (ev.button !== 0) return
-      const endPt = this.lf!.getPointByClient({ x: ev.clientX, y: ev.clientY }).domOverlayPosition
-      this.boxSelectOverlayEnd = { x: endPt.x, y: endPt.y }
-      document.removeEventListener('pointermove', onMove, true)
-      document.removeEventListener('pointerup', onUp, true)
-      this.boxSelectTeardown = null
+      try {
+        absorbPointerModifiers(this.boxSelectModifierFlags, ev)
+        const endPt = this.lf!.getPointByClient({ x: ev.clientX, y: ev.clientY }).domOverlayPosition
+        this.boxSelectOverlayEnd = { x: endPt.x, y: endPt.y }
+        this.boxSelectPointerEvent = ev
+        applyBoxSelectDirection(endPt.x, endPt.y)
+        const sx = this.boxSelectOverlayStart?.x
+        const sy = this.boxSelectOverlayStart?.y
+        if (sx != null && sy != null) {
+          const dx = Math.abs(endPt.x - sx)
+          const dy = Math.abs(endPt.y - sy)
+          const wasBoxDrag = dx >= 10 || dy >= 10
+          if (wasBoxDrag) {
+            this.finalizeBoxSelect()
+            requestAnimationFrame(() => {
+              this.reapplyBoxSelectResult()
+              this.clearBoxSelectRubberBand()
+            })
+          } else {
+            this.cleanupActiveBoxSelect()
+          }
+        }
+      } finally {
+        this.clearBoxSelectRubberBand()
+        document.removeEventListener('pointermove', onMove, true)
+        document.removeEventListener('pointerup', onUp, true)
+        this.boxSelectKeyTeardown?.()
+        this.boxSelectKeyTeardown = null
+        this.boxSelectTeardown = null
+      }
     }
     document.addEventListener('pointermove', onMove, true)
     document.addEventListener('pointerup', onUp, true)
     this.boxSelectTeardown = () => {
       document.removeEventListener('pointermove', onMove, true)
       document.removeEventListener('pointerup', onUp, true)
+      this.boxSelectKeyTeardown?.()
+      this.boxSelectKeyTeardown = null
     }
   }
 
@@ -462,25 +901,67 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     }
   }
 
+  /** Shift + 滚轮：左右滚动画布（捕获阶段优先于 LogicFlow 默认纵向滚动） */
+  private bindShiftWheelPan(el: HTMLElement): () => void {
+    let stepScrollX = 0
+
+    const onWheel = (event: WheelEvent) => {
+      if (!this.lf) return
+      if (!event.shiftKey || event.ctrlKey || event.metaKey) return
+
+      event.preventDefault()
+      event.stopImmediatePropagation()
+
+      const { transformModel, gridSize } = this.lf.graphModel
+      const deltaX = event.deltaX !== 0 ? event.deltaX : event.deltaY
+      stepScrollX += deltaX
+      if (Math.abs(stepScrollX) >= gridSize) {
+        const remainderX = stepScrollX % gridSize
+        const moveDistance = stepScrollX - remainderX
+        transformModel.translate(-moveDistance * transformModel.SCALE_X, 0)
+        stepScrollX = remainderX
+      }
+      this.viewportChangeHandler?.()
+    }
+
+    el.addEventListener('wheel', onWheel, { capture: true, passive: false })
+    return () => el.removeEventListener('wheel', onWheel, true)
+  }
+
   private bindEvents(): void {
     if (!this.lf) return
 
     this.lf.on('node:click', ({ data, e }) => {
       if (this.lf) cancelAllPendingUmlClassifierHitClicks(this.lf)
-      const append = Boolean(e?.ctrlKey || e?.metaKey || e?.shiftKey)
-      if (!append && this.lf) {
-        for (const edge of this.lf.getSelectElements(true).edges) {
-          this.lf.deselectElementById(edge.id)
+      const inBoxSelectGrace = performance.now() < this.suppressPostBoxSelectClickUntil
+
+      // 框选刚结束：LF node:click 会覆盖选区，直接重放框选结果，不做点选 reconcile
+      if (inBoxSelectGrace) {
+        this.reapplyBoxSelectResult()
+        this.scheduleDismissSelectionRubberBand()
+        this.afterSelectionMutation()
+        return
+      }
+
+      this.reconcileModifierSelection(data.id, e)
+      if (!isToggleSelectKey(e) || isBoxSubtractKey(e)) {
+        if (!isModifierSelectionGesture(e)) {
+          this.lastBoxSelectNodeIds = []
+        }
+        if (!isModifierSelectionGesture(e) && this.lf) {
+          for (const edge of this.lf.getSelectElements(true).edges) {
+            this.lf.deselectElementById(edge.id)
+          }
         }
       }
+
       if (this.formatPainterState?.active && this.formatPainterState.kind === 'node' && this.lf) {
         applyNodeStyleSnapshot(this.lf, data.id, this.formatPainterState.nodeSnapshot!)
         syncGroupFramesForNodes(this.lf, [data.id])
         this.refreshGroupFrameDisplay()
         this.scheduleGraphChange()
       }
-      this.syncSelectionFromGraph()
-      this.scheduleGroupFramesToBottom()
+      this.afterSelectionMutation()
     })
 
     const onShapeHit = (payload: DiagramShapeHitPayload) => {
@@ -493,6 +974,12 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
     this.lf.on('edge:click', ({ data, e }) => {
       if (this.lf) cancelAllPendingUmlClassifierHitClicks(this.lf)
+      if (performance.now() < this.suppressPostBoxSelectClickUntil) {
+        this.reapplyBoxSelectResult()
+        this.scheduleDismissSelectionRubberBand()
+        this.afterSelectionMutation()
+        return
+      }
       if (this.formatPainterState?.active && this.formatPainterState.kind === 'edge' && this.lf) {
         applyEdgeStyleSnapshot(this.lf, data.id, this.formatPainterState.edgeSnapshot!)
         this.scheduleGraphChange()
@@ -526,15 +1013,23 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       if (this.middlePanning) return
       const button = (e as MouseEvent | PointerEvent | undefined)?.button
       if (button !== undefined && button !== 0) return
+      if (performance.now() < this.suppressPostBoxSelectClickUntil) {
+        this.reapplyBoxSelectResult()
+        this.scheduleDismissSelectionRubberBand()
+        this.afterSelectionMutation()
+        return
+      }
+      // Ctrl/Meta 多选流程中点击空白：保留选区（后续可能接框选加减选）
+      if (isModifierSelectionGesture(e)) return
       if (this.lf) cancelAllPendingUmlClassifierHitClicks(this.lf)
       this.cancelFormatPainter()
+      this.lastBoxSelectNodeIds = []
       this.lf?.clearSelectElements()
       this.lf?.removeNodeSnapLine()
       this.cleanupActiveBoxSelect()
+      this.scheduleDismissSelectionRubberBand()
       resetEdgeEndpointPriority(this.lf, this.container)
-      this.syncSelectionFromGraph()
-      this.refreshMultiSelectResize?.()
-      this.scheduleOverlayLayout()
+      this.afterSelectionMutation()
     })
 
     this.lf.on('blank:mousedown', ({ e }) => {
@@ -550,26 +1045,15 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       rightBottomPoint: [number, number]
     }) => {
       if (!this.lf) return
-      const sx = this.boxSelectOverlayStart?.x
-      const sy = this.boxSelectOverlayStart?.y
-      const ex = this.boxSelectOverlayEnd?.x ?? payload.rightBottomPoint[0]
-      const ey = this.boxSelectOverlayEnd?.y ?? payload.rightBottomPoint[1]
-      const isContain = sx == null || sy == null ? true : isForwardBoxSelect(sx, sy, ex, ey)
-      const canvasBox = this.domSelectionBoxToCanvas(payload.leftTopPoint, payload.rightBottomPoint)
-
-      this.lf.clearSelectElements()
-      for (const model of this.lf.graphModel.nodes) {
-        if (model.type === DIAGRAM_GROUP_FRAME_TYPE) continue
-        if (!isNodeInSelectionBox(model, canvasBox.leftTop, canvasBox.rightBottom, isContain)) continue
-        this.lf.selectElementById(model.id, true)
+      if (!this.boxSelectFinalized) {
+        this.finalizeBoxSelect(payload.leftTopPoint, payload.rightBottomPoint)
       }
-      for (const model of this.lf.graphModel.edges) {
-        if (!isEdgeInSelectionBox(model, canvasBox.leftTop, canvasBox.rightBottom, isContain)) continue
-        this.lf.selectElementById(model.id, true)
-      }
+      // capture 阶段已写入目标选区；LF drawOff 会覆盖，此处重放并清理选框
+      this.reapplyBoxSelectResult()
+      this.dismissSelectionRubberBand()
+      this.scheduleDismissSelectionRubberBand()
       this.cleanupActiveBoxSelect()
-      this.syncSelectionFromGraph()
-      this.scheduleGroupFramesToBottom()
+      this.boxSelectFinalized = false
     })
 
     this.lf.on('node:mouseup', ({ data }) => {
@@ -596,7 +1080,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     })
 
     this.lf.on('node:drag', ({ data }) => {
-      if (!this.lf) return
+      if (!this.lf || isDiagramGroupMultiResizing()) return
       const model = this.lf.getNodeModelById(data.id)
       if (model && model.type !== DIAGRAM_GROUP_FRAME_TYPE) {
         const inGroup =
@@ -831,7 +1315,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.selectedNodeId = live.primaryNodeId
     this.selectedEdgeId = live.primaryEdgeId
     this.refreshGroupFrameDisplay()
-    this.scheduleEmitSelection()
+    this.emitSelection()
     this.scheduleGroupFramesToBottom()
   }
 
@@ -972,7 +1456,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.viewportChangeHandler = handler
   }
 
-  onOverlayLayoutChange(handler: () => void): void {
+  onOverlayLayoutChange(handler: (layout: DiagramMultiSelectLayout) => void): void {
     this.overlayLayoutHandler = handler
   }
 
@@ -1009,14 +1493,22 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
   private handleShapeExtensionHit(payload: DiagramShapeHitPayload): void {
     if (!this.lf) return
+    const inBoxSelectGrace = performance.now() < this.suppressPostBoxSelectClickUntil
+    if (inBoxSelectGrace && !payload.append) return
     const model = this.lf.getNodeModelById(payload.nodeId)
     if (!model) return
     const ext = readNodeShapeExtension(model.properties as Record<string, unknown>)
     if (!ext || ext.kind !== payload.kind) return
-    if (!model.isSelected) {
+    if (payload.append) {
+      reconcileModifierNodeClick(
+        this.lf,
+        payload.nodeId,
+        this.getClickSelectionSnapshot()
+      )
+    } else if (!model.isSelected) {
       this.lf.selectElementById(payload.nodeId)
-      this.syncSelectionFromGraph()
     }
+    this.afterSelectionMutation()
     this.shapePanelFocusHandler?.(payload)
   }
 
@@ -1583,6 +2075,16 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.hideMiniMap()
     this.teardownMiddlePan?.()
     this.teardownMiddlePan = null
+    this.teardownShiftWheelPan?.()
+    this.teardownShiftWheelPan = null
+    this.teardownSelectionSnapshot?.()
+    this.teardownSelectionSnapshot = null
+    this.teardownBoxSelectRubberGuard?.()
+    this.teardownBoxSelectRubberGuard = null
+    if (this.overlayLayoutRetryRaf != null) {
+      cancelAnimationFrame(this.overlayLayoutRetryRaf)
+      this.overlayLayoutRetryRaf = null
+    }
     this.teardownContextMenu?.()
     this.teardownContextMenu = null
     this.teardownShapeHit?.()
@@ -1597,6 +2099,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.teardownMultiSelectResize?.()
     this.teardownMultiSelectResize = null
     this.refreshMultiSelectResize = null
+    this.refreshMultiSelectResizeNow = null
+    setLiveMultiSelectCount(0)
+    this.getCanvasFrameEl()?.removeAttribute('data-dg-multi-active')
     this.teardownEdgeEndpointPriority?.()
     this.teardownEdgeEndpointPriority = null
     this.overlayLayoutHandler = null

@@ -63,7 +63,9 @@ class DiagramResizeHandleInner extends Component {
     this.graphModel = props.graphModel as GraphModel
     this.dragHandler = new StepDrag({
       onDragStart: () => {
-        this.graphModel.selectNodeById(this.nodeModel.id)
+        if (shouldShowSingleNodeResize(this.graphModel, this.nodeModel)) {
+          this.graphModel.selectNodeById(this.nodeModel.id)
+        }
       },
       onDragging: ({ deltaX, deltaY }) => {
         const { x, y } = cornerPoint(this.direction, this.nodeModel)
@@ -82,6 +84,9 @@ class DiagramResizeHandleInner extends Component {
   }
 
   private onPointerDown = (e: PointerEvent) => {
+    if (!shouldShowSingleNodeResize(this.graphModel, this.nodeModel)) {
+      return
+    }
     e.stopPropagation()
     e.preventDefault()
     this.dragHandler.handleMouseDown(e)

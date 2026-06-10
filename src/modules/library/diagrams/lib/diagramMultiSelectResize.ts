@@ -27,29 +27,65 @@ const MIN_BBOX = 32
 const OUTLINE_PAD = 2
 const HANDLE_DIRS: HandleDir[] = ['nw', 'ne', 'se', 'sw']
 
+/** 由适配层同步写入，供单图元缩放判断（避免 MobX 跨节点选中不触发重绘） */
+let liveMultiSelectCount = 0
+
+/** 多选整体缩放拖拽中（供适配层跳过 node:drag 副作用） */
+let diagramGroupMultiResizing = false
+
+export function setLiveMultiSelectCount(count: number): void {
+  liveMultiSelectCount = Math.max(0, count)
+}
+
+export function getLiveMultiSelectCount(): number {
+  return liveMultiSelectCount
+}
+
+export function isDiagramGroupMultiResizing(): boolean {
+  return diagramGroupMultiResizing
+}
+
+function isDiagramContentNode(node: LogicFlow.BaseNodeModel): boolean {
+  return node.type !== DIAGRAM_GROUP_FRAME_TYPE && node.visible !== false
+}
+
 /** 参与多选框计算的图元（不含组合框） */
-export function getMultiSelectNodes(graphModel: LogicFlow.GraphModel): LogicFlow.BaseNodeModel[] {
-  return graphModel.nodes.filter(
-    (n) =>
-      n.isSelected &&
-      n.type !== DIAGRAM_GROUP_FRAME_TYPE &&
-      n.visible !== false
+export function getMultiSelectNodes(
+  graphModel: LogicFlow.GraphModel,
+  lf?: LogicFlow
+): LogicFlow.BaseNodeModel[] {
+  const fromSelectNodes = graphModel.selectNodes.filter(isDiagramContentNode)
+  if (fromSelectNodes.length >= 2) return fromSelectNodes
+
+  const selectedIds = new Set(
+    (lf?.getSelectElements(true).nodes ?? graphModel.getSelectElements(true).nodes).map((n) => n.id)
   )
+  for (const node of graphModel.nodes) {
+    if (node.isSelected) selectedIds.add(node.id)
+  }
+  return graphModel.nodes.filter((n) => selectedIds.has(n.id) && isDiagramContentNode(n))
 }
 
 /** 可参与等比缩放的图元 */
 export function getMultiSelectResizeTargets(
-  graphModel: LogicFlow.GraphModel
+  graphModel: LogicFlow.GraphModel,
+  lf?: LogicFlow
 ): LogicFlow.BaseNodeModel[] {
-  return getMultiSelectNodes(graphModel).filter((n) => n.resizable !== false)
+  return getMultiSelectNodes(graphModel, lf).filter((n) => n.resizable !== false)
 }
 
-export function countMultiSelectResizeNodes(graphModel: LogicFlow.GraphModel): number {
-  return getMultiSelectResizeTargets(graphModel).length
+export function countMultiSelectResizeNodes(
+  graphModel: LogicFlow.GraphModel,
+  lf?: LogicFlow
+): number {
+  return getMultiSelectResizeTargets(graphModel, lf).length
 }
 
-export function countSelectedDiagramNodes(graphModel: LogicFlow.GraphModel): number {
-  return getMultiSelectNodes(graphModel).length
+export function countSelectedDiagramNodes(
+  graphModel: LogicFlow.GraphModel,
+  lf?: LogicFlow
+): number {
+  return getMultiSelectNodes(graphModel, lf).length
 }
 
 export function shouldShowSingleNodeResize(
@@ -59,7 +95,8 @@ export function shouldShowSingleNodeResize(
   if (!model.isSelected || !model.resizable || model.type === DIAGRAM_GROUP_FRAME_TYPE) {
     return false
   }
-  return countSelectedDiagramNodes(graphModel) <= 1
+  const count = Math.max(getLiveMultiSelectCount(), countSelectedDiagramNodes(graphModel))
+  return count <= 1
 }
 
 function unionBoundsFromModels(models: LogicFlow.BaseNodeModel[]): DiagramSelectionRect | null {
@@ -89,8 +126,8 @@ function unionBoundsFromModels(models: LogicFlow.BaseNodeModel[]): DiagramSelect
   }
 }
 
-function getOverlayMount(lf: LogicFlow): HTMLElement {
-  const container = lf.container as HTMLElement
+function getOverlayMount(lf: LogicFlow, mountRoot?: HTMLElement): HTMLElement {
+  const container = mountRoot ?? (lf.container as HTMLElement)
   if (!container.style.position) {
     container.style.position = 'relative'
   }
@@ -101,7 +138,7 @@ function getOverlayMount(lf: LogicFlow): HTMLElement {
 export function getMultiSelectOverlayRect(
   lf: LogicFlow
 ): { left: number; top: number; width: number; height: number } | null {
-  const selected = getMultiSelectNodes(lf.graphModel)
+  const selected = getMultiSelectNodes(lf.graphModel, lf)
   if (selected.length < 2) return null
   const bounds = unionBoundsFromModels(selected)
   if (!bounds) return null
@@ -119,19 +156,6 @@ function snapNodes(lf: LogicFlow, models: LogicFlow.BaseNodeModel[]): NodeSnap[]
     minHeight: Number(model.minHeight ?? 24),
     resizable: model.resizable !== false
   }))
-}
-
-function setNodeSizeVisual(
-  model: LogicFlow.BaseNodeModel,
-  width: number,
-  height: number
-): void {
-  if (typeof model.rx === 'number' && typeof model.ry === 'number') {
-    model.rx = width / 2
-    model.ry = height / 2
-  }
-  model.width = width
-  model.height = height
 }
 
 function applyOutlineBox(
@@ -204,6 +228,7 @@ function applyUniformGroupScale(
 
   const scaleX = newBounds.width / oldBounds.width
   const scaleY = newBounds.height / oldBounds.height
+  const moves: Array<{ id: string; x: number; y: number }> = []
 
   for (const snap of snaps) {
     const model = lf.getNodeModelById(snap.id)
@@ -217,26 +242,27 @@ function applyUniformGroupScale(
     if (snap.resizable) {
       const newW = Math.max(snap.minWidth, snap.width * scaleX)
       const newH = Math.max(snap.minHeight, snap.height * scaleY)
-      if (persist) {
-        applyNodeDimensions(
-          model as Parameters<typeof applyNodeDimensions>[0],
-          Math.round(newW),
-          Math.round(newH)
-        )
-      } else {
-        setNodeSizeVisual(model, Math.round(newW), Math.round(newH))
-      }
+      applyNodeDimensions(
+        model as Parameters<typeof applyNodeDimensions>[0],
+        persist ? Math.round(newW) : newW,
+        persist ? Math.round(newH) : newH
+      )
     }
 
-    const dx = newCx - model.x
-    const dy = newCy - model.y
-    if (dx !== 0 || dy !== 0) {
-      lf.graphModel.moveNode(snap.id, dx, dy, true)
-    }
+    moves.push({ id: snap.id, x: newCx, y: newCy })
+  }
 
-    if (persist) {
-      syncNodeTextLayout(model)
-      if (snap.resizable) {
+  for (const { id, x, y } of moves) {
+    lf.graphModel.moveNode2Coordinate(id, x, y, true)
+    const model = lf.getNodeModelById(id)
+    if (model) syncNodeTextLayout(model)
+  }
+
+  if (persist) {
+    for (const snap of snaps) {
+      if (!snap.resizable) continue
+      const model = lf.getNodeModelById(snap.id)
+      if (model) {
         syncNodeSizeProperties(model as Parameters<typeof syncNodeSizeProperties>[0])
       }
     }
@@ -345,16 +371,24 @@ function canvasBoundsToHtmlRect(
   }
 }
 
+export type DiagramMultiSelectLayout = {
+  rect: { left: number; top: number; width: number; height: number } | null
+  nodeCount: number
+}
+
 export type DiagramMultiSelectResizeHandle = {
   refresh: () => void
+  /** 同步刷新（用于 node:click 等同帧需立即反映选区的场景） */
+  refreshNow: () => DiagramMultiSelectLayout
   destroy: () => void
 }
 
 export function mountDiagramMultiSelectResize(
   lf: LogicFlow,
   onGraphChange: () => void,
-  onLayoutChange?: () => void,
-  onNodesTransform?: () => void
+  onLayoutChange?: (layout: DiagramMultiSelectLayout) => void,
+  onNodesTransform?: () => void,
+  mountRoot?: HTMLElement
 ): DiagramMultiSelectResizeHandle {
   const root = document.createElement('div')
   root.className = 'dg-multi-select-resize'
@@ -382,35 +416,56 @@ export function mountDiagramMultiSelectResize(
     applyOutlineBox(lf, outline, handles, canvasBounds)
   }
 
-  const refresh = (notifyLayout = true) => {
-    if (groupResizing) return
+  const mountTarget = getOverlayMount(lf, mountRoot)
 
-    const selected = getMultiSelectNodes(lf.graphModel)
-    const resizeTargets = getMultiSelectResizeTargets(lf.graphModel)
-    const showHandles = resizeTargets.length >= 2
+  const refresh = (notifyLayout = true): DiagramMultiSelectLayout => {
+    if (groupResizing) {
+      const selected = getMultiSelectNodes(lf.graphModel, lf)
+      setLiveMultiSelectCount(selected.length)
+      return { rect: null, nodeCount: selected.length }
+    }
+
+    if (!mountTarget.contains(root)) {
+      mountTarget.appendChild(root)
+    }
+
+    const selected = getMultiSelectNodes(lf.graphModel, lf)
+    const resizeTargets = getMultiSelectResizeTargets(lf.graphModel, lf)
+    const showHandles = selected.length >= 2 && resizeTargets.length > 0
 
     if (selected.length < 2) {
       root.style.display = 'none'
       root.classList.remove('dg-multi-select-resize--active', 'dg-multi-select-resize--handles')
-      return
+      setLiveMultiSelectCount(selected.length)
+      const layout = { rect: null, nodeCount: selected.length }
+      if (notifyLayout) onLayoutChange?.(layout)
+      return layout
     }
 
     const bounds = unionBoundsFromModels(selected)
     if (!bounds) {
       root.style.display = 'none'
       root.classList.remove('dg-multi-select-resize--active', 'dg-multi-select-resize--handles')
-      return
+      setLiveMultiSelectCount(selected.length)
+      const layout = { rect: null, nodeCount: selected.length }
+      if (notifyLayout) onLayoutChange?.(layout)
+      return layout
     }
 
+    const padded = paddedBounds(bounds, OUTLINE_PAD)
     root.style.display = ''
     root.classList.add('dg-multi-select-resize--active')
     root.classList.toggle('dg-multi-select-resize--handles', showHandles)
 
-    applyOutlineBoxFromBounds(paddedBounds(bounds, OUTLINE_PAD))
+    applyOutlineBoxFromBounds(padded)
 
-    if (notifyLayout) {
-      onLayoutChange?.()
+    const layout = {
+      rect: canvasBoundsToHtmlRect(lf, padded),
+      nodeCount: selected.length
     }
+    setLiveMultiSelectCount(selected.length)
+    if (notifyLayout) onLayoutChange?.(layout)
+    return layout
   }
 
   const scheduleRefresh = (layout: boolean) => {
@@ -446,7 +501,7 @@ export function mountDiagramMultiSelectResize(
     const drag = new StepDrag({
       step: 1,
       onDragStart: () => {
-        const selected = getMultiSelectNodes(lf.graphModel)
+        const selected = getMultiSelectNodes(lf.graphModel, lf)
         startBounds = unionBoundsFromModels(selected)
         if (!startBounds) return
         fixedAnchor = fixedAnchorForHandle(dir, startBounds)
@@ -454,6 +509,7 @@ export function mountDiagramMultiSelectResize(
         cumDx = 0
         cumDy = 0
         groupResizing = true
+        diagramGroupMultiResizing = true
         aspectLock = false
         root.classList.add('dg-multi-select-resize--dragging')
         window.addEventListener('keydown', syncAspectLock, true)
@@ -468,11 +524,10 @@ export function mountDiagramMultiSelectResize(
         if (!next) return
         applyUniformGroupScale(lf, snaps, startBounds, next, fixedAnchor, false)
         applyOutlineBoxFromBounds(paddedBounds(next, OUTLINE_PAD))
-        onNodesTransform?.()
-        onLayoutChange?.()
       },
       onDragEnd: () => {
         groupResizing = false
+        diagramGroupMultiResizing = false
         window.removeEventListener('keydown', syncAspectLock, true)
         window.removeEventListener('keyup', syncAspectLock, true)
         root.classList.remove('dg-multi-select-resize--dragging')
@@ -516,7 +571,6 @@ export function mountDiagramMultiSelectResize(
 
   root.prepend(outline)
 
-  const mountTarget = getOverlayMount(lf)
   if (!mountTarget.contains(root)) {
     mountTarget.appendChild(root)
   }
@@ -532,7 +586,7 @@ export function mountDiagramMultiSelectResize(
   }
 
   const onSelectionDragStart = () => {
-    if (getMultiSelectNodes(lf.graphModel).length >= 2) {
+    if (getMultiSelectNodes(lf.graphModel, lf).length >= 2) {
       root.classList.add('dg-multi-select-resize--dragging')
     }
   }
@@ -596,5 +650,16 @@ export function mountDiagramMultiSelectResize(
     root.remove()
   }
 
-  return { refresh: () => scheduleRefresh(true), destroy }
+  return {
+    refresh: () => scheduleRefresh(true),
+    refreshNow: () => {
+      if (refreshRaf != null) {
+        cancelAnimationFrame(refreshRaf)
+        refreshRaf = null
+        pendingLayout = false
+      }
+      return refresh(false)
+    },
+    destroy
+  }
 }

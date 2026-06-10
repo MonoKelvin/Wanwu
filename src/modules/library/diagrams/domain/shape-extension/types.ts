@@ -31,4 +31,6 @@ export interface DiagramShapeHitPayload {
   nodeId: string
   kind: string
   hit: unknown
+  /** Ctrl/Meta/Shift 追加多选或切换取消 */
+  append?: boolean
 }

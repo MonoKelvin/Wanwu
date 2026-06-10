@@ -116,7 +116,12 @@ export interface IDiagramEditorPort {
   onEditorSelectionChange?(handler: (selection: DiagramEditorSelection) => void): void
   onGraphChange?(handler: () => void): void
   onViewportChange?(handler: () => void): void
-  onOverlayLayoutChange?(handler: () => void): void
+  onOverlayLayoutChange?(
+    handler: (layout: {
+      rect: { left: number; top: number; width: number; height: number } | null
+      nodeCount: number
+    }) => void
+  ): void
   onContextMenu?(
     handler: (detail: {
       event: MouseEvent
