@@ -37,24 +37,23 @@ import {
 import { LIBRARY_DIAGRAMS_EDITOR_ROUTE, isDiagramEditorPath } from '@modules/library/diagrams/domain/diagramRoutes'
 import { useDiagramRecentShapes } from '@modules/library/diagrams/composables/useDiagramRecentShapes'
 import { isShapeDragEvent, readShapeDragData } from '@modules/library/diagrams/lib/diagramShapeDrag'
-import {
-  defaultCanvasSettings,
-  type DiagramEditorSelection
-} from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import { registerBuiltinShapePanelFocusHandlers } from '@modules/library/diagrams/app/diagramShapePanelFocusBootstrap'
 import { provideDiagramShapePanelFocus } from '@modules/library/diagrams/composables/useDiagramShapePanelFocus'
+import { provideDiagramEditorSelection } from '@modules/library/diagrams/composables/useDiagramEditorSelection'
 import { provideUmlClassifierEditFocus } from '@modules/library/diagrams/extensions/uml/composables/useUmlClassifierEditFocus'
+
+function resolvedTheme(): 'light' | 'dark' {
+  return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+}
 
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
-const selectedNodeCount = ref(0)
-const selectedEdgeCount = ref(0)
+const selectionApi = provideDiagramEditorSelection(resolvedTheme())
+const editorSelection = selectionApi.selection
 const alignBarNodeCount = ref(0)
 const alignBarAnchor = ref<DiagramAlignBarAnchor | null>(null)
 const alignBarStageWidth = ref(0)
-const canUngroupSelection = ref(false)
-const canGroupSelection = ref(false)
 const alignBarStageHeight = ref(600)
 const canvasRef = ref<HTMLElement | null>(null)
 const canvasWrapRef = ref<HTMLElement | null>(null)
@@ -65,17 +64,6 @@ const loading = ref(true)
 const loadError = ref<string | null>(null)
 const bootError = ref<string | null>(null)
 const editorReady = ref(false)
-const editorSelection = ref<DiagramEditorSelection>({
-  kind: 'canvas',
-  node: null,
-  edge: null,
-  canvas: defaultCanvasSettings(resolvedTheme()),
-  selectedNodeCount: 0,
-  selectedEdgeCount: 0,
-  selectedNodeIds: [],
-  selectedEdgeIds: [],
-  mixedNodeFields: []
-})
 const isCanvasDragOver = ref(false)
 const dropIndicator = ref<{ x: number; y: number } | null>(null)
 const dropIndicatorSnapped = ref(false)
@@ -138,11 +126,7 @@ function syncAfterPageCommand() {
   refreshViewportZoom()
   const port = portRef.value
   if (!port) return
-  editorSelection.value = port.getSelection()
-  selectedNodeCount.value = editorSelection.value.selectedNodeCount
-  selectedEdgeCount.value = editorSelection.value.selectedEdgeCount
-  canUngroupSelection.value = port.canUngroupSelection()
-  canGroupSelection.value = port.canGroupSelection()
+  selectionApi.publish(port.getSelection())
   scheduleAlignBarRefresh()
 }
 
@@ -247,8 +231,23 @@ function applyFolderIdFromRoute() {
   pickedFolderId.value = raw
 }
 
+function publishLiveSelection() {
+  const port = portRef.value
+  if (!port) return
+  selectionApi.publish(port.getSelection())
+}
+
 const unsubscribeBusResult = bus.onResult((cmd, result) => {
   if (!result.ok) return
+
+  // 组合/拆组由 LogicFlowDiagramAdapter 内部 commitSelectionForIds 推送，此处不再 publish 避免覆盖
+  if (
+    cmd.type === 'canvas.select' ||
+    cmd.type === 'canvas.selectAll' ||
+    cmd.type === 'canvas.clearSelection'
+  ) {
+    publishLiveSelection()
+  }
 
   if (
     cmd.type === 'document.save' ||
@@ -301,7 +300,7 @@ const unsubscribeBusResult = bus.onResult((cmd, result) => {
       portRef.value
     ) {
       bumpSessionView()
-      editorSelection.value = portRef.value.getSelection()
+      selectionApi.publish(portRef.value.getSelection())
     }
   }
 })
@@ -332,10 +331,6 @@ const dirty = computed(() => {
   void sessionRevision.value
   return sessionRef.value?.dirty ?? false
 })
-
-function resolvedTheme(): 'light' | 'dark' {
-  return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
-}
 
 function focusCanvasForKeys() {
   portRef.value?.focusCanvas()
@@ -442,11 +437,7 @@ async function bootstrapEditor() {
   port.mount(el)
   port.setTheme(resolvedTheme())
   port.onEditorSelectionChange((selection) => {
-    editorSelection.value = selection
-    selectedNodeCount.value = selection.selectedNodeCount
-    selectedEdgeCount.value = selection.selectedEdgeCount
-    canUngroupSelection.value = selection.canUngroup ?? port.canUngroupSelection()
-    canGroupSelection.value = selection.canGroup ?? port.canGroupSelection()
+    selectionApi.publish(selection)
     scheduleAlignBarRefresh()
     const focus = panelFocus.value
     if (
@@ -472,7 +463,7 @@ async function bootstrapEditor() {
   })
   port.onGraphChange(() => {
     sessionRef.value?.markActivePageDirty()
-    if (selectedNodeCount.value >= 2) {
+    if (editorSelection.value.selectedNodeCount >= 2) {
       scheduleAlignBarRefresh()
     }
   })
@@ -494,7 +485,7 @@ async function bootstrapEditor() {
   port.onShapePanelFocus((request) => {
     shapePanelFocus.route(request)
   })
-  editorSelection.value = port.getSelection()
+  selectionApi.publish(port.getSelection())
 
   resizeObserver = new ResizeObserver(() => {
     if (resizeRaf) cancelAnimationFrame(resizeRaf)
@@ -632,7 +623,7 @@ watch(
   () => document.documentElement.dataset.theme,
   () => {
     portRef.value?.setTheme(resolvedTheme())
-    if (portRef.value) editorSelection.value = portRef.value.getSelection()
+    if (portRef.value) selectionApi.publish(portRef.value.getSelection())
   }
 )
 
@@ -754,8 +745,6 @@ function onCanvasDrop(event: DragEvent) {
           :anchor-rect="alignBarAnchor"
           :stage-width="alignBarStageWidth"
           :stage-height="alignBarStageHeight"
-          :can-group="editorSelection.canGroup ?? canGroupSelection"
-          :can-ungroup="editorSelection.canUngroup ?? canUngroupSelection"
         />
         <div v-if="loading" class="dg-canvas-wrap__overlay">加载画布…</div>
         <div v-else-if="loadError" class="dg-canvas-wrap__overlay dg-canvas-wrap__overlay--error">
@@ -771,7 +760,6 @@ function onCanvasDrop(event: DragEvent) {
         :folder-id="pickedFolderId"
         :file-id="sessionRef?.fileId ?? null"
         :booting="!editorReady"
-        :selection="editorSelection"
         @back="goBack"
       />
 
@@ -786,10 +774,7 @@ function onCanvasDrop(event: DragEvent) {
         />
         <DiagramPropertyPanel
           v-if="!editorLayout.propsCollapsed.value"
-          :selection="editorSelection"
           :file-id="sessionRef?.fileId ?? null"
-          :can-ungroup="editorSelection.canUngroup ?? canUngroupSelection"
-          :can-group="editorSelection.canGroup ?? canGroupSelection"
         />
         <DiagramPanelRestoreButton
           v-else

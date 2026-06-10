@@ -30,19 +30,26 @@ import {
 } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import { UML_CLASSIFIER_KIND } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierTypes'
-import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
-import type { DiagramEditorSelection } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import {
   togglePropsPanelCollapsed,
   useDiagramEditorLayout
 } from '@modules/library/diagrams/composables/useDiagramEditorLayout'
+import { useDiagramEditorSelection } from '@modules/library/diagrams/composables/useDiagramEditorSelection'
+import {
+  effectiveEdgeCount,
+  effectiveNodeCount,
+  shapeExtensionDigest
+} from '@modules/library/diagrams/lib/diagramSelectionSnapshot'
 
 const props = defineProps<{
-  selection: DiagramEditorSelection
   fileId: string | null
-  canUngroup?: boolean
-  canGroup?: boolean
 }>()
+
+const selectionApi = useDiagramEditorSelection()
+const selection = computed(() => selectionApi.selection.value)
+const selectionRevision = computed(
+  () => `${selectionApi.revision.value}|${selectionApi.fingerprint.value}`
+)
 
 const bus = useDiagramCommandBus()
 const toast = useWanwuToast()
@@ -51,80 +58,66 @@ const activeTab = ref<'node' | 'edge' | 'canvas'>('canvas')
 const layout = useDiagramEditorLayout()
 
 watch(
-  () => ({
-    kind: props.selection.kind,
-    nodeCount: props.selection.selectedNodeCount,
-    edgeCount: props.selection.selectedEdgeCount,
-    nodeIdsLen: props.selection.selectedNodeIds.length,
-    edgeIdsLen: props.selection.selectedEdgeIds.length,
-    canUngroup: props.selection.canUngroup,
-    nodeId: props.selection.node?.id ?? null,
-    edgeId: props.selection.edge?.id ?? null,
-    groupId: props.selection.node?.groupId ?? null
-  }),
-  (next, prev) => {
-    const totalCount = Math.max(next.nodeCount, next.nodeIdsLen) + Math.max(next.edgeCount, next.edgeIdsLen)
-    if (next.kind === 'canvas' || totalCount === 0) {
+  selectionRevision,
+  () => {
+    const s = selection.value
+    const nodeCount = effectiveNodeCount(s)
+    const edgeCount = effectiveEdgeCount(s)
+    const total = nodeCount + edgeCount
+    if (s.kind === 'canvas' || total === 0) {
       activeTab.value = 'canvas'
       return
     }
-    if (next.edgeCount > 0 && next.nodeCount === 0 && next.nodeIdsLen === 0) {
+    if (edgeCount > 0 && nodeCount === 0) {
       activeTab.value = 'edge'
       return
     }
-    if (next.nodeCount > 0 || next.nodeIdsLen > 0) {
-      if (
-        (prev?.nodeCount ?? 0) === 0 ||
-        next.nodeCount !== prev?.nodeCount ||
-        next.nodeIdsLen !== prev?.nodeIdsLen ||
-        next.nodeId !== prev?.nodeId ||
-        next.edgeCount !== prev?.edgeCount ||
-        next.canUngroup !== prev?.canUngroup ||
-        next.groupId !== prev?.groupId
-      ) {
-        activeTab.value = 'node'
-      }
+    if (nodeCount > 0) {
+      activeTab.value = 'node'
     }
   },
   { immediate: true }
 )
 
 const showNode = computed(
-  () => activeTab.value === 'node' && props.selection.selectedNodeCount > 0
+  () => activeTab.value === 'node' && effectiveNodeCount(selection.value) > 0
 )
 const showEdge = computed(
-  () => activeTab.value === 'edge' && props.selection.selectedEdgeCount > 0
+  () => activeTab.value === 'edge' && effectiveEdgeCount(selection.value) > 0
 )
-const canvas = computed(() => props.selection.canvas)
-const multiNode = computed(() => props.selection.selectedNodeCount > 1)
-const multiEdge = computed(() => props.selection.selectedEdgeCount > 1)
-const multiSelect = computed(() => {
-  const nc = Math.max(
-    props.selection.selectedNodeCount,
-    props.selection.selectedNodeIds.length
-  )
-  const ec = Math.max(
-    props.selection.selectedEdgeCount,
-    props.selection.selectedEdgeIds.length
-  )
-  return nc + ec > 1
-})
+const canvas = computed(() => selection.value.canvas)
+const multiNode = computed(() => effectiveNodeCount(selection.value) > 1)
+const multiEdge = computed(() => effectiveEdgeCount(selection.value) > 1)
+const multiSelect = computed(
+  () => effectiveNodeCount(selection.value) + effectiveEdgeCount(selection.value) > 1
+)
+const showMultiSelectTools = computed(
+  () => multiSelect.value || Boolean(selection.value.canUngroup)
+)
 const isGroupFrame = computed(() => {
-  if (props.selection.selectedNodeCount !== 1) return false
-  return props.selection.node?.type === DIAGRAM_GROUP_FRAME_TYPE
+  if (effectiveNodeCount(selection.value) !== 1) return false
+  return selection.value.node?.type === DIAGRAM_GROUP_FRAME_TYPE
+})
+const shapeHostKey = computed(() => {
+  const node = selection.value.node
+  if (!node) return 'none'
+  return [
+    node.id,
+    node.width,
+    node.height,
+    node.type,
+    node.groupId ?? '',
+    shapeExtensionDigest(node.shapeExtension)
+  ].join('|')
 })
 const showGroupFrame = computed(() => isGroupFrame.value && showNode.value)
 const isGroupedMember = computed(
-  () => !multiNode.value && Boolean(props.selection.node?.groupId)
+  () => !multiNode.value && Boolean(selection.value.node?.groupId)
 )
 
-function ungroupSelection() {
-  void bus.dispatch({ type: 'canvas.ungroup' })
-}
-
 const selectionBanner = computed(() => {
-  const nc = props.selection.selectedNodeCount
-  const ec = props.selection.selectedEdgeCount
+  const nc = effectiveNodeCount(selection.value)
+  const ec = effectiveEdgeCount(selection.value)
   if (nc > 0 && ec > 0) return `${nc} 图元 · ${ec} 连线`
   if (nc > 1) return `${nc} 图元`
   if (ec > 1) return `${ec} 连线`
@@ -132,17 +125,17 @@ const selectionBanner = computed(() => {
 })
 
 function isMixed(field: string): boolean {
-  return multiNode.value && props.selection.mixedNodeFields.includes(field)
+  return multiNode.value && selection.value.mixedNodeFields.includes(field)
 }
 
 function isTextAlignActive(value: string): boolean {
   if (isMixed('textStyle.textAlign')) return false
-  return props.selection.node?.textStyle.textAlign === value
+  return selection.value.node?.textStyle.textAlign === value
 }
 
 function isFontWeightActive(): boolean {
   if (isMixed('textStyle.fontWeight')) return false
-  return props.selection.node?.textStyle.fontWeight === 'bold'
+  return selection.value.node?.textStyle.fontWeight === 'bold'
 }
 
 const dispatchBatchNode = useDebounceFn((nodeProps: Record<string, unknown>) => {
@@ -150,7 +143,7 @@ const dispatchBatchNode = useDebounceFn((nodeProps: Record<string, unknown>) => 
 }, 200)
 
 const dispatchNodeText = useDebounceFn((nodeProps: Record<string, unknown>) => {
-  const id = props.selection.node?.id
+  const id = selection.value.node?.id
   if (!id) return
   void bus.dispatch({ type: 'canvas.updateNode', payload: { nodeId: id, nodeProps } })
 }, 200)
@@ -160,7 +153,7 @@ function patchNodeNow(nodeProps: Record<string, unknown>) {
     void bus.dispatch({ type: 'canvas.batchUpdateNodes', payload: { nodeProps } })
     return
   }
-  const id = props.selection.node?.id
+  const id = selection.value.node?.id
   if (!id) return
   void bus.dispatch({ type: 'canvas.updateNode', payload: { nodeId: id, nodeProps } })
 }
@@ -178,7 +171,7 @@ function patchEdgeNow(edgeProps: Record<string, unknown>) {
     void bus.dispatch({ type: 'canvas.batchUpdateEdges', payload: { edgeProps } })
     return
   }
-  const id = props.selection.edge?.id
+  const id = selection.value.edge?.id
   if (!id) return
   void bus.dispatch({ type: 'canvas.updateEdge', payload: { edgeId: id, edgeProps } })
 }
@@ -188,7 +181,7 @@ const dispatchBatchEdge = useDebounceFn((edgeProps: Record<string, unknown>) => 
 }, 200)
 
 const dispatchEdgeText = useDebounceFn((edgeProps: Record<string, unknown>) => {
-  const id = props.selection.edge?.id
+  const id = selection.value.edge?.id
   if (!id) return
   void bus.dispatch({ type: 'canvas.updateEdge', payload: { edgeId: id, edgeProps } })
 }, 200)
@@ -209,7 +202,7 @@ function patchDefaultEdge(patch: Record<string, unknown>) {
 }
 
 function patchNodeTextStyle(patch: Record<string, unknown>) {
-  const ts = props.selection.node?.textStyle
+  const ts = selection.value.node?.textStyle
   if (!ts) return
   const next = { ...ts, ...patch }
   if (typeof next.fontSize === 'number') {
@@ -236,19 +229,19 @@ function patchCanvas(patch: Record<string, unknown>) {
 }
 
 function toggleUnderline() {
-  const ts = props.selection.node?.textStyle
+  const ts = selection.value.node?.textStyle
   if (!ts) return
   patchNodeTextStyle({ underline: !ts.underline })
 }
 
 function toggleItalic() {
-  const ts = props.selection.node?.textStyle
+  const ts = selection.value.node?.textStyle
   if (!ts) return
   patchNodeTextStyle({ fontStyle: (ts.fontStyle ?? 'normal') === 'italic' ? 'normal' : 'italic' })
 }
 
 function toggleStrikethrough() {
-  const ts = props.selection.node?.textStyle
+  const ts = selection.value.node?.textStyle
   if (!ts) return
   patchNodeTextStyle({ strikethrough: !ts.strikethrough })
 }
@@ -265,7 +258,7 @@ function nodeTopLeft(node: { x: number; y: number; width: number; height: number
 }
 
 function patchNodePositionFromTopLeft(left: number, top: number) {
-  const node = props.selection.node
+  const node = selection.value.node
   if (!node) return
   patchNodeNumeric({
     x: left + node.width / 2,
@@ -274,7 +267,7 @@ function patchNodePositionFromTopLeft(left: number, top: number) {
 }
 
 function patchNodeSizeKeepTopLeft(width: number, height: number) {
-  const node = props.selection.node
+  const node = selection.value.node
   if (!node) return
   const { left, top } = nodeTopLeft(node)
   patchNodeNow({
@@ -292,13 +285,13 @@ function parseNumber(value: unknown, fallback: number, min = -Infinity, max = In
 }
 
 const showImageSection = computed(() => {
-  const node = props.selection.node
+  const node = selection.value.node
   if (!node || multiNode.value) return false
   return node.type === 'dg-image' || Boolean(node.imageAsset?.url)
 })
 
 const shapeKindRegistration = computed(() => {
-  const ext = props.selection.node?.shapeExtension
+  const ext = selection.value.node?.shapeExtension
   if (!ext?.kind) return null
   return ensureDiagramShapeExtensions().getKind(ext.kind) ?? null
 })
@@ -307,7 +300,7 @@ const showShapeExtensionHost = computed(
   () =>
     showNode.value &&
     !multiNode.value &&
-    Boolean(props.selection.node?.shapeExtension) &&
+    Boolean(selection.value.node?.shapeExtension) &&
     Boolean(shapeKindRegistration.value?.propertyEditor)
 )
 
@@ -316,7 +309,7 @@ const hideGenericTextContent = computed(
 )
 
 const nodeTextSectionTitle = computed(() =>
-  props.selection.node?.shapeExtension?.kind === UML_CLASSIFIER_KIND ? '标题样式' : '文本'
+  selection.value.node?.shapeExtension?.kind === UML_CLASSIFIER_KIND ? '标题样式' : '文本'
 )
 
 async function pickNodeImage() {
@@ -324,7 +317,7 @@ async function pickNodeImage() {
     toast.info('请先保存文档后再插入图片')
     return
   }
-  const nodeId = props.selection.node?.id
+  const nodeId = selection.value.node?.id
   if (!nodeId) return
   imageBusy.value = true
   try {
@@ -348,7 +341,7 @@ async function pickNodeImage() {
 }
 
 function clearNodeImage() {
-  const nodeId = props.selection.node?.id
+  const nodeId = selection.value.node?.id
   if (!nodeId) return
   void bus.dispatch({
     type: 'canvas.updateNode',
@@ -357,9 +350,9 @@ function clearNodeImage() {
 }
 
 function patchGroupStyle(patch: Record<string, unknown>) {
-  const id = props.selection.node?.id
+  const id = selection.value.node?.id
   if (!id) return
-  const node = props.selection.node
+  const node = selection.value.node
   void bus.dispatch({
     type: 'canvas.updateNode',
     payload: {
@@ -380,7 +373,7 @@ function patchGroupStyle(patch: Record<string, unknown>) {
 }
 
 function patchGroupAlwaysVisible(value: boolean) {
-  const id = props.selection.node?.id
+  const id = selection.value.node?.id
   if (!id) return
   void bus.dispatch({
     type: 'canvas.updateNode',
@@ -448,19 +441,16 @@ function patchGroupAlwaysVisible(value: boolean) {
       </button>
     </div>
 
-    <div class="dg-panel__body ww-scroll-main">
+    <div :key="`panel-body-${selectionRevision}`" class="dg-panel__body ww-scroll-main">
       <p v-if="selectionBanner" class="dg-prop-selection-banner">{{ selectionBanner }}</p>
 
       <DiagramMultiSelectTools
-        v-if="multiSelect"
-        :node-count="selection.selectedNodeCount"
-        :edge-count="selection.selectedEdgeCount"
-        :can-group="selection.canGroup ?? canGroup ?? false"
-        :can-ungroup="selection.canUngroup ?? canUngroup ?? false"
+        v-if="showMultiSelectTools"
+        :key="`multi-${selectionRevision}`"
       />
 
       <!-- 组合框 -->
-      <template v-if="showGroupFrame && selection.node">
+      <template v-if="showGroupFrame && selection.node" :key="`group-${selectionRevision}`">
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">组合框</p>
           <p v-if="selection.node.groupMemberCount != null" class="dg-prop-hint">
@@ -519,14 +509,6 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchGroupStyle({ strokeDasharray: String($event ?? '') })"
             />
           </SettingsRow>
-          <WwButton
-            v-if="selection.canUngroup ?? canUngroup"
-            size="small"
-            severity="secondary"
-            class="dg-prop-group__ungroup-btn"
-            :label="`取消组合 (${DG_SHORTCUT.ungroup})`"
-            @click="ungroupSelection"
-          />
         </section>
       </template>
 
@@ -535,21 +517,14 @@ function patchGroupAlwaysVisible(value: boolean) {
         v-if="showNode && selection.node && isGroupedMember && !isGroupFrame"
         class="dg-prop-section dg-prop-group dg-prop-grouped-banner"
       >
-        <p class="dg-prop-grouped-banner__text">该图元已在组合内，可直接编辑；需要拆分时可取消组合。</p>
-        <WwButton
-          v-if="selection.canUngroup ?? canUngroup"
-          size="small"
-          severity="secondary"
-          :label="`取消组合 (${DG_SHORTCUT.ungroup})`"
-          @click="ungroupSelection"
-        />
+        <p class="dg-prop-grouped-banner__text">该图元已在组合内，可直接编辑；需要拆分时可使用上方取消组合。</p>
       </section>
 
       <!-- 图形 -->
       <template v-if="showNode && selection.node && !isGroupFrame">
         <DiagramShapePropertyHost
           v-if="showShapeExtensionHost"
-          :key="selection.node.id"
+          :key="shapeHostKey"
           :node="selection.node"
         />
         <section class="dg-prop-section dg-prop-group">

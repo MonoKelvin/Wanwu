@@ -61,6 +61,15 @@ watch(
   }
 )
 
+watch(
+  () => props.hasPendingPatch,
+  (pending, wasPending) => {
+    if (wasPending && !pending) {
+      localData.value = normalizeUmlClassifierData(props.shapeExtension.data)
+    }
+  }
+)
+
 const data = computed(() => localData.value)
 
 const visibilityOptions = UML_VISIBILITY_OPTIONS.map((item) => ({

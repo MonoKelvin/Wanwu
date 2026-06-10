@@ -9,6 +9,7 @@ import {
 } from '@modules/library/diagrams/lib/diagramAlignActions'
 import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
 import type { DiagramAlignMode, DiagramDistributeMode } from '@modules/library/diagrams/lib/diagramNodeLayout'
+import { useDiagramEditorSelection } from '@modules/library/diagrams/composables/useDiagramEditorSelection'
 
 export type DiagramAlignBarAnchor = {
   left: number
@@ -22,11 +23,12 @@ const props = defineProps<{
   anchorRect?: DiagramAlignBarAnchor | null
   stageWidth?: number
   stageHeight?: number
-  canGroup?: boolean
-  canUngroup?: boolean
 }>()
 
 const bus = useDiagramCommandBus()
+const editorSelection = useDiagramEditorSelection().selection
+const canGroup = computed(() => editorSelection.value.canGroup ?? false)
+const canUngroup = computed(() => editorSelection.value.canUngroup ?? false)
 const barRef = ref<HTMLElement | null>(null)
 const barWidth = ref(220)
 let barObserver: ResizeObserver | null = null
@@ -79,10 +81,10 @@ function ungroup() {
 }
 
 const groupEnabled = computed(
-  () => props.canGroup || (props.nodeCount ?? 0) >= 2
+  () => canGroup.value || (props.nodeCount ?? 0) >= 2
 )
 
-const ungroupEnabled = computed(() => Boolean(props.canUngroup))
+const ungroupEnabled = computed(() => canUngroup.value)
 
 const barStyle = computed(() => {
   const rect = props.anchorRect

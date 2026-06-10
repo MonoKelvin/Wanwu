@@ -17,7 +17,11 @@ import {
   normalizeDiagramTitleInput
 } from '@modules/library/diagrams/lib/diagramHomeUtils'
 import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
-import type { DiagramEditorSelection } from '@modules/library/diagrams/lib/diagramSelectionTypes'
+import { useDiagramEditorSelection } from '@modules/library/diagrams/composables/useDiagramEditorSelection'
+import {
+  effectiveEdgeCount,
+  effectiveNodeCount
+} from '@modules/library/diagrams/lib/diagramSelectionSnapshot'
 
 const props = defineProps<{
   title: string
@@ -28,8 +32,10 @@ const props = defineProps<{
   fileId?: string | null
   /** 画布尚未就绪时禁用编辑操作，保留工具栏布局 */
   booting?: boolean
-  selection?: DiagramEditorSelection
 }>()
+
+const selectionApi = useDiagramEditorSelection()
+const editorSelection = selectionApi.selection
 
 const saveBadge = computed(() => {
   if (props.saving) return { text: '保存中…', tone: 'saving' as const }
@@ -53,24 +59,22 @@ const zoomLabel = computed(() => `${props.zoomPercent ?? 100}%`)
 
 const canFormatPaint = computed(() => {
   if (props.booting) return false
-  const s = props.selection
+  const s = editorSelection.value
   if (!s) return false
-  const nc = Math.max(s.selectedNodeCount, s.selectedNodeIds.length)
-  const ec = Math.max(s.selectedEdgeCount, s.selectedEdgeIds.length)
+  const nc = effectiveNodeCount(s)
+  const ec = effectiveEdgeCount(s)
   return (nc === 1 && ec === 0) || (ec === 1 && nc === 0)
 })
 
 const canClearStyle = computed(() => {
   if (props.booting) return false
-  const s = props.selection
+  const s = editorSelection.value
   if (!s) return false
   if (s.canClearStyle != null) return s.canClearStyle
-  const nc = Math.max(s.selectedNodeCount, s.selectedNodeIds.length)
-  const ec = Math.max(s.selectedEdgeCount, s.selectedEdgeIds.length)
-  return nc + ec > 0
+  return effectiveNodeCount(s) + effectiveEdgeCount(s) > 0
 })
 
-const formatPainterActive = computed(() => props.selection?.formatPainterActive ?? false)
+const formatPainterActive = computed(() => editorSelection.value.formatPainterActive ?? false)
 
 function toggleFormatPainter() {
   if (formatPainterActive.value) {

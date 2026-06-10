@@ -114,6 +114,8 @@ export interface IDiagramEditorPort {
   applyCanvasSettings(settings: Partial<DiagramCanvasSettings>): void
   loadCanvasSettings(settings: DiagramCanvasSettings | undefined): void
   onEditorSelectionChange?(handler: (selection: DiagramEditorSelection) => void): void
+  /** 批量图变更后强制同步并推送选区（组合/拆组等） */
+  notifyEditorSelection?(): void
   onGraphChange?(handler: () => void): void
   onViewportChange?(handler: () => void): void
   onOverlayLayoutChange?(
