@@ -78,6 +78,12 @@ function ungroup() {
   void bus.dispatch({ type: 'canvas.ungroup' })
 }
 
+const groupEnabled = computed(
+  () => props.canGroup || (props.nodeCount ?? 0) >= 2
+)
+
+const ungroupEnabled = computed(() => Boolean(props.canUngroup))
+
 const barStyle = computed(() => {
   const rect = props.anchorRect
   if (!rect) return undefined
@@ -184,7 +190,7 @@ const barStyle = computed(() => {
         icon-size="xs"
         compact
         aria-label="组合"
-        :disabled="!canGroup"
+        :disabled="!groupEnabled"
         v-tooltip.bottom="`组合 (${DG_SHORTCUT.group})`"
         class="dg-align-bar__btn dg-toolbar-icon-btn"
         @mousedown.prevent
@@ -195,7 +201,7 @@ const barStyle = computed(() => {
         icon-size="xs"
         compact
         aria-label="取消组合"
-        :disabled="!canUngroup"
+        :disabled="!ungroupEnabled"
         v-tooltip.bottom="`取消组合 (${DG_SHORTCUT.ungroup})`"
         class="dg-align-bar__btn dg-toolbar-icon-btn"
         @mousedown.prevent

@@ -17,6 +17,12 @@ const showSection = computed(
   () => props.nodeCount + props.edgeCount > 1 || props.canGroup || props.canUngroup
 )
 
+const groupEnabled = computed(
+  () => props.canGroup || props.nodeCount + props.edgeCount >= 2
+)
+
+const ungroupEnabled = computed(() => props.canUngroup)
+
 function group() {
   void bus.dispatch({ type: 'canvas.group' })
 }
@@ -32,7 +38,7 @@ function ungroup() {
       icon="layers"
       compact
       ariaLabel="组合"
-      :disabled="!canGroup"
+      :disabled="!groupEnabled"
       v-tooltip.bottom="`组合 (${DG_SHORTCUT.group})`"
       @mousedown.prevent
       @click="group"
@@ -41,7 +47,7 @@ function ungroup() {
       icon="ungroup"
       compact
       ariaLabel="取消组合"
-      :disabled="!canUngroup"
+      :disabled="!ungroupEnabled"
       v-tooltip.bottom="`取消组合 (${DG_SHORTCUT.ungroup})`"
       @mousedown.prevent
       @click="ungroup"

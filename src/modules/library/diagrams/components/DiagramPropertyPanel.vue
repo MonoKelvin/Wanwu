@@ -55,23 +55,32 @@ watch(
     kind: props.selection.kind,
     nodeCount: props.selection.selectedNodeCount,
     edgeCount: props.selection.selectedEdgeCount,
+    nodeIdsLen: props.selection.selectedNodeIds.length,
+    edgeIdsLen: props.selection.selectedEdgeIds.length,
+    canUngroup: props.selection.canUngroup,
     nodeId: props.selection.node?.id ?? null,
-    edgeId: props.selection.edge?.id ?? null
+    edgeId: props.selection.edge?.id ?? null,
+    groupId: props.selection.node?.groupId ?? null
   }),
   (next, prev) => {
-    if (next.kind === 'canvas' || (next.nodeCount === 0 && next.edgeCount === 0)) {
+    const totalCount = Math.max(next.nodeCount, next.nodeIdsLen) + Math.max(next.edgeCount, next.edgeIdsLen)
+    if (next.kind === 'canvas' || totalCount === 0) {
       activeTab.value = 'canvas'
       return
     }
-    if (next.edgeCount > 0 && next.nodeCount === 0) {
+    if (next.edgeCount > 0 && next.nodeCount === 0 && next.nodeIdsLen === 0) {
       activeTab.value = 'edge'
       return
     }
-    if (next.nodeCount > 0) {
+    if (next.nodeCount > 0 || next.nodeIdsLen > 0) {
       if (
         (prev?.nodeCount ?? 0) === 0 ||
+        next.nodeCount !== prev?.nodeCount ||
+        next.nodeIdsLen !== prev?.nodeIdsLen ||
         next.nodeId !== prev?.nodeId ||
-        next.edgeCount !== prev?.edgeCount
+        next.edgeCount !== prev?.edgeCount ||
+        next.canUngroup !== prev?.canUngroup ||
+        next.groupId !== prev?.groupId
       ) {
         activeTab.value = 'node'
       }
@@ -89,9 +98,17 @@ const showEdge = computed(
 const canvas = computed(() => props.selection.canvas)
 const multiNode = computed(() => props.selection.selectedNodeCount > 1)
 const multiEdge = computed(() => props.selection.selectedEdgeCount > 1)
-const multiSelect = computed(
-  () => props.selection.selectedNodeCount + props.selection.selectedEdgeCount > 1
-)
+const multiSelect = computed(() => {
+  const nc = Math.max(
+    props.selection.selectedNodeCount,
+    props.selection.selectedNodeIds.length
+  )
+  const ec = Math.max(
+    props.selection.selectedEdgeCount,
+    props.selection.selectedEdgeIds.length
+  )
+  return nc + ec > 1
+})
 const isGroupFrame = computed(() => {
   if (props.selection.selectedNodeCount !== 1) return false
   return props.selection.node?.type === DIAGRAM_GROUP_FRAME_TYPE
@@ -438,8 +455,8 @@ function patchGroupAlwaysVisible(value: boolean) {
         v-if="multiSelect"
         :node-count="selection.selectedNodeCount"
         :edge-count="selection.selectedEdgeCount"
-        :can-group="canGroup ?? false"
-        :can-ungroup="canUngroup ?? false"
+        :can-group="selection.canGroup ?? canGroup ?? false"
+        :can-ungroup="selection.canUngroup ?? canUngroup ?? false"
       />
 
       <!-- 组合框 -->
@@ -502,6 +519,14 @@ function patchGroupAlwaysVisible(value: boolean) {
               @update:model-value="patchGroupStyle({ strokeDasharray: String($event ?? '') })"
             />
           </SettingsRow>
+          <WwButton
+            v-if="selection.canUngroup ?? canUngroup"
+            size="small"
+            severity="secondary"
+            class="dg-prop-group__ungroup-btn"
+            :label="`取消组合 (${DG_SHORTCUT.ungroup})`"
+            @click="ungroupSelection"
+          />
         </section>
       </template>
 
@@ -512,7 +537,7 @@ function patchGroupAlwaysVisible(value: boolean) {
       >
         <p class="dg-prop-grouped-banner__text">该图元已在组合内，可直接编辑；需要拆分时可取消组合。</p>
         <WwButton
-          v-if="canUngroup"
+          v-if="selection.canUngroup ?? canUngroup"
           size="small"
           severity="secondary"
           :label="`取消组合 (${DG_SHORTCUT.ungroup})`"

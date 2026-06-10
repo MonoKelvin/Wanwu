@@ -55,17 +55,19 @@ const canFormatPaint = computed(() => {
   if (props.booting) return false
   const s = props.selection
   if (!s) return false
-  return (
-    (s.selectedNodeCount === 1 && s.selectedEdgeCount === 0) ||
-    (s.selectedEdgeCount === 1 && s.selectedNodeCount === 0)
-  )
+  const nc = Math.max(s.selectedNodeCount, s.selectedNodeIds.length)
+  const ec = Math.max(s.selectedEdgeCount, s.selectedEdgeIds.length)
+  return (nc === 1 && ec === 0) || (ec === 1 && nc === 0)
 })
 
 const canClearStyle = computed(() => {
   if (props.booting) return false
   const s = props.selection
   if (!s) return false
-  return s.selectedNodeCount + s.selectedEdgeCount > 0
+  if (s.canClearStyle != null) return s.canClearStyle
+  const nc = Math.max(s.selectedNodeCount, s.selectedNodeIds.length)
+  const ec = Math.max(s.selectedEdgeCount, s.selectedEdgeIds.length)
+  return nc + ec > 0
 })
 
 const formatPainterActive = computed(() => props.selection?.formatPainterActive ?? false)

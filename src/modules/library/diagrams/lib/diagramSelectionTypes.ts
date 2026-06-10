@@ -98,6 +98,12 @@ export interface DiagramEditorSelection {
   mixedNodeFields: string[]
   /** 格式刷是否处于激活状态 */
   formatPainterActive?: boolean
+  /** 当前选区是否可组合 */
+  canGroup?: boolean
+  /** 当前选区是否可取消组合 */
+  canUngroup?: boolean
+  /** 当前选区是否可清空样式（至少选中 1 个图元或连线） */
+  canClearStyle?: boolean
 }
 
 export function defaultDefaultEdgeStyle(resolved: 'light' | 'dark'): DiagramDefaultEdgeStyle {

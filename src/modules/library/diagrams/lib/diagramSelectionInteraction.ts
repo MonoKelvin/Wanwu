@@ -201,18 +201,20 @@ export function collectElementsInCanvasBox(
   leftTop: [number, number],
   rightBottom: [number, number],
   contain: boolean,
-  opts?: { skipGroupFrame?: boolean }
+  opts?: { skipGroupFrame?: boolean; skipGroupMembers?: boolean }
 ): { nodeIds: string[]; edgeIds: string[] } {
   const nodeIds: string[] = []
   const edgeIds: string[] = []
 
   for (const model of lf.graphModel.nodes) {
     if (opts?.skipGroupFrame !== false && model.type === DIAGRAM_GROUP_FRAME_TYPE) continue
+    if (opts?.skipGroupMembers && model.properties?.dgGroupId) continue
     if (!isNodeInSelectionBox(model, leftTop, rightBottom, contain)) continue
     nodeIds.push(model.id)
   }
 
   for (const model of lf.graphModel.edges) {
+    if (opts?.skipGroupMembers && model.properties?.dgGroupId) continue
     if (!isEdgeInSelectionBox(model, leftTop, rightBottom, contain)) continue
     edgeIds.push(model.id)
   }

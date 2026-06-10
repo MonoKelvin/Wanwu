@@ -4,7 +4,12 @@ import { applyNodeDimensions } from '@modules/library/diagrams/lib/diagramShapeR
 import type { DiagramArrowType, DiagramShadowPreset } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { shadowStyleForPreset } from '@modules/library/diagrams/lib/diagramCanvasPresets'
 import { readNodeImageAsset } from '@modules/library/diagrams/lib/diagramAssetRefs'
-import { DIAGRAM_GROUP_FRAME_TYPE, readGroupStyle, readGroupAlwaysVisible } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import {
+  DIAGRAM_GROUP_FRAME_TYPE,
+  readGroupAlwaysVisible,
+  readGroupStyle,
+  resolveGroupFrameIdForElement
+} from '@modules/library/diagrams/lib/diagramGroupFrame'
 import { cssFontFamilyStack } from '@shared/lib/fontCatalog'
 import type {
   DiagramEdgeProperties,
@@ -306,8 +311,7 @@ export function readNodeProperties(lf: LogicFlow, nodeId: string): DiagramNodePr
     strokeDasharray: String(propsStyle.strokeDasharray ?? style.strokeDasharray ?? ''),
     shadow: readShadowPreset(model.properties as Record<string, unknown>),
     imageAsset,
-    groupId:
-      typeof model.properties?.dgGroupId === 'string' ? model.properties.dgGroupId : undefined,
+    groupId: resolveGroupFrameIdForElement(lf, nodeId, 'node') ?? undefined,
     shapeExtension: readNodeShapeExtension(model.properties as Record<string, unknown>)
   }
 }

@@ -70,7 +70,12 @@ export function isPointInsideGroupFrame(
   )
 }
 
-/** 根据图元/连线解析所属组合框 id */
+function isLiveGroupFrame(lf: LogicFlow, groupId: string): boolean {
+  const group = lf.getNodeModelById(groupId)
+  return Boolean(group && isGroupFrameType(group.type))
+}
+
+/** 根据图元/连线解析所属组合框 id（组合框已删除时返回 null） */
 export function resolveGroupFrameIdForElement(
   lf: LogicFlow,
   elementId: string,
@@ -81,10 +86,23 @@ export function resolveGroupFrameIdForElement(
     if (!model) return null
     if (isGroupFrameType(model.type)) return elementId
     const gid = model.properties?.dgGroupId
-    return typeof gid === 'string' && gid ? gid : null
+    if (typeof gid !== 'string' || !gid || !isLiveGroupFrame(lf, gid)) return null
+    return gid
   }
   const gid = lf.getEdgeModelById(elementId)?.properties?.dgGroupId
-  return typeof gid === 'string' && gid ? gid : null
+  if (typeof gid !== 'string' || !gid || !isLiveGroupFrame(lf, gid)) return null
+  return gid
+}
+
+/** 彻底清除图元/连线的组合标识（setProperties(undefined) 无法删除 LF 属性） */
+export function clearElementGroupId(lf: LogicFlow, elementId: string): void {
+  const node = lf.getNodeModelById(elementId)
+  const edge = lf.getEdgeModelById(elementId)
+  if (!node && !edge) return
+  const props = (node ?? edge)?.properties as Record<string, unknown> | undefined
+  if (props && 'dgGroupId' in props) {
+    lf.deleteProperty(elementId, 'dgGroupId')
+  }
 }
 
 /** 按画布坐标同步各组合框的悬停状态 */

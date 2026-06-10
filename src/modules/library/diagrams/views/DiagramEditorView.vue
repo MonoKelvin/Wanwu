@@ -445,8 +445,8 @@ async function bootstrapEditor() {
     editorSelection.value = selection
     selectedNodeCount.value = selection.selectedNodeCount
     selectedEdgeCount.value = selection.selectedEdgeCount
-    canUngroupSelection.value = port.canUngroupSelection()
-    canGroupSelection.value = port.canGroupSelection()
+    canUngroupSelection.value = selection.canUngroup ?? port.canUngroupSelection()
+    canGroupSelection.value = selection.canGroup ?? port.canGroupSelection()
     scheduleAlignBarRefresh()
     const focus = panelFocus.value
     if (
@@ -477,17 +477,18 @@ async function bootstrapEditor() {
     }
   })
   port.onContextMenu((detail) => {
+    const selection = port.getSelection()
     canvasMenuRef.value?.show(
       detail.event,
       {
         kind: detail.kind,
         targetId: detail.targetId,
-        nodeIds: detail.nodeIds,
-        edgeIds: detail.edgeIds
+        nodeIds: detail.nodeIds.length ? detail.nodeIds : selection.selectedNodeIds,
+        edgeIds: detail.edgeIds.length ? detail.edgeIds : selection.selectedEdgeIds
       },
       port.hasClipboard(),
-      port.canGroupSelection(),
-      port.canUngroupSelection()
+      selection.canGroup ?? port.canGroupSelection(),
+      selection.canUngroup ?? port.canUngroupSelection()
     )
   })
   port.onShapePanelFocus((request) => {
@@ -753,8 +754,8 @@ function onCanvasDrop(event: DragEvent) {
           :anchor-rect="alignBarAnchor"
           :stage-width="alignBarStageWidth"
           :stage-height="alignBarStageHeight"
-          :can-group="canGroupSelection"
-          :can-ungroup="canUngroupSelection"
+          :can-group="editorSelection.canGroup ?? canGroupSelection"
+          :can-ungroup="editorSelection.canUngroup ?? canUngroupSelection"
         />
         <div v-if="loading" class="dg-canvas-wrap__overlay">加载画布…</div>
         <div v-else-if="loadError" class="dg-canvas-wrap__overlay dg-canvas-wrap__overlay--error">
@@ -787,8 +788,8 @@ function onCanvasDrop(event: DragEvent) {
           v-if="!editorLayout.propsCollapsed.value"
           :selection="editorSelection"
           :file-id="sessionRef?.fileId ?? null"
-          :can-ungroup="canUngroupSelection"
-          :can-group="canGroupSelection"
+          :can-ungroup="editorSelection.canUngroup ?? canUngroupSelection"
+          :can-group="editorSelection.canGroup ?? canGroupSelection"
         />
         <DiagramPanelRestoreButton
           v-else

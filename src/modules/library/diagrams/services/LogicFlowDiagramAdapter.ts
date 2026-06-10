@@ -87,17 +87,25 @@ import {
 import {
   DEFAULT_GROUP_STYLE,
   DIAGRAM_GROUP_FRAME_TYPE,
+  clearElementGroupId,
   clearGroupFramePointerInside,
   resolveGroupFrameIdForElement,
   setGroupFramePointerInside,
   syncGroupFramePointerHover
 } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import {
-  collectGroupIdsForNodes,
   ensureAllGroupFramesAtBottom,
   ensureGroupFrameAtBottom,
+  syncGroupFrameBounds,
   syncGroupFramesForNodes
 } from '@modules/library/diagrams/lib/diagramGroupBounds'
+import {
+  analyzeGroupSelection,
+  canGroupFromLiveSelection,
+  collectOrderedSelectionIds,
+  countSelectedEdges,
+  selectionHasGroupedElements
+} from '@modules/library/diagrams/lib/diagramGroupSelection'
 import {
   refreshSnapAlignGuide,
   snapCanvasPoint,
@@ -421,13 +429,20 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
    */
   private finalizeBoxSelect(
     domLeftTop?: [number, number],
-    domRightBottom?: [number, number]
+    domRightBottom?: [number, number],
+    force = false
   ): void {
-    if (!this.lf || this.boxSelectFinalized) return
+    if (!this.lf || (!force && this.boxSelectFinalized)) return
 
     let leftTop: [number, number]
     let rightBottom: [number, number]
     if (domLeftTop && domRightBottom) {
+      if (
+        Math.abs(domRightBottom[0] - domLeftTop[0]) < 10 &&
+        Math.abs(domRightBottom[1] - domLeftTop[1]) < 10
+      ) {
+        return
+      }
       leftTop = domLeftTop
       rightBottom = domRightBottom
     } else {
@@ -444,7 +459,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       this.lf,
       canvasBox.leftTop,
       canvasBox.rightBottom,
-      this.boxSelectUseContainMode
+      this.boxSelectUseContainMode,
+      { skipGroupMembers: true }
     )
     const boxSelectModifiers = { ...this.boxSelectModifierFlags }
     absorbPointerModifiers(boxSelectModifiers, this.boxSelectPointerEvent)
@@ -454,12 +470,12 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       preSelection: this.boxSelectGestureSnapshot
     })
 
-    const applied = this.lf.getSelectElements(true)
+    const applied = collectOrderedSelectionIds(this.lf)
     this.boxSelectAppliedResult = {
-      nodeIds: applied.nodes.map((node) => node.id),
-      edgeIds: applied.edges.map((edge) => edge.id)
+      nodeIds: [...applied.nodeIds],
+      edgeIds: [...applied.edgeIds]
     }
-    this.lastBoxSelectNodeIds = this.filterAlignableNodeIds(this.getSelectedNodeIds())
+    this.lastBoxSelectNodeIds = this.filterAlignableNodeIds(applied.nodeIds)
     this.suppressPostBoxSelectClickUntil = performance.now() + 360
     this.boxSelectFinalized = true
     this.afterSelectionMutation()
@@ -478,23 +494,30 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     }
   }
 
-  /** 结束框选拖拽：清除显示标记并移除 LF 选框 DOM */
-  private clearBoxSelectRubberBand(): void {
+  /** 仅清理选框视觉（不触碰 SelectionSelect 内部状态，避免打断 drawOff） */
+  private clearBoxSelectRubberBandVisual(): void {
     this.setBoxSelectingActive(false)
     const lf = this.lf
-    const ext = lf?.extension?.selectionSelect as
-      | { cleanupSelectionState?: () => void; wrapper?: HTMLElement }
-      | undefined
+    const ext = lf?.extension?.selectionSelect as { wrapper?: HTMLElement } | undefined
     ext?.wrapper?.remove()
-    ext?.cleanupSelectionState?.()
     this.removeSelectionRubberBandDom()
+  }
+
+  /** 框选完全结束后：视觉清理 + 重置 SelectionSelect 内部状态 */
+  private clearBoxSelectRubberBand(): void {
+    this.clearBoxSelectRubberBandVisual()
+    const lf = this.lf
+    const ext = lf?.extension?.selectionSelect as
+      | { cleanupSelectionState?: () => void }
+      | undefined
+    ext?.cleanupSelectionState?.()
   }
 
   /** 画布 pointerup 兜底：无论 LF 是否完成 drawOff 都清理选框 */
   private bindBoxSelectRubberBandGuard(el: HTMLElement): () => void {
     const onPointerEnd = (e: PointerEvent) => {
       if (e.button !== 0) return
-      this.clearBoxSelectRubberBand()
+      this.clearBoxSelectRubberBandVisual()
     }
     el.addEventListener('pointerup', onPointerEnd, true)
     el.addEventListener('pointercancel', onPointerEnd, true)
@@ -589,7 +612,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   /** 框选松手落在节点上时，LogicFlow 可能把多选收成单选，按最近一次框选结果恢复 */
   private restoreBoxSelectIfCollapsed(): void {
     if (!this.lf || this.lastBoxSelectNodeIds.length < 2) return
-    const current = this.filterAlignableNodeIds(this.getSelectedNodeIds())
+    const current = this.filterAlignableNodeIds(collectOrderedSelectionIds(this.lf).nodeIds)
     if (current.length >= 2) return
     this.lf.clearSelectElements()
     for (const id of this.lastBoxSelectNodeIds) {
@@ -623,6 +646,19 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     const layout = this.refreshMultiSelectResizeNow?.()
     this.syncMultiSelectDomFlags(layout?.nodeCount)
     this.flushOverlayLayout(layout)
+    // mouseup 早于 click，isSelected 在延迟刷新后才稳定，需再次同步工具栏/属性面板
+    const live = this.collectLiveSelectedIds()
+    const overlayNodes = countSelectedDiagramNodes(this.lf.graphModel, this.lf)
+    const cached =
+      this.lastSelectedNodeIds.length + this.lastSelectedEdgeIds.length
+    if (
+      live.nodeIds.length + live.edgeIds.length > 0 ||
+      overlayNodes >= 2 ||
+      cached >= 2 ||
+      this.boxSelectAppliedResult != null
+    ) {
+      this.syncSelectionFromGraph()
+    }
   }
 
   /**
@@ -771,14 +807,13 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
             this.finalizeBoxSelect()
             requestAnimationFrame(() => {
               this.reapplyBoxSelectResult()
-              this.clearBoxSelectRubberBand()
             })
           } else {
             this.cleanupActiveBoxSelect()
           }
         }
       } finally {
-        this.clearBoxSelectRubberBand()
+        this.clearBoxSelectRubberBandVisual()
         document.removeEventListener('pointermove', onMove, true)
         document.removeEventListener('pointerup', onUp, true)
         this.boxSelectKeyTeardown?.()
@@ -1014,7 +1049,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       const button = (e as MouseEvent | PointerEvent | undefined)?.button
       if (button !== undefined && button !== 0) return
       if (performance.now() < this.suppressPostBoxSelectClickUntil) {
+        // 框选松手落在空白：保持框选结果，勿清空（否则属性面板/工具栏会闪回画布）
         this.reapplyBoxSelectResult()
+        this.cleanupActiveBoxSelect()
         this.scheduleDismissSelectionRubberBand()
         this.afterSelectionMutation()
         return
@@ -1023,7 +1060,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       if (isModifierSelectionGesture(e)) return
       if (this.lf) cancelAllPendingUmlClassifierHitClicks(this.lf)
       this.cancelFormatPainter()
-      this.lastBoxSelectNodeIds = []
+      this.clearBoxSelectSnapshots()
       this.lf?.clearSelectElements()
       this.lf?.removeNodeSnapLine()
       this.cleanupActiveBoxSelect()
@@ -1045,15 +1082,15 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       rightBottomPoint: [number, number]
     }) => {
       if (!this.lf) return
-      if (!this.boxSelectFinalized) {
-        this.finalizeBoxSelect(payload.leftTopPoint, payload.rightBottomPoint)
-      }
-      // capture 阶段已写入目标选区；LF drawOff 会覆盖，此处重放并清理选框
+      // LF drawOff 会先写入预选区；此处强制按自定义规则覆盖
+      this.boxSelectFinalized = false
+      this.finalizeBoxSelect(payload.leftTopPoint, payload.rightBottomPoint, true)
       this.reapplyBoxSelectResult()
       this.dismissSelectionRubberBand()
       this.scheduleDismissSelectionRubberBand()
       this.cleanupActiveBoxSelect()
       this.boxSelectFinalized = false
+      this.afterSelectionMutation()
     })
 
     this.lf.on('node:mouseup', ({ data }) => {
@@ -1067,14 +1104,24 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     })
 
     this.lf.on('node:dragstart', ({ data }) => {
-      const model = this.lf?.getNodeModelById(data.id)
-      this.edgeInsertDragNodeIds = this.getSelectedNodeIds().includes(data.id)
-        ? this.getSelectedNodeIds().filter((id) => {
+      if (!this.lf) return
+      const model = this.lf.getNodeModelById(data.id)
+      const liveNodeIds = collectOrderedSelectionIds(this.lf).nodeIds
+      this.edgeInsertDragNodeIds = liveNodeIds.includes(data.id)
+        ? liveNodeIds.filter((id) => {
             const node = this.lf?.getNodeModelById(id)
             return node && node.type !== DIAGRAM_GROUP_FRAME_TYPE
           })
         : [data.id]
       if (model?.type === DIAGRAM_GROUP_FRAME_TYPE) {
+        const members = new Set(
+          (model.properties?.dgGroupMembers as string[] | undefined) ?? []
+        )
+        const stray = liveNodeIds.filter((id) => id !== data.id && !members.has(id))
+        if (stray.length) {
+          this.lf.clearSelectElements()
+          this.lf.selectElementById(data.id)
+        }
         this.groupDragLastPos.set(data.id, { x: model.x, y: model.y })
       }
     })
@@ -1113,14 +1160,19 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         if (members.length) {
           this.lf.graphModel.moveNodes(members, dx, dy, true)
         }
-        this.groupDragLastPos.set(data.id, { x: model.x, y: model.y })
+        syncGroupFrameBounds(this.lf, data.id)
+        const synced = this.lf.getNodeModelById(data.id)
+        if (synced) {
+          this.groupDragLastPos.set(data.id, { x: synced.x, y: synced.y })
+        }
+        return
       }
       if (this.countSelectedNodes() === 1 && this.selectedNodeId === data.id) {
         this.scheduleEmitSelection()
       }
       if (this.canvasSettings.snapGrid) {
-        const affected = this.getSelectedNodeIds()
-        const snapTargets = affected.includes(data.id) ? affected : [data.id]
+        const liveNodeIds = collectOrderedSelectionIds(this.lf).nodeIds
+        const snapTargets = liveNodeIds.includes(data.id) ? liveNodeIds : [data.id]
         softSnapNodesDuringDrag(this.lf, snapTargets, true, data.id)
         refreshSnapAlignGuide(this.lf, data.id, true)
       }
@@ -1156,10 +1208,10 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         this.setEdgeInsertHighlight(null)
       }
       this.lf.removeNodeSnapLine()
-      const affected = this.getSelectedNodeIds()
-      const snapTargets = affected.includes(data.id) ? affected : [data.id]
+      const liveNodeIds = collectOrderedSelectionIds(this.lf).nodeIds
+      const snapTargets = liveNodeIds.includes(data.id) ? liveNodeIds : [data.id]
       snapNodesAfterDrag(this.lf, snapTargets, this.canvasSettings.snapGrid, data.id)
-      const syncIds = (affected.includes(data.id) ? affected : [data.id]).filter(
+      const syncIds = (liveNodeIds.includes(data.id) ? liveNodeIds : [data.id]).filter(
         (id) => !this.isGroupFrameId(id)
       )
       this.syncGroupFramesForSelectedNodes(syncIds)
@@ -1278,6 +1330,58 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     }
   }
 
+  /** 读取 LogicFlow 当前真实选区（勿合并历史框选快照，避免污染拖拽/右键/点选） */
+  private collectLiveSelectedIds(): { nodeIds: string[]; edgeIds: string[] } {
+    if (!this.lf) return { nodeIds: [], edgeIds: [] }
+    return collectOrderedSelectionIds(this.lf)
+  }
+
+  private clearBoxSelectSnapshots(): void {
+    this.boxSelectAppliedResult = null
+    this.lastBoxSelectNodeIds = []
+    this.suppressPostBoxSelectClickUntil = 0
+  }
+
+  /** 框选后 LF click 可能收成单选；右键/菜单操作前先恢复最近一次框选结果 */
+  private restoreCollapsedBoxSelection(): void {
+    if (!this.lf) return
+    const live = collectOrderedSelectionIds(this.lf)
+    const liveCount = live.nodeIds.length + live.edgeIds.length
+
+    if (this.boxSelectAppliedResult) {
+      const snap = this.boxSelectAppliedResult
+      const snapCount = snap.nodeIds.length + snap.edgeIds.length
+      if (liveCount < snapCount) {
+        this.lf.clearSelectElements()
+        for (const id of snap.nodeIds) this.lf.selectElementById(id, true)
+        for (const id of snap.edgeIds) this.lf.selectElementById(id, true)
+        return
+      }
+    }
+
+    if (
+      this.lastBoxSelectNodeIds.length >= 2 &&
+      this.filterAlignableNodeIds(live.nodeIds).length < this.lastBoxSelectNodeIds.length
+    ) {
+      this.lf.clearSelectElements()
+      for (const id of this.lastBoxSelectNodeIds) {
+        this.lf.selectElementById(id, true)
+      }
+      return
+    }
+
+    const stableCount = this.lastSelectedNodeIds.length + this.lastSelectedEdgeIds.length
+    if (stableCount >= 2 && liveCount < stableCount) {
+      this.lf.clearSelectElements()
+      for (const id of this.lastSelectedNodeIds) {
+        this.lf.selectElementById(id, true)
+      }
+      for (const id of this.lastSelectedEdgeIds) {
+        this.lf.selectElementById(id, true)
+      }
+    }
+  }
+
   /** 从 LogicFlow 当前选区读取主节点/连线（属性面板须以此为准，勿用陈旧缓存） */
   private readLiveSelection(): {
     selectedNodeIds: string[]
@@ -1293,30 +1397,65 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         primaryEdgeId: null
       }
     }
-    const selected = this.lf.getSelectElements(true)
-    const selectedNodeIds = selected.nodes.map((n) => n.id)
-    const selectedEdgeIds = selected.edges.map((e) => e.id)
-    const primaryNode =
-      selected.nodes.find((n) => !this.isGroupFrameId(n.id)) ??
-      selected.nodes.find((n) => this.isGroupFrameId(n.id))
+    const { nodeIds: selectedNodeIds, edgeIds: selectedEdgeIds } = this.collectLiveSelectedIds()
+    const primaryNodeId =
+      selectedNodeIds.find((id) => !this.isGroupFrameId(id)) ??
+      selectedNodeIds.find((id) => this.isGroupFrameId(id)) ??
+      null
     return {
       selectedNodeIds,
       selectedEdgeIds,
-      primaryNodeId: primaryNode?.id ?? null,
-      primaryEdgeId: selected.edges[0]?.id ?? null
+      primaryNodeId,
+      primaryEdgeId: selectedEdgeIds[0] ?? null
+    }
+  }
+
+  /** 清除指向已删除组合框的残留 dgGroupId */
+  private scrubOrphanGroupIds(): void {
+    if (!this.lf) return
+    for (const node of this.lf.graphModel.nodes) {
+      const gid = node.properties?.dgGroupId
+      if (typeof gid !== 'string' || !gid) continue
+      const group = this.lf.getNodeModelById(gid)
+      if (!group || group.type !== DIAGRAM_GROUP_FRAME_TYPE) {
+        clearElementGroupId(this.lf, node.id)
+      }
+    }
+    for (const edge of this.lf.graphModel.edges) {
+      const gid = edge.properties?.dgGroupId
+      if (typeof gid !== 'string' || !gid) continue
+      const group = this.lf.getNodeModelById(gid)
+      if (!group || group.type !== DIAGRAM_GROUP_FRAME_TYPE) {
+        clearElementGroupId(this.lf, edge.id)
+      }
     }
   }
 
   private syncSelectionFromGraph(): void {
     if (!this.lf) return
+    this.scrubOrphanGroupIds()
     const live = this.readLiveSelection()
     this.lastSelectedNodeIds = live.selectedNodeIds
     this.lastSelectedEdgeIds = live.selectedEdgeIds
     this.selectedNodeId = live.primaryNodeId
     this.selectedEdgeId = live.primaryEdgeId
     this.refreshGroupFrameDisplay()
+    this.maybeCancelFormatPainterOnSelectionChange()
     this.emitSelection()
     this.scheduleGroupFramesToBottom()
+  }
+
+  /** 格式刷仅支持单图元或单连线；多选时自动关闭 */
+  private maybeCancelFormatPainterOnSelectionChange(): void {
+    if (!this.formatPainterState?.active) return
+    const nodeCount = this.countSelectedNodes()
+    const edgeCount = this.getSelectedEdgeIds().length
+    const singleNode = nodeCount === 1 && edgeCount === 0
+    const singleEdge = nodeCount === 0 && edgeCount === 1
+    if (!singleNode && !singleEdge) {
+      this.formatPainterState = null
+      this.syncFormatPainterCursor()
+    }
   }
 
   /** LogicFlow overlapMode 会把选中节点置顶，组合框需在下一帧强制置底 */
@@ -1426,12 +1565,15 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.groupSyncDragRaf = requestAnimationFrame(() => {
       this.groupSyncDragRaf = null
       if (!this.lf) return
-      const contentSelected = this.getSelectedContentNodeIds()
+      const contentSelected = this.filterAlignableNodeIds(
+        collectOrderedSelectionIds(this.lf).nodeIds
+      )
       let syncIds: string[]
-      if (contentSelected.length >= 2) {
-        syncIds = contentSelected
-      } else if (triggerNodeId) {
-        syncIds = [triggerNodeId]
+      if (triggerNodeId) {
+        syncIds =
+          contentSelected.length >= 2 && contentSelected.includes(triggerNodeId)
+            ? contentSelected
+            : [triggerNodeId]
       } else {
         syncIds = contentSelected
       }
@@ -1579,9 +1721,10 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     event: MouseEvent
   ): void {
     if (!this.lf) return
-    const selected = this.lf.getSelectElements(true)
-    const nodeIds = selected.nodes.map((n) => n.id)
-    const edgeIds = selected.edges.map((e) => e.id)
+    this.restoreCollapsedBoxSelection()
+    const live = this.collectLiveSelectedIds()
+    const nodeIds = live.nodeIds
+    const edgeIds = live.edgeIds
     const totalSelected = nodeIds.length + edgeIds.length
     const alreadySelected =
       picked.kind === 'node'
@@ -1607,7 +1750,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     const onContextMenu = (event: MouseEvent) => {
       if (!this.lf || !this.contextMenuHandler) return
       event.preventDefault()
+      event.stopPropagation()
       this.cancelFormatPainter()
+      this.restoreCollapsedBoxSelection()
       const domPick = this.pickElementFromDom(event.target)
       const picked = domPick ?? this.pickElementAt(event.clientX, event.clientY)
       if ((picked.kind === 'node' || picked.kind === 'edge') && picked.targetId) {
@@ -1616,34 +1761,32 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
           event
         )
       } else if (picked.kind === 'blank') {
-        // 保留框选结果；仅点击空白且无选中时清空
-        const selected = this.lf.getSelectElements(true)
-        if (!selected.nodes.length && !selected.edges.length) {
+        // 保留框选/多选结果；仅空白且无选中时清空
+        const live = this.collectLiveSelectedIds()
+        if (!live.nodeIds.length && !live.edgeIds.length) {
           this.lf.clearSelectElements()
         }
       }
       this.syncSelectionFromGraph()
-      const selected = this.lf.getSelectElements(true)
+      const live = this.collectLiveSelectedIds()
       this.contextMenuHandler({
         event,
         kind: picked.kind,
         targetId: picked.targetId,
-        nodeIds: selected.nodes.map((n) => n.id),
-        edgeIds: selected.edges.map((e) => e.id)
+        nodeIds: live.nodeIds,
+        edgeIds: live.edgeIds
       })
     }
-    el.addEventListener('contextmenu', onContextMenu)
-    return () => el.removeEventListener('contextmenu', onContextMenu)
+    el.addEventListener('contextmenu', onContextMenu, true)
+    return () => el.removeEventListener('contextmenu', onContextMenu, true)
   }
 
   getSelectedNodeIds(): string[] {
-    if (!this.lf) return []
-    return this.lf.getSelectElements(true).nodes.map((n) => n.id)
+    return this.collectLiveSelectedIds().nodeIds
   }
 
   getSelectedEdgeIds(): string[] {
-    if (!this.lf) return []
-    return this.lf.getSelectElements(true).edges.map((e) => e.id)
+    return this.collectLiveSelectedIds().edgeIds
   }
 
   hasClipboard(): boolean {
@@ -1663,6 +1806,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   }
 
   private countSelectedNodes(): number {
+    if (!this.lf) return 0
+    const fromOverlay = countSelectedDiagramNodes(this.lf.graphModel, this.lf)
+    if (fromOverlay > 0) return fromOverlay
     const ids = this.getSelectedNodeIds()
     const content = this.filterAlignableNodeIds(ids)
     if (content.length) return content.length
@@ -1819,21 +1965,37 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         selectedNodeIds: [],
         selectedEdgeIds: [],
         mixedNodeFields: [],
-        formatPainterActive
+        formatPainterActive,
+        canGroup: false,
+        canUngroup: false,
+        canClearStyle: false
       }
     }
 
     const live = this.readLiveSelection()
     const selectedNodeIds = live.selectedNodeIds
     const selectedEdgeIds = live.selectedEdgeIds
-    const selectedNodeCount = this.countSelectedNodes()
-    const selectedEdgeCount = selectedEdgeIds.length
+    const alignableFromIds = this.filterAlignableNodeIds(selectedNodeIds)
+    const groupFrameFromIds = selectedNodeIds.some((id) => this.isGroupFrameId(id)) ? 1 : 0
+    const nodeCountFromIds = alignableFromIds.length || groupFrameFromIds
+    const selectedNodeCount = Math.max(this.countSelectedNodes(), nodeCountFromIds)
+    const selectedEdgeCount = Math.max(selectedEdgeIds.length, countSelectedEdges(lf))
+    const canClearStyle =
+      selectedNodeCount + selectedEdgeCount > 0 ||
+      selectedNodeIds.length + selectedEdgeIds.length > 0
+    const canGroup =
+      this.canGroupSelection() ||
+      selectedNodeCount + selectedEdgeCount >= 2 ||
+      selectedNodeIds.length + selectedEdgeIds.length >= 2
+    const primaryNodeId = live.primaryNodeId
+    const canUngroup =
+      this.canUngroupSelection() ||
+      selectionHasGroupedElements(lf, selectedNodeIds, selectedEdgeIds)
     const alignableIds = this.filterAlignableNodeIds(selectedNodeIds)
     const mixedNodeFields =
       alignableIds.length >= 2 ? computeMixedNodeFields(lf, alignableIds) : []
 
     if (selectedNodeCount > 0) {
-      const primaryNodeId = live.primaryNodeId
       const primaryEdgeId =
         live.primaryEdgeId && selectedEdgeIds.includes(live.primaryEdgeId)
           ? live.primaryEdgeId
@@ -1848,7 +2010,10 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         selectedNodeIds,
         selectedEdgeIds,
         mixedNodeFields,
-        formatPainterActive
+        formatPainterActive,
+        canGroup,
+        canUngroup,
+        canClearStyle
       }
     }
 
@@ -1864,7 +2029,10 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         selectedNodeIds,
         selectedEdgeIds,
         mixedNodeFields,
-        formatPainterActive
+        formatPainterActive,
+        canGroup,
+        canUngroup,
+        canClearStyle
       }
     }
 
@@ -1873,12 +2041,15 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       node: null,
       edge: null,
       canvas,
-      selectedNodeCount: 0,
-      selectedEdgeCount: 0,
-      selectedNodeIds: [],
-      selectedEdgeIds: [],
+      selectedNodeCount,
+      selectedEdgeCount,
+      selectedNodeIds,
+      selectedEdgeIds,
       mixedNodeFields: [],
-      formatPainterActive
+      formatPainterActive,
+      canGroup,
+      canUngroup,
+      canClearStyle
     }
   }
 
@@ -2635,16 +2806,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   ): { nodeIds: string[]; edgeIds: string[] } {
     if (!this.lf) return { nodeIds: [], edgeIds: [] }
 
-    const rawNodeIds = nodeIds?.length
-      ? nodeIds
-      : this.lastSelectedNodeIds.length
-        ? this.lastSelectedNodeIds
-        : this.getSelectedNodeIds()
-    const rawEdgeIds = edgeIds?.length
-      ? edgeIds
-      : this.lastSelectedEdgeIds.length
-        ? this.lastSelectedEdgeIds
-        : this.getSelectedEdgeIds()
+    const live = this.collectLiveSelectedIds()
+    const rawNodeIds = nodeIds?.length ? nodeIds : live.nodeIds
+    const rawEdgeIds = edgeIds?.length ? edgeIds : live.edgeIds
 
     const expandedNodeIds: string[] = []
     const expandedEdgeIds = new Set(rawEdgeIds)
@@ -2674,70 +2838,6 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       nodeIds: [...nodeIdSet],
       edgeIds: [...expandedEdgeIds]
     }
-  }
-
-  private isEntireExistingGroupSelected(nodeIds: string[], edgeIds: string[]): boolean {
-    if (!this.lf || nodeIds.length + edgeIds.length < 2) return false
-    const groupIds = collectGroupIdsForNodes(this.lf, nodeIds)
-    for (const id of edgeIds) {
-      const gid = this.lf.getEdgeModelById(id)?.properties?.dgGroupId
-      if (typeof gid === 'string' && gid) groupIds.add(gid)
-    }
-    if (groupIds.size !== 1) return false
-    const groupId = [...groupIds][0]
-    const group = this.lf.getNodeModelById(groupId)
-    if (!group || group.type !== DIAGRAM_GROUP_FRAME_TYPE) return false
-    const members = (group.properties?.dgGroupMembers as string[] | undefined) ?? []
-    const groupEdges = (group.properties?.dgGroupEdges as string[] | undefined) ?? []
-    const nodeSet = new Set(nodeIds)
-    const edgeSet = new Set(edgeIds)
-    if (members.length !== nodeSet.size || groupEdges.length !== edgeSet.size) return false
-    return (
-      members.every((id) => nodeSet.has(id)) &&
-      groupEdges.every((id) => edgeSet.has(id))
-    )
-  }
-
-  /** 组合前：展开选区并从旧组合中拆出待组合图元 */
-  private prepareGroupSelectionTargets(
-    nodeIds?: string[],
-    edgeIds?: string[]
-  ): { nodes: string[]; edges: string[] } {
-    if (!this.lf) return { nodes: [], edges: [] }
-    const { nodeIds: resolvedNodes, edgeIds: resolvedEdges } = this.resolveClipboardTargets(
-      nodeIds,
-      edgeIds
-    )
-    const nodeSet = new Set(resolvedNodes)
-    const edgeSet = new Set(resolvedEdges)
-    const groupIds = collectGroupIdsForNodes(this.lf, resolvedNodes)
-    for (const id of resolvedEdges) {
-      const gid = this.lf.getEdgeModelById(id)?.properties?.dgGroupId
-      if (typeof gid === 'string' && gid) groupIds.add(gid)
-    }
-
-    for (const groupId of groupIds) {
-      const model = this.lf.getNodeModelById(groupId)
-      if (!model || model.type !== DIAGRAM_GROUP_FRAME_TYPE) continue
-      const members = (model.properties?.dgGroupMembers as string[] | undefined) ?? []
-      const groupEdges = (model.properties?.dgGroupEdges as string[] | undefined) ?? []
-      const dissolvingEntireGroup =
-        members.every((id) => nodeSet.has(id)) && groupEdges.every((id) => edgeSet.has(id))
-
-      if (dissolvingEntireGroup && (members.length || groupEdges.length)) {
-        this.releaseGroupFrame(groupId)
-        continue
-      }
-
-      for (const id of members) {
-        if (nodeSet.has(id)) this.detachNodeFromGroup(id)
-      }
-      for (const id of groupEdges) {
-        if (edgeSet.has(id)) this.detachEdgeFromGroup(id)
-      }
-    }
-
-    return { nodes: [...nodeSet], edges: [...edgeSet] }
   }
 
   private buildClipboardSnapshot(
@@ -2851,42 +2951,74 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
   canUngroupSelection(): boolean {
     if (!this.lf) return false
-    const selected = this.lf.getSelectElements(true)
-    if (
-      selected.nodes.some((n) => this.lf!.getNodeModelById(n.id)?.type === DIAGRAM_GROUP_FRAME_TYPE)
-    ) {
-      return true
+    const { nodeIds, edgeIds } = this.collectLiveSelectedIds()
+    if (selectionHasGroupedElements(this.lf, nodeIds, edgeIds)) return true
+    const resolved = this.resolveClipboardTargets(nodeIds, edgeIds)
+    for (const id of resolved.nodeIds) {
+      if (resolveGroupFrameIdForElement(this.lf, id, 'node')) return true
     }
-    if (
-      selected.nodes.some((n) =>
-        Boolean(this.lf!.getNodeModelById(n.id)?.properties?.dgGroupId)
-      )
-    ) {
-      return true
+    for (const id of resolved.edgeIds) {
+      if (resolveGroupFrameIdForElement(this.lf, id, 'edge')) return true
     }
-    return selected.edges.some((e) =>
-      Boolean(this.lf!.getEdgeModelById(e.id)?.properties?.dgGroupId)
-    )
+    return false
   }
 
   canGroupSelection(): boolean {
     if (!this.lf) return false
-    const { nodeIds, edgeIds } = this.resolveClipboardTargets()
-    if (nodeIds.length + edgeIds.length < 2) return false
-    if (this.isEntireExistingGroupSelected(nodeIds, edgeIds)) return false
-    return true
+
+    const live = this.collectLiveSelectedIds()
+    if (canGroupFromLiveSelection(this.lf, live.nodeIds, live.edgeIds)) return true
+
+    // 与多选包围盒 overlay 对齐：overlay 已识别 ≥2 图元时也应激活组合
+    const overlayNodes = countSelectedDiagramNodes(this.lf.graphModel, this.lf)
+    const edgeCount = Math.max(live.edgeIds.length, countSelectedEdges(this.lf))
+    if (overlayNodes + edgeCount >= 2) return true
+
+    const resolved = this.resolveClipboardTargets(live.nodeIds, live.edgeIds)
+    return resolved.nodeIds.length + resolved.edgeIds.length >= 2
   }
 
-  groupSelection(nodeIds?: string[], edgeIds?: string[]): void {
+  /** 将未组合图元/连线并入已有组合框 */
+  private mergeUngroupedIntoGroup(
+    groupId: string,
+    nodeIds: string[],
+    edgeIds: string[]
+  ): void {
     if (!this.lf) return
-    const { nodes, edges } = this.prepareGroupSelectionTargets(nodeIds, edgeIds)
-    if (nodes.length + edges.length < 2) return
+    const group = this.lf.getNodeModelById(groupId)
+    if (!group || group.type !== DIAGRAM_GROUP_FRAME_TYPE) return
+
+    const memberSet = new Set((group.properties?.dgGroupMembers as string[] | undefined) ?? [])
+    const edgeSet = new Set((group.properties?.dgGroupEdges as string[] | undefined) ?? [])
+
+    for (const id of nodeIds) {
+      const model = this.lf.getNodeModelById(id)
+      if (!model || model.type === DIAGRAM_GROUP_FRAME_TYPE) continue
+      memberSet.add(id)
+      this.lf.setProperties(id, { dgGroupId: groupId })
+    }
+    for (const id of edgeIds) {
+      if (!this.lf.getEdgeModelById(id)) continue
+      edgeSet.add(id)
+      this.lf.setProperties(id, { dgGroupId: groupId })
+    }
+
+    this.lf.setProperties(groupId, {
+      dgGroupMembers: [...memberSet],
+      dgGroupEdges: [...edgeSet]
+    })
+    syncGroupFrameBounds(this.lf, groupId)
+  }
+
+  /** 为未组合图元/连线创建新组合框 */
+  private createGroupFrame(nodeIds: string[], edgeIds: string[]): void {
+    if (!this.lf || nodeIds.length + edgeIds.length < 2) return
 
     let minX = Infinity
     let maxX = -Infinity
     let minY = Infinity
     let maxY = -Infinity
-    for (const id of nodes) {
+    for (const id of nodeIds) {
       const bounds = this.readNodeBounds(id)
       if (!bounds) continue
       minX = Math.min(minX, bounds.x - bounds.width / 2)
@@ -2894,8 +3026,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       minY = Math.min(minY, bounds.y - bounds.height / 2)
       maxY = Math.max(maxY, bounds.y + bounds.height / 2)
     }
-    if (!nodes.length) {
-      for (const edgeId of edges) {
+    if (!nodeIds.length) {
+      for (const edgeId of edgeIds) {
         const model = this.lf.getEdgeModelById(edgeId)
         for (const pt of model?.pointsList ?? []) {
           minX = Math.min(minX, pt.x)
@@ -2924,8 +3056,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       x: cx,
       y: cy,
       properties: {
-        dgGroupMembers: nodes,
-        dgGroupEdges: edges,
+        dgGroupMembers: nodeIds,
+        dgGroupEdges: edgeIds,
         dgGroupStyle: { ...DEFAULT_GROUP_STYLE }
       }
     })
@@ -2934,34 +3066,65 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       groupModel.width = w
       groupModel.height = h
     }
-    for (const id of nodes) {
+    for (const id of nodeIds) {
       this.lf.setProperties(id, { dgGroupId: groupId })
     }
-    for (const id of edges) {
+    for (const id of edgeIds) {
       this.lf.setProperties(id, { dgGroupId: groupId })
     }
     ensureGroupFrameAtBottom(this.lf, groupId)
     this.lf.selectElementById(groupId)
-    this.syncSelectionFromGraph()
+  }
+
+  groupSelection(nodeIds?: string[], edgeIds?: string[]): void {
+    if (!this.lf) return
+    const analysis = analyzeGroupSelection(this.lf, nodeIds, edgeIds)
+    if (analysis.totalElementCount < 2) return
+
+    if (analysis.primaryGroupId) {
+      if (!analysis.ungroupedNodeIds.length && !analysis.ungroupedEdgeIds.length) return
+      this.mergeUngroupedIntoGroup(
+        analysis.primaryGroupId,
+        analysis.ungroupedNodeIds,
+        analysis.ungroupedEdgeIds
+      )
+      this.lf.selectElementById(analysis.primaryGroupId)
+    } else {
+      const nodes = analysis.ungroupedNodeIds
+      const edges = analysis.ungroupedEdgeIds
+      if (nodes.length + edges.length < 2) return
+      this.createGroupFrame(nodes, edges)
+    }
+
+    this.clearBoxSelectSnapshots()
+    this.afterSelectionMutation()
     this.scheduleGraphChange()
   }
 
   ungroupSelection(): void {
     if (!this.lf) return
-    const selected = this.lf.getSelectElements(true)
+    const { nodeIds, edgeIds } = this.collectLiveSelectedIds()
     const groupIds = new Set<string>()
-    for (const node of selected.nodes) {
-      const model = this.lf.getNodeModelById(node.id)
+    const collectGroupId = (gid: unknown) => {
+      if (typeof gid === 'string' && gid) groupIds.add(gid)
+    }
+    for (const id of nodeIds) {
+      const model = this.lf.getNodeModelById(id)
       if (model?.type === DIAGRAM_GROUP_FRAME_TYPE) {
-        groupIds.add(node.id)
+        groupIds.add(id)
         continue
       }
-      const parentId = model?.properties?.dgGroupId
-      if (typeof parentId === 'string' && parentId) groupIds.add(parentId)
+      collectGroupId(model?.properties?.dgGroupId)
     }
-    for (const edge of selected.edges) {
-      const parentId = this.lf.getEdgeModelById(edge.id)?.properties?.dgGroupId
-      if (typeof parentId === 'string' && parentId) groupIds.add(parentId)
+    for (const id of edgeIds) {
+      collectGroupId(this.lf.getEdgeModelById(id)?.properties?.dgGroupId)
+    }
+    const resolved = this.resolveClipboardTargets(nodeIds, edgeIds)
+    for (const id of resolved.nodeIds) {
+      collectGroupId(this.lf.getNodeModelById(id)?.properties?.dgGroupId)
+    }
+    for (const id of resolved.edgeIds) {
+      collectGroupId(this.lf.getEdgeModelById(id)?.properties?.dgGroupId)
     }
     const releasedNodeIds: string[] = []
     const releasedEdgeIds: string[] = []
@@ -2989,10 +3152,11 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         }
       }
     }
-    this.syncSelectionFromGraph()
+    this.clearBoxSelectSnapshots()
+    this.scrubOrphanGroupIds()
+    this.refreshGroupFrameDisplay()
+    this.afterSelectionMutation()
     this.scheduleGraphChange()
-    this.refreshMultiSelectResize?.()
-    this.scheduleOverlayLayout()
   }
 
   private detachNodeFromGroup(nodeId: string): void {
@@ -3002,16 +3166,18 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     if (typeof groupId !== 'string' || !groupId) return
     const group = this.lf.getNodeModelById(groupId)
     if (!group || group.type !== DIAGRAM_GROUP_FRAME_TYPE) {
-      this.lf.setProperties(nodeId, { dgGroupId: undefined })
+      clearElementGroupId(this.lf, nodeId)
       return
     }
     const members = ((group.properties?.dgGroupMembers as string[] | undefined) ?? []).filter(
       (id) => id !== nodeId
     )
     this.lf.setProperties(groupId, { dgGroupMembers: members })
-    this.lf.setProperties(nodeId, { dgGroupId: undefined })
+    clearElementGroupId(this.lf, nodeId)
     if (!members.length && !((group.properties?.dgGroupEdges as string[] | undefined) ?? []).length) {
       this.lf.deleteNode(groupId)
+    } else {
+      syncGroupFrameBounds(this.lf, groupId)
     }
   }
 
@@ -3022,32 +3188,46 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     if (typeof groupId !== 'string' || !groupId) return
     const group = this.lf.getNodeModelById(groupId)
     if (!group || group.type !== DIAGRAM_GROUP_FRAME_TYPE) {
-      this.lf.setProperties(edgeId, { dgGroupId: undefined })
+      clearElementGroupId(this.lf, edgeId)
       return
     }
     const edges = ((group.properties?.dgGroupEdges as string[] | undefined) ?? []).filter(
       (id) => id !== edgeId
     )
     this.lf.setProperties(groupId, { dgGroupEdges: edges })
-    this.lf.setProperties(edgeId, { dgGroupId: undefined })
+    clearElementGroupId(this.lf, edgeId)
     if (!edges.length && !((group.properties?.dgGroupMembers as string[] | undefined) ?? []).length) {
       this.lf.deleteNode(groupId)
+    } else {
+      syncGroupFrameBounds(this.lf, groupId)
     }
   }
 
   private releaseGroupFrame(groupId: string): void {
     if (!this.lf) return
     const model = this.lf.getNodeModelById(groupId)
-    if (!model || model.type !== DIAGRAM_GROUP_FRAME_TYPE) return
-    const members = (model.properties?.dgGroupMembers as string[] | undefined) ?? []
-    const edgeMembers = (model.properties?.dgGroupEdges as string[] | undefined) ?? []
+    const members = (model?.properties?.dgGroupMembers as string[] | undefined) ?? []
+    const edgeMembers = (model?.properties?.dgGroupEdges as string[] | undefined) ?? []
+
     for (const memberId of members) {
-      this.lf.setProperties(memberId, { dgGroupId: undefined })
+      clearElementGroupId(this.lf, memberId)
     }
     for (const edgeId of edgeMembers) {
-      this.lf.setProperties(edgeId, { dgGroupId: undefined })
+      clearElementGroupId(this.lf, edgeId)
     }
-    this.lf.deleteNode(groupId)
+    for (const node of this.lf.graphModel.nodes) {
+      if (node.properties?.dgGroupId === groupId) {
+        clearElementGroupId(this.lf, node.id)
+      }
+    }
+    for (const edge of this.lf.graphModel.edges) {
+      if (edge.properties?.dgGroupId === groupId) {
+        clearElementGroupId(this.lf, edge.id)
+      }
+    }
+    if (model?.type === DIAGRAM_GROUP_FRAME_TYPE) {
+      this.lf.deleteNode(groupId)
+    }
   }
 
   private pasteClipboard(
