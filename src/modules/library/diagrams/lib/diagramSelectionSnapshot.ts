@@ -79,7 +79,26 @@ export function shapeExtensionDigest(
   }
 }
 
-/** 供 Vue :key 与变更检测使用的轻量指纹 */
+/**
+ * 选区结构指纹（不含 fill/stroke/尺寸等属性值）。
+ * 用于属性面板 :key，避免改属性时整块重挂载导致滚动回顶。
+ */
+export function selectionScopeKey(selection: DiagramEditorSelection): string {
+  return [
+    selection.kind,
+    selection.selectedNodeIds.join(','),
+    selection.selectedEdgeIds.join(','),
+    selection.node?.id ?? '',
+    selection.node?.type ?? '',
+    selection.node?.shapeExtension?.kind ?? '',
+    selection.edge?.id ?? '',
+    selection.canUngroup ? 1 : 0,
+    selection.canGroup ? 1 : 0,
+    selection.mixedNodeFields.join(',')
+  ].join('|')
+}
+
+/** 供变更检测使用的完整指纹（含几何与样式） */
 export function selectionFingerprint(selection: DiagramEditorSelection): string {
   const node = selection.node
   return [

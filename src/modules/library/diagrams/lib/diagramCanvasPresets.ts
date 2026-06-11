@@ -35,7 +35,7 @@ export function logicFlowThemeForPreset(
     const baseDiamond = (base.diamond ?? {}) as Record<string, unknown>
     return {
       ...base,
-      background: { backgroundColor: bg },
+      background: { background: bg, backgroundColor: bg },
       grid: {
         ...diagramGridOptions('dark'),
         config: { color: '#2a5080', thickness: 1 }
@@ -53,7 +53,7 @@ export function logicFlowThemeForPreset(
     const baseRect = (base.rect ?? {}) as Record<string, unknown>
     return {
       ...base,
-      background: { backgroundColor: bg },
+      background: { background: bg, backgroundColor: bg },
       grid: {
         ...diagramGridOptions('light'),
         config: { color: '#e8e0d4', thickness: 1 }
@@ -66,7 +66,7 @@ export function logicFlowThemeForPreset(
     const baseRect = (base.rect ?? {}) as Record<string, unknown>
     return {
       ...base,
-      background: { backgroundColor: bg },
+      background: { background: bg, backgroundColor: bg },
       grid: {
         ...diagramGridOptions('dark'),
         config: { color: '#3a424d', thickness: 1 }
@@ -78,7 +78,7 @@ export function logicFlowThemeForPreset(
 
   return {
     ...base,
-    background: { backgroundColor: bg }
+    background: { background: bg, backgroundColor: bg }
   }
 }
 

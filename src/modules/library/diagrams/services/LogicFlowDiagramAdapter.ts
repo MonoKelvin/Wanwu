@@ -7,11 +7,9 @@ import {
 } from '@modules/library/diagrams/lib/diagramCanvasPresets'
 import {
   DIAGRAM_GRID_SIZE,
-  diagramAxisStyle,
   diagramCanvasBackground,
   type DiagramCanvasTheme
 } from '@modules/library/diagrams/lib/diagramCanvasTheme'
-import { mountDiagramAxisOverlay } from '@modules/library/diagrams/lib/diagramAxisOverlay'
 import {
   mountDiagramMultiSelectResize,
   getMultiSelectOverlayRect,
@@ -52,6 +50,7 @@ import {
   absorbKeyboardModifiers,
   absorbPointerModifiers,
   applyBoxSelectForPointer,
+  applyNodeSelectForPointer,
   collectElementsInCanvasBox,
   isBoxModifierGesture,
   isBoxSubtractKey,
@@ -257,9 +256,10 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   /** 组合/拆组等批量图变更期间抑制中间态选区推送 */
   private suppressSelectionSyncDuringMutation = false
   private pendingDeferredSelectionSync = false
-  /** 强制提交后短暂忽略 history/selection 附带的同步，避免旧选区覆盖 */
+  /** 组合/拆组提交后短暂忽略附带同步，避免中间态覆盖（用户点选会强制清除） */
   private ignoreIncidentalSelectionSyncUntil = 0
   private skipSelectionReconcileOnce = false
+  private postMutationCommitRaf: number | null = null
   private edgeInsertHighlightId: string | null = null
   private edgeInsertDragNodeIds: string[] = []
   private groupFramesBottomRaf: number | null = null
@@ -365,6 +365,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     ensureDiagramShapeExtensions().registerExtensionRenderers(this.lf)
     this.applyCanvasSettings(this.canvasSettings)
     this.lf.render({ nodes: [], edges: [] })
+    this.applyLogicFlowBackgroundColor(
+      this.canvasSettings.backgroundColor || diagramCanvasBackground(this.resolvedTheme)
+    )
     this.refreshAxisOverlay()
     this.bindEvents()
     this.enableBoxSelection()
@@ -379,7 +382,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       () => {
         this.syncGroupFramesForSelectedNodes(this.getSelectedContentNodeIds())
         this.scheduleGraphChange()
-        this.syncSelectionFromGraph()
+        this.publishSelectionFromLiveGraph()
       },
       (layout) => {
         this.syncMultiSelectDomFlags(layout.nodeCount)
@@ -660,8 +663,6 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     const layout = this.refreshMultiSelectResizeNow?.()
     this.syncMultiSelectDomFlags(layout?.nodeCount)
     this.flushOverlayLayout(layout)
-    // mouseup 早于 click，isSelected 在延迟刷新后才稳定，需再次同步工具栏/属性面板
-    this.syncSelectionFromGraph()
   }
 
   /**
@@ -692,7 +693,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   }
 
   /**
-   * LogicFlow 选区在 click/mouseup 后才稳定；延迟多次读取并推送给 UI。
+   * LogicFlow 选区在 click/mouseup 后才稳定；禁止在事件回调内立即读取（会落到旧选区，如 UML）。
    */
   private scheduleDeferredSelectionSync(forceEmit = false): void {
     if (this.suppressSelectionSyncDuringMutation && !forceEmit) {
@@ -700,14 +701,16 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       return
     }
 
-    this.syncSelectionFromGraph(forceEmit)
+    const run = () => {
+      if (this.suppressSelectionSyncDuringMutation && !forceEmit) return
+      this.syncSelectionFromGraph(forceEmit)
+    }
 
     if (!this.selectionSyncMicrotaskQueued) {
       this.selectionSyncMicrotaskQueued = true
       queueMicrotask(() => {
         this.selectionSyncMicrotaskQueued = false
-        if (this.suppressSelectionSyncDuringMutation && !forceEmit) return
-        this.syncSelectionFromGraph(forceEmit)
+        run()
       })
     }
 
@@ -716,7 +719,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     }
     this.selectionSyncRetryRaf = requestAnimationFrame(() => {
       this.selectionSyncRetryRaf = null
-      this.syncSelectionFromGraph(forceEmit)
+      run()
+      requestAnimationFrame(() => run())
     })
   }
 
@@ -857,32 +861,114 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.refreshGroupFrameDisplay()
     this.flushMultiSelectOverlayNow()
 
+    if (!applyToGraph) {
+      const live = this.readLiveSelection()
+      if (
+        live.selectedNodeIds.join(',') !== nodes.join(',') ||
+        live.selectedEdgeIds.join(',') !== edges.join(',')
+      ) {
+        return
+      }
+    }
+
     const snapshot = this.composeSelectionFromIds(nodes, edges)
     this.pushSelectionSnapshot(snapshot)
-    this.ignoreIncidentalSelectionSyncUntil = performance.now() + 150
+    if (applyToGraph) {
+      this.ignoreIncidentalSelectionSyncUntil = performance.now() + 80
+    }
   }
 
-  private commitSelectionFromLiveGraph(): void {
-    if (!this.lf) return
-    const live = this.readLiveSelection()
-    this.commitSelectionForIds(live.selectedNodeIds, live.selectedEdgeIds, {
-      applyToGraph: false
-    })
+  private cancelPostMutationDeferredCommits(): void {
+    if (this.postMutationCommitRaf != null) {
+      cancelAnimationFrame(this.postMutationCommitRaf)
+      this.postMutationCommitRaf = null
+    }
   }
 
   private schedulePostMutationSelectionCommit(nodeIds: string[], edgeIds: string[]): void {
+    this.cancelPostMutationDeferredCommits()
     this.commitSelectionForIds(nodeIds, edgeIds)
-    queueMicrotask(() => this.commitSelectionFromLiveGraph())
-    requestAnimationFrame(() => {
-      this.commitSelectionFromLiveGraph()
-      requestAnimationFrame(() => this.commitSelectionFromLiveGraph())
+    // 单帧补推：覆盖 LF 延迟选区，不再多次 deferred 以免覆盖后续用户点选
+    this.postMutationCommitRaf = requestAnimationFrame(() => {
+      this.postMutationCommitRaf = null
+      if (!this.lf) return
+      const live = this.readLiveSelection()
+      if (
+        live.selectedNodeIds.join(',') !== nodeIds.join(',') ||
+        live.selectedEdgeIds.join(',') !== edgeIds.join(',')
+      ) {
+        return
+      }
+      this.commitSelectionForIds(live.selectedNodeIds, live.selectedEdgeIds, {
+        applyToGraph: false
+      })
     })
   }
 
+  /** 从 LF 当前选区直接推送属性面板（不跑框选 reconcile，避免覆盖用户点选） */
+  private publishSelectionFromLiveGraph(): void {
+    if (!this.lf) return
+    this.scrubOrphanGroupIds()
+    const live = this.readLiveSelection()
+    this.lastSelectedNodeIds = live.selectedNodeIds
+    this.lastSelectedEdgeIds = live.selectedEdgeIds
+    this.selectedNodeId = live.primaryNodeId
+    this.selectedEdgeId = live.primaryEdgeId
+    this.refreshGroupFrameDisplay()
+    this.maybeCancelFormatPainterOnSelectionChange()
+    this.pushSelectionSnapshot(
+      this.composeSelectionFromIds(live.selectedNodeIds, live.selectedEdgeIds)
+    )
+  }
+
+  private shouldReconcileBoxSelectCollapse(): boolean {
+    if (this.boxSelectAppliedResult) return true
+    if (performance.now() < this.suppressPostBoxSelectClickUntil) return true
+    if (this.lastBoxSelectNodeIds.length >= 2) return true
+    return false
+  }
+
+  /** 用户点选/框选后的选区同步（直接读 LF，不跑框选 reconcile） */
+  private afterUserSelectionChange(): void {
+    this.ignoreIncidentalSelectionSyncUntil = 0
+    this.cancelPostMutationDeferredCommits()
+    this.cancelPendingSelectionSync()
+    if (performance.now() >= this.suppressPostBoxSelectClickUntil) {
+      this.clearBoxSelectSnapshots()
+    }
+    // click 回调内 LF 选区已更新，立即推送；再 rAF 确认一次避免竞态覆盖
+    this.publishSelectionFromLiveGraph()
+    requestAnimationFrame(() => {
+      this.publishSelectionFromLiveGraph()
+      this.scheduleGroupFramesToBottom()
+      this.scheduleMultiSelectOverlayRefresh()
+    })
+  }
+
+  private applyLogicFlowBackgroundColor(color: string): void {
+    if (!this.lf) return
+    // LF 主题用 background 简写，仅传 backgroundColor 时边缘会露出主题默认色（#FBFCFE / #33353A）
+    this.lf.graphModel.updateBackgroundOptions({ background: color, backgroundColor: color })
+    this.patchBackgroundDom(color)
+  }
+
+  /** 直接写 DOM，覆盖 LF setTheme 写入的内联 background */
+  private patchBackgroundDom(color: string): void {
+    const root = this.container
+    if (!root) return
+    const apply = (el: HTMLElement) => {
+      el.style.setProperty('background', color, 'important')
+      el.style.setProperty('background-color', color, 'important')
+      el.style.setProperty('border', 'none', 'important')
+      el.style.setProperty('outline', 'none', 'important')
+      el.style.setProperty('box-shadow', 'none', 'important')
+    }
+    apply(root)
+    root.querySelectorAll<HTMLElement>('.lf-background-area, .lf-graph, .lf-grid, .lf-background').forEach(apply)
+  }
+
   private afterSelectionMutation(): void {
-    this.scheduleDeferredSelectionSync()
-    this.scheduleGroupFramesToBottom()
-    this.scheduleMultiSelectOverlayRefresh()
+    this.afterUserSelectionChange()
   }
 
   /** 点击修饰键点选时使用的「点击前」选区快照 */
@@ -896,27 +982,21 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     return [...this.lastSelectedNodeIds]
   }
 
-  private reconcileModifierSelection(
-    nodeId: string,
-    e?: MouseEvent | PointerEvent | null
-  ): void {
-    if (!this.lf || !isToggleSelectKey(e) || isBoxSubtractKey(e)) return
-    reconcileModifierNodeClick(this.lf, nodeId, this.getClickSelectionSnapshot(e))
-  }
-
   private bindSelectionSnapshotCapture(el: HTMLElement): () => void {
     const onPointerDown = (e: PointerEvent) => {
       if (e.button !== 0 || this.middlePanning || !this.lf) return
-      const selected = this.lf.getSelectElements(true)
-      const ids = selected.nodes.map((node) => node.id)
+      cancelAllPendingUmlClassifierHitClicks(this.lf)
+      const ordered = collectOrderedSelectionIds(this.lf)
+      const ids = ordered.nodeIds
       this.lastPointerDownSelection = ids
       this.selectionSnapshotByPointer.set(e.pointerId, ids)
       this.selectionFullSnapshotByPointer.set(e.pointerId, {
         nodeIds: ids,
-        edgeIds: selected.edges.map((edge) => edge.id)
+        edgeIds: ordered.edgeIds
       })
     }
     const onPointerUp = (e: PointerEvent) => {
+      // 不在 pointerup 同步选区：它在 click 之前触发，会把旧选区（如 UML）推给属性面板
       if (e.button === 0 && this.lf) {
         queueMicrotask(() => this.scheduleMultiSelectOverlayRefresh())
       }
@@ -1168,15 +1248,18 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         return
       }
 
-      this.reconcileModifierSelection(data.id, e)
-      if (!isToggleSelectKey(e) || isBoxSubtractKey(e)) {
-        if (!isModifierSelectionGesture(e)) {
-          this.lastBoxSelectNodeIds = []
-        }
-        if (!isModifierSelectionGesture(e) && this.lf) {
-          for (const edge of this.lf.getSelectElements(true).edges) {
-            this.lf.deselectElementById(edge.id)
-          }
+      this.clearBoxSelectSnapshots()
+      if (!isModifierSelectionGesture(e)) {
+        this.lastBoxSelectNodeIds = []
+      }
+      if (isToggleSelectKey(e) && !isBoxSubtractKey(e)) {
+        reconcileModifierNodeClick(this.lf, data.id, this.getClickSelectionSnapshot(e))
+      } else if (!isModifierSelectionGesture(e)) {
+        applyNodeSelectForPointer(this.lf, data.id, e, this.getClickSelectionSnapshot(e))
+      }
+      if (!isModifierSelectionGesture(e) && this.lf) {
+        for (const edge of this.lf.getSelectElements(true).edges) {
+          this.lf.deselectElementById(edge.id)
         }
       }
 
@@ -1204,6 +1287,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         this.scheduleDismissSelectionRubberBand()
         return
       }
+      this.clearBoxSelectSnapshots()
       if (this.formatPainterState?.active && this.formatPainterState.kind === 'edge' && this.lf) {
         applyEdgeStyleSnapshot(this.lf, data.id, this.formatPainterState.edgeSnapshot!)
         this.scheduleGraphChange()
@@ -1218,7 +1302,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         this.lf?.deselectElementById(data.id)
       }
       activateEdgeEndpointPriority(this.lf!, data.id, this.container)
-      this.scheduleDeferredSelectionSync()
+      this.afterUserSelectionChange()
     })
 
     this.lf.on('edge:add', ({ data }) => {
@@ -1254,7 +1338,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       this.cleanupActiveBoxSelect()
       this.scheduleDismissSelectionRubberBand()
       resetEdgeEndpointPriority(this.lf, this.container)
-      this.afterSelectionMutation()
+      this.afterUserSelectionChange()
     })
 
     this.lf.on('blank:mousedown', ({ e }) => {
@@ -1286,7 +1370,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     })
 
     this.lf.on('selection:mouseup', () => {
-      this.scheduleDeferredSelectionSync()
+      this.scheduleMultiSelectOverlayRefresh()
     })
 
     this.lf.on('node:dragstart', ({ data }) => {
@@ -1445,11 +1529,13 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
     this.lf.on('text:update', () => {
       this.scheduleGraphChange()
-      this.syncSelectionFromGraph()
     })
 
     this.lf.on('graph:transform', () => {
       this.viewportChangeHandler?.()
+      const bg =
+        this.canvasSettings.backgroundColor || diagramCanvasBackground(this.resolvedTheme)
+      this.patchBackgroundDom(bg)
       if (this.countSelectedNodes() >= 2) {
         this.scheduleOverlayLayout()
         this.refreshMultiSelectResize?.()
@@ -1643,7 +1729,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.scrubOrphanGroupIds()
     if (this.skipSelectionReconcileOnce) {
       this.skipSelectionReconcileOnce = false
-    } else {
+    } else if (this.shouldReconcileBoxSelectCollapse()) {
       this.reconcileBoxSelectCollapse()
     }
     const raw = this.collectLiveSelectedIds()
@@ -1863,22 +1949,16 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
   private handleShapeExtensionHit(payload: DiagramShapeHitPayload): void {
     if (!this.lf) return
-    const inBoxSelectGrace = performance.now() < this.suppressPostBoxSelectClickUntil
     const model = this.lf.getNodeModelById(payload.nodeId)
-    if (inBoxSelectGrace && !payload.append && !model?.isSelected) return
     if (!model) return
     const ext = readNodeShapeExtension(model.properties as Record<string, unknown>)
     if (!ext || ext.kind !== payload.kind) return
-    if (payload.append) {
-      reconcileModifierNodeClick(
-        this.lf,
-        payload.nodeId,
-        this.getClickSelectionSnapshot()
-      )
-    } else if (!model.isSelected) {
-      this.lf.selectElementById(payload.nodeId)
+
+    const live = this.readLiveSelection()
+    if (!payload.append && live.primaryNodeId !== payload.nodeId) {
+      return
     }
-    this.afterSelectionMutation()
+
     this.shapePanelFocusHandler?.(payload)
   }
 
@@ -2693,7 +2773,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.lf.setTheme(theme as never, resolved === 'dark' ? 'dark' : 'default')
 
     const bg = this.canvasSettings.backgroundColor || backgroundForPreset(preset, resolved)
-    this.lf.graphModel.updateBackgroundOptions({ backgroundColor: bg })
+    this.applyLogicFlowBackgroundColor(bg)
     this.refreshEdgeLabelViews()
   }
 
@@ -2749,7 +2829,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     if (themePreset) {
       this.applyTheme()
     } else if (backgroundColor) {
-      this.lf.graphModel.updateBackgroundOptions({ backgroundColor })
+      this.applyLogicFlowBackgroundColor(backgroundColor)
     }
 
     if (miniMapVisible) this.showMiniMap()
@@ -2800,11 +2880,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   }
 
   private refreshAxisOverlay(): void {
-    if (!this.lf) return
     this.teardownAxis?.()
-    const preset = this.canvasSettings.themePreset
-    const resolved = resolveThemeFromPreset(preset, this.resolvedTheme)
-    this.teardownAxis = mountDiagramAxisOverlay(this.lf, () => diagramAxisStyle(resolved))
+    this.teardownAxis = null
+    // 坐标轴在视口边缘会形成类似「画布边框」的十字线，默认不绘制
   }
 
   async exportPng(): Promise<Blob> {
@@ -2918,6 +2996,10 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     if (clientWidth > 0 && clientHeight > 0) {
       this.lf.resize(clientWidth, clientHeight)
     }
+    const bg =
+      this.canvasSettings.backgroundColor ||
+      backgroundForPreset(this.canvasSettings.themePreset, this.resolvedTheme)
+    this.patchBackgroundDom(bg)
   }
 
   getViewport(): DiagramViewport {
@@ -2970,7 +3052,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   clearSelection(): void {
     if (this.lf) cancelAllPendingUmlClassifierHitClicks(this.lf)
     this.lf?.clearSelectElements()
-    this.syncSelectionFromGraph()
+    this.publishSelectionFromLiveGraph()
     this.refreshMultiSelectResize?.()
     this.scheduleOverlayLayout()
   }
@@ -2986,7 +3068,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     for (const id of edgeIds ?? []) {
       this.lf.selectElementById(id, true)
     }
-    this.syncSelectionFromGraph()
+    this.publishSelectionFromLiveGraph()
   }
 
   deleteSelection(nodeIds?: string[], edgeIds?: string[]): void {
@@ -3782,7 +3864,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       }
     }
     this.scheduleGraphChange()
-    this.syncSelectionFromGraph()
+    this.publishSelectionFromLiveGraph()
   }
 
   updateEdge(edgeId: string, patch: Record<string, unknown>): void {

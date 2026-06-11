@@ -25,9 +25,8 @@ import type { DiagramNodeTextStyle } from '@modules/library/diagrams/lib/diagram
 const UML_CLASSIFIER_LF_TYPES = ['dg-uml-class', 'dg-uml-interface'] as const
 const UML_MEMBER_FONT_SIZE = 11
 const UML_STEREOTYPE_FONT_SIZE = 10
-const HIT_CLICK_DELAY_MS = 220
-
 const hitClickTimers = new WeakMap<DiagramRectResizeModel, ReturnType<typeof setTimeout>>()
+let umlHitEmitGeneration = 0
 
 export function cancelPendingUmlClassifierHitClick(model: DiagramRectResizeModel): void {
   const pending = hitClickTimers.get(model)
@@ -38,6 +37,7 @@ export function cancelPendingUmlClassifierHitClick(model: DiagramRectResizeModel
 }
 
 export function cancelAllPendingUmlClassifierHitClicks(lf: LogicFlow): void {
+  umlHitEmitGeneration += 1
   for (const model of lf.graphModel.nodes) {
     if (!UML_CLASSIFIER_LF_TYPES.includes(String(model.type) as (typeof UML_CLASSIFIER_LF_TYPES)[number])) {
       continue
@@ -123,20 +123,18 @@ function emitUmlClassifierHit(
   })
 }
 
-/** 单击：延迟触发，避免双击时重复 focus */
+/** 单击：不阻断 LF 冒泡；延迟 emit 以便选区先稳定，可用 generation 取消过期 hit */
 function onUmlClassifierHitClick(
   model: DiagramRectResizeModel,
   hit: UmlLayoutHitTarget,
   event: MouseEvent
 ): void {
-  event.stopPropagation()
-  const pending = hitClickTimers.get(model)
-  if (pending) clearTimeout(pending)
-  const timer = setTimeout(() => {
-    hitClickTimers.delete(model)
+  cancelPendingUmlClassifierHitClick(model)
+  const generation = umlHitEmitGeneration
+  queueMicrotask(() => {
+    if (generation !== umlHitEmitGeneration) return
     emitUmlClassifierHit(model, hit, event)
-  }, HIT_CLICK_DELAY_MS)
-  hitClickTimers.set(model, timer)
+  })
 }
 
 /** 双击：立即触发并取消待处理单击 */
@@ -145,7 +143,6 @@ function onUmlClassifierHitDblClick(
   hit: UmlLayoutHitTarget,
   event: MouseEvent
 ): void {
-  event.stopPropagation()
   const pending = hitClickTimers.get(model)
   if (pending) {
     clearTimeout(pending)

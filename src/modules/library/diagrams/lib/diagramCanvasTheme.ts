@@ -56,7 +56,8 @@ export function diagramAxisStyle(resolved: DiagramCanvasTheme) {
 }
 
 export function diagramCanvasBackground(resolved: DiagramCanvasTheme) {
-  return resolved === 'dark' ? '#161618' : '#ffffff'
+  // 与 --ww-content / --dg-canvas-bg 一致，避免画布边缘色差描边
+  return resolved === 'dark' ? '#18181b' : '#ffffff'
 }
 
 function diagramTextTheme(resolved: DiagramCanvasTheme) {
@@ -98,7 +99,10 @@ export function diagramLogicFlowTheme(resolved: DiagramCanvasTheme): Record<stri
   const edgeStroke = isDark ? '#707078' : '#5a5a62'
 
   return {
-    background: { backgroundColor: diagramCanvasBackground(resolved) },
+    background: {
+      background: diagramCanvasBackground(resolved),
+      backgroundColor: diagramCanvasBackground(resolved)
+    },
     grid: diagramGridOptions(resolved),
     snapline: diagramSnaplineTheme(resolved),
     rect: {

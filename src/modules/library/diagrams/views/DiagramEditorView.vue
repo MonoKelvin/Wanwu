@@ -3,7 +3,7 @@ defineOptions({ name: 'DiagramEditorView' })
 
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, toRefs, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
-import { useRoute, useRouter, type NavigationGuardReturn } from 'vue-router'
+import { onBeforeRouteLeave, useRoute, useRouter, type NavigationGuardReturn } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import DiagramEditorToolbar from '@modules/library/diagrams/components/DiagramEditorToolbar.vue'
 import DiagramAssetPanel from '@modules/library/diagrams/components/DiagramAssetPanel.vue'
@@ -64,6 +64,7 @@ const loading = ref(true)
 const loadError = ref<string | null>(null)
 const bootError = ref<string | null>(null)
 const editorReady = ref(false)
+const editorVisible = ref(true)
 const isCanvasDragOver = ref(false)
 const dropIndicator = ref<{ x: number; y: number } | null>(null)
 const dropIndicatorSnapped = ref(false)
@@ -440,13 +441,20 @@ async function bootstrapEditor() {
     selectionApi.publish(selection)
     scheduleAlignBarRefresh()
     const focus = panelFocus.value
-    if (
-      focus &&
-      (selection.kind === 'canvas' ||
-        selection.selectedNodeCount !== 1 ||
-        selection.node?.id !== focus.nodeId)
-    ) {
+    const shapeFocus = shapePanelFocus.activeFocus.value
+    const lostSingleNode =
+      selection.kind === 'canvas' ||
+      selection.selectedNodeCount !== 1 ||
+      !selection.node
+    if (focus && (lostSingleNode || selection.node?.id !== focus.nodeId)) {
       setPanelFocus(null)
+    }
+    if (
+      shapeFocus &&
+      (lostSingleNode ||
+        selection.node?.id !== shapeFocus.nodeId ||
+        selection.node?.shapeExtension?.kind !== shapeFocus.kind)
+    ) {
       shapePanelFocus.clear()
     }
   })
@@ -551,6 +559,16 @@ async function flushBeforeLeave(): Promise<NavigationGuardReturn> {
   return confirmUnsavedLeave()
 }
 
+function teardownEditorSurface() {
+  editorReady.value = false
+  editorVisible.value = false
+  setPanelFocus(null)
+  shapePanelFocus.clear()
+  selectionApi.reset(resolvedTheme())
+  alignBarNodeCount.value = 0
+  alignBarAnchor.value = null
+}
+
 let removeLeaveGuard: (() => void) | null = null
 let removeBeforeUnload: (() => void) | null = null
 
@@ -627,8 +645,15 @@ watch(
   }
 )
 
+onBeforeRouteLeave((to) => {
+  if (!isDiagramEditorPath(to.path)) {
+    teardownEditorSurface()
+  }
+  return true
+})
+
 onBeforeUnmount(() => {
-  editorReady.value = false
+  teardownEditorSurface()
   unsubscribeBusResult()
   removeLeaveGuard?.()
   removeLeaveGuard = null
@@ -647,6 +672,9 @@ onBeforeUnmount(() => {
 })
 
 async function goBack() {
+  const ok = await flushBeforeLeave()
+  if (ok !== true) return
+  teardownEditorSurface()
   await pushShellRoute(router, { name: 'library-diagrams-home' })
 }
 
@@ -716,54 +744,56 @@ function onCanvasDrop(event: DragEvent) {
 <template>
   <div class="dg-editor-root dg-fade-in flex h-full min-h-0 w-full flex-1 flex-col">
     <div class="dg-editor-stage" :style="stageStyle">
-      <div
-        ref="canvasWrapRef"
-        class="dg-canvas-wrap"
-        tabindex="0"
-        :class="{ 'dg-canvas-wrap--drop-target': isCanvasDragOver }"
-        @pointerdown="focusCanvasForKeys"
-        @dragenter="onCanvasDragEnter"
-        @dragover="onCanvasDragOver"
-        @dragleave="onCanvasDragLeave"
-        @drop="onCanvasDrop"
-      >
+      <template v-if="editorVisible">
         <div
-          ref="canvasRef"
-          class="dg-canvas-frame"
-          :class="{ 'dg-canvas-frame--loading': loading }"
-        />
-        <div
-          v-if="isCanvasDragOver && dropIndicator"
-          class="dg-drop-indicator"
-          :class="{ 'dg-drop-indicator--snapped': dropIndicatorSnapped }"
-          :style="{ left: `${dropIndicator.x}px`, top: `${dropIndicator.y}px` }"
-          aria-hidden="true"
-        />
-        <DiagramAlignBar
-          v-if="editorReady"
-          :node-count="alignBarNodeCount"
-          :anchor-rect="alignBarAnchor"
-          :stage-width="alignBarStageWidth"
-          :stage-height="alignBarStageHeight"
-        />
-        <div v-if="loading" class="dg-canvas-wrap__overlay">加载画布…</div>
-        <div v-else-if="loadError" class="dg-canvas-wrap__overlay dg-canvas-wrap__overlay--error">
-          {{ loadError }}
+          ref="canvasWrapRef"
+          class="dg-canvas-wrap"
+          tabindex="0"
+          :class="{ 'dg-canvas-wrap--drop-target': isCanvasDragOver }"
+          @pointerdown="focusCanvasForKeys"
+          @dragenter="onCanvasDragEnter"
+          @dragover="onCanvasDragOver"
+          @dragleave="onCanvasDragLeave"
+          @drop="onCanvasDrop"
+        >
+          <div
+            ref="canvasRef"
+            class="dg-canvas-frame"
+            :class="{ 'dg-canvas-frame--loading': loading }"
+          />
+          <div
+            v-if="isCanvasDragOver && dropIndicator"
+            class="dg-drop-indicator"
+            :class="{ 'dg-drop-indicator--snapped': dropIndicatorSnapped }"
+            :style="{ left: `${dropIndicator.x}px`, top: `${dropIndicator.y}px` }"
+            aria-hidden="true"
+          />
+          <DiagramAlignBar
+            v-if="editorReady"
+            :node-count="alignBarNodeCount"
+            :anchor-rect="alignBarAnchor"
+            :stage-width="alignBarStageWidth"
+            :stage-height="alignBarStageHeight"
+          />
+          <div v-if="loading" class="dg-canvas-wrap__overlay">加载画布…</div>
+          <div v-else-if="loadError" class="dg-canvas-wrap__overlay dg-canvas-wrap__overlay--error">
+            {{ loadError }}
+          </div>
         </div>
-      </div>
 
-      <DiagramEditorToolbar
-        :title="editorReady ? title : loading ? '加载中…' : '流程图'"
-        :dirty="editorReady && dirty"
-        :saving="editorReady && isSaving"
-        :zoom-percent="viewportZoomPercent"
-        :folder-id="pickedFolderId"
-        :file-id="sessionRef?.fileId ?? null"
-        :booting="!editorReady"
-        @back="goBack"
-      />
+        <DiagramEditorToolbar
+          v-if="editorReady || loading"
+          :title="editorReady ? title : loading ? '加载中…' : '流程图'"
+          :dirty="editorReady && dirty"
+          :saving="editorReady && isSaving"
+          :zoom-percent="viewportZoomPercent"
+          :folder-id="pickedFolderId"
+          :file-id="sessionRef?.fileId ?? null"
+          :booting="!editorReady"
+          @back="goBack"
+        />
 
-      <template v-if="editorReady">
+        <template v-if="editorReady">
         <DiagramAssetPanel v-if="!editorLayout.assetCollapsed.value" />
         <DiagramPanelRestoreButton
           v-else
@@ -804,6 +834,7 @@ function onCanvasDrop(event: DragEvent) {
           @cancel="onFolderPickerCancel"
         />
         <DiagramCanvasContextMenu ref="canvasMenuRef" />
+        </template>
       </template>
     </div>
   </div>

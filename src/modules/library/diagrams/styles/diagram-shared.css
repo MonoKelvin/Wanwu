@@ -18,6 +18,7 @@
   --dg-row-hover-bg: var(--ww-list-hover-bg);
   --dg-menu-btn-hover-bg: color-mix(in srgb, var(--ww-ink) 7%, transparent);
   --dg-pinned-row-bg: color-mix(in oklab, var(--ww-content) 93%, var(--ww-list-selected-bg));
+  --dg-canvas-bg: var(--ww-content);
 }
 
 .dg-fade-in {
@@ -181,6 +182,7 @@
 }
 
 [data-theme='dark'] {
+  --dg-canvas-bg: var(--ww-content);
   --dg-elevate-shadow: var(--ww-shadow-card);
   --dg-elevate-shadow-hover: 0 24px 56px -10px rgb(0 0 0 / 0.72), 0 8px 20px -8px rgb(0 0 0 / 0.45),
     0 0 0 1px rgb(255 255 255 / 0.05);
@@ -1361,6 +1363,13 @@
   inset: 0;
   z-index: 0;
   outline: none;
+  background: var(--dg-canvas-bg);
+}
+
+.dg-canvas-wrap:focus,
+.dg-canvas-wrap:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .dg-canvas-frame {
@@ -1369,16 +1378,50 @@
   min-height: 12rem;
   border: none;
   border-radius: 0;
-  background: var(--ww-content);
+  background: var(--dg-canvas-bg);
   overflow: hidden;
   cursor: default;
   position: relative;
   transition: opacity var(--ww-duration-fast) var(--ww-ease-out);
 }
 
-.dg-canvas-frame .lf-graph {
+.dg-canvas-frame .lf-graph,
+.dg-canvas-frame .lf-grid,
+.dg-canvas-frame .lf-background,
+.dg-canvas-frame .lf-background-area {
   width: 100% !important;
   height: 100% !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 与 --dg-canvas-bg 对齐，覆盖 LF 主题默认 background（#FBFCFE / #33353A）避免视口边缘色差描边 */
+.dg-canvas-frame .lf-graph {
+  background: var(--dg-canvas-bg) !important;
+}
+
+.dg-canvas-frame .lf-background-area {
+  background: var(--dg-canvas-bg) !important;
+  background-color: var(--dg-canvas-bg) !important;
+}
+
+/* mesh 网格每个 cell 的四条边线在视口边缘会形成「假边框」，内缩 1px 裁掉 */
+.dg-canvas-frame .lf-grid {
+  background: transparent !important;
+  clip-path: inset(1px);
+}
+
+.dg-canvas-frame .lf-background {
+  clip-path: inset(1px);
+}
+
+.dg-canvas-frame .lf-grid svg {
+  overflow: visible;
+}
+
+.dg-canvas-frame .dg-axis-overlay {
+  display: none !important;
 }
 
 .dg-canvas-frame .lf-control {
@@ -3270,7 +3313,7 @@
 }
 
 [data-theme='dark'] .dg-canvas-frame .lf-mini-map .lf-graph {
-  background: #161618 !important;
+  background: var(--ww-content) !important;
 }
 
 .dg-canvas-frame .lf-mini-map-graph {
@@ -3281,7 +3324,7 @@
 }
 
 [data-theme='dark'] .dg-canvas-frame .lf-mini-map-graph {
-  background: #161618;
+  background: var(--ww-content);
 }
 
 .dg-canvas-frame .lf-minimap-viewport {

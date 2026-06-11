@@ -38,7 +38,7 @@ import { useDiagramEditorSelection } from '@modules/library/diagrams/composables
 import {
   effectiveEdgeCount,
   effectiveNodeCount,
-  shapeExtensionDigest
+  selectionScopeKey
 } from '@modules/library/diagrams/lib/diagramSelectionSnapshot'
 
 const props = defineProps<{
@@ -47,9 +47,7 @@ const props = defineProps<{
 
 const selectionApi = useDiagramEditorSelection()
 const selection = computed(() => selectionApi.selection.value)
-const selectionRevision = computed(
-  () => `${selectionApi.revision.value}|${selectionApi.fingerprint.value}`
-)
+const selectionScope = computed(() => selectionScopeKey(selection.value))
 
 const bus = useDiagramCommandBus()
 const toast = useWanwuToast()
@@ -58,7 +56,7 @@ const activeTab = ref<'node' | 'edge' | 'canvas'>('canvas')
 const layout = useDiagramEditorLayout()
 
 watch(
-  selectionRevision,
+  selectionScope,
   () => {
     const s = selection.value
     const nodeCount = effectiveNodeCount(s)
@@ -100,14 +98,13 @@ const isGroupFrame = computed(() => {
 })
 const shapeHostKey = computed(() => {
   const node = selection.value.node
-  if (!node) return 'none'
+  if (!node) return `none|${selectionApi.revision.value}`
   return [
+    selectionApi.revision.value,
     node.id,
-    node.width,
-    node.height,
     node.type,
     node.groupId ?? '',
-    shapeExtensionDigest(node.shapeExtension)
+    node.shapeExtension?.kind ?? ''
   ].join('|')
 })
 const showGroupFrame = computed(() => isGroupFrame.value && showNode.value)
@@ -296,13 +293,12 @@ const shapeKindRegistration = computed(() => {
   return ensureDiagramShapeExtensions().getKind(ext.kind) ?? null
 })
 
-const showShapeExtensionHost = computed(
-  () =>
-    showNode.value &&
-    !multiNode.value &&
-    Boolean(selection.value.node?.shapeExtension) &&
-    Boolean(shapeKindRegistration.value?.propertyEditor)
-)
+const showShapeExtensionHost = computed(() => {
+  if (!showNode.value || multiNode.value) return false
+  const node = selection.value.node
+  if (!node?.shapeExtension?.kind) return false
+  return Boolean(shapeKindRegistration.value?.propertyEditor)
+})
 
 const hideGenericTextContent = computed(
   () => shapeKindRegistration.value?.propertyEditor?.order === 'replace-text'
@@ -441,16 +437,16 @@ function patchGroupAlwaysVisible(value: boolean) {
       </button>
     </div>
 
-    <div :key="`panel-body-${selectionRevision}`" class="dg-panel__body ww-scroll-main">
+    <div class="dg-panel__body ww-scroll-main">
       <p v-if="selectionBanner" class="dg-prop-selection-banner">{{ selectionBanner }}</p>
 
       <DiagramMultiSelectTools
         v-if="showMultiSelectTools"
-        :key="`multi-${selectionRevision}`"
+        :key="`multi-${selectionScope}`"
       />
 
       <!-- 组合框 -->
-      <template v-if="showGroupFrame && selection.node" :key="`group-${selectionRevision}`">
+      <template v-if="showGroupFrame && selection.node" :key="`group-${selectionScope}`">
         <section class="dg-prop-section dg-prop-group">
           <p class="dg-prop-section__title">组合框</p>
           <p v-if="selection.node.groupMemberCount != null" class="dg-prop-hint">

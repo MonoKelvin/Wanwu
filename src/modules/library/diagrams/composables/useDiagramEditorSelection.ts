@@ -38,6 +38,7 @@ export interface DiagramEditorSelectionApi {
   /** 每次 publish 递增，用于强制 UI 与选区对齐 */
   readonly revision: Ref<number>
   publish(selection: DiagramEditorSelection): void
+  reset(resolved?: 'light' | 'dark'): void
   subscribe(listener: DiagramSelectionListener): () => void
 }
 
@@ -74,6 +75,10 @@ export function provideDiagramEditorSelection(
       selection.value = snapshot
       revision.value += 1
       for (const listener of listeners) listener(snapshot)
+    },
+    reset(resolved = 'light') {
+      selection.value = emptySelection(resolved)
+      revision.value += 1
     },
     subscribe(listener) {
       listeners.add(listener)

@@ -121,7 +121,7 @@ export function defaultCanvasSettings(resolved: 'light' | 'dark'): DiagramCanvas
   return {
     gridVisible: true,
     snapGrid: true,
-    backgroundColor: resolved === 'dark' ? '#161618' : '#ffffff',
+    backgroundColor: resolved === 'dark' ? '#18181b' : '#ffffff',
     miniMapVisible: false,
     themePreset: resolved === 'dark' ? 'classic-dark' : 'classic-light',
     defaultEdge: defaultDefaultEdgeStyle(resolved)
