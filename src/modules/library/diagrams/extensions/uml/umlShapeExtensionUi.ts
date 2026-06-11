@@ -6,6 +6,7 @@ export function registerUmlShapeExtensionUi(registry: DiagramShapeExtensionRegis
   registry.registerPropertyEditor(UML_CLASSIFIER_KIND, {
     kind: UML_CLASSIFIER_KIND,
     order: 'replace-text',
+    textSectionTitle: '标题样式',
     component: UmlClassifierPropertyEditor
   })
 }

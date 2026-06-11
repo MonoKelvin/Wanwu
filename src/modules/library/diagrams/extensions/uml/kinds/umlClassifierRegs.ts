@@ -3,48 +3,23 @@ import {
   DiagramRectResizeModel,
   DiagramRectResizeView
 } from '@modules/library/diagrams/lib/diagramRectResizeBase'
-import {
-  applyDefaultRectSize,
-  syncNodeSizeProperties
-} from '@modules/library/diagrams/lib/diagramShapeResize'
+import { applyDefaultRectSize } from '@modules/library/diagrams/lib/diagramShapeResize'
 import { readUmlClassifierData } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierFormat'
 import {
-  applyUmlClassifierLayoutToModel,
   computeUmlClassifierLayout,
+  syncUmlClassifierLayoutToNode,
   truncateUmlCanvasLine,
   UML_LAYOUT,
-  type UmlLayoutHitTarget,
   type UmlLayoutLine
 } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierLayout'
 import { DG_SHAPE_RENDER_REV_KEY } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'
-import { DG_SHAPE_HIT_EVENT } from '@modules/library/diagrams/domain/shape-extension/types'
-import { UML_CLASSIFIER_KIND } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierTypes'
+import { DG_SHAPE_PAYLOAD_KEY } from '@modules/library/diagrams/domain/shape-extension/types'
 import { textXForAlign } from '@modules/library/diagrams/lib/diagramStyleBridge'
 import type { DiagramNodeTextStyle } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 
 const UML_CLASSIFIER_LF_TYPES = ['dg-uml-class', 'dg-uml-interface'] as const
 const UML_MEMBER_FONT_SIZE = 11
 const UML_STEREOTYPE_FONT_SIZE = 10
-const hitClickTimers = new WeakMap<DiagramRectResizeModel, ReturnType<typeof setTimeout>>()
-let umlHitEmitGeneration = 0
-
-export function cancelPendingUmlClassifierHitClick(model: DiagramRectResizeModel): void {
-  const pending = hitClickTimers.get(model)
-  if (pending) {
-    clearTimeout(pending)
-    hitClickTimers.delete(model)
-  }
-}
-
-export function cancelAllPendingUmlClassifierHitClicks(lf: LogicFlow): void {
-  umlHitEmitGeneration += 1
-  for (const model of lf.graphModel.nodes) {
-    if (!UML_CLASSIFIER_LF_TYPES.includes(String(model.type) as (typeof UML_CLASSIFIER_LF_TYPES)[number])) {
-      continue
-    }
-    cancelPendingUmlClassifierHitClick(model as DiagramRectResizeModel)
-  }
-}
 
 function isUmlNameLine(line: UmlLayoutLine): boolean {
   return line.role === 'name'
@@ -52,10 +27,6 @@ function isUmlNameLine(line: UmlLayoutLine): boolean {
 
 function isUmlStereotypeLine(line: UmlLayoutLine): boolean {
   return line.role === 'stereotype'
-}
-
-function isUmlPlaceholderLine(line: UmlLayoutLine): boolean {
-  return line.hit?.region === 'attributes-add' || line.hit?.region === 'operations-add'
 }
 
 function readTitleTextAlign(model: DiagramRectResizeModel): DiagramNodeTextStyle['textAlign'] {
@@ -110,48 +81,6 @@ function applyDefaultUmlTitleTextStyle(model: DiagramRectResizeModel): void {
   }
 }
 
-function emitUmlClassifierHit(
-  model: DiagramRectResizeModel,
-  hit: UmlLayoutHitTarget,
-  event?: MouseEvent
-): void {
-  model.graphModel.eventCenter.emit(DG_SHAPE_HIT_EVENT, {
-    nodeId: model.id,
-    kind: UML_CLASSIFIER_KIND,
-    hit,
-    append: Boolean(event?.ctrlKey || event?.metaKey || event?.shiftKey)
-  })
-}
-
-/** 单击：不阻断 LF 冒泡；延迟 emit 以便选区先稳定，可用 generation 取消过期 hit */
-function onUmlClassifierHitClick(
-  model: DiagramRectResizeModel,
-  hit: UmlLayoutHitTarget,
-  event: MouseEvent
-): void {
-  cancelPendingUmlClassifierHitClick(model)
-  const generation = umlHitEmitGeneration
-  queueMicrotask(() => {
-    if (generation !== umlHitEmitGeneration) return
-    emitUmlClassifierHit(model, hit, event)
-  })
-}
-
-/** 双击：立即触发并取消待处理单击 */
-function onUmlClassifierHitDblClick(
-  model: DiagramRectResizeModel,
-  hit: UmlLayoutHitTarget,
-  event: MouseEvent
-): void {
-  const pending = hitClickTimers.get(model)
-  if (pending) {
-    clearTimeout(pending)
-    hitClickTimers.delete(model)
-  }
-  emitUmlClassifierHit(model, hit, event)
-}
-
-/** 内容最小尺寸（不含用户手动放大的宽高）；minWidth 不得用 max(当前宽, 内容宽) 否则放大后无法缩小 */
 function appendPackageTab(
   shapes: unknown[],
   left: number,
@@ -200,42 +129,44 @@ function appendComponentTabs(
   )
 }
 
-function syncUmlClassifierLayout(model: DiagramRectResizeModel): void {
-  const data = readUmlClassifierData(model)
-  if (!data) return
-  if (applyUmlClassifierLayoutToModel(model, data)) {
-    syncNodeSizeProperties(model)
+function trackUmlClassifierDataForRender(
+  props: Record<string, unknown> | undefined,
+  data: ReturnType<typeof readUmlClassifierData>
+): void {
+  void Number(props?.[DG_SHAPE_RENDER_REV_KEY] ?? 0)
+  void props?.[DG_SHAPE_PAYLOAD_KEY]
+  void data?.name
+  void data?.classifierKind
+  void data?.showAttributes
+  void data?.showOperations
+  for (const attr of data?.attributes ?? []) {
+    void attr.id
+    void attr.name
+    void attr.type
+    void attr.visibility
+    void attr.isStatic
+  }
+  for (const op of data?.operations ?? []) {
+    void op.id
+    void op.name
+    void op.returnType
+    void op.visibility
+    void op.isStatic
+    void op.isAbstract
+    void op.parameters.length
   }
 }
 
 export function registerUmlClassifierShapes(lf: LogicFlow): void {
   for (const type of UML_CLASSIFIER_LF_TYPES) {
     class UmlClassifierModel extends DiagramRectResizeModel {
-      private _umlResizing = false
-
       initNodeData(data: LogicFlow.NodeConfig) {
         super.initNodeData(data)
         applyDefaultRectSize(this, data, { width: 140, height: 72, radius: 2 })
         this.minWidth = 80
         this.minHeight = 48
         applyDefaultUmlTitleTextStyle(this)
-        syncUmlClassifierLayout(this)
-      }
-
-      setAttributes() {
-        super.setAttributes()
-        if (!this._umlResizing) {
-          syncUmlClassifierLayout(this)
-        }
-      }
-
-      resize(resizeInfo: Parameters<DiagramRectResizeModel['resize']>[0]) {
-        this._umlResizing = true
-        try {
-          return super.resize(resizeInfo)
-        } finally {
-          this._umlResizing = false
-        }
+        syncUmlClassifierLayoutToNode(this)
       }
     }
 
@@ -247,14 +178,9 @@ export function registerUmlClassifierShapes(lf: LogicFlow): void {
       getResizeShape() {
         const { model } = this.props
         const props = model.properties as Record<string, unknown> | undefined
-        void Number(props?.[DG_SHAPE_RENDER_REV_KEY] ?? 0)
         const data = readUmlClassifierData(model)
-        // 显式订阅 dgShape 成员变更，供 MobX observer 追踪重绘
-        void data?.name
-        void data?.showAttributes
-        void data?.showOperations
-        void data?.attributes.length
-        void data?.operations.length
+        trackUmlClassifierDataForRender(props, data)
+
         const { x, y, width, height, radius } = model
         const style = model.getNodeStyle()
         const left = x - width / 2
@@ -304,12 +230,12 @@ export function registerUmlClassifierShapes(lf: LogicFlow): void {
                 })
               )
             } else if (line.text?.trim()) {
-              const isPlaceholder = isUmlPlaceholderLine(line)
               const isName = isUmlNameLine(line)
               const isStereotype = isUmlStereotypeLine(line)
               const textAttrs: Record<string, unknown> = {
                 y: top + line.y,
-                dominantBaseline: 'middle'
+                dominantBaseline: 'middle',
+                pointerEvents: 'none'
               }
 
               if (isStereotype) {
@@ -336,16 +262,6 @@ export function registerUmlClassifierShapes(lf: LogicFlow): void {
                   class: 'dg-uml-title-text',
                   ...(titleFontFamily ? { fontFamily: titleFontFamily } : {})
                 })
-              } else if (isPlaceholder) {
-                Object.assign(textAttrs, {
-                  x: left + 8,
-                  fontSize: UML_MEMBER_FONT_SIZE,
-                  fontWeight: 400,
-                  fontStyle: 'normal',
-                  textDecoration: 'none',
-                  textAnchor: 'start',
-                  class: 'dg-uml-placeholder'
-                })
               } else {
                 Object.assign(textAttrs, {
                   x: left + 8,
@@ -358,25 +274,9 @@ export function registerUmlClassifierShapes(lf: LogicFlow): void {
                 })
               }
 
-              const displayText = isPlaceholder
-                ? line.text
-                : truncateUmlCanvasLine(line.text ?? '', width)
-              shapes.push(h('text', textAttrs, displayText))
-              if (line.hit && line.hitTop != null && line.hitHeight != null) {
-                shapes.push(
-                  h('rect', {
-                    x: left,
-                    y: top + line.hitTop,
-                    width,
-                    height: line.hitHeight,
-                    fill: 'transparent',
-                    stroke: 'none',
-                    class: 'dg-uml-hit',
-                    onClick: (e: MouseEvent) => onUmlClassifierHitClick(model, line.hit!, e),
-                    onDblClick: (e: MouseEvent) => onUmlClassifierHitDblClick(model, line.hit!, e)
-                  })
-                )
-              }
+              shapes.push(
+                h('text', textAttrs, truncateUmlCanvasLine(line.text ?? '', width))
+              )
             }
           }
         } else {

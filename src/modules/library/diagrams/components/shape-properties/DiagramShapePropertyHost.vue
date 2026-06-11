@@ -12,7 +12,7 @@ const props = defineProps<{
 const bus = useDiagramCommandBus()
 const registry = ensureDiagramShapeExtensions()
 
-const shapeExtension = computed(() => props.node.shapeExtension)
+const shapeExtension = computed(() => props.node.shapeExtension ?? null)
 
 const kindRegistration = computed(() => {
   const kind = shapeExtension.value?.kind
@@ -22,6 +22,12 @@ const kindRegistration = computed(() => {
 const editorProvider = computed(() => kindRegistration.value?.propertyEditor)
 
 const EditorComponent = computed(() => editorProvider.value?.component)
+
+const editorKey = computed(() => {
+  const ext = shapeExtension.value
+  if (!ext?.kind) return null
+  return `${props.node.id}:${ext.kind}`
+})
 
 /** 待 flush 的 debounced patch，切换节点前先落到原 nodeId */
 const pendingPatch = ref<{
@@ -82,9 +88,9 @@ function onPatch(
 }
 
 watch(
-  () => props.node.id,
-  (nextId, prevId) => {
-    if (!prevId || nextId === prevId) return
+  () => [props.node.id, shapeExtension.value?.kind] as const,
+  ([nextId, nextKind], [prevId, prevKind]) => {
+    if (!prevId || (nextId === prevId && nextKind === prevKind)) return
     dispatchShapePatchDebounced.cancel()
     if (pendingPatch.value?.nodeId === prevId) {
       flushPendingPatch()
@@ -107,7 +113,8 @@ defineExpose({ flushPendingPatch })
 <template>
   <component
     :is="EditorComponent"
-    v-if="EditorComponent && shapeExtension"
+    v-if="EditorComponent && shapeExtension && editorKey"
+    :key="editorKey"
     :node-id="node.id"
     :shape-extension="shapeExtension"
     :has-pending-patch="hasPendingPatch"

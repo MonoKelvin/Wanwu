@@ -55,7 +55,14 @@ export class DiagramEditorSession {
     this.loadActivePageToPort(options)
   }
 
-  async openFromFile(fileId: string, options?: { skipViewport?: boolean }): Promise<void> {
+  async openFromFile(
+    fileId: string,
+    options?: { skipViewport?: boolean; force?: boolean }
+  ): Promise<void> {
+    // 会话已持有同一文件时跳过 loadGraph，避免 HMR/重复 bootstrap 整图重绘
+    if (!options?.force && this.fileId === fileId && this.content) {
+      return
+    }
     const record = await this.repo.readFile(fileId)
     if (!record) throw new Error('文件不存在')
     this.fileId = fileId

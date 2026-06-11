@@ -67,7 +67,12 @@ export function patchNodeDgShape(
   if (kindReg.codec.layoutHandledByModel === true) {
     const updated = lf.getNodeModelById(nodeId)
     if (updated) {
-      syncNodeSizeProperties(updated)
+      const data = kindReg.codec.read(envelope as DiagramShapePayloadEnvelope)
+      if (kindReg.codec.syncLayoutToModel) {
+        kindReg.codec.syncLayoutToModel(updated, data)
+      } else {
+        syncNodeSizeProperties(updated)
+      }
     }
     refreshLayoutHandledShapeView(lf, nodeId)
     return
@@ -87,7 +92,9 @@ export function syncShapeExtensionNodeAfterLoad(lf: LogicFlow, nodeId: string): 
   if (!kindReg) return
 
   if (kindReg.codec.layoutHandledByModel === true) {
-    if ('setAttributes' in model && typeof model.setAttributes === 'function') {
+    if (kindReg.codec.syncLayoutToModel) {
+      kindReg.codec.syncLayoutToModel(model, view.data)
+    } else if ('setAttributes' in model && typeof model.setAttributes === 'function') {
       ;(model as { setAttributes: () => void }).setAttributes()
     }
     refreshLayoutHandledShapeView(lf, nodeId)

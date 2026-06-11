@@ -32,6 +32,9 @@ export interface IDiagramShapePayloadCodec<TData = unknown> {
   /** Model.setAttributes 已处理布局时，bridge 跳过重复 layout */
   readonly layoutHandledByModel?: boolean
 
+  /** layoutHandledByModel 时 dgShape 更新后同步 LF Model 尺寸（扩展自管布局逻辑） */
+  syncLayoutToModel?(model: unknown, data: TData): void
+
   /** 可选：按数据计算节点尺寸 */
   computeLayout?(data: TData, width: number): { width: number; height: number; minWidth?: number; minHeight?: number }
 }
@@ -47,6 +50,17 @@ export interface IDiagramShapePropertyEditorProvider {
   readonly kind: string
   readonly order: DiagramShapePropertyEditorOrder
   readonly component: Component
+  /** order 为 replace-text 时覆盖通用「文本」区块标题 */
+  readonly textSectionTitle?: string
+}
+
+/** 属性面板区块策略 — 扩展声明与通用区块的共存方式 */
+export interface DiagramPropertySectionPolicy {
+  /** 扩展区块排序，默认 100 */
+  extensionOrder?: number
+  /** 隐藏通用区块子项 */
+  hideSections?: Partial<Record<'node-text-content', true>>
+  textSectionTitle?: string
 }
 
 /** palette 拖入画布时的默认结构化数据绑定 */
@@ -63,6 +77,7 @@ export interface DiagramShapeKindRegistration<TData = unknown> {
   interactionMode: DiagramShapeInteractionMode
   codec: IDiagramShapePayloadCodec<TData>
   propertyEditor?: IDiagramShapePropertyEditorProvider
+  propertyPanelPolicy?: DiagramPropertySectionPolicy
   renderer?: IDiagramShapeRenderer
 }
 

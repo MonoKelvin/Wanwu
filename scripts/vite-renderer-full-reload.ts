@@ -1,5 +1,12 @@
 import type { Plugin } from 'vite'
 
+function shouldSkipFullReload(file: string): boolean {
+  const normalized = file.replace(/\\/g, '/')
+  if (normalized.includes('/.cursor/')) return true
+  if (/\/debug-[^/]*\.log$/i.test(normalized)) return true
+  return false
+}
+
 /**
  * Electron 渲染进程开发：对源码变更统一整页刷新，避免部分 HMR 与
  * KeepAlive / TipTap / 多 BrowserWindow / App 双壳 组合后界面错乱。
@@ -9,7 +16,8 @@ export function rendererFullReloadInDev(): Plugin {
   return {
     name: 'wanwu-renderer-full-reload',
     apply: 'serve',
-    handleHotUpdate({ server }) {
+    handleHotUpdate({ server, file }) {
+      if (shouldSkipFullReload(file)) return []
       server.ws.send({ type: 'full-reload' })
       return []
     }

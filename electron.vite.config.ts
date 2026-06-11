@@ -58,6 +58,10 @@ export default defineConfig({
     server: {
       host: '127.0.0.1',
       strictPort: true,
+      watch: {
+        // debug ingest 写入 .cursor/debug-*.log 会触发 handleHotUpdate → 整页刷新 → bootstrap 永远无法完成
+        ignored: ['**/.cursor/**', '**/debug-*.log']
+      },
       proxy: {
         '/api': {
           target: 'http://localhost:3000',

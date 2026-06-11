@@ -8,7 +8,10 @@ import {
   formatUmlOperationLine,
   normalizeUmlClassifierData
 } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierFormat'
-import { computeUmlClassifierLayout } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierLayout'
+import {
+  computeUmlClassifierLayout,
+  syncUmlClassifierLayoutToNode
+} from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierLayout'
 import {
   createMemberId,
   UML_CLASSIFIER_KIND,
@@ -85,6 +88,12 @@ export const umlClassifierCodec: IDiagramShapePayloadCodec<UmlClassifierData> = 
 
   computeLayout(data, width) {
     return computeUmlClassifierLayout(data, width)
+  },
+
+  syncLayoutToModel(model, _data) {
+    syncUmlClassifierLayoutToNode(
+      model as Parameters<typeof syncUmlClassifierLayoutToNode>[0]
+    )
   },
 
   migrateLegacyNode(node: LogicFlow.NodeConfig) {

@@ -8,13 +8,12 @@ export type {
 } from '@modules/library/diagrams/domain/shape-extension/interfaces'
 
 export type {
-  DiagramShapeHitPayload,
   DiagramShapeInteractionMode,
   DiagramShapePayloadEnvelope,
   DiagramShapePropertyEditorOrder
 } from '@modules/library/diagrams/domain/shape-extension/types'
 
-export { DG_SHAPE_HIT_EVENT, DG_SHAPE_PAYLOAD_KEY } from '@modules/library/diagrams/domain/shape-extension/types'
+export { DG_SHAPE_PAYLOAD_KEY } from '@modules/library/diagrams/domain/shape-extension/types'
 
 export {
   DiagramShapeExtensionRegistry,

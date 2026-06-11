@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import InputText from 'primevue/inputtext'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import WwSelect from '@shared/components/WwSelect/WwSelect.vue'
@@ -7,10 +7,6 @@ import WwIconButton from '@shared/components/WwIconButton.vue'
 import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import WwTruncatedText from '@shared/components/WwTruncatedText.vue'
 import type { DiagramNodeShapeExtensionView } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'
-import {
-  useUmlClassifierEditFocus,
-  type UmlClassifierPanelFocus
-} from '@modules/library/diagrams/extensions/uml/composables/useUmlClassifierEditFocus'
 import {
   formatUmlAttributeExpression,
   formatUmlOperationExpression,
@@ -45,10 +41,6 @@ const emit = defineEmits<{
   patch: [data: UmlClassifierData, immediate?: boolean, meta?: { lfType?: string }]
 }>()
 
-const { panelFocus, setPanelFocus } = useUmlClassifierEditFocus()
-const memberRefs = ref(new Map<string, HTMLElement>())
-const nameRowRef = ref<HTMLElement | null>(null)
-
 const localData = ref(normalizeUmlClassifierData(props.shapeExtension.data))
 
 watch(
@@ -67,6 +59,15 @@ watch(
     if (wasPending && !pending) {
       localData.value = normalizeUmlClassifierData(props.shapeExtension.data)
     }
+  }
+)
+
+watch(
+  () => props.nodeId,
+  () => {
+    localData.value = normalizeUmlClassifierData(props.shapeExtension.data)
+    expandedAttributes.value = new Set()
+    expandedOperations.value = new Set()
   }
 )
 
@@ -99,79 +100,8 @@ function onClassifierKind(value: UmlClassifierKind) {
   patch(classifierKindChangePatch(value), true, { lfType: lfTypeForClassifierKind(value) })
 }
 
-function setMemberRef(id: string, el: Element | null) {
-  if (el instanceof HTMLElement) memberRefs.value.set(id, el)
-  else memberRefs.value.delete(id)
-}
-
 const expandedAttributes = ref(new Set<string>())
 const expandedOperations = ref(new Set<string>())
-
-function focusInputIn(container: HTMLElement | null | undefined) {
-  const input = container?.querySelector('input')
-  if (!(input instanceof HTMLInputElement)) return
-  input.focus()
-  input.select()
-}
-
-function focusMemberNameInput(container: HTMLElement | null | undefined) {
-  const input = container?.querySelector('.dg-uml-member-name-input')
-  if (!(input instanceof HTMLInputElement)) return
-  input.focus()
-  input.select()
-}
-
-function isMemberFocused(memberId: string, kind: 'attribute' | 'operation'): boolean {
-  const focus = panelFocus.value
-  if (!focus || focus.nodeId !== props.nodeId) return false
-  return focus.region === kind && focus.memberId === memberId
-}
-
-async function applyPanelFocus(focus: UmlClassifierPanelFocus) {
-  if (focus.nodeId !== props.nodeId) return
-
-  if (focus.region === 'attributes-add') {
-    addAttribute()
-    return
-  }
-  if (focus.region === 'operations-add') {
-    addOperation()
-    return
-  }
-
-  await nextTick()
-
-  if (focus.region === 'name') {
-    nameRowRef.value?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
-    focusInputIn(nameRowRef.value)
-    return
-  }
-
-  if (focus.region === 'attribute' || focus.region === 'operation') {
-    expandMember(focus.memberId, focus.region, true)
-    await nextTick()
-    const el = memberRefs.value.get(focus.memberId)
-    el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
-    focusMemberNameInput(el)
-  }
-}
-
-watch(() => panelFocus.value, (focus) => {
-  if (focus) void applyPanelFocus(focus)
-})
-
-watch(
-  () => props.nodeId,
-  () => {
-    localData.value = normalizeUmlClassifierData(props.shapeExtension.data)
-    expandedAttributes.value = new Set()
-    expandedOperations.value = new Set()
-    const focus = panelFocus.value
-    if (focus && focus.nodeId !== props.nodeId) {
-      setPanelFocus(null)
-    }
-  }
-)
 
 function memberExpandedSet(kind: 'attribute' | 'operation') {
   return kind === 'attribute' ? expandedAttributes : expandedOperations
@@ -223,20 +153,7 @@ function onMemberBarDblClick(
   event: MouseEvent
 ) {
   event.preventDefault()
-  openMember(memberId, kind)
-}
-
-function openMember(memberId: string, kind: 'attribute' | 'operation') {
-  expandMember(memberId, kind)
-  setPanelFocus({
-    nodeId: props.nodeId,
-    region: kind,
-    memberId
-  })
-}
-
-function focusName() {
-  setPanelFocus({ nodeId: props.nodeId, region: 'name' })
+  expandMember(memberId, kind, true)
 }
 
 function addAttribute() {
@@ -252,7 +169,7 @@ function addAttribute() {
   }
   if (!data.value.showAttributes) partial.showAttributes = true
   patchNow(partial)
-  openMember(next.id, 'attribute')
+  expandMember(next.id, 'attribute', true)
 }
 
 function updateAttribute(id: string, partial: Partial<UmlAttribute>, immediate = false) {
@@ -267,9 +184,6 @@ function updateAttribute(id: string, partial: Partial<UmlAttribute>, immediate =
 }
 
 function removeAttribute(id: string) {
-  if (panelFocus.value?.nodeId === props.nodeId && panelFocus.value.region === 'attribute' && panelFocus.value.memberId === id) {
-    setPanelFocus(null)
-  }
   collapseMember(id, 'attribute')
   patchNow({ attributes: data.value.attributes.filter((item) => item.id !== id) })
 }
@@ -299,7 +213,7 @@ function addOperation() {
   }
   if (!data.value.showOperations) partial.showOperations = true
   patchNow(partial)
-  openMember(next.id, 'operation')
+  expandMember(next.id, 'operation', true)
 }
 
 function updateOperation(id: string, partial: Partial<UmlOperation>, immediate = false) {
@@ -314,9 +228,6 @@ function updateOperation(id: string, partial: Partial<UmlOperation>, immediate =
 }
 
 function removeOperation(id: string) {
-  if (panelFocus.value?.nodeId === props.nodeId && panelFocus.value.region === 'operation' && panelFocus.value.memberId === id) {
-    setPanelFocus(null)
-  }
   collapseMember(id, 'operation')
   patchNow({ operations: data.value.operations.filter((item) => item.id !== id) })
 }
@@ -376,18 +287,15 @@ function onShowOperations(value: boolean) {
           @update:model-value="onClassifierKind($event as UmlClassifierKind)"
         />
       </SettingsRow>
-      <div ref="nameRowRef" @click="focusName">
-        <SettingsRow label="名称" class="dg-settings-row--inline dg-settings-row--control dg-uml-field-row">
-          <InputText
-            :model-value="data.name"
-            class="dg-prop-control"
-            placeholder="ClassName"
-            @update:model-value="patch({ name: String($event ?? '') })"
-            @focus="focusName"
-            @blur="flushTextPatch"
-          />
-        </SettingsRow>
-      </div>
+      <SettingsRow label="名称" class="dg-settings-row--inline dg-settings-row--control dg-uml-field-row">
+        <InputText
+          :model-value="data.name"
+          class="dg-prop-control"
+          placeholder="ClassName"
+          @update:model-value="patch({ name: String($event ?? '') })"
+          @blur="flushTextPatch"
+        />
+      </SettingsRow>
 
       <p
         v-if="!data.showAttributes"
@@ -407,12 +315,8 @@ function onShowOperations(value: boolean) {
       <div
         v-for="(attr, index) in data.attributes"
         :key="attr.id"
-        :ref="(el) => setMemberRef(attr.id, el as Element | null)"
         class="dg-uml-member"
-        :class="{
-          'dg-uml-member--expanded': isMemberExpanded(attr.id, 'attribute'),
-          'dg-uml-member--active': isMemberFocused(attr.id, 'attribute')
-        }"
+        :class="{ 'dg-uml-member--expanded': isMemberExpanded(attr.id, 'attribute') }"
       >
         <div
           class="dg-uml-member__bar"
@@ -514,12 +418,8 @@ function onShowOperations(value: boolean) {
       <div
         v-for="(op, index) in data.operations"
         :key="op.id"
-        :ref="(el) => setMemberRef(op.id, el as Element | null)"
         class="dg-uml-member"
-        :class="{
-          'dg-uml-member--expanded': isMemberExpanded(op.id, 'operation'),
-          'dg-uml-member--active': isMemberFocused(op.id, 'operation')
-        }"
+        :class="{ 'dg-uml-member--expanded': isMemberExpanded(op.id, 'operation') }"
       >
         <div
           class="dg-uml-member__bar"

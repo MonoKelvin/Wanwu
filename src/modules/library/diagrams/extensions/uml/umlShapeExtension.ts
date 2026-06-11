@@ -12,7 +12,12 @@ export const umlShapeExtension: DiagramShapeExtension = {
       lfTypes: ['dg-uml-class', 'dg-uml-interface'],
       interactionMode: 'node',
       codec: umlClassifierCodec,
-      renderer: umlClassifierRenderer
+      renderer: umlClassifierRenderer,
+      propertyPanelPolicy: {
+        extensionOrder: 100,
+        hideSections: { 'node-text-content': true },
+        textSectionTitle: '标题样式'
+      }
     }
   ],
   paletteBindings: [

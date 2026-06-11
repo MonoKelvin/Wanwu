@@ -2,9 +2,11 @@ import {
   classifierStereotype,
   formatUmlAttributeLine,
   formatUmlOperationLine,
-  isClassifierNameItalic
+  isClassifierNameItalic,
+  readUmlClassifierData
 } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierFormat'
 import type { UmlClassifierData } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierTypes'
+import { syncNodeSizeProperties } from '@modules/library/diagrams/lib/diagramShapeResize'
 
 export const UML_LAYOUT = {
   MIN_WIDTH: 120,
@@ -20,13 +22,6 @@ export const UML_LAYOUT = {
   COMPONENT_TAB_W: 6
 } as const
 
-export type UmlLayoutHitTarget =
-  | { region: 'name' }
-  | { region: 'attribute'; memberId: string; index: number }
-  | { region: 'operation'; memberId: string; index: number }
-  | { region: 'attributes-add' }
-  | { region: 'operations-add' }
-
 export interface UmlLayoutLine {
   kind: 'text' | 'divider'
   y: number
@@ -34,10 +29,6 @@ export interface UmlLayoutLine {
   role?: 'stereotype' | 'name'
   italic?: boolean
   underline?: boolean
-  hit?: UmlLayoutHitTarget
-  /** 行中心距节点顶边的距离，用于命中检测 */
-  hitTop?: number
-  hitHeight?: number
 }
 
 export interface UmlClassifierLayout {
@@ -55,7 +46,7 @@ export interface UmlClassifierLayoutModel {
   minHeight?: number
 }
 
-/** 将内容最小尺寸应用到 LF Model（随内容增高/增宽；高度可随成员删减回落） */
+/** 将内容最小尺寸应用到 LF Model（仅随内容增高/增宽，不缩小用户手动放大的宽高） */
 export function applyUmlClassifierLayoutToModel(
   model: UmlClassifierLayoutModel,
   data: UmlClassifierData
@@ -68,15 +59,25 @@ export function applyUmlClassifierLayoutToModel(
   if (model.height < layout.height - 0.5) {
     model.height = layout.height
     changed = true
-  } else if (model.height > layout.height + 0.5) {
-    model.height = layout.height
-    changed = true
   }
   if (model.width < layout.width - 0.5) {
     model.width = layout.width
     changed = true
   }
   return changed
+}
+
+/** 仅在 dgShape 内容变更后调用；勿挂到 setAttributes，避免干扰基类 resize */
+export function syncUmlClassifierLayoutToNode(
+  model: UmlClassifierLayoutModel & {
+    properties?: Record<string, unknown>
+  }
+): void {
+  const data = readUmlClassifierData(model)
+  if (!data) return
+  if (applyUmlClassifierLayoutToModel(model, data)) {
+    syncNodeSizeProperties(model)
+  }
 }
 
 function charWidth(ch: string): number {
@@ -134,10 +135,7 @@ export function computeUmlClassifierLayout(
       kind: 'text',
       y: y + UML_LAYOUT.STEREOTYPE_H / 2,
       text: stereotype,
-      role: 'stereotype',
-      hit: { region: 'name' },
-      hitTop: y,
-      hitHeight: UML_LAYOUT.STEREOTYPE_H
+      role: 'stereotype'
     })
     contentMaxW = Math.max(contentMaxW, estimateTextWidth(stereotype))
     y += UML_LAYOUT.STEREOTYPE_H
@@ -149,10 +147,7 @@ export function computeUmlClassifierLayout(
     y: y + UML_LAYOUT.NAME_H / 2,
     text: name,
     role: 'name',
-    italic: isClassifierNameItalic(data),
-    hit: { region: 'name' },
-    hitTop: y,
-    hitHeight: UML_LAYOUT.NAME_H
+    italic: isClassifierNameItalic(data)
   })
   contentMaxW = Math.max(contentMaxW, estimateTextWidth(name))
   y += UML_LAYOUT.NAME_H + UML_LAYOUT.SECTION_PAD
@@ -162,33 +157,16 @@ export function computeUmlClassifierLayout(
 
   if (data.showAttributes) {
     y += UML_LAYOUT.SECTION_PAD
-    const attrs = data.attributes
-    if (!attrs.length) {
+    for (const attr of data.attributes) {
+      const text = formatUmlAttributeLine(attr)
       lines.push({
         kind: 'text',
         y: y + UML_LAYOUT.ROW_H / 2,
-        text: '  + 添加属性',
-        hit: { region: 'attributes-add' },
-        hitTop: y,
-        hitHeight: UML_LAYOUT.ROW_H
+        text,
+        underline: attr.isStatic
       })
+      contentMaxW = Math.max(contentMaxW, estimateTextWidth(text))
       y += UML_LAYOUT.ROW_H
-    } else {
-      for (let i = 0; i < attrs.length; i++) {
-        const attr = attrs[i]
-        const text = formatUmlAttributeLine(attr)
-        lines.push({
-          kind: 'text',
-          y: y + UML_LAYOUT.ROW_H / 2,
-          text,
-          underline: attr.isStatic,
-          hit: { region: 'attribute', memberId: attr.id, index: i },
-          hitTop: y,
-          hitHeight: UML_LAYOUT.ROW_H
-        })
-        contentMaxW = Math.max(contentMaxW, estimateTextWidth(text))
-        y += UML_LAYOUT.ROW_H
-      }
     }
     y += UML_LAYOUT.SECTION_PAD
     lines.push({ kind: 'divider', y })
@@ -196,34 +174,17 @@ export function computeUmlClassifierLayout(
 
   if (data.showOperations) {
     y += UML_LAYOUT.SECTION_PAD
-    const ops = data.operations
-    if (!ops.length) {
+    for (const op of data.operations) {
+      const text = formatUmlOperationLine(op)
       lines.push({
         kind: 'text',
         y: y + UML_LAYOUT.ROW_H / 2,
-        text: '  + 添加操作',
-        hit: { region: 'operations-add' },
-        hitTop: y,
-        hitHeight: UML_LAYOUT.ROW_H
+        text,
+        italic: op.isAbstract,
+        underline: op.isStatic
       })
+      contentMaxW = Math.max(contentMaxW, estimateTextWidth(text))
       y += UML_LAYOUT.ROW_H
-    } else {
-      for (let i = 0; i < ops.length; i++) {
-        const op = ops[i]
-        const text = formatUmlOperationLine(op)
-        lines.push({
-          kind: 'text',
-          y: y + UML_LAYOUT.ROW_H / 2,
-          text,
-          italic: op.isAbstract,
-          underline: op.isStatic,
-          hit: { region: 'operation', memberId: op.id, index: i },
-          hitTop: y,
-          hitHeight: UML_LAYOUT.ROW_H
-        })
-        contentMaxW = Math.max(contentMaxW, estimateTextWidth(text))
-        y += UML_LAYOUT.ROW_H
-      }
     }
     y += UML_LAYOUT.SECTION_PAD
   }

@@ -143,6 +143,7 @@ export function applyNodeSelectForPointer(
   }
 
   if (!wasSelected || previouslySelectedIds.length !== 1 || previouslySelectedIds[0] !== nodeId) {
+    lf.clearSelectElements()
     lf.selectElementById(nodeId, false)
   }
 }

@@ -22,15 +22,3 @@ export type DiagramShapePropertyEditorOrder =
   | 'replace-text'
 
 export const DG_SHAPE_PAYLOAD_KEY = 'dgShape' as const
-
-/** LogicFlow eventCenter 事件名：结构化图形内部区域双击 */
-export const DG_SHAPE_HIT_EVENT = 'dg:shape-hit' as const
-
-/** 结构化图形画布命中载荷 — 由扩展渲染器发出，适配层转发给属性面板 */
-export interface DiagramShapeHitPayload {
-  nodeId: string
-  kind: string
-  hit: unknown
-  /** Ctrl/Meta/Shift 追加多选或切换取消 */
-  append?: boolean
-}

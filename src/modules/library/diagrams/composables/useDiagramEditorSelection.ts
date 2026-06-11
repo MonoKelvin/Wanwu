@@ -1,7 +1,6 @@
-import { computed, inject, provide, ref, type InjectionKey, type Ref } from 'vue'
+import { inject, provide, ref, type InjectionKey, type Ref } from 'vue'
 import type { DiagramEditorSelection } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import { defaultCanvasSettings } from '@modules/library/diagrams/lib/diagramSelectionTypes'
-import { selectionFingerprint } from '@modules/library/diagrams/lib/diagramSelectionSnapshot'
 
 function cloneSelection(next: DiagramEditorSelection): DiagramEditorSelection {
   return {
@@ -30,16 +29,10 @@ function cloneSelection(next: DiagramEditorSelection): DiagramEditorSelection {
   }
 }
 
-export type DiagramSelectionListener = (selection: DiagramEditorSelection) => void
-
 export interface DiagramEditorSelectionApi {
   readonly selection: Readonly<Ref<DiagramEditorSelection>>
-  readonly fingerprint: Ref<string>
-  /** 每次 publish 递增，用于强制 UI 与选区对齐 */
-  readonly revision: Ref<number>
   publish(selection: DiagramEditorSelection): void
   reset(resolved?: 'light' | 'dark'): void
-  subscribe(listener: DiagramSelectionListener): () => void
 }
 
 const selectionKey = Symbol('diagramEditorSelection') as InjectionKey<DiagramEditorSelectionApi>
@@ -62,27 +55,14 @@ export function provideDiagramEditorSelection(
   resolved: 'light' | 'dark' = 'light'
 ): DiagramEditorSelectionApi {
   const selection = ref<DiagramEditorSelection>(emptySelection(resolved))
-  const fingerprint = computed(() => selectionFingerprint(selection.value))
-  const revision = ref(0)
-  const listeners = new Set<DiagramSelectionListener>()
 
   const api: DiagramEditorSelectionApi = {
     selection,
-    fingerprint,
-    revision,
     publish(next) {
-      const snapshot = cloneSelection(next)
-      selection.value = snapshot
-      revision.value += 1
-      for (const listener of listeners) listener(snapshot)
+      selection.value = cloneSelection(next)
     },
-    reset(resolved = 'light') {
-      selection.value = emptySelection(resolved)
-      revision.value += 1
-    },
-    subscribe(listener) {
-      listeners.add(listener)
-      return () => listeners.delete(listener)
+    reset(resolvedTheme = 'light') {
+      selection.value = emptySelection(resolvedTheme)
     }
   }
 

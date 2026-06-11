@@ -17,7 +17,7 @@ export type DiagramGroupSelectionAnalysis = {
   totalElementCount: number
 }
 
-/** 合并 LF selectElements 与 isSelected，保留选中顺序 */
+/** 合并 LF 选区 id，仅以 model.isSelected 为准（selectNodes 切换选中时可能残留旧节点） */
 export function collectOrderedSelectionIds(lf: LogicFlow): {
   nodeIds: string[]
   edgeIds: string[]
@@ -28,19 +28,22 @@ export function collectOrderedSelectionIds(lf: LogicFlow): {
   const seenE = new Set<string>()
 
   const pushNode = (id: string) => {
+    const model = lf.getNodeModelById(id)
+    if (!model?.isSelected) return
     if (!seenN.has(id)) {
       seenN.add(id)
       nodeIds.push(id)
     }
   }
   const pushEdge = (id: string) => {
+    const model = lf.getEdgeModelById(id)
+    if (!model?.isSelected) return
     if (!seenE.has(id)) {
       seenE.add(id)
       edgeIds.push(id)
     }
   }
 
-  // 与多选 overlay 一致：优先 graphModel.selectNodes（isSelected 的聚合视图）
   for (const node of lf.graphModel.selectNodes) pushNode(node.id)
   for (const node of lf.getSelectElements(true).nodes) pushNode(node.id)
   for (const edge of lf.getSelectElements(true).edges) pushEdge(edge.id)

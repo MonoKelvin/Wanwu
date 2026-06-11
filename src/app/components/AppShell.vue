@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { computed, defineAsyncComponent, watch } from 'vue'
+import { KeepAlive, computed, defineAsyncComponent, watch } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import ModuleSidebar from '@app/components/ModuleSidebar.vue'
 import SubItemPanel from '@app/components/SubItemPanel.vue'
@@ -31,8 +31,9 @@ const appStore = useAppStore()
 const isItemDetail = computed(() => isItemDetailRoute(route.name))
 const isNotesRoute = computed(() => route.name === LIBRARY_NOTES_ROUTE)
 const showDiagramEditor = computed(() => isDiagramEditorRoute(route.name, route.path))
+/** 仅 fileId 参与 key；template 只在首次 open 使用，纳入 key 会在 query 变化时整页 remount 画布 */
 const diagramEditorKey = computed(
-  () => `diagrams-editor:${String(route.params.fileId)}:${String(route.query.template ?? '')}`
+  () => `diagrams-editor:${String(route.params.fileId ?? 'new')}`
 )
 const itemDetailShell = computed(() => moduleViewComponent(shellModule.value))
 
@@ -89,11 +90,10 @@ watch(showDiagramEditor, (active, wasActive) => {
       <!-- 便笺含 Tiptap：必须在 RouterView 外渲染，否则切模块时 outlet 卡死 -->
       <NotesView v-if="isNotesRoute" class="h-full min-h-0 flex flex-1 flex-col" />
       <!-- 编辑器不走 RouterView，避免 vue-router 5 卸载时 vnode 为 null 触发 component 读取错误 -->
-      <DiagramEditorView
-        v-else-if="showDiagramEditor"
-        :key="diagramEditorKey"
-        class="h-full min-h-0 flex flex-1 flex-col"
-      />
+      <!-- KeepAlive 避免短暂 v-if 切换销毁编辑器实例；勿绑 :key=fileId -->
+      <KeepAlive v-else-if="showDiagramEditor" include="DiagramEditorView">
+        <DiagramEditorView class="h-full min-h-0 flex flex-1 flex-col" />
+      </KeepAlive>
       <template v-else-if="isItemDetail">
         <component
           :is="itemDetailShell"
