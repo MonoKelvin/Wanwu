@@ -24,6 +24,37 @@ export type DiagramPropertySectionId =
   | 'canvas-settings'
   | 'canvas-default-edge'
 
+export interface DiagramPropertyActions {
+  isMixed(field: string): boolean
+  isTextAlignActive(value: string): boolean
+  isFontWeightActive(): boolean
+  parseNumber(value: unknown, fallback: number, min?: number, max?: number): number
+  nodeTopLeft(node: { x: number; y: number; width: number; height: number }): {
+    left: number
+    top: number
+  }
+  patchNode(patch: Record<string, unknown>): void
+  patchNodeNow(nodeProps: Record<string, unknown>): void
+  patchNodeNumeric(patch: Record<string, unknown>): void
+  patchNodeTextStyle(patch: Record<string, unknown>): void
+  patchNodePositionFromTopLeft(left: number, top: number): void
+  patchNodeSizeKeepTopLeft(width: number, height: number): void
+  patchEdge(patch: Record<string, unknown>): void
+  dispatchEdgeNumeric(edgeProps: Record<string, unknown>): void
+  patchCanvas(patch: Record<string, unknown>): void
+  patchDefaultEdge(patch: Record<string, unknown>): void
+  patchGroupStyle(patch: Record<string, unknown>): void
+  patchGroupAlwaysVisible(value: boolean): void
+  toggleUnderline(): void
+  toggleItalic(): void
+  toggleStrikethrough(): void
+  setTextAlign(align: 'left' | 'center' | 'right'): void
+  pickNodeImage(): Promise<void>
+  clearNodeImage(): void
+  hideTextContent(): boolean
+  textSectionTitle(): string
+}
+
 export interface DiagramPropertyContext {
   tab: DiagramPropertyTab
   fileId: string | null

@@ -2,6 +2,7 @@ export type {
   DiagramShapeExtension,
   DiagramShapeKindRegistration,
   DiagramShapePaletteBinding,
+  IDiagramShapeExtensionRegistry,
   IDiagramShapePayloadCodec,
   IDiagramShapePropertyEditorProvider,
   IDiagramShapeRenderer

@@ -81,6 +81,16 @@ export interface DiagramShapeKindRegistration<TData = unknown> {
   renderer?: IDiagramShapeRenderer
 }
 
+/** 图形扩展注册表抽象 — 组合根注册扩展包与属性编辑器 */
+export interface IDiagramShapeExtensionRegistry {
+  register(extension: DiagramShapeExtension): void
+  getKind(kind: string): DiagramShapeKindRegistration | undefined
+  getKindByLfType(lfType: string): DiagramShapeKindRegistration | undefined
+  registerPropertyEditor(kind: string, provider: IDiagramShapePropertyEditorProvider): void
+  getPaletteBinding(paletteId: string): DiagramShapePaletteBinding | undefined
+  listKinds(): DiagramShapeKindRegistration[]
+}
+
 /**
  * 领域扩展包 — 一个模块对应一种场景（uml / table / sequence / bpmn…）
  * 新增领域时：新建 extensions/{domain}/ 并在组合根 register 一次。

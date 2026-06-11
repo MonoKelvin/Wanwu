@@ -1,21 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, toRef, watch } from 'vue'
+import { toRef } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
 import { registerDiagramPropertyPanel } from '@modules/library/diagrams/app/diagramPropertyPanelBootstrap'
-import { provideDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
-import { useDiagramEditorSelection } from '@modules/library/diagrams/composables/useDiagramEditorSelection'
-import {
-  buildPropertyContext,
-  getDiagramPropertySectionRegistry,
-  type DiagramPropertyTab
-} from '@modules/library/diagrams/domain/property-panel'
+import { useDiagramPropertySections } from '@modules/library/diagrams/composables/useDiagramPropertySections'
 import DiagramPropertySectionsHost from '@modules/library/diagrams/components/property-panel/DiagramPropertySectionsHost.vue'
-import {
-  effectiveEdgeCount,
-  effectiveNodeCount,
-  selectionScopeKey
-} from '@modules/library/diagrams/lib/diagramSelectionSnapshot'
 import {
   togglePropsPanelCollapsed,
   useDiagramEditorLayout
@@ -27,62 +16,16 @@ const props = defineProps<{
   fileId: string | null
 }>()
 
-const { selection } = useDiagramEditorSelection()
-const activeTab = ref<DiagramPropertyTab>('canvas')
 const layout = useDiagramEditorLayout()
-const registry = getDiagramPropertySectionRegistry()
-
-provideDiagramPropertyContext(toRef(props, 'fileId'), activeTab)
-
-watch(
+const {
+  activeTab,
   selection,
-  (sel) => {
-    const nodeCount = effectiveNodeCount(sel)
-    const edgeCount = effectiveEdgeCount(sel)
-    const total = nodeCount + edgeCount
-    if (sel.kind === 'canvas' || total === 0) {
-      activeTab.value = 'canvas'
-      return
-    }
-    if (edgeCount > 0 && nodeCount === 0) {
-      activeTab.value = 'edge'
-      return
-    }
-    if (nodeCount > 0) {
-      activeTab.value = 'node'
-    }
-  },
-  { immediate: true, deep: true }
-)
-
-const propertyContext = computed(() =>
-  buildPropertyContext(activeTab.value, selection.value, props.fileId)
-)
-
-const resolvedSections = computed(() =>
-  registry.resolve(activeTab.value, propertyContext.value)
-)
-
-/** 选区结构变化时重挂载 Section，避免 UML 扩展块叠加与 PrimeVue 控件滞留旧值 */
-const sectionsScopeKey = computed(
-  () => `${activeTab.value}|${selectionScopeKey(selection.value)}`
-)
-
-const selectionBanner = computed(() => {
-  const nc = effectiveNodeCount(selection.value)
-  const ec = effectiveEdgeCount(selection.value)
-  if (nc > 0 && ec > 0) return `${nc} 图元 · ${ec} 连线`
-  if (nc > 1) return `${nc} 图元`
-  if (ec > 1) return `${ec} 连线`
-  return ''
-})
-
-const showNodeEmpty = computed(
-  () => activeTab.value === 'node' && selection.value.selectedNodeCount === 0
-)
-const showEdgeEmpty = computed(
-  () => activeTab.value === 'edge' && selection.value.selectedEdgeCount === 0
-)
+  resolvedSections,
+  sectionsScopeKey,
+  selectionBanner,
+  showNodeEmpty,
+  showEdgeEmpty
+} = useDiagramPropertySections(toRef(props, 'fileId'))
 </script>
 
 <template>

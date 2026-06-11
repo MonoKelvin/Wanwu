@@ -16,6 +16,14 @@ export function sanitizeSelectionIds(
   return { nodeIds: nodes, edgeIds: edges }
 }
 
+/** 可对齐/批量编辑的内容图元（排除组合框） */
+export function filterAlignableNodeIds(lf: LogicFlow, nodeIds: readonly string[]): string[] {
+  return nodeIds.filter((id) => {
+    const model = lf.getNodeModelById(id)
+    return model && model.type !== DIAGRAM_GROUP_FRAME_TYPE
+  })
+}
+
 /** 属性面板主图元：优先内容图元，其次组合框 */
 export function resolvePrimaryNodeId(lf: LogicFlow, nodeIds: string[]): string | null {
   for (const id of nodeIds) {

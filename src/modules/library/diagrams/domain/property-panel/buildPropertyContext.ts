@@ -1,34 +1,12 @@
 import { ensureDiagramShapeExtensions } from '@modules/library/diagrams/app/diagramShapeExtensions'
-import type { DiagramPropertySectionPolicy } from '@modules/library/diagrams/domain/shape-extension/interfaces'
 import type { DiagramPropertyContext, DiagramPropertyTab } from '@modules/library/diagrams/domain/property-panel/types'
+import { resolveSectionPolicy } from '@modules/library/diagrams/domain/property-panel/resolveSectionPolicy'
 import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import type { DiagramEditorSelection } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import {
   effectiveEdgeCount,
   effectiveNodeCount
 } from '@modules/library/diagrams/lib/diagramSelectionSnapshot'
-
-function resolveSectionPolicy(
-  shapeKindReg?: ReturnType<ReturnType<typeof ensureDiagramShapeExtensions>['getKind']>
-): DiagramPropertySectionPolicy | null {
-  if (!shapeKindReg) return null
-  const explicit = shapeKindReg.propertyPanelPolicy
-  const editor = shapeKindReg.propertyEditor
-  if (explicit) {
-    return {
-      extensionOrder: explicit.extensionOrder,
-      hideSections: explicit.hideSections,
-      textSectionTitle: explicit.textSectionTitle ?? editor?.textSectionTitle
-    }
-  }
-  if (!editor) return null
-  const hideContent = editor.order === 'replace-text'
-  return {
-    extensionOrder: editor.order === 'before-common' ? 100 : editor.order === 'after-common' ? 500 : 100,
-    hideSections: hideContent ? { 'node-text-content': true } : undefined,
-    textSectionTitle: editor.textSectionTitle
-  }
-}
 
 export function buildPropertyContext(
   tab: DiagramPropertyTab,

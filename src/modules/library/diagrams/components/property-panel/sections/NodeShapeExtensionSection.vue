@@ -6,15 +6,10 @@ import { hasShapeExtension, shapeExtensionSectionKey } from '@modules/library/di
 
 const { ctx } = useDiagramPropertyContext()
 
-const node = computed(() => ctx.value.selectedNode)
 const hostKey = computed(() => shapeExtensionSectionKey(ctx.value))
-const showHost = computed(() => hasShapeExtension(ctx.value) && node.value != null)
+const showHost = computed(() => hasShapeExtension(ctx.value))
 </script>
 
 <template>
-  <DiagramShapePropertyHost
-    v-if="showHost && hostKey && node"
-    :key="hostKey"
-    :node="node"
-  />
+  <DiagramShapePropertyHost v-if="showHost && hostKey" :key="hostKey" />
 </template>

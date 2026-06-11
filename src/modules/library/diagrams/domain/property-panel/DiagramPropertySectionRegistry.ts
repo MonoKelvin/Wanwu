@@ -1,3 +1,4 @@
+import type { IDiagramPropertySectionRegistry } from '@modules/library/diagrams/domain/property-panel/interfaces'
 import type {
   DiagramPropertyContext,
   DiagramPropertyTab,
@@ -5,7 +6,7 @@ import type {
   ResolvedPropertySection
 } from '@modules/library/diagrams/domain/property-panel/types'
 
-export class DiagramPropertySectionRegistry {
+export class DiagramPropertySectionRegistry implements IDiagramPropertySectionRegistry {
   private readonly providers = new Map<string, IDiagramPropertySectionProvider>()
 
   register(provider: IDiagramPropertySectionProvider): void {

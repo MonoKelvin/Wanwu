@@ -1,4 +1,5 @@
 import { inject, provide, ref, type InjectionKey, type Ref } from 'vue'
+import { emptyDiagramEditorSelection } from '@modules/library/diagrams/domain/selection'
 import type { DiagramEditorSelection } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import { defaultCanvasSettings } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 
@@ -31,6 +32,8 @@ function cloneSelection(next: DiagramEditorSelection): DiagramEditorSelection {
 
 export interface DiagramEditorSelectionApi {
   readonly selection: Readonly<Ref<DiagramEditorSelection>>
+  /** 每次 publish 递增，供属性面板 :key 强制与选区对齐 */
+  readonly revision: Readonly<Ref<number>>
   publish(selection: DiagramEditorSelection): void
   reset(resolved?: 'light' | 'dark'): void
 }
@@ -38,31 +41,25 @@ export interface DiagramEditorSelectionApi {
 const selectionKey = Symbol('diagramEditorSelection') as InjectionKey<DiagramEditorSelectionApi>
 
 function emptySelection(resolved: 'light' | 'dark'): DiagramEditorSelection {
-  return {
-    kind: 'canvas',
-    node: null,
-    edge: null,
-    canvas: defaultCanvasSettings(resolved),
-    selectedNodeCount: 0,
-    selectedEdgeCount: 0,
-    selectedNodeIds: [],
-    selectedEdgeIds: [],
-    mixedNodeFields: []
-  }
+  return emptyDiagramEditorSelection(defaultCanvasSettings(resolved))
 }
 
 export function provideDiagramEditorSelection(
   resolved: 'light' | 'dark' = 'light'
 ): DiagramEditorSelectionApi {
   const selection = ref<DiagramEditorSelection>(emptySelection(resolved))
+  const revision = ref(0)
 
   const api: DiagramEditorSelectionApi = {
     selection,
+    revision,
     publish(next) {
       selection.value = cloneSelection(next)
+      revision.value += 1
     },
     reset(resolvedTheme = 'light') {
       selection.value = emptySelection(resolvedTheme)
+      revision.value += 1
     }
   }
 

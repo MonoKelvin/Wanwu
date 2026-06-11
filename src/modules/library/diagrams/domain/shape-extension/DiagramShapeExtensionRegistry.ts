@@ -3,6 +3,7 @@ import type {
   DiagramShapeExtension,
   DiagramShapeKindRegistration,
   DiagramShapePaletteBinding,
+  IDiagramShapeExtensionRegistry,
   IDiagramShapePropertyEditorProvider,
   IDiagramShapeRenderer
 } from '@modules/library/diagrams/domain/shape-extension/interfaces'
@@ -11,7 +12,7 @@ import type { DiagramShapePayloadEnvelope } from '@modules/library/diagrams/doma
 import { getDiagramShapeById } from '@modules/library/diagrams/lib/diagramShapeLookup'
 import type { DiagramShapeItem } from '@modules/library/diagrams/lib/diagramShapeTypes'
 
-export class DiagramShapeExtensionRegistry {
+export class DiagramShapeExtensionRegistry implements IDiagramShapeExtensionRegistry {
   private readonly extensions = new Map<string, DiagramShapeExtension>()
   private readonly kinds = new Map<string, DiagramShapeKindRegistration>()
   private readonly lfTypeToKind = new Map<string, string>()

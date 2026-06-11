@@ -29,3 +29,12 @@ export function shapeExtensionSectionKey(ctx: DiagramPropertyContext): string | 
   if (!node || !kind) return undefined
   return `${node.id}:${kind}`
 }
+
+/** 属性面板区块容器 :key（结构指纹 + 发布世代，避免 PrimeVue / 扩展编辑器滞留） */
+export function propertyPanelScopeKey(
+  tab: string,
+  selectionRevision: number,
+  selectionScope: string
+): string {
+  return `${tab}|${selectionRevision}|${selectionScope}`
+}
