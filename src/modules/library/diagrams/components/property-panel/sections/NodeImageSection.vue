@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import WwButton from '@shared/components/WwButton.vue'
-import { useDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
+import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 
-const { ctx, actions, imageBusy } = useDiagramPropertyContext()
+const { ctx, actions, imageBusy } = useDiagramPropertySectionView()
 const node = computed(() => ctx.value.selectedNode!)
 </script>
 

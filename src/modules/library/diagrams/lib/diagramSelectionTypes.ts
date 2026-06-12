@@ -25,6 +25,8 @@ export interface DiagramDefaultEdgeStyle {
 export interface DiagramCanvasSettings {
   gridVisible: boolean
   snapGrid: boolean
+  /** 显示画布原点十字中心参考线 */
+  centerAxisVisible: boolean
   backgroundColor: string
   miniMapVisible: boolean
   themePreset: DiagramThemePreset
@@ -121,6 +123,7 @@ export function defaultCanvasSettings(resolved: 'light' | 'dark'): DiagramCanvas
   return {
     gridVisible: true,
     snapGrid: true,
+    centerAxisVisible: false,
     backgroundColor: resolved === 'dark' ? '#18181b' : '#ffffff',
     miniMapVisible: false,
     themePreset: resolved === 'dark' ? 'classic-dark' : 'classic-light',

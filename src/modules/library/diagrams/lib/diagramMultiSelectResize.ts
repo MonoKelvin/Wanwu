@@ -1,11 +1,14 @@
 import type LogicFlow from '@logicflow/core'
+import type { BaseNodeModel, GraphModel } from '@modules/library/diagrams/lib/logicFlowModelTypes'
 import { getNodeBBox } from '@logicflow/core/lib/util/node'
 import { StepDrag } from '@logicflow/core/lib/util/drag'
-import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { isGroupFrameModel } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import type { DiagramSelectionRect } from '@modules/library/diagrams/lib/diagramNodeLayout'
 import {
   boundsForResizeHandleDrag,
+  cornerOfSelectionRect,
   fixedAnchorForResizeHandle,
+  targetBoundsFromResizePointer,
   type DiagramResizeHandleDir
 } from '@modules/library/diagrams/lib/diagramResizeBounds'
 import {
@@ -50,15 +53,15 @@ export function isDiagramGroupMultiResizing(): boolean {
   return diagramGroupMultiResizing
 }
 
-function isDiagramContentNode(node: LogicFlow.BaseNodeModel): boolean {
-  return node.type !== DIAGRAM_GROUP_FRAME_TYPE && node.visible !== false
+function isDiagramContentNode(node: BaseNodeModel): boolean {
+  return !isGroupFrameModel(node) && node.visible !== false
 }
 
 /** 参与多选框计算的图元（不含组合框） */
 export function getMultiSelectNodes(
-  graphModel: LogicFlow.GraphModel,
+  graphModel: GraphModel,
   lf?: LogicFlow
-): LogicFlow.BaseNodeModel[] {
+): BaseNodeModel[] {
   const fromSelectNodes = graphModel.selectNodes.filter(isDiagramContentNode)
   if (fromSelectNodes.length >= 2) return fromSelectNodes
 
@@ -73,38 +76,38 @@ export function getMultiSelectNodes(
 
 /** 可参与等比缩放的图元 */
 export function getMultiSelectResizeTargets(
-  graphModel: LogicFlow.GraphModel,
+  graphModel: GraphModel,
   lf?: LogicFlow
-): LogicFlow.BaseNodeModel[] {
+): BaseNodeModel[] {
   return getMultiSelectNodes(graphModel, lf).filter((n) => n.resizable !== false)
 }
 
 export function countMultiSelectResizeNodes(
-  graphModel: LogicFlow.GraphModel,
+  graphModel: GraphModel,
   lf?: LogicFlow
 ): number {
   return getMultiSelectResizeTargets(graphModel, lf).length
 }
 
 export function countSelectedDiagramNodes(
-  graphModel: LogicFlow.GraphModel,
+  graphModel: GraphModel,
   lf?: LogicFlow
 ): number {
   return getMultiSelectNodes(graphModel, lf).length
 }
 
 export function shouldShowSingleNodeResize(
-  graphModel: LogicFlow.GraphModel,
-  model: LogicFlow.BaseNodeModel
+  graphModel: GraphModel,
+  model: BaseNodeModel
 ): boolean {
-  if (!model.isSelected || !model.resizable || model.type === DIAGRAM_GROUP_FRAME_TYPE) {
+  if (!model.isSelected || !model.resizable || isGroupFrameModel(model)) {
     return false
   }
   const count = Math.max(getLiveMultiSelectCount(), countSelectedDiagramNodes(graphModel))
   return count <= 1
 }
 
-function unionBoundsFromModels(models: LogicFlow.BaseNodeModel[]): DiagramSelectionRect | null {
+function unionBoundsFromModels(models: BaseNodeModel[]): DiagramSelectionRect | null {
   if (!models.length) return null
   let minX = Infinity
   let minY = Infinity
@@ -150,7 +153,7 @@ export function getMultiSelectOverlayRect(
   return canvasBoundsToHtmlRect(lf, paddedBounds(bounds, OUTLINE_PAD))
 }
 
-function snapNodes(lf: LogicFlow, models: LogicFlow.BaseNodeModel[]): NodeSnap[] {
+function snapNodes(lf: LogicFlow, models: BaseNodeModel[]): NodeSnap[] {
   return models.map((model) => ({
     id: model.id,
     left: model.x - model.width / 2,
@@ -415,8 +418,7 @@ export function mountDiagramMultiSelectResize(
     let startBounds: DiagramSelectionRect | null = null
     let fixedAnchor: { x: number; y: number } | null = null
     let snaps: NodeSnap[] = []
-    let cumDx = 0
-    let cumDy = 0
+    let aspectLock = false
 
     const drag = new StepDrag({
       step: 1,
@@ -426,8 +428,6 @@ export function mountDiagramMultiSelectResize(
         if (!startBounds) return
         fixedAnchor = fixedAnchorForResizeHandle(dir, startBounds)
         snaps = snapNodes(lf, selected)
-        cumDx = 0
-        cumDy = 0
         groupResizing = true
         diagramGroupMultiResizing = true
         aspectLock = false
@@ -435,18 +435,27 @@ export function mountDiagramMultiSelectResize(
         window.addEventListener('keydown', syncAspectLock, true)
         window.addEventListener('keyup', syncAspectLock, true)
       },
-      onDragging: ({ deltaX, deltaY }) => {
-        if (!startBounds || !fixedAnchor) return
-        const [cdx, cdy] = lf.graphModel.transformModel.fixDeltaXY(deltaX, deltaY)
-        const tryDx = cumDx + cdx
-        const tryDy = cumDy + cdy
-        const next = boundsForResizeHandleDrag(dir, startBounds, tryDx, tryDy, aspectLock, {
-          minWidth: MIN_BBOX,
-          minHeight: MIN_BBOX
-        })
+      onDragging: ({ event }) => {
+        if (!startBounds || !fixedAnchor || !event) return
+        const pointer = lf.graphModel.getPointByClient({
+          x: event.clientX,
+          y: event.clientY
+        }).canvasOverlayPosition
+        const next =
+          aspectLock
+            ? boundsForResizeHandleDrag(
+                dir,
+                startBounds,
+                pointer.x - cornerOfSelectionRect(dir, startBounds).x,
+                pointer.y - cornerOfSelectionRect(dir, startBounds).y,
+                true,
+                { minWidth: MIN_BBOX, minHeight: MIN_BBOX }
+              )
+            : targetBoundsFromResizePointer(dir, fixedAnchor, pointer.x, pointer.y, {
+                minWidth: MIN_BBOX,
+                minHeight: MIN_BBOX
+              })
         if (!next) return
-        cumDx = tryDx
-        cumDy = tryDy
         applyUniformGroupScale(lf, snaps, startBounds, next, fixedAnchor, false)
         applyOutlineBoxFromBounds(paddedBounds(next, OUTLINE_PAD))
       },
@@ -456,15 +465,7 @@ export function mountDiagramMultiSelectResize(
         window.removeEventListener('keydown', syncAspectLock, true)
         window.removeEventListener('keyup', syncAspectLock, true)
         root.classList.remove('dg-multi-select-resize--dragging')
-        if (!startBounds || !fixedAnchor) return
-        const next = boundsForResizeHandleDrag(dir, startBounds, cumDx, cumDy, false, {
-          minWidth: MIN_BBOX,
-          minHeight: MIN_BBOX
-        })
-        if (next) {
-          applyUniformGroupScale(lf, snaps, startBounds, next, fixedAnchor, true)
-          applyOutlineBoxFromBounds(paddedBounds(next, OUTLINE_PAD))
-        } else {
+        if (snaps.length) {
           for (const snap of snaps) {
             const model = lf.getNodeModelById(snap.id)
             if (model) {
@@ -474,12 +475,12 @@ export function mountDiagramMultiSelectResize(
               }
             }
           }
-          refresh(true)
         }
         startBounds = null
         fixedAnchor = null
+        snaps = []
         onGraphChange()
-        onLayoutChange?.()
+        refresh(true)
       }
     })
 
@@ -489,7 +490,7 @@ export function mountDiagramMultiSelectResize(
         e.stopPropagation()
         e.preventDefault()
         hit.setPointerCapture(e.pointerId)
-        drag.handleMouseDown(e as unknown as MouseEvent)
+        drag.handleMouseDown(e)
       },
       true
     )
@@ -535,7 +536,10 @@ export function mountDiagramMultiSelectResize(
     scheduleRefresh(true)
   }
 
-  const onRefresh = () => scheduleRefresh(true)
+  const onRefresh = () => {
+    if (getMultiSelectNodes(lf.graphModel, lf).length < 2) return
+    scheduleRefresh(true)
+  }
 
   scheduleRefresh(true)
 

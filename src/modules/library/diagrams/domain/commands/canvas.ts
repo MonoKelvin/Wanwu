@@ -135,5 +135,7 @@ export type CanvasNudgeDirection = 'left' | 'right' | 'up' | 'down'
 export interface CanvasNudgeSelectionPayload {
   direction: CanvasNudgeDirection
   large?: boolean
+  /** Ctrl/⌘ + 方向键：1px 微调，不吸附网格 */
+  fine?: boolean
   nodeIds?: string[]
 }

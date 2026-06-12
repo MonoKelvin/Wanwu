@@ -48,9 +48,9 @@ export function diagramAxisStyle(resolved: DiagramCanvasTheme) {
   const isDark = resolved === 'dark'
   const grid = isDark ? '#3a3a42' : '#e0e0e4'
   return {
-    vertical: isDark ? '#3f3f46' : '#d8d8de',
-    horizontal: isDark ? '#45454d' : '#dedee4',
-    width: 1,
+    vertical: isDark ? '#7a7a86' : '#c4c4cc',
+    horizontal: isDark ? '#82828e' : '#c8c8d0',
+    width: 1.5,
     grid
   }
 }

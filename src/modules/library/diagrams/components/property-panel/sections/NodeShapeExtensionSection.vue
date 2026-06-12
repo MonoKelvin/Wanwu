@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import DiagramShapePropertyHost from '@modules/library/diagrams/components/shape-properties/DiagramShapePropertyHost.vue'
-import { useDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
+import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 import { hasShapeExtension, shapeExtensionSectionKey } from '@modules/library/diagrams/domain/property-panel'
 
-const { ctx } = useDiagramPropertyContext()
+const { ctx } = useDiagramPropertySectionView()
 
 const hostKey = computed(() => shapeExtensionSectionKey(ctx.value))
 const showHost = computed(() => hasShapeExtension(ctx.value))

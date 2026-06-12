@@ -23,7 +23,7 @@ export interface DiagramBoxSelectCoordinatorPorts {
   syncSelectionFromGraph(): void
   scheduleGroupFramesToBottom(): void
   scheduleMultiSelectOverlayRefresh(): void
-  publishSelectionFromLiveGraph(): void
+  publishSelection(): void
   afterSelectionMutation(): void
   getLastSelectedNodeIds(): string[]
   getLastSelectedEdgeIds(): string[]
@@ -50,6 +50,7 @@ export class DiagramBoxSelectCoordinator {
   private keyTeardown: (() => void) | null = null
   private suppressPostClickUntil = 0
   private lastBoxSelectNodeIds: string[] = []
+  private rubberBandEl: HTMLDivElement | null = null
 
   constructor(private readonly ports: DiagramBoxSelectCoordinatorPorts) {}
 
@@ -120,6 +121,7 @@ export class DiagramBoxSelectCoordinator {
       const contain = isForwardBoxSelect(pt.x, pt.y, endX, endY)
       this.useContainMode = contain
       this.updateBoxSelectVisual(contain)
+      this.syncRubberBandVisual(contain)
     }
 
     const onMove = (ev: PointerEvent) => {
@@ -299,7 +301,7 @@ export class DiagramBoxSelectCoordinator {
     lf.clearSelectElements()
     for (const id of nodeIds) lf.selectElementById(id, true)
     for (const id of edgeIds) lf.selectElementById(id, true)
-    this.ports.publishSelectionFromLiveGraph()
+    this.ports.publishSelection()
     this.ports.scheduleMultiSelectOverlayRefresh()
   }
 
@@ -413,6 +415,7 @@ export class DiagramBoxSelectCoordinator {
 
   private clearRubberBandVisual(): void {
     this.setBoxSelectingActive(false)
+    this.removeRubberBandEl()
     const lf = this.ports.getLf()
     const ext = lf?.extension?.selectionSelect as { wrapper?: HTMLElement } | undefined
     ext?.wrapper?.remove()
@@ -452,10 +455,50 @@ export class DiagramBoxSelectCoordinator {
   }
 
   private updateBoxSelectVisual(isContain: boolean): void {
+    this.syncRubberBandVisual(isContain)
     const wrap = this.ports.getContainer()?.querySelector('.lf-selection-select')
     if (!wrap) return
     wrap.classList.toggle('dg-selection-box--contain', isContain)
     wrap.classList.toggle('dg-selection-box--intersect', !isContain)
+  }
+
+  private getRubberBandHost(): HTMLElement | null {
+    return this.ports.getContainer() ?? this.ports.getCanvasFrameEl()
+  }
+
+  private ensureRubberBand(): HTMLDivElement | null {
+    const host = this.getRubberBandHost()
+    if (!host) return null
+    if (!this.rubberBandEl) {
+      const el = document.createElement('div')
+      el.className = 'dg-selection-rubberband'
+      host.appendChild(el)
+      this.rubberBandEl = el
+    }
+    return this.rubberBandEl
+  }
+
+  private syncRubberBandVisual(isContain: boolean): void {
+    const start = this.overlayStart
+    const end = this.overlayEnd
+    if (!start || !end) return
+    const el = this.ensureRubberBand()
+    if (!el) return
+    const left = Math.min(start.x, end.x)
+    const top = Math.min(start.y, end.y)
+    const width = Math.abs(end.x - start.x)
+    const height = Math.abs(end.y - start.y)
+    el.style.left = `${left}px`
+    el.style.top = `${top}px`
+    el.style.width = `${width}px`
+    el.style.height = `${height}px`
+    el.classList.toggle('dg-selection-box--contain', isContain)
+    el.classList.toggle('dg-selection-box--intersect', !isContain)
+  }
+
+  private removeRubberBandEl(): void {
+    this.rubberBandEl?.remove()
+    this.rubberBandEl = null
   }
 
   private domSelectionBoxToCanvas(

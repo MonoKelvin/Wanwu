@@ -14,6 +14,7 @@ import NodeSizeSection from '@modules/library/diagrams/components/property-panel
 import NodeTextSection from '@modules/library/diagrams/components/property-panel/sections/NodeTextSection.vue'
 import {
   getDiagramPropertySectionRegistry,
+  resetDiagramPropertySectionRegistry,
   type IDiagramPropertySectionProvider,
   hasSelectedNodes,
   hasSelectedEdges,
@@ -137,4 +138,5 @@ export function registerDiagramPropertyPanel(
 
 export function resetDiagramPropertyPanelBootstrap(): void {
   bootstrapped = false
+  resetDiagramPropertySectionRegistry()
 }

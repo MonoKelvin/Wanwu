@@ -61,3 +61,12 @@ export const DIAGRAM_TEXT_ALIGN_ACTIONS = [
   { value: 'center' as const, icon: 'align-center-h' as const, label: '居中' },
   { value: 'right' as const, icon: 'align-right' as const, label: '右对齐' }
 ]
+
+/** 画布容器 DOM 类名（与 diagram-shared.css 一致） */
+export const DIAGRAM_CANVAS_FRAME_CLASS = {
+  formatPainter: 'dg-canvas-frame--format-painter',
+  formatPainterBlocked: 'dg-canvas-frame--format-painter-blocked'
+} as const
+
+/** 剪贴板粘贴默认偏移（像素，画布坐标） */
+export const DIAGRAM_CLIPBOARD_DEFAULT_OFFSET = { x: 20, y: 20 } as const

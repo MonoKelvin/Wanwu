@@ -8,9 +8,9 @@ import {
   DIAGRAM_DASH_PRESETS,
   DIAGRAM_SHADOW_PRESETS
 } from '@modules/library/diagrams/lib/diagramEditorConstants'
-import { useDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
+import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 
-const { ctx, actions } = useDiagramPropertyContext()
+const { ctx, actions } = useDiagramPropertySectionView()
 const node = computed(() => ctx.value.selectedNode!)
 </script>
 

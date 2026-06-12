@@ -44,6 +44,9 @@ export interface UmlClassifierLayoutModel {
   height: number
   minWidth?: number
   minHeight?: number
+  rx?: number
+  ry?: number
+  setProperties?: (props: Record<string, unknown>) => void
 }
 
 /** 将内容最小尺寸应用到 LF Model（仅随内容增高/增宽，不缩小用户手动放大的宽高） */
@@ -75,8 +78,14 @@ export function syncUmlClassifierLayoutToNode(
 ): void {
   const data = readUmlClassifierData(model)
   if (!data) return
-  if (applyUmlClassifierLayoutToModel(model, data)) {
-    syncNodeSizeProperties(model)
+  if (applyUmlClassifierLayoutToModel(model, data) && model.setProperties) {
+    syncNodeSizeProperties({
+      width: model.width,
+      height: model.height,
+      rx: model.rx,
+      ry: model.ry,
+      setProperties: (props) => model.setProperties!(props)
+    })
   }
 }
 

@@ -1,9 +1,10 @@
 import type LogicFlow from '@logicflow/core'
+import type { BaseNodeModel } from '@modules/library/diagrams/lib/logicFlowModelTypes'
 import {
   isEdgeInSelectionBox,
   isNodeInSelectionBox
 } from '@modules/library/diagrams/lib/diagramBoxSelection'
-import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { isGroupFrameModel } from '@modules/library/diagrams/lib/diagramGroupFrame'
 
 export type DiagramPointerModifiers = {
   ctrlKey: boolean
@@ -101,7 +102,7 @@ export function reconcileModifierNodeClick(
 ): void {
   const model = lf.getNodeModelById(nodeId)
   if (!model) return
-  if (opts?.skipGroupFrame !== false && model.type === DIAGRAM_GROUP_FRAME_TYPE) return
+  if (opts?.skipGroupFrame !== false && isGroupFrameModel(model)) return
 
   const wasSelected = previouslySelectedIds.includes(nodeId)
   if (wasSelected) {
@@ -129,7 +130,7 @@ export function applyNodeSelectForPointer(
 ): void {
   const model = lf.getNodeModelById(nodeId)
   if (!model) return
-  if (opts?.skipGroupFrame !== false && model.type === DIAGRAM_GROUP_FRAME_TYPE) return
+  if (opts?.skipGroupFrame !== false && isGroupFrameModel(model)) return
 
   const wasSelected = previouslySelectedIds.includes(nodeId)
 
@@ -208,7 +209,7 @@ export function collectElementsInCanvasBox(
   const edgeIds: string[] = []
 
   for (const model of lf.graphModel.nodes) {
-    if (opts?.skipGroupFrame !== false && model.type === DIAGRAM_GROUP_FRAME_TYPE) continue
+    if (opts?.skipGroupFrame !== false && isGroupFrameModel(model)) continue
     if (opts?.skipGroupMembers && model.properties?.dgGroupId) continue
     if (!isNodeInSelectionBox(model, leftTop, rightBottom, contain)) continue
     nodeIds.push(model.id)
@@ -238,15 +239,15 @@ function nodesAtCanvasPoint(
   canvasX: number,
   canvasY: number,
   skipGroupFrame = true
-): LogicFlow.BaseNodeModel[] {
+): BaseNodeModel[] {
   return lf.graphModel.nodes.filter((node) => {
-    if (skipGroupFrame && node.type === DIAGRAM_GROUP_FRAME_TYPE) return false
+    if (skipGroupFrame && isGroupFrameModel(node)) return false
     if (node.visible === false) return false
     return pointInNode(node, canvasX, canvasY)
   })
 }
 
-function sortNodesByStackOrder(models: LogicFlow.BaseNodeModel[]): LogicFlow.BaseNodeModel[] {
+function sortNodesByStackOrder(models: BaseNodeModel[]): BaseNodeModel[] {
   return [...models].sort((a, b) => {
     const za = a.zIndex ?? 0
     const zb = b.zIndex ?? 0
@@ -290,7 +291,7 @@ export function pickNodeIdAtPointer(
 
   if (
     domModel &&
-    domModel.type !== DIAGRAM_GROUP_FRAME_TYPE &&
+    !isGroupFrameModel(domModel) &&
     (!opts?.preferUnselected || !domModel.isSelected)
   ) {
     return domModel.id

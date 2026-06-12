@@ -6,9 +6,9 @@ import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import WwColorInput from '@shared/components/WwColorInput.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import { DIAGRAM_DASH_PRESETS } from '@modules/library/diagrams/lib/diagramEditorConstants'
-import { useDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
+import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 
-const { ctx, actions } = useDiagramPropertyContext()
+const { ctx, actions } = useDiagramPropertySectionView()
 const node = computed(() => ctx.value.selection.node!)
 </script>
 

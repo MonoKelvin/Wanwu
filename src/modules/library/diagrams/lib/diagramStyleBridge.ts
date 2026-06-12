@@ -6,6 +6,7 @@ import { shadowStyleForPreset } from '@modules/library/diagrams/lib/diagramCanva
 import { readNodeImageAsset } from '@modules/library/diagrams/lib/diagramAssetRefs'
 import {
   DIAGRAM_GROUP_FRAME_TYPE,
+  isGroupFrameModel,
   readGroupAlwaysVisible,
   readGroupStyle,
   resolveGroupFrameIdForElement
@@ -77,10 +78,13 @@ function resolveLfFontSize(value: unknown, fallback = 12): number {
 export function buildDiagramNodeTextStyle(model: BaseNodeModel): LogicFlow.NodeTextTheme {
   const nodeText = model.graphModel.theme.nodeText
   const propsStyle = (model.properties?.textStyle ?? {}) as Record<string, unknown>
-  const ink = propsStyle.fill ?? propsStyle.color ?? nodeText.fill ?? nodeText.color
+  const inkRaw = propsStyle.fill ?? propsStyle.color ?? nodeText.fill ?? nodeText.color
+  const ink = typeof inkRaw === 'string' ? inkRaw : String(inkRaw ?? '#121214')
   return {
     ...nodeText,
     ...propsStyle,
+    color: ink,
+    fill: ink,
     fontSize: resolveLfFontSize(propsStyle.fontSize ?? nodeText.fontSize),
     overflowMode:
       propsStyle.overflowMode === 'default' ||
@@ -262,7 +266,7 @@ export function readNodeProperties(lf: LogicFlow, nodeId: string): DiagramNodePr
     ? { ...imageRaw, url: imageRaw.url || '' }
     : null
 
-  if (model.type === DIAGRAM_GROUP_FRAME_TYPE) {
+  if (isGroupFrameModel(model)) {
     const gs = readGroupStyle(model.properties as Record<string, unknown>)
     const members = (model.properties?.dgGroupMembers as string[] | undefined) ?? []
     const groupEdges = (model.properties?.dgGroupEdges as string[] | undefined) ?? []

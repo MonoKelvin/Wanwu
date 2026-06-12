@@ -29,11 +29,14 @@ function isUmlStereotypeLine(line: UmlLayoutLine): boolean {
   return line.role === 'stereotype'
 }
 
-function readTitleTextAlign(model: DiagramRectResizeModel): DiagramNodeTextStyle['textAlign'] {
+function readTitleTextAlign(model: {
+  properties?: Record<string, unknown>
+  getTextStyle(): Record<string, unknown>
+}): DiagramNodeTextStyle['textAlign'] {
   const propsStyle = (model.properties?.textStyle ?? {}) as Record<string, unknown>
   const align = propsStyle.textAlign
   if (align === 'left' || align === 'center' || align === 'right') return align
-  const lfTextStyle = model.getTextStyle() as Record<string, unknown>
+  const lfTextStyle = model.getTextStyle()
   const anchor = String(lfTextStyle.textAnchor ?? 'middle')
   if (anchor === 'start') return 'left'
   if (anchor === 'end') return 'right'

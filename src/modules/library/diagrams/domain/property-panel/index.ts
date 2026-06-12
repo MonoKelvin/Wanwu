@@ -19,6 +19,7 @@ export {
   hasShapeExtension,
   showNodeImageSection,
   shapeExtensionSectionKey,
+  sectionResolveKey,
   propertyPanelScopeKey
 } from '@modules/library/diagrams/domain/property-panel/sectionVisibility'
 

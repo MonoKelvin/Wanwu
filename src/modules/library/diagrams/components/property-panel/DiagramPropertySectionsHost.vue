@@ -1,18 +1,24 @@
 <script setup lang="ts">
-import type { ResolvedPropertySection } from '@modules/library/diagrams/domain/property-panel/types'
+import DiagramPropertySectionSlot from '@modules/library/diagrams/components/property-panel/DiagramPropertySectionSlot.vue'
+import type {
+  DiagramPropertyContext,
+  ResolvedPropertySection
+} from '@modules/library/diagrams/domain/property-panel/types'
 
 defineProps<{
   sections: ResolvedPropertySection[]
   scopeKey: string
+  propertyContext: DiagramPropertyContext
 }>()
 </script>
 
 <template>
   <div :key="scopeKey" class="dg-property-sections">
-    <component
+    <DiagramPropertySectionSlot
       v-for="section in sections"
-      :is="section.component"
       :key="section.key"
+      :property-context="propertyContext"
+      :component="section.component"
     />
   </div>
 </template>

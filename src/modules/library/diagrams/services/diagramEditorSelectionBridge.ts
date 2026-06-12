@@ -60,6 +60,7 @@ export class DiagramEditorSelectionBridge {
   private postMutationCommitRaf: number | null = null
   private selectionSyncRetryRaf: number | null = null
   private selectionSyncMicrotaskQueued = false
+  private publishSelectionRaf: number | null = null
   private readonly selectionPublishScheduler = new DiagramSelectionPublishScheduler()
 
   constructor(private readonly ports: DiagramEditorSelectionBridgePorts) {}
@@ -103,6 +104,10 @@ export class DiagramEditorSelectionBridge {
     if (this.selectionSyncRetryRaf != null) {
       cancelAnimationFrame(this.selectionSyncRetryRaf)
       this.selectionSyncRetryRaf = null
+    }
+    if (this.publishSelectionRaf != null) {
+      cancelAnimationFrame(this.publishSelectionRaf)
+      this.publishSelectionRaf = null
     }
     this.selectionPublishScheduler.cancelScheduled()
   }
@@ -184,13 +189,33 @@ export class DiagramEditorSelectionBridge {
     })
   }
 
-  publishFromLiveGraph(): void {
+  /** 从 LF 当前选区推送快照到属性面板（组合变更抑制期间默认跳过，force 可强制） */
+  publishSelection(options: { force?: boolean } = {}): void {
+    if (!options.force && this.suppressSelectionSyncDuringMutation) return
     this.pushSelectionSnapshot()
   }
 
-  emitSelection(force = false): void {
-    if (!force && this.suppressSelectionSyncDuringMutation) return
-    this.publishFromLiveGraph()
+  /** 拖拽单选图元时 rAF 合并推送，避免每帧刷新属性面板 */
+  schedulePublishSelection(): void {
+    if (this.publishSelectionRaf != null) {
+      cancelAnimationFrame(this.publishSelectionRaf)
+    }
+    this.publishSelectionRaf = requestAnimationFrame(() => {
+      this.publishSelectionRaf = null
+      this.publishSelection()
+    })
+  }
+
+  /** 属性变更后刷新选区快照（仅当选中集包含目标时推送，避免覆盖用户已切换的选区） */
+  publishSelectionIfSelected(options: { nodeId?: string; edgeId?: string }): void {
+    const live = this.readLiveSelection()
+    if (options.nodeId && live.selectedNodeIds.includes(options.nodeId)) {
+      this.publishSelection()
+      return
+    }
+    if (options.edgeId && live.selectedEdgeIds.includes(options.edgeId)) {
+      this.publishSelection()
+    }
   }
 
   syncFromGraph(forceEmit = false): void {
@@ -220,7 +245,7 @@ export class DiagramEditorSelectionBridge {
     this.selectedEdgeId = live.primaryEdgeId
     this.ports.onRefreshGroupFrames()
     this.ports.onMaybeInvalidateFormatPainter()
-    this.emitSelection(forceEmit)
+    this.publishSelection({ force: forceEmit })
     this.ports.onAfterSyncFromGraph()
   }
 
@@ -233,7 +258,7 @@ export class DiagramEditorSelectionBridge {
 
     const publish = () => {
       if (!this.ports.getLf()) return
-      this.publishFromLiveGraph()
+      this.publishSelection()
     }
 
     this.selectionPublishScheduler.scheduleUserSelectionPublish(publish, () => {
@@ -370,7 +395,7 @@ export class DiagramEditorSelectionBridge {
       },
       getLastSelectionKey: () =>
         `${this.lastSelectedNodeIds.join(',')}|${this.lastSelectedEdgeIds.join(',')}`,
-      publishIfChanged: () => this.publishFromLiveGraph()
+      publishIfChanged: () => this.publishSelection()
     })
   }
 

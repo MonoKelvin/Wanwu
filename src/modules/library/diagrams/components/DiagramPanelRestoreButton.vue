@@ -17,7 +17,7 @@ const emit = defineEmits<{ click: [] }>()
     icon-size="sm"
     class="dg-panel-restore ww-glass-blur"
     :class="side === 'left' ? 'dg-panel-restore--left' : 'dg-panel-restore--right'"
-    :aria-label="label"
+    :ariaLabel="label"
     compact
     @click="emit('click')"
   />

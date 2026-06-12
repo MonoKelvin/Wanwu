@@ -8,9 +8,9 @@ import WwColorInput from '@shared/components/WwColorInput.vue'
 import WwFontSelect from '@shared/components/WwFontSelect/WwFontSelect.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import { DIAGRAM_TEXT_ALIGN_ACTIONS } from '@modules/library/diagrams/lib/diagramEditorConstants'
-import { useDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
+import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 
-const { ctx, actions } = useDiagramPropertyContext()
+const { ctx, actions } = useDiagramPropertySectionView()
 const node = computed(() => ctx.value.selectedNode!)
 </script>
 

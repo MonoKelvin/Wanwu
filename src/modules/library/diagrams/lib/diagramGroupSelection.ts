@@ -1,6 +1,6 @@
 import type LogicFlow from '@logicflow/core'
 import {
-  DIAGRAM_GROUP_FRAME_TYPE,
+  isGroupFrameModel,
   isGroupFrameType,
   resolveGroupFrameIdForElement
 } from '@modules/library/diagrams/lib/diagramGroupFrame'
@@ -102,7 +102,7 @@ function expandSelectionContent(
       for (const edgeId of groupEdges) edgeSet.add(edgeId)
       continue
     }
-    if (model.type !== DIAGRAM_GROUP_FRAME_TYPE) {
+    if (!isGroupFrameModel(model)) {
       nodeSet.add(id)
     }
   }
@@ -172,15 +172,16 @@ export function selectionHasGroupedElements(
   for (const id of orderedNodeIds) {
     const model = lf.getNodeModelById(id)
     if (!model) continue
-    if (model.type === DIAGRAM_GROUP_FRAME_TYPE) return true
+    if (isGroupFrameModel(model)) return true
     const gid = model.properties?.dgGroupId
-    if (typeof gid === 'string' && gid && lf.getNodeModelById(gid)?.type === DIAGRAM_GROUP_FRAME_TYPE) {
-      return true
+    if (typeof gid === 'string' && gid) {
+      const groupModel = lf.getNodeModelById(gid)
+      if (groupModel && isGroupFrameModel(groupModel)) return true
     }
   }
   for (const id of orderedEdgeIds) {
     const gid = lf.getEdgeModelById(id)?.properties?.dgGroupId
-    if (typeof gid === 'string' && gid && lf.getNodeModelById(gid)?.type === DIAGRAM_GROUP_FRAME_TYPE) {
+    if (typeof gid === 'string' && gid && isGroupFrameModel(lf.getNodeModelById(gid))) {
       return true
     }
   }

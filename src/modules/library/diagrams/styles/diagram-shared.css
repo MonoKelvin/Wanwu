@@ -1430,6 +1430,14 @@
   display: none !important;
 }
 
+.dg-canvas-frame.dg-center-axis-visible .dg-axis-overlay {
+  display: block !important;
+}
+
+.dg-canvas-frame .dg-axis-overlay line {
+  opacity: 0.92;
+}
+
 .dg-canvas-frame .lf-control {
   display: none !important;
 }
@@ -3288,6 +3296,29 @@
 }
 
 .dg-canvas-frame[data-dg-box-dragging] .lf-selection-select.dg-selection-box--intersect {
+  border-style: dashed;
+}
+
+.dg-canvas-frame .dg-selection-rubberband {
+  display: none;
+  position: absolute;
+  z-index: 12;
+  pointer-events: none;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, var(--ww-ink) 28%, transparent);
+  background: color-mix(in srgb, var(--ww-ink) 5%, transparent);
+}
+
+.dg-canvas-frame[data-dg-box-dragging] .dg-selection-rubberband {
+  display: block;
+}
+
+.dg-canvas-frame[data-dg-box-dragging] .dg-selection-rubberband.dg-selection-box--contain {
+  border-style: solid;
+}
+
+.dg-canvas-frame[data-dg-box-dragging] .dg-selection-rubberband.dg-selection-box--intersect {
   border-style: dashed;
 }
 

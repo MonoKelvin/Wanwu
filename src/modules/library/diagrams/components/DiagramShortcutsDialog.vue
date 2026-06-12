@@ -48,8 +48,10 @@ const sections: ShortcutSection[] = [
       { keys: DG_SHORTCUT.wheelScrollHorizontal, action: '左右滚动画布' },
       { keys: DG_SHORTCUT.wheelZoom, action: '缩放画布' },
       { keys: '中键拖拽', action: '平移画布' },
-      { keys: '方向键', action: '微移图元' },
-      { keys: 'Shift + 方向键', action: '大步微移图元' }
+      { keys: '方向键', action: '微移图元（可吸附网格）' },
+      { keys: 'Ctrl + 方向键', action: '精确微移 1px（不吸附）' },
+      { keys: 'Shift + 方向键', action: '大步微移图元' },
+      { keys: 'Ctrl + 拖拽 / 缩放', action: '自由移动或缩放（不吸附）' }
     ]
   }
 ]

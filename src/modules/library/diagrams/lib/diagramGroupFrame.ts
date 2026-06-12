@@ -11,6 +11,11 @@ export function isGroupFrameType(type: unknown): boolean {
   return type === DIAGRAM_GROUP_FRAME_TYPE
 }
 
+/** LogicFlow NodeModel.type 在 d.ts 中可能收窄为 `""`，统一经此判断（不做 type predicate，避免 TS 将分支收窄为 never） */
+export function isGroupFrameModel(model: { type?: unknown } | null | undefined): boolean {
+  return isGroupFrameType(model?.type)
+}
+
 export type DiagramGroupStyle = {
   stroke: string
   strokeWidth: number
@@ -24,6 +29,10 @@ export const DEFAULT_GROUP_STYLE: DiagramGroupStyle = {
   strokeDasharray: '6 4',
   fill: 'transparent'
 }
+
+/** 新建组合框时的内边距与最小尺寸 */
+export const DIAGRAM_GROUP_FRAME_CREATE_PAD = 12
+export const DIAGRAM_GROUP_FRAME_MIN_SIZE = { width: 80, height: 60 } as const
 
 export function readGroupStyle(properties: Record<string, unknown>): DiagramGroupStyle {
   const raw = (properties.dgGroupStyle ?? {}) as Partial<DiagramGroupStyle>
@@ -112,7 +121,7 @@ export function syncGroupFramePointerHover(
   canvasY: number
 ): void {
   for (const model of lf.graphModel.nodes) {
-    if (model.type !== DIAGRAM_GROUP_FRAME_TYPE) continue
+    if (!isGroupFrameModel(model)) continue
     const inside = isPointInsideGroupFrame(model, canvasX, canvasY)
     setGroupFramePointerInside(model.id, inside)
   }

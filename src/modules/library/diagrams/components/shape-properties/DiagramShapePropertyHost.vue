@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { ensureDiagramShapeExtensions } from '@modules/library/diagrams/app/diagramShapeExtensions'
-import { useDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
+import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 import { useShapeExtensionPropertyPatch } from '@modules/library/diagrams/composables/useShapeExtensionPropertyPatch'
 import { hasShapeExtension } from '@modules/library/diagrams/domain/property-panel'
 
-const { ctx } = useDiagramPropertyContext()
+const { ctx } = useDiagramPropertySectionView()
 const registry = ensureDiagramShapeExtensions()
 
 const node = computed(() => ctx.value.selectedNode)

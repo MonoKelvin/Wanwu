@@ -125,6 +125,15 @@ export function useDiagramShortcuts(
       return
     }
     const nudgeDirection = arrowDirections[e.key]
+    if (mod && !e.shiftKey && nudgeDirection) {
+      if (isEditableTarget(e.target)) return
+      e.preventDefault()
+      void bus.dispatch({
+        type: 'canvas.nudgeSelection',
+        payload: { direction: nudgeDirection, fine: true }
+      })
+      return
+    }
     if (!mod && nudgeDirection) {
       if (isEditableTarget(e.target)) return
       e.preventDefault()

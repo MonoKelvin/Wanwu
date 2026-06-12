@@ -2,15 +2,12 @@
 import { toRef } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
-import { registerDiagramPropertyPanel } from '@modules/library/diagrams/app/diagramPropertyPanelBootstrap'
 import { useDiagramPropertySections } from '@modules/library/diagrams/composables/useDiagramPropertySections'
 import DiagramPropertySectionsHost from '@modules/library/diagrams/components/property-panel/DiagramPropertySectionsHost.vue'
 import {
   togglePropsPanelCollapsed,
   useDiagramEditorLayout
 } from '@modules/library/diagrams/composables/useDiagramEditorLayout'
-
-registerDiagramPropertyPanel()
 
 const props = defineProps<{
   fileId: string | null
@@ -20,6 +17,7 @@ const layout = useDiagramEditorLayout()
 const {
   activeTab,
   selection,
+  propertyContext,
   resolvedSections,
   sectionsScopeKey,
   selectionBanner,
@@ -40,7 +38,7 @@ const {
         icon="chevron-right"
         icon-size="sm"
         class="dg-panel__collapse-btn"
-        aria-label="收起属性面板"
+        ariaLabel="收起属性面板"
         compact
         @click="togglePropsPanelCollapsed(layout)"
       />
@@ -86,6 +84,7 @@ const {
       <DiagramPropertySectionsHost
         :sections="resolvedSections"
         :scope-key="sectionsScopeKey"
+        :property-context="propertyContext"
       />
 
       <div v-if="showNodeEmpty" class="dg-panel__empty">

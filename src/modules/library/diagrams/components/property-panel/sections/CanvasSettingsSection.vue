@@ -4,9 +4,9 @@ import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import WwColorInput from '@shared/components/WwColorInput.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import { DIAGRAM_THEME_PRESETS } from '@modules/library/diagrams/lib/diagramEditorConstants'
-import { useDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
+import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 
-const { canvas, actions } = useDiagramPropertyContext()
+const { canvas, actions } = useDiagramPropertySectionView()
 </script>
 
 <template>
@@ -30,6 +30,17 @@ const { canvas, actions } = useDiagramPropertyContext()
     </SettingsRow>
     <p v-if="canvas.snapGrid" class="dg-prop-hint">
       拖动时显示对齐线，接近网格时轻吸附，松手后对齐网格
+    </p>
+    <SettingsRow label="中心参考线" class="dg-settings-row--inline">
+      <WwToggleSwitch
+        :model-value="canvas.centerAxisVisible"
+        :drag-to-change="false"
+        aria-label="显示画布中心参考线"
+        @update:model-value="actions.patchCanvas({ centerAxisVisible: $event })"
+      />
+    </SettingsRow>
+    <p v-if="canvas.centerAxisVisible" class="dg-prop-hint">
+      在画布原点显示略粗于网格的垂直/水平中心线
     </p>
     <SettingsRow label="导航窗口" class="dg-settings-row--inline">
       <WwToggleSwitch

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineOptions({ name: 'DiagramEditorView' })
 
-import { computed, nextTick, onActivated, onBeforeUnmount, onMounted, ref, shallowRef, toRefs, watch } from 'vue'
+import { computed, onActivated, onBeforeUnmount, onMounted, ref, shallowRef, toRefs, watch } from 'vue'
 import { onBeforeRouteLeave, useRoute, useRouter, type NavigationGuardReturn } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import DiagramEditorToolbar from '@modules/library/diagrams/components/DiagramEditorToolbar.vue'
@@ -40,6 +40,7 @@ import { provideDiagramEditorSelection } from '@modules/library/diagrams/composa
 import {
   attachDiagramEditorFromRuntime
 } from '@modules/library/diagrams/composables/useDiagramEditorCanvasAttach'
+import { useDiagramEditorBootstrap } from '@modules/library/diagrams/composables/useDiagramEditorBootstrap'
 import {
   clearDiagramEditorBootstrapPromise,
   destroyDiagramEditorRuntime,
@@ -212,13 +213,6 @@ provideDiagramEditorGuard({
   }
 })
 
-function applyFolderIdFromRoute() {
-  const raw = route.query.folderId
-  if (typeof raw !== 'string' || !raw) return
-  if (raw === DG_HOME || raw === DG_RECYCLE) return
-  pickedFolderId.value = raw
-}
-
 function publishLiveSelection() {
   const port = portRef.value
   if (!port) return
@@ -297,6 +291,27 @@ const fileId = computed(() => route.params.fileId as string)
 const templateQuery = computed(() => route.query.template as string | undefined)
 const isNewDraft = computed(() => fileId.value === 'new' || fileId.value === 'draft')
 
+const editorBootstrap = useDiagramEditorBootstrap({
+  bus,
+  repo,
+  route,
+  router,
+  toast,
+  canvasRef,
+  portRef,
+  sessionRef,
+  portBinding,
+  loadError,
+  editorReady,
+  pickedFolderId,
+  refreshViewportZoom,
+  resolvedTheme,
+  fileId,
+  templateQuery,
+  isNewDraft
+})
+const { waitForLayout, waitForCanvasEl, openDocument, executeBootstrap } = editorBootstrap
+
 const pages = computed(() => {
   void sessionRevision.value
   const list = sessionRef.value?.content?.pages
@@ -325,24 +340,6 @@ function focusCanvasForKeys() {
   canvasWrapRef.value?.focus({ preventScroll: true })
 }
 
-function waitForLayout(): Promise<void> {
-  return new Promise((resolve) => {
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-  })
-}
-
-async function waitForCanvasEl(): Promise<HTMLElement> {
-  for (let attempt = 0; attempt < 12; attempt += 1) {
-    await nextTick()
-    await waitForLayout()
-    const el = canvasRef.value
-    if (el && el.clientWidth > 0 && el.clientHeight > 0) return el
-  }
-  const el = canvasRef.value
-  if (el) return el
-  throw new Error('画布容器未就绪')
-}
-
 async function attachFromExistingRuntime(docKey: string): Promise<boolean> {
   return attachDiagramEditorFromRuntime(
     docKey,
@@ -359,113 +356,6 @@ async function attachFromExistingRuntime(docKey: string): Promise<boolean> {
       loading
     }
   )
-}
-
-async function applyFitView() {
-  await waitForLayout()
-  portRef.value?.resize()
-  await bus.dispatch({ type: 'canvas.zoomToFit' })
-  refreshViewportZoom()
-}
-
-async function applyCenterContentView(resetZoom: boolean) {
-  await waitForLayout()
-  portRef.value?.resize()
-  if (resetZoom) {
-    portRef.value?.zoomReset()
-  } else {
-    const zoom = sessionRef.value?.getActivePage()?.viewport?.zoom ?? 1
-    if (Math.abs(zoom - 1) > 0.001) {
-      portRef.value?.zoom(undefined, zoom)
-    } else {
-      portRef.value?.zoomReset()
-    }
-  }
-  portRef.value?.centerContent()
-  sessionRef.value?.syncActivePageViewport()
-  refreshViewportZoom()
-}
-
-async function openDocument() {
-  loadError.value = null
-  if (isNewDraft.value) applyFolderIdFromRoute()
-  const wantFitView = route.query.fitView === '1'
-  const payload: Record<string, string | boolean> = { skipViewport: true }
-  if (!isNewDraft.value) {
-    payload.fileId = fileId.value
-  } else if (templateQuery.value) {
-    payload.templateId = templateQuery.value
-  }
-  const result = await bus.dispatch({ type: 'document.open', payload })
-  if (!result.ok) {
-    loadError.value = result.message ?? '无法打开文档'
-    toast.add({
-      severity: 'error',
-      summary: '打开失败',
-      detail: loadError.value,
-      life: 5000
-    })
-    if (sessionRef.value && !sessionRef.value.content) {
-      sessionRef.value.openBlank()
-    }
-    return
-  }
-  portRef.value?.resize()
-  if (wantFitView) {
-    await applyFitView()
-    sessionRef.value?.flushActivePage()
-    const nextQuery = { ...route.query }
-    delete nextQuery.fitView
-    void router.replace({ query: nextQuery })
-  } else {
-    await applyCenterContentView(isNewDraft.value)
-  }
-}
-
-async function executeBootstrap(docKey: string): Promise<void> {
-  const rt = getDiagramEditorRuntime()
-  if (isDiagramEditorRuntimeReady(docKey)) {
-    return
-  }
-
-  // 仅切换文档时 teardown；bootstrap 进行中 (port 有但 key 未写入) 不得 destroy，否则并发 remount 会杀掉进行中的画布
-  if (rt.bootstrappedDocKey && rt.bootstrappedDocKey !== docKey) {
-    rt.port?.destroy()
-    rt.port = null
-    rt.session = null
-    rt.bootstrappedDocKey = null
-  }
-
-  await import('@logicflow/core/lib/style/index.css')
-  await import('@logicflow/extension/lib/style/index.css')
-  const { LogicFlowDiagramAdapter: Adapter, ensureSnapshotPlugin, ensureMiniMapPlugin, ensureSelectionSelectPlugin } =
-    await import('@modules/library/diagrams/services/LogicFlowDiagramAdapter')
-  await ensureSnapshotPlugin()
-  await ensureMiniMapPlugin()
-  await ensureSelectionSelectPlugin()
-
-  const port = new Adapter()
-  const session = new DiagramEditorSession(port, repo)
-  rt.port = port
-  rt.session = session
-  portRef.value = port
-  sessionRef.value = session
-
-  portBinding.wirePortHandlers(port, session)
-
-  const el = await waitForCanvasEl()
-  port.mount(el)
-  port.setTheme(resolvedTheme())
-  portBinding.attachCanvasObservers(port, el)
-
-  port.resize()
-  await openDocument()
-  rt.bootstrappedDocKey = docKey
-  setDiagramEditorReadyDocKey(docKey)
-  editorReady.value = true
-  refreshViewportZoom()
-  await waitForLayout()
-  port.resize()
 }
 
 function askUnsavedLeave(): Promise<'save' | 'discard' | 'cancel'> {

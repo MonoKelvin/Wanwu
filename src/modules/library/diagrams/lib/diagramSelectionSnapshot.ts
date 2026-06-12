@@ -1,5 +1,5 @@
 import type LogicFlow from '@logicflow/core'
-import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { isGroupFrameModel } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import type {
   DiagramEditorSelection,
   DiagramNodeShapeExtensionView
@@ -20,7 +20,7 @@ export function sanitizeSelectionIds(
 export function filterAlignableNodeIds(lf: LogicFlow, nodeIds: readonly string[]): string[] {
   return nodeIds.filter((id) => {
     const model = lf.getNodeModelById(id)
-    return model && model.type !== DIAGRAM_GROUP_FRAME_TYPE
+    return model && !isGroupFrameModel(model)
   })
 }
 
@@ -28,11 +28,11 @@ export function filterAlignableNodeIds(lf: LogicFlow, nodeIds: readonly string[]
 export function resolvePrimaryNodeId(lf: LogicFlow, nodeIds: string[]): string | null {
   for (const id of nodeIds) {
     const model = lf.getNodeModelById(id)
-    if (model && model.type !== DIAGRAM_GROUP_FRAME_TYPE) return id
+    if (model && !isGroupFrameModel(model)) return id
   }
   for (const id of nodeIds) {
     const model = lf.getNodeModelById(id)
-    if (model?.type === DIAGRAM_GROUP_FRAME_TYPE) return id
+    if (isGroupFrameModel(model)) return id
   }
   return null
 }
@@ -59,10 +59,10 @@ export function deriveSelectionCounts(
 ): { selectedNodeCount: number; selectedEdgeCount: number } {
   const alignable = nodeIds.filter((id) => {
     const model = lf.getNodeModelById(id)
-    return model && model.type !== DIAGRAM_GROUP_FRAME_TYPE
+    return model && !isGroupFrameModel(model)
   })
   const hasGroupFrame = nodeIds.some(
-    (id) => lf.getNodeModelById(id)?.type === DIAGRAM_GROUP_FRAME_TYPE
+    (id) => isGroupFrameModel(lf.getNodeModelById(id))
   )
   const selectedNodeCount = alignable.length > 0 ? alignable.length : hasGroupFrame ? 1 : 0
   return { selectedNodeCount, selectedEdgeCount: edgeIds.length }

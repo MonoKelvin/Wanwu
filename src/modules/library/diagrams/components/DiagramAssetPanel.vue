@@ -103,7 +103,7 @@ function toggleSection(id: string) {
         icon="chevron-left"
         icon-size="sm"
         class="dg-panel__collapse-btn"
-        aria-label="收起图形面板"
+        ariaLabel="收起图形面板"
         compact
         @click="toggleAssetPanelCollapsed(layout)"
       />

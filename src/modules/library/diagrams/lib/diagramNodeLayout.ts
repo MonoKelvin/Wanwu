@@ -159,3 +159,19 @@ export function selectionUnionBounds(
     cy: (minY + maxY) / 2
   }
 }
+
+/** 从 LogicFlow 节点模型读取布局边界 */
+export function readDiagramNodeBounds(
+  lf: { getNodeModelById(id: string): { x: number; y: number; width: number; height: number } | undefined } | null,
+  nodeId: string
+): DiagramNodeBounds | null {
+  const model = lf?.getNodeModelById(nodeId)
+  if (!model) return null
+  return {
+    id: nodeId,
+    x: model.x,
+    y: model.y,
+    width: model.width,
+    height: model.height
+  }
+}

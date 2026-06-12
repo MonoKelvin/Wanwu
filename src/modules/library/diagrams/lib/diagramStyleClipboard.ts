@@ -2,7 +2,8 @@ import LogicFlow, { BaseNodeModel } from '@logicflow/core'
 import type { DiagramCanvasTheme } from '@modules/library/diagrams/lib/diagramCanvasTheme'
 import {
   DEFAULT_GROUP_STYLE,
-  DIAGRAM_GROUP_FRAME_TYPE
+  isGroupFrameModel,
+  isGroupFrameType
 } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import {
   applyEdgeProperties,
@@ -10,11 +11,11 @@ import {
   readEdgeProperties,
   readNodeProperties
 } from '@modules/library/diagrams/lib/diagramStyleBridge'
+import type { DiagramShadowPreset } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import type {
   DiagramEdgeProperties,
   DiagramNodeProperties,
-  DiagramNodeTextStyle,
-  DiagramShadowPreset
+  DiagramNodeTextStyle
 } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import { defaultDefaultEdgeStyle } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 
@@ -44,7 +45,7 @@ export function extractNodeStyleSnapshot(props: DiagramNodeProperties): DiagramN
     strokeDasharray: props.strokeDasharray ?? '',
     shadow: props.shadow,
     textStyle: { ...props.textStyle },
-    isGroupFrame: props.type === DIAGRAM_GROUP_FRAME_TYPE,
+    isGroupFrame: isGroupFrameType(props.type),
     groupAlwaysVisible: props.groupAlwaysVisible
   }
 }
@@ -72,7 +73,7 @@ export function applyNodeStyleSnapshot(
   const model = lf.getNodeModelById(targetId)
   if (!model) return
 
-  if (model.type === DIAGRAM_GROUP_FRAME_TYPE) {
+  if (isGroupFrameModel(model)) {
     lf.setProperties(targetId, {
       dgGroupStyle: {
         fill: snapshot.fill,
@@ -142,7 +143,7 @@ export function clearNodeStyle(lf: LogicFlow, nodeId: string, resolved: DiagramC
   const model = lf.getNodeModelById(nodeId)
   if (!model) return
 
-  if (model.type === DIAGRAM_GROUP_FRAME_TYPE) {
+  if (isGroupFrameModel(model)) {
     lf.setProperties(nodeId, {
       dgGroupStyle: { ...DEFAULT_GROUP_STYLE },
       dgGroupAlwaysVisible: false

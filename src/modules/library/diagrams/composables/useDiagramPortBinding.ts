@@ -47,6 +47,7 @@ export function useDiagramPortBinding(options: DiagramPortBindingOptions) {
 
     port.onViewportChange(() => {
       void syncViewport()
+      onViewportZoomRefresh()
       onAlignBarSchedule()
     })
 

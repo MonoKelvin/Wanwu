@@ -153,7 +153,7 @@ const barStyle = computed(() => {
         :icon="action.icon"
         icon-size="xs"
         compact
-        :aria-label="action.label"
+        :ariaLabel="action.label"
         v-tooltip.bottom="action.label"
         class="dg-align-bar__btn dg-toolbar-icon-btn"
         @click="align(action.mode)"
@@ -169,7 +169,7 @@ const barStyle = computed(() => {
         :icon="action.icon"
         icon-size="xs"
         compact
-        :aria-label="action.label"
+        :ariaLabel="action.label"
         v-tooltip.bottom="action.label"
         class="dg-align-bar__btn dg-toolbar-icon-btn"
         @click="align(action.mode)"
@@ -185,7 +185,7 @@ const barStyle = computed(() => {
           :icon="action.icon"
           icon-size="xs"
           compact
-          :aria-label="action.label"
+          :ariaLabel="action.label"
           v-tooltip.bottom="action.label"
           class="dg-align-bar__btn dg-toolbar-icon-btn"
           @click="distribute(action.mode)"
@@ -203,7 +203,7 @@ const barStyle = computed(() => {
           icon="layers"
           icon-size="xs"
           compact
-          aria-label="组合"
+          ariaLabel="组合"
           :disabled="!groupEnabled"
           class="dg-align-bar__btn dg-toolbar-icon-btn"
           @pointerdown.stop.prevent="onGroupPointerDown"
@@ -217,7 +217,7 @@ const barStyle = computed(() => {
           icon="ungroup"
           icon-size="xs"
           compact
-          aria-label="取消组合"
+          ariaLabel="取消组合"
           :disabled="!ungroupEnabled"
           class="dg-align-bar__btn dg-toolbar-icon-btn"
           @pointerdown.stop.prevent="onUngroupPointerDown"

@@ -1,7 +1,7 @@
 import type LogicFlow from '@logicflow/core'
 import type { DiagramNodeProperties } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import { readNodeProperties } from '@modules/library/diagrams/lib/diagramStyleBridge'
-import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { isGroupFrameModel } from '@modules/library/diagrams/lib/diagramGroupFrame'
 
 type MixedGetter = (node: DiagramNodeProperties) => unknown
 
@@ -28,7 +28,7 @@ export function computeMixedNodeFields(
   const props = nodeIds
     .map((id) => {
       const model = lf.getNodeModelById(id)
-      if (!model || model.type === DIAGRAM_GROUP_FRAME_TYPE) return null
+      if (!model || isGroupFrameModel(model)) return null
       return readNodeProperties(lf, id)
     })
     .filter(Boolean) as DiagramNodeProperties[]

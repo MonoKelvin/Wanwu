@@ -2,9 +2,9 @@
 import { computed } from 'vue'
 import WwNumberInput from '@shared/components/WwNumberInput/WwNumberInput.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
-import { useDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
+import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 
-const { ctx, actions } = useDiagramPropertyContext()
+const { ctx, actions } = useDiagramPropertySectionView()
 const node = computed(() => ctx.value.selectedNode!)
 const topLeft = computed(() => actions.nodeTopLeft(node.value))
 </script>

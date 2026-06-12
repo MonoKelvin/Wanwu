@@ -1,4 +1,8 @@
 import type LogicFlow from '@logicflow/core'
+import {
+  normalizeDiagramWheelDeltaY,
+  zoomDiagramCanvasAtWheel
+} from '@modules/library/diagrams/lib/diagramViewportOps'
 
 export interface DiagramCanvasViewportPorts {
   getLf(): LogicFlow | null
@@ -111,7 +115,16 @@ export class DiagramCanvasViewportController {
     const onWheel = (event: WheelEvent) => {
       const lf = ports.getLf()
       if (!lf) return
-      if (!event.shiftKey || event.ctrlKey || event.metaKey) return
+
+      if (event.ctrlKey || event.metaKey) {
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        const deltaY = normalizeDiagramWheelDeltaY(event)
+        zoomDiagramCanvasAtWheel(lf, deltaY, event.clientX, event.clientY)
+        return
+      }
+
+      if (!event.shiftKey) return
 
       event.preventDefault()
       event.stopImmediatePropagation()

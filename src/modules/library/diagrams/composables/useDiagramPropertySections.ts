@@ -1,10 +1,13 @@
-import { computed, ref, watch, type Ref } from 'vue'
+import { computed, shallowRef, watch, type Ref } from 'vue'
 import { provideDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
+import { useDiagramPropertyPanelTab } from '@modules/library/diagrams/composables/useDiagramPropertyPanelTab'
 import { useDiagramEditorSelection } from '@modules/library/diagrams/composables/useDiagramEditorSelection'
 import {
   buildPropertyContext,
   getDiagramPropertySectionRegistry,
   propertyPanelScopeKey,
+  sectionResolveKey,
+  type DiagramPropertyContext,
   type DiagramPropertyTab,
   type ResolvedPropertySection
 } from '@modules/library/diagrams/domain/property-panel'
@@ -18,6 +21,7 @@ import type { DiagramEditorSelection } from '@modules/library/diagrams/lib/diagr
 export interface DiagramPropertySectionsApi {
   readonly activeTab: Ref<DiagramPropertyTab>
   readonly selection: Ref<DiagramEditorSelection>
+  readonly propertyContext: Ref<DiagramPropertyContext>
   readonly resolvedSections: Ref<ResolvedPropertySection[]>
   readonly sectionsScopeKey: Ref<string>
   readonly selectionBanner: Ref<string>
@@ -27,47 +31,35 @@ export interface DiagramPropertySectionsApi {
 
 /**
  * 属性面板区块解析与选区联动。
- * 组合根在 DiagramPropertyPanel 调用；各 Section 通过 useDiagramPropertyContext 读写属性。
+ * 组合根在 DiagramPropertyPanel 调用；各 Section 通过 useDiagramPropertySectionView 读快照、useDiagramPropertyContext 写属性。
  */
 export function useDiagramPropertySections(fileId: Ref<string | null>): DiagramPropertySectionsApi {
   const selectionApi = useDiagramEditorSelection()
   const selection = selectionApi.selection
   const selectionRevision = selectionApi.revision
-  const activeTab = ref<DiagramPropertyTab>('canvas')
+  const activeTab = useDiagramPropertyPanelTab(selection)
   const registry = getDiagramPropertySectionRegistry()
 
   provideDiagramPropertyContext(fileId, activeTab)
 
   const selectionScope = computed(() => selectionScopeKey(selection.value))
 
-  watch(
-    selectionScope,
-    () => {
-      const sel = selection.value
-      const nodeCount = effectiveNodeCount(sel)
-      const edgeCount = effectiveEdgeCount(sel)
-      const total = nodeCount + edgeCount
-      if (sel.kind === 'canvas' || total === 0) {
-        activeTab.value = 'canvas'
-        return
-      }
-      if (edgeCount > 0 && nodeCount === 0) {
-        activeTab.value = 'edge'
-        return
-      }
-      if (nodeCount > 0) {
-        activeTab.value = 'node'
-      }
-    },
-    { immediate: true }
-  )
-
   const propertyContext = computed(() =>
     buildPropertyContext(activeTab.value, selection.value, fileId.value)
   )
 
-  const resolvedSections = computed(() =>
-    registry.resolve(activeTab.value, propertyContext.value)
+  const sectionListKey = computed(() =>
+    sectionResolveKey(activeTab.value, selection.value)
+  )
+
+  const resolvedSections = shallowRef<ResolvedPropertySection[]>([])
+
+  watch(
+    sectionListKey,
+    () => {
+      resolvedSections.value = registry.resolve(activeTab.value, propertyContext.value)
+    },
+    { immediate: true }
   )
 
   const sectionsScopeKey = computed(() =>
@@ -93,6 +85,7 @@ export function useDiagramPropertySections(fileId: Ref<string | null>): DiagramP
   return {
     activeTab,
     selection,
+    propertyContext,
     resolvedSections,
     sectionsScopeKey,
     selectionBanner,

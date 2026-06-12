@@ -3,9 +3,9 @@ import { computed } from 'vue'
 import WwSelect from '@shared/components/WwSelect/WwSelect.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import { DIAGRAM_ARROW_TYPES } from '@modules/library/diagrams/lib/diagramEditorConstants'
-import { useDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
+import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 
-const { ctx, actions } = useDiagramPropertyContext()
+const { ctx, actions } = useDiagramPropertySectionView()
 const edge = computed(() => ctx.value.selectedEdge!)
 </script>
 

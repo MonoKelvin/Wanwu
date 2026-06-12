@@ -2,18 +2,25 @@ import LogicFlow, { BaseNodeModel, Component, GraphModel, h, observer, Rect } fr
 import { StepDrag } from '@logicflow/core/lib/util/drag'
 import { getNodeBBox } from '@logicflow/core/lib/util/node'
 import { handleResize } from '@logicflow/core/lib/util/resize'
+import { getDiagramCanvasSnapGrid, getDiagramActiveLogicFlow } from '@modules/library/diagrams/lib/diagramCanvasInteractionSettings'
+import { snapResizeTargetBounds } from '@modules/library/diagrams/lib/diagramDragSnap'
+import { isDiagramSnapBypassActive } from '@modules/library/diagrams/lib/diagramSnapBypass'
 import {
   diagramResizeControlStyle,
   diagramResizeOutlineStyle
 } from '@modules/library/diagrams/lib/diagramShapeResize'
 import { shouldShowSingleNodeResize } from '@modules/library/diagrams/lib/diagramMultiSelectResize'
+import type { DiagramResizeHandleDir } from '@modules/library/diagrams/lib/diagramResizeBounds'
 import {
-  boundsForResizeHandleDrag,
   cornerOfSelectionRect,
+  fixedAnchorForResizeHandle,
   selectionRectFromBBox,
-  type DiagramResizeHandleDir
+  targetBoundsFromResizePointer
 } from '@modules/library/diagrams/lib/diagramResizeBounds'
-import type { DiagramSelectionRect } from '@modules/library/diagrams/lib/diagramNodeLayout'
+import {
+  beginDiagramResizeSession,
+  endDiagramResizeSession
+} from '@modules/library/diagrams/lib/diagramResizeSession'
 
 type HandleDir = DiagramResizeHandleDir
 
@@ -61,9 +68,7 @@ class DiagramResizeHandleInner extends Component {
   private graphModel!: GraphModel
   private dragHandler!: StepDrag
   private direction: HandleDir = 'nw'
-  private dragStartBounds: DiagramSelectionRect | null = null
-  private cumDx = 0
-  private cumDy = 0
+  private fixedAnchor: { x: number; y: number } | null = null
 
   constructor(props: Record<string, unknown>) {
     super(props)
@@ -76,57 +81,58 @@ class DiagramResizeHandleInner extends Component {
         if (shouldShowSingleNodeResize(this.graphModel, this.nodeModel)) {
           this.graphModel.selectNodeById(this.nodeModel.id)
         }
-        this.dragStartBounds = selectionRectFromBBox(getNodeBBox(this.nodeModel))
-        this.cumDx = 0
-        this.cumDy = 0
+        const startRect = selectionRectFromBBox(getNodeBBox(this.nodeModel))
+        this.fixedAnchor = fixedAnchorForResizeHandle(this.direction, startRect)
+        beginDiagramResizeSession(this.nodeModel.id, this.index, this.fixedAnchor)
       },
-      onDragging: ({ deltaX, deltaY }) => {
+      onDragging: ({ event }) => {
         const { nodeModel, graphModel, direction } = this
-        const [cdx, cdy] = graphModel.transformModel.fixDeltaXY(deltaX, deltaY)
-        const start = this.dragStartBounds
-        if (!start) {
-          const { x, y } = cornerPoint(direction, nodeModel)
-          handleResize({
-            x,
-            y,
-            deltaX,
-            deltaY,
-            index: this.index,
-            nodeModel,
-            graphModel
-          })
-          return
+        const fixed = this.fixedAnchor
+        if (!fixed || !event) return
+
+        const pointer = graphModel.getPointByClient({
+          x: event.clientX,
+          y: event.clientY
+        }).canvasOverlayPosition
+        let target = targetBoundsFromResizePointer(
+          direction,
+          fixed,
+          pointer.x,
+          pointer.y,
+          {
+            minWidth: nodeModel.minWidth,
+            minHeight: nodeModel.minHeight,
+            maxWidth: nodeModel.maxWidth,
+            maxHeight: nodeModel.maxHeight
+          }
+        )
+        if (!isDiagramSnapBypassActive()) {
+          const lf = getDiagramActiveLogicFlow()
+          if (lf) {
+            target = snapResizeTargetBounds(
+              lf,
+              nodeModel.id,
+              this.index,
+              target,
+              getDiagramCanvasSnapGrid()
+            )
+          }
         }
-
-        const tryDx = this.cumDx + cdx
-        const tryDy = this.cumDy + cdy
-        const next = boundsForResizeHandleDrag(direction, start, tryDx, tryDy, false, {
-          minWidth: nodeModel.minWidth,
-          minHeight: nodeModel.minHeight,
-          maxWidth: nodeModel.maxWidth,
-          maxHeight: nodeModel.maxHeight
-        })
-        if (!next) return
-
-        this.cumDx = tryDx
-        this.cumDy = tryDy
-
         const corner = cornerPoint(direction, nodeModel)
-        const target = cornerOfSelectionRect(direction, next)
+        const targetCorner = cornerOfSelectionRect(direction, target)
         handleResize({
           x: corner.x,
           y: corner.y,
-          deltaX: target.x - corner.x,
-          deltaY: target.y - corner.y,
+          deltaX: targetCorner.x - corner.x,
+          deltaY: targetCorner.y - corner.y,
           index: this.index,
           nodeModel,
           graphModel
         })
       },
       onDragEnd: () => {
-        this.dragStartBounds = null
-        this.cumDx = 0
-        this.cumDy = 0
+        endDiagramResizeSession()
+        this.fixedAnchor = null
       },
       step: 1
     })

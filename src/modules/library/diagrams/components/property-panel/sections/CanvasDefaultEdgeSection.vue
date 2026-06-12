@@ -8,9 +8,9 @@ import {
   DIAGRAM_DASH_PRESETS,
   DIAGRAM_EDGE_TYPES
 } from '@modules/library/diagrams/lib/diagramEditorConstants'
-import { useDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
+import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 
-const { canvas, actions } = useDiagramPropertyContext()
+const { canvas, actions } = useDiagramPropertySectionView()
 </script>
 
 <template>

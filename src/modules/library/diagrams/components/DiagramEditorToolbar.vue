@@ -236,7 +236,7 @@ function cancelTitleEdit() {
   titleDraft.value = displayTitleBase.value
 }
 
-const fileMenuItems = computed<WwMenuItem[]>(() => {
+const fileMenuItems = computed(() => {
   const items: WwMenuItem[] = [
     {
       label: '保存',
