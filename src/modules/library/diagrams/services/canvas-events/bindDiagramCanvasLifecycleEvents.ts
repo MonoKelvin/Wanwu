@@ -1,4 +1,6 @@
+import type BaseEdgeModel from '@logicflow/core/es/model/edge/BaseEdgeModel'
 import { diagramCanvasBackground } from '@modules/library/diagrams/lib/diagramCanvasTheme'
+import { syncDiagramEdgeTextById, syncDiagramEdgeTextPosition, syncDiagramEdgeTextsForNodeIds } from '@modules/library/diagrams/lib/diagramEdgeTextSync'
 import { syncNodeTextLayout } from '@modules/library/diagrams/lib/diagramStyleBridge'
 import { isDiagramResizeSessionActive } from '@modules/library/diagrams/lib/diagramResizeSession'
 import type { DiagramCanvasEventBinderPorts } from '@modules/library/diagrams/services/canvas-events/diagramCanvasEventPorts'
@@ -34,6 +36,12 @@ export function bindDiagramCanvasLifecycleEvents(ports: DiagramCanvasEventBinder
           syncNodeTextLayout(model)
           ports.scheduleResizeFollowUp(model.id)
         }
+        if (nodeId) syncDiagramEdgeTextsForNodeIds(lf, [nodeId])
+      }
+      if (evt === 'edge:adjust') {
+        const payload = arg as { data?: { id?: string } } | undefined
+        const edgeId = payload?.data?.id
+        if (edgeId) syncDiagramEdgeTextById(lf, edgeId)
       }
       if (
         (evt === 'node:drop' || evt === 'node:resize' || evt === 'history:change') &&
@@ -46,8 +54,11 @@ export function bindDiagramCanvasLifecycleEvents(ports: DiagramCanvasEventBinder
     })
   }
 
-  lf.on('text:update', () => {
+  lf.on('text:update', ({ model }) => {
     ports.scheduleGraphChange()
+    if (model && 'sourceNodeId' in model) {
+      syncDiagramEdgeTextPosition(model as BaseEdgeModel)
+    }
   })
 
   lf.on('graph:transform', () => {

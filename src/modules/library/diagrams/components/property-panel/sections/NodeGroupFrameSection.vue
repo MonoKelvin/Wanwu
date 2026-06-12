@@ -5,7 +5,11 @@ import WwNumberInput from '@shared/components/WwNumberInput/WwNumberInput.vue'
 import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import WwColorInput from '@shared/components/WwColorInput.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
-import { DIAGRAM_DASH_PRESETS } from '@modules/library/diagrams/lib/diagramEditorConstants'
+import {
+  DIAGRAM_LINE_TYPE_PRESETS,
+  normalizeStrokeDasharrayForSelect,
+  strokeDasharrayFromLineType
+} from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 
 const { ctx, actions } = useDiagramPropertySectionView()
@@ -60,14 +64,16 @@ const node = computed(() => ctx.value.selection.node!)
         "
       />
     </SettingsRow>
-    <SettingsRow label="虚线" class="dg-settings-row--inline dg-settings-row--control">
+    <SettingsRow label="线型" class="dg-settings-row--inline dg-settings-row--control">
       <WwSelect
-        :model-value="node.strokeDasharray ?? ''"
-        :options="DIAGRAM_DASH_PRESETS"
+        :model-value="normalizeStrokeDasharrayForSelect(node.strokeDasharray)"
+        :options="DIAGRAM_LINE_TYPE_PRESETS"
         option-label="label"
         option-value="value"
         size="block"
-        @update:model-value="actions.patchGroupStyle({ strokeDasharray: String($event ?? '') })"
+        @update:model-value="
+          actions.patchGroupStyle({ strokeDasharray: strokeDasharrayFromLineType($event) })
+        "
       />
     </SettingsRow>
   </section>

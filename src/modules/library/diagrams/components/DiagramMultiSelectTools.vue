@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import WwIconButton from '@shared/components/WwIconButton.vue'
 import { computed } from 'vue'
+import WwIcon from '@shared/components/WwIcon.vue'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
 import { useDiagramEditorSelection } from '@modules/library/diagrams/composables/useDiagramEditorSelection'
 import {
@@ -8,7 +8,6 @@ import {
   effectiveNodeCount
 } from '@modules/library/diagrams/lib/diagramSelectionSnapshot'
 import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
-import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
 
 const bus = useDiagramCommandBus()
 const selection = useDiagramEditorSelection().selection
@@ -34,10 +33,10 @@ const showGroupButton = computed(() => {
 })
 
 const groupEnabled = computed(() => showGroupButton.value)
-
 const ungroupEnabled = computed(() => canUngroup.value)
 
 function group() {
+  if (!groupEnabled.value) return
   void bus.dispatch({ type: 'canvas.group' })
 }
 
@@ -45,44 +44,33 @@ function ungroup() {
   if (!ungroupEnabled.value) return
   void bus.dispatch({ type: 'canvas.ungroup' })
 }
-
-function onGroupPointerDown() {
-  if (!groupEnabled.value) return
-  group()
-}
-
-function onUngroupPointerDown() {
-  if (!ungroupEnabled.value) return
-  ungroup()
-}
 </script>
 
 <template>
-  <div v-if="showSection" class="dg-multi-tools">
-    <span
-      v-if="showGroupButton"
-      v-tooltip.bottom="{ value: `组合 (${DG_SHORTCUT.group})`, showDelay: 400 }"
-      class="dg-toolbar-tooltip-wrap"
-    >
-      <WwIconButton
-        icon="layers"
-        compact
-        ariaLabel="组合"
+  <section v-if="showSection" class="dg-prop-section dg-prop-group">
+    <p class="dg-prop-section__title">组合</p>
+    <div class="dg-prop-action-row">
+      <button
+        v-if="showGroupButton"
+        type="button"
+        class="dg-prop-action-btn"
         :disabled="!groupEnabled"
-        @pointerdown.stop.prevent="onGroupPointerDown"
-      />
-    </span>
-    <span
-      v-tooltip.bottom="{ value: `取消组合 (${DG_SHORTCUT.ungroup})`, showDelay: 400 }"
-      class="dg-toolbar-tooltip-wrap"
-    >
-      <WwIconButton
-        icon="ungroup"
-        compact
-        ariaLabel="取消组合"
+        aria-label="组合"
+        @click="group"
+      >
+        <WwIcon name="layers" size="sm" class="dg-prop-action-btn__icon" aria-hidden="true" />
+        <span class="dg-prop-action-btn__label">组合</span>
+      </button>
+      <button
+        type="button"
+        class="dg-prop-action-btn"
         :disabled="!ungroupEnabled"
-        @pointerdown.stop.prevent="onUngroupPointerDown"
-      />
-    </span>
-  </div>
+        aria-label="取消组合"
+        @click="ungroup"
+      >
+        <WwIcon name="ungroup" size="sm" class="dg-prop-action-btn__icon" aria-hidden="true" />
+        <span class="dg-prop-action-btn__label">取消组合</span>
+      </button>
+    </div>
+  </section>
 </template>

@@ -5,8 +5,10 @@ import WwColorInput from '@shared/components/WwColorInput.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import {
   DIAGRAM_ARROW_TYPES,
-  DIAGRAM_DASH_PRESETS,
-  DIAGRAM_EDGE_TYPES
+  DIAGRAM_LINE_TYPE_PRESETS,
+  DIAGRAM_EDGE_TYPES,
+  normalizeStrokeDasharrayForSelect,
+  strokeDasharrayFromLineType
 } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 
@@ -15,8 +17,8 @@ const { canvas, actions } = useDiagramPropertySectionView()
 
 <template>
   <section class="dg-prop-section dg-prop-group">
-    <p class="dg-prop-section__title">默认连线</p>
-    <SettingsRow label="线型" class="dg-settings-row--inline dg-settings-row--control">
+    <p class="dg-prop-section__title">默认连线样式</p>
+    <SettingsRow label="路径" class="dg-settings-row--inline dg-settings-row--control">
       <WwSelect
         :model-value="canvas.defaultEdge.type"
         :options="DIAGRAM_EDGE_TYPES"
@@ -26,10 +28,10 @@ const { canvas, actions } = useDiagramPropertySectionView()
         @update:model-value="actions.patchDefaultEdge({ type: String($event ?? 'polyline') })"
       />
     </SettingsRow>
-    <SettingsRow label="默认线条色" class="dg-settings-row--inline dg-settings-row--control">
+    <SettingsRow label="颜色" class="dg-settings-row--inline dg-settings-row--control">
       <WwColorInput
         :model-value="canvas.defaultEdge.stroke"
-        aria-label="默认线条颜色"
+        aria-label="颜色"
         @update:model-value="actions.patchDefaultEdge({ stroke: $event })"
       />
     </SettingsRow>
@@ -47,17 +49,29 @@ const { canvas, actions } = useDiagramPropertySectionView()
         "
       />
     </SettingsRow>
-    <SettingsRow label="虚线" class="dg-settings-row--inline dg-settings-row--control">
+    <SettingsRow label="线型" class="dg-settings-row--inline dg-settings-row--control">
       <WwSelect
-        :model-value="canvas.defaultEdge.strokeDasharray"
-        :options="DIAGRAM_DASH_PRESETS"
+        :model-value="normalizeStrokeDasharrayForSelect(canvas.defaultEdge.strokeDasharray)"
+        :options="DIAGRAM_LINE_TYPE_PRESETS"
         option-label="label"
         option-value="value"
         size="block"
-        @update:model-value="actions.patchDefaultEdge({ strokeDasharray: String($event ?? '') })"
+        @update:model-value="
+          actions.patchDefaultEdge({ strokeDasharray: strokeDasharrayFromLineType($event) })
+        "
       />
     </SettingsRow>
-    <SettingsRow label="终点箭头" class="dg-settings-row--inline dg-settings-row--control">
+    <SettingsRow label="起点" class="dg-settings-row--inline dg-settings-row--control">
+      <WwSelect
+        :model-value="canvas.defaultEdge.startArrowType"
+        :options="DIAGRAM_ARROW_TYPES"
+        option-label="label"
+        option-value="value"
+        size="block"
+        @update:model-value="actions.patchDefaultEdge({ startArrowType: String($event ?? 'none') })"
+      />
+    </SettingsRow>
+    <SettingsRow label="终点" class="dg-settings-row--inline dg-settings-row--control">
       <WwSelect
         :model-value="canvas.defaultEdge.endArrowType"
         :options="DIAGRAM_ARROW_TYPES"

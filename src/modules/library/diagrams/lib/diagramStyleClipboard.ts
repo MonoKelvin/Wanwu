@@ -3,7 +3,8 @@ import type { DiagramCanvasTheme } from '@modules/library/diagrams/lib/diagramCa
 import {
   DEFAULT_GROUP_STYLE,
   isGroupFrameModel,
-  isGroupFrameType
+  isGroupFrameType,
+  readGroupStyle
 } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import {
   applyEdgeProperties,
@@ -56,6 +57,20 @@ export function extractEdgeStyleSnapshot(props: DiagramEdgeProperties): DiagramE
 }
 
 export function readNodeStyleSnapshot(lf: LogicFlow, nodeId: string): DiagramNodeStyleSnapshot | null {
+  const model = lf.getNodeModelById(nodeId)
+  if (model && isGroupFrameModel(model)) {
+    const gs = readGroupStyle(model.properties as Record<string, unknown>)
+    return {
+      fill: gs.fill,
+      stroke: gs.stroke,
+      strokeWidth: gs.strokeWidth,
+      strokeDasharray: gs.strokeDasharray,
+      shadow: 'none',
+      textStyle: defaultNodeTextStyle('light'),
+      isGroupFrame: true,
+      groupAlwaysVisible: Boolean(model.properties?.dgGroupAlwaysVisible)
+    }
+  }
   const props = readNodeProperties(lf, nodeId)
   return props ? extractNodeStyleSnapshot(props) : null
 }

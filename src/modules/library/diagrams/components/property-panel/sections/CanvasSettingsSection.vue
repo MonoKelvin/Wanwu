@@ -40,7 +40,7 @@ const { canvas, actions } = useDiagramPropertySectionView()
       />
     </SettingsRow>
     <p v-if="canvas.centerAxisVisible" class="dg-prop-hint">
-      在画布原点显示略粗于网格的垂直/水平中心线
+      在画布原点显示极淡的垂直/水平中心线（略粗于网格）
     </p>
     <SettingsRow label="导航窗口" class="dg-settings-row--inline">
       <WwToggleSwitch

@@ -43,11 +43,7 @@ export function sectionResolveKey(
   return `${tab}|${selectionScopeKey(selection)}`
 }
 
-/** 属性面板区块容器 :key（结构指纹 + 发布世代，避免 PrimeVue / 扩展编辑器滞留） */
-export function propertyPanelScopeKey(
-  tab: string,
-  selectionRevision: number,
-  selectionScope: string
-): string {
-  return `${tab}|${selectionRevision}|${selectionScope}`
+/** 属性面板区块容器 :key（仅结构指纹，避免改 fill 等属性值时整块重挂载） */
+export function propertyPanelScopeKey(tab: string, selectionScope: string): string {
+  return `${tab}|${selectionScope}`
 }

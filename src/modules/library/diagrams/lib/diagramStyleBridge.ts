@@ -3,13 +3,15 @@ import { readNodeShapeExtension } from '@modules/library/diagrams/domain/shape-e
 import { applyNodeLayoutProperties } from '@modules/library/diagrams/lib/diagramNodeLayoutPatch'
 import type { DiagramArrowType, DiagramShadowPreset } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { shadowStyleForPreset } from '@modules/library/diagrams/lib/diagramCanvasPresets'
+import { resolveDiagramCanvasTheme } from '@modules/library/diagrams/lib/diagramCanvasTheme'
 import { readNodeImageAsset } from '@modules/library/diagrams/lib/diagramAssetRefs'
 import {
   DIAGRAM_GROUP_FRAME_TYPE,
   isGroupFrameModel,
   readGroupAlwaysVisible,
   readGroupStyle,
-  resolveGroupFrameIdForElement
+  resolveGroupFrameIdForElement,
+  resolveGroupFrameStrokeForUi
 } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import { cssFontFamilyStack } from '@shared/lib/fontCatalog'
 import type {
@@ -177,7 +179,6 @@ function buildNodeAppearanceStyle(
   if (props.fill != null) patch.fill = props.fill
   if (props.stroke != null) patch.stroke = props.stroke
   if (props.strokeWidth != null) patch.strokeWidth = props.strokeWidth
-  if (props.strokeDasharray != null) patch.strokeDasharray = props.strokeDasharray || undefined
   return Object.keys(patch).length ? patch : null
 }
 
@@ -187,10 +188,47 @@ function buildEdgeAppearanceStyle(
   const patch: Record<string, unknown> = {}
   if (props.stroke != null) patch.stroke = props.stroke
   if (props.strokeWidth != null) patch.strokeWidth = props.strokeWidth
-  if (props.strokeDasharray != null) patch.strokeDasharray = props.strokeDasharray || undefined
   if (props.startArrowType != null) patch.startArrowType = props.startArrowType
   if (props.endArrowType != null) patch.endArrowType = props.endArrowType
   return Object.keys(patch).length ? patch : null
+}
+
+function syncNodeStrokeDasharray(
+  lf: LogicFlow,
+  model: BaseNodeModel,
+  nodeId: string,
+  dash: string
+): void {
+  const existing = (model.properties?.style ?? {}) as Record<string, unknown>
+  const styleUpdate = { ...existing }
+  if (dash) {
+    styleUpdate.strokeDasharray = dash
+    model.setStyles({ strokeDasharray: dash })
+  } else {
+    delete styleUpdate.strokeDasharray
+    delete (model.style as Record<string, unknown>).strokeDasharray
+    model.setStyles({ strokeDasharray: '' })
+  }
+  lf.setProperties(nodeId, { style: styleUpdate })
+}
+
+function syncEdgeStrokeDasharray(
+  lf: LogicFlow,
+  model: NonNullable<ReturnType<LogicFlow['getEdgeModelById']>>,
+  edgeId: string,
+  dash: string
+): void {
+  const existing = (model.properties?.style ?? {}) as Record<string, unknown>
+  const styleUpdate = { ...existing }
+  if (dash) {
+    styleUpdate.strokeDasharray = dash
+    model.setStyles({ strokeDasharray: dash })
+  } else {
+    delete styleUpdate.strokeDasharray
+    delete (model.style as Record<string, unknown>).strokeDasharray
+    model.setStyles({ strokeDasharray: '' })
+  }
+  lf.setProperties(edgeId, { style: styleUpdate })
 }
 
 /** 将根级 fill/stroke 等迁移到 properties.style，兼容 draw.io 导入与旧数据 */
@@ -289,7 +327,7 @@ export function readNodeProperties(lf: LogicFlow, nodeId: string): DiagramNodePr
       width: Math.round(model.width),
       height: Math.round(model.height),
       fill: gs.fill,
-      stroke: gs.stroke,
+      stroke: resolveGroupFrameStrokeForUi(gs.stroke, resolveDiagramCanvasTheme()),
       strokeWidth: gs.strokeWidth,
       strokeDasharray: gs.strokeDasharray,
       shadow: 'none',
@@ -389,6 +427,10 @@ export function applyNodeProperties(lf: LogicFlow, props: Partial<DiagramNodePro
     model.setStyles(appearanceStyle)
   }
 
+  if (props.strokeDasharray != null) {
+    syncNodeStrokeDasharray(lf, model, props.id, props.strokeDasharray)
+  }
+
   if (props.shadow != null) {
     const shadow = shadowStyleForPreset(props.shadow)
     const existing = (model.properties?.style ?? {}) as Record<string, unknown>
@@ -435,7 +477,6 @@ export function applyEdgeProperties(lf: LogicFlow, props: Partial<DiagramEdgePro
   const stylePatch: Record<string, unknown> = {}
   if (props.stroke != null) stylePatch.stroke = props.stroke
   if (props.strokeWidth != null) stylePatch.strokeWidth = props.strokeWidth
-  if (props.strokeDasharray != null) stylePatch.strokeDasharray = props.strokeDasharray || undefined
   if (props.startArrowType != null) stylePatch.startArrowType = props.startArrowType
   if (props.endArrowType != null) stylePatch.endArrowType = props.endArrowType
 
@@ -443,6 +484,10 @@ export function applyEdgeProperties(lf: LogicFlow, props: Partial<DiagramEdgePro
   if (appearanceStyle) {
     const existing = (model.properties?.style ?? {}) as Record<string, unknown>
     lf.setProperties(props.id, { style: { ...existing, ...appearanceStyle } })
+  }
+
+  if (props.strokeDasharray != null) {
+    syncEdgeStrokeDasharray(lf, model, props.id, props.strokeDasharray)
   }
 
   if (Object.keys(stylePatch).length) {

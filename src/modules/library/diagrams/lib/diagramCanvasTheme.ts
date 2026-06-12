@@ -47,10 +47,12 @@ export function diagramGridOptions(resolved: DiagramCanvasTheme) {
 export function diagramAxisStyle(resolved: DiagramCanvasTheme) {
   const isDark = resolved === 'dark'
   const grid = isDark ? '#3a3a42' : '#e0e0e4'
+  // 中心参考线：与网格同色阶、仅略深/略浅，线宽微增即可辨认
+  const axis = isDark ? '#3e3e46' : '#dcdce0'
   return {
-    vertical: isDark ? '#7a7a86' : '#c4c4cc',
-    horizontal: isDark ? '#82828e' : '#c8c8d0',
-    width: 1.5,
+    vertical: axis,
+    horizontal: axis,
+    width: 1.25,
     grid
   }
 }
@@ -58,6 +60,16 @@ export function diagramAxisStyle(resolved: DiagramCanvasTheme) {
 export function diagramCanvasBackground(resolved: DiagramCanvasTheme) {
   // 与 --ww-content / --dg-canvas-bg 一致，避免画布边缘色差描边
   return resolved === 'dark' ? '#18181b' : '#ffffff'
+}
+
+/** 从 DOM 读取当前深浅色（属性面板/导出等无 LF 主题上下文时使用） */
+export function resolveDiagramCanvasTheme(el?: ParentNode | null): DiagramCanvasTheme {
+  if (typeof document === 'undefined') return 'light'
+  const host = (el as HTMLElement | null) ?? document.querySelector('.dg-canvas-frame')
+  const themed =
+    host?.closest('[data-theme]')?.getAttribute('data-theme') ??
+    document.documentElement.getAttribute('data-theme')
+  return themed === 'dark' ? 'dark' : 'light'
 }
 
 function diagramTextTheme(resolved: DiagramCanvasTheme) {
@@ -85,8 +97,11 @@ function diagramEdgeTextTheme(resolved: DiagramCanvasTheme) {
     overflowMode: 'default' as const,
     lineHeight: 1.2,
     background: {
-      fill: isDark ? 'rgb(42 42 46 / 0.92)' : 'rgb(255 255 255 / 0.94)',
-      wrapPadding: '2, 4'
+      fill: isDark ? '#2a2a2e' : '#ffffff',
+      wrapPadding: '4, 8',
+      radius: 4,
+      stroke: 'none',
+      strokeWidth: 0
     }
   }
 }

@@ -24,6 +24,11 @@ import {
   isDiagramResizeSessionActive,
   onDiagramResizeSessionEnd
 } from '@modules/library/diagrams/lib/diagramResizeSession'
+import {
+  cancelScheduledDiagramEdgeTextSync,
+  scheduleDiagramEdgeTextSyncForNodes,
+  syncDiagramEdgeTextsForNodeIds
+} from '@modules/library/diagrams/lib/diagramEdgeTextSync'
 import type { DiagramCanvasEventBinderPorts } from '@modules/library/diagrams/services/canvas-events/diagramCanvasEventPorts'
 
 function resolveSnapTargets(lf: LogicFlow, anchorId: string): string[] {
@@ -147,7 +152,12 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
   lf.on('node:drag', ({ data, e }) => {
     if (isDiagramGroupMultiResizing()) return
     const model = lf.getNodeModelById(data.id)
-    if (ports.groupFrames.handleFrameDrag(data.id)) return
+    if (ports.groupFrames.handleFrameDrag(data.id)) {
+      const frameModel = lf.getNodeModelById(data.id)
+      const members = (frameModel?.properties?.dgGroupMembers as string[] | undefined) ?? []
+      syncDiagramEdgeTextsForNodeIds(lf, members.length ? members : [data.id])
+      return
+    }
     if (model && !isGroupFrameType(model.type)) {
       const inGroup =
         typeof model.properties?.dgGroupId === 'string' && Boolean(model.properties.dgGroupId)
@@ -165,6 +175,9 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
     const pointer = rememberDragPointer(lf, e)
     const bypassSnap = isDiagramSnapBypassEvent(e)
     applyDragSnapFeedback(lf, data.id, snapTargets, snapGrid, pointer, activeGrabRatios, bypassSnap)
+    const edgeTextSyncTargets = snapTargets.length ? snapTargets : [data.id]
+    syncDiagramEdgeTextsForNodeIds(lf, edgeTextSyncTargets)
+    scheduleDiagramEdgeTextSyncForNodes(lf, edgeTextSyncTargets)
 
     if (ports.countSelectedNodes() >= 2) {
       ports.refreshMultiSelectResize()
@@ -194,6 +207,8 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
       const pointer = rememberDragPointer(lf, e)
       const bypassSnap = isDiagramSnapBypassEvent(e)
       applyDragSnapFeedback(lf, ids[0]!, ids, snapGrid, pointer, activeGrabRatios, bypassSnap)
+      syncDiagramEdgeTextsForNodeIds(lf, ids)
+      scheduleDiagramEdgeTextSyncForNodes(lf, ids)
     }
   })
 
@@ -205,6 +220,7 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
     const ids = collectOrderedSelectionIds(lf).nodeIds.filter((id) => !ports.isGroupFrameId(id))
     const bypassSnap = isDiagramSnapBypassEvent(e)
     if (ids.length) finishDragSnapOnce(ports, ids[0]!, rememberDragPointer(lf, e), bypassSnap)
+    syncDiagramEdgeTextsForNodeIds(lf, ids)
     activeGrabRatios = undefined
   })
 
@@ -218,6 +234,7 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
       (id) => !ports.isGroupFrameId(id)
     )
     ports.groupFrames.syncForNodeIds(syncIds)
+    syncDiagramEdgeTextsForNodeIds(lf, syncIds)
     ports.refreshMultiSelectResize()
     ports.scheduleOverlayLayout()
   })
@@ -234,6 +251,7 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
   })
 
   return () => {
+    cancelScheduledDiagramEdgeTextSync()
     cancelResizeSnapFeedback()
     lf.removeNodeSnapLine()
     teardownResizeEnd()

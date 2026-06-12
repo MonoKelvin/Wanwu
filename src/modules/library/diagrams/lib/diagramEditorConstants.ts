@@ -24,12 +24,36 @@ export const DIAGRAM_ARROW_TYPES = [
 
 export type DiagramArrowType = (typeof DIAGRAM_ARROW_TYPES)[number]['value']
 
-export const DIAGRAM_DASH_PRESETS = [
-  { value: '', label: '实线' },
+/** Select 选项值：实线（写入模型仍为 ''） */
+export const DIAGRAM_LINE_TYPE_SOLID = 'solid' as const
+
+export const DIAGRAM_LINE_TYPE_PRESETS = [
+  { value: DIAGRAM_LINE_TYPE_SOLID, label: '实线' },
   { value: '6,4', label: '虚线' },
   { value: '2,4', label: '点线' },
   { value: '12,4,4,4', label: '点划线' }
 ] as const
+
+/** @deprecated 使用 DIAGRAM_LINE_TYPE_PRESETS */
+export const DIAGRAM_DASH_PRESETS = DIAGRAM_LINE_TYPE_PRESETS
+
+/** 模型 strokeDasharray → 属性面板 Select 值 */
+export function normalizeStrokeDasharrayForSelect(dash: string | undefined | null): string {
+  const raw = String(dash ?? '').trim()
+  if (!raw) return DIAGRAM_LINE_TYPE_SOLID
+  const normalized = raw.replace(/\s+/g, ',')
+  const match = DIAGRAM_LINE_TYPE_PRESETS.find(
+    (preset) => preset.value !== DIAGRAM_LINE_TYPE_SOLID && preset.value === normalized
+  )
+  return match?.value ?? normalized
+}
+
+/** 属性面板 Select 值 → 模型 strokeDasharray */
+export function strokeDasharrayFromLineType(lineType: unknown): string {
+  const value = String(lineType ?? '').trim()
+  if (!value || value === DIAGRAM_LINE_TYPE_SOLID) return ''
+  return value.replace(/\s+/g, ',')
+}
 
 export const DIAGRAM_SHADOW_PRESETS = [
   { value: 'none', label: '无阴影' },

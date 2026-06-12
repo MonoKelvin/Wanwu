@@ -66,15 +66,23 @@ export class DiagramGroupFrameCoordinator {
     const onNodeEnter = ({ data }: { data: { id: string } }) => {
       this.markHoverFromElement(data.id, 'node')
     }
+    const onNodeLeave = () => {
+      this.scheduleHoverUpdate(this.lastPointerClient.x, this.lastPointerClient.y)
+    }
     const onEdgeEnter = ({ data }: { data: { id: string } }) => {
       this.markHoverFromElement(data.id, 'edge')
+    }
+    const onEdgeLeave = () => {
+      this.scheduleHoverUpdate(this.lastPointerClient.x, this.lastPointerClient.y)
     }
 
     el.addEventListener('pointermove', onMove, { passive: true })
     el.addEventListener('pointerenter', onEnter)
     el.addEventListener('pointerleave', onLeave)
     lf?.on('node:mouseenter', onNodeEnter)
+    lf?.on('node:mouseleave', onNodeLeave)
     lf?.on('edge:mouseenter', onEdgeEnter)
+    lf?.on('edge:mouseleave', onEdgeLeave)
 
     this.teardownHover = () => {
       if (this.hoverRaf) cancelAnimationFrame(this.hoverRaf)
@@ -82,7 +90,9 @@ export class DiagramGroupFrameCoordinator {
       el.removeEventListener('pointerenter', onEnter)
       el.removeEventListener('pointerleave', onLeave)
       lf?.off('node:mouseenter', onNodeEnter)
+      lf?.off('node:mouseleave', onNodeLeave)
       lf?.off('edge:mouseenter', onEdgeEnter)
+      lf?.off('edge:mouseleave', onEdgeLeave)
       clearGroupFramePointerInside()
     }
     return this.teardownHover
@@ -105,6 +115,18 @@ export class DiagramGroupFrameCoordinator {
     if (!lf) return
     for (const model of lf.graphModel.nodes) {
       if (!isGroupFrameType(model.type)) continue
+      const nodeStyle = model.getNodeStyle() as {
+        fill?: string
+        stroke?: string
+        strokeWidth?: number
+        strokeDasharray?: string
+      }
+      model.setStyles({
+        fill: nodeStyle.fill,
+        stroke: nodeStyle.stroke,
+        strokeWidth: nodeStyle.strokeWidth,
+        strokeDasharray: nodeStyle.strokeDasharray
+      })
       if ('setAttributes' in model && typeof model.setAttributes === 'function') {
         ;(model as { setAttributes: () => void }).setAttributes()
       }

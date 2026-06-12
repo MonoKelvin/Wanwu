@@ -5,8 +5,10 @@ import WwNumberInput from '@shared/components/WwNumberInput/WwNumberInput.vue'
 import WwColorInput from '@shared/components/WwColorInput.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import {
-  DIAGRAM_DASH_PRESETS,
-  DIAGRAM_SHADOW_PRESETS
+  DIAGRAM_LINE_TYPE_PRESETS,
+  DIAGRAM_SHADOW_PRESETS,
+  normalizeStrokeDasharrayForSelect,
+  strokeDasharrayFromLineType
 } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 
@@ -49,15 +51,21 @@ const node = computed(() => ctx.value.selectedNode!)
         "
       />
     </SettingsRow>
-    <SettingsRow label="虚线" class="dg-settings-row--inline dg-settings-row--control">
+    <SettingsRow label="线型" class="dg-settings-row--inline dg-settings-row--control">
       <WwSelect
-        :model-value="actions.isMixed('strokeDasharray') ? null : (node.strokeDasharray ?? '')"
+        :model-value="
+          actions.isMixed('strokeDasharray')
+            ? null
+            : normalizeStrokeDasharrayForSelect(node.strokeDasharray)
+        "
         :placeholder="actions.isMixed('strokeDasharray') ? '多种' : undefined"
-        :options="DIAGRAM_DASH_PRESETS"
+        :options="DIAGRAM_LINE_TYPE_PRESETS"
         option-label="label"
         option-value="value"
         size="block"
-        @update:model-value="actions.patchNode({ strokeDasharray: String($event ?? '') })"
+        @update:model-value="
+          actions.patchNode({ strokeDasharray: strokeDasharrayFromLineType($event) })
+        "
       />
     </SettingsRow>
     <SettingsRow label="阴影" class="dg-settings-row--inline dg-settings-row--control">

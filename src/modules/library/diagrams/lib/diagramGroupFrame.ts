@@ -3,9 +3,25 @@ import {
   DiagramRectResizeModel,
   DiagramRectResizeView
 } from '@modules/library/diagrams/lib/diagramRectResizeBase'
+import {
+  DEFAULT_GROUP_STYLE,
+  readGroupStyle,
+  resolveGroupFrameStrokeForRender
+} from '@modules/library/diagrams/lib/diagramGroupFrameTheme'
 import { applyDefaultRectSize } from '@modules/library/diagrams/lib/diagramShapeResize'
 
 export const DIAGRAM_GROUP_FRAME_TYPE = 'dg-group-frame'
+
+export type { DiagramGroupStyle } from '@modules/library/diagrams/lib/diagramGroupFrameTheme'
+export {
+  DEFAULT_GROUP_STYLE,
+  GROUP_FRAME_STROKE_THEME,
+  isThemeGroupFrameStroke,
+  defaultGroupFrameStroke,
+  readGroupStyle,
+  resolveGroupFrameStrokeForRender,
+  resolveGroupFrameStrokeForUi
+} from '@modules/library/diagrams/lib/diagramGroupFrameTheme'
 
 export function isGroupFrameType(type: unknown): boolean {
   return type === DIAGRAM_GROUP_FRAME_TYPE
@@ -16,37 +32,13 @@ export function isGroupFrameModel(model: { type?: unknown } | null | undefined):
   return isGroupFrameType(model?.type)
 }
 
-export type DiagramGroupStyle = {
-  stroke: string
-  strokeWidth: number
-  strokeDasharray: string
-  fill: string
-}
-
-export const DEFAULT_GROUP_STYLE: DiagramGroupStyle = {
-  stroke: '#3b82f6',
-  strokeWidth: 1.5,
-  strokeDasharray: '6 4',
-  fill: 'transparent'
+export function readGroupAlwaysVisible(properties: Record<string, unknown>): boolean {
+  return Boolean(properties.dgGroupAlwaysVisible)
 }
 
 /** 新建组合框时的内边距与最小尺寸 */
 export const DIAGRAM_GROUP_FRAME_CREATE_PAD = 12
 export const DIAGRAM_GROUP_FRAME_MIN_SIZE = { width: 80, height: 60 } as const
-
-export function readGroupStyle(properties: Record<string, unknown>): DiagramGroupStyle {
-  const raw = (properties.dgGroupStyle ?? {}) as Partial<DiagramGroupStyle>
-  return {
-    stroke: raw.stroke ?? DEFAULT_GROUP_STYLE.stroke,
-    strokeWidth: raw.strokeWidth ?? DEFAULT_GROUP_STYLE.strokeWidth,
-    strokeDasharray: raw.strokeDasharray ?? DEFAULT_GROUP_STYLE.strokeDasharray,
-    fill: raw.fill ?? DEFAULT_GROUP_STYLE.fill
-  }
-}
-
-export function readGroupAlwaysVisible(properties: Record<string, unknown>): boolean {
-  return Boolean(properties.dgGroupAlwaysVisible)
-}
 
 /** 指针是否在组合框区域内（由适配器 pointermove 维护，不持久化） */
 const pointerInsideGroupIds = new Set<string>()
@@ -166,7 +158,7 @@ export function registerDiagramGroupFrame(lf: LogicFlow): void {
       return {
         ...style,
         fill: visible ? gs.fill : 'transparent',
-        stroke: visible ? gs.stroke : 'transparent',
+        stroke: visible ? resolveGroupFrameStrokeForRender(gs.stroke) : 'transparent',
         strokeWidth: visible ? gs.strokeWidth : 0,
         strokeDasharray: visible ? gs.strokeDasharray : undefined
       }

@@ -36,7 +36,6 @@ export interface DiagramPropertySectionsApi {
 export function useDiagramPropertySections(fileId: Ref<string | null>): DiagramPropertySectionsApi {
   const selectionApi = useDiagramEditorSelection()
   const selection = selectionApi.selection
-  const selectionRevision = selectionApi.revision
   const activeTab = useDiagramPropertyPanelTab(selection)
   const registry = getDiagramPropertySectionRegistry()
 
@@ -63,7 +62,7 @@ export function useDiagramPropertySections(fileId: Ref<string | null>): DiagramP
   )
 
   const sectionsScopeKey = computed(() =>
-    propertyPanelScopeKey(activeTab.value, selectionRevision.value, selectionScope.value)
+    propertyPanelScopeKey(activeTab.value, selectionScope.value)
   )
 
   const selectionBanner = computed(() => {

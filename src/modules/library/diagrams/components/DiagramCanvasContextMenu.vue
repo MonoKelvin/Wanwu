@@ -145,22 +145,6 @@ const menuItems = computed<WwMenuItem[]>(() => {
     )
   }
 
-  items.push(
-    { separator: true },
-    {
-      label: '撤销',
-      wwIcon: 'undo',
-      shortcut: DG_SHORTCUT.undo,
-      command: () => void bus.dispatch({ type: 'canvas.undo' })
-    },
-    {
-      label: '重做',
-      wwIcon: 'redo',
-      shortcut: DG_SHORTCUT.redo,
-      command: () => void bus.dispatch({ type: 'canvas.redo' })
-    }
-  )
-
   return items
 })
 

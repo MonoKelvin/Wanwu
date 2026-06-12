@@ -1,4 +1,5 @@
-import { h, AdjustPoint, AdjustType } from '@logicflow/core'
+import { h, AdjustType } from '@logicflow/core'
+import { DiagramAdjustPoint } from '@modules/library/diagrams/lib/diagramAdjustPoint'
 
 /** LogicFlow h() 的 VNode 泛型与 Preact 不完全一致，内部渲染统一放宽 */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,7 +35,7 @@ type AdjustGraphModel = {
   }
 }
 
-/** 交互热区（LogicFlow AdjustPoint）+ 始终跟随 model 端点坐标的可见圆点 */
+/** 交互热区（DiagramAdjustPoint）+ 始终跟随 model 端点坐标的可见圆点 */
 export function renderEdgeAdjustLayer(
   edgeModel: AdjustEdgeModel,
   graphModel: AdjustGraphModel,
@@ -51,7 +52,7 @@ export function renderEdgeAdjustLayer(
   const interactive: LfVNode[] = []
   if (adjustEdgeStart) {
     interactive.push(
-      h(AdjustPoint as never, {
+      h(DiagramAdjustPoint as never, {
         type: AdjustType.SOURCE,
         x: start.x,
         y: start.y,
@@ -63,7 +64,7 @@ export function renderEdgeAdjustLayer(
   }
   if (adjustEdgeEnd) {
     interactive.push(
-      h(AdjustPoint as never, {
+      h(DiagramAdjustPoint as never, {
         type: AdjustType.TARGET,
         x: end.x,
         y: end.y,

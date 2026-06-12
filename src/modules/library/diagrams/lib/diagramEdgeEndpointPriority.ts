@@ -127,6 +127,10 @@ export function finishAdjustPointDrag(lf: LogicFlow, container: HTMLElement | nu
   adjustPointDragging = false
   if (!activeEdgeId) return
   const edge = lf.getEdgeModelById(activeEdgeId)
+  if (!edge) {
+    deactivateEdgeEndpointPriority(lf, container)
+    return
+  }
   if (edge?.isHovered || edge?.isSelected) {
     lf.graphModel.toFront(activeEdgeId)
     for (const id of suppressedNodeIds) {

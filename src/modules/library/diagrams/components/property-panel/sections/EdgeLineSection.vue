@@ -5,8 +5,10 @@ import WwNumberInput from '@shared/components/WwNumberInput/WwNumberInput.vue'
 import WwColorInput from '@shared/components/WwColorInput.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import {
-  DIAGRAM_DASH_PRESETS,
-  DIAGRAM_EDGE_TYPES
+  DIAGRAM_LINE_TYPE_PRESETS,
+  DIAGRAM_EDGE_TYPES,
+  normalizeStrokeDasharrayForSelect,
+  strokeDasharrayFromLineType
 } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { useDiagramPropertySectionView } from '@modules/library/diagrams/composables/useDiagramPropertySectionView'
 
@@ -17,7 +19,7 @@ const edge = computed(() => ctx.value.selectedEdge!)
 <template>
   <section class="dg-prop-section dg-prop-group">
     <p class="dg-prop-section__title">线条</p>
-    <SettingsRow label="线型" class="dg-settings-row--inline dg-settings-row--control">
+    <SettingsRow label="路径" class="dg-settings-row--inline dg-settings-row--control">
       <WwSelect
         :model-value="edge.type"
         :options="DIAGRAM_EDGE_TYPES"
@@ -27,14 +29,16 @@ const edge = computed(() => ctx.value.selectedEdge!)
         @update:model-value="actions.patchEdge({ type: String($event ?? 'polyline') })"
       />
     </SettingsRow>
-    <SettingsRow label="虚线" class="dg-settings-row--inline dg-settings-row--control">
+    <SettingsRow label="线型" class="dg-settings-row--inline dg-settings-row--control">
       <WwSelect
-        :model-value="edge.strokeDasharray"
-        :options="DIAGRAM_DASH_PRESETS"
+        :model-value="normalizeStrokeDasharrayForSelect(edge.strokeDasharray)"
+        :options="DIAGRAM_LINE_TYPE_PRESETS"
         option-label="label"
         option-value="value"
         size="block"
-        @update:model-value="actions.patchEdge({ strokeDasharray: String($event ?? '') })"
+        @update:model-value="
+          actions.patchEdge({ strokeDasharray: strokeDasharrayFromLineType($event) })
+        "
       />
     </SettingsRow>
     <SettingsRow label="颜色" class="dg-settings-row--inline dg-settings-row--control">

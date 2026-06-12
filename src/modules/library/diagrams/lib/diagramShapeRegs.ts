@@ -10,6 +10,7 @@ import {
   DiagramLineEdge,
   DiagramPolylineEdge
 } from '@modules/library/diagrams/lib/diagramEdgeViews'
+import { resolveDiagramEdgeTextPosition } from '@modules/library/diagrams/lib/diagramEdgeTextSync'
 import { DiamondResizeModel } from '@logicflow/extension/lib/NodeResize/node/DiamondResize'
 import { EllipseResizeModel } from '@logicflow/extension/lib/NodeResize/node/EllipseResize'
 import {
@@ -931,13 +932,48 @@ function hideEdgeOutlineModel<T extends EdgeModelConstructor>(Base: T): T {
       const style = super.getTextStyle()
       const propsStyle = (this.properties?.textStyle ?? {}) as Partial<LogicFlow.EdgeTextTheme>
       const ink = propsStyle.fill ?? propsStyle.color ?? style.fill ?? style.color
+      const themeBg = style.background ?? {}
+      const propsBg = propsStyle.background ?? {}
       return {
         ...style,
         ...propsStyle,
         textWidth: propsStyle.textWidth ?? style.textWidth,
         fontSize: propsStyle.fontSize ?? style.fontSize,
+        background: {
+          ...themeBg,
+          ...propsBg,
+          stroke: 'none',
+          strokeWidth: 0
+        },
         ...(ink != null ? { fill: ink, color: ink } : {})
       }
+    }
+
+    initEdgeData(data: any) {
+      super.initEdgeData(data)
+      this.applyDiagramEdgeCustomTextPosition()
+      if (this.customTextPosition) this.resetTextPosition()
+    }
+
+    setText(textConfig: any) {
+      super.setText(textConfig)
+      this.applyDiagramEdgeCustomTextPosition()
+      if (this.customTextPosition) this.resetTextPosition()
+    }
+
+    updateText(value: string) {
+      super.updateText(value)
+      this.applyDiagramEdgeCustomTextPosition()
+      if (this.customTextPosition) this.resetTextPosition()
+    }
+
+    /** 有标签时走 LF customTextPosition 分支，拖拽节点时用 resetTextPosition 而非 moveText 偏移 */
+    applyDiagramEdgeCustomTextPosition() {
+      this.customTextPosition = Boolean(String(this.text?.value ?? '').trim())
+    }
+
+    getTextPosition() {
+      return resolveDiagramEdgeTextPosition(this)
     }
   } as T
 }

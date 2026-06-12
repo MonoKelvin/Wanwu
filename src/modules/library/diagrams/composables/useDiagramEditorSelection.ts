@@ -32,7 +32,7 @@ function cloneSelection(next: DiagramEditorSelection): DiagramEditorSelection {
 
 export interface DiagramEditorSelectionApi {
   readonly selection: Readonly<Ref<DiagramEditorSelection>>
-  /** 每次 publish 递增，供属性面板 :key 强制与选区对齐 */
+  /** 每次 publish 递增，供调试或后续选区世代追踪 */
   readonly revision: Readonly<Ref<number>>
   publish(selection: DiagramEditorSelection): void
   reset(resolved?: 'light' | 'dark'): void
