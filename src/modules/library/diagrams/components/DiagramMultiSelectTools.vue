@@ -42,30 +42,47 @@ function group() {
 }
 
 function ungroup() {
+  if (!ungroupEnabled.value) return
   void bus.dispatch({ type: 'canvas.ungroup' })
+}
+
+function onGroupPointerDown() {
+  if (!groupEnabled.value) return
+  group()
+}
+
+function onUngroupPointerDown() {
+  if (!ungroupEnabled.value) return
+  ungroup()
 }
 </script>
 
 <template>
   <div v-if="showSection" class="dg-multi-tools">
-    <WwIconButton
+    <span
       v-if="showGroupButton"
-      icon="layers"
-      compact
-      ariaLabel="组合"
-      :disabled="!groupEnabled"
-      v-tooltip.bottom="`组合 (${DG_SHORTCUT.group})`"
-      @mousedown.prevent
-      @click="group"
-    />
-    <WwIconButton
-      icon="ungroup"
-      compact
-      ariaLabel="取消组合"
-      :disabled="!ungroupEnabled"
-      v-tooltip.bottom="`取消组合 (${DG_SHORTCUT.ungroup})`"
-      @mousedown.prevent
-      @click="ungroup"
-    />
+      v-tooltip.bottom="{ value: `组合 (${DG_SHORTCUT.group})`, showDelay: 400 }"
+      class="dg-toolbar-tooltip-wrap"
+    >
+      <WwIconButton
+        icon="layers"
+        compact
+        ariaLabel="组合"
+        :disabled="!groupEnabled"
+        @pointerdown.stop.prevent="onGroupPointerDown"
+      />
+    </span>
+    <span
+      v-tooltip.bottom="{ value: `取消组合 (${DG_SHORTCUT.ungroup})`, showDelay: 400 }"
+      class="dg-toolbar-tooltip-wrap"
+    >
+      <WwIconButton
+        icon="ungroup"
+        compact
+        ariaLabel="取消组合"
+        :disabled="!ungroupEnabled"
+        @pointerdown.stop.prevent="onUngroupPointerDown"
+      />
+    </span>
   </div>
 </template>

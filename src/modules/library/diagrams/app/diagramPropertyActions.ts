@@ -187,15 +187,8 @@ export function createDiagramPropertyActions(deps: DiagramPropertyActionsDeps): 
   }
 
   function patchNodeSizeKeepTopLeft(width: number, height: number) {
-    const node = getSelectedNode()
-    if (!node) return
-    const { left, top } = nodeTopLeft(node)
-    patchNodeNow({
-      width,
-      height,
-      x: left + width / 2,
-      y: top + height / 2
-    })
+    if (!getSelectedNode()) return
+    patchNodeNow({ width, height })
   }
 
   function parseNumber(value: unknown, fallback: number, min = -Infinity, max = Infinity): number {

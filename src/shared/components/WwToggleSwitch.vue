@@ -9,9 +9,12 @@ const props = withDefaults(
   defineProps<{
     disabled?: boolean
     ariaLabel?: string
+    /** 拖拽改值；布局会随开关变化的属性面板建议关闭 */
+    dragToChange?: boolean
   }>(),
   {
-    disabled: false
+    disabled: false,
+    dragToChange: true
   }
 )
 
@@ -24,7 +27,7 @@ const rootRef = ref<HTMLButtonElement | null>(null)
 const dragging = ref(false)
 /** 超过阈值后为 true，用于拖拽态样式 */
 const dragActive = ref(false)
-/** 拖拽时 0–1，松手后还原由 CSS 控制 */
+/** 拖拽时 0–1 预览位置，松手后还原由 CSS 控制 */
 const dragRatio = ref<number | null>(null)
 
 const DRAG_THRESHOLD_PX = 4
@@ -33,7 +36,11 @@ type PointerSession = { x: number; moved: boolean }
 
 let session: PointerSession | null = null
 
-const isOn = computed(() => Boolean(model.value))
+/** 拖拽中按预览比例显示，避免未提交前轨道样式滞后 */
+const displayOn = computed(() => {
+  if (dragRatio.value !== null) return dragRatio.value >= 0.5
+  return Boolean(model.value)
+})
 
 const thumbStyle = computed(() => {
   if (dragRatio.value === null) return undefined
@@ -41,18 +48,39 @@ const thumbStyle = computed(() => {
   return { left: `calc(2px + (100% - 1.125rem - 4px) * ${r})` }
 })
 
-function setFromClientX(clientX: number) {
+function ratioFromClientX(clientX: number): number | null {
   const el = rootRef.value
-  if (!el) return
+  if (!el) return null
   const rect = el.getBoundingClientRect()
-  const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width))
-  dragRatio.value = ratio
+  if (rect.width <= 0) return null
+  return Math.min(1, Math.max(0, (clientX - rect.left) / rect.width))
+}
+
+/** 拖拽过程仅更新拇指预览，不写 model（避免父级重排导致开关位移后反复切换） */
+function previewFromClientX(clientX: number) {
+  const ratio = ratioFromClientX(clientX)
+  if (ratio !== null) dragRatio.value = ratio
+}
+
+function commitFromClientX(clientX: number) {
+  const ratio = ratioFromClientX(clientX)
+  if (ratio === null) return
   const next = ratio >= 0.5
   if (model.value !== next) model.value = next
 }
 
+function resetPointerSession(event?: PointerEvent) {
+  session = null
+  dragging.value = false
+  dragActive.value = false
+  dragRatio.value = null
+  if (event && rootRef.value?.hasPointerCapture(event.pointerId)) {
+    rootRef.value.releasePointerCapture(event.pointerId)
+  }
+}
+
 function onPointerDown(event: PointerEvent) {
-  if (props.disabled) return
+  if (props.disabled || !props.dragToChange) return
   session = { x: event.clientX, moved: false }
   dragging.value = true
   dragActive.value = false
@@ -60,26 +88,43 @@ function onPointerDown(event: PointerEvent) {
 }
 
 function onPointerMove(event: PointerEvent) {
-  if (!session || props.disabled) return
+  if (!session || props.disabled || !props.dragToChange) return
   if (!session.moved && Math.abs(event.clientX - session.x) >= DRAG_THRESHOLD_PX) {
     session.moved = true
     dragActive.value = true
   }
-  if (session.moved) setFromClientX(event.clientX)
+  if (session.moved) previewFromClientX(event.clientX)
 }
 
 function endPointer(event: PointerEvent) {
-  if (!session) return
-  if (!session.moved) {
-    model.value = !model.value
-  } else {
-    setFromClientX(event.clientX)
+  if (!session || props.disabled || !props.dragToChange) return
+  const { moved } = session
+  try {
+    if (!moved) {
+      model.value = !model.value
+    } else {
+      commitFromClientX(event.clientX)
+    }
+  } finally {
+    resetPointerSession(event)
   }
-  session = null
-  dragging.value = false
-  dragActive.value = false
-  dragRatio.value = null
-  rootRef.value?.releasePointerCapture(event.pointerId)
+}
+
+function onLostPointerCapture(event: PointerEvent) {
+  if (!session || !props.dragToChange) return
+  if (session.moved) {
+    const ratio = dragRatio.value
+    if (ratio !== null) {
+      const next = ratio >= 0.5
+      if (model.value !== next) model.value = next
+    }
+  }
+  resetPointerSession(event)
+}
+
+function onClick() {
+  if (props.disabled || props.dragToChange) return
+  model.value = !model.value
 }
 
 function onKeydown(event: KeyboardEvent) {
@@ -101,18 +146,20 @@ function onKeydown(event: KeyboardEvent) {
     :class="[
       attrs.class,
       {
-        'is-on': isOn,
+        'is-on': displayOn,
         'is-disabled': disabled,
         'is-dragging': dragActive
       }
     ]"
-    :aria-checked="isOn"
+    :aria-checked="displayOn"
     :aria-label="ariaLabel"
     :disabled="disabled"
+    @click="onClick"
     @pointerdown.prevent="onPointerDown"
     @pointermove="onPointerMove"
     @pointerup="endPointer"
     @pointercancel="endPointer"
+    @lostpointercapture="onLostPointerCapture"
     @keydown="onKeydown"
   >
     <span class="ww-toggle-switch__track" aria-hidden="true">

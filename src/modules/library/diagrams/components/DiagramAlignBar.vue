@@ -9,14 +9,10 @@ import {
 } from '@modules/library/diagrams/lib/diagramAlignActions'
 import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
 import type { DiagramAlignMode, DiagramDistributeMode } from '@modules/library/diagrams/lib/diagramNodeLayout'
+import type { DiagramAlignBarAnchor } from '@modules/library/diagrams/lib/diagramAlignBarTypes'
 import { useDiagramEditorSelection } from '@modules/library/diagrams/composables/useDiagramEditorSelection'
 
-export type DiagramAlignBarAnchor = {
-  left: number
-  top: number
-  width: number
-  height: number
-}
+export type { DiagramAlignBarAnchor }
 
 const props = defineProps<{
   nodeCount: number
@@ -77,7 +73,19 @@ function group() {
 }
 
 function ungroup() {
+  if (!ungroupEnabled.value) return
   void bus.dispatch({ type: 'canvas.ungroup' })
+}
+
+/** 浮动工具栏在 pointerdown→click 间会位移，用 pointerdown 触发避免点不中 */
+function onGroupPointerDown() {
+  if (!groupEnabled.value) return
+  group()
+}
+
+function onUngroupPointerDown() {
+  if (!ungroupEnabled.value) return
+  ungroup()
 }
 
 const groupEnabled = computed(
@@ -187,28 +195,34 @@ const barStyle = computed(() => {
 
     <span class="dg-align-bar__sep" aria-hidden="true" />
     <div class="dg-align-bar__actions">
-      <WwIconButton
-        icon="layers"
-        icon-size="xs"
-        compact
-        aria-label="组合"
-        :disabled="!groupEnabled"
-        v-tooltip.bottom="`组合 (${DG_SHORTCUT.group})`"
-        class="dg-align-bar__btn dg-toolbar-icon-btn"
-        @mousedown.prevent
-        @click="group"
-      />
-      <WwIconButton
-        icon="ungroup"
-        icon-size="xs"
-        compact
-        aria-label="取消组合"
-        :disabled="!ungroupEnabled"
-        v-tooltip.bottom="`取消组合 (${DG_SHORTCUT.ungroup})`"
-        class="dg-align-bar__btn dg-toolbar-icon-btn"
-        @mousedown.prevent
-        @click="ungroup"
-      />
+      <span
+        v-tooltip.bottom="{ value: `组合 (${DG_SHORTCUT.group})`, showDelay: 400 }"
+        class="dg-toolbar-tooltip-wrap"
+      >
+        <WwIconButton
+          icon="layers"
+          icon-size="xs"
+          compact
+          aria-label="组合"
+          :disabled="!groupEnabled"
+          class="dg-align-bar__btn dg-toolbar-icon-btn"
+          @pointerdown.stop.prevent="onGroupPointerDown"
+        />
+      </span>
+      <span
+        v-tooltip.bottom="{ value: `取消组合 (${DG_SHORTCUT.ungroup})`, showDelay: 400 }"
+        class="dg-toolbar-tooltip-wrap"
+      >
+        <WwIconButton
+          icon="ungroup"
+          icon-size="xs"
+          compact
+          aria-label="取消组合"
+          :disabled="!ungroupEnabled"
+          class="dg-align-bar__btn dg-toolbar-icon-btn"
+          @pointerdown.stop.prevent="onUngroupPointerDown"
+        />
+      </span>
     </div>
   </div>
 </template>

@@ -1,6 +1,6 @@
 import LogicFlow, { BaseNodeModel } from '@logicflow/core'
 import { readNodeShapeExtension } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'
-import { applyNodeDimensions } from '@modules/library/diagrams/lib/diagramShapeResize'
+import { applyNodeLayoutProperties } from '@modules/library/diagrams/lib/diagramNodeLayoutPatch'
 import type { DiagramArrowType, DiagramShadowPreset } from '@modules/library/diagrams/lib/diagramEditorConstants'
 import { shadowStyleForPreset } from '@modules/library/diagrams/lib/diagramCanvasPresets'
 import { readNodeImageAsset } from '@modules/library/diagrams/lib/diagramAssetRefs'
@@ -364,34 +364,18 @@ export function applyNodeProperties(lf: LogicFlow, props: Partial<DiagramNodePro
     }
   }
 
-  if (props.x != null || props.y != null) {
-    const nx = props.x ?? model.x
-    const ny = props.y ?? model.y
-    const dx = nx - model.x
-    const dy = ny - model.y
-    if (dx !== 0 || dy !== 0) {
-      lf.graphModel.moveNode(props.id, dx, dy, true)
-      syncNodeTextLayout(model)
-    }
-  }
-  if (props.width != null || props.height != null) {
-    const left = model.x - model.width / 2
-    const top = model.y - model.height / 2
-    const newW = props.width ?? Math.round(model.width)
-    const newH = props.height ?? Math.round(model.height)
-    applyNodeDimensions(
-      model as Parameters<typeof applyNodeDimensions>[0],
-      newW,
-      newH
-    )
-    if (props.x == null && props.y == null) {
-      const nx = left + newW / 2
-      const ny = top + newH / 2
-      const dx = nx - model.x
-      const dy = ny - model.y
-      if (dx !== 0 || dy !== 0) lf.graphModel.moveNode(props.id, dx, dy, true)
-    }
-    syncNodeTextLayout(model)
+  if (
+    props.x != null ||
+    props.y != null ||
+    props.width != null ||
+    props.height != null
+  ) {
+    applyNodeLayoutProperties(lf, model, {
+      x: props.x,
+      y: props.y,
+      width: props.width,
+      height: props.height
+    })
   }
 
   const appearanceStyle = buildNodeAppearanceStyle(props)

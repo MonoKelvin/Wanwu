@@ -4,13 +4,18 @@ import { StepDrag } from '@logicflow/core/lib/util/drag'
 import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import type { DiagramSelectionRect } from '@modules/library/diagrams/lib/diagramNodeLayout'
 import {
+  boundsForResizeHandleDrag,
+  fixedAnchorForResizeHandle,
+  type DiagramResizeHandleDir
+} from '@modules/library/diagrams/lib/diagramResizeBounds'
+import {
   applyNodeDimensions,
   syncNodeSizeProperties
 } from '@modules/library/diagrams/lib/diagramShapeResize'
 import { diagramResizeControlStyle, diagramResizeTheme } from '@modules/library/diagrams/lib/diagramShapeResize'
 import { syncNodeTextLayout } from '@modules/library/diagrams/lib/diagramStyleBridge'
 
-type HandleDir = 'nw' | 'ne' | 'se' | 'sw'
+type HandleDir = DiagramResizeHandleDir
 
 type NodeSnap = {
   id: string
@@ -199,23 +204,6 @@ function applyOutlineBox(
   }
 }
 
-/** 拖拽角的对边为缩放锚点（整体等比缩放） */
-function fixedAnchorForHandle(
-  dir: HandleDir,
-  bounds: DiagramSelectionRect
-): { x: number; y: number } {
-  switch (dir) {
-    case 'se':
-      return { x: bounds.minX, y: bounds.minY }
-    case 'nw':
-      return { x: bounds.maxX, y: bounds.maxY }
-    case 'ne':
-      return { x: bounds.minX, y: bounds.maxY }
-    case 'sw':
-      return { x: bounds.maxX, y: bounds.minY }
-  }
-}
-
 function applyUniformGroupScale(
   lf: LogicFlow,
   snaps: NodeSnap[],
@@ -266,74 +254,6 @@ function applyUniformGroupScale(
         syncNodeSizeProperties(model as Parameters<typeof syncNodeSizeProperties>[0])
       }
     }
-  }
-}
-
-function boundsForHandleDrag(
-  dir: HandleDir,
-  anchor: DiagramSelectionRect,
-  dx: number,
-  dy: number,
-  lockAspect = false
-): DiagramSelectionRect | null {
-  let { minX, minY, maxX, maxY } = anchor
-  if (dir === 'nw') {
-    minX += dx
-    minY += dy
-  } else if (dir === 'ne') {
-    maxX += dx
-    minY += dy
-  } else if (dir === 'se') {
-    maxX += dx
-    maxY += dy
-  } else {
-    minX += dx
-    maxY += dy
-  }
-
-  if (lockAspect && anchor.width > 1 && anchor.height > 1) {
-    const scaleX = (maxX - minX) / anchor.width
-    const scaleY = (maxY - minY) / anchor.height
-    const scale = Math.abs(scaleX - 1) < Math.abs(scaleY - 1) ? scaleX : scaleY
-    const fixed = fixedAnchorForHandle(dir, anchor)
-    const newW = anchor.width * scale
-    const newH = anchor.height * scale
-    if (newW < MIN_BBOX || newH < MIN_BBOX) return null
-    if (dir === 'se') {
-      maxX = fixed.x + newW
-      maxY = fixed.y + newH
-      minX = fixed.x
-      minY = fixed.y
-    } else if (dir === 'nw') {
-      minX = fixed.x - newW
-      minY = fixed.y - newH
-      maxX = fixed.x
-      maxY = fixed.y
-    } else if (dir === 'ne') {
-      maxX = fixed.x + newW
-      minY = fixed.y - newH
-      minX = fixed.x
-      maxY = fixed.y
-    } else {
-      minX = fixed.x - newW
-      maxY = fixed.y + newH
-      maxX = fixed.x
-      minY = fixed.y
-    }
-  }
-
-  if (maxX - minX < MIN_BBOX || maxY - minY < MIN_BBOX) return null
-  const width = maxX - minX
-  const height = maxY - minY
-  return {
-    minX,
-    minY,
-    maxX,
-    maxY,
-    width,
-    height,
-    cx: (minX + maxX) / 2,
-    cy: (minY + maxY) / 2
   }
 }
 
@@ -504,7 +424,7 @@ export function mountDiagramMultiSelectResize(
         const selected = getMultiSelectNodes(lf.graphModel, lf)
         startBounds = unionBoundsFromModels(selected)
         if (!startBounds) return
-        fixedAnchor = fixedAnchorForHandle(dir, startBounds)
+        fixedAnchor = fixedAnchorForResizeHandle(dir, startBounds)
         snaps = snapNodes(lf, selected)
         cumDx = 0
         cumDy = 0
@@ -518,10 +438,15 @@ export function mountDiagramMultiSelectResize(
       onDragging: ({ deltaX, deltaY }) => {
         if (!startBounds || !fixedAnchor) return
         const [cdx, cdy] = lf.graphModel.transformModel.fixDeltaXY(deltaX, deltaY)
-        cumDx += cdx
-        cumDy += cdy
-        const next = boundsForHandleDrag(dir, startBounds, cumDx, cumDy, aspectLock)
+        const tryDx = cumDx + cdx
+        const tryDy = cumDy + cdy
+        const next = boundsForResizeHandleDrag(dir, startBounds, tryDx, tryDy, aspectLock, {
+          minWidth: MIN_BBOX,
+          minHeight: MIN_BBOX
+        })
         if (!next) return
+        cumDx = tryDx
+        cumDy = tryDy
         applyUniformGroupScale(lf, snaps, startBounds, next, fixedAnchor, false)
         applyOutlineBoxFromBounds(paddedBounds(next, OUTLINE_PAD))
       },
@@ -532,7 +457,10 @@ export function mountDiagramMultiSelectResize(
         window.removeEventListener('keyup', syncAspectLock, true)
         root.classList.remove('dg-multi-select-resize--dragging')
         if (!startBounds || !fixedAnchor) return
-        const next = boundsForHandleDrag(dir, startBounds, cumDx, cumDy)
+        const next = boundsForResizeHandleDrag(dir, startBounds, cumDx, cumDy, false, {
+          minWidth: MIN_BBOX,
+          minHeight: MIN_BBOX
+        })
         if (next) {
           applyUniformGroupScale(lf, snaps, startBounds, next, fixedAnchor, true)
           applyOutlineBoxFromBounds(paddedBounds(next, OUTLINE_PAD))

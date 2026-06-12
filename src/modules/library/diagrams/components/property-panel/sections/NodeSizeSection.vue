@@ -6,6 +6,7 @@ import { useDiagramPropertyContext } from '@modules/library/diagrams/composables
 
 const { ctx, actions } = useDiagramPropertyContext()
 const node = computed(() => ctx.value.selectedNode!)
+const topLeft = computed(() => actions.nodeTopLeft(node.value))
 </script>
 
 <template>
@@ -14,24 +15,24 @@ const node = computed(() => ctx.value.selectedNode!)
     <div class="dg-prop-kv-grid dg-prop-kv-grid--metrics">
       <SettingsRow label="X" class="dg-settings-row--stacked dg-settings-row--compact">
         <WwNumberInput
-          :model-value="actions.nodeTopLeft(node).left"
+          :model-value="topLeft.left"
           size="block"
           @update:model-value="
             actions.patchNodePositionFromTopLeft(
-              actions.parseNumber($event, actions.nodeTopLeft(node).left),
-              actions.nodeTopLeft(node).top
+              actions.parseNumber($event, topLeft.left),
+              topLeft.top
             )
           "
         />
       </SettingsRow>
       <SettingsRow label="Y" class="dg-settings-row--stacked dg-settings-row--compact">
         <WwNumberInput
-          :model-value="actions.nodeTopLeft(node).top"
+          :model-value="topLeft.top"
           size="block"
           @update:model-value="
             actions.patchNodePositionFromTopLeft(
-              actions.nodeTopLeft(node).left,
-              actions.parseNumber($event, actions.nodeTopLeft(node).top)
+              topLeft.left,
+              actions.parseNumber($event, topLeft.top)
             )
           "
         />

@@ -23,6 +23,7 @@ const node = computed(() => ctx.value.selection.node!)
     <SettingsRow label="始终显示" class="dg-settings-row--inline dg-settings-row--toggle">
       <WwToggleSwitch
         :model-value="node.groupAlwaysVisible ?? false"
+        :drag-to-change="false"
         aria-label="始终显示组合框"
         @update:model-value="actions.patchGroupAlwaysVisible($event)"
       />

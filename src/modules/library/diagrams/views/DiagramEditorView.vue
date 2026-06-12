@@ -2,16 +2,15 @@
 defineOptions({ name: 'DiagramEditorView' })
 
 import { computed, nextTick, onActivated, onBeforeUnmount, onMounted, ref, shallowRef, toRefs, watch } from 'vue'
-import { useDebounceFn } from '@vueuse/core'
 import { onBeforeRouteLeave, useRoute, useRouter, type NavigationGuardReturn } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import DiagramEditorToolbar from '@modules/library/diagrams/components/DiagramEditorToolbar.vue'
 import DiagramAssetPanel from '@modules/library/diagrams/components/DiagramAssetPanel.vue'
 import DiagramPropertyPanel from '@modules/library/diagrams/components/DiagramPropertyPanel.vue'
 import DiagramPageTabs from '@modules/library/diagrams/components/DiagramPageTabs.vue'
-import DiagramAlignBar, {
-  type DiagramAlignBarAnchor
-} from '@modules/library/diagrams/components/DiagramAlignBar.vue'
+import DiagramAlignBar from '@modules/library/diagrams/components/DiagramAlignBar.vue'
+import { useDiagramAlignBar } from '@modules/library/diagrams/composables/useDiagramAlignBar'
+import { useDiagramPortBinding } from '@modules/library/diagrams/composables/useDiagramPortBinding'
 import DiagramPanelRestoreButton from '@modules/library/diagrams/components/DiagramPanelRestoreButton.vue'
 import DiagramCanvasContextMenu from '@modules/library/diagrams/components/DiagramCanvasContextMenu.vue'
 import DiagramSaveConflictDialog from '@modules/library/diagrams/components/DiagramSaveConflictDialog.vue'
@@ -38,138 +37,42 @@ import { LIBRARY_DIAGRAMS_EDITOR_ROUTE, isDiagramEditorPath } from '@modules/lib
 import { useDiagramRecentShapes } from '@modules/library/diagrams/composables/useDiagramRecentShapes'
 import { isShapeDragEvent, readShapeDragData } from '@modules/library/diagrams/lib/diagramShapeDrag'
 import { provideDiagramEditorSelection } from '@modules/library/diagrams/composables/useDiagramEditorSelection'
+import {
+  attachDiagramEditorFromRuntime
+} from '@modules/library/diagrams/composables/useDiagramEditorCanvasAttach'
+import {
+  clearDiagramEditorBootstrapPromise,
+  destroyDiagramEditorRuntime,
+  diagramEditorDocKey,
+  ensureDiagramEditorBootstrap,
+  getDiagramEditorRuntime,
+  hasDiagramEditorBootstrapInFlight,
+  isDiagramEditorRuntimeReady,
+  isDiagramEditorSetupCurrent,
+  setDiagramEditorReadyDocKey
+} from '@modules/library/diagrams/composables/useDiagramEditorRuntime'
 
 function resolvedTheme(): 'light' | 'dark' {
   return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
-}
-
-type DiagramEditorRuntimeState = {
-  port: LogicFlowDiagramAdapter | null
-  session: DiagramEditorSession | null
-  bootstrappedDocKey: string | null
-}
-
-type BootstrapPromiseSlot = { docKey: string; promise: Promise<void> }
-
-const WINDOW_RUNTIME_KEY = '__wanwuDiagramEditorRuntime'
-const WINDOW_READY_DOC_KEY = '__wanwuDiagramEditorReadyDocKey'
-const WINDOW_BOOTSTRAP_PROMISE_KEY = '__wanwuDiagramEditorBootstrapPromise'
-const WINDOW_MOUNT_COUNT_KEY = '__wanwuDiagramEditorMountCount'
-const WINDOW_UNMOUNT_COUNT_KEY = '__wanwuDiagramEditorUnmountCount'
-const WINDOW_SETUP_GEN_KEY = '__wanwuDiagramEditorSetupGen'
-
-function windowStore(): Record<string, unknown> {
-  return window as unknown as Record<string, unknown>
-}
-
-/** 每次 script 执行（含 HMR）更新；旧 onMounted 回调见版本不一致则跳过 */
-const setupGeneration = crypto.randomUUID()
-windowStore()[WINDOW_SETUP_GEN_KEY] = setupGeneration
-
-function getReadyDocKey(): string | null {
-  const v = windowStore()[WINDOW_READY_DOC_KEY]
-  return typeof v === 'string' ? v : null
-}
-
-function setReadyDocKey(docKey: string | null): void {
-  const w = windowStore()
-  if (docKey) w[WINDOW_READY_DOC_KEY] = docKey
-  else delete w[WINDOW_READY_DOC_KEY]
-}
-
-/** 跨 HMR/模块重载/重复 mount 复用画布运行时（挂 window，单页内持久） */
-function editorRuntime(): DiagramEditorRuntimeState {
-  const w = windowStore()
-  if (!w[WINDOW_RUNTIME_KEY]) {
-    w[WINDOW_RUNTIME_KEY] = {
-      port: null,
-      session: null,
-      bootstrappedDocKey: getReadyDocKey()
-    }
-  }
-  return w[WINDOW_RUNTIME_KEY] as DiagramEditorRuntimeState
 }
 
 const route = useRoute()
 const router = useRouter()
 
 function currentDocKey(): string {
-  return `${String(route.params.fileId ?? 'new')}|${String(route.query.template ?? '')}`
+  return diagramEditorDocKey(route.params.fileId, route.query.template)
 }
 
 function destroyModuleEditorRuntime(_reason: string): void {
-  const rt = editorRuntime()
-  rt.port?.destroy()
-  rt.port = null
-  rt.session = null
-  rt.bootstrappedDocKey = null
-  const w = windowStore()
-  delete w[WINDOW_BOOTSTRAP_PROMISE_KEY]
-  setReadyDocKey(null)
-  // 保留 runtime 对象身份，避免 HMR/remount 拿到全新空对象
+  destroyDiagramEditorRuntime()
 }
 
-function isRuntimeReadyForDoc(docKey: string): boolean {
-  const rt = editorRuntime()
-  const readyDocKey = getReadyDocKey()
-  if (readyDocKey !== docKey) return false
-  if (!rt.port || !rt.session) return false
-  rt.bootstrappedDocKey = docKey
-  return true
-}
+const WINDOW_MOUNT_COUNT_KEY = '__wanwuDiagramEditorMountCount'
+const WINDOW_UNMOUNT_COUNT_KEY = '__wanwuDiagramEditorUnmountCount'
 
-/** window 级单例 Promise：全页只 cold bootstrap 一次，后续 mount 仅 join */
-function ensureBootstrapPromise(docKey: string): Promise<void> {
-  const w = windowStore()
-  if (isRuntimeReadyForDoc(docKey)) return Promise.resolve()
-
-  const slot = w[WINDOW_BOOTSTRAP_PROMISE_KEY] as BootstrapPromiseSlot | undefined
-  if (slot?.docKey === docKey) {
-    return slot.promise
-  }
-
-  if (slot) delete w[WINDOW_BOOTSTRAP_PROMISE_KEY]
-
-  const promise = executeBootstrap(docKey).catch((err: unknown) => {
-    delete w[WINDOW_BOOTSTRAP_PROMISE_KEY]
-    throw err
-  })
-  w[WINDOW_BOOTSTRAP_PROMISE_KEY] = { docKey, promise }
-  return promise
-}
-
-async function attachFromExistingRuntime(docKey: string, attempt = 0): Promise<boolean> {
-  const rt = editorRuntime()
-  if (!isRuntimeReadyForDoc(docKey)) return false
-
-  portRef.value = rt.port
-  sessionRef.value = rt.session
-  editorReady.value = true
-  loading.value = false
-  wirePortHandlers(rt.port!, rt.session!)
-  try {
-    const el = await waitForCanvasEl()
-    rt.port!.mount(el)
-    attachCanvasObservers(rt.port!, el)
-    rt.port!.setTheme(resolvedTheme())
-    rt.port!.resize()
-    refreshViewportZoom()
-    return true
-  } catch (err) {
-    if (attempt < 8) {
-      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
-      return attachFromExistingRuntime(docKey, attempt + 1)
-    }
-    throw err
-  }
-}
 const toast = useToast()
 const selectionApi = provideDiagramEditorSelection(resolvedTheme())
 const editorSelection = selectionApi.selection
-const alignBarNodeCount = ref(0)
-const alignBarAnchor = ref<DiagramAlignBarAnchor | null>(null)
-const alignBarStageWidth = ref(0)
-const alignBarStageHeight = ref(600)
 const canvasRef = ref<HTMLElement | null>(null)
 const canvasWrapRef = ref<HTMLElement | null>(null)
 const canvasMenuRef = ref<InstanceType<typeof DiagramCanvasContextMenu> | null>(null)
@@ -186,49 +89,29 @@ const dropIndicatorSnapped = ref(false)
 const viewportZoomPercent = ref(100)
 const unsavedLeaveOpen = ref(false)
 let unsavedLeaveResolve: ((choice: 'save' | 'discard' | 'cancel') => void) | null = null
-let resizeObserver: ResizeObserver | null = null
-let teardownZoomWheel: (() => void) | null = null
-let resizeRaf = 0
-let zoomWheelRaf = 0
+
+const {
+  nodeCount: alignBarNodeCount,
+  anchor: alignBarAnchor,
+  stageWidth: alignBarStageWidth,
+  stageHeight: alignBarStageHeight,
+  scheduleRefresh: scheduleAlignBarRefresh,
+  applyOverlayLayout: applyAlignBarOverlayLayout,
+  dispose: disposeAlignBar
+} = useDiagramAlignBar(canvasWrapRef)
+const portBinding = useDiagramPortBinding({
+  selectionApi,
+  sessionRef,
+  canvasMenuRef,
+  onAlignBarSchedule: () => scheduleAlignBarRefresh(portRef),
+  onOverlayLayout: (layout) => applyAlignBarOverlayLayout(layout),
+  onViewportZoomRefresh: () => refreshViewportZoom(),
+  onGraphDirty: () => sessionRef.value?.markActivePageDirty()
+})
 
 function refreshViewportZoom() {
   const zoom = portRef.value?.getViewport().zoom ?? 1
   viewportZoomPercent.value = Math.round(zoom * 100)
-}
-
-function refreshAlignBarAnchor() {
-  const port = portRef.value
-  const wrap = canvasWrapRef.value
-  if (wrap) {
-    alignBarStageWidth.value = wrap.clientWidth
-    alignBarStageHeight.value = wrap.clientHeight
-  }
-  if (!port) {
-    alignBarNodeCount.value = 0
-    alignBarAnchor.value = null
-    return
-  }
-  const liveCount = port.getSelection().selectedNodeCount
-  alignBarNodeCount.value = liveCount
-  if (liveCount < 2) {
-    alignBarAnchor.value = null
-    return
-  }
-  alignBarAnchor.value = port.getMultiSelectOverlayRect()
-}
-
-function applyAlignBarLayout(rect: DiagramAlignBarAnchor | null, nodeCount: number) {
-  alignBarNodeCount.value = nodeCount
-  alignBarAnchor.value = rect
-}
-
-let alignBarRaf = 0
-function scheduleAlignBarRefresh() {
-  if (alignBarRaf) cancelAnimationFrame(alignBarRaf)
-  alignBarRaf = requestAnimationFrame(() => {
-    alignBarRaf = 0
-    refreshAlignBarAnchor()
-  })
 }
 
 /** shallowRef session 内部变更不会触发视图更新，页操作成功后递增 */
@@ -243,7 +126,7 @@ function syncAfterPageCommand() {
   const port = portRef.value
   if (!port) return
   selectionApi.publish(port.getSelection())
-  scheduleAlignBarRefresh()
+  scheduleAlignBarRefresh(portRef)
 }
 
 const repo = new DiagramRepositoryIpcAdapter()
@@ -460,6 +343,24 @@ async function waitForCanvasEl(): Promise<HTMLElement> {
   throw new Error('画布容器未就绪')
 }
 
+async function attachFromExistingRuntime(docKey: string): Promise<boolean> {
+  return attachDiagramEditorFromRuntime(
+    docKey,
+    isDiagramEditorRuntimeReady,
+    getDiagramEditorRuntime,
+    {
+      portRef,
+      sessionRef,
+      portBinding,
+      waitForCanvasEl,
+      refreshViewportZoom,
+      resolvedTheme,
+      editorReady,
+      loading
+    }
+  )
+}
+
 async function applyFitView() {
   await waitForLayout()
   portRef.value?.resize()
@@ -521,75 +422,9 @@ async function openDocument() {
   }
 }
 
-function wirePortHandlers(port: LogicFlowDiagramAdapter, session: DiagramEditorSession): void {
-  port.onEditorSelectionChange((selection) => {
-    selectionApi.publish(selection)
-    scheduleAlignBarRefresh()
-  })
-
-  const syncViewport = useDebounceFn(() => {
-    session.syncActivePageViewport()
-  }, 300)
-
-  port.onViewportChange(() => {
-    void syncViewport()
-    scheduleAlignBarRefresh()
-  })
-  port.onOverlayLayoutChange((layout) => {
-    applyAlignBarLayout(layout.rect, layout.nodeCount)
-  })
-  port.onGraphChange(() => {
-    session.markActivePageDirty()
-    if (editorSelection.value.selectedNodeCount >= 2) {
-      scheduleAlignBarRefresh()
-    }
-  })
-  port.onContextMenu((detail) => {
-    const selection = port.getSelection()
-    canvasMenuRef.value?.show(
-      detail.event,
-      {
-        kind: detail.kind,
-        targetId: detail.targetId,
-        nodeIds: detail.nodeIds.length ? detail.nodeIds : selection.selectedNodeIds,
-        edgeIds: detail.edgeIds.length ? detail.edgeIds : selection.selectedEdgeIds
-      },
-      port.hasClipboard(),
-      selection.canGroup ?? port.canGroupSelection(),
-      selection.canUngroup ?? port.canUngroupSelection()
-    )
-  })
-  selectionApi.publish(port.getSelection())
-}
-
-function attachCanvasObservers(port: LogicFlowDiagramAdapter, el: HTMLElement): void {
-  if (resizeObserver) resizeObserver.disconnect()
-  resizeObserver = new ResizeObserver(() => {
-    if (resizeRaf) cancelAnimationFrame(resizeRaf)
-    resizeRaf = requestAnimationFrame(() => {
-      resizeRaf = 0
-      port.resize()
-      refreshAlignBarAnchor()
-    })
-  })
-  resizeObserver.observe(el)
-
-  teardownZoomWheel?.()
-  const onZoomWheel = () => {
-    if (zoomWheelRaf) return
-    zoomWheelRaf = requestAnimationFrame(() => {
-      zoomWheelRaf = 0
-      refreshViewportZoom()
-      refreshAlignBarAnchor()
-    })
-  }
-  el.addEventListener('wheel', onZoomWheel, { passive: true })
-  teardownZoomWheel = () => el.removeEventListener('wheel', onZoomWheel)
-}
-
 async function executeBootstrap(docKey: string): Promise<void> {
-  const rt = editorRuntime()
-  if (isRuntimeReadyForDoc(docKey)) {
+  const rt = getDiagramEditorRuntime()
+  if (isDiagramEditorRuntimeReady(docKey)) {
     return
   }
 
@@ -616,17 +451,17 @@ async function executeBootstrap(docKey: string): Promise<void> {
   portRef.value = port
   sessionRef.value = session
 
-  wirePortHandlers(port, session)
+  portBinding.wirePortHandlers(port, session)
 
   const el = await waitForCanvasEl()
   port.mount(el)
   port.setTheme(resolvedTheme())
-  attachCanvasObservers(port, el)
+  portBinding.attachCanvasObservers(port, el)
 
   port.resize()
   await openDocument()
   rt.bootstrappedDocKey = docKey
-  setReadyDocKey(docKey)
+  setDiagramEditorReadyDocKey(docKey)
   editorReady.value = true
   refreshViewportZoom()
   await waitForLayout()
@@ -672,8 +507,8 @@ function teardownEditorSurface() {
   editorReady.value = false
   editorVisible.value = false
   selectionApi.reset(resolvedTheme())
-  alignBarNodeCount.value = 0
   alignBarAnchor.value = null
+  alignBarNodeCount.value = 0
 }
 
 let editorShellMountCount = 0
@@ -681,15 +516,14 @@ let sharedRemoveLeaveGuard: (() => void) | null = null
 let removeBeforeUnload: (() => void) | null = null
 
 async function bootstrapEditorSurface(_trigger: 'mount' | 'activate'): Promise<void> {
-  const w = windowStore()
-  if (w[WINDOW_SETUP_GEN_KEY] !== setupGeneration) {
+  if (!isDiagramEditorSetupCurrent()) {
     return
   }
   const docKey = currentDocKey()
-  const ready = isRuntimeReadyForDoc(docKey)
+  const ready = isDiagramEditorRuntimeReady(docKey)
   if (ready) loading.value = false
   try {
-    await ensureBootstrapPromise(docKey)
+    await ensureDiagramEditorBootstrap(docKey, () => executeBootstrap(docKey))
     await attachFromExistingRuntime(docKey)
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
@@ -706,7 +540,7 @@ async function bootstrapEditorSurface(_trigger: 'mount' | 'activate'): Promise<v
 
 onMounted(() => {
   editorShellMountCount += 1
-  const w = windowStore()
+  const w = window as unknown as Record<string, unknown>
   w[WINDOW_MOUNT_COUNT_KEY] = ((w[WINDOW_MOUNT_COUNT_KEY] as number) ?? 0) + 1
 
   if (!sharedRemoveLeaveGuard) {
@@ -740,12 +574,12 @@ onMounted(() => {
 
 onActivated(() => {
   const docKey = currentDocKey()
-  if (isRuntimeReadyForDoc(docKey)) {
+  if (isDiagramEditorRuntimeReady(docKey)) {
     loading.value = false
     void attachFromExistingRuntime(docKey)
     return
   }
-  if (windowStore()[WINDOW_BOOTSTRAP_PROMISE_KEY]) return
+  if (hasDiagramEditorBootstrapInFlight()) return
   void bootstrapEditorSurface('activate')
 })
 
@@ -753,7 +587,7 @@ watch(fileId, async (id, prev) => {
   if (!portRef.value || !sessionRef.value || id === prev) return
   // 自动/手动保存后仅更新 URL 时，会话已持有同一文件，无需重载
   if (sessionRef.value.fileId === id) return
-  delete windowStore()[WINDOW_BOOTSTRAP_PROMISE_KEY]
+  clearDiagramEditorBootstrapPromise()
   const nav = await flushBeforeLeave()
   if (nav !== true) {
     if (prev) {
@@ -766,8 +600,8 @@ watch(fileId, async (id, prev) => {
   try {
     await openDocument()
     const docKey = currentDocKey()
-    editorRuntime().bootstrappedDocKey = docKey
-    setReadyDocKey(docKey)
+    getDiagramEditorRuntime().bootstrappedDocKey = docKey
+    setDiagramEditorReadyDocKey(docKey)
     refreshViewportZoom()
     await waitForLayout()
     portRef.value.resize()
@@ -796,7 +630,7 @@ onBeforeRouteLeave((to) => {
 })
 
 onBeforeUnmount(() => {
-  const w = windowStore()
+  const w = window as unknown as Record<string, unknown>
   w[WINDOW_UNMOUNT_COUNT_KEY] = ((w[WINDOW_UNMOUNT_COUNT_KEY] as number) ?? 0) + 1
   editorShellMountCount = Math.max(0, editorShellMountCount - 1)
   teardownEditorSurface()
@@ -806,13 +640,8 @@ onBeforeUnmount(() => {
     sharedRemoveLeaveGuard = null
     removeBeforeUnload?.()
   }
-  if (resizeRaf) cancelAnimationFrame(resizeRaf)
-  if (zoomWheelRaf) cancelAnimationFrame(zoomWheelRaf)
-  if (alignBarRaf) cancelAnimationFrame(alignBarRaf)
-  resizeObserver?.disconnect()
-  resizeObserver = null
-  teardownZoomWheel?.()
-  teardownZoomWheel = null
+  disposeAlignBar()
+  portBinding.dispose()
   portRef.value = null
   sessionRef.value = null
   // 离开编辑器路由时在 onBeforeRouteLeave 中 destroyModuleEditorRuntime；HMR 保留 modulePort 供复用

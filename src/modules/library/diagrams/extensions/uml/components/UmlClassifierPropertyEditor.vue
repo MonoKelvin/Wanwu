@@ -297,6 +297,25 @@ function onShowOperations(value: boolean) {
         />
       </SettingsRow>
 
+      <div class="dg-uml-subsection dg-uml-display">
+        <SettingsRow label="显示属性区" class="dg-settings-row--inline dg-settings-row--toggle">
+          <WwToggleSwitch
+            :model-value="data.showAttributes"
+            :drag-to-change="false"
+            aria-label="显示属性区"
+            @update:model-value="onShowAttributes($event)"
+          />
+        </SettingsRow>
+        <SettingsRow label="显示操作区" class="dg-settings-row--inline dg-settings-row--toggle">
+          <WwToggleSwitch
+            :model-value="data.showOperations"
+            :drag-to-change="false"
+            aria-label="显示操作区"
+            @update:model-value="onShowOperations($event)"
+          />
+        </SettingsRow>
+      </div>
+
       <p
         v-if="!data.showAttributes"
         class="dg-uml-subsection dg-uml-block__empty dg-uml-block__empty--action"
@@ -520,23 +539,6 @@ function onShowOperations(value: boolean) {
         </div>
       </div>
       </div>
-
-      <div class="dg-uml-subsection dg-uml-display">
-        <SettingsRow label="显示属性区" class="dg-settings-row--inline dg-settings-row--toggle">
-          <WwToggleSwitch
-            :model-value="data.showAttributes"
-            aria-label="显示属性区"
-            @update:model-value="onShowAttributes($event)"
-          />
-        </SettingsRow>
-        <SettingsRow label="显示操作区" class="dg-settings-row--inline dg-settings-row--toggle">
-          <WwToggleSwitch
-            :model-value="data.showOperations"
-            aria-label="显示操作区"
-            @update:model-value="onShowOperations($event)"
-          />
-        </SettingsRow>
-      </div>
   </section>
 </template>
 
@@ -552,6 +554,10 @@ function onShowOperations(value: boolean) {
   flex-direction: column;
   gap: 0.25rem;
   padding-inline: 0.125rem;
+}
+
+.dg-uml-display {
+  margin-bottom: 0.125rem;
 }
 
 .dg-uml-display :deep(.ww-settings-row:last-child) {

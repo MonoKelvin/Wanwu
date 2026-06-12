@@ -15,6 +15,7 @@ const { canvas, actions } = useDiagramPropertyContext()
     <SettingsRow label="显示网格" class="dg-settings-row--inline">
       <WwToggleSwitch
         :model-value="canvas.gridVisible"
+        :drag-to-change="false"
         aria-label="显示网格"
         @update:model-value="actions.patchCanvas({ gridVisible: $event })"
       />
@@ -22,6 +23,7 @@ const { canvas, actions } = useDiagramPropertyContext()
     <SettingsRow label="吸附网格" class="dg-settings-row--inline">
       <WwToggleSwitch
         :model-value="canvas.snapGrid"
+        :drag-to-change="false"
         aria-label="吸附网格"
         @update:model-value="actions.patchCanvas({ snapGrid: $event })"
       />
@@ -32,6 +34,7 @@ const { canvas, actions } = useDiagramPropertyContext()
     <SettingsRow label="导航窗口" class="dg-settings-row--inline">
       <WwToggleSwitch
         :model-value="canvas.miniMapVisible"
+        :drag-to-change="false"
         aria-label="显示导航窗口"
         @update:model-value="actions.patchCanvas({ miniMapVisible: $event })"
       />

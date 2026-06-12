@@ -7,8 +7,15 @@ import {
   diagramResizeOutlineStyle
 } from '@modules/library/diagrams/lib/diagramShapeResize'
 import { shouldShowSingleNodeResize } from '@modules/library/diagrams/lib/diagramMultiSelectResize'
+import {
+  boundsForResizeHandleDrag,
+  cornerOfSelectionRect,
+  selectionRectFromBBox,
+  type DiagramResizeHandleDir
+} from '@modules/library/diagrams/lib/diagramResizeBounds'
+import type { DiagramSelectionRect } from '@modules/library/diagrams/lib/diagramNodeLayout'
 
-type HandleDir = 'nw' | 'ne' | 'se' | 'sw'
+type HandleDir = DiagramResizeHandleDir
 
 const HANDLE_INDEX: Record<HandleDir, number> = {
   nw: 0,
@@ -54,6 +61,9 @@ class DiagramResizeHandleInner extends Component {
   private graphModel!: GraphModel
   private dragHandler!: StepDrag
   private direction: HandleDir = 'nw'
+  private dragStartBounds: DiagramSelectionRect | null = null
+  private cumDx = 0
+  private cumDy = 0
 
   constructor(props: Record<string, unknown>) {
     super(props)
@@ -66,18 +76,57 @@ class DiagramResizeHandleInner extends Component {
         if (shouldShowSingleNodeResize(this.graphModel, this.nodeModel)) {
           this.graphModel.selectNodeById(this.nodeModel.id)
         }
+        this.dragStartBounds = selectionRectFromBBox(getNodeBBox(this.nodeModel))
+        this.cumDx = 0
+        this.cumDy = 0
       },
       onDragging: ({ deltaX, deltaY }) => {
-        const { x, y } = cornerPoint(this.direction, this.nodeModel)
-        handleResize({
-          x,
-          y,
-          deltaX,
-          deltaY,
-          index: this.index,
-          nodeModel: this.nodeModel,
-          graphModel: this.graphModel
+        const { nodeModel, graphModel, direction } = this
+        const [cdx, cdy] = graphModel.transformModel.fixDeltaXY(deltaX, deltaY)
+        const start = this.dragStartBounds
+        if (!start) {
+          const { x, y } = cornerPoint(direction, nodeModel)
+          handleResize({
+            x,
+            y,
+            deltaX,
+            deltaY,
+            index: this.index,
+            nodeModel,
+            graphModel
+          })
+          return
+        }
+
+        const tryDx = this.cumDx + cdx
+        const tryDy = this.cumDy + cdy
+        const next = boundsForResizeHandleDrag(direction, start, tryDx, tryDy, false, {
+          minWidth: nodeModel.minWidth,
+          minHeight: nodeModel.minHeight,
+          maxWidth: nodeModel.maxWidth,
+          maxHeight: nodeModel.maxHeight
         })
+        if (!next) return
+
+        this.cumDx = tryDx
+        this.cumDy = tryDy
+
+        const corner = cornerPoint(direction, nodeModel)
+        const target = cornerOfSelectionRect(direction, next)
+        handleResize({
+          x: corner.x,
+          y: corner.y,
+          deltaX: target.x - corner.x,
+          deltaY: target.y - corner.y,
+          index: this.index,
+          nodeModel,
+          graphModel
+        })
+      },
+      onDragEnd: () => {
+        this.dragStartBounds = null
+        this.cumDx = 0
+        this.cumDy = 0
       },
       step: 1
     })
