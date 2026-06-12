@@ -62,7 +62,11 @@ const menuItems = computed<WwMenuItem[]>(() => {
         label: '复制',
         wwIcon: 'copy',
         shortcut: DG_SHORTCUT.copy,
-        command: () => void bus.dispatch({ type: 'canvas.copy' })
+        command: () =>
+          void bus.dispatch({
+            type: 'canvas.copy',
+            payload: { nodeIds, edgeIds }
+          })
       },
       {
         label: '粘贴',

@@ -77,6 +77,46 @@ function isLiveGroupFrame(lf: LogicFlow, groupId: string): boolean {
 }
 
 /** 根据图元/连线解析所属组合框 id（组合框已删除时返回 null） */
+/** 收集组合框下全部成员与组内连线（列表 + dgGroupId 反查 + 成员间隐式连线） */
+export function collectDiagramGroupContent(
+  lf: LogicFlow,
+  groupId: string
+): { memberNodeIds: string[]; memberEdgeIds: string[] } {
+  const group = lf.getNodeModelById(groupId)
+  if (!group || !isGroupFrameType(group.type)) {
+    return { memberNodeIds: [], memberEdgeIds: [] }
+  }
+
+  const memberNodeIds = new Set<string>(
+    ((group.properties?.dgGroupMembers as string[] | undefined) ?? []).filter((id) =>
+      Boolean(lf.getNodeModelById(id))
+    )
+  )
+  const memberEdgeIds = new Set<string>(
+    ((group.properties?.dgGroupEdges as string[] | undefined) ?? []).filter((id) =>
+      Boolean(lf.getEdgeModelById(id))
+    )
+  )
+
+  for (const node of lf.graphModel.nodes) {
+    if (isGroupFrameModel(node)) continue
+    if (node.properties?.dgGroupId === groupId) memberNodeIds.add(node.id)
+  }
+  for (const edge of lf.graphModel.edges) {
+    if (edge.properties?.dgGroupId === groupId) memberEdgeIds.add(edge.id)
+  }
+  for (const edge of lf.graphModel.edges) {
+    if (memberNodeIds.has(edge.sourceNodeId) && memberNodeIds.has(edge.targetNodeId)) {
+      memberEdgeIds.add(edge.id)
+    }
+  }
+
+  return {
+    memberNodeIds: [...memberNodeIds],
+    memberEdgeIds: [...memberEdgeIds]
+  }
+}
+
 export function resolveGroupFrameIdForElement(
   lf: LogicFlow,
   elementId: string,
@@ -87,22 +127,78 @@ export function resolveGroupFrameIdForElement(
     if (!model) return null
     if (isGroupFrameType(model.type)) return elementId
     const gid = model.properties?.dgGroupId
-    if (typeof gid !== 'string' || !gid || !isLiveGroupFrame(lf, gid)) return null
-    return gid
+    if (typeof gid === 'string' && gid && isLiveGroupFrame(lf, gid)) return gid
+    for (const frame of lf.graphModel.nodes) {
+      if (!isGroupFrameModel(frame)) continue
+      const members = (frame.properties?.dgGroupMembers as string[] | undefined) ?? []
+      if (members.includes(elementId) && isLiveGroupFrame(lf, frame.id)) return frame.id
+    }
+    return null
   }
-  const gid = lf.getEdgeModelById(elementId)?.properties?.dgGroupId
-  if (typeof gid !== 'string' || !gid || !isLiveGroupFrame(lf, gid)) return null
-  return gid
+  const edge = lf.getEdgeModelById(elementId)
+  const gid = edge?.properties?.dgGroupId
+  if (typeof gid === 'string' && gid && isLiveGroupFrame(lf, gid)) return gid
+  for (const frame of lf.graphModel.nodes) {
+    if (!isGroupFrameModel(frame)) continue
+    const edges = (frame.properties?.dgGroupEdges as string[] | undefined) ?? []
+    if (edges.includes(elementId) && isLiveGroupFrame(lf, frame.id)) return frame.id
+  }
+  return null
+}
+
+const GROUP_MEMBERSHIP_KEYS = ['dgGroupId', 'dgGroupMembers', 'dgGroupEdges'] as const
+
+/** 同步组合框成员列表与成员 dgGroupId（修复 load/编辑后数据不一致） */
+export function syncDiagramGroupMembershipFromFrames(lf: LogicFlow): void {
+  for (const frame of lf.graphModel.nodes) {
+    if (!isGroupFrameModel(frame)) continue
+    const groupId = frame.id
+    const { memberNodeIds, memberEdgeIds } = collectDiagramGroupContent(lf, groupId)
+
+    for (const memberId of memberNodeIds) {
+      const member = lf.getNodeModelById(memberId)
+      if (member && member.properties?.dgGroupId !== groupId) {
+        lf.setProperties(memberId, { dgGroupId: groupId })
+      }
+    }
+    for (const edgeId of memberEdgeIds) {
+      const edge = lf.getEdgeModelById(edgeId)
+      if (edge && edge.properties?.dgGroupId !== groupId) {
+        lf.setProperties(edgeId, { dgGroupId: groupId })
+      }
+    }
+
+    const listedMembers = (frame.properties?.dgGroupMembers as string[] | undefined) ?? []
+    const listedEdges = (frame.properties?.dgGroupEdges as string[] | undefined) ?? []
+    const membersMatch =
+      listedMembers.length === memberNodeIds.length &&
+      memberNodeIds.every((id) => listedMembers.includes(id))
+    const edgesMatch =
+      listedEdges.length === memberEdgeIds.length &&
+      memberEdgeIds.every((id) => listedEdges.includes(id))
+    if (!membersMatch || !edgesMatch) {
+      lf.setProperties(groupId, {
+        dgGroupMembers: memberNodeIds,
+        dgGroupEdges: memberEdgeIds
+      })
+    }
+  }
 }
 
 /** 彻底清除图元/连线的组合标识（setProperties(undefined) 无法删除 LF 属性） */
 export function clearElementGroupId(lf: LogicFlow, elementId: string): void {
+  clearElementGroupMembership(lf, elementId)
+}
+
+/** 清除图元/连线上全部组合成员属性 */
+export function clearElementGroupMembership(lf: LogicFlow, elementId: string): void {
   const node = lf.getNodeModelById(elementId)
   const edge = lf.getEdgeModelById(elementId)
   if (!node && !edge) return
   const props = (node ?? edge)?.properties as Record<string, unknown> | undefined
-  if (props && 'dgGroupId' in props) {
-    lf.deleteProperty(elementId, 'dgGroupId')
+  if (!props) return
+  for (const key of GROUP_MEMBERSHIP_KEYS) {
+    if (key in props) lf.deleteProperty(elementId, key)
   }
 }
 

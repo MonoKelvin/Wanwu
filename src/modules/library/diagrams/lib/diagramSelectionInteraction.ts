@@ -102,7 +102,15 @@ export function reconcileModifierNodeClick(
 ): void {
   const model = lf.getNodeModelById(nodeId)
   if (!model) return
-  if (opts?.skipGroupFrame !== false && isGroupFrameModel(model)) return
+  if (opts?.skipGroupFrame !== false && isGroupFrameModel(model)) {
+    const wasSelected = previouslySelectedIds.includes(nodeId)
+    if (wasSelected) lf.deselectElementById(nodeId)
+    else {
+      for (const id of previouslySelectedIds) lf.selectElementById(id, true)
+      lf.selectElementById(nodeId, true)
+    }
+    return
+  }
 
   const wasSelected = previouslySelectedIds.includes(nodeId)
   if (wasSelected) {
@@ -130,7 +138,19 @@ export function applyNodeSelectForPointer(
 ): void {
   const model = lf.getNodeModelById(nodeId)
   if (!model) return
-  if (opts?.skipGroupFrame !== false && isGroupFrameModel(model)) return
+  if (opts?.skipGroupFrame !== false && isGroupFrameModel(model)) {
+    const wasSelected = previouslySelectedIds.includes(nodeId)
+    if (isToggleSelectKey(e)) {
+      if (wasSelected) lf.deselectElementById(nodeId)
+      else lf.selectElementById(nodeId, true)
+      return
+    }
+    if (!wasSelected || previouslySelectedIds.length !== 1 || previouslySelectedIds[0] !== nodeId) {
+      lf.clearSelectElements()
+      lf.selectElementById(nodeId, false)
+    }
+    return
+  }
 
   const wasSelected = previouslySelectedIds.includes(nodeId)
 

@@ -2,6 +2,9 @@ import type LogicFlow from '@logicflow/core'
 import { ensureDiagramShapeExtensions } from '@modules/library/diagrams/app/diagramShapeExtensions'
 import { ensureAllGroupFramesAtBottom } from '@modules/library/diagrams/lib/diagramGroupBounds'
 import {
+  syncDiagramGroupMembershipFromFrames
+} from '@modules/library/diagrams/lib/diagramGroupFrame'
+import {
   normalizeDiagramGraph,
   reapplyLoadedDiagramGraphStyles,
   syncDiagramShapeExtensionsAfterLoad
@@ -37,6 +40,7 @@ export class DiagramGraphLoadCoordinator {
     this.ports.selectionBridge.setPrimarySelection(null, null)
     this.ports.selectionBridge.publishSelection()
     requestAnimationFrame(() => this.ports.scheduleResize())
+    syncDiagramGroupMembershipFromFrames(lf)
     ensureAllGroupFramesAtBottom(lf)
   }
 }

@@ -74,12 +74,12 @@ export function resolvePrimaryGroupId(
     const model = lf.getNodeModelById(id)
     if (!model) continue
     if (isGroupFrameType(model.type)) return id
-    const gid = model.properties?.dgGroupId
-    if (typeof gid === 'string' && gid) return gid
+    const gid = resolveGroupFrameIdForElement(lf, id, 'node')
+    if (gid) return gid
   }
   for (const id of orderedEdgeIds) {
-    const gid = lf.getEdgeModelById(id)?.properties?.dgGroupId
-    if (typeof gid === 'string' && gid) return gid
+    const gid = resolveGroupFrameIdForElement(lf, id, 'edge')
+    if (gid) return gid
   }
   return null
 }

@@ -854,12 +854,16 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.groupSelectionCoordinator.deleteSelection(nodeIds, edgeIds)
   }
 
-  copy(): void {
-    this.clipboard.copy()
+  copy(nodeIds?: string[], edgeIds?: string[]): void {
+    this.clipboard.copy(nodeIds, edgeIds)
   }
 
   paste(clientX?: number, clientY?: number): void {
     this.clipboard.paste(clientX, clientY)
+    this.selectionBridge.syncFromGraph()
+    this.groupFrames.refreshDisplay()
+    this.refreshMultiSelectResize?.()
+    this.scheduleOverlayLayout()
   }
 
   duplicate(

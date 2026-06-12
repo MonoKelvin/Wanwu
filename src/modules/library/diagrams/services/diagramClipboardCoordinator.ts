@@ -1,10 +1,13 @@
 import type LogicFlow from '@logicflow/core'
 import {
-  buildDiagramClipboardSnapshot,
-  pasteDiagramClipboardSnapshot,
-  resolveDiagramClipboardTargets,
-  type DiagramClipboardSnapshot
-} from '@modules/library/diagrams/lib/diagramClipboard'
+  buildDiagramClipboardPayload,
+  pasteDiagramClipboardPayload
+} from '@modules/library/diagrams/lib/diagramClipboardEngine'
+import {
+  isDiagramClipboardPayloadEmpty,
+  type DiagramClipboardPayload
+} from '@modules/library/diagrams/lib/diagramClipboardPayload'
+import { resolveDiagramClipboardTargets } from '@modules/library/diagrams/lib/diagramClipboard'
 
 export interface DiagramClipboardCoordinatorPorts {
   getLf(): LogicFlow | null
@@ -20,7 +23,7 @@ export interface DiagramClipboardCoordinatorPorts {
  * 剪贴板：复制/粘贴/副本；快照构建与目标解析委托 lib/diagramClipboard。
  */
 export class DiagramClipboardCoordinator {
-  private snapshot: DiagramClipboardSnapshot | null = null
+  private snapshot: DiagramClipboardPayload | null = null
 
   constructor(private readonly ports: DiagramClipboardCoordinatorPorts) {}
 
@@ -42,14 +45,16 @@ export class DiagramClipboardCoordinator {
   copy(nodeIds?: string[], edgeIds?: string[]): void {
     const lf = this.ports.getLf()
     if (!lf) return
-    const targets = this.resolveTargets(nodeIds, edgeIds)
-    this.snapshot = buildDiagramClipboardSnapshot(lf, targets)
+    const live = this.ports.collectLiveSelection()
+    const nodes = nodeIds?.length ? nodeIds : live.nodeIds
+    const edges = edgeIds?.length ? edgeIds : live.edgeIds
+    this.snapshot = buildDiagramClipboardPayload(lf, nodes, edges)
   }
 
   paste(clientX?: number, clientY?: number, fixedOffsetX?: number, fixedOffsetY?: number): void {
     const lf = this.ports.getLf()
     if (!lf || !this.snapshot) return
-    pasteDiagramClipboardSnapshot(lf, this.snapshot, {
+    pasteDiagramClipboardPayload(lf, this.snapshot, {
       clientX,
       clientY,
       fixedOffsetX,
@@ -69,12 +74,12 @@ export class DiagramClipboardCoordinator {
     edgeIds?: string[]
   ): void {
     this.copy(nodeIds, edgeIds)
-    if (!this.snapshot?.nodes.length && !this.snapshot?.edges.length) return
+    if (isDiagramClipboardPayloadEmpty(this.snapshot)) return
     this.paste(undefined, undefined, offsetX, offsetY)
   }
 
   hasClipboard(): boolean {
-    return Boolean(this.snapshot?.nodes.length || this.snapshot?.edges.length)
+    return !isDiagramClipboardPayloadEmpty(this.snapshot)
   }
 
   clear(): void {

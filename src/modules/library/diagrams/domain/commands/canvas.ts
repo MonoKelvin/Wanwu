@@ -75,6 +75,11 @@ export interface CanvasSelectPayload {
   append?: boolean
 }
 
+export interface CanvasCopyPayload {
+  nodeIds?: string[]
+  edgeIds?: string[]
+}
+
 export interface CanvasPastePayload {
   x?: number
   y?: number

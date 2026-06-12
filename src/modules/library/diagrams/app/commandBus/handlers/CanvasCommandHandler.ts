@@ -129,7 +129,7 @@ export class CanvasCommandHandler implements IDiagramCommandHandler {
           port.clearSelection()
           return { ok: true }
         case 'canvas.copy':
-          port.copy()
+          port.copy(p.nodeIds as string[] | undefined, p.edgeIds as string[] | undefined)
           return { ok: true }
         case 'canvas.paste':
           port.paste(p.x as number | undefined, p.y as number | undefined)
