@@ -85,21 +85,34 @@ function updateCell(row: number, col: number, value: string) {
   localData.value = { ...data.value, rows }
   emitPatch()
 }
+function onShowHeaderChange(value: boolean) {
+  localData.value = { ...localData.value, showHeader: value }
+  emitPatch(true)
+}
 </script>
 
 <template>
   <div class="dg-table-editor">
     <SettingsRow label="显示表头">
-      <WwToggleSwitch
-        :model-value="data.showHeader"
-        @update:model-value="(v) => { localData.value = { ...data, showHeader: Boolean(v) }; emitPatch(true) }"
-      />
+      <WwToggleSwitch :model-value="data.showHeader" @update:model-value="onShowHeaderChange" />
     </SettingsRow>
     <SettingsRow label="列数">
       <div class="dg-table-editor__cols">
-        <WwIconButton icon="minus" icon-size="sm" compact aria-label="减少列" @click="setColumnCount(data.columns.length - 1)" />
+        <WwIconButton
+          icon="minus"
+          icon-size="sm"
+          compact
+          aria-label="减少列"
+          @click="setColumnCount(data.columns.length - 1)"
+        />
         <span>{{ data.columns.length }}</span>
-        <WwIconButton icon="plus" icon-size="sm" compact aria-label="增加列" @click="setColumnCount(data.columns.length + 1)" />
+        <WwIconButton
+          icon="plus"
+          icon-size="sm"
+          compact
+          aria-label="增加列"
+          @click="setColumnCount(data.columns.length + 1)"
+        />
       </div>
     </SettingsRow>
     <template v-if="data.showHeader">
