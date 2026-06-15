@@ -67,6 +67,7 @@ import {
   isGroupFrameModel,
   clearGroupFramePointerInside
 } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { finalizeNodeLayoutChange } from '@modules/library/diagrams/lib/diagramNodeLayoutPatch'
 import { syncGroupFramesForNodes } from '@modules/library/diagrams/lib/diagramGroupBounds'
 import { snapCanvasPoint } from '@modules/library/diagrams/lib/diagramGridSnap'
 import {
@@ -327,7 +328,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.resizeSnapTimer = setTimeout(() => {
       this.resizeSnapTimer = null
       if (!this.lf) return
-      syncGroupFramesForNodes(this.lf, [nodeId])
+      finalizeNodeLayoutChange(this.lf, [nodeId])
       this.refreshMultiSelectResize?.()
       this.multiSelectOverlay.scheduleLayout()
       this.scheduleGraphChange()
@@ -546,10 +547,21 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   ): void {
     if (!this.lf) return
     const ids = filterAlignableNodeIds(this.lf!, nodeIds?.length ? nodeIds : this.getSelectedNodeIds())
+    const affectsLayout =
+      nodeProps.x != null ||
+      nodeProps.y != null ||
+      nodeProps.width != null ||
+      nodeProps.height != null ||
+      (nodeProps as { left?: number; top?: number }).left != null ||
+      (nodeProps as { left?: number; top?: number }).top != null
     for (const id of ids) {
       applyNodeProperties(this.lf, { id, ...nodeProps })
     }
-    syncGroupFramesForNodes(this.lf, ids)
+    if (affectsLayout) {
+      finalizeNodeLayoutChange(this.lf, ids)
+      this.refreshMultiSelectResize?.()
+      this.scheduleOverlayLayout()
+    }
     this.scheduleGraphChange()
     this.selectionBridge.publishSelection()
   }
@@ -739,11 +751,17 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
   updateNodeProperties(props: Partial<DiagramNodeProperties> & { id: string }): void {
     if (!this.lf) return
+    const layoutProps = props as Partial<DiagramNodeProperties> & { left?: number; top?: number }
     const affectsLayout =
-      props.x != null || props.y != null || props.width != null || props.height != null
+      layoutProps.x != null ||
+      layoutProps.y != null ||
+      layoutProps.left != null ||
+      layoutProps.top != null ||
+      layoutProps.width != null ||
+      layoutProps.height != null
     applyNodeProperties(this.lf, props)
     if (affectsLayout) {
-      syncGroupFramesForNodes(this.lf, [props.id])
+      finalizeNodeLayoutChange(this.lf, [props.id])
       this.refreshMultiSelectResize?.()
       this.scheduleOverlayLayout()
     }
@@ -891,8 +909,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.selectionBridge.publishSelection()
   }
 
-  deleteSelection(nodeIds?: string[], edgeIds?: string[]): void {
-    this.groupSelectionCoordinator.deleteSelection(nodeIds, edgeIds)
+  deleteSelection(nodeIds?: string[], edgeIds?: string[]): Promise<void> {
+    return this.groupSelectionCoordinator.deleteSelection(nodeIds, edgeIds)
   }
 
   copy(): void {

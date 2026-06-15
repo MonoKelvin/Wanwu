@@ -1,6 +1,13 @@
 import { collectOrderedSelectionIds } from '@modules/library/diagrams/lib/diagramGroupSelection'
 import { isGroupFrameType } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import { isDiagramGroupMultiResizing } from '@modules/library/diagrams/lib/diagramMultiSelectResize'
+import {
+  applyNodeSelectForPointer,
+  isBoxSubtractKey,
+  isModifierSelectionGesture,
+  isToggleSelectKey,
+  reconcileModifierNodeClick
+} from '@modules/library/diagrams/lib/diagramSelectionInteraction'
 import type LogicFlow from '@logicflow/core'
 import {
   applyDragSnapOnDrop,
@@ -105,6 +112,38 @@ function resolveMovingSnapTargets(lf: LogicFlow, anchorId: string, isGroupFrameI
   return resolveSnapTargets(lf, anchorId).filter((id) => !isGroupFrameId(id))
 }
 
+/** 拖拽开始时同步选区：未选中图元按点击语义选中，已选中则保留现有多选并推送选区事件 */
+function syncSelectionOnNodeDragStart(
+  ports: DiagramCanvasEventBinderPorts,
+  nodeId: string,
+  e?: MouseEvent | TouchEvent
+): void {
+  if (ports.boxSelect.isInGracePeriod()) return
+
+  const lf = ports.getLf()
+  const pointerEvent = e as MouseEvent | PointerEvent | undefined
+  ports.boxSelect.clearSnapshots()
+
+  const liveNodeIds = collectOrderedSelectionIds(lf).nodeIds
+  const alreadySelected = liveNodeIds.includes(nodeId)
+
+  if (!alreadySelected) {
+    const snapshot = ports.getClickSelectionSnapshot(pointerEvent)
+    if (isToggleSelectKey(pointerEvent) && !isBoxSubtractKey(pointerEvent)) {
+      reconcileModifierNodeClick(lf, nodeId, snapshot)
+    } else if (!isModifierSelectionGesture(pointerEvent)) {
+      applyNodeSelectForPointer(lf, nodeId, pointerEvent, snapshot)
+    }
+    if (!isModifierSelectionGesture(pointerEvent)) {
+      for (const edge of lf.getSelectElements(true).edges) {
+        lf.deselectElementById(edge.id)
+      }
+    }
+  }
+
+  ports.selectionBridge.afterSelectionMutation()
+}
+
 /** 拖拽、缩放、框选移动、对齐线与松手吸附 */
 export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts): () => void {
   const lf = ports.getLf()
@@ -135,6 +174,7 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
   })
 
   lf.on('node:dragstart', ({ data, e }) => {
+    syncSelectionOnNodeDragStart(ports, data.id, e)
     lf.removeNodeSnapLine()
     lastDragAlignPointer = undefined
     const snapTargets = resolveMovingSnapTargets(lf, data.id, ports.isGroupFrameId)
@@ -186,6 +226,9 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
   })
 
   lf.on('selection:dragstart', ({ e }) => {
+    if (!ports.boxSelect.isInGracePeriod()) {
+      ports.selectionBridge.afterSelectionMutation()
+    }
     lf.removeNodeSnapLine()
     const ids = collectOrderedSelectionIds(lf).nodeIds.filter((id) => !ports.isGroupFrameId(id))
     if (!ids.length) return

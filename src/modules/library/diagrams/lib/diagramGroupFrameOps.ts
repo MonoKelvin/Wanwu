@@ -6,6 +6,7 @@ import {
   DIAGRAM_GROUP_FRAME_MIN_SIZE,
   DIAGRAM_GROUP_FRAME_TYPE,
   clearElementGroupId,
+  collectDiagramGroupContent,
   isGroupFrameModel
 } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import type { DiagramNodeBounds } from '@modules/library/diagrams/lib/diagramNodeLayout'
@@ -49,6 +50,18 @@ export function detachDiagramEdgeFromGroup(lf: LogicFlow, edgeId: string): void 
     lf.deleteNode(groupId)
   } else {
     syncGroupFrameBounds(lf, groupId)
+  }
+}
+
+/** 删除选择框并一并删除其成员图元与连线 */
+export function deleteDiagramGroupFrameWithContents(lf: LogicFlow, groupId: string): void {
+  const { memberNodeIds, memberEdgeIds } = collectDiagramGroupContent(lf, groupId)
+  releaseDiagramGroupFrame(lf, groupId)
+  for (const edgeId of memberEdgeIds) {
+    if (lf.getEdgeModelById(edgeId)) lf.deleteEdge(edgeId)
+  }
+  for (const memberId of memberNodeIds) {
+    if (lf.getNodeModelById(memberId)) lf.deleteNode(memberId)
   }
 }
 

@@ -37,6 +37,10 @@ export interface DiagramPropertyActions {
   patchNodeNow(nodeProps: Record<string, unknown>): void
   patchNodeNumeric(patch: Record<string, unknown>): void
   patchNodeTextStyle(patch: Record<string, unknown>): void
+  patchNodeLeft(left: number): void
+  patchNodeTop(top: number): void
+  patchNodeWidth(width: number): void
+  patchNodeHeight(height: number): void
   patchNodePositionFromTopLeft(left: number, top: number): void
   patchNodeSizeKeepTopLeft(width: number, height: number): void
   patchEdge(patch: Record<string, unknown>): void

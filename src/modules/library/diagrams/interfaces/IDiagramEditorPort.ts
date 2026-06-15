@@ -48,7 +48,7 @@ export interface IDiagramEditorPort {
   selectAll(): void
   clearSelection(): void
   select(nodeIds: string[], edgeIds?: string[], append?: boolean): void
-  deleteSelection(nodeIds?: string[], edgeIds?: string[]): void
+  deleteSelection(nodeIds?: string[], edgeIds?: string[]): Promise<void>
   copy(): void
   paste(x?: number, y?: number): void
   groupSelection(nodeIds?: string[], edgeIds?: string[]): void

@@ -1,5 +1,6 @@
 import type { LogicFlowDiagramAdapter } from '@modules/library/diagrams/services/LogicFlowDiagramAdapter'
 import type { DiagramEditorSession } from '@modules/library/diagrams/app/DiagramEditorSession'
+import { resetDiagramGroupFrameDeleteSession } from '@modules/library/diagrams/lib/diagramGroupFrameDeleteConfirm'
 
 export type DiagramEditorRuntimeState = {
   port: LogicFlowDiagramAdapter | null
@@ -55,6 +56,7 @@ export function getDiagramEditorRuntime(): DiagramEditorRuntimeState {
 }
 
 export function destroyDiagramEditorRuntime(): void {
+  resetDiagramGroupFrameDeleteSession()
   const rt = getDiagramEditorRuntime()
   rt.port?.destroy()
   rt.port = null

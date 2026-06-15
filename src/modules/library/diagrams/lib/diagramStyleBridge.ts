@@ -406,17 +406,25 @@ export function applyNodeProperties(lf: LogicFlow, props: Partial<DiagramNodePro
     }
   }
 
+  const layoutProps = props as Partial<DiagramNodeProperties> & {
+    left?: number
+    top?: number
+  }
   if (
-    props.x != null ||
-    props.y != null ||
-    props.width != null ||
-    props.height != null
+    layoutProps.x != null ||
+    layoutProps.y != null ||
+    layoutProps.left != null ||
+    layoutProps.top != null ||
+    layoutProps.width != null ||
+    layoutProps.height != null
   ) {
     applyNodeLayoutProperties(lf, model, {
-      x: props.x,
-      y: props.y,
-      width: props.width,
-      height: props.height
+      x: layoutProps.x,
+      y: layoutProps.y,
+      left: layoutProps.left,
+      top: layoutProps.top,
+      width: layoutProps.width,
+      height: layoutProps.height
     })
   }
 

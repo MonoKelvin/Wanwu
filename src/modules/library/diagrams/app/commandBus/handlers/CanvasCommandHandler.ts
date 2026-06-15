@@ -103,7 +103,7 @@ export class CanvasCommandHandler implements IDiagramCommandHandler {
           session.markActivePageDirty()
           return { ok: true }
         case 'canvas.deleteSelection':
-          port.deleteSelection(p.nodeIds as string[] | undefined, p.edgeIds as string[] | undefined)
+          await port.deleteSelection(p.nodeIds as string[] | undefined, p.edgeIds as string[] | undefined)
           session.markActivePageDirty()
           return { ok: true }
         case 'canvas.connect': {

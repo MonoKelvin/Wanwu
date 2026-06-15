@@ -16,24 +16,20 @@ const topLeft = computed(() => actions.nodeTopLeft(node.value))
       <SettingsRow label="X" class="dg-settings-row--stacked dg-settings-row--compact">
         <WwNumberInput
           :model-value="topLeft.left"
+          :max-fraction-digits="0"
           size="block"
           @update:model-value="
-            actions.patchNodePositionFromTopLeft(
-              actions.parseNumber($event, topLeft.left),
-              topLeft.top
-            )
+            actions.patchNodeLeft(actions.parseNumber($event, topLeft.left))
           "
         />
       </SettingsRow>
       <SettingsRow label="Y" class="dg-settings-row--stacked dg-settings-row--compact">
         <WwNumberInput
           :model-value="topLeft.top"
+          :max-fraction-digits="0"
           size="block"
           @update:model-value="
-            actions.patchNodePositionFromTopLeft(
-              topLeft.left,
-              actions.parseNumber($event, topLeft.top)
-            )
+            actions.patchNodeTop(actions.parseNumber($event, topLeft.top))
           "
         />
       </SettingsRow>
@@ -41,12 +37,10 @@ const topLeft = computed(() => actions.nodeTopLeft(node.value))
         <WwNumberInput
           :model-value="node.width"
           :min="1"
+          :max-fraction-digits="0"
           size="block"
           @update:model-value="
-            actions.patchNodeSizeKeepTopLeft(
-              actions.parseNumber($event, node.width, 1),
-              node.height
-            )
+            actions.patchNodeWidth(actions.parseNumber($event, node.width, 1))
           "
         />
       </SettingsRow>
@@ -54,12 +48,10 @@ const topLeft = computed(() => actions.nodeTopLeft(node.value))
         <WwNumberInput
           :model-value="node.height"
           :min="1"
+          :max-fraction-digits="0"
           size="block"
           @update:model-value="
-            actions.patchNodeSizeKeepTopLeft(
-              node.width,
-              actions.parseNumber($event, node.height, 1)
-            )
+            actions.patchNodeHeight(actions.parseNumber($event, node.height, 1))
           "
         />
       </SettingsRow>

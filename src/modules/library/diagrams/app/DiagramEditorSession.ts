@@ -10,6 +10,7 @@ import {
   stripTransientAssetUrls
 } from '@modules/library/diagrams/lib/diagramAssetRefs'
 import { cloneForIpc } from '@shared/lib/cloneForIpc'
+import { resetDiagramGroupFrameDeleteSession } from '@modules/library/diagrams/lib/diagramGroupFrameDeleteConfirm'
 import {
   normalizePageName,
   uniquePageName,
@@ -46,6 +47,7 @@ export class DiagramEditorSession {
     templateContent: DiagramContent,
     options?: { skipViewport?: boolean }
   ): Promise<void> {
+    resetDiagramGroupFrameDeleteSession()
     this.fileId = null
     this.fileMeta = null
     this.content = cloneForIpc(templateContent)
@@ -63,6 +65,7 @@ export class DiagramEditorSession {
     if (!options?.force && this.fileId === fileId && this.content) {
       return
     }
+    resetDiagramGroupFrameDeleteSession()
     const record = await this.repo.readFile(fileId)
     if (!record) throw new Error('文件不存在')
     this.fileId = fileId
@@ -74,6 +77,7 @@ export class DiagramEditorSession {
   }
 
   openBlank(title = '未命名流程图'): void {
+    resetDiagramGroupFrameDeleteSession()
     this.fileId = null
     this.fileMeta = null
     this.content = createBlankDiagramContent(title)

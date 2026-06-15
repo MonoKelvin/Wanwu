@@ -2,12 +2,17 @@ import type LogicFlow from '@logicflow/core'
 import { analyzeGroupSelection } from '@modules/library/diagrams/lib/diagramGroupSelection'
 import {
   createDiagramGroupFrame,
+  deleteDiagramGroupFrameWithContents,
   detachDiagramEdgeFromGroup,
   detachDiagramNodeFromGroup,
   mergeUngroupedIntoDiagramGroup,
   releaseDiagramGroupFrame
 } from '@modules/library/diagrams/lib/diagramGroupFrameOps'
 import { isGroupFrameModel, collectDiagramGroupContent } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import {
+  askDiagramGroupFrameDeleteConfirm,
+  getDiagramGroupFrameDeleteSessionPreference
+} from '@modules/library/diagrams/lib/diagramGroupFrameDeleteConfirm'
 import { resolveSelectionCapabilities } from '@modules/library/diagrams/domain/selection'
 import { readDiagramNodeBounds } from '@modules/library/diagrams/lib/diagramNodeLayout'
 import type { DiagramBoxSelectCoordinator } from '@modules/library/diagrams/services/diagramBoxSelectCoordinator'
@@ -188,7 +193,7 @@ export class DiagramGroupSelectionCoordinator {
     this.ports.scheduleGraphChange()
   }
 
-  deleteSelection(nodeIds?: string[], edgeIds?: string[]): void {
+  async deleteSelection(nodeIds?: string[], edgeIds?: string[]): Promise<void> {
     const lf = this.ports.getLf()
     if (!lf) return
     const targets =
@@ -198,18 +203,56 @@ export class DiagramGroupSelectionCoordinator {
             edges: (edgeIds ?? []).map((id) => ({ id }))
           }
         : lf.getSelectElements(true)
+
+    const groupFrameIds = targets.nodes
+      .map((node) => node.id)
+      .filter((id) => isGroupFrameModel(lf.getNodeModelById(id)))
+
+    const groupFrameOnlySelection =
+      groupFrameIds.length > 0 &&
+      groupFrameIds.length === targets.nodes.length &&
+      targets.edges.length === 0
+
+    let deleteGroupContents = false
+    if (groupFrameOnlySelection) {
+      const sessionPref = getDiagramGroupFrameDeleteSessionPreference()
+      if (sessionPref === 'with-contents') {
+        deleteGroupContents = true
+      } else if (sessionPref === 'frame-only') {
+        deleteGroupContents = false
+      } else {
+        const choice = await askDiagramGroupFrameDeleteConfirm(groupFrameIds.length)
+        if (choice === 'cancel') return
+        deleteGroupContents = choice === 'with-contents'
+      }
+    }
+
+    const deletedNodeIds = new Set<string>()
+    const deletedEdgeIds = new Set<string>()
+
     for (const node of targets.nodes) {
+      if (deletedNodeIds.has(node.id)) continue
       const model = lf.getNodeModelById(node.id)
       if (isGroupFrameModel(model)) {
-        releaseDiagramGroupFrame(lf, node.id)
+        if (deleteGroupContents) {
+          const { memberNodeIds, memberEdgeIds } = collectDiagramGroupContent(lf, node.id)
+          deleteDiagramGroupFrameWithContents(lf, node.id)
+          for (const edgeId of memberEdgeIds) deletedEdgeIds.add(edgeId)
+          for (const memberId of memberNodeIds) deletedNodeIds.add(memberId)
+        } else {
+          releaseDiagramGroupFrame(lf, node.id)
+        }
         continue
       }
       detachDiagramNodeFromGroup(lf, node.id)
       lf.deleteNode(node.id)
+      deletedNodeIds.add(node.id)
     }
     for (const edge of targets.edges) {
+      if (deletedEdgeIds.has(edge.id)) continue
       detachDiagramEdgeFromGroup(lf, edge.id)
       lf.deleteEdge(edge.id)
+      deletedEdgeIds.add(edge.id)
     }
     this.ports.selectionBridge.setPrimarySelection(null, null)
     this.ports.groupFrames.refreshDisplay()

@@ -13,6 +13,7 @@ import { useDiagramAlignBar } from '@modules/library/diagrams/composables/useDia
 import { useDiagramPortBinding } from '@modules/library/diagrams/composables/useDiagramPortBinding'
 import DiagramPanelRestoreButton from '@modules/library/diagrams/components/DiagramPanelRestoreButton.vue'
 import DiagramCanvasContextMenu from '@modules/library/diagrams/components/DiagramCanvasContextMenu.vue'
+import DiagramGroupFrameDeleteConfirmHost from '@modules/library/diagrams/components/DiagramGroupFrameDeleteConfirmHost.vue'
 import DiagramSaveConflictDialog from '@modules/library/diagrams/components/DiagramSaveConflictDialog.vue'
 import DiagramUnsavedLeaveDialog from '@modules/library/diagrams/components/DiagramUnsavedLeaveDialog.vue'
 import DiagramFolderPickerDialog from '@modules/library/diagrams/components/DiagramFolderPickerDialog.vue'
@@ -722,6 +723,7 @@ function onCanvasDrop(event: DragEvent) {
           @cancel="onFolderPickerCancel"
         />
         <DiagramCanvasContextMenu ref="canvasMenuRef" />
+        <DiagramGroupFrameDeleteConfirmHost />
         </template>
       </template>
     </div>
