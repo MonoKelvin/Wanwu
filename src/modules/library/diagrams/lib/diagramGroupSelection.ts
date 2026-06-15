@@ -1,5 +1,6 @@
 import type LogicFlow from '@logicflow/core'
 import {
+  collectDiagramGroupContent,
   isGroupFrameModel,
   isGroupFrameType,
   resolveGroupFrameIdForElement
@@ -96,10 +97,9 @@ function expandSelectionContent(
     const model = lf.getNodeModelById(id)
     if (!model) continue
     if (isGroupFrameType(model.type)) {
-      const members = (model.properties?.dgGroupMembers as string[] | undefined) ?? []
-      const groupEdges = (model.properties?.dgGroupEdges as string[] | undefined) ?? []
-      for (const memberId of members) nodeSet.add(memberId)
-      for (const edgeId of groupEdges) edgeSet.add(edgeId)
+      const { memberNodeIds, memberEdgeIds } = collectDiagramGroupContent(lf, id)
+      for (const memberId of memberNodeIds) nodeSet.add(memberId)
+      for (const edgeId of memberEdgeIds) edgeSet.add(edgeId)
       continue
     }
     if (!isGroupFrameModel(model)) {

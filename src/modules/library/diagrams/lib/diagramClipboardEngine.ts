@@ -2,15 +2,17 @@ import type LogicFlow from '@logicflow/core'
 import {
   DIAGRAM_GROUP_FRAME_TYPE,
   clearElementGroupMembership,
-  collectDiagramGroupContent,
+  collectDiagramGroupContentForCopy,
+  finalizeStandalonePasteElements,
+  isGroupFrameModel,
+  isGroupFrameType,
+  scrubElementsFromAllGroupFrames,
   syncDiagramGroupMembershipFromFrames
 } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import { ensureGroupFrameAtBottom, syncGroupFramesForNodes } from '@modules/library/diagrams/lib/diagramGroupBounds'
-import {
-  createDiagramGroupFrame,
-  mergeUngroupedIntoDiagramGroup
-} from '@modules/library/diagrams/lib/diagramGroupFrameOps'
-import { selectionBoundsCenter, readDiagramNodeBounds } from '@modules/library/diagrams/lib/diagramNodeLayout'
+import { mergeUngroupedIntoDiagramGroup } from '@modules/library/diagrams/lib/diagramGroupFrameOps'
+import { DEFAULT_GROUP_STYLE } from '@modules/library/diagrams/lib/diagramGroupFrameTheme'
+import { selectionBoundsCenter } from '@modules/library/diagrams/lib/diagramNodeLayout'
 import { snapNodesAfterDrag } from '@modules/library/diagrams/lib/diagramGridSnap'
 import { applyNodeDimensions } from '@modules/library/diagrams/lib/diagramShapeResize'
 import {
@@ -27,25 +29,44 @@ import {
   collectGroupedMemberLocalIds,
   resolveDiagramClipboardCopyPlan,
   sanitizeClipboardProperties,
-  stripClipboardMembershipProperties
+  stripClipboardMembershipProperties,
+  buildPasteElementProperties
 } from '@modules/library/diagrams/lib/diagramClipboardPayload'
 import { lfTextToClipboardString } from '@modules/library/diagrams/lib/diagramClipboardText'
+
+function cloneModelProperties(properties: unknown): Record<string, unknown> {
+  if (!properties || typeof properties !== 'object') return {}
+  try {
+    return JSON.parse(JSON.stringify(properties)) as Record<string, unknown>
+  } catch {
+    try {
+      return structuredClone(properties as Record<string, unknown>)
+    } catch {
+      return {}
+    }
+  }
+}
 
 function serializeNode(
   model: NonNullable<ReturnType<LogicFlow['getNodeModelById']>>,
   copyMode: DiagramClipboardCopyMode
 ): DiagramClipboardElement {
+  const rawProps =
+    'getProperties' in model && typeof model.getProperties === 'function'
+      ? (model.getProperties() as Record<string, unknown>)
+      : cloneModelProperties(model.properties)
   return {
     localId: model.id,
     kind: 'node',
     type: String(model.type),
+    copyMode,
     data: {
       x: model.x,
       y: model.y,
       width: model.width,
       height: model.height,
       text: lfTextToClipboardString(model.text),
-      properties: sanitizeClipboardProperties((model.properties ?? {}) as Record<string, unknown>, {
+      properties: sanitizeClipboardProperties(rawProps, {
         elementKind: 'node',
         elementType: String(model.type),
         copyMode
@@ -58,11 +79,15 @@ function serializeEdge(
   model: NonNullable<ReturnType<LogicFlow['getEdgeModelById']>>,
   copyMode: DiagramClipboardCopyMode
 ): DiagramClipboardElement {
+  const rawProps =
+    'getProperties' in model && typeof model.getProperties === 'function'
+      ? (model.getProperties() as Record<string, unknown>)
+      : cloneModelProperties(model.properties)
   const data: Record<string, unknown> = {
     sourceNodeId: model.sourceNodeId,
     targetNodeId: model.targetNodeId,
     text: lfTextToClipboardString(model.text),
-    properties: sanitizeClipboardProperties((model.properties ?? {}) as Record<string, unknown>, {
+    properties: sanitizeClipboardProperties(rawProps, {
       elementKind: 'edge',
       elementType: String(model.type),
       copyMode
@@ -77,6 +102,7 @@ function serializeEdge(
     localId: model.id,
     kind: 'edge',
     type: String(model.type),
+    copyMode,
     data
   }
 }
@@ -88,12 +114,54 @@ function upsertElement(
   map.set(element.localId, element)
 }
 
+function appendGroupFrameToPayload(
+  lf: LogicFlow,
+  groupId: string,
+  elementMap: Map<string, DiagramClipboardElement>,
+  groups: DiagramClipboardGroupBinding[],
+  ownedLocalIds: Set<string>
+): void {
+  const group = lf.getNodeModelById(groupId)
+  if (!group) return
+
+  const { memberNodeIds, memberEdgeIds } = collectDiagramGroupContentForCopy(lf, groupId)
+
+  upsertElement(elementMap, serializeNode(group, 'group-frame'))
+  ownedLocalIds.add(groupId)
+
+  const memberSet = new Set(memberNodeIds)
+  const allGroupEdgeIds = new Set(memberEdgeIds)
+  for (const edge of lf.graphModel.edges) {
+    if (memberSet.has(edge.sourceNodeId) && memberSet.has(edge.targetNodeId)) {
+      allGroupEdgeIds.add(edge.id)
+    }
+  }
+
+  for (const memberId of memberNodeIds) {
+    const member = lf.getNodeModelById(memberId)
+    if (!member) continue
+    upsertElement(elementMap, serializeNode(member, 'group-content'))
+    ownedLocalIds.add(memberId)
+  }
+  for (const edgeId of allGroupEdgeIds) {
+    const edge = lf.getEdgeModelById(edgeId)
+    if (!edge) continue
+    upsertElement(elementMap, serializeEdge(edge, 'group-content'))
+    ownedLocalIds.add(edgeId)
+  }
+
+  groups.push({
+    localFrameId: groupId,
+    memberLocalNodeIds: memberNodeIds,
+    memberLocalEdgeIds: [...allGroupEdgeIds]
+  })
+}
+
 export function buildDiagramClipboardPayload(
   lf: LogicFlow,
   nodeIds: string[],
   edgeIds: string[]
 ): DiagramClipboardPayload | null {
-  syncDiagramGroupMembershipFromFrames(lf)
   const plan = resolveDiagramClipboardCopyPlan(lf, nodeIds, edgeIds)
   if (!plan.groupFrameIds.length && !plan.nodeIds.length && !plan.edgeIds.length) {
     return null
@@ -104,45 +172,16 @@ export function buildDiagramClipboardPayload(
   const ownedLocalIds = new Set<string>()
 
   for (const groupId of plan.groupFrameIds) {
-    const group = lf.getNodeModelById(groupId)
-    if (!group) continue
-
-    const { memberNodeIds, memberEdgeIds } = collectDiagramGroupContent(lf, groupId)
-    upsertElement(elementMap, serializeNode(group, 'group-frame'))
-    ownedLocalIds.add(groupId)
-
-    const memberSet = new Set(memberNodeIds)
-    const allGroupEdgeIds = new Set(memberEdgeIds)
-    for (const edge of lf.graphModel.edges) {
-      if (memberSet.has(edge.sourceNodeId) && memberSet.has(edge.targetNodeId)) {
-        allGroupEdgeIds.add(edge.id)
-      }
-    }
-
-    for (const memberId of memberNodeIds) {
-      const member = lf.getNodeModelById(memberId)
-      if (!member) continue
-      upsertElement(elementMap, serializeNode(member, 'group-content'))
-      ownedLocalIds.add(memberId)
-    }
-    for (const edgeId of allGroupEdgeIds) {
-      const edge = lf.getEdgeModelById(edgeId)
-      if (!edge) continue
-      upsertElement(elementMap, serializeEdge(edge, 'group-content'))
-      ownedLocalIds.add(edgeId)
-    }
-
-    groups.push({
-      localFrameId: groupId,
-      memberLocalNodeIds: memberNodeIds,
-      memberLocalEdgeIds: [...allGroupEdgeIds]
-    })
+    appendGroupFrameToPayload(lf, groupId, elementMap, groups, ownedLocalIds)
   }
 
   for (const nodeId of plan.nodeIds) {
     if (ownedLocalIds.has(nodeId)) continue
     const model = lf.getNodeModelById(nodeId)
-    if (model) upsertElement(elementMap, serializeNode(model, 'standalone'))
+    if (!model) continue
+    // 非 active 组合框跳过（isSelected 残留不得触发整组复制）
+    if (isGroupFrameModel(model) || isGroupFrameType(model.type)) continue
+    upsertElement(elementMap, serializeNode(model, 'standalone'))
   }
 
   for (const edgeId of plan.edgeIds) {
@@ -171,6 +210,23 @@ export interface PasteDiagramClipboardOptions {
 
 function newElementId(type: string, stamp: number, seq: number): string {
   return `${type}_${stamp}_${seq}_${Math.random().toString(36).slice(2, 6)}`
+}
+
+function commitPastedElementId(
+  idMap: Map<string, string>,
+  localId: string,
+  requestedId: string,
+  actualId: string,
+  createdIds: string[]
+): string {
+  idMap.set(localId, actualId)
+  const existingIndex = createdIds.indexOf(requestedId)
+  if (existingIndex >= 0) {
+    createdIds[existingIndex] = actualId
+  } else if (!createdIds.includes(actualId)) {
+    createdIds.push(actualId)
+  }
+  return actualId
 }
 
 function pasteOffsetForPayload(
@@ -202,15 +258,7 @@ function pasteOffsetForPayload(
     const { x: cx, y: cy } = options.clientToCanvas(options.clientX, options.clientY)
     return { offsetX: cx - centerX, offsetY: cy - centerY }
   }
-  const container = options.getContainer()
-  if (container) {
-    const rect = container.getBoundingClientRect()
-    const { x: cx, y: cy } = options.clientToCanvas(
-      rect.left + rect.width / 2,
-      rect.top + rect.height / 2
-    )
-    return { offsetX: cx - centerX, offsetY: cy - centerY }
-  }
+  // 键盘粘贴无坐标时：相对原位置偏移，避免对齐视口中心后与原组合框重叠
   return { offsetX, offsetY }
 }
 
@@ -223,6 +271,40 @@ function offsetPolylinePoints(
   return points.map((pt) => ({ x: pt.x + offsetX, y: pt.y + offsetY }))
 }
 
+function isStandalonePasteElement(
+  element: DiagramClipboardElement,
+  payload: DiagramClipboardPayload,
+  groupedLocalIds: Set<string>
+): boolean {
+  if (element.copyMode === 'standalone') return true
+  if (payload.groups.length === 0) return element.copyMode !== 'group-frame'
+  if (element.copyMode === 'group-content' || element.copyMode === 'group-frame') return false
+  return !groupedLocalIds.has(element.localId)
+}
+
+function finalizePastedMembership(
+  lf: LogicFlow,
+  payload: DiagramClipboardPayload,
+  idMap: Map<string, string>,
+  groupedLocalIds: Set<string>,
+  groupFrameLocalIds: Set<string>
+): void {
+  if (!payload.groups.length) {
+    finalizeStandalonePasteElements(lf, [...idMap.values()])
+    return
+  }
+
+  for (const [localId, newId] of idMap) {
+    if (groupedLocalIds.has(localId) || groupFrameLocalIds.has(localId)) continue
+    const element = payload.elements.find((el) => el.localId === localId)
+    if (element && isStandalonePasteElement(element, payload, groupedLocalIds)) {
+      finalizeStandalonePasteElements(lf, [newId])
+    }
+  }
+
+  syncDiagramGroupMembershipFromFrames(lf)
+}
+
 function pasteNodeElement(
   lf: LogicFlow,
   element: DiagramClipboardElement,
@@ -231,25 +313,31 @@ function pasteNodeElement(
   stamp: number,
   seq: number,
   idMap: Map<string, string>,
-  createdNodeIds: string[]
+  createdNodeIds: string[],
+  options: { standalone: boolean }
 ): string {
-  const newId = newElementId(element.type, stamp, seq)
-  idMap.set(element.localId, newId)
-  createdNodeIds.push(newId)
+  const requestedId = newElementId(element.type, stamp, seq)
+  idMap.set(element.localId, requestedId)
 
-  lf.addNode({
-    id: newId,
+  const addedModel = lf.addNode({
+    id: requestedId,
     type: element.type,
     x: (element.data.x as number) + offsetX,
     y: (element.data.y as number) + offsetY,
     text: element.data.text as string | undefined,
-    properties: stripClipboardMembershipProperties(
-      (element.data.properties ?? {}) as Record<string, unknown>
-    )
+    properties: buildPasteElementProperties(element.data.properties, {
+      standalone: options.standalone
+    })
   })
-  clearElementGroupMembership(lf, newId)
+  const actualId = commitPastedElementId(
+    idMap,
+    element.localId,
+    requestedId,
+    addedModel.id,
+    createdNodeIds
+  )
 
-  const model = lf.getNodeModelById(newId)
+  const model = lf.getNodeModelById(actualId)
   if (model && (element.data.width != null || element.data.height != null)) {
     applyNodeDimensions(
       model as Parameters<typeof applyNodeDimensions>[0],
@@ -257,7 +345,13 @@ function pasteNodeElement(
       (element.data.height as number | undefined) ?? Math.round(model.height)
     )
   }
-  return newId
+
+  if (options.standalone) {
+    finalizeStandalonePasteElements(lf, [actualId])
+  } else {
+    clearElementGroupMembership(lf, actualId)
+  }
+  return actualId
 }
 
 function pasteEdgeElement(
@@ -268,16 +362,16 @@ function pasteEdgeElement(
   stamp: number,
   seq: number,
   idMap: Map<string, string>,
-  createdEdgeIds: string[]
+  createdEdgeIds: string[],
+  options: { standalone: boolean }
 ): string | null {
   const sourceNodeId = idMap.get(element.data.sourceNodeId as string)
   const targetNodeId = idMap.get(element.data.targetNodeId as string)
   if (!sourceNodeId || !targetNodeId) return null
   if (!lf.getNodeModelById(sourceNodeId) || !lf.getNodeModelById(targetNodeId)) return null
 
-  const newId = newElementId(element.type, stamp, seq)
-  idMap.set(element.localId, newId)
-  createdEdgeIds.push(newId)
+  const requestedId = newElementId(element.type, stamp, seq)
+  idMap.set(element.localId, requestedId)
 
   const pointsList = offsetPolylinePoints(
     element.data.pointsList as Array<{ x: number; y: number }> | undefined,
@@ -287,26 +381,38 @@ function pasteEdgeElement(
   const startPoint = element.data.startPoint as { x: number; y: number } | undefined
   const endPoint = element.data.endPoint as { x: number; y: number } | undefined
 
-  lf.addEdge({
-    id: newId,
+  const addedModel = lf.addEdge({
+    id: requestedId,
     type: element.type,
     sourceNodeId,
     targetNodeId,
     text: element.data.text as string | undefined,
-    properties: stripClipboardMembershipProperties(
-      (element.data.properties ?? {}) as Record<string, unknown>
-    ),
+    properties: buildPasteElementProperties(element.data.properties, {
+      standalone: options.standalone
+    }),
     ...(pointsList ? { pointsList } : {}),
     ...(startPoint
       ? { startPoint: { x: startPoint.x + offsetX, y: startPoint.y + offsetY } }
       : {}),
     ...(endPoint ? { endPoint: { x: endPoint.x + offsetX, y: endPoint.y + offsetY } } : {})
   })
-  clearElementGroupMembership(lf, newId)
+  const actualId = commitPastedElementId(
+    idMap,
+    element.localId,
+    requestedId,
+    addedModel.id,
+    createdEdgeIds
+  )
 
-  const edgeProps = readEdgeProperties(lf, newId)
+  const edgeProps = readEdgeProperties(lf, actualId)
   if (edgeProps) applyEdgeProperties(lf, edgeProps)
-  return newId
+
+  if (options.standalone) {
+    finalizeStandalonePasteElements(lf, [actualId])
+  } else {
+    clearElementGroupMembership(lf, actualId)
+  }
+  return actualId
 }
 
 function pasteGroupBinding(
@@ -328,76 +434,52 @@ function pasteGroupBinding(
 
   if (!memberNodeIds.length && !memberEdgeIds.length) return null
 
-  const createdGroupId = createDiagramGroupFrame(
-    lf,
-    memberNodeIds,
-    memberEdgeIds,
-    (id) => readDiagramNodeBounds(lf, id)
-  )
+  scrubElementsFromAllGroupFrames(lf, [...memberNodeIds, ...memberEdgeIds])
 
-  if (createdGroupId) {
-    idMap.set(binding.localFrameId, createdGroupId)
-    const frameProps = stripClipboardMembershipProperties(
-      (frameElement.data.properties ?? {}) as Record<string, unknown>
-    )
-    if (Object.keys(frameProps).length) {
-      lf.setProperties(createdGroupId, frameProps)
-    }
-    const groupModel = lf.getNodeModelById(createdGroupId)
-    if (groupModel) {
-      if (frameElement.data.width != null) {
-        groupModel.width = frameElement.data.width as number
-      }
-      if (frameElement.data.height != null) {
-        groupModel.height = frameElement.data.height as number
-      }
-      const targetX = (frameElement.data.x as number) + offsetX
-      const targetY = (frameElement.data.y as number) + offsetY
-      lf.graphModel.moveNode(
-        createdGroupId,
-        targetX - groupModel.x,
-        targetY - groupModel.y,
-        true
-      )
-    }
-    ensureGroupFrameAtBottom(lf, createdGroupId)
-    return createdGroupId
-  }
+  const targetX = (frameElement.data.x as number) + offsetX
+  const targetY = (frameElement.data.y as number) + offsetY
+  const frameProps = stripClipboardMembershipProperties(
+    cloneModelProperties(frameElement.data.properties)
+  )
+  const frameStyle =
+    frameProps.dgGroupStyle && typeof frameProps.dgGroupStyle === 'object'
+      ? frameProps.dgGroupStyle
+      : { ...DEFAULT_GROUP_STYLE }
 
   const newGroupId = newElementId(DIAGRAM_GROUP_FRAME_TYPE, stamp, seq)
   idMap.set(binding.localFrameId, newGroupId)
 
-  lf.addNode({
+  const addedFrame = lf.addNode({
     id: newGroupId,
     type: DIAGRAM_GROUP_FRAME_TYPE,
-    x: (frameElement.data.x as number) + offsetX,
-    y: (frameElement.data.y as number) + offsetY,
-    properties: stripClipboardMembershipProperties(
-      (frameElement.data.properties ?? {}) as Record<string, unknown>
-    )
+    x: targetX,
+    y: targetY,
+    properties: {
+      ...frameProps,
+      dgGroupStyle: frameStyle
+    }
   })
+  const actualGroupId = commitPastedElementId(
+    idMap,
+    binding.localFrameId,
+    newGroupId,
+    addedFrame.id,
+    []
+  )
 
-  const groupModel = lf.getNodeModelById(newGroupId)
+  const groupModel = lf.getNodeModelById(actualGroupId)
   if (groupModel) {
-    if (frameElement.data.width != null) groupModel.width = frameElement.data.width as number
-    if (frameElement.data.height != null) groupModel.height = frameElement.data.height as number
+    if (frameElement.data.width != null) {
+      groupModel.width = frameElement.data.width as number
+    }
+    if (frameElement.data.height != null) {
+      groupModel.height = frameElement.data.height as number
+    }
   }
 
-  mergeUngroupedIntoDiagramGroup(lf, newGroupId, memberNodeIds, memberEdgeIds)
-  ensureGroupFrameAtBottom(lf, newGroupId)
-  return newGroupId
-}
-
-function finalizeStandaloneMembership(
-  lf: LogicFlow,
-  payload: DiagramClipboardPayload,
-  idMap: Map<string, string>
-): void {
-  const groupedLocalIds = collectGroupedMemberLocalIds(payload)
-  for (const [localId, newId] of idMap) {
-    if (groupedLocalIds.has(localId)) continue
-    clearElementGroupMembership(lf, newId)
-  }
+  mergeUngroupedIntoDiagramGroup(lf, actualGroupId, memberNodeIds, memberEdgeIds)
+  ensureGroupFrameAtBottom(lf, actualGroupId)
+  return actualGroupId
 }
 
 export function pasteDiagramClipboardPayload(
@@ -419,19 +501,41 @@ export function pasteDiagramClipboardPayload(
   const createdEdgeIds: string[] = []
   const createdGroupFrameIds: string[] = []
   const standaloneNodeIds: string[] = []
+  const groupedLocalIds = collectGroupedMemberLocalIds(payload)
 
+  const pastedNodeLocalIds = new Set<string>()
   for (const element of payload.elements) {
     if (element.kind !== 'node') continue
+    if (pastedNodeLocalIds.has(element.localId)) continue
     if (deferredFrameLocalIds.has(element.localId)) continue
-    const newId = pasteNodeElement(lf, element, offsetX, offsetY, stamp, seq++, idMap, createdNodeIds)
-    if (!collectGroupedMemberLocalIds(payload).has(element.localId)) {
-      standaloneNodeIds.push(newId)
+    if (
+      !payload.groups.length &&
+      (element.type === DIAGRAM_GROUP_FRAME_TYPE || isGroupFrameType(element.type))
+    ) {
+      continue
     }
+    pastedNodeLocalIds.add(element.localId)
+    const isStandalone = isStandalonePasteElement(element, payload, groupedLocalIds)
+    const newId = pasteNodeElement(
+      lf,
+      element,
+      offsetX,
+      offsetY,
+      stamp,
+      seq++,
+      idMap,
+      createdNodeIds,
+      { standalone: isStandalone }
+    )
+    if (isStandalone) standaloneNodeIds.push(newId)
   }
 
   for (const element of payload.elements) {
     if (element.kind !== 'edge') continue
-    pasteEdgeElement(lf, element, offsetX, offsetY, stamp, seq++, idMap, createdEdgeIds)
+    const isStandalone = isStandalonePasteElement(element, payload, groupedLocalIds)
+    pasteEdgeElement(lf, element, offsetX, offsetY, stamp, seq++, idMap, createdEdgeIds, {
+      standalone: isStandalone
+    })
   }
 
   for (const binding of payload.groups) {
@@ -454,7 +558,8 @@ export function pasteDiagramClipboardPayload(
     createdNodeIds.push(newGroupId)
   }
 
-  finalizeStandaloneMembership(lf, payload, idMap)
+  const groupFrameLocalIds = new Set(payload.groups.map((g) => g.localFrameId))
+  finalizePastedMembership(lf, payload, idMap, groupedLocalIds, groupFrameLocalIds)
 
   const memberIdsInNewGroups = new Set<string>()
   for (const binding of payload.groups) {
@@ -483,7 +588,11 @@ export function pasteDiagramClipboardPayload(
         ? [...new Set([...selectNodeIds, ...memberIdsInNewGroups])]
         : selectNodeIds
       snapNodesAfterDrag(lf, snapTargets, true, snapTargets[0])
-      syncGroupFramesForNodes(lf, snapTargets)
+      if (payload.groups.length) {
+        syncGroupFramesForNodes(lf, snapTargets)
+      } else {
+        finalizeStandalonePasteElements(lf, [...selectNodeIds, ...selectEdgeIds])
+      }
     }
   } else if (selectEdgeIds.length) {
     options.select([], selectEdgeIds)

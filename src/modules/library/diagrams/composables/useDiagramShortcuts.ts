@@ -17,6 +17,8 @@ export function useDiagramShortcuts(
     onSaveAs?: () => void
     onPagePrev?: () => void | Promise<void>
     onPageNext?: () => void | Promise<void>
+    onCopy?: () => void
+    onPaste?: () => void
     isActive?: () => boolean
     isBlocked?: () => boolean
     canGroup?: () => boolean
@@ -60,25 +62,31 @@ export function useDiagramShortcuts(
     if (mod && e.key === 'x') {
       if (isEditableTarget(e.target)) return
       e.preventDefault()
-      void bus.dispatch({ type: 'canvas.copy' })
+      e.stopImmediatePropagation()
+      if (options?.onCopy) options.onCopy()
+      else void bus.dispatch({ type: 'canvas.copy' })
       void bus.dispatch({ type: 'canvas.deleteSelection' })
       return
     }
     if (mod && e.key === 'c') {
       if (isEditableTarget(e.target)) return
       e.preventDefault()
+      e.stopImmediatePropagation()
+      if (options?.onCopy) {
+        options.onCopy()
+        return
+      }
       void bus.dispatch({ type: 'canvas.copy' })
-      return
-    }
-    if (mod && e.key === 'd') {
-      if (isEditableTarget(e.target)) return
-      e.preventDefault()
-      void bus.dispatch({ type: 'canvas.duplicate' })
       return
     }
     if (mod && e.key === 'v') {
       if (isEditableTarget(e.target)) return
       e.preventDefault()
+      e.stopImmediatePropagation()
+      if (options?.onPaste) {
+        options.onPaste()
+        return
+      }
       void bus.dispatch({ type: 'canvas.paste' })
       return
     }
@@ -158,6 +166,6 @@ export function useDiagramShortcuts(
     }
   }
 
-  onMounted(() => window.addEventListener('keydown', onKeyDown))
-  onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
+  onMounted(() => window.addEventListener('keydown', onKeyDown, true))
+  onUnmounted(() => window.removeEventListener('keydown', onKeyDown, true))
 }

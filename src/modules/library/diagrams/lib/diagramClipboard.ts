@@ -1,5 +1,13 @@
 import type LogicFlow from '@logicflow/core'
-import { isGroupFrameModel } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import {
+  collectDiagramGroupContent,
+  isGroupFrameModel,
+  isGroupFrameType
+} from '@modules/library/diagrams/lib/diagramGroupFrame'
+import {
+  resolveDiagramCopySelectionFromLive,
+  sanitizeDiagramCopySelectionInput
+} from '@modules/library/diagrams/lib/diagramCopySelection'
 import {
   buildDiagramClipboardPayload,
   pasteDiagramClipboardPayload,
@@ -41,6 +49,18 @@ export interface DiagramClipboardEdgeSnapshot {
 }
 
 /**
+ * @deprecated 使用 resolveDiagramCopySelectionFromLive / sanitizeDiagramCopySelectionInput
+ */
+export function resolveDiagramClipboardCopyInput(
+  lf: LogicFlow,
+  options: { nodeIds: string[]; edgeIds: string[] }
+): { nodeIds: string[]; edgeIds: string[] } {
+  return sanitizeDiagramCopySelectionInput(lf, options.nodeIds, options.edgeIds)
+}
+
+export { resolveDiagramCopySelectionFromLive, sanitizeDiagramCopySelectionInput } from '@modules/library/diagrams/lib/diagramCopySelection'
+
+/**
  * 展开组合框选区为内容图元/连线 id（用于组合/拆组能力判断，非复制专用）。
  */
 export function resolveDiagramClipboardTargets(
@@ -62,10 +82,9 @@ export function resolveDiagramClipboardTargets(
     const model = lf.getNodeModelById(id)
     if (!model) continue
     if (isGroupFrameModel(model)) {
-      const members = (model.properties?.dgGroupMembers as string[] | undefined) ?? []
-      const groupEdges = (model.properties?.dgGroupEdges as string[] | undefined) ?? []
-      for (const memberId of members) expandedNodeIds.push(memberId)
-      for (const edgeId of groupEdges) expandedEdgeIds.add(edgeId)
+      const { memberNodeIds, memberEdgeIds } = collectDiagramGroupContent(lf, id)
+      for (const memberId of memberNodeIds) expandedNodeIds.push(memberId)
+      for (const edgeId of memberEdgeIds) expandedEdgeIds.add(edgeId)
       continue
     }
     expandedNodeIds.push(id)

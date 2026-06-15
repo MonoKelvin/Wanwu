@@ -23,6 +23,7 @@ import { createDiagramCommandBus } from '@modules/library/diagrams/app/commandBu
 import { provideDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
 import { useDiagramAutosave } from '@modules/library/diagrams/composables/useDiagramAutosave'
 import { useDiagramShortcuts } from '@modules/library/diagrams/composables/useDiagramShortcuts'
+import { provideDiagramCanvasClipboard } from '@modules/library/diagrams/composables/useDiagramCanvasClipboard'
 import { useDiagramIpcBridge } from '@modules/library/diagrams/composables/useDiagramIpcBridge'
 import { pushShellRoute } from '@app/composables/shellNavigation'
 import { DG_HOME, DG_RECYCLE } from '@modules/library/diagrams/domain/diagramFolderIds'
@@ -136,6 +137,18 @@ const bus = createDiagramCommandBus({
   repo
 })
 provideDiagramCommandBus(bus)
+const canvasClipboard = {
+  copy() {
+    portRef.value?.copy()
+  },
+  paste() {
+    portRef.value?.paste()
+  },
+  hasClipboard() {
+    return portRef.value?.hasClipboard() ?? false
+  }
+}
+provideDiagramCanvasClipboard(canvasClipboard)
 const editorLayout = provideDiagramEditorLayout()
 const { record: recordRecentShape } = useDiagramRecentShapes()
 const saveFlow = provideDiagramSaveFlow(bus, toast)
@@ -188,6 +201,8 @@ useDiagramShortcuts(bus, {
   onSaveAs: () => saveFlow.promptSaveAs(sessionRef.value?.content?.meta.title),
   onPagePrev: () => switchPageWithFlush(() => bus.dispatch({ type: 'page.prev' })),
   onPageNext: () => switchPageWithFlush(() => bus.dispatch({ type: 'page.next' })),
+  onCopy: () => canvasClipboard.copy(),
+  onPaste: () => canvasClipboard.paste(),
   isActive: () => isDiagramEditorPath(route.path),
   isBlocked: () => conflictOpen.value || folderPickerOpen.value,
   canGroup: () => portRef.value?.canGroupSelection() ?? false,

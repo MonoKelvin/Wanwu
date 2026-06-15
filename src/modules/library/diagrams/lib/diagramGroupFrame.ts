@@ -27,9 +27,18 @@ export function isGroupFrameType(type: unknown): boolean {
   return type === DIAGRAM_GROUP_FRAME_TYPE
 }
 
+function isGroupFrameByProperties(properties: Record<string, unknown> | undefined): boolean {
+  if (!properties) return false
+  const members = readPropertyStringArray(properties, 'dgGroupMembers')
+  if (!members.length) return false
+  return properties.dgGroupStyle != null && typeof properties.dgGroupId !== 'string'
+}
+
 /** LogicFlow NodeModel.type 在 d.ts 中可能收窄为 `""`，统一经此判断（不做 type predicate，避免 TS 将分支收窄为 never） */
-export function isGroupFrameModel(model: { type?: unknown } | null | undefined): boolean {
-  return isGroupFrameType(model?.type)
+export function isGroupFrameModel(model: { type?: unknown; properties?: unknown } | null | undefined): boolean {
+  if (!model) return false
+  if (isGroupFrameType(model.type)) return true
+  return isGroupFrameByProperties(model.properties as Record<string, unknown> | undefined)
 }
 
 export function readGroupAlwaysVisible(properties: Record<string, unknown>): boolean {
@@ -71,9 +80,38 @@ export function isPointInsideGroupFrame(
   )
 }
 
+function readPropertyStringArray(
+  properties: Record<string, unknown> | undefined,
+  key: string
+): string[] {
+  const raw = properties?.[key]
+  if (!Array.isArray(raw)) return []
+  return raw.filter((id): id is string => typeof id === 'string' && Boolean(id))
+}
+
+/** 图元矩形与组合框是否相交（复制兜底，比中心点判定更可靠） */
+export function nodeBoundsOverlapGroupFrame(
+  frame: { x: number; y: number; width: number; height: number },
+  node: { x: number; y: number; width: number; height: number }
+): boolean {
+  const frameLeft = frame.x - frame.width / 2
+  const frameRight = frame.x + frame.width / 2
+  const frameTop = frame.y - frame.height / 2
+  const frameBottom = frame.y + frame.height / 2
+  const nodeLeft = node.x - node.width / 2
+  const nodeRight = node.x + node.width / 2
+  const nodeTop = node.y - node.height / 2
+  const nodeBottom = node.y + node.height / 2
+  return !(
+    nodeRight < frameLeft ||
+    nodeLeft > frameRight ||
+    nodeBottom < frameTop ||
+    nodeTop > frameBottom
+  )
+}
+
 function isLiveGroupFrame(lf: LogicFlow, groupId: string): boolean {
-  const group = lf.getNodeModelById(groupId)
-  return Boolean(group && isGroupFrameType(group.type))
+  return isGroupFrameModel(lf.getNodeModelById(groupId))
 }
 
 /** 根据图元/连线解析所属组合框 id（组合框已删除时返回 null） */
@@ -83,17 +121,18 @@ export function collectDiagramGroupContent(
   groupId: string
 ): { memberNodeIds: string[]; memberEdgeIds: string[] } {
   const group = lf.getNodeModelById(groupId)
-  if (!group || !isGroupFrameType(group.type)) {
+  if (!group || !isGroupFrameModel(group)) {
     return { memberNodeIds: [], memberEdgeIds: [] }
   }
 
+  const groupProps = group.properties as Record<string, unknown> | undefined
   const memberNodeIds = new Set<string>(
-    ((group.properties?.dgGroupMembers as string[] | undefined) ?? []).filter((id) =>
+    readPropertyStringArray(groupProps, 'dgGroupMembers').filter((id) =>
       Boolean(lf.getNodeModelById(id))
     )
   )
   const memberEdgeIds = new Set<string>(
-    ((group.properties?.dgGroupEdges as string[] | undefined) ?? []).filter((id) =>
+    readPropertyStringArray(groupProps, 'dgGroupEdges').filter((id) =>
       Boolean(lf.getEdgeModelById(id))
     )
   )
@@ -117,6 +156,51 @@ export function collectDiagramGroupContent(
   }
 }
 
+/** 组合框范围内（几何包含）的内容图元，用于成员关系数据缺失时的复制兜底 */
+export function collectSpatialNodesInGroupFrame(
+  lf: LogicFlow,
+  frame: { id: string; x: number; y: number; width: number; height: number }
+): string[] {
+  const memberNodeIds: string[] = []
+  for (const node of lf.graphModel.nodes) {
+    if (node.id === frame.id || isGroupFrameModel(node)) continue
+    if (
+      nodeBoundsOverlapGroupFrame(frame, node) ||
+      isPointInsideGroupFrame(frame, node.x, node.y)
+    ) {
+      memberNodeIds.push(node.id)
+    }
+  }
+  return memberNodeIds
+}
+
+/** 复制专用：同步关系后收集成员，必要时按组合框几何范围兜底 */
+export function collectDiagramGroupContentForCopy(
+  lf: LogicFlow,
+  groupId: string
+): { memberNodeIds: string[]; memberEdgeIds: string[] } {
+  syncDiagramGroupMembershipFromFrames(lf)
+  let { memberNodeIds, memberEdgeIds } = collectDiagramGroupContent(lf, groupId)
+  if (memberNodeIds.length || memberEdgeIds.length) {
+    return { memberNodeIds, memberEdgeIds }
+  }
+
+  const frame = lf.getNodeModelById(groupId)
+  if (!frame || !isGroupFrameModel(frame)) {
+    return { memberNodeIds, memberEdgeIds }
+  }
+
+  memberNodeIds = collectSpatialNodesInGroupFrame(lf, frame)
+  const memberSet = new Set(memberNodeIds)
+  memberEdgeIds = []
+  for (const edge of lf.graphModel.edges) {
+    if (memberSet.has(edge.sourceNodeId) && memberSet.has(edge.targetNodeId)) {
+      memberEdgeIds.push(edge.id)
+    }
+  }
+  return { memberNodeIds, memberEdgeIds }
+}
+
 export function resolveGroupFrameIdForElement(
   lf: LogicFlow,
   elementId: string,
@@ -130,7 +214,7 @@ export function resolveGroupFrameIdForElement(
     if (typeof gid === 'string' && gid && isLiveGroupFrame(lf, gid)) return gid
     for (const frame of lf.graphModel.nodes) {
       if (!isGroupFrameModel(frame)) continue
-      const members = (frame.properties?.dgGroupMembers as string[] | undefined) ?? []
+      const members = readPropertyStringArray(frame.properties as Record<string, unknown>, 'dgGroupMembers')
       if (members.includes(elementId) && isLiveGroupFrame(lf, frame.id)) return frame.id
     }
     return null
@@ -140,7 +224,7 @@ export function resolveGroupFrameIdForElement(
   if (typeof gid === 'string' && gid && isLiveGroupFrame(lf, gid)) return gid
   for (const frame of lf.graphModel.nodes) {
     if (!isGroupFrameModel(frame)) continue
-    const edges = (frame.properties?.dgGroupEdges as string[] | undefined) ?? []
+    const edges = readPropertyStringArray(frame.properties as Record<string, unknown>, 'dgGroupEdges')
     if (edges.includes(elementId) && isLiveGroupFrame(lf, frame.id)) return frame.id
   }
   return null
@@ -194,11 +278,85 @@ export function clearElementGroupId(lf: LogicFlow, elementId: string): void {
 export function clearElementGroupMembership(lf: LogicFlow, elementId: string): void {
   const node = lf.getNodeModelById(elementId)
   const edge = lf.getEdgeModelById(elementId)
-  if (!node && !edge) return
-  const props = (node ?? edge)?.properties as Record<string, unknown> | undefined
-  if (!props) return
+  const target = node ?? edge
+  if (!target) return
+
+  if ('deleteProperty' in target && typeof target.deleteProperty === 'function') {
+    for (const key of GROUP_MEMBERSHIP_KEYS) {
+      ;(target as { deleteProperty: (key: string) => void }).deleteProperty(key)
+    }
+  }
   for (const key of GROUP_MEMBERSHIP_KEYS) {
-    if (key in props) lf.deleteProperty(elementId, key)
+    lf.deleteProperty(elementId, key)
+  }
+
+  const props = target.properties as Record<string, unknown> | undefined
+  if (props) {
+    for (const key of GROUP_MEMBERSHIP_KEYS) {
+      delete props[key]
+    }
+  }
+}
+
+/** 收集画布上全部组合框 id（按 type 判定，避免属性识别偏差） */
+export function collectAllGroupFrameIds(lf: LogicFlow): string[] {
+  const ids: string[] = []
+  for (const node of lf.graphModel.nodes) {
+    if (isGroupFrameType(node.type) || isGroupFrameModel(node)) {
+      ids.push(node.id)
+    }
+  }
+  return ids
+}
+
+/** 将图元/连线从所有组合框成员列表中移除，并清除 dgGroupId（standalone 粘贴后防串组） */
+export function scrubElementsFromAllGroupFrames(
+  lf: LogicFlow,
+  elementIds: readonly string[],
+  exceptGroupId?: string
+): void {
+  const idSet = new Set(elementIds.filter(Boolean))
+  if (!idSet.size) return
+
+  for (const elementId of idSet) {
+    clearElementGroupMembership(lf, elementId)
+  }
+
+  for (const frameId of collectAllGroupFrameIds(lf)) {
+    if (exceptGroupId && frameId === exceptGroupId) continue
+    const frame = lf.getNodeModelById(frameId)
+    if (!frame) continue
+
+    const frameProps = frame.properties as Record<string, unknown> | undefined
+    const members = readPropertyStringArray(frameProps, 'dgGroupMembers')
+    const edges = readPropertyStringArray(frameProps, 'dgGroupEdges')
+    const nextMembers = members.filter((id) => !idSet.has(id))
+    const nextEdges = edges.filter((id) => !idSet.has(id))
+    if (nextMembers.length === members.length && nextEdges.length === edges.length) continue
+
+    lf.setProperties(frameId, {
+      dgGroupMembers: nextMembers,
+      dgGroupEdges: nextEdges
+    })
+  }
+}
+
+/** standalone 粘贴最终兜底：确保图元/连线与全部既有组合框脱钩 */
+export function finalizeStandalonePasteElements(lf: LogicFlow, elementIds: readonly string[]): void {
+  const ids = [...new Set(elementIds.filter(Boolean))]
+  if (!ids.length) return
+
+  scrubElementsFromAllGroupFrames(lf, ids)
+
+  for (const id of ids) {
+    const node = lf.getNodeModelById(id)
+    const edge = lf.getEdgeModelById(id)
+    if (!node && !edge) continue
+
+    if (resolveGroupFrameIdForElement(lf, id, node ? 'node' : 'edge')) {
+      scrubElementsFromAllGroupFrames(lf, [id])
+      clearElementGroupMembership(lf, id)
+    }
   }
 }
 

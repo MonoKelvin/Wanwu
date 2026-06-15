@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import type { WwMenuItem } from '@shared/types/menu'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramCanvasClipboard } from '@modules/library/diagrams/composables/useDiagramCanvasClipboard'
 import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
 
 export type DiagramCanvasContextTarget = {
@@ -13,8 +14,8 @@ export type DiagramCanvasContextTarget = {
 }
 
 const bus = useDiagramCommandBus()
+const clipboard = useDiagramCanvasClipboard()
 const menuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
-const menuEvent = ref<MouseEvent | null>(null)
 const clipboardReady = ref(false)
 const canUngroup = ref(false)
 const canGroup = ref(false)
@@ -29,19 +30,7 @@ const hasSelection = computed(
 )
 
 function pasteAtCursor() {
-  const ev = menuEvent.value
-  void bus.dispatch({
-    type: 'canvas.paste',
-    payload: ev ? { x: ev.clientX, y: ev.clientY } : undefined
-  })
-}
-
-function duplicateSelection() {
-  const { nodeIds, edgeIds } = target.value
-  void bus.dispatch({
-    type: 'canvas.duplicate',
-    payload: { nodeIds, edgeIds }
-  })
+  clipboard.paste()
 }
 
 const menuItems = computed<WwMenuItem[]>(() => {
@@ -49,24 +38,12 @@ const menuItems = computed<WwMenuItem[]>(() => {
   const { nodeIds, edgeIds } = target.value
 
   if (hasSelection.value) {
-    if (nodeIds.length > 0 || edgeIds.length > 0) {
-      items.push({
-        label: '创建副本',
-        wwIcon: 'copy',
-        shortcut: DG_SHORTCUT.duplicate,
-        command: () => duplicateSelection()
-      })
-    }
     items.push(
       {
         label: '复制',
         wwIcon: 'copy',
         shortcut: DG_SHORTCUT.copy,
-        command: () =>
-          void bus.dispatch({
-            type: 'canvas.copy',
-            payload: { nodeIds, edgeIds }
-          })
+        command: () => clipboard.copy()
       },
       {
         label: '粘贴',
@@ -160,7 +137,6 @@ function show(
   ungroupReady = false
 ) {
   event.preventDefault()
-  menuEvent.value = event
   target.value = next
   clipboardReady.value = hasClipboard
   canGroup.value = groupReady

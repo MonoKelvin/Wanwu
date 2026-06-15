@@ -96,11 +96,13 @@ export function mergeUngroupedIntoDiagramGroup(
   for (const id of nodeIds) {
     const model = lf.getNodeModelById(id)
     if (!model || isGroupFrameModel(model)) continue
+    detachDiagramNodeFromGroup(lf, id)
     memberSet.add(id)
     lf.setProperties(id, { dgGroupId: groupId })
   }
   for (const id of edgeIds) {
     if (!lf.getEdgeModelById(id)) continue
+    detachDiagramEdgeFromGroup(lf, id)
     edgeSet.add(id)
     lf.setProperties(id, { dgGroupId: groupId })
   }

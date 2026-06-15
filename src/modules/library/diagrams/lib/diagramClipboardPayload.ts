@@ -1,7 +1,10 @@
 import type LogicFlow from '@logicflow/core'
 import {
   collectDiagramGroupContent,
-  isGroupFrameModel
+  collectDiagramGroupContentForCopy,
+  isGroupFrameModel,
+  isGroupFrameType,
+  resolveGroupFrameIdForElement
 } from '@modules/library/diagrams/lib/diagramGroupFrame'
 
 /** 剪贴板 payload 版本，便于后续演进 */
@@ -31,6 +34,7 @@ export interface DiagramClipboardElement {
   localId: string
   kind: DiagramClipboardElementKind
   type: string
+  copyMode: DiagramClipboardCopyMode
   /** LogicFlow 兼容字段（x/y/text/properties/pointsList 等） */
   data: Record<string, unknown>
 }
@@ -64,7 +68,37 @@ export function stripClipboardMembershipProperties(
 ): Record<string, unknown> {
   const props = structuredClone(properties)
   for (const key of CLIPBOARD_MEMBERSHIP_KEYS) delete props[key]
+  delete props.dgGroupStyle
+  delete props.dgGroupAlwaysVisible
   return props
+}
+
+/** 粘贴用：确保 properties 不含任何组合成员字段 */
+export function buildPasteElementProperties(
+  properties: unknown,
+  options: { standalone: boolean }
+): Record<string, unknown> {
+  let props = stripClipboardMembershipProperties(cloneModelPropertiesForPaste(properties))
+  if (options.standalone) {
+    props = stripClipboardMembershipProperties(props)
+    for (const key of CLIPBOARD_MEMBERSHIP_KEYS) delete props[key]
+    delete props.dgGroupStyle
+    delete props.dgGroupAlwaysVisible
+  }
+  return props
+}
+
+function cloneModelPropertiesForPaste(properties: unknown): Record<string, unknown> {
+  if (!properties || typeof properties !== 'object') return {}
+  try {
+    return JSON.parse(JSON.stringify(properties)) as Record<string, unknown>
+  } catch {
+    try {
+      return structuredClone(properties as Record<string, unknown>)
+    } catch {
+      return {}
+    }
+  }
 }
 
 export function sanitizeClipboardProperties(
@@ -74,6 +108,8 @@ export function sanitizeClipboardProperties(
   let props = structuredClone(properties)
   if (ctx.copyMode === 'standalone' || ctx.copyMode === 'group-content') {
     for (const key of CLIPBOARD_MEMBERSHIP_KEYS) delete props[key]
+    delete props.dgGroupStyle
+    delete props.dgGroupAlwaysVisible
   } else if (ctx.copyMode === 'group-frame') {
     delete props.dgGroupMembers
     delete props.dgGroupEdges
@@ -89,6 +125,8 @@ export function sanitizeClipboardProperties(
  * 框选/全选组成员但未选中组合框时：若选中了该组的全部成员，则视为复制整组。
  * 仅选部分成员时不触发（粘贴为独立图元、不带组合属性）。
  * 不依赖 dgGroupId，直接比对 collectDiagramGroupContent 的成员列表。
+ *
+ * 注意：复制粘贴仅在有显式组合框选中时整组复制；此函数供能力判断/测试保留。
  */
 export function detectImplicitGroupFrameCopy(
   lf: LogicFlow,
@@ -149,9 +187,64 @@ function absorbGroupContentIntoPlan(
   standaloneEdgeIds: Set<string>
 ): void {
   for (const groupId of groupFrameIds) {
-    const { memberNodeIds, memberEdgeIds } = collectDiagramGroupContent(lf, groupId)
+    const { memberNodeIds, memberEdgeIds } = collectDiagramGroupContentForCopy(lf, groupId)
     for (const memberId of memberNodeIds) standaloneNodeIds.delete(memberId)
     for (const edgeId of memberEdgeIds) standaloneEdgeIds.delete(edgeId)
+  }
+}
+
+function collectExplicitGroupFrameIds(lf: LogicFlow, nodeIds: readonly string[]): string[] {
+  const groupFrameIds: string[] = []
+  for (const id of nodeIds) {
+    const model = lf.getNodeModelById(id)
+    if (!model) continue
+    if (isGroupFrameModel(model) || isGroupFrameType(model.type)) {
+      if (!groupFrameIds.includes(id)) groupFrameIds.push(id)
+    }
+  }
+  return groupFrameIds
+}
+
+/**
+ * 判定哪些组合框应触发整组复制。
+ * 仅当用户显式选中组合框本身（选区中无该组成员图元）时整组复制。
+ * 选中组内图元时（即使组合框 isSelected 残留、或单成员组）一律不整组。
+ */
+function resolveActiveGroupFrameIdsForCopy(
+  lf: LogicFlow,
+  nodeIds: readonly string[]
+): string[] {
+  const candidates = collectExplicitGroupFrameIds(lf, nodeIds)
+  if (!candidates.length) return []
+
+  const contentNodeIds = nodeIds.filter((id) => {
+    const model = lf.getNodeModelById(id)
+    if (!model) return false
+    return !isGroupFrameModel(model) && !isGroupFrameType(model.type)
+  })
+
+  const active: string[] = []
+  for (const groupId of candidates) {
+    const { memberNodeIds } = collectDiagramGroupContent(lf, groupId)
+    const selectedInGroup = contentNodeIds.filter((id) => memberNodeIds.includes(id))
+    if (!selectedInGroup.length) active.push(groupId)
+  }
+  return active
+}
+
+function reclassifyStandaloneGroupFrames(
+  lf: LogicFlow,
+  groupFrameIds: string[],
+  standaloneNodeIds: Set<string>
+): void {
+  for (const id of [...standaloneNodeIds]) {
+    const model = lf.getNodeModelById(id)
+    if (!model) {
+      standaloneNodeIds.delete(id)
+      continue
+    }
+    if (!isGroupFrameModel(model) && !isGroupFrameType(model.type)) continue
+    standaloneNodeIds.delete(id)
   }
 }
 
@@ -184,31 +277,43 @@ function retainInternalStandaloneEdges(
   }
 }
 
-/** 解析复制目标：显式/隐式整组 vs 独立图元 */
+/**
+ * 解析复制目标，两条规则：
+ * 1. 选区含组合框 → 每个被选组合框整组复制（框 + 全部成员），同组已选成员去重
+ * 2. 未选组合框 → 仅 standalone 图元/连线，不带组合属性
+ */
 export function resolveDiagramClipboardCopyPlan(
   lf: LogicFlow,
   nodeIds: string[],
   edgeIds: string[]
 ): DiagramClipboardCopyPlan {
-  const groupFrameIds: string[] = []
+  const groupFrameIds = resolveActiveGroupFrameIdsForCopy(lf, nodeIds)
+  const selectedGroups = new Set(groupFrameIds)
   const standaloneNodeIds = new Set<string>()
   const standaloneEdgeIds = new Set<string>(edgeIds)
 
   for (const id of nodeIds) {
     const model = lf.getNodeModelById(id)
     if (!model) continue
-    if (isGroupFrameModel(model)) {
-      if (!groupFrameIds.includes(id)) groupFrameIds.push(id)
-      continue
+    if (isGroupFrameModel(model) || isGroupFrameType(model.type)) continue
+
+    if (selectedGroups.size) {
+      const parentGroupId = resolveGroupFrameIdForElement(lf, id, 'node')
+      if (parentGroupId && selectedGroups.has(parentGroupId)) continue
     }
     standaloneNodeIds.add(id)
   }
 
-  const implicitGroupId = detectImplicitGroupFrameCopy(lf, [...standaloneNodeIds], [...standaloneEdgeIds])
-  if (implicitGroupId && !groupFrameIds.includes(implicitGroupId)) {
-    groupFrameIds.push(implicitGroupId)
+  if (selectedGroups.size) {
+    for (const edgeId of [...standaloneEdgeIds]) {
+      const parentGroupId = resolveGroupFrameIdForElement(lf, edgeId, 'edge')
+      if (parentGroupId && selectedGroups.has(parentGroupId)) {
+        standaloneEdgeIds.delete(edgeId)
+      }
+    }
   }
 
+  reclassifyStandaloneGroupFrames(lf, groupFrameIds, standaloneNodeIds)
   absorbGroupContentIntoPlan(lf, groupFrameIds, standaloneNodeIds, standaloneEdgeIds)
   retainInternalStandaloneEdges(lf, standaloneNodeIds, standaloneEdgeIds)
 

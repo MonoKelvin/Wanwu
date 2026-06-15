@@ -18,7 +18,6 @@ const sections: ShortcutSection[] = [
       { keys: DG_SHORTCUT.copy, action: '复制' },
       { keys: DG_SHORTCUT.cut, action: '剪切' },
       { keys: DG_SHORTCUT.paste, action: '粘贴' },
-      { keys: DG_SHORTCUT.duplicate, action: '创建副本' },
       { keys: DG_SHORTCUT.delete, action: '删除选中' }
     ]
   },

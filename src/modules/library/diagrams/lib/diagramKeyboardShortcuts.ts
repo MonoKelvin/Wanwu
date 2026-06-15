@@ -7,7 +7,6 @@ export const DG_SHORTCUT = {
   copy: 'Ctrl + C',
   cut: 'Ctrl + X',
   paste: 'Ctrl + V',
-  duplicate: 'Ctrl + D',
   selectAll: 'Ctrl + A',
   delete: 'Del',
   group: 'Ctrl + G',

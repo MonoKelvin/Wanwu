@@ -40,6 +40,7 @@ import { DiagramExportCoordinator } from '@modules/library/diagrams/services/dia
 import { DiagramEditorSelectionBridge } from '@modules/library/diagrams/services/diagramEditorSelectionBridge'
 import { DiagramFormatPainterCoordinator } from '@modules/library/diagrams/services/diagramFormatPainterCoordinator'
 import { DiagramClipboardCoordinator } from '@modules/library/diagrams/services/diagramClipboardCoordinator'
+import { suppressGroupFrameSelectionWhenMembersSelected } from '@modules/library/diagrams/lib/diagramCopySelection'
 import { DiagramGroupSelectionCoordinator } from '@modules/library/diagrams/services/diagramGroupSelectionCoordinator'
 import { DiagramSelectionLayoutCoordinator } from '@modules/library/diagrams/services/diagramSelectionLayoutCoordinator'
 import { DiagramSelectionStyleCoordinator } from '@modules/library/diagrams/services/diagramSelectionStyleCoordinator'
@@ -154,8 +155,11 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     getContainer: () => this.container,
     clientToCanvas: (x, y) => this.clientToCanvas(x, y),
     getSnapGrid: () => this.canvasSettings.snapGrid,
+    getLastCanvasPointerClient: () => this.getLastCanvasPointerClient(),
+    clearBoxSelectSnapshots: () => this.boxSelect.clearSnapshots(),
     collectLiveSelection: () => this.selectionBridge.collectLiveSelectedIds(),
     select: (nodeIds, edgeIds) => this.select(nodeIds, edgeIds),
+    prepareSelectionForCopy: () => this.prepareSelectionForCopy(),
     scheduleGraphChange: () => this.scheduleGraphChange()
   })
   private readonly selectionBridge: DiagramEditorSelectionBridge = new DiagramEditorSelectionBridge({
@@ -281,7 +285,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     cancelFormatPainter: () => this.formatPainter.cancel(),
     boxSelect: this.boxSelect,
     selectionBridge: this.selectionBridge,
-    clientToCanvas: (x, y) => this.clientToCanvas(x, y)
+    clientToCanvas: (x, y) => this.clientToCanvas(x, y),
+    recordCanvasPointer: (x, y) => this.recordCanvasPointer(x, y)
   })
   private readonly editorMount = new DiagramEditorMountCoordinator()
   private readonly exportCoordinator = new DiagramExportCoordinator({
@@ -290,6 +295,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     ensureSnapshotPlugin
   })
   private teardownGroupFrameHover: (() => void) | null = null
+  private teardownCanvasPointer: (() => void) | null = null
+  private lastCanvasPointerClient: { x: number; y: number } | null = null
 
   mount(el: HTMLElement): void {
     if (this.lf && this.container === el) return
@@ -370,6 +377,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.teardownShiftWheelPan = mounted.teardownShiftWheelPan
     this.teardownContextMenu = mounted.teardownContextMenu
     this.teardownGroupFrameHover = mounted.teardownGroupFrameHover
+    this.teardownCanvasPointer = this.bindCanvasPointerTracking(el)
     this.teardownSelectionSnapshot = mounted.teardownSelectionSnapshot
     this.teardownSelectionPointerSync = mounted.teardownSelectionPointerSync
     this.teardownBoxSelectRubberGuard = mounted.teardownBoxSelectRubberGuard
@@ -608,6 +616,36 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.selectionStyle.clearSelectionStyles()
   }
 
+  recordCanvasPointer(clientX: number, clientY: number): void {
+    if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) return
+    this.lastCanvasPointerClient = { x: clientX, y: clientY }
+  }
+
+  getLastCanvasPointerClient(): { x: number; y: number } | null {
+    return this.lastCanvasPointerClient ? { ...this.lastCanvasPointerClient } : null
+  }
+
+  /** 复制前选区规范化（快捷键 / 右键菜单共用，不调用 syncFromGraph 避免框选快照扩选） */
+  private prepareSelectionForCopy(): void {
+    const lf = this.lf
+    if (!lf) return
+    this.boxSelect.clearSnapshots()
+    this.selectionBridge.scrubOrphanGroupLinks()
+    suppressGroupFrameSelectionWhenMembersSelected(lf)
+  }
+
+  private bindCanvasPointerTracking(el: HTMLElement): () => void {
+    const record = (event: PointerEvent) => {
+      this.recordCanvasPointer(event.clientX, event.clientY)
+    }
+    el.addEventListener('pointerdown', record, true)
+    el.addEventListener('pointermove', record, { passive: true, capture: true })
+    return () => {
+      el.removeEventListener('pointerdown', record, true)
+      el.removeEventListener('pointermove', record, true)
+    }
+  }
+
   private getCanvasFrameEl(): HTMLElement | null {
     return this.container?.closest('.dg-canvas-frame') ?? null
   }
@@ -636,6 +674,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.teardownContextMenu = null
     this.teardownGroupFrameHover?.()
     this.teardownGroupFrameHover = null
+    this.teardownCanvasPointer?.()
+    this.teardownCanvasPointer = null
+    this.lastCanvasPointerClient = null
     clearGroupFramePointerInside()
     this.contextMenuHandler = null
     this.teardownAxis?.()
@@ -854,28 +895,18 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.groupSelectionCoordinator.deleteSelection(nodeIds, edgeIds)
   }
 
-  copy(nodeIds?: string[], edgeIds?: string[]): void {
-    this.clipboard.copy(nodeIds, edgeIds)
+  copy(): void {
+    this.clipboard.copy()
   }
 
   paste(clientX?: number, clientY?: number): void {
     this.clipboard.paste(clientX, clientY)
-    this.selectionBridge.syncFromGraph()
-    this.groupFrames.refreshDisplay()
-    this.refreshMultiSelectResize?.()
-    this.scheduleOverlayLayout()
-  }
-
-  duplicate(
-    offsetX = 20,
-    offsetY = 20,
-    nodeIds?: string[],
-    edgeIds?: string[]
-  ): void {
-    this.clipboard.duplicate(offsetX, offsetY, nodeIds, edgeIds)
-    this.selectionBridge.syncFromGraph()
-    this.refreshMultiSelectResize?.()
-    this.scheduleOverlayLayout()
+    requestAnimationFrame(() => {
+      this.selectionBridge.syncFromGraph()
+      this.groupFrames.refreshDisplay()
+      this.refreshMultiSelectResize?.()
+      this.scheduleOverlayLayout()
+    })
   }
 
   canUngroupSelection(): boolean {

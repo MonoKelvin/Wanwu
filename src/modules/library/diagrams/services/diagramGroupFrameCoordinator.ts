@@ -3,6 +3,7 @@ import { collectOrderedSelectionIds } from '@modules/library/diagrams/lib/diagra
 import {
   isGroupFrameType,
   clearGroupFramePointerInside,
+  collectDiagramGroupContent,
   resolveGroupFrameIdForElement,
   setGroupFramePointerInside,
   syncGroupFramePointerHover
@@ -29,7 +30,7 @@ export class DiagramGroupFrameCoordinator {
   private bottomRaf: number | null = null
   private syncDragRaf: number | null = null
   private hoverRaf = 0
-  private lastPointerClient = { x: 0, y: 0 }
+  private lastPointerClient: { x: number; y: number } | null = null
   private teardownHover: (() => void) | null = null
 
   constructor(private readonly ports: DiagramGroupFrameCoordinatorPorts) {}
@@ -67,13 +68,15 @@ export class DiagramGroupFrameCoordinator {
       this.markHoverFromElement(data.id, 'node')
     }
     const onNodeLeave = () => {
-      this.scheduleHoverUpdate(this.lastPointerClient.x, this.lastPointerClient.y)
+      const pointer = this.lastPointerClient
+      if (pointer) this.scheduleHoverUpdate(pointer.x, pointer.y)
     }
     const onEdgeEnter = ({ data }: { data: { id: string } }) => {
       this.markHoverFromElement(data.id, 'edge')
     }
     const onEdgeLeave = () => {
-      this.scheduleHoverUpdate(this.lastPointerClient.x, this.lastPointerClient.y)
+      const pointer = this.lastPointerClient
+      if (pointer) this.scheduleHoverUpdate(pointer.x, pointer.y)
     }
 
     el.addEventListener('pointermove', onMove, { passive: true })
@@ -167,7 +170,8 @@ export class DiagramGroupFrameCoordinator {
     const model = lf.getNodeModelById(nodeId)
     if (!model || !isGroupFrameType(model.type)) return
     const liveNodeIds = collectOrderedSelectionIds(lf).nodeIds
-    const members = new Set((model.properties?.dgGroupMembers as string[] | undefined) ?? [])
+    const { memberNodeIds } = collectDiagramGroupContent(lf, nodeId)
+    const members = new Set(memberNodeIds)
     const stray = liveNodeIds.filter((id) => id !== nodeId && !members.has(id))
     if (stray.length) {
       lf.clearSelectElements()
@@ -187,9 +191,9 @@ export class DiagramGroupFrameCoordinator {
     const dx = model.x - last.x
     const dy = model.y - last.y
     if (dx !== 0 || dy !== 0) {
-      const members = (model.properties?.dgGroupMembers as string[] | undefined) ?? []
-      if (members.length) {
-        lf.graphModel.moveNodes(members, dx, dy, true)
+      const { memberNodeIds } = collectDiagramGroupContent(lf, nodeId)
+      if (memberNodeIds.length) {
+        lf.graphModel.moveNodes(memberNodeIds, dx, dy, true)
       }
       syncGroupFrameBounds(lf, nodeId)
       const synced = lf.getNodeModelById(nodeId)
@@ -204,13 +208,20 @@ export class DiagramGroupFrameCoordinator {
     this.dragLastPos.delete(nodeId)
   }
 
+  /** 画布上最近一次指针位置（供键盘粘贴对齐光标） */
+  getLastPointerClient(): { x: number; y: number } | null {
+    return this.lastPointerClient ? { ...this.lastPointerClient } : null
+  }
+
   private scheduleHoverUpdate(clientX: number, clientY: number): void {
     this.lastPointerClient = { x: clientX, y: clientY }
     if (this.hoverRaf) return
     this.hoverRaf = requestAnimationFrame(() => {
       this.hoverRaf = 0
-      this.updatePointerHover(this.lastPointerClient.x, this.lastPointerClient.y)
-      this.ports.onPointerMove(this.lastPointerClient.x, this.lastPointerClient.y)
+      const pointer = this.lastPointerClient
+      if (!pointer) return
+      this.updatePointerHover(pointer.x, pointer.y)
+      this.ports.onPointerMove(pointer.x, pointer.y)
     })
   }
 
@@ -235,6 +246,7 @@ export class DiagramGroupFrameCoordinator {
       this.refreshDisplay()
       return
     }
-    this.updatePointerHover(this.lastPointerClient.x, this.lastPointerClient.y)
+    const pointer = this.lastPointerClient
+    if (pointer) this.updatePointerHover(pointer.x, pointer.y)
   }
 }

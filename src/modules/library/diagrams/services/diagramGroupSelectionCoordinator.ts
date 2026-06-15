@@ -7,7 +7,7 @@ import {
   mergeUngroupedIntoDiagramGroup,
   releaseDiagramGroupFrame
 } from '@modules/library/diagrams/lib/diagramGroupFrameOps'
-import { isGroupFrameModel } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { isGroupFrameModel, collectDiagramGroupContent } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import { resolveSelectionCapabilities } from '@modules/library/diagrams/domain/selection'
 import { readDiagramNodeBounds } from '@modules/library/diagrams/lib/diagramNodeLayout'
 import type { DiagramBoxSelectCoordinator } from '@modules/library/diagrams/services/diagramBoxSelectCoordinator'
@@ -151,10 +151,9 @@ export class DiagramGroupSelectionCoordinator {
     for (const groupId of groupIds) {
       const model = lf.getNodeModelById(groupId)
       if (!model || !isGroupFrameModel(model)) continue
-      const members = (model.properties?.dgGroupMembers as string[] | undefined) ?? []
-      const edges = (model.properties?.dgGroupEdges as string[] | undefined) ?? []
-      releasedNodeIds.push(...members)
-      releasedEdgeIds.push(...edges)
+      const { memberNodeIds, memberEdgeIds } = collectDiagramGroupContent(lf, groupId)
+      releasedNodeIds.push(...memberNodeIds)
+      releasedEdgeIds.push(...memberEdgeIds)
     }
 
     this.ports.cancelPendingSelectionSync()

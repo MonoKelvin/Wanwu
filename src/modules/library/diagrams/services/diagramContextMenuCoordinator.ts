@@ -21,6 +21,7 @@ export interface DiagramContextMenuCoordinatorPorts {
   boxSelect: DiagramBoxSelectCoordinator
   selectionBridge: DiagramEditorSelectionBridge
   clientToCanvas(clientX: number, clientY: number): { x: number; y: number }
+  recordCanvasPointer(clientX: number, clientY: number): void
 }
 
 /** 画布右键菜单：命中检测与选区预处理 */
@@ -34,6 +35,7 @@ export class DiagramContextMenuCoordinator {
       if (!lf || !handler) return
       event.preventDefault()
       event.stopPropagation()
+      this.ports.recordCanvasPointer(event.clientX, event.clientY)
       this.ports.cancelFormatPainter()
       this.ports.boxSelect.restoreCollapsedBoxSelection()
       const domPick = pickDiagramElementFromDom(lf, event.target)

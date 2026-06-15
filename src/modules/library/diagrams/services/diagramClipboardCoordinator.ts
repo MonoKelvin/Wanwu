@@ -1,8 +1,10 @@
 import type LogicFlow from '@logicflow/core'
 import {
-  buildDiagramClipboardPayload,
-  pasteDiagramClipboardPayload
-} from '@modules/library/diagrams/lib/diagramClipboardEngine'
+  runDiagramClipboardCopy,
+  runDiagramClipboardPaste,
+  type DiagramClipboardRuntime,
+  type DiagramClipboardSession
+} from '@modules/library/diagrams/lib/diagramClipboardActions'
 import {
   isDiagramClipboardPayloadEmpty,
   type DiagramClipboardPayload
@@ -14,18 +16,42 @@ export interface DiagramClipboardCoordinatorPorts {
   getContainer(): HTMLElement | null
   clientToCanvas(clientX: number, clientY: number): { x: number; y: number }
   getSnapGrid(): boolean
+  getLastCanvasPointerClient(): { x: number; y: number } | null
+  prepareSelectionForCopy(): void
   collectLiveSelection(): { nodeIds: string[]; edgeIds: string[] }
   select(nodeIds: string[], edgeIds?: string[]): void
   scheduleGraphChange(): void
 }
 
 /**
- * 剪贴板：复制/粘贴/副本；快照构建与目标解析委托 lib/diagramClipboard。
+ * 剪贴板协调器：仅持有 snapshot，复制/粘贴逻辑委托 diagramClipboardActions。
  */
 export class DiagramClipboardCoordinator {
   private snapshot: DiagramClipboardPayload | null = null
+  private pasteInProgress = false
 
   constructor(private readonly ports: DiagramClipboardCoordinatorPorts) {}
+
+  private runtime(): DiagramClipboardRuntime {
+    return {
+      getLf: () => this.ports.getLf(),
+      getContainer: () => this.ports.getContainer(),
+      clientToCanvas: (x, y) => this.ports.clientToCanvas(x, y),
+      getSnapGrid: () => this.ports.getSnapGrid(),
+      getLastCanvasPointerClient: () => this.ports.getLastCanvasPointerClient(),
+      prepareSelectionForCopy: () => this.ports.prepareSelectionForCopy(),
+      select: (nodes, edges) => this.ports.select(nodes, edges)
+    }
+  }
+
+  private session(): DiagramClipboardSession {
+    return {
+      getSnapshot: () => this.snapshot,
+      setSnapshot: (value) => {
+        this.snapshot = value
+      }
+    }
+  }
 
   resolveTargets(
     nodeIds?: string[],
@@ -42,40 +68,21 @@ export class DiagramClipboardCoordinator {
     })
   }
 
-  copy(nodeIds?: string[], edgeIds?: string[]): void {
-    const lf = this.ports.getLf()
-    if (!lf) return
-    const live = this.ports.collectLiveSelection()
-    const nodes = nodeIds?.length ? nodeIds : live.nodeIds
-    const edges = edgeIds?.length ? edgeIds : live.edgeIds
-    this.snapshot = buildDiagramClipboardPayload(lf, nodes, edges)
+  copy(): void {
+    runDiagramClipboardCopy(this.runtime(), this.session())
   }
 
-  paste(clientX?: number, clientY?: number, fixedOffsetX?: number, fixedOffsetY?: number): void {
-    const lf = this.ports.getLf()
-    if (!lf || !this.snapshot) return
-    pasteDiagramClipboardPayload(lf, this.snapshot, {
-      clientX,
-      clientY,
-      fixedOffsetX,
-      fixedOffsetY,
-      clientToCanvas: (x, y) => this.ports.clientToCanvas(x, y),
-      getContainer: () => this.ports.getContainer(),
-      snapGrid: this.ports.getSnapGrid(),
-      select: (nodes, edges) => this.ports.select(nodes, edges)
-    })
-    this.ports.scheduleGraphChange()
-  }
-
-  duplicate(
-    offsetX = 20,
-    offsetY = 20,
-    nodeIds?: string[],
-    edgeIds?: string[]
-  ): void {
-    this.copy(nodeIds, edgeIds)
-    if (isDiagramClipboardPayloadEmpty(this.snapshot)) return
-    this.paste(undefined, undefined, offsetX, offsetY)
+  paste(clientX?: number, clientY?: number): void {
+    if (this.pasteInProgress) return
+    this.pasteInProgress = true
+    try {
+      if (!runDiagramClipboardPaste(this.runtime(), this.session(), clientX, clientY)) return
+      this.ports.scheduleGraphChange()
+    } finally {
+      queueMicrotask(() => {
+        this.pasteInProgress = false
+      })
+    }
   }
 
   hasClipboard(): boolean {

@@ -49,14 +49,8 @@ export interface IDiagramEditorPort {
   clearSelection(): void
   select(nodeIds: string[], edgeIds?: string[], append?: boolean): void
   deleteSelection(nodeIds?: string[], edgeIds?: string[]): void
-  copy(nodeIds?: string[], edgeIds?: string[]): void
+  copy(): void
   paste(x?: number, y?: number): void
-  duplicate(
-    offsetX?: number,
-    offsetY?: number,
-    nodeIds?: string[],
-    edgeIds?: string[]
-  ): void
   groupSelection(nodeIds?: string[], edgeIds?: string[]): void
   ungroupSelection(): void
   canUngroupSelection(): boolean

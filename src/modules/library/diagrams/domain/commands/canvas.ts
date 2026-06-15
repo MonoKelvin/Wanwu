@@ -14,7 +14,6 @@ export const CANVAS_COMMAND_TYPES = [
   'canvas.clearSelection',
   'canvas.copy',
   'canvas.paste',
-  'canvas.duplicate',
   'canvas.group',
   'canvas.ungroup',
   'canvas.bringToFront',
@@ -83,13 +82,6 @@ export interface CanvasCopyPayload {
 export interface CanvasPastePayload {
   x?: number
   y?: number
-}
-
-export interface CanvasDuplicatePayload {
-  offsetX?: number
-  offsetY?: number
-  nodeIds?: string[]
-  edgeIds?: string[]
 }
 
 export interface CanvasGroupPayload {
