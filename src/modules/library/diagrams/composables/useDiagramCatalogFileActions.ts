@@ -1,5 +1,5 @@
-import { useDiagramCatalogCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
 import { diagramTitleBase } from '@modules/library/diagrams/lib/diagramHomeUtils'
+import { useDiagramCatalogCommands } from '@modules/library/diagrams/composables/useDiagramCatalogCommands'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import type { DiagramFileMeta, DiagramFileRecord } from '@shared/types/diagrams'
@@ -7,7 +7,7 @@ import type { DiagramFileMeta, DiagramFileRecord } from '@shared/types/diagrams'
 export function useDiagramCatalogFileActions(options?: {
   afterMutate?: () => void | Promise<void>
 }) {
-  const bus = useDiagramCatalogCommandBus()
+  const catalog = useDiagramCatalogCommands()
   const toast = useWanwuToast()
   const confirm = useWanwuConfirm()
 
@@ -26,7 +26,7 @@ export function useDiagramCatalogFileActions(options?: {
   }
 
   async function duplicateFile(fileId: string): Promise<boolean> {
-    const result = await bus.dispatch({ type: 'file.duplicate', payload: { fileId } })
+    const result = await catalog.file.duplicate(fileId)
     if (!result.ok) {
       toast.error(result.message ?? '复制失败')
       return false
@@ -40,10 +40,7 @@ export function useDiagramCatalogFileActions(options?: {
 
   async function togglePin(file: Pick<DiagramFileMeta, 'id' | 'pinned'>): Promise<boolean> {
     const next = !file.pinned
-    const result = await bus.dispatch({
-      type: 'file.setPinned',
-      payload: { fileId: file.id, pinned: next }
-    })
+    const result = await catalog.file.setPinned(file.id, next)
     if (!result.ok) {
       toast.error(result.message ?? '置顶操作失败')
       return false
@@ -62,7 +59,7 @@ export function useDiagramCatalogFileActions(options?: {
       width: 'min(92vw, 22rem)'
     })
     if (!ok) return false
-    const result = await bus.dispatch({ type: 'file.softDelete', payload: { fileId } })
+    const result = await catalog.file.softDelete(fileId)
     if (!result.ok) {
       toast.error(result.message ?? '删除失败')
       return false

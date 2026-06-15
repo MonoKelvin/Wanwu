@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
-import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramCanvasCommands } from '@modules/library/diagrams/composables/useDiagramCanvasCommands'
 import {
   DIAGRAM_ALIGN_HORIZONTAL,
   DIAGRAM_ALIGN_VERTICAL,
@@ -21,7 +21,7 @@ const props = defineProps<{
   stageHeight?: number
 }>()
 
-const bus = useDiagramCommandBus()
+const canvas = useDiagramCanvasCommands()
 const editorSelection = useDiagramEditorSelection().selection
 const canGroup = computed(() => editorSelection.value.canGroup ?? false)
 const canUngroup = computed(() => editorSelection.value.canUngroup ?? false)
@@ -61,20 +61,20 @@ watch(
 )
 
 function align(mode: DiagramAlignMode) {
-  void bus.dispatch({ type: 'canvas.alignNodes', payload: { mode } })
+  canvas.alignNodes(mode)
 }
 
 function distribute(mode: DiagramDistributeMode) {
-  void bus.dispatch({ type: 'canvas.distributeNodes', payload: { mode } })
+  canvas.distributeNodes(mode)
 }
 
 function group() {
-  void bus.dispatch({ type: 'canvas.group' })
+  canvas.group()
 }
 
 function ungroup() {
   if (!ungroupEnabled.value) return
-  void bus.dispatch({ type: 'canvas.ungroup' })
+  canvas.ungroup()
 }
 
 /** 浮动工具栏在 pointerdown→click 间会位移，用 pointerdown 触发避免点不中 */

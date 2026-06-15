@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
-import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramCanvasCommands } from '@modules/library/diagrams/composables/useDiagramCanvasCommands'
 import { useDiagramEditorSelection } from '@modules/library/diagrams/composables/useDiagramEditorSelection'
 import {
   effectiveEdgeCount,
@@ -9,7 +9,7 @@ import {
 } from '@modules/library/diagrams/lib/diagramSelectionSnapshot'
 import { DIAGRAM_GROUP_FRAME_TYPE } from '@modules/library/diagrams/lib/diagramGroupFrame'
 
-const bus = useDiagramCommandBus()
+const canvas = useDiagramCanvasCommands()
 const selection = useDiagramEditorSelection().selection
 
 const nodeCount = computed(() => effectiveNodeCount(selection.value))
@@ -37,12 +37,12 @@ const ungroupEnabled = computed(() => canUngroup.value)
 
 function group() {
   if (!groupEnabled.value) return
-  void bus.dispatch({ type: 'canvas.group' })
+  canvas.group()
 }
 
 function ungroup() {
   if (!ungroupEnabled.value) return
-  void bus.dispatch({ type: 'canvas.ungroup' })
+  canvas.ungroup()
 }
 </script>
 

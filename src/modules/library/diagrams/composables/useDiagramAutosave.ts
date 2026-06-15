@@ -1,6 +1,7 @@
 import { onUnmounted, ref, watch, type Ref } from 'vue'
-import type { IDiagramCommandBus } from '@modules/library/diagrams/interfaces/IDiagramCommandBus'
 import type { DiagramEditorSession } from '@modules/library/diagrams/app/DiagramEditorSession'
+import { createDiagramFileCommands } from '@modules/library/diagrams/composables/useDiagramFileCommands'
+import type { IDiagramCommandBus } from '@modules/library/diagrams/interfaces/IDiagramCommandBus'
 
 export function useDiagramAutosave(options: {
   bus: IDiagramCommandBus
@@ -11,6 +12,7 @@ export function useDiagramAutosave(options: {
   onConflict?: () => void
   savePayload?: () => Record<string, unknown> | undefined
 }) {
+  const fileCommands = createDiagramFileCommands(options.bus)
   let timer: ReturnType<typeof setTimeout> | null = null
   const isSaving = ref(false)
   let saveChain: Promise<boolean> = Promise.resolve(true)
@@ -33,9 +35,9 @@ export function useDiagramAutosave(options: {
 
     isSaving.value = true
     try {
-      const result = await options.bus.dispatch({
-        type: 'document.save',
-        payload: { ...options.savePayload?.(), auto: true }
+      const result = await fileCommands.save({
+        ...options.savePayload?.(),
+        auto: true
       })
       if (!result.ok) {
         if (result.code === 'CONFLICT') {

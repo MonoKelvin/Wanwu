@@ -31,7 +31,7 @@ import type { WwIconName } from '@shared/icons/registry'
 import type { WwMenuItem } from '@shared/types/menu'
 import type { DiagramFileMeta } from '@shared/types/diagrams'
 import { useDiagramsStore } from '@shared/stores/diagrams'
-import { useDiagramCatalogCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramCatalogCommands } from '@modules/library/diagrams/composables/useDiagramCatalogCommands'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import {
@@ -48,7 +48,7 @@ import { pushShellRoute } from '@app/composables/shellNavigation'
 const route = useRoute()
 const router = useRouter()
 const store = useDiagramsStore()
-const bus = useDiagramCatalogCommandBus()
+const catalog = useDiagramCatalogCommands()
 const confirm = useWanwuConfirm()
 const toast = useWanwuToast()
 const search = ref('')
@@ -259,10 +259,7 @@ async function commitRename() {
     renameOpen.value = false
     return
   }
-  const result = await bus.dispatch({
-    type: 'file.rename',
-    payload: { fileId: file.id, title }
-  })
+  const result = await catalog.file.rename(file.id, title)
   if (result.ok) {
     renameOpen.value = false
     toast.success('已重命名')
@@ -281,10 +278,7 @@ function openMove(file: DiagramFileMeta) {
 async function commitMove() {
   const file = actionTarget.value
   if (!file) return
-  const result = await bus.dispatch({
-    type: 'file.move',
-    payload: { fileId: file.id, folderId: moveFolderId.value }
-  })
+  const result = await catalog.file.move(file.id, moveFolderId.value)
   if (result.ok) {
     moveOpen.value = false
     toast.success('已移动')
@@ -295,7 +289,7 @@ async function commitMove() {
 }
 
 async function restore(fileId: string) {
-  const result = await bus.dispatch({ type: 'file.restore', payload: { fileId } })
+  const result = await catalog.file.restore(fileId)
   if (result.ok) {
     const restored = result.data as DiagramFileMeta
     const restoreFolderName = folderNameById(restored.folderId) ?? '文件'
@@ -317,7 +311,7 @@ async function purge(fileId: string) {
     width: 'min(92vw, 22rem)'
   })
   if (!ok) return
-  const result = await bus.dispatch({ type: 'file.purge', payload: { fileId } })
+  const result = await catalog.file.purge(fileId)
   if (result.ok) {
     toast.success('已永久删除')
     await load()
@@ -339,7 +333,7 @@ async function emptyRecycleBin() {
   })
   if (!ok) return
   const results = await Promise.all(
-    list.map((file) => bus.dispatch({ type: 'file.purge', payload: { fileId: file.id } }))
+    list.map((file) => catalog.file.purge(file.id))
   )
   const failed = results.filter((r) => !r.ok).length
   if (failed) toast.error(`有 ${failed} 个文件未能删除`)
@@ -572,5 +566,5 @@ function toggleSortMenu(event: MouseEvent) {
 
 <style>
 @import '../../core/styles/library-shared.css';
-@import '../styles/diagram-shared.css';
+@import '../assets/diagram-shared.css';
 </style>

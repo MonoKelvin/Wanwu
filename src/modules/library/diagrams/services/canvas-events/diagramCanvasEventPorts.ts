@@ -33,4 +33,6 @@ export interface DiagramCanvasEventBinderPorts {
   patchBackgroundDom(color: string): void
   onViewportChange(): void
   onFormatPainterNodeApplied(nodeId: string): void
+  captureDragUndoBaseline(): void
+  commitDragUndoMutation(): void
 }

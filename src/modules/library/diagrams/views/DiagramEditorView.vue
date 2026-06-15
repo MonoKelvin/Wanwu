@@ -19,15 +19,13 @@ import DiagramUnsavedLeaveDialog from '@modules/library/diagrams/components/Diag
 import DiagramFolderPickerDialog from '@modules/library/diagrams/components/DiagramFolderPickerDialog.vue'
 import type { LogicFlowDiagramAdapter } from '@modules/library/diagrams/services/LogicFlowDiagramAdapter'
 import { DiagramEditorSession } from '@modules/library/diagrams/app/DiagramEditorSession'
-import { DiagramRepositoryIpcAdapter } from '@modules/library/diagrams/infrastructure/DiagramRepositoryIpcAdapter'
-import { createDiagramCommandBus } from '@modules/library/diagrams/app/commandBus/createDiagramCommandBus'
-import { provideDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramEditorCommandSetup } from '@modules/library/diagrams/composables/useDiagramEditorCommandSetup'
+import { createDiagramCanvasCommands } from '@modules/library/diagrams/composables/useDiagramCanvasCommands'
+import { bindDiagramCommandUiBridge } from '@modules/library/diagrams/app/command/ui/DiagramCommandUiBridge'
 import { useDiagramAutosave } from '@modules/library/diagrams/composables/useDiagramAutosave'
 import { useDiagramShortcuts } from '@modules/library/diagrams/composables/useDiagramShortcuts'
-import { provideDiagramCanvasClipboard } from '@modules/library/diagrams/composables/useDiagramCanvasClipboard'
 import { useDiagramIpcBridge } from '@modules/library/diagrams/composables/useDiagramIpcBridge'
 import { pushShellRoute } from '@app/composables/shellNavigation'
-import { DG_HOME, DG_RECYCLE } from '@modules/library/diagrams/domain/diagramFolderIds'
 import { provideDiagramEditorGuard } from '@modules/library/diagrams/composables/useDiagramEditorGuard'
 import { provideDiagramSaveFlow } from '@modules/library/diagrams/composables/useDiagramSaveFlow'
 import { provideDiagramEditorLayout } from '@modules/library/diagrams/composables/useDiagramEditorLayout'
@@ -132,27 +130,15 @@ function syncAfterPageCommand() {
   scheduleAlignBarRefresh(portRef)
 }
 
-const repo = new DiagramRepositoryIpcAdapter()
-const bus = createDiagramCommandBus({
-  getSession: () => sessionRef.value,
-  repo
+const { bus, repo, onDocumentSaved } = useDiagramEditorCommandSetup({
+  sessionRef,
+  portRef,
+  getFileId: () => route.params.fileId as string
 })
-provideDiagramCommandBus(bus)
-const canvasClipboard = {
-  copy() {
-    portRef.value?.copy()
-  },
-  paste() {
-    portRef.value?.paste()
-  },
-  hasClipboard() {
-    return portRef.value?.hasClipboard() ?? false
-  }
-}
-provideDiagramCanvasClipboard(canvasClipboard)
+const canvasCommands = createDiagramCanvasCommands(bus)
 const editorLayout = provideDiagramEditorLayout()
 const { record: recordRecentShape } = useDiagramRecentShapes()
-const saveFlow = provideDiagramSaveFlow(bus, toast)
+const saveFlow = provideDiagramSaveFlow(bus, toast, { onDocumentSaved })
 
 const stageStyle = computed(() => ({
   '--dg-asset-panel-w': editorLayout.assetCollapsed.value ? '0px' : '11.75rem',
@@ -194,16 +180,18 @@ async function switchPageWithFlush(dispatch: () => Promise<unknown>) {
   await dispatch()
 }
 
-useDiagramShortcuts(bus, {
+useDiagramShortcuts({
+  bus,
+  canvas: canvasCommands,
   onSave: () => {
     if (!sessionRef.value?.dirty) return
     void saveFlow.saveDocument({ folderId: pickedFolderId.value })
   },
   onSaveAs: () => saveFlow.promptSaveAs(sessionRef.value?.content?.meta.title),
-  onPagePrev: () => switchPageWithFlush(() => bus.dispatch({ type: 'page.prev' })),
-  onPageNext: () => switchPageWithFlush(() => bus.dispatch({ type: 'page.next' })),
-  onCopy: () => canvasClipboard.copy(),
-  onPaste: () => canvasClipboard.paste(),
+  onPagePrev: () => switchPageWithFlush(() => canvasCommands.pagePrev()),
+  onPageNext: () => switchPageWithFlush(() => canvasCommands.pageNext()),
+  onCopy: () => canvasCommands.copy(),
+  onPaste: () => canvasCommands.paste(),
   isActive: () => isDiagramEditorPath(route.path),
   isBlocked: () => conflictOpen.value || folderPickerOpen.value,
   canGroup: () => portRef.value?.canGroupSelection() ?? false,
@@ -235,72 +223,17 @@ function publishLiveSelection() {
   selectionApi.publish(port.getSelection())
 }
 
-const unsubscribeBusResult = bus.onResult((cmd, result) => {
-  if (!result.ok) return
-
-  // 组合/拆组由 LogicFlowDiagramAdapter 内部 commitSelectionForIds 推送，此处不再 publish 避免覆盖
-  if (
-    cmd.type === 'canvas.select' ||
-    cmd.type === 'canvas.selectAll' ||
-    cmd.type === 'canvas.clearSelection'
-  ) {
-    publishLiveSelection()
-  }
-
-  if (
-    cmd.type === 'document.save' ||
-    cmd.type === 'document.saveAs' ||
-    cmd.type === 'document.importWfg' ||
-    cmd.type === 'document.importDrawio'
-  ) {
-    if (cmd.type === 'document.save' || cmd.type === 'document.saveAs') {
-      bumpSessionView()
-    }
-    const data = result.data as { meta?: { id: string } } | undefined
-    const id = data?.meta?.id ?? (data as { fileId?: string } | undefined)?.fileId
-    if (id && id !== fileId.value) {
-      const folderId =
-        typeof route.query.folderId === 'string' ? route.query.folderId : pickedFolderId.value
-      const query: Record<string, string> = {}
-      if (folderId && folderId !== DG_HOME && folderId !== DG_RECYCLE) {
-        query.folderId = folderId
-      }
-      if (cmd.type === 'document.importWfg' || cmd.type === 'document.importDrawio') {
-        query.fitView = '1'
-      }
-      void router.replace({
-        name: LIBRARY_DIAGRAMS_EDITOR_ROUTE,
-        params: { fileId: id },
-        query
-      })
-    }
-  }
-
-  if (
-    cmd.type === 'canvas.zoom' ||
-    cmd.type === 'canvas.zoomToFit' ||
-    cmd.type === 'canvas.zoomReset' ||
-    cmd.type === 'canvas.centerContent' ||
-    cmd.type === 'document.open' ||
-    cmd.type === 'document.importWfg' ||
-    cmd.type === 'document.importDrawio' ||
-    cmd.type.startsWith('page.')
-  ) {
-    if (cmd.type.startsWith('page.')) {
-      syncAfterPageCommand()
-    } else {
-      refreshViewportZoom()
-    }
-    if (
-      (cmd.type === 'document.open' ||
-        cmd.type === 'document.importWfg' ||
-        cmd.type === 'document.importDrawio') &&
-      portRef.value
-    ) {
-      bumpSessionView()
-      selectionApi.publish(portRef.value.getSelection())
-    }
-  }
+const unsubscribeBusResult = bindDiagramCommandUiBridge({
+  bus,
+  router,
+  getPort: () => portRef.value,
+  getFileId: () => route.params.fileId as string,
+  getFolderId: () =>
+    typeof route.query.folderId === 'string' ? route.query.folderId : pickedFolderId.value,
+  publishSelection: publishLiveSelection,
+  bumpSessionView,
+  refreshViewportZoom,
+  syncAfterPageCommand
 })
 
 const fileId = computed(() => route.params.fileId as string)
@@ -417,11 +350,18 @@ function teardownEditorSurface() {
   alignBarNodeCount.value = 0
 }
 
+/** KeepAlive 再次激活时恢复可见（离开编辑器时 teardown 会隐藏整页） */
+function showEditorSurface() {
+  editorVisible.value = true
+  bootError.value = null
+}
+
 let editorShellMountCount = 0
 let sharedRemoveLeaveGuard: (() => void) | null = null
 let removeBeforeUnload: (() => void) | null = null
 
 async function bootstrapEditorSurface(_trigger: 'mount' | 'activate'): Promise<void> {
+  showEditorSurface()
   if (!isDiagramEditorSetupCurrent()) {
     return
   }
@@ -479,6 +419,7 @@ onMounted(() => {
 })
 
 onActivated(() => {
+  showEditorSurface()
   const docKey = currentDocKey()
   if (isDiagramEditorRuntimeReady(docKey)) {
     loading.value = false
@@ -616,15 +557,12 @@ function onCanvasDrop(event: DragEvent) {
   const insertEdgeId = port.findEdgeAtCanvasPoint(x, y) ?? undefined
   resetCanvasDragState()
   recordRecentShape(payload.shapeId)
-  void bus.dispatch({
-    type: 'canvas.addNode',
-    payload: {
-      shape: payload.shapeId,
-      x,
-      y,
-      text: payload.defaultText || undefined,
-      insertEdgeId
-    }
+  canvasCommands.addNode({
+    shape: payload.shapeId,
+    x,
+    y,
+    text: payload.defaultText || undefined,
+    insertEdgeId
   })
 }
 </script>
@@ -694,6 +632,7 @@ function onCanvasDrop(event: DragEvent) {
         <DiagramPropertyPanel
           v-if="!editorLayout.propsCollapsed.value"
           :file-id="sessionRef?.fileId ?? null"
+          :canvas-commands="canvasCommands"
         />
         <DiagramPanelRestoreButton
           v-else
@@ -731,5 +670,5 @@ function onCanvasDrop(event: DragEvent) {
 </template>
 
 <style>
-@import '../styles/diagram-shared.css';
+@import '../assets/diagram-shared.css';
 </style>

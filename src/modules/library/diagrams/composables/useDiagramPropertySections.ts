@@ -1,5 +1,6 @@
 import { computed, shallowRef, watch, type Ref } from 'vue'
 import { provideDiagramPropertyContext } from '@modules/library/diagrams/composables/useDiagramPropertyContext'
+import type { DiagramDocumentMutationCommands } from '@modules/library/diagrams/composables/useDiagramCanvasCommands'
 import { useDiagramPropertyPanelTab } from '@modules/library/diagrams/composables/useDiagramPropertyPanelTab'
 import { useDiagramEditorSelection } from '@modules/library/diagrams/composables/useDiagramEditorSelection'
 import {
@@ -33,13 +34,16 @@ export interface DiagramPropertySectionsApi {
  * 属性面板区块解析与选区联动。
  * 组合根在 DiagramPropertyPanel 调用；各 Section 通过 useDiagramPropertySectionView 读快照、useDiagramPropertyContext 写属性。
  */
-export function useDiagramPropertySections(fileId: Ref<string | null>): DiagramPropertySectionsApi {
+export function useDiagramPropertySections(
+  fileId: Ref<string | null>,
+  canvasCommands: DiagramDocumentMutationCommands
+): DiagramPropertySectionsApi {
   const selectionApi = useDiagramEditorSelection()
   const selection = selectionApi.selection
   const activeTab = useDiagramPropertyPanelTab(selection)
   const registry = getDiagramPropertySectionRegistry()
 
-  provideDiagramPropertyContext(fileId, activeTab)
+  provideDiagramPropertyContext(fileId, activeTab, canvasCommands)
 
   const selectionScope = computed(() => selectionScopeKey(selection.value))
 

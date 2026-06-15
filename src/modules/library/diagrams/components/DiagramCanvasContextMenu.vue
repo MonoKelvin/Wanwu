@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import type { WwMenuItem } from '@shared/types/menu'
-import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramCanvasCommands } from '@modules/library/diagrams/composables/useDiagramCanvasCommands'
 import { useDiagramCanvasClipboard } from '@modules/library/diagrams/composables/useDiagramCanvasClipboard'
 import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
 
@@ -13,7 +13,7 @@ export type DiagramCanvasContextTarget = {
   edgeIds: string[]
 }
 
-const bus = useDiagramCommandBus()
+const canvas = useDiagramCanvasCommands()
 const clipboard = useDiagramCanvasClipboard()
 const menuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
 const clipboardReady = ref(false)
@@ -58,14 +58,14 @@ const menuItems = computed<WwMenuItem[]>(() => {
       wwIcon: 'layers',
       shortcut: DG_SHORTCUT.group,
       disabled: !canGroup.value,
-      command: () => void bus.dispatch({ type: 'canvas.group' })
+      command: () => canvas.group()
     })
     items.push({
       label: '取消组合',
       wwIcon: 'ungroup',
       shortcut: DG_SHORTCUT.ungroup,
       disabled: !canUngroup.value,
-      command: () => void bus.dispatch({ type: 'canvas.ungroup' })
+      command: () => canvas.ungroup()
     })
     if (nodeIds.length > 0) {
       items.push({ separator: true })
@@ -73,20 +73,12 @@ const menuItems = computed<WwMenuItem[]>(() => {
         {
           label: '置于顶层',
           wwIcon: 'arrow-up-to-line',
-          command: () =>
-            void bus.dispatch({
-              type: 'canvas.bringToFront',
-              payload: { nodeIds }
-            })
+          command: () => canvas.bringToFront(nodeIds)
         },
         {
           label: '置于底层',
           wwIcon: 'arrow-down-from-line',
-          command: () =>
-            void bus.dispatch({
-              type: 'canvas.sendToBack',
-              payload: { nodeIds }
-            })
+          command: () => canvas.sendToBack(nodeIds)
         }
       )
     }
@@ -95,11 +87,7 @@ const menuItems = computed<WwMenuItem[]>(() => {
       label: '删除',
       wwIcon: 'trash-2',
       shortcut: DG_SHORTCUT.delete,
-      command: () =>
-        void bus.dispatch({
-          type: 'canvas.deleteSelection',
-          payload: { nodeIds, edgeIds }
-        })
+      command: () => canvas.deleteSelection({ nodeIds, edgeIds })
     })
   } else {
     items.push(
@@ -114,14 +102,14 @@ const menuItems = computed<WwMenuItem[]>(() => {
         label: '全选',
         wwIcon: 'layers',
         shortcut: DG_SHORTCUT.selectAll,
-        command: () => void bus.dispatch({ type: 'canvas.selectAll' })
+        command: () => canvas.selectAll()
       },
       { separator: true },
       {
         label: '适应画布',
         wwIcon: 'layout-grid',
         shortcut: DG_SHORTCUT.zoomFit,
-        command: () => void bus.dispatch({ type: 'canvas.zoomToFit' })
+        command: () => canvas.zoomToFit()
       }
     )
   }

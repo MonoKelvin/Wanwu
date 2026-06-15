@@ -1,5 +1,5 @@
 import { DIAGRAM_GRID_SIZE } from '@modules/library/diagrams/lib/diagramCanvasTheme'
-import type { CanvasNudgeDirection } from '@modules/library/diagrams/domain/commands/canvas'
+import type { CanvasNudgeDirection } from '@modules/library/diagrams/app/command/domain/payloads'
 
 export interface CanvasNudgeDelta {
   dx: number

@@ -5,8 +5,8 @@ import {
   isMainProcessCommand,
   isRendererProcessCommand
 } from '../services/diagrams/ipcCommands'
-import type { DiagramCommandEnvelope } from '../../src/modules/library/diagrams/domain/commands/types'
-import type { DiagramCommandResult } from '../../src/modules/library/diagrams/domain/commands/types'
+import type { DiagramCommandEnvelope } from '../../src/modules/library/diagrams/app/command/domain/types'
+import type { DiagramCommandResult } from '../../src/modules/library/diagrams/app/command/domain/types'
 
 const pendingRenderer = new Map<
   string,

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DiagramCmd } from '@modules/library/diagrams/app/command/domain/ids'
 import { computed, ref, watch } from 'vue'
 import InputText from 'primevue/inputtext'
 import WwButton from '@shared/components/WwButton.vue'
@@ -6,11 +7,11 @@ import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import DiagramShortcutsDialog from '@modules/library/diagrams/components/DiagramShortcutsDialog.vue'
 import type { WwMenuItem } from '@shared/types/menu'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramCanvasCommands } from '@modules/library/diagrams/composables/useDiagramCanvasCommands'
 import { useDiagramEditorGuard } from '@modules/library/diagrams/composables/useDiagramEditorGuard'
 import { useDiagramCatalogFileActions } from '@modules/library/diagrams/composables/useDiagramCatalogFileActions'
 import { useDiagramSaveFlow } from '@modules/library/diagrams/composables/useDiagramSaveFlow'
-import { useWanwuToast } from '@shared/composables/useWanwuToast'
-import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
+import { useDiagramUiRuntime } from '@modules/library/diagrams/composables/useDiagramUiRuntime'
 import { focusInputText } from '@modules/library/diagrams/lib/diagramInputFocus'
 import {
   diagramTitleBase,
@@ -22,6 +23,13 @@ import {
   effectiveEdgeCount,
   effectiveNodeCount
 } from '@modules/library/diagrams/lib/diagramSelectionSnapshot'
+import {
+  ExportAllPagesPngUiCommand,
+  ExportCurrentPagePngUiCommand,
+  ExportSvgUiCommand,
+  ExportWfgUiCommand,
+  runImportExternalFileUiCommand
+} from '@modules/library/diagrams/app/command/ui/fileExportUiCommands'
 
 const props = defineProps<{
   title: string
@@ -46,11 +54,15 @@ const saveBadge = computed(() => {
 const emit = defineEmits<{ back: [] }>()
 
 const bus = useDiagramCommandBus()
+const canvas = useDiagramCanvasCommands()
 const saveFlow = useDiagramSaveFlow()
 const editorGuard = useDiagramEditorGuard()
 const catalogActions = useDiagramCatalogFileActions()
-const toast = useWanwuToast()
-const { ask } = useWanwuConfirm()
+const uiRuntime = useDiagramUiRuntime()
+const exportPngCmd = new ExportCurrentPagePngUiCommand()
+const exportAllPngCmd = new ExportAllPagesPngUiCommand()
+const exportWfgCmd = new ExportWfgUiCommand()
+const exportSvgCmd = new ExportSvgUiCommand()
 const titleDraft = ref(diagramTitleBase(props.title))
 const displayTitleBase = computed(() => diagramTitleBase(props.title))
 const editingTitle = ref(false)
@@ -77,15 +89,12 @@ const canClearStyle = computed(() => {
 const formatPainterActive = computed(() => editorSelection.value.formatPainterActive ?? false)
 
 function toggleFormatPainter() {
-  if (formatPainterActive.value) {
-    void bus.dispatch({ type: 'canvas.formatPainterCancel' })
-    return
-  }
-  void bus.dispatch({ type: 'canvas.formatPainterStart' })
+  if (formatPainterActive.value) canvas.formatPainterCancel()
+  else canvas.formatPainterStart()
 }
 
 function clearStyles() {
-  void bus.dispatch({ type: 'canvas.clearStyles' })
+  canvas.clearStyles()
 }
 
 watch(
@@ -112,105 +121,42 @@ function saveAs() {
 
 async function exportPng() {
   await editorGuard?.flushSave()
-  const result = await bus.dispatch({ type: 'document.export', payload: { format: 'png' } })
-  if (!result.ok || !result.data) {
-    toast.error(result.ok ? '导出失败' : (result.message ?? '导出失败'))
-    return
-  }
-  const blob = (result.data as { blob: Blob }).blob
-  const dataUrl = await blobToDataUrl(blob)
-  const saved = await window.wanwu.shell.savePngDataUrl({
-    dataUrl,
-    defaultName: `${props.title || '流程图'}.png`
-  })
-  if (saved.ok && saved.path) toast.success('已导出 PNG')
+  await exportPngCmd.run(
+    bus,
+    { defaultName: `${props.title || '流程图'}.png` },
+    uiRuntime
+  )
 }
 
 async function exportAllPagesPng() {
   await editorGuard?.flushSave()
-  const result = await bus.dispatch({
-    type: 'document.export',
-    payload: { format: 'png', scope: 'all' }
-  })
-  if (!result.ok || !result.data) {
-    toast.error(result.ok ? '导出失败' : (result.message ?? '导出失败'))
-    return
-  }
-  const pages = (result.data as { pages: Array<{ pageName: string; blob: Blob }> }).pages
-  let savedCount = 0
-  const base = props.title || '流程图'
-  for (const page of pages) {
-    const dataUrl = await blobToDataUrl(page.blob)
-    const saved = await window.wanwu.shell.savePngDataUrl({
-      dataUrl,
-      defaultName: `${base}-${page.pageName}.png`
-    })
-    if (saved.canceled) break
-    if (saved.ok) savedCount++
-  }
-  if (savedCount > 0) toast.success(`已导出 ${savedCount} 页 PNG`)
+  await exportAllPngCmd.run(bus, { titleBase: props.title || '流程图' }, uiRuntime)
 }
 
-async function importExternalFile(type: 'document.importWfg' | 'document.importDrawio', label: string) {
+async function importExternalFile(
+  type: typeof DiagramCmd.File.ImportWfg | typeof DiagramCmd.File.ImportDrawio,
+  label: string
+) {
   await editorGuard?.flushSave()
-  let result = await bus.dispatch({ type, payload: { folderId: props.folderId } })
-  if (!result.ok && result.code === 'VALIDATION') {
-    const discard = await ask({
-      header: '未保存的更改',
-      message: '导入将替换当前画布内容。不保存并导入，还是取消？',
-      acceptLabel: '不保存并导入',
-      rejectLabel: '取消'
-    })
-    if (!discard) return
-    result = await bus.dispatch({
-      type,
-      payload: { discard: true, folderId: props.folderId }
-    })
-  }
-  if (!result.ok) {
-    if (result.message && result.code !== 'VALIDATION') toast.error(result.message)
-    return
-  }
-  const data = result.data as { canceled?: boolean; title?: string }
-  if (data.canceled) return
-  toast.success(`已导入${label}${data.title ? `：${data.title}` : ''}`)
+  await runImportExternalFileUiCommand(
+    bus,
+    { type, folderId: props.folderId, label },
+    uiRuntime
+  )
 }
 
 async function exportWfg() {
   await editorGuard?.flushSave()
-  const result = await bus.dispatch({ type: 'document.export', payload: { format: 'wfg' } })
-  if (!result.ok) {
-    toast.error(result.message ?? '导出失败')
-    return
-  }
-  const data = result.data as { canceled?: boolean; path?: string }
-  if (data.canceled) return
-  if (data.path) toast.success('已导出流程图')
+  await exportWfgCmd.run(bus, undefined!, uiRuntime)
 }
 
 async function exportSvg() {
   await editorGuard?.flushSave()
-  const result = await bus.dispatch({ type: 'document.export', payload: { format: 'svg' } })
-  if (!result.ok || !result.data) {
-    toast.error(result.ok ? '导出失败' : (result.message ?? '导出失败'))
-    return
-  }
-  const svg = (result.data as { svg: string }).svg
-  const saved = await window.wanwu.shell.saveTextFile({
-    content: svg,
-    defaultName: `${props.title || '流程图'}.svg`,
-    extension: 'svg'
-  })
-  if (saved.ok && saved.path) toast.success('已导出 SVG')
-}
-
-function blobToDataUrl(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(String(reader.result))
-    reader.onerror = () => reject(reader.error)
-    reader.readAsDataURL(blob)
-  })
+  await exportSvgCmd.run(
+    bus,
+    { defaultName: `${props.title || '流程图'}.svg` },
+    uiRuntime
+  )
 }
 
 function startTitleEdit() {
@@ -256,8 +202,8 @@ const fileMenuItems = computed(() => {
   }
   items.push(
     { separator: true },
-    { label: '打开流程图文件', wwIcon: 'inbox', command: () => void importExternalFile('document.importWfg', '流程图') },
-    { label: '打开 draw.io', wwIcon: 'external-link', command: () => void importExternalFile('document.importDrawio', ' draw.io') }
+    { label: '打开流程图文件', wwIcon: 'inbox', command: () => void importExternalFile(DiagramCmd.File.ImportWfg, '流程图') },
+    { label: '打开 draw.io', wwIcon: 'external-link', command: () => void importExternalFile(DiagramCmd.File.ImportDrawio, ' draw.io') }
   )
   return items
 })
@@ -274,30 +220,30 @@ const viewMenuItems: WwMenuItem[] = [
   {
     label: '放大',
     wwIcon: 'plus',
-    command: () => void bus.dispatch({ type: 'canvas.zoom', payload: { delta: 0.1 } })
+    command: () => canvas.zoom(0.1)
   },
   {
     label: '缩小',
     wwIcon: 'minus',
-    command: () => void bus.dispatch({ type: 'canvas.zoom', payload: { delta: -0.1 } })
+    command: () => canvas.zoom(-0.1)
   },
   { separator: true },
   {
     label: '重置缩放',
     wwIcon: 'maximize',
     shortcut: DG_SHORTCUT.zoomReset,
-    command: () => void bus.dispatch({ type: 'canvas.zoomReset' })
+    command: () => canvas.zoomReset()
   },
   {
     label: '适应画布',
     wwIcon: 'layout-grid',
     shortcut: DG_SHORTCUT.zoomFit,
-    command: () => void bus.dispatch({ type: 'canvas.zoomToFit' })
+    command: () => canvas.zoomToFit()
   },
   {
     label: '原点居中',
     wwIcon: 'compass',
-    command: () => void bus.dispatch({ type: 'canvas.centerOrigin' })
+    command: () => canvas.centerOrigin()
   }
 ]
 
@@ -394,7 +340,7 @@ function openMenu(
           aria-label="撤销"
           :disabled="booting"
           v-tooltip.bottom="'撤销 (Ctrl+Z)'"
-          @click="bus.dispatch({ type: 'canvas.undo' })"
+          @click="canvas.undo()"
         />
         <WwButton
           icon="redo"
@@ -405,7 +351,7 @@ function openMenu(
           aria-label="重做"
           :disabled="booting"
           v-tooltip.bottom="'重做 (Ctrl+Y)'"
-          @click="bus.dispatch({ type: 'canvas.redo' })"
+          @click="canvas.redo()"
         />
         <WwButton
           icon="layout-grid"
@@ -416,14 +362,14 @@ function openMenu(
           aria-label="适应画布"
           :disabled="booting"
           v-tooltip.bottom="'适应画布'"
-          @click="bus.dispatch({ type: 'canvas.zoomToFit' })"
+          @click="canvas.zoomToFit()"
         />
         <button
           type="button"
           class="dg-editor-toolbar__zoom-label"
           :disabled="booting"
           :title="booting ? undefined : `当前缩放 ${zoomLabel}，点击重置`"
-          @click="bus.dispatch({ type: 'canvas.zoomReset' })"
+          @click="canvas.zoomReset()"
         >
           {{ zoomLabel }}
         </button>

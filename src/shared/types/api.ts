@@ -29,7 +29,7 @@ import type { NoteCreateInput, NoteImage, NoteItem, NoteUpdateInput } from './no
 import type {
   DiagramCommandEnvelope,
   DiagramCommandResult
-} from '@modules/library/diagrams/domain/commands/types'
+} from '@modules/library/diagrams/app/command/domain/types'
 import type {
   DiagramContent,
   DiagramFileMeta,

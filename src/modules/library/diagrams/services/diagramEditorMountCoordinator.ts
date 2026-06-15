@@ -79,6 +79,7 @@ export class DiagramEditorMountCoordinator {
       snapline: true,
       snaplineEpsilon: DIAGRAM_SNAPLINE_EPSILON,
       keyboard: { enabled: false },
+      history: false,
       edgeType: 'polyline',
       adjustEdgeStartAndEnd: true,
       multipleSelectKey: 'ctrl',

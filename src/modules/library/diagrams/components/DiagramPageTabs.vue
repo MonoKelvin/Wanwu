@@ -6,7 +6,7 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import type { WwMenuItem } from '@shared/types/menu'
-import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramPageCommands } from '@modules/library/diagrams/composables/useDiagramPageCommands'
 import { useDiagramEditorGuard } from '@modules/library/diagrams/composables/useDiagramEditorGuard'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
@@ -18,7 +18,7 @@ const props = defineProps<{
   activePageId: string | null
 }>()
 
-const bus = useDiagramCommandBus()
+const pageCmd = useDiagramPageCommands()
 const editorGuard = useDiagramEditorGuard()
 const { ask } = useWanwuConfirm()
 const toast = useWanwuToast()
@@ -132,7 +132,7 @@ async function switchPage(pageId: string) {
   if (pageId === editorGuard?.getActivePageId()) return
   overflowOpen.value = false
   await editorGuard?.flushSave()
-  const result = await bus.dispatch({ type: 'page.switch', payload: { pageId } })
+  const result = await pageCmd.switch(pageId)
   if (!result.ok) {
     toast.error(result.message ?? '切换页面失败')
   }
@@ -144,7 +144,7 @@ async function addPage() {
   }
   overflowOpen.value = false
   await editorGuard?.flushSave()
-  const result = await bus.dispatch({ type: 'page.add' })
+  const result = await pageCmd.add()
   if (!result.ok) {
     toast.error(result.message ?? '新建页面失败')
   }
@@ -179,7 +179,7 @@ async function commitRename() {
   }
 
   await editorGuard?.flushSave()
-  const result = await bus.dispatch({ type: 'page.rename', payload: { pageId, name } })
+  const result = await pageCmd.rename(pageId, name)
   if (!result.ok) {
     toast.info(result.message ?? '重命名失败', '无法重命名')
     renamingPageId.value = pageId
@@ -220,7 +220,7 @@ async function deletePage(pageId: string) {
   }
 
   await editorGuard?.flushSave()
-  const result = await bus.dispatch({ type: 'page.delete', payload: { pageId } })
+  const result = await pageCmd.delete(pageId)
   if (!result.ok) {
     toast.error(result.message ?? '删除页面失败')
   }
@@ -228,7 +228,7 @@ async function deletePage(pageId: string) {
 
 async function duplicatePage(pageId: string) {
   await editorGuard?.flushSave()
-  const result = await bus.dispatch({ type: 'page.duplicate', payload: { pageId } })
+  const result = await pageCmd.duplicate(pageId)
   if (!result.ok) {
     toast.error(result.message ?? '复制页面失败')
   }

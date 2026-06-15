@@ -1,13 +1,13 @@
 import {
-  DG_FILES,
   DG_HOME,
   DG_RECYCLE,
   isDiagramCustomFolderId,
   isDiagramSystemFolderId
 } from '../../../src/modules/library/diagrams/domain/diagramFolderIds'
-import { isDiagramCommandType } from '../../../src/modules/library/diagrams/domain/commands/types'
-import type { DiagramCommandEnvelope } from '../../../src/modules/library/diagrams/domain/commands/types'
-import type { DiagramCommandResult } from '../../../src/modules/library/diagrams/domain/commands/types'
+import { DiagramCmd } from '../../../src/modules/library/diagrams/app/command/domain/ids'
+import { isDiagramCommandId } from '../../../src/modules/library/diagrams/app/command/domain/ids'
+import type { DiagramCommandEnvelope } from '../../../src/modules/library/diagrams/app/command/domain/types'
+import type { DiagramCommandResult } from '../../../src/modules/library/diagrams/app/command/domain/types'
 
 function fail(code: 'VALIDATION' | 'UNKNOWN_COMMAND', message: string): DiagramCommandResult {
   return { ok: false, code, message }
@@ -23,14 +23,14 @@ function isWritableFolderId(folderId: string): boolean {
 }
 
 export function validateDiagramCommand(cmd: DiagramCommandEnvelope): DiagramCommandResult | null {
-  if (!isDiagramCommandType(cmd.type)) {
+  if (!isDiagramCommandId(cmd.type)) {
     return fail('UNKNOWN_COMMAND', `未知命令类型: ${cmd.type}`)
   }
 
-  const payload = cmd.payload ?? {}
+  const payload = cmd.payload ?? ({} as Record<string, unknown>)
 
   switch (cmd.type) {
-    case 'file.create': {
+    case DiagramCmd.Catalog.File.Create: {
       const folderId = payload.folderId
       const title = payload.title
       if (!isNonEmptyString(folderId) || !isWritableFolderId(folderId)) {
@@ -39,62 +39,68 @@ export function validateDiagramCommand(cmd: DiagramCommandEnvelope): DiagramComm
       if (!isNonEmptyString(title)) return fail('VALIDATION', 'title 不能为空')
       return null
     }
-    case 'file.rename':
-    case 'file.move':
-    case 'file.duplicate':
-    case 'file.setPinned':
-    case 'file.softDelete':
-    case 'file.restore':
-    case 'file.purge':
-    case 'file.read': {
+    case DiagramCmd.Catalog.File.Rename:
+    case DiagramCmd.Catalog.File.Move:
+    case DiagramCmd.Catalog.File.Duplicate:
+    case DiagramCmd.Catalog.File.SetPinned:
+    case DiagramCmd.Catalog.File.SoftDelete:
+    case DiagramCmd.Catalog.File.Restore:
+    case DiagramCmd.Catalog.File.Purge:
+    case DiagramCmd.Catalog.File.Read: {
       if (!isNonEmptyString(payload.fileId)) return fail('VALIDATION', 'fileId 不能为空')
-      if (cmd.type === 'file.move' && !isNonEmptyString(payload.folderId)) {
+      if (cmd.type === DiagramCmd.Catalog.File.Move && !isNonEmptyString(payload.folderId)) {
         return fail('VALIDATION', 'folderId 不能为空')
       }
-      if (cmd.type === 'file.move' && !isWritableFolderId(payload.folderId as string)) {
+      if (
+        cmd.type === DiagramCmd.Catalog.File.Move &&
+        !isWritableFolderId(payload.folderId as string)
+      ) {
         return fail('VALIDATION', '无效的目标 folderId')
       }
-      if (cmd.type === 'file.rename' && !isNonEmptyString(payload.title)) {
+      if (cmd.type === DiagramCmd.Catalog.File.Rename && !isNonEmptyString(payload.title)) {
         return fail('VALIDATION', 'title 不能为空')
       }
-      if (cmd.type === 'file.setPinned' && typeof payload.pinned !== 'boolean') {
+      if (cmd.type === DiagramCmd.Catalog.File.SetPinned && typeof payload.pinned !== 'boolean') {
         return fail('VALIDATION', 'pinned 必须为 boolean')
       }
       return null
     }
-    case 'file.list': {
+    case DiagramCmd.Catalog.File.List: {
       if (!isNonEmptyString(payload.folderId)) return fail('VALIDATION', 'folderId 不能为空')
       if (payload.folderId === DG_HOME) return null
-      if (!isDiagramSystemFolderId(payload.folderId) && !isDiagramCustomFolderId(payload.folderId)) {
+      if (
+        !isDiagramSystemFolderId(payload.folderId as string) &&
+        !isDiagramCustomFolderId(payload.folderId as string)
+      ) {
         return fail('VALIDATION', '无效的 folderId')
       }
       return null
     }
-    case 'folder.create': {
+    case DiagramCmd.Catalog.Folder.Create: {
       if (!isNonEmptyString(payload.name)) return fail('VALIDATION', 'name 不能为空')
       return null
     }
-    case 'folder.rename': {
+    case DiagramCmd.Catalog.Folder.Rename: {
       if (!isNonEmptyString(payload.folderId) || !isNonEmptyString(payload.name)) {
         return fail('VALIDATION', 'folderId 与 name 不能为空')
       }
-      if (isDiagramSystemFolderId(payload.folderId)) {
+      if (isDiagramSystemFolderId(payload.folderId as string)) {
         return fail('VALIDATION', '不能重命名系统分组')
       }
       return null
     }
-    case 'folder.delete': {
+    case DiagramCmd.Catalog.Folder.Delete: {
       if (!isNonEmptyString(payload.folderId)) return fail('VALIDATION', 'folderId 不能为空')
-      if (isDiagramSystemFolderId(payload.folderId)) {
+      if (isDiagramSystemFolderId(payload.folderId as string)) {
         return fail('VALIDATION', '不能删除系统分组')
       }
       return null
     }
-    case 'folder.reorder': {
+    case DiagramCmd.Catalog.Folder.Reorder: {
       if (!Array.isArray(payload.orders)) return fail('VALIDATION', 'orders 必须为数组')
       return null
     }
-    case 'folder.list':
+    case DiagramCmd.Catalog.Folder.List:
       return null
     default:
       return null
@@ -105,8 +111,7 @@ export function validateMainProcessCommands(
   cmds: DiagramCommandEnvelope[]
 ): DiagramCommandResult | null {
   for (const cmd of cmds) {
-    const domain = cmd.type.split('.')[0]
-    if (domain !== 'file' && domain !== 'folder') continue
+    if (!cmd.type.startsWith('Diagram.Catalog.')) continue
     const err = validateDiagramCommand(cmd)
     if (err) return err
   }

@@ -3,6 +3,7 @@ import { toRef } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
 import { useDiagramPropertySections } from '@modules/library/diagrams/composables/useDiagramPropertySections'
+import type { DiagramDocumentMutationCommands } from '@modules/library/diagrams/composables/useDiagramCanvasCommands'
 import DiagramPropertySectionsHost from '@modules/library/diagrams/components/property-panel/DiagramPropertySectionsHost.vue'
 import {
   togglePropsPanelCollapsed,
@@ -11,6 +12,7 @@ import {
 
 const props = defineProps<{
   fileId: string | null
+  canvasCommands: DiagramDocumentMutationCommands
 }>()
 
 const layout = useDiagramEditorLayout()
@@ -23,7 +25,7 @@ const {
   selectionBanner,
   showNodeEmpty,
   showEdgeEmpty
-} = useDiagramPropertySections(toRef(props, 'fileId'))
+} = useDiagramPropertySections(toRef(props, 'fileId'), props.canvasCommands)
 </script>
 
 <template>

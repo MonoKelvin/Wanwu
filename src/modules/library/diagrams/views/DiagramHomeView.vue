@@ -21,7 +21,7 @@ import {
   sortRecentDiagramFiles
 } from '@modules/library/diagrams/lib/diagramHomeUtils'
 import { useDiagramCatalogFileActions } from '@modules/library/diagrams/composables/useDiagramCatalogFileActions'
-import { useDiagramCatalogCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramCatalogCommands } from '@modules/library/diagrams/composables/useDiagramCatalogCommands'
 import { cloneForIpc } from '@shared/lib/cloneForIpc'
 import { useDiagramsStore } from '@shared/stores/diagrams'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
@@ -38,7 +38,7 @@ import type { DiagramContent, DiagramFileMeta, DiagramSearchHit } from '@shared/
 const router = useRouter()
 const store = useDiagramsStore()
 const toast = useWanwuToast()
-const bus = useDiagramCatalogCommandBus()
+const catalog = useDiagramCatalogCommands()
 
 const actionTarget = ref<DiagramFileMeta | null>(null)
 const renameOpen = ref(false)
@@ -186,10 +186,7 @@ async function commitRename() {
     renameOpen.value = false
     return
   }
-  const result = await bus.dispatch({
-    type: 'file.rename',
-    payload: { fileId: file.id, title }
-  })
+  const result = await catalog.file.rename(file.id, title)
   if (result.ok) {
     renameOpen.value = false
     toast.success('已重命名')
@@ -209,10 +206,7 @@ function openMove(file: DiagramFileMeta) {
 async function commitMove() {
   const file = actionTarget.value
   if (!file) return
-  const result = await bus.dispatch({
-    type: 'file.move',
-    payload: { fileId: file.id, folderId: fileMoveFolderId.value }
-  })
+  const result = await catalog.file.move(file.id, fileMoveFolderId.value)
   if (result.ok) {
     fileMoveOpen.value = false
     toast.success('已移动')
@@ -444,5 +438,5 @@ async function confirmImportToFolder() {
 </template>
 
 <style>
-@import '../styles/diagram-shared.css';
+@import '../assets/diagram-shared.css';
 </style>

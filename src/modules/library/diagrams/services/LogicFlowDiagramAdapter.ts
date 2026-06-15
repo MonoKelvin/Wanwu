@@ -68,8 +68,12 @@ import {
   clearGroupFramePointerInside
 } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import { finalizeNodeLayoutChange } from '@modules/library/diagrams/lib/diagramNodeLayoutPatch'
+import { normalizeDiagramGraph } from '@modules/library/diagrams/lib/diagramGraphLoad'
+import type { DiagramSelectionIds } from '@modules/library/diagrams/services/diagramGraphLoadCoordinator'
 import { syncGroupFramesForNodes } from '@modules/library/diagrams/lib/diagramGroupBounds'
 import { snapCanvasPoint } from '@modules/library/diagrams/lib/diagramGridSnap'
+import { cloneForIpc } from '@shared/lib/cloneForIpc'
+import type { DiagramDocumentFinishDragParams } from '@modules/library/diagrams/app/command/domain/payloads'
 import {
   setDiagramActiveLogicFlow,
   setDiagramCanvasSnapGrid,
@@ -140,6 +144,12 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   private teardownSelectionSnapshot: (() => void) | null = null
   private teardownSelectionPointerSync: (() => void) | null = null
   private teardownBoxSelectRubberGuard: (() => void) | null = null
+  private dragUndoBaseline: Pick<
+    DiagramDocumentFinishDragParams,
+    'beforeGraph' | 'beforeSelection'
+  > | null = null
+  private dragUndoRecorder: ((payload: DiagramDocumentFinishDragParams) => void) | null = null
+  private undoRedoRestoreDepth = 0
   private readonly viewport = new DiagramCanvasViewportController()
   private readonly formatPainter = new DiagramFormatPainterCoordinator({
     getLf: () => this.lf,
@@ -415,8 +425,96 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       onFormatPainterNodeApplied: (nodeId) => {
         syncGroupFramesForNodes(lf, [nodeId])
         this.groupFrames.refreshDisplay()
-      }
+      },
+      captureDragUndoBaseline: () => this.captureDragUndoBaseline(),
+      commitDragUndoMutation: () => this.commitDragUndoMutation()
     }
+  }
+
+  setDragUndoRecorder(
+    recorder: ((payload: DiagramDocumentFinishDragParams) => void) | null
+  ): void {
+    this.dragUndoRecorder = recorder
+    if (!recorder) this.dragUndoBaseline = null
+  }
+
+  getLogicFlow(): LogicFlow | null {
+    return this.lf
+  }
+
+  isUndoRedoRestoreActive(): boolean {
+    return this.undoRedoRestoreDepth > 0
+  }
+
+  withUndoRedoRestore<T>(fn: () => T): T {
+    this.selectionBridge.cancelPostMutationCommits()
+    this.selectionBridge.cancelPendingSync()
+    this.selectionBridge.beginMutationSuppress()
+    this.undoRedoRestoreDepth += 1
+    try {
+      return fn()
+    } finally {
+      this.undoRedoRestoreDepth -= 1
+      this.selectionBridge.endMutationSuppress()
+      this.selectionBridge.syncFromGraph(true)
+      this.refreshMultiSelectResize?.()
+      this.scheduleOverlayLayout()
+    }
+  }
+
+  async withUndoRedoRestoreAsync<T>(fn: () => Promise<T>): Promise<T> {
+    this.selectionBridge.cancelPostMutationCommits()
+    this.selectionBridge.cancelPendingSync()
+    this.selectionBridge.beginMutationSuppress()
+    this.undoRedoRestoreDepth += 1
+    try {
+      return await fn()
+    } finally {
+      this.undoRedoRestoreDepth -= 1
+      this.selectionBridge.endMutationSuppress()
+      this.selectionBridge.syncFromGraph(true)
+      this.refreshMultiSelectResize?.()
+      this.scheduleOverlayLayout()
+    }
+  }
+
+  captureSelectionIds(): DiagramSelectionIds {
+    if (!this.lf) return { nodeIds: [], edgeIds: [] }
+    const selected = this.lf.getSelectElements(true)
+    return {
+      nodeIds: selected.nodes.map((n) => n.id),
+      edgeIds: selected.edges.map((e) => e.id)
+    }
+  }
+
+  loadGraphForUndoRedo(data: unknown, restoreSelection: DiagramSelectionIds): void {
+    const load = () => {
+      this.graphLoad.loadGraph(data, { restoreSelection })
+    }
+    if (this.undoRedoRestoreDepth > 0) load()
+    else this.withUndoRedoRestore(load)
+  }
+
+  captureDragUndoBaseline(): void {
+    if (!this.dragUndoRecorder || !this.lf) return
+    this.dragUndoBaseline = {
+      beforeGraph: cloneForIpc(this.getGraph()),
+      beforeSelection: this.captureSelectionIds()
+    }
+  }
+
+  commitDragUndoMutation(): void {
+    if (!this.dragUndoRecorder || !this.dragUndoBaseline || !this.lf) return
+    const afterGraph = cloneForIpc(this.getGraph())
+    const afterSelection = this.captureSelectionIds()
+    const baseline = this.dragUndoBaseline
+    this.dragUndoBaseline = null
+    this.dragUndoRecorder({
+      beforeGraph: baseline.beforeGraph,
+      afterGraph,
+      beforeSelection: baseline.beforeSelection,
+      afterSelection
+    })
   }
 
   private cancelPendingSelectionSync(): void {
@@ -722,7 +820,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   }
 
   getGraph(): unknown {
-    return this.lf?.getGraphData() ?? { nodes: [], edges: [] }
+    return normalizeDiagramGraph(this.lf?.getGraphData() ?? { nodes: [], edges: [] })
   }
 
   applyPatch(patch: CanvasGraphPatch): void {

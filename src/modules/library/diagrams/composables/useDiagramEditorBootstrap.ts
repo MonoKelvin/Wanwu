@@ -1,9 +1,10 @@
+import type { DiagramFileOpenParams } from '@modules/library/diagrams/app/command/domain/payloads'
 import { nextTick, type ComputedRef, type Ref } from 'vue'
 import type { RouteLocationNormalizedLoaded, Router } from 'vue-router'
 import type { useToast } from 'primevue/usetoast'
 import { DiagramEditorSession } from '@modules/library/diagrams/app/DiagramEditorSession'
 import { registerDiagramEditorUi } from '@modules/library/diagrams/app/diagramEditorUiBootstrap'
-import { DiagramRepositoryIpcAdapter } from '@modules/library/diagrams/infrastructure/DiagramRepositoryIpcAdapter'
+import { DiagramRepositoryIpcAdapter } from '@modules/library/diagrams/services/DiagramRepositoryIpcAdapter'
 import type { useDiagramPortBinding } from '@modules/library/diagrams/composables/useDiagramPortBinding'
 import {
   getDiagramEditorRuntime,
@@ -11,6 +12,10 @@ import {
   setDiagramEditorReadyDocKey
 } from '@modules/library/diagrams/composables/useDiagramEditorRuntime'
 import type { LogicFlowDiagramAdapter } from '@modules/library/diagrams/services/LogicFlowDiagramAdapter'
+import {
+  createDiagramCanvasCommands
+} from '@modules/library/diagrams/composables/useDiagramCanvasCommands'
+import { createDiagramFileCommands } from '@modules/library/diagrams/composables/useDiagramFileCommands'
 import type { IDiagramCommandBus } from '@modules/library/diagrams/interfaces/IDiagramCommandBus'
 import { DG_HOME, DG_RECYCLE } from '@modules/library/diagrams/domain/diagramFolderIds'
 
@@ -67,6 +72,9 @@ export function useDiagramEditorBootstrap(
     isNewDraft
   } = options
 
+  const fileCommands = createDiagramFileCommands(bus)
+  const canvasCommands = createDiagramCanvasCommands(bus)
+
   function applyFolderIdFromRoute(): void {
     const raw = route.query.folderId
     if (typeof raw !== 'string' || !raw) return
@@ -95,7 +103,7 @@ export function useDiagramEditorBootstrap(
   async function applyFitView(): Promise<void> {
     await waitForLayout()
     portRef.value?.resize()
-    await bus.dispatch({ type: 'canvas.zoomToFit' })
+    await canvasCommands.zoomToFit()
     refreshViewportZoom()
   }
 
@@ -121,13 +129,13 @@ export function useDiagramEditorBootstrap(
     loadError.value = null
     if (isNewDraft.value) applyFolderIdFromRoute()
     const wantFitView = route.query.fitView === '1'
-    const payload: Record<string, string | boolean> = { skipViewport: true }
+    const payload: DiagramFileOpenParams = { skipViewport: true }
     if (!isNewDraft.value) {
       payload.fileId = fileId.value
     } else if (templateQuery.value) {
       payload.templateId = templateQuery.value
     }
-    const result = await bus.dispatch({ type: 'document.open', payload })
+    const result = await fileCommands.open(payload)
     if (!result.ok) {
       loadError.value = result.message ?? '无法打开文档'
       toast.add({

@@ -2,6 +2,8 @@
 import { createPinia } from 'pinia'
 import { applyColorScheme, readStoredColorScheme } from '@app/theme/applyTheme'
 import { detectBootMode, isPopoutBootMode, type BootMode } from '@app/bootstrap/bootMode'
+import { createCommandRuntime } from '@app/bootstrap/createCommandRuntime'
+import { setCommandRuntime } from '@app/bootstrap/commandRuntimeStore'
 import { loadStylesForMode } from '@app/bootstrap/loadStyles'
 import { loadWebFonts } from '@app/bootstrap/loadWebFonts'
 import { installUiPlugins } from '@app/bootstrap/uiPlugins'
@@ -50,6 +52,10 @@ async function bootstrap(): Promise<void> {
 
   if (!isPopoutBootMode(mode)) {
     applyColorScheme(readStoredColorScheme() ?? 'system')
+  }
+
+  if (mode === 'main') {
+    setCommandRuntime(createCommandRuntime())
   }
 
   const app = createApp(await resolveRootComponent(mode))

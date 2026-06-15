@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { DiagramFileMeta, DiagramFolder } from '@shared/types/diagrams'
-import { DiagramRepositoryIpcAdapter } from '@modules/library/diagrams/infrastructure/DiagramRepositoryIpcAdapter'
-import { createDiagramCommandBus } from '@modules/library/diagrams/app/commandBus/createDiagramCommandBus'
+import { DiagramRepositoryIpcAdapter } from '@modules/library/diagrams/services/DiagramRepositoryIpcAdapter'
+import { createDiagramCommandBus } from '@modules/library/diagrams/app/command/createDiagramCommandBus'
 import { setDiagramCatalogCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
 const repo = new DiagramRepositoryIpcAdapter()
 

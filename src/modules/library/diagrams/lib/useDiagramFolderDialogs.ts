@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue'
-import { useDiagramCatalogCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { useDiagramCatalogCommands } from '@modules/library/diagrams/composables/useDiagramCatalogCommands'
 import { useDiagramsStore } from '@shared/stores/diagrams'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
@@ -10,7 +10,7 @@ export function useDiagramFolderDialogs(options?: {
   onDeleted?: (folderId: string) => void
 }) {
   const store = useDiagramsStore()
-  const bus = useDiagramCatalogCommandBus()
+  const catalog = useDiagramCatalogCommands()
   const toast = useWanwuToast()
   const confirm = useWanwuConfirm()
 
@@ -61,7 +61,7 @@ export function useDiagramFolderDialogs(options?: {
     })
     if (!ok) return
 
-    const result = await bus.dispatch({ type: 'folder.delete', payload: { folderId } })
+    const result = await catalog.folder.delete(folderId)
     if (result.ok) {
       toast.success('已删除分组')
       await store.loadFolders()
@@ -76,7 +76,7 @@ export function useDiagramFolderDialogs(options?: {
     if (!trimmed) return
 
     if (folderDialogMode.value === 'create') {
-      const result = await bus.dispatch({ type: 'folder.create', payload: { name: trimmed } })
+      const result = await catalog.folder.create(trimmed)
       const folder = result.ok ? (result.data as DiagramFolder | undefined) : undefined
       if (folder?.id) {
         toast.success('已创建分组')
@@ -90,10 +90,7 @@ export function useDiagramFolderDialogs(options?: {
 
     const folderId = folderDialogTargetId.value
     if (!folderId) return
-    const result = await bus.dispatch({
-      type: 'folder.rename',
-      payload: { folderId, name: trimmed }
-    })
+    const result = await catalog.folder.rename(folderId, trimmed)
     if (result.ok) {
       toast.success('已重命名')
       await store.loadFolders()

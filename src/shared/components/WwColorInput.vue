@@ -62,6 +62,9 @@ const panelStyle = computed(() => ({
 
 const previewColor = computed(() => {
   if (props.mixed) return '#b0b0b0'
+  if (open.value) {
+    return colorPreviewCss(formatHsva(hsva.value, { transparentKeyword: props.allowTransparent }))
+  }
   return colorPreviewCss(props.modelValue)
 })
 
@@ -137,17 +140,20 @@ function syncFromModel() {
   hsva.value = parseColorToHsva(props.modelValue)
 }
 
-function emitFromHsva() {
+function draftValue(): string {
+  return formatHsva(hsva.value, { transparentKeyword: props.allowTransparent })
+}
+
+function commitDraft() {
   if (props.mixed) return
-  emit(
-    'update:modelValue',
-    formatHsva(hsva.value, { transparentKeyword: props.allowTransparent })
-  )
+  const next = draftValue()
+  if (next !== props.modelValue) {
+    emit('update:modelValue', next)
+  }
 }
 
 function patchHsva(patch: Partial<HsvaColor>) {
   hsva.value = { ...hsva.value, ...patch }
-  emitFromHsva()
 }
 
 async function copyText(text: string, tip = '已复制') {
@@ -182,12 +188,14 @@ async function updatePanelPosition() {
 
 async function toggleOpen() {
   if (props.mixed) return
-  open.value = !open.value
   if (open.value) {
-    panelDragged.value = false
-    syncFromModel()
-    await updatePanelPosition()
+    closePanel()
+    return
   }
+  open.value = true
+  panelDragged.value = false
+  syncFromModel()
+  await updatePanelPosition()
 }
 
 function rememberRecentColor() {
@@ -199,13 +207,19 @@ function rememberRecentColor() {
 
 function applyRecentColor(color: string) {
   hsva.value = parseColorToHsva(color)
-  emitFromHsva()
-  void settingsStore.appendRecentColor(color)
 }
 
 function closePanel() {
-  if (open.value) rememberRecentColor()
+  if (!open.value) return
+  commitDraft()
+  rememberRecentColor()
   open.value = false
+}
+
+function onBackdropPointerDown(event: PointerEvent) {
+  event.preventDefault()
+  event.stopPropagation()
+  closePanel()
 }
 
 function setValueFormat(format: ColorValueFormat) {
@@ -215,7 +229,6 @@ function setValueFormat(format: ColorValueFormat) {
 function applyParsed(parsed: ReturnType<typeof parseColor>) {
   if (!parsed) return
   hsva.value = parsedToHsva(parsed)
-  emitFromHsva()
 }
 
 function onHexInput(event: Event) {
@@ -381,16 +394,11 @@ function startPanelDrag(event: PointerEvent) {
   document.addEventListener('pointercancel', endPanelDrag)
 }
 
-function onDocPointerDown(event: PointerEvent) {
-  const target = event.target as Node
-  if (!open.value) return
-  if (rootRef.value?.contains(target)) return
-  if (panelRef.value?.contains(target)) return
-  closePanel()
-}
-
 function onKeydown(event: KeyboardEvent) {
-  if (event.key === 'Escape') closePanel()
+  if (!open.value || event.key !== 'Escape') return
+  event.preventDefault()
+  event.stopPropagation()
+  closePanel()
 }
 
 function onWindowChange() {
@@ -404,13 +412,11 @@ function onWindowChange() {
 
 watch(open, (isOpen) => {
   if (isOpen) {
-    document.addEventListener('pointerdown', onDocPointerDown, true)
-    document.addEventListener('keydown', onKeydown)
+    document.addEventListener('keydown', onKeydown, true)
     window.addEventListener('scroll', onWindowChange, true)
     window.addEventListener('resize', onWindowChange)
   } else {
-    document.removeEventListener('pointerdown', onDocPointerDown, true)
-    document.removeEventListener('keydown', onKeydown)
+    document.removeEventListener('keydown', onKeydown, true)
     window.removeEventListener('scroll', onWindowChange, true)
     window.removeEventListener('resize', onWindowChange)
     cleanupDrag()
@@ -419,8 +425,7 @@ watch(open, (isOpen) => {
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('pointerdown', onDocPointerDown, true)
-  document.removeEventListener('keydown', onKeydown)
+  document.removeEventListener('keydown', onKeydown, true)
   window.removeEventListener('scroll', onWindowChange, true)
   window.removeEventListener('resize', onWindowChange)
   cleanupDrag()
@@ -453,6 +458,12 @@ onBeforeUnmount(() => {
     </button>
 
     <Teleport to="body">
+      <div
+        v-if="open"
+        class="ww-color-input__backdrop"
+        aria-hidden="true"
+        @pointerdown="onBackdropPointerDown"
+      />
       <Transition name="ww-color-input-pop">
         <div
           v-if="open"
@@ -701,6 +712,14 @@ onBeforeUnmount(() => {
 .ww-color-input__preview {
   position: absolute;
   inset: 0;
+}
+
+.ww-color-input__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--ww-z-popover, 10045) - 1);
+  background: transparent;
+  touch-action: none;
 }
 
 .ww-color-input__panel {

@@ -420,7 +420,7 @@ const api: WanwuApi = {
         _: unknown,
         payload: {
           requestId: string
-          cmds: import('../src/modules/library/diagrams/domain/commands/types').DiagramCommandEnvelope[]
+          cmds: import('../src/modules/library/diagrams/app/command/domain/types').DiagramCommandEnvelope[]
         }
       ) => listener(payload)
       ipcRenderer.on('diagrams:run-commands', handler)

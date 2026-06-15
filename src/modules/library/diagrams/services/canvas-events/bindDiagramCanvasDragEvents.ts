@@ -174,6 +174,7 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
   })
 
   lf.on('node:dragstart', ({ data, e }) => {
+    ports.captureDragUndoBaseline()
     syncSelectionOnNodeDragStart(ports, data.id, e)
     lf.removeNodeSnapLine()
     lastDragAlignPointer = undefined
@@ -226,6 +227,7 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
   })
 
   lf.on('selection:dragstart', ({ e }) => {
+    ports.captureDragUndoBaseline()
     if (!ports.boxSelect.isInGracePeriod()) {
       ports.selectionBridge.afterSelectionMutation()
     }
@@ -265,6 +267,7 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
     if (ids.length) finishDragSnapOnce(ports, ids[0]!, rememberDragPointer(lf, e), bypassSnap)
     syncDiagramEdgeTextsForNodeIds(lf, ids)
     activeGrabRatios = undefined
+    ports.commitDragUndoMutation()
   })
 
   lf.on('node:drop', ({ data, e }) => {
@@ -280,6 +283,7 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
     syncDiagramEdgeTextsForNodeIds(lf, syncIds)
     ports.refreshMultiSelectResize()
     ports.scheduleOverlayLayout()
+    ports.commitDragUndoMutation()
   })
 
   lf.on('node:resize', ({ data, index }) => {

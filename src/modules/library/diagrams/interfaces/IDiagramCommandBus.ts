@@ -1,7 +1,7 @@
 import type {
   DiagramCommandEnvelope,
   DiagramCommandResult
-} from '@modules/library/diagrams/domain/commands/types'
+} from '@modules/library/diagrams/app/command/domain/types'
 
 export interface DiagramCommandBatchOptions {
   stopOnError?: boolean

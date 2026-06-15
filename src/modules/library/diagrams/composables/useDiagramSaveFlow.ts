@@ -1,7 +1,15 @@
 import { inject, provide, ref, type InjectionKey, type Ref } from 'vue'
-import type { IDiagramCommandBus } from '@modules/library/diagrams/interfaces/IDiagramCommandBus'
-import type { DiagramCommandResult } from '@modules/library/diagrams/domain/commands/types'
+import type { DiagramFileSaveParams } from '@modules/library/diagrams/app/command/domain/payloads'
 import { DG_FILES } from '@modules/library/diagrams/domain/diagramFolderIds'
+import { createDiagramFileCommands } from '@modules/library/diagrams/composables/useDiagramFileCommands'
+import type { IDiagramCommandBus } from '@modules/library/diagrams/interfaces/IDiagramCommandBus'
+import {
+  adaptPrimeToast,
+  runForceSaveUiCommand,
+  runReloadDocumentUiCommand,
+  runSaveAsDocumentUiCommand,
+  runSaveDocumentUiCommand
+} from '@modules/library/diagrams/app/command/ui/fileSaveUiCommands'
 
 export interface DiagramSaveFlow {
   saveDocument: (payload?: { title?: string; folderId?: string }) => Promise<boolean>
@@ -26,8 +34,11 @@ export const DIAGRAM_SAVE_FLOW_KEY: InjectionKey<DiagramSaveFlow> = Symbol('diag
 
 export function provideDiagramSaveFlow(
   bus: IDiagramCommandBus,
-  toast: { add: (msg: object) => void }
+  toast: { add: (msg: object) => void },
+  options?: { onDocumentSaved?: () => void }
 ): DiagramSaveFlow {
+  const file = createDiagramFileCommands(bus)
+  const ui = adaptPrimeToast(toast)
   const isSaving = ref(false)
   const conflictOpen = ref(false)
   const folderPickerOpen = ref(false)
@@ -44,29 +55,6 @@ export function provideDiagramSaveFlow(
     isSaving.value = false
   }
 
-  async function dispatchSave(payload?: Record<string, unknown>): Promise<DiagramCommandResult> {
-    return bus.dispatch({ type: 'document.save', payload })
-  }
-
-  async function finishConflictSave(action: () => Promise<DiagramCommandResult>): Promise<boolean> {
-    const result = await action()
-    if (result.ok) {
-      toast.add({ severity: 'success', summary: '已保存', life: 2000 })
-      conflictResolve?.(true)
-      conflictResolve = null
-      return true
-    }
-    toast.add({
-      severity: 'error',
-      summary: '保存失败',
-      detail: result.message,
-      life: 4000
-    })
-    conflictResolve?.(false)
-    conflictResolve = null
-    return false
-  }
-
   function openConflictDialog(title?: string) {
     if (conflictOpen.value) return
     pendingSaveAsTitle.value = title
@@ -76,26 +64,16 @@ export function provideDiagramSaveFlow(
   async function saveDocument(payload?: { title?: string; folderId?: string }): Promise<boolean> {
     isSaving.value = true
     try {
-      const result = await dispatchSave({
+      const savePayload: DiagramFileSaveParams = {
         ...payload,
         folderId: payload?.folderId ?? pickedFolderId.value
+      }
+      const result = await runSaveDocumentUiCommand(file, savePayload, ui, {
+        onDocumentSaved: options?.onDocumentSaved
       })
-      if (result.ok) {
-        if (!(result.data as { noop?: boolean } | undefined)?.noop) {
-          toast.add({ severity: 'success', summary: '已保存', life: 2000 })
-        }
-        return true
-      }
+      if (result.ok) return true
       if (result.code === 'CANCELED') return false
-      if (result.code !== 'CONFLICT') {
-        toast.add({
-          severity: 'error',
-          summary: '保存失败',
-          detail: result.message,
-          life: 4000
-        })
-        return false
-      }
+      if (result.code !== 'CONFLICT') return false
       pendingSaveAsTitle.value = payload?.title
       isSaving.value = false
       return new Promise((resolve) => {
@@ -110,21 +88,15 @@ export function provideDiagramSaveFlow(
   async function saveAsDocument(payload?: { title?: string; folderId?: string }): Promise<boolean> {
     isSaving.value = true
     try {
-      const result = await bus.dispatch({
-        type: 'document.saveAs',
-        payload: { folderId: payload?.folderId ?? pickedFolderId.value, title: payload?.title }
-      })
-      if (result.ok) {
-        toast.add({ severity: 'success', summary: '已另存为', life: 2000 })
-        return true
-      }
-      toast.add({
-        severity: 'error',
-        summary: '另存失败',
-        detail: result.message,
-        life: 4000
-      })
-      return false
+      return await runSaveAsDocumentUiCommand(
+        file,
+        {
+          folderId: payload?.folderId ?? pickedFolderId.value,
+          title: payload?.title
+        },
+        ui,
+        { onDocumentSaved: options?.onDocumentSaved }
+      )
     } finally {
       isSaving.value = false
     }
@@ -137,9 +109,8 @@ export function provideDiagramSaveFlow(
   }
 
   async function onConflictReload() {
-    const result = await bus.dispatch({ type: 'document.reload' })
+    const result = await runReloadDocumentUiCommand(file, ui)
     if (result.ok) {
-      toast.add({ severity: 'info', summary: '已重新加载', life: 2000 })
       conflictResolve?.(true)
       conflictResolve = null
       isSaving.value = false
@@ -153,11 +124,21 @@ export function provideDiagramSaveFlow(
   }
 
   async function onConflictOverwrite() {
-    const ok = await finishConflictSave(() =>
-      dispatchSave({ force: true, title: pendingSaveAsTitle.value })
+    const ok = await runForceSaveUiCommand(
+      file,
+      { force: true, title: pendingSaveAsTitle.value },
+      ui,
+      { onDocumentSaved: options?.onDocumentSaved }
     )
     isSaving.value = false
-    if (ok) conflictOpen.value = false
+    if (ok) {
+      conflictResolve?.(true)
+      conflictResolve = null
+      conflictOpen.value = false
+    } else {
+      conflictResolve?.(false)
+      conflictResolve = null
+    }
   }
 
   function onConflictSaveAs() {

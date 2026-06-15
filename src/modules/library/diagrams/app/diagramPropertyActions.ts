@@ -1,19 +1,19 @@
 import type { Ref } from 'vue'
 import type { DiagramPropertySectionPolicy } from '@modules/library/diagrams/domain/shape-extension/interfaces'
 import type { DiagramPropertyActions } from '@modules/library/diagrams/domain/property-panel/types'
-import type { IDiagramCommandBus } from '@modules/library/diagrams/interfaces/IDiagramCommandBus'
+import type { DiagramDocumentMutationCommands } from '@modules/library/diagrams/composables/useDiagramCanvasCommands'
 import type {
   DiagramCanvasSettings,
   DiagramEditorSelection,
   DiagramNodeProperties
 } from '@modules/library/diagrams/lib/diagramSelectionTypes'
-import { createDiagramPropertyAssetActions } from '@modules/library/diagrams/app/property-actions/diagramPropertyAssetActions'
-import { createDiagramPropertyCommandDispatch } from '@modules/library/diagrams/app/property-actions/diagramPropertyCommandDispatch'
-import { createDiagramPropertyEdgeActions } from '@modules/library/diagrams/app/property-actions/diagramPropertyEdgeActions'
-import { createDiagramPropertyNodeActions } from '@modules/library/diagrams/app/property-actions/diagramPropertyNodeActions'
+import { createDiagramPropertyAssetActions } from '@modules/library/diagrams/app/property/diagramPropertyAssetActions'
+import { createDiagramPropertyCommandDispatch } from '@modules/library/diagrams/app/property/diagramPropertyCommandDispatch'
+import { createDiagramPropertyEdgeActions } from '@modules/library/diagrams/app/property/diagramPropertyEdgeActions'
+import { createDiagramPropertyNodeActions } from '@modules/library/diagrams/app/property/diagramPropertyNodeActions'
 
 export interface DiagramPropertyActionsDeps {
-  bus: IDiagramCommandBus
+  canvas: DiagramDocumentMutationCommands
   getSelection: () => DiagramEditorSelection
   getSelectedNode: () => DiagramNodeProperties | null | undefined
   getSectionPolicy: () => DiagramPropertySectionPolicy | null | undefined
@@ -36,7 +36,7 @@ function parseNumber(value: unknown, fallback: number, min = -Infinity, max = In
 
 /** 属性面板写操作：通过 command bus 修改画布，与 Section UI 解耦 */
 export function createDiagramPropertyActions(deps: DiagramPropertyActionsDeps): DiagramPropertyActions {
-  const { bus, getSelection, getSelectedNode, getSectionPolicy, getCanvas, isMultiNode, isMultiEdge } =
+  const { canvas, getSelection, getSelectedNode, getSectionPolicy, getCanvas, isMultiNode, isMultiEdge } =
     deps
 
   function isMixed(field: string): boolean {
@@ -44,7 +44,7 @@ export function createDiagramPropertyActions(deps: DiagramPropertyActionsDeps): 
   }
 
   const dispatch = createDiagramPropertyCommandDispatch({
-    bus,
+    canvas,
     getSelection,
     getSelectedNode,
     isMultiNode,
@@ -66,7 +66,7 @@ export function createDiagramPropertyActions(deps: DiagramPropertyActionsDeps): 
   })
 
   const assetActions = createDiagramPropertyAssetActions({
-    bus,
+    canvas,
     dispatch,
     getSelectedNode,
     getFileId: deps.getFileId,

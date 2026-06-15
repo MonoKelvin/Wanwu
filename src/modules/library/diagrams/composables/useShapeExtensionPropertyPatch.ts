@@ -1,6 +1,6 @@
 import { computed, onBeforeUnmount, ref, watch, type ComputedRef } from 'vue'
 import { ensureDiagramShapeExtensions } from '@modules/library/diagrams/app/diagramShapeExtensions'
-import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import type { DiagramDocumentMutationCommands } from '@modules/library/diagrams/composables/useDiagramCanvasCommands'
 import type { DiagramNodeProperties } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 
 export interface ShapeExtensionPropertyPatchApi {
@@ -14,9 +14,10 @@ export interface ShapeExtensionPropertyPatchApi {
  * debounce → command bus → dgShape envelope，切换节点前 flush 到原 nodeId。
  */
 export function useShapeExtensionPropertyPatch(
-  node: ComputedRef<DiagramNodeProperties | null | undefined>
+  node: ComputedRef<DiagramNodeProperties | null | undefined>,
+  canvas: DiagramDocumentMutationCommands
 ): ShapeExtensionPropertyPatchApi {
-  const bus = useDiagramCommandBus()
+  const canvasCommands = canvas
   const registry = ensureDiagramShapeExtensions()
 
   const shapeExtension = computed(() => node.value?.shapeExtension ?? null)
@@ -36,16 +37,13 @@ export function useShapeExtensionPropertyPatch(
   ) {
     const kindReg = registry.getKind(kind)
     if (!kindReg) return
-    void bus.dispatch({
-      type: 'canvas.updateNode',
-      payload: {
-        nodeId,
-        patch: {
-          properties: {
-            dgShape: kindReg.codec.toEnvelope(data)
-          },
-          ...(lfType ? { lfType } : {})
-        }
+    canvasCommands.modifyNode({
+      nodeId,
+      patch: {
+        properties: {
+          dgShape: kindReg.codec.toEnvelope(data)
+        },
+        ...(lfType ? { lfType } : {})
       }
     })
   }

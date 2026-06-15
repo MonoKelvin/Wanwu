@@ -1,6 +1,6 @@
 import { computed, inject, provide, ref, type ComputedRef, type InjectionKey, type Ref } from 'vue'
 import { createDiagramPropertyActions } from '@modules/library/diagrams/app/diagramPropertyActions'
-import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import type { DiagramDocumentMutationCommands } from '@modules/library/diagrams/composables/useDiagramCanvasCommands'
 import { useDiagramEditorSelection } from '@modules/library/diagrams/composables/useDiagramEditorSelection'
 import { buildPropertyContext } from '@modules/library/diagrams/domain/property-panel/buildPropertyContext'
 import type {
@@ -20,6 +20,7 @@ export type { DiagramPropertyActions }
 export interface DiagramPropertyContextApi {
   readonly ctx: ComputedRef<DiagramPropertyContext>
   readonly canvas: ComputedRef<DiagramCanvasSettings>
+  readonly canvasCommands: DiagramDocumentMutationCommands
   readonly imageBusy: Readonly<Ref<boolean>>
   readonly actions: DiagramPropertyActions
 }
@@ -28,10 +29,10 @@ const propertyContextKey = Symbol('diagramPropertyContext') as InjectionKey<Diag
 
 export function provideDiagramPropertyContext(
   fileId: Ref<string | null> | ComputedRef<string | null>,
-  activeTab: Ref<DiagramPropertyTab>
+  activeTab: Ref<DiagramPropertyTab>,
+  canvasCommands: DiagramDocumentMutationCommands
 ): DiagramPropertyContextApi {
   const { selection } = useDiagramEditorSelection()
-  const bus = useDiagramCommandBus()
   const toast = useWanwuToast()
   const imageBusy = ref(false)
 
@@ -42,7 +43,7 @@ export function provideDiagramPropertyContext(
   const canvas = computed(() => selection.value.canvas)
 
   const actions = createDiagramPropertyActions({
-    bus,
+    canvas: canvasCommands,
     getSelection: () => selection.value,
     getSelectedNode: () => ctx.value.selectedNode,
     getSectionPolicy: () => ctx.value.sectionPolicy,
@@ -57,6 +58,7 @@ export function provideDiagramPropertyContext(
   const api: DiagramPropertyContextApi = {
     ctx,
     canvas,
+    canvasCommands,
     imageBusy,
     actions
   }

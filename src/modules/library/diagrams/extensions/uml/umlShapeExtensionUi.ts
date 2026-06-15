@@ -1,5 +1,5 @@
 import type { IDiagramShapeExtensionRegistry } from '@modules/library/diagrams/domain/shape-extension/interfaces'
-import UmlClassifierPropertyEditor from '@modules/library/diagrams/extensions/uml/components/UmlClassifierPropertyEditor.vue'
+import UmlClassifierPropertyEditor from '@modules/library/diagrams/extensions/uml/UmlClassifierPropertyEditor.vue'
 import { UML_CLASSIFIER_KIND } from '@modules/library/diagrams/extensions/uml/kinds/umlClassifierTypes'
 
 export function registerUmlShapeExtensionUi(registry: IDiagramShapeExtensionRegistry): void {
