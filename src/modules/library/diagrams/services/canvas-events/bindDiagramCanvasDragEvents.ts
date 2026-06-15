@@ -227,10 +227,9 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
   })
 
   lf.on('selection:dragstart', ({ e }) => {
+    if (ports.boxSelect.shouldSuppressSelectionDrag()) return
     ports.captureDragUndoBaseline()
-    if (!ports.boxSelect.isInGracePeriod()) {
-      ports.selectionBridge.afterSelectionMutation()
-    }
+    ports.selectionBridge.afterSelectionMutation()
     lf.removeNodeSnapLine()
     const ids = collectOrderedSelectionIds(lf).nodeIds.filter((id) => !ports.isGroupFrameId(id))
     if (!ids.length) return
@@ -243,6 +242,7 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
   })
 
   lf.on('selection:drag', ({ e }) => {
+    if (ports.boxSelect.shouldSuppressSelectionDrag()) return
     ports.groupFrames.scheduleSyncDuringDrag()
     ports.refreshMultiSelectResize()
     ports.scheduleOverlayLayout()
@@ -258,6 +258,11 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
   })
 
   lf.on('selection:drop', ({ e }) => {
+    if (ports.boxSelect.shouldSuppressSelectionDrag()) {
+      ports.clearDragUndoBaseline()
+      lf.removeNodeSnapLine()
+      return
+    }
     ports.groupFrames.syncForNodeIds(ports.getSelectedContentNodeIds())
     ports.refreshMultiSelectResize()
     ports.scheduleOverlayLayout()

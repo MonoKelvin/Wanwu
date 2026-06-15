@@ -427,6 +427,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
         this.groupFrames.refreshDisplay()
       },
       captureDragUndoBaseline: () => this.captureDragUndoBaseline(),
+      clearDragUndoBaseline: () => this.clearDragUndoBaseline(),
       commitDragUndoMutation: () => this.commitDragUndoMutation()
     }
   }
@@ -501,6 +502,10 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       beforeGraph: cloneForIpc(this.getGraph()),
       beforeSelection: this.captureSelectionIds()
     }
+  }
+
+  clearDragUndoBaseline(): void {
+    this.dragUndoBaseline = null
   }
 
   commitDragUndoMutation(): void {

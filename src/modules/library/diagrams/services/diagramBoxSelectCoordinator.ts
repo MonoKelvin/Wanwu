@@ -51,8 +51,15 @@ export class DiagramBoxSelectCoordinator {
   private suppressPostClickUntil = 0
   private lastBoxSelectNodeIds: string[] = []
   private rubberBandEl: HTMLDivElement | null = null
+  private nodePosSnapshot: Map<string, { x: number; y: number }> | null = null
+  private boxDragRecognized = false
 
   constructor(private readonly ports: DiagramBoxSelectCoordinatorPorts) {}
+
+  /** 框选手势进行中或刚结束：抑制 LF 选区拖拽与磁吸，避免松手后图元偏移 */
+  shouldSuppressSelectionDrag(): boolean {
+    return this.overlayStart != null || this.isInGracePeriod()
+  }
 
   enableBoxSelection(): void {
     const lf = this.ports.getLf()
@@ -104,6 +111,8 @@ export class DiagramBoxSelectCoordinator {
     }
     this.gestureSnapshot = this.resolveGestureSnapshot()
     this.useContainMode = true
+    this.boxDragRecognized = false
+    this.snapshotNodePositions()
     this.setBoxSelectingActive(true)
 
     const onKeyDown = (keyEv: KeyboardEvent) => {
@@ -118,6 +127,7 @@ export class DiagramBoxSelectCoordinator {
     this.overlayEnd = { x: pt.x, y: pt.y }
 
     const applyBoxSelectDirection = (endX: number, endY: number) => {
+      this.recognizeBoxDragIfNeeded(pt.x, pt.y, endX, endY)
       const contain = isForwardBoxSelect(pt.x, pt.y, endX, endY)
       this.useContainMode = contain
       this.updateBoxSelectVisual(contain)
@@ -146,6 +156,8 @@ export class DiagramBoxSelectCoordinator {
           const dy = Math.abs(endPt.y - sy)
           const wasBoxDrag = dx >= 10 || dy >= 10
           if (wasBoxDrag) {
+            this.recognizeBoxDragIfNeeded(sx, sy, endPt.x, endPt.y)
+            this.restoreNodePositions()
             this.finalize()
             requestAnimationFrame(() => {
               this.reapplyResult()
@@ -195,6 +207,8 @@ export class DiagramBoxSelectCoordinator {
     this.keyTeardown = null
     this.gestureTeardown?.()
     this.gestureTeardown = null
+    this.nodePosSnapshot = null
+    this.boxDragRecognized = false
   }
 
   clearSnapshots(): void {
@@ -328,6 +342,8 @@ export class DiagramBoxSelectCoordinator {
     const lf = this.ports.getLf()
     if (!lf || (!force && this.finalized)) return
 
+    this.restoreNodePositions()
+
     let leftTop: [number, number]
     let rightBottom: [number, number]
     if (domLeftTop && domRightBottom) {
@@ -368,7 +384,7 @@ export class DiagramBoxSelectCoordinator {
       edgeIds: [...applied.edgeIds]
     }
     this.lastBoxSelectNodeIds = filterAlignableNodeIds(lf, applied.nodeIds)
-    this.suppressPostClickUntil = performance.now() + 280
+    this.suppressPostClickUntil = performance.now() + 320
     this.finalized = true
     this.ports.syncSelectionFromGraph()
     this.ports.scheduleGroupFramesToBottom()
@@ -499,6 +515,41 @@ export class DiagramBoxSelectCoordinator {
   private removeRubberBandEl(): void {
     this.rubberBandEl?.remove()
     this.rubberBandEl = null
+  }
+
+  private snapshotNodePositions(): void {
+    const lf = this.ports.getLf()
+    if (!lf) return
+    const snapshot = new Map<string, { x: number; y: number }>()
+    for (const node of lf.graphModel.nodes) {
+      snapshot.set(node.id, { x: node.x, y: node.y })
+    }
+    this.nodePosSnapshot = snapshot
+  }
+
+  private restoreNodePositions(): void {
+    const lf = this.ports.getLf()
+    const snapshot = this.nodePosSnapshot
+    if (!lf || !snapshot?.size) return
+    for (const [id, pos] of snapshot) {
+      const model = lf.getNodeModelById(id)
+      if (!model) continue
+      const dx = pos.x - model.x
+      const dy = pos.y - model.y
+      if (dx !== 0 || dy !== 0) {
+        lf.graphModel.moveNode(id, dx, dy, true)
+      }
+    }
+  }
+
+  private recognizeBoxDragIfNeeded(startX: number, startY: number, endX: number, endY: number): void {
+    if (this.boxDragRecognized) return
+    const dx = Math.abs(endX - startX)
+    const dy = Math.abs(endY - startY)
+    if (dx < 10 && dy < 10) return
+    this.boxDragRecognized = true
+    this.suppressPostClickUntil = performance.now() + 320
+    this.restoreNodePositions()
   }
 
   private domSelectionBoxToCanvas(
