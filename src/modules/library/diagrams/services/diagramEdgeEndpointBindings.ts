@@ -11,6 +11,9 @@ import {
 export interface DiagramEdgeEndpointBindingCallbacks {
   onAdjustDrag(): void
   onGraphChange(): void
+  captureDragUndoBaseline(): void
+  commitDragUndoMutation(): void
+  clearDragUndoBaseline(): void
 }
 
 /** 连线端点优先级与锚点抑制（悬停 / 调整折点） */
@@ -31,6 +34,7 @@ export function bindDiagramEdgeEndpointPriority(
 
   const onAdjustDragStart = ({ data }: { data?: { edgeData?: { id?: string } } }) => {
     setAdjustPointDragging(true)
+    callbacks.captureDragUndoBaseline()
     const edgeId = data?.edgeData?.id
     if (edgeId) {
       activateEdgeEndpointPriority(lf, edgeId, container)
@@ -44,6 +48,7 @@ export function bindDiagramEdgeEndpointPriority(
 
   const onAdjustDragEnd = () => {
     finishAdjustPointDrag(lf, container)
+    callbacks.commitDragUndoMutation()
     callbacks.onGraphChange()
   }
 

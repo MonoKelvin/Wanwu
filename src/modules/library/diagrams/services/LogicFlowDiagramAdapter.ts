@@ -38,7 +38,7 @@ import { DiagramBoxSelectCoordinator } from '@modules/library/diagrams/services/
 import { DiagramCanvasViewportController } from '@modules/library/diagrams/services/diagramCanvasViewportController'
 import { DiagramEdgeInsertCoordinator } from '@modules/library/diagrams/services/diagramEdgeInsertCoordinator'
 import { DiagramGroupFrameCoordinator } from '@modules/library/diagrams/services/diagramGroupFrameCoordinator'
-import type { DiagramCanvasEventBinderPorts } from '@modules/library/diagrams/services/canvas-events/diagramCanvasEventPorts'
+import { buildLogicFlowCanvasEventPorts } from '@modules/library/diagrams/services/buildLogicFlowCanvasEventPorts'
 import { DiagramEditorMountCoordinator } from '@modules/library/diagrams/services/diagramEditorMountCoordinator'
 import { DiagramExportCoordinator } from '@modules/library/diagrams/services/diagramExportCoordinator'
 import { DiagramEditorSelectionBridge } from '@modules/library/diagrams/services/diagramEditorSelectionBridge'
@@ -77,7 +77,9 @@ import type { DiagramSelectionIds } from '@modules/library/diagrams/services/dia
 import { syncGroupFramesForNodes } from '@modules/library/diagrams/lib/diagramGroupBounds'
 import { snapCanvasPoint } from '@modules/library/diagrams/lib/diagramGridSnap'
 import { cloneForIpc } from '@shared/lib/cloneForIpc'
+import type { DiagramDocumentCommandBridge } from '@modules/library/diagrams/app/command/diagramDocumentCommandBridge'
 import type { DiagramDocumentFinishDragParams } from '@modules/library/diagrams/app/command/domain/payloads'
+import { splitEdgeAtNode } from '@modules/library/diagrams/lib/diagramEdgeSplit'
 import {
   setDiagramActiveLogicFlow,
   setDiagramCanvasSnapGrid,
@@ -152,7 +154,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     DiagramDocumentFinishDragParams,
     'beforeGraph' | 'beforeSelection'
   > | null = null
-  private dragUndoRecorder: ((payload: DiagramDocumentFinishDragParams) => void) | null = null
+  private documentCommandBridge: DiagramDocumentCommandBridge | null = null
   private undoRedoRestoreDepth = 0
   private readonly viewport = new DiagramCanvasViewportController()
   private readonly formatPainter = new DiagramFormatPainterCoordinator({
@@ -206,8 +208,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   })
   private readonly edgeInsert = new DiagramEdgeInsertCoordinator({
     getLf: () => this.lf,
-    select: (ids) => this.select(ids),
-    scheduleGraphChange: () => this.scheduleGraphChange()
+    requestInsertNodeOnEdge: (nodeId, edgeId) => {
+      this.documentCommandBridge?.insertNodeOnEdge({ nodeId, edgeId })
+    }
   })
   private readonly selectionPointerCapture = new DiagramSelectionPointerCapture({
     getLf: () => this.lf,
@@ -403,9 +406,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.refreshMultiSelectResizeNow = mounted.refreshMultiSelectResizeNow
   }
 
-  private buildCanvasEventPorts(lf: LogicFlow): DiagramCanvasEventBinderPorts {
-    return {
-      getLf: () => lf,
+  private buildCanvasEventPorts(lf: LogicFlow) {
+    return buildLogicFlowCanvasEventPorts({
+      lf,
       getContainer: () => this.container,
       getCanvasSettings: () => this.canvasSettings,
       getResolvedTheme: () => this.resolvedTheme,
@@ -414,6 +417,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       groupFrames: this.groupFrames,
       edgeInsert: this.edgeInsert,
       selectionBridge: this.selectionBridge,
+      formatPainter: this.formatPainter,
       getClickSelectionSnapshot: (e) => this.getClickSelectionSnapshot(e),
       scheduleGraphChange: () => this.scheduleGraphChange(),
       scheduleMultiSelectOverlayRefresh: () => this.scheduleMultiSelectOverlayRefresh(),
@@ -424,25 +428,36 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       getSelectedNodeIds: () => this.getSelectedNodeIds(),
       getSelectedContentNodeIds: () => this.getSelectedContentNodeIds(),
       isGroupFrameId: (id) => this.isGroupFrameId(id),
-      formatPainter: this.formatPainter,
       applyDefaultEdgeStyle: (id) => this.canvasTheme.applyDefaultEdgeStyle(id),
       patchBackgroundDom: (color) => this.canvasTheme.patchBackgroundDom(color),
       onViewportChange: () => this.viewportChangeHandler?.(),
-      onFormatPainterNodeApplied: (nodeId) => {
-        syncGroupFramesForNodes(lf, [nodeId])
-        this.groupFrames.refreshDisplay()
+      requestFormatPainterApply: (payload) => {
+        this.documentCommandBridge?.formatPainterApply(payload)
       },
       captureDragUndoBaseline: () => this.captureDragUndoBaseline(),
       clearDragUndoBaseline: () => this.clearDragUndoBaseline(),
       commitDragUndoMutation: () => this.commitDragUndoMutation()
-    }
+    })
   }
 
+  setDocumentCommandBridge(bridge: DiagramDocumentCommandBridge | null): void {
+    this.documentCommandBridge = bridge
+    if (!bridge) this.dragUndoBaseline = null
+  }
+
+  /** @deprecated 使用 setDocumentCommandBridge */
   setDragUndoRecorder(
     recorder: ((payload: DiagramDocumentFinishDragParams) => void) | null
   ): void {
-    this.dragUndoRecorder = recorder
-    if (!recorder) this.dragUndoBaseline = null
+    if (!recorder) {
+      this.setDocumentCommandBridge(null)
+      return
+    }
+    this.setDocumentCommandBridge({
+      finishDrag: recorder,
+      formatPainterApply: () => {},
+      insertNodeOnEdge: () => {}
+    })
   }
 
   getLogicFlow(): LogicFlow | null {
@@ -509,7 +524,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   }
 
   captureDragUndoBaseline(): void {
-    if (!this.dragUndoRecorder || !this.lf) return
+    if (!this.documentCommandBridge?.finishDrag || !this.lf) return
     if (this.dragUndoBaseline) {
       if (import.meta.env.DEV) {
         console.warn(
@@ -529,12 +544,12 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   }
 
   commitDragUndoMutation(): void {
-    if (!this.dragUndoRecorder || !this.dragUndoBaseline || !this.lf) return
+    if (!this.documentCommandBridge?.finishDrag || !this.dragUndoBaseline || !this.lf) return
     const afterGraph = cloneForIpc(this.getGraph())
     const afterSelection = this.captureSelectionIds()
     const baseline = this.dragUndoBaseline
     this.dragUndoBaseline = null
-    this.dragUndoRecorder({
+    this.documentCommandBridge.finishDrag({
       beforeGraph: baseline.beforeGraph,
       afterGraph,
       beforeSelection: baseline.beforeSelection,
@@ -919,20 +934,6 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     return this.exportCoordinator.exportSvg()
   }
 
-  /** @deprecated 撤销请走 DiagramCmd.Document.Undo → TransactionManager，LogicFlow history 已关闭 */
-  undo(): void {
-    if (import.meta.env.DEV) {
-      console.warn('[DiagramEditor] port.undo() 已废弃，请使用 DiagramCmd.Document.Undo')
-    }
-  }
-
-  /** @deprecated 重做请走 DiagramCmd.Document.Redo → TransactionManager，LogicFlow history 已关闭 */
-  redo(): void {
-    if (import.meta.env.DEV) {
-      console.warn('[DiagramEditor] port.redo() 已废弃，请使用 DiagramCmd.Document.Redo')
-    }
-  }
-
   zoom(delta?: number, scale?: number): void {
     if (!this.lf) return
     zoomDiagramCanvas(this.lf, delta, scale)
@@ -1098,7 +1099,15 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
   }
 
   insertExistingNodeOnEdge(nodeId: string, edgeId: string): boolean {
-    return this.edgeInsert.insertExistingNodeOnEdge(nodeId, edgeId)
+    const lf = this.lf
+    if (!lf) return false
+    const ok = splitEdgeAtNode(lf, nodeId, edgeId)
+    if (ok) {
+      this.edgeInsert.setHighlight(null)
+      this.select([nodeId])
+      this.scheduleGraphChange()
+    }
+    return ok
   }
 
   addNodeOnEdge(

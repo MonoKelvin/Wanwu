@@ -10,6 +10,7 @@ export function useDiagramAutosave(options: {
   isBlocked?: () => boolean
   onSaveError?: (message: string) => void
   onConflict?: () => void
+  onDocumentSaved?: () => void
   savePayload?: () => Record<string, unknown> | undefined
 }) {
   const fileCommands = createDiagramFileCommands(options.bus)
@@ -49,6 +50,7 @@ export function useDiagramAutosave(options: {
         return false
       }
       retryBackoffMs = debounceMs
+      options.onDocumentSaved?.()
       return true
     } finally {
       isSaving.value = false

@@ -3,7 +3,7 @@ import {
   resetDiagramShapeExtensionRegistry,
   type DiagramShapeExtensionRegistry
 } from '@modules/library/diagrams/domain/shape-extension'
-import { umlShapeExtension } from '@modules/library/diagrams/extensions'
+import { umlShapeExtension, tableShapeExtension } from '@modules/library/diagrams/extensions'
 
 let bootstrapped = false
 
@@ -16,6 +16,7 @@ export function registerBuiltinDiagramShapeExtensions(
 ): void {
   if (bootstrapped) return
   registry.register(umlShapeExtension)
+  registry.register(tableShapeExtension)
   bootstrapped = true
 }
 

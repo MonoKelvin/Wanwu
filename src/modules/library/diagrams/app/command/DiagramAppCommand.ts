@@ -29,7 +29,8 @@ export interface IDiagramAppCommand {
 /** @deprecated 使用 DiagramDataCommandBase */
 export abstract class DiagramAppCommandBase implements IDiagramAppCommand {
   abstract readonly id: DiagramCommandId
-  abstract readonly title: string
+  abstract   readonly title: string
+  /** 文档性标记：事务由各命令内部 runDocumentMutation 管理，Registry 不读取此字段 */
   readonly usesTransaction: boolean = false
 
   protected castParams<P extends IDiagramCommandParams>(params: IDiagramCommandParams | undefined): P {

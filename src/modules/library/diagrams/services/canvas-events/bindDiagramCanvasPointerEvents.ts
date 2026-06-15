@@ -9,15 +9,25 @@ import {
   activateEdgeEndpointPriority,
   resetEdgeEndpointPriority
 } from '@modules/library/diagrams/lib/diagramEdgeEndpointPriority'
-import {
-  applyEdgeStyleSnapshot,
-  applyNodeStyleSnapshot
-} from '@modules/library/diagrams/lib/diagramStyleClipboard'
+import { applyGroupFrameAlwaysVisibleForConnectedNodes } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import type { DiagramCanvasEventBinderPorts } from '@modules/library/diagrams/services/canvas-events/diagramCanvasEventPorts'
 
 /** 点击/空白/连线选中与格式刷应用 */
 export function bindDiagramCanvasPointerEvents(ports: DiagramCanvasEventBinderPorts): void {
   const lf = ports.getLf()
+  let edgeAnchorDrawActive = false
+
+  lf.on('anchor:dragstart', () => {
+    ports.captureDragUndoBaseline()
+    edgeAnchorDrawActive = true
+  })
+
+  lf.on('anchor:dragend', () => {
+    if (edgeAnchorDrawActive) {
+      ports.clearDragUndoBaseline()
+      edgeAnchorDrawActive = false
+    }
+  })
 
   lf.on('node:click', ({ data, e }) => {
     if (ports.boxSelect.isInGracePeriod()) {
@@ -41,10 +51,13 @@ export function bindDiagramCanvasPointerEvents(ports: DiagramCanvasEventBinderPo
     }
 
     const painter = ports.formatPainter.getState()
-    if (painter?.active && painter.kind === 'node') {
-      applyNodeStyleSnapshot(lf, data.id, painter.nodeSnapshot!)
+    if (painter?.active && painter.kind === 'node' && painter.nodeSnapshot) {
+      ports.requestFormatPainterApply({
+        targetId: data.id,
+        kind: 'node',
+        nodeSnapshot: painter.nodeSnapshot
+      })
       ports.onFormatPainterNodeApplied(data.id)
-      ports.scheduleGraphChange()
     }
     ports.selectionBridge.afterSelectionMutation()
   })
@@ -56,9 +69,12 @@ export function bindDiagramCanvasPointerEvents(ports: DiagramCanvasEventBinderPo
     }
     ports.boxSelect.clearSnapshots()
     const painter = ports.formatPainter.getState()
-    if (painter?.active && painter.kind === 'edge') {
-      applyEdgeStyleSnapshot(lf, data.id, painter.edgeSnapshot!)
-      ports.scheduleGraphChange()
+    if (painter?.active && painter.kind === 'edge' && painter.edgeSnapshot) {
+      ports.requestFormatPainterApply({
+        targetId: data.id,
+        kind: 'edge',
+        edgeSnapshot: painter.edgeSnapshot
+      })
     }
     const append = Boolean(e?.ctrlKey || e?.metaKey || e?.shiftKey)
     if (!append) {
@@ -74,9 +90,17 @@ export function bindDiagramCanvasPointerEvents(ports: DiagramCanvasEventBinderPo
   })
 
   lf.on('edge:add', ({ data }) => {
+    edgeAnchorDrawActive = false
     ports.applyDefaultEdgeStyle(data.id)
+    const edge = lf.getEdgeModelById(data.id)
+    if (
+      edge &&
+      applyGroupFrameAlwaysVisibleForConnectedNodes(lf, edge.sourceNodeId, edge.targetNodeId)
+    ) {
+      ports.groupFrames.refreshDisplay()
+    }
     ports.selectionBridge.setPrimarySelection(null, data.id)
-    ports.scheduleGraphChange()
+    ports.commitDragUndoMutation()
     ports.selectionBridge.publishSelection()
   })
 

@@ -17,8 +17,15 @@ import { DiagramCmd } from '@modules/library/diagrams/app/command/domain/ids'
 import type {
   DiagramDocumentAddNodeParams,
   DiagramDocumentFinishDragParams,
+  DiagramDocumentFormatPainterApplyParams,
+  DiagramDocumentInsertNodeOnEdgeParams,
   DiagramDocumentModifyNodeParams
 } from '@modules/library/diagrams/app/command/domain/payloads'
+import {
+  applyEdgeStyleSnapshot,
+  applyNodeStyleSnapshot
+} from '@modules/library/diagrams/lib/diagramStyleClipboard'
+import { splitEdgeAtNode } from '@modules/library/diagrams/lib/diagramEdgeSplit'
 
 class AddNodeCommand extends DiagramAppCommandBase {
   readonly id = DiagramCmd.Document.AddNode
@@ -206,11 +213,48 @@ function mutationCommand(
   }
 }
 
+class FormatPainterApplyCommand extends DiagramAppCommandBase {
+  readonly id = DiagramCmd.Document.FormatPainterApply
+  readonly title = '应用格式刷'
+  readonly usesTransaction = true
+
+  execute(params: DiagramDocumentFormatPainterApplyParams | undefined, ctx: DiagramCommandExecutionContext) {
+    const p = this.castParams<DiagramDocumentFormatPainterApplyParams>(params)
+    return runDocumentMutation(ctx, this.title, (canvas) => {
+      const lf = canvas.port.getLogicFlow()
+      if (!lf) return
+      if (p.kind === 'node' && p.nodeSnapshot) {
+        applyNodeStyleSnapshot(lf, p.targetId, p.nodeSnapshot)
+      } else if (p.kind === 'edge' && p.edgeSnapshot) {
+        applyEdgeStyleSnapshot(lf, p.targetId, p.edgeSnapshot)
+      }
+    })
+  }
+}
+
+class InsertNodeOnEdgeCommand extends DiagramAppCommandBase {
+  readonly id = DiagramCmd.Document.InsertNodeOnEdge
+  readonly title = '插入连线'
+  readonly usesTransaction = true
+
+  execute(params: DiagramDocumentInsertNodeOnEdgeParams | undefined, ctx: DiagramCommandExecutionContext) {
+    const p = this.castParams<DiagramDocumentInsertNodeOnEdgeParams>(params)
+    return runDocumentMutation(ctx, this.title, (canvas) => {
+      const lf = canvas.port.getLogicFlow()
+      if (!lf) return
+      if (!splitEdgeAtNode(lf, p.nodeId, p.edgeId)) return
+      canvas.port.select([p.nodeId])
+    })
+  }
+}
+
 export function registerDocumentContentCommands(registry: DiagramCommandRegistry): void {
   registry
     .registerSingleton(new AddNodeCommand())
     .registerSingleton(new ModifyNodeCommand())
     .registerSingleton(new FinishDragCommand())
+    .registerSingleton(new FormatPainterApplyCommand())
+    .registerSingleton(new InsertNodeOnEdgeCommand())
     .registerSingleton(new UndoCommand())
     .registerSingleton(new RedoCommand())
     .registerSingleton(new CopyNodeCommand())

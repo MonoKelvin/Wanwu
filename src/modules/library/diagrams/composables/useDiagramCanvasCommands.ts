@@ -6,6 +6,8 @@ import type {
   DiagramDocumentBatchModifyNodesParams,
   DiagramDocumentDistributeNodesParams,
   DiagramDocumentFinishDragParams,
+  DiagramDocumentFormatPainterApplyParams,
+  DiagramDocumentInsertNodeOnEdgeParams,
   DiagramDocumentModifyCanvasSettingsParams,
   DiagramDocumentModifyEdgeParams,
   DiagramDocumentModifyNodeParams,
@@ -75,6 +77,10 @@ export function createDiagramCanvasCommands(bus: IDiagramCommandBus) {
       fireTyped(DiagramCmd.Document.ModifyCanvasSettings, payload),
     finishDrag: (payload: DiagramDocumentFinishDragParams) =>
       void dispatch(DiagramCmd.Document.FinishDrag, payload),
+    formatPainterApply: (payload: DiagramDocumentFormatPainterApplyParams) =>
+      void dispatch(DiagramCmd.Document.FormatPainterApply, payload),
+    insertNodeOnEdge: (payload: DiagramDocumentInsertNodeOnEdgeParams) =>
+      void dispatch(DiagramCmd.Document.InsertNodeOnEdge, payload),
     pagePrev: () => dispatchEmpty(DiagramCmd.Page.Prev),
     pageNext: () => dispatchEmpty(DiagramCmd.Page.Next),
     dispatch,

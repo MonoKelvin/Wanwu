@@ -117,7 +117,7 @@ export function finalizeNodeLayoutChange(lf: LogicFlow, nodeIds: readonly string
   if (!nodeIds.length) return
   syncDiagramEdgePointsForNodeIds(lf, nodeIds)
   syncDiagramEdgeTextsForNodeIds(lf, nodeIds)
-  syncGroupFramesForNodes(lf, nodeIds)
+  syncGroupFramesForNodes(lf, nodeIds, { mode: 'fit' })
 }
 
 /**

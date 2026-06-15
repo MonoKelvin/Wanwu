@@ -45,24 +45,19 @@ export function registerDiagramCommandBridge(getService: () => DiagramService | 
 
       const stopOnError = params.stopOnError !== false
       const results: DiagramCommandResult[] = []
-      const rendererBatch: DiagramCommandEnvelope[] = []
 
       for (const cmd of params.cmds) {
+        let result: DiagramCommandResult
         if (isMainProcessCommand(cmd.type)) {
-          const result = await executeMainDiagramCommand(service, cmd)
-          results.push(result)
-          if (stopOnError && !result.ok) break
+          result = await executeMainDiagramCommand(service, cmd)
         } else if (isRendererProcessCommand(cmd.type)) {
-          rendererBatch.push(cmd)
+          const batch = await invokeRendererCommands(event.sender, [cmd])
+          result = batch[0] ?? { ok: false, code: 'INTERNAL', message: '渲染进程无返回' }
         } else {
-          results.push({ ok: false, code: 'UNKNOWN_COMMAND', message: `未知命令: ${cmd.type}` })
-          if (stopOnError) break
+          result = { ok: false, code: 'UNKNOWN_COMMAND', message: `未知命令: ${cmd.type}` }
         }
-      }
-
-      if (rendererBatch.length > 0) {
-        const rendererResults = await invokeRendererCommands(event.sender, rendererBatch)
-        results.push(...rendererResults)
+        results.push(result)
+        if (stopOnError && !result.ok) break
       }
 
       return results

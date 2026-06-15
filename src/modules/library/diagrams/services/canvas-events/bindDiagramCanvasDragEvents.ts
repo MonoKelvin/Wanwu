@@ -3,7 +3,10 @@
  * undo 通过 captureDragUndoBaseline → commitDragUndoMutation → FinishDrag 图快照事务。
  */
 import { collectOrderedSelectionIds } from '@modules/library/diagrams/lib/diagramGroupSelection'
-import { isGroupFrameType } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import {
+  isGroupFrameType,
+  resolveGroupFrameIdForElement
+} from '@modules/library/diagrams/lib/diagramGroupFrame'
 import { isDiagramGroupMultiResizing } from '@modules/library/diagrams/lib/diagramMultiSelectResize'
 import {
   applyNodeSelectForPointer,
@@ -42,6 +45,7 @@ import {
   syncDiagramEdgeTextsForNodeIds
 } from '@modules/library/diagrams/lib/diagramEdgeTextSync'
 import type { DiagramCanvasEventBinderPorts } from '@modules/library/diagrams/services/canvas-events/diagramCanvasEventPorts'
+import type { GroupFrameBoundsSyncMode } from '@modules/library/diagrams/lib/diagramGroupBounds'
 
 function resolveSnapTargets(lf: LogicFlow, anchorId: string): string[] {
   const liveNodeIds = collectOrderedSelectionIds(lf).nodeIds
@@ -115,6 +119,23 @@ function applyDragSnapFeedback(
 
 function resolveMovingSnapTargets(lf: LogicFlow, anchorId: string, isGroupFrameId: (id: string) => boolean): string[] {
   return resolveSnapTargets(lf, anchorId).filter((id) => !isGroupFrameId(id))
+}
+
+function syncGroupFramesAfterMove(
+  ports: DiagramCanvasEventBinderPorts,
+  lf: LogicFlow,
+  anchorId: string | undefined,
+  mode: GroupFrameBoundsSyncMode
+): void {
+  if (anchorId) {
+    const model = lf.getNodeModelById(anchorId)
+    if (!model || isGroupFrameType(model.type)) return
+    const inGroup = Boolean(resolveGroupFrameIdForElement(lf, anchorId, 'node'))
+    if (!inGroup && ports.countSelectedNodes() < 2) return
+  } else {
+    if (ports.countSelectedNodes() < 2) return
+  }
+  ports.groupFrames.syncDuringDrag(anchorId, mode)
 }
 
 /** 拖拽开始时同步选区：未选中图元按点击语义选中，已选中则保留现有多选并推送选区事件 */
@@ -208,11 +229,6 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
       return
     }
     if (model && !isGroupFrameType(model.type)) {
-      const inGroup =
-        typeof model.properties?.dgGroupId === 'string' && Boolean(model.properties.dgGroupId)
-      if (inGroup || ports.countSelectedNodes() >= 2) {
-        ports.groupFrames.scheduleSyncDuringDrag(data.id)
-      }
       ports.edgeInsert.scheduleHighlightAtNodeCenter(data.id)
     }
     if (ports.countSelectedNodes() === 1 && ports.selectionBridge.getPrimaryNodeId() === data.id) {
@@ -224,6 +240,7 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
     const pointer = rememberDragPointer(lf, e)
     const bypassSnap = isDiagramSnapBypassEvent(e)
     applyDragSnapFeedback(lf, data.id, snapTargets, snapGrid, pointer, activeGrabRatios, bypassSnap)
+    syncGroupFramesAfterMove(ports, lf, data.id, 'fit')
     const edgeTextSyncTargets = snapTargets.length ? snapTargets : [data.id]
     syncDiagramEdgeTextsForNodeIds(lf, edgeTextSyncTargets)
     scheduleDiagramEdgeTextSyncForNodes(lf, edgeTextSyncTargets)
@@ -251,7 +268,6 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
 
   lf.on('selection:drag', ({ e }) => {
     if (ports.boxSelect.shouldSuppressSelectionDrag()) return
-    ports.groupFrames.scheduleSyncDuringDrag()
     ports.refreshMultiSelectResize()
     ports.scheduleOverlayLayout()
     const ids = collectOrderedSelectionIds(lf).nodeIds.filter((id) => !ports.isGroupFrameId(id))
@@ -260,6 +276,7 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
       const pointer = rememberDragPointer(lf, e)
       const bypassSnap = isDiagramSnapBypassEvent(e)
       applyDragSnapFeedback(lf, ids[0]!, ids, snapGrid, pointer, activeGrabRatios, bypassSnap)
+      syncGroupFramesAfterMove(ports, lf, undefined, 'fit')
       syncDiagramEdgeTextsForNodeIds(lf, ids)
       scheduleDiagramEdgeTextSyncForNodes(lf, ids)
     }
@@ -271,13 +288,13 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
       lf.removeNodeSnapLine()
       return
     }
-    ports.groupFrames.syncForNodeIds(ports.getSelectedContentNodeIds())
     ports.refreshMultiSelectResize()
     ports.scheduleOverlayLayout()
     ports.selectionBridge.syncFromGraph()
     const ids = collectOrderedSelectionIds(lf).nodeIds.filter((id) => !ports.isGroupFrameId(id))
     const bypassSnap = isDiagramSnapBypassEvent(e)
     if (ids.length) finishDragSnapOnce(ports, ids[0]!, rememberDragPointer(lf, e), bypassSnap)
+    ports.groupFrames.syncForNodeIds(ports.getSelectedContentNodeIds(), 'fit')
     syncDiagramEdgeTextsForNodeIds(lf, ids)
     activeGrabRatios = undefined
     ports.commitDragUndoMutation()
@@ -292,22 +309,33 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
     const syncIds = (liveNodeIds.includes(data.id) ? liveNodeIds : [data.id]).filter(
       (id) => !ports.isGroupFrameId(id)
     )
-    ports.groupFrames.syncForNodeIds(syncIds)
+    ports.groupFrames.syncForNodeIds(syncIds, 'fit')
     syncDiagramEdgeTextsForNodeIds(lf, syncIds)
     ports.refreshMultiSelectResize()
     ports.scheduleOverlayLayout()
     ports.commitDragUndoMutation()
   })
 
+  lf.on('node:dragend', () => {
+    ports.edgeInsert.clearDragState()
+  })
+
   lf.on('node:resize', ({ data, index }) => {
     if (ports.isGroupFrameId(data.id)) return
     if (!isDiagramResizeSessionActive()) return
+    const model = lf.getNodeModelById(data.id)
     if (isDiagramSnapBypassActive()) {
       cancelResizeSnapFeedback()
       lf.removeNodeSnapLine()
-      return
+    } else {
+      scheduleResizeSnapFeedback(lf, data.id, index, ports.getCanvasSettings().snapGrid)
     }
-    scheduleResizeSnapFeedback(lf, data.id, index, ports.getCanvasSettings().snapGrid)
+    if (model) {
+      const inGroup = Boolean(resolveGroupFrameIdForElement(lf, data.id, 'node'))
+      if (inGroup || ports.countSelectedNodes() >= 2) {
+        ports.groupFrames.syncDuringDrag(data.id, 'fit')
+      }
+    }
   })
 
   return () => {

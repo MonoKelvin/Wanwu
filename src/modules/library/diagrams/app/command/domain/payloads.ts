@@ -157,6 +157,18 @@ export interface DiagramDocumentFinishDragParams extends IDiagramCommandParams {
   afterSelection: { nodeIds: string[]; edgeIds: string[] }
 }
 
+export interface DiagramDocumentFormatPainterApplyParams extends IDiagramCommandParams {
+  targetId: string
+  kind: import('@modules/library/diagrams/lib/diagramStyleClipboard').DiagramFormatPainterKind
+  nodeSnapshot?: import('@modules/library/diagrams/lib/diagramStyleClipboard').DiagramNodeStyleSnapshot
+  edgeSnapshot?: import('@modules/library/diagrams/lib/diagramStyleClipboard').DiagramEdgeStyleSnapshot
+}
+
+export interface DiagramDocumentInsertNodeOnEdgeParams extends IDiagramCommandParams {
+  nodeId: string
+  edgeId: string
+}
+
 export interface DiagramPageAddParams extends IDiagramCommandParams {
   name?: string
 }
@@ -277,6 +289,8 @@ export interface DiagramCommandPayloadMap {
   [DiagramCmd.Document.SetGrid]: DiagramDocumentSetGridParams
   [DiagramCmd.Document.NudgeSelection]: DiagramDocumentNudgeSelectionParams
   [DiagramCmd.Document.FinishDrag]: DiagramDocumentFinishDragParams
+  [DiagramCmd.Document.FormatPainterApply]: DiagramDocumentFormatPainterApplyParams
+  [DiagramCmd.Document.InsertNodeOnEdge]: DiagramDocumentInsertNodeOnEdgeParams
   [DiagramCmd.Page.Add]: DiagramPageAddParams
   [DiagramCmd.Page.Rename]: DiagramPageRenameParams
   [DiagramCmd.Page.Delete]: DiagramPageDeleteParams

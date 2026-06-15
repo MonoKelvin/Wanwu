@@ -1,3 +1,4 @@
+/** 编辑器选区领域：合成快照、能力解析（统一从此 barrel 导入） */
 export type {
   DiagramSelectionCapabilities,
   DiagramSelectionComposeInput

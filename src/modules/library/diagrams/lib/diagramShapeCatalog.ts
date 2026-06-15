@@ -103,6 +103,95 @@ export const DIAGRAM_SHAPE_CATEGORIES: DiagramShapeCategory[] = [
         lfType: 'dg-uml-class',
         defaultText: 'Component',
         preview: { kind: 'path', d: 'M6 6 H14 V14 H6 Z M4 8 H5 V12 H4 Z M17 8 H18 V12 H17 Z' }
+      },
+      {
+        id: 'dg-uml-usecase',
+        label: '用例',
+        lfType: 'dg-uml-usecase',
+        defaultText: '用例',
+        preview: { kind: 'ellipse', rx: 0.9, ry: 0.45 }
+      },
+      {
+        id: 'dg-uml-state',
+        label: '状态',
+        lfType: 'dg-uml-state',
+        defaultText: '状态',
+        preview: { kind: 'rect', w: 1.5, h: 0.75, r: 0.18 }
+      },
+      {
+        id: 'dg-uml-abstract',
+        label: '抽象类',
+        lfType: 'dg-uml-class',
+        defaultText: 'AbstractClass',
+        preview: { kind: 'path', d: 'M4 5 H18 V15 H4 Z M4 9 H18' }
+      },
+      {
+        id: 'dg-uml-enum',
+        label: '枚举',
+        lfType: 'dg-uml-class',
+        defaultText: 'EnumName',
+        preview: { kind: 'path', d: 'M4 5 H18 V15 H4 Z M4 9 H18 M4 12 H18' }
+      },
+      {
+        id: 'dg-uml-start',
+        label: '初始状态',
+        lfType: 'dg-uml-start',
+        defaultText: '',
+        preview: { kind: 'circle', r: 0.22 }
+      },
+      {
+        id: 'dg-uml-end',
+        label: '结束状态',
+        lfType: 'dg-uml-end',
+        defaultText: '',
+        preview: { kind: 'path', d: 'M12 8 A4 4 0 1 1 12 16 A4 4 0 1 1 12 8 M12 9.5 A2.5 2.5 0 1 0 12 14.5 A2.5 2.5 0 1 0 12 9.5' }
+      },
+      {
+        id: 'dg-uml-lifeline',
+        label: '生命线',
+        lfType: 'dg-uml-lifeline',
+        defaultText: 'Object',
+        preview: { kind: 'path', d: 'M7 5 H15 V8 H7 Z M11 8 V17' }
+      }
+    ]
+  },
+  {
+    id: 'mindmap',
+    label: '思维导图',
+    items: [
+      {
+        id: 'dg-mindmap-central',
+        label: '中心主题',
+        lfType: 'dg-mindmap-central',
+        defaultText: '中心主题',
+        preview: { kind: 'rect', w: 1.8, h: 0.65, r: 0.22 }
+      },
+      {
+        id: 'dg-mindmap-branch',
+        label: '分支主题',
+        lfType: 'dg-mindmap-branch',
+        defaultText: '分支主题',
+        preview: { kind: 'rect', w: 1.4, h: 0.5, r: 0.14 }
+      },
+      {
+        id: 'dg-mindmap-floating',
+        label: '自由主题',
+        lfType: 'dg-mindmap-floating',
+        defaultText: '自由主题',
+        preview: { kind: 'rect', w: 1.3, h: 0.48, r: 0.12 }
+      }
+    ]
+  },
+  {
+    id: 'table',
+    label: '表格',
+    items: [
+      {
+        id: 'dg-table',
+        label: '表格',
+        lfType: 'dg-table',
+        defaultText: '',
+        preview: { kind: 'path', d: 'M4 6 H18 V16 H4 Z M4 9 H18 M4 12 H18 M9 6 V16 M14 6 V16' }
       }
     ]
   },

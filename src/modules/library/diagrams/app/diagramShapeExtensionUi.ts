@@ -1,6 +1,7 @@
 import { ensureDiagramShapeExtensions } from '@modules/library/diagrams/app/diagramShapeExtensions'
 import type { IDiagramShapeExtensionRegistry } from '@modules/library/diagrams/domain/shape-extension'
 import { registerUmlShapeExtensionUi } from '@modules/library/diagrams/extensions/uml/umlShapeExtensionUi'
+import { registerTableShapeExtensionUi } from '@modules/library/diagrams/extensions/table/tableShapeExtensionUi'
 
 let uiBootstrapped = false
 
@@ -10,6 +11,7 @@ export function registerDiagramShapeExtensionUi(
 ): void {
   if (uiBootstrapped) return
   registerUmlShapeExtensionUi(registry)
+  registerTableShapeExtensionUi(registry)
   uiBootstrapped = true
 }
 

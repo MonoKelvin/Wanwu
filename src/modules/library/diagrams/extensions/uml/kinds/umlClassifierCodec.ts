@@ -23,7 +23,9 @@ const PALETTE_CLASSIFIER_KIND: Record<string, UmlClassifierKind> = {
   'dg-uml-class': 'class',
   'dg-uml-interface': 'interface',
   'dg-uml-package': 'package',
-  'dg-uml-component': 'component'
+  'dg-uml-component': 'component',
+  'dg-uml-abstract': 'abstractClass',
+  'dg-uml-enum': 'enum'
 }
 
 export function createDefaultUmlClassifierData(

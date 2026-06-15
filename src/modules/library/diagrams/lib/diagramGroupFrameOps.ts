@@ -28,7 +28,7 @@ export function detachDiagramNodeFromGroup(lf: LogicFlow, nodeId: string): void 
   if (!members.length && !((group.properties?.dgGroupEdges as string[] | undefined) ?? []).length) {
     lf.deleteNode(groupId)
   } else {
-    syncGroupFrameBounds(lf, groupId)
+    syncGroupFrameBounds(lf, groupId, { mode: 'tight' })
   }
 }
 
@@ -49,7 +49,7 @@ export function detachDiagramEdgeFromGroup(lf: LogicFlow, edgeId: string): void 
   if (!edges.length && !((group.properties?.dgGroupMembers as string[] | undefined) ?? []).length) {
     lf.deleteNode(groupId)
   } else {
-    syncGroupFrameBounds(lf, groupId)
+    syncGroupFrameBounds(lf, groupId, { mode: 'tight' })
   }
 }
 
@@ -124,7 +124,7 @@ export function mergeUngroupedIntoDiagramGroup(
     dgGroupMembers: [...memberSet],
     dgGroupEdges: [...edgeSet]
   })
-  syncGroupFrameBounds(lf, groupId)
+  syncGroupFrameBounds(lf, groupId, { mode: 'tight' })
 }
 
 export function createDiagramGroupFrame(

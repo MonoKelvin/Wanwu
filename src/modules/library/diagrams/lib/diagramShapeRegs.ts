@@ -712,6 +712,219 @@ function regText(lf: LogicFlow, type: string) {
   lf.register({ type, view: View, model: Model })
 }
 
+/** UML 用例（椭圆） */
+function regUmlUseCase(lf: LogicFlow, type: string) {
+  regEllipse(lf, type, 72, 36)
+}
+
+/** UML 状态（圆角矩形 + 名称区分线） */
+function regUmlState(lf: LogicFlow, type: string) {
+  class Model extends DiagramRectResizeModel {
+    initNodeData(data: LogicFlow.NodeConfig) {
+      super.initNodeData(data)
+      applyDefaultRectSize(this, data, { width: 120, height: 64, radius: 14 })
+      this.minWidth = 64
+      this.minHeight = 40
+    }
+  }
+  class View extends DiagramRectResizeView {
+    getResizeShape() {
+      const { model } = this.props
+      const { x, y, width, height, radius } = model
+      const style = model.getNodeStyle()
+      const left = x - width / 2
+      const top = y - height / 2
+      const headerY = top + Math.min(28, height * 0.38)
+      return h('g', {}, [
+        h('rect', { ...diagramNodeShapeAttrs(style), x: left, y: top, width, height, rx: radius, ry: radius }),
+        h('line', {
+          x1: left,
+          y1: headerY,
+          x2: left + width,
+          y2: headerY,
+          stroke: style.stroke,
+          strokeWidth: style.strokeWidth
+        })
+      ])
+    }
+  }
+  lf.register({ type, view: View, model: Model })
+}
+
+/** UML 活动图：初始状态（实心圆） */
+function regUmlStartState(lf: LogicFlow, type: string) {
+  class Model extends DiagramEllipseResizeModel {
+    initNodeData(data: LogicFlow.NodeConfig) {
+      super.initNodeData(data)
+      applyDefaultEllipseRadii(this, data, { rx: 12, ry: 12 })
+      this.minWidth = 20
+      this.minHeight = 20
+    }
+    getResizeControlStyle() {
+      return diagramResizeControlStyle()
+    }
+    getResizeOutlineStyle() {
+      return diagramResizeOutlineStyle()
+    }
+  }
+  class View extends DiagramResizableEllipseView {
+    getShape() {
+      const { model } = this.props
+      const { x, y, width, height } = model
+      const style = model.getNodeStyle()
+      return h('circle', {
+        cx: x,
+        cy: y,
+        r: Math.min(width, height) / 2,
+        fill: style.stroke ?? '#333',
+        stroke: style.stroke,
+        strokeWidth: style.strokeWidth
+      })
+    }
+  }
+  lf.register({ type, view: View, model: Model })
+}
+
+/** UML 活动图：结束状态（双圆） */
+function regUmlEndState(lf: LogicFlow, type: string) {
+  class Model extends DiagramEllipseResizeModel {
+    initNodeData(data: LogicFlow.NodeConfig) {
+      super.initNodeData(data)
+      applyDefaultEllipseRadii(this, data, { rx: 16, ry: 16 })
+      this.minWidth = 24
+      this.minHeight = 24
+    }
+    getResizeControlStyle() {
+      return diagramResizeControlStyle()
+    }
+    getResizeOutlineStyle() {
+      return diagramResizeOutlineStyle()
+    }
+  }
+  class View extends DiagramResizableEllipseView {
+    getShape() {
+      const { model } = this.props
+      const { x, y, width, height } = model
+      const style = model.getNodeStyle()
+      const outer = Math.min(width, height) / 2
+      const inner = outer * 0.62
+      return h('g', {}, [
+        h('circle', {
+          cx: x,
+          cy: y,
+          r: outer,
+          fill: 'transparent',
+          stroke: style.stroke,
+          strokeWidth: style.strokeWidth
+        }),
+        h('circle', {
+          cx: x,
+          cy: y,
+          r: inner,
+          fill: style.stroke ?? '#333',
+          stroke: style.stroke,
+          strokeWidth: style.strokeWidth
+        })
+      ])
+    }
+  }
+  lf.register({ type, view: View, model: Model })
+}
+
+/** UML 时序图：生命线（头部矩形 + 虚线） */
+function regUmlLifeline(lf: LogicFlow, type: string) {
+  class Model extends DiagramRectResizeModel {
+    initNodeData(data: LogicFlow.NodeConfig) {
+      super.initNodeData(data)
+      applyDefaultRectSize(this, data, { width: 96, height: 160, radius: 4 })
+      this.minWidth = 48
+      this.minHeight = 80
+    }
+  }
+  class View extends DiagramRectResizeView {
+    getResizeShape() {
+      const { model } = this.props
+      const { x, y, width, height } = model
+      const style = model.getNodeStyle()
+      const left = x - width / 2
+      const top = y - height / 2
+      const headerH = Math.min(32, height * 0.22)
+      return h('g', {}, [
+        h('rect', {
+          ...diagramNodeShapeAttrs(style),
+          x: left,
+          y: top,
+          width,
+          height: headerH,
+          rx: 4,
+          ry: 4
+        }),
+        h('line', {
+          x1: x,
+          y1: top + headerH,
+          x2: x,
+          y2: top + height,
+          stroke: style.stroke,
+          strokeWidth: style.strokeWidth,
+          strokeDasharray: '6 4'
+        })
+      ])
+    }
+  }
+  lf.register({ type, view: View, model: Model })
+}
+
+/** 思维导图：中心主题 */
+function regMindmapCentral(lf: LogicFlow, type: string) {
+  class Model extends DiagramRectResizeModel {
+    initNodeData(data: LogicFlow.NodeConfig) {
+      super.initNodeData(data)
+      applyDefaultRectSize(this, data, { width: 148, height: 52, radius: 18 })
+      this.minWidth = 80
+      this.minHeight = 36
+    }
+  }
+  class View extends DiagramRectResizeView {}
+  lf.register({ type, view: View, model: Model })
+}
+
+/** 思维导图：分支主题 */
+function regMindmapBranch(lf: LogicFlow, type: string) {
+  regRect(lf, type, 108, 40, 12)
+}
+
+/** 思维导图：自由主题（虚线边框） */
+function regMindmapFloating(lf: LogicFlow, type: string) {
+  class Model extends DiagramRectResizeModel {
+    initNodeData(data: LogicFlow.NodeConfig) {
+      super.initNodeData(data)
+      applyDefaultRectSize(this, data, { width: 96, height: 40, radius: 10 })
+      this.minWidth = 48
+      this.minHeight = 28
+    }
+  }
+  class View extends DiagramRectResizeView {
+    getResizeShape() {
+      const { model } = this.props
+      const { x, y, width, height, radius } = model
+      const style = model.getNodeStyle()
+      return h('rect', {
+        x: x - width / 2,
+        y: y - height / 2,
+        width,
+        height,
+        rx: radius,
+        ry: radius,
+        fill: style.fill ?? 'transparent',
+        stroke: style.stroke,
+        strokeWidth: style.strokeWidth,
+        strokeDasharray: '6 4'
+      })
+    }
+  }
+  lf.register({ type, view: View, model: Model })
+}
+
 export function registerAllDiagramShapes(lf: LogicFlow): void {
   regText(lf, 'text')
   regText(lf, 'dg-text')
@@ -736,6 +949,14 @@ export function registerAllDiagramShapes(lf: LogicFlow): void {
   regXorGateway(lf, 'dg-xor-gateway')
   regActor(lf, 'dg-actor')
   regImage(lf, 'dg-image')
+  regUmlUseCase(lf, 'dg-uml-usecase')
+  regUmlState(lf, 'dg-uml-state')
+  regUmlStartState(lf, 'dg-uml-start')
+  regUmlEndState(lf, 'dg-uml-end')
+  regUmlLifeline(lf, 'dg-uml-lifeline')
+  regMindmapCentral(lf, 'dg-mindmap-central')
+  regMindmapBranch(lf, 'dg-mindmap-branch')
+  regMindmapFloating(lf, 'dg-mindmap-floating')
 
   regPolygon(lf, 'dg-triangle-up', [
     [0, -34],

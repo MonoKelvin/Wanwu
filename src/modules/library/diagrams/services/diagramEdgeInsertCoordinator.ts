@@ -1,17 +1,14 @@
 import type LogicFlow from '@logicflow/core'
 import {
-  buildSplitEdgeConfigs,
   findNearestEdgeIdAtPoint,
-  isPointInsideNode,
-  type DiagramEdgeInsertNode
+  isPointInsideNode
 } from '@modules/library/diagrams/lib/diagramEdgeInsert'
 import { isGroupFrameType } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import { setEdgeInsertHighlightId } from '@modules/library/diagrams/lib/diagramShapeRegs'
 
 export interface DiagramEdgeInsertCoordinatorPorts {
   getLf(): LogicFlow | null
-  select(nodeIds: string[]): void
-  scheduleGraphChange(): void
+  requestInsertNodeOnEdge(nodeId: string, edgeId: string): void
 }
 
 /**
@@ -43,6 +40,10 @@ export class DiagramEdgeInsertCoordinator {
   scheduleHighlightAtNodeCenter(nodeId: string): void {
     if (this.dragRaf != null) return
     const dragIds = [...this.dragNodeIds]
+    if (dragIds.length !== 1) {
+      this.setHighlight(null)
+      return
+    }
     this.dragRaf = requestAnimationFrame(() => {
       this.dragRaf = null
       const lf = this.ports.getLf()
@@ -61,15 +62,16 @@ export class DiagramEdgeInsertCoordinator {
     const dragNodeIds = [...this.dragNodeIds]
     this.dragNodeIds = []
     if (highlightEdgeId && dragNodeIds.length === 1) {
-      this.insertExistingNodeOnEdge(dragNodeIds[0], highlightEdgeId)
+      this.ports.requestInsertNodeOnEdge(dragNodeIds[0], highlightEdgeId)
     } else {
       this.setHighlight(null)
     }
   }
 
-  clearDragState(nodeId: string): void {
+  clearDragState(): void {
     this.dragNodeIds = []
     this.cancelDragRaf()
+    this.setHighlight(null)
   }
 
   findEdgeAtCanvasPoint(
@@ -108,54 +110,6 @@ export class DiagramEdgeInsertCoordinator {
     }
     refresh(prev)
     refresh(edgeId)
-  }
-
-  insertExistingNodeOnEdge(nodeId: string, edgeId: string): boolean {
-    const lf = this.ports.getLf()
-    if (!lf) return false
-    const edge = lf.getEdgeModelById(edgeId)
-    if (!edge) {
-      this.setHighlight(null)
-      return false
-    }
-    const sourceNodeId = edge.sourceNodeId
-    const targetNodeId = edge.targetNodeId
-    if (!sourceNodeId || !targetNodeId || sourceNodeId === targetNodeId) {
-      this.setHighlight(null)
-      return false
-    }
-    if (nodeId === sourceNodeId || nodeId === targetNodeId) {
-      this.setHighlight(null)
-      return false
-    }
-    const insertModel = lf.getNodeModelById(nodeId)
-    const sourceModel = lf.getNodeModelById(sourceNodeId)
-    const targetModel = lf.getNodeModelById(targetNodeId)
-    if (!insertModel || !sourceModel || !targetModel) {
-      this.setHighlight(null)
-      return false
-    }
-
-    const [firstEdge, secondEdge] = buildSplitEdgeConfigs(
-      {
-        type: edge.type,
-        sourceNodeId,
-        targetNodeId,
-        properties: structuredClone(edge.properties ?? {}) as Record<string, unknown>,
-        text: edge.text
-      },
-      insertModel as DiagramEdgeInsertNode,
-      sourceModel as DiagramEdgeInsertNode,
-      targetModel as DiagramEdgeInsertNode
-    )
-
-    lf.deleteEdge(edgeId)
-    lf.addEdge(firstEdge as never)
-    lf.addEdge(secondEdge as never)
-    this.setHighlight(null)
-    this.ports.select([nodeId])
-    this.ports.scheduleGraphChange()
-    return true
   }
 
   private cancelDragRaf(): void {

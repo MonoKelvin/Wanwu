@@ -41,13 +41,21 @@ export function createDiagramDataCommandApi(bus: IDiagramCommandBus) {
     ) => dispatchDiagramDataCommandTyped(bus, id, payload),
     dispatchEmpty: (id: DiagramCommandId) => bus.dispatch(diagramCmdEmpty(id)),
     fire: (id: DiagramCommandId, payload?: IDiagramCommandParams) => {
-      void dispatchDiagramDataCommand(bus, id, payload)
+      void dispatchDiagramDataCommand(bus, id, payload).then((result) => {
+        if (!result.ok && import.meta.env.DEV) {
+          console.warn(`[DiagramCommand] ${id}:`, result.message)
+        }
+      })
     },
     fireTyped: <K extends keyof DiagramCommandPayloadMap>(
       id: K,
       payload: DiagramCommandPayloadMap[K]
     ) => {
-      void bus.dispatch(diagramCmd(id, payload))
+      void bus.dispatch(diagramCmd(id, payload)).then((result) => {
+        if (!result.ok && import.meta.env.DEV) {
+          console.warn(`[DiagramCommand] ${id}:`, result.message)
+        }
+      })
     },
     fireEmpty: (id: DiagramCommandId) => {
       void bus.dispatch(diagramCmdEmpty(id))

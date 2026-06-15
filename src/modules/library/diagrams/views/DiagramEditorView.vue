@@ -159,6 +159,7 @@ useDiagramIpcBridge(bus)
 const autosave = useDiagramAutosave({
   bus,
   session: sessionRef,
+  onDocumentSaved,
   isBlocked: () => conflictOpen.value || folderPickerOpen.value || unsavedLeaveOpen.value,
   savePayload: () => ({ folderId: pickedFolderId.value }),
   onSaveError: (detail) => {

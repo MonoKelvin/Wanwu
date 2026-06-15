@@ -6,6 +6,7 @@ import type { DiagramCanvasViewportController } from '@modules/library/diagrams/
 import type { DiagramEdgeInsertCoordinator } from '@modules/library/diagrams/services/diagramEdgeInsertCoordinator'
 import type { DiagramEditorSelectionBridge } from '@modules/library/diagrams/services/diagramEditorSelectionBridge'
 import type { DiagramFormatPainterCoordinator } from '@modules/library/diagrams/services/diagramFormatPainterCoordinator'
+import type { DiagramDocumentFormatPainterApplyParams } from '@modules/library/diagrams/app/command/domain/payloads'
 import type { DiagramGroupFrameCoordinator } from '@modules/library/diagrams/services/diagramGroupFrameCoordinator'
 
 export interface DiagramCanvasEventBinderPorts {
@@ -33,6 +34,7 @@ export interface DiagramCanvasEventBinderPorts {
   patchBackgroundDom(color: string): void
   onViewportChange(): void
   onFormatPainterNodeApplied(nodeId: string): void
+  requestFormatPainterApply(payload: DiagramDocumentFormatPainterApplyParams): void
   captureDragUndoBaseline(): void
   clearDragUndoBaseline(): void
   commitDragUndoMutation(): void

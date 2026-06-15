@@ -45,7 +45,7 @@ export function useDiagramEditorCommandSetup(
   let txBundle: DiagramTransactionBundle | null = null
 
   function disposeTransaction() {
-    options.portRef.value?.setDragUndoRecorder(null)
+    options.portRef.value?.setDocumentCommandBridge(null)
     txBundle?.detachSpill()
     if (txBundle) txBundle.spill.clear(txBundle.resourceId)
     txBundle = null
@@ -62,9 +62,17 @@ export function useDiagramEditorCommandSetup(
     setDiagramTransactionManager(txHolder, txBundle.manager)
   }
 
-  function wireDragUndoRecorder() {
-    options.portRef.value?.setDragUndoRecorder((payload) => {
-      canvasCommands.finishDrag(payload)
+  function wireDocumentCommandBridge() {
+    options.portRef.value?.setDocumentCommandBridge({
+      finishDrag: (payload) => {
+        void canvasCommands.finishDrag(payload)
+      },
+      formatPainterApply: (payload) => {
+        void canvasCommands.formatPainterApply(payload)
+      },
+      insertNodeOnEdge: (payload) => {
+        void canvasCommands.insertNodeOnEdge(payload)
+      }
     })
   }
 
@@ -88,7 +96,7 @@ export function useDiagramEditorCommandSetup(
     () => [options.sessionRef.value, options.portRef.value, options.getFileId()] as const,
     () => {
       bindTransaction()
-      wireDragUndoRecorder()
+      wireDocumentCommandBridge()
     },
     { immediate: true, flush: 'post' }
   )

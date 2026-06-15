@@ -18,6 +18,8 @@ import type {
   DiagramProjectOpenRecentFileParams
 } from '@modules/library/diagrams/app/command/domain/payloads'
 import type { DiagramCommandResult } from '@modules/library/diagrams/app/command/domain/types'
+import { withDiagramSaveMutex } from '@modules/library/diagrams/lib/diagramSaveMutex'
+import type { WriteResult } from '@shared/types/diagrams'
 
 class FileOpenCommand extends DiagramAppCommandBase {
   readonly id = DiagramCmd.File.Open
@@ -70,7 +72,7 @@ class FileReloadCommand extends DiagramAppCommandBase {
   async execute(_params: undefined, ctx: DiagramCommandExecutionContext) {
     const session = ctx.session
     if (!session?.fileId) return diagramError('VALIDATION', '当前文档尚未保存')
-    await session.openFromFile(session.fileId)
+    await session.openFromFile(session.fileId, { force: true })
     return { ok: true as const, data: { fileId: session.fileId } }
   }
 }
@@ -212,7 +214,30 @@ async function importExternal(
   return { ok: true as const, data: { fileId: record.meta.id, title: record.meta.title } }
 }
 
+function mapWriteFailure(result: Extract<WriteResult, { ok: false }>): DiagramCommandResult {
+  switch (result.reason) {
+    case 'conflict':
+      return diagramError('CONFLICT', result.message ?? '保存冲突')
+    case 'not_found':
+      return diagramError('NOT_FOUND', result.message ?? '文件不存在')
+    default:
+      return diagramError('INTERNAL', result.message ?? '保存失败')
+  }
+}
+
 async function saveFile(
+  session: DiagramEditorSession | null,
+  folderId: string,
+  title?: string,
+  force?: boolean,
+  auto?: boolean
+): Promise<DiagramCommandResult> {
+  return withDiagramSaveMutex(() =>
+    saveFileInner(session, folderId, title, force, auto)
+  )
+}
+
+async function saveFileInner(
   session: DiagramEditorSession | null,
   folderId: string,
   title?: string,
@@ -235,9 +260,7 @@ async function saveFile(
 
   if (!session.fileId) {
     if (auto) {
-      const record = await session.repository.createFile(folderId || DG_FILES, content.meta.title, content)
-      session.markSaved(record.meta)
-      return { ok: true as const, data: record }
+      return { ok: true as const, data: { noop: true, fileId: null, reason: 'no_file_id' } }
     }
     const saved = await session.repository.saveNewWithDialog({
       folderId: folderId || DG_FILES,
@@ -252,14 +275,17 @@ async function saveFile(
     return { ok: true as const, data: saved.record }
   }
 
+  const persistedPatch = session.getWritePatch()
+  const saveGenerationAtStart = session.getSaveGeneration()
+
   const result = await session.repository.writeFile(
     session.fileId,
     content,
     session.fileMeta?.updatedAt ?? '',
     force,
-    session.getWritePatch()
+    persistedPatch
   )
-  if (!result.ok) return diagramError('CONFLICT', result.message ?? '保存冲突')
+  if (!result.ok) return mapWriteFailure(result)
 
   let meta = session.fileMeta
   if (meta) {
@@ -279,7 +305,7 @@ async function saveFile(
     if (!renamed) return diagramError('INTERNAL', '重命名失败')
     meta = renamed
   }
-  if (meta) session.markSaved(meta)
+  if (meta) session.markSaved(meta, { persistedPatch, saveGenerationAtStart })
   return { ok: true as const, data: { fileId: session.fileId, updatedAt: meta?.updatedAt ?? result.updatedAt, meta } }
 }
 

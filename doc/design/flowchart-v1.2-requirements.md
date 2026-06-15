@@ -507,7 +507,7 @@ flowchart LR
 
 ### 8.2 命令模型（可序列化 · 可校验 · 可批量）
 
-所有命令为 **纯 JSON 友好** 结构，定义于 `src/modules/library/diagrams/domain/commands/`（按域拆分文件，避免单文件膨胀）。
+所有命令为 **纯 JSON 友好** 结构，定义于 `src/modules/library/diagrams/app/command/domain/`（`ids.ts`、`payloads.ts`、`types.ts` 等，按域拆分避免单文件膨胀）。
 
 ```ts
 /** 命令信封：便于 MCP 批量下发与审计日志 */
@@ -673,7 +673,7 @@ flowchart TB
 | 层级 | 允许依赖 | **禁止** |
 |------|----------|----------|
 | `views/*` | `composables/useDiagramCommandBus`、`domain` 类型 | `@logicflow/*`、`electron`、`Pinia` 直接 IPC |
-| `app/*` | `interfaces/*`、`domain/commands` | Vue 组件、LogicFlow |
+| `app/*` | `interfaces/*`、`app/command/domain` | Vue 组件、LogicFlow |
 | `interfaces/*` | 仅类型 | 任何实现 |
 | `services/LogicFlowDiagramAdapter` | `@logicflow/*` | Pinia、Router、IPC |
 | `composables/*` | `interfaces`、`app` | LogicFlow（除 adapter 工厂注入） |
@@ -997,7 +997,7 @@ git clone --depth 1 https://github.com/bcakmakoglu/vue-flow.git
 
 ### PR-1 领域与命令契约（约 2 天）
 
-- [ ] `domain/commands/*` 类型与错误码
+- [ ] `app/command/domain/*` 类型与错误码
 - [ ] `shared/types/diagrams.ts` DTO
 - [ ] `commandValidation.ts`（主进程 file/folder payload 校验）
 - [ ] 单元测试：命令 type 校验、非法 payload 拒绝

@@ -45,6 +45,24 @@ export function readGroupAlwaysVisible(properties: Record<string, unknown>): boo
   return Boolean(properties.dgGroupAlwaysVisible)
 }
 
+/** 连线端点落在组合框上时自动开启「始终显示」（由 edge:add 在 undo 提交前调用） */
+export function applyGroupFrameAlwaysVisibleForConnectedNodes(
+  lf: LogicFlow,
+  sourceNodeId: string,
+  targetNodeId: string
+): boolean {
+  let changed = false
+  for (const nodeId of [sourceNodeId, targetNodeId]) {
+    const model = lf.getNodeModelById(nodeId)
+    if (!model || !isGroupFrameType(model.type)) continue
+    const props = (model.properties ?? {}) as Record<string, unknown>
+    if (readGroupAlwaysVisible(props)) continue
+    lf.setProperties(nodeId, { dgGroupAlwaysVisible: true })
+    changed = true
+  }
+  return changed
+}
+
 /** 新建组合框时的内边距与最小尺寸 */
 export const DIAGRAM_GROUP_FRAME_CREATE_PAD = 12
 export const DIAGRAM_GROUP_FRAME_MIN_SIZE = { width: 80, height: 60 } as const

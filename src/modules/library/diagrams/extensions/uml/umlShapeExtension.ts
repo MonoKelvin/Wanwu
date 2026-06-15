@@ -41,6 +41,26 @@ export const umlShapeExtension: DiagramShapeExtension = {
         showAttributes: false,
         showOperations: true
       }
+    },
+    {
+      paletteId: 'dg-uml-abstract',
+      kind: UML_CLASSIFIER_KIND,
+      defaultOverrides: {
+        classifierKind: 'abstractClass',
+        name: 'AbstractClass',
+        showAttributes: true,
+        showOperations: true
+      }
+    },
+    {
+      paletteId: 'dg-uml-enum',
+      kind: UML_CLASSIFIER_KIND,
+      defaultOverrides: {
+        classifierKind: 'enum',
+        name: 'EnumName',
+        showAttributes: true,
+        showOperations: false
+      }
     }
   ]
 }

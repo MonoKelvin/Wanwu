@@ -128,7 +128,7 @@ export class DiagramEditorMountCoordinator {
         ports.multiSelectOverlay.syncDomFlags(layout.nodeCount)
         ports.multiSelectOverlay.flushLayout(layout)
       },
-      () => ports.groupFrames.scheduleSyncDuringDrag(),
+      () => ports.groupFrames.syncDuringDrag(undefined, 'fit'),
       el,
       {
         onStart: () => ports.captureDragUndoBaseline(),

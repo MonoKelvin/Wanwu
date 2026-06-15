@@ -21,7 +21,10 @@ export function bindDiagramCanvasEvents(ports: DiagramCanvasEventBinderPorts): (
       onAdjustDrag: () => {
         ports.refreshMultiSelectResize()
         ports.scheduleOverlayLayout()
-      }
+      },
+      captureDragUndoBaseline: () => ports.captureDragUndoBaseline(),
+      commitDragUndoMutation: () => ports.commitDragUndoMutation(),
+      clearDragUndoBaseline: () => ports.clearDragUndoBaseline()
     })
 
   return () => {

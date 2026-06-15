@@ -18,8 +18,8 @@ export default defineConfig({
     include: [
       'src/app/command/**/*.test.ts',
       'src/app/transaction/**/*.test.ts',
-      'src/modules/library/diagrams/app/transaction/**/*.test.ts',
-      'src/modules/library/diagrams/app/command/**/*.test.ts'
+      'src/modules/library/diagrams/app/**/*.test.ts',
+      'electron/**/*.test.ts'
     ],
     environment: 'node'
   }

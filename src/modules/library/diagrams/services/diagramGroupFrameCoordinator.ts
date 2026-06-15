@@ -11,7 +11,8 @@ import {
 import {
   ensureAllGroupFramesAtBottom,
   syncGroupFrameBounds,
-  syncGroupFramesForNodes
+  syncGroupFramesForNodes,
+  type GroupFrameBoundsSyncMode
 } from '@modules/library/diagrams/lib/diagramGroupBounds'
 import { filterAlignableNodeIds } from '@modules/library/diagrams/lib/diagramSelectionSnapshot'
 
@@ -136,32 +137,41 @@ export class DiagramGroupFrameCoordinator {
     }
   }
 
-  syncForNodeIds(nodeIds: string[]): void {
+  syncForNodeIds(nodeIds: string[], mode: GroupFrameBoundsSyncMode = 'fit'): void {
     const lf = this.ports.getLf()
     if (!lf || !nodeIds.length) return
-    syncGroupFramesForNodes(lf, nodeIds)
+    syncGroupFramesForNodes(lf, nodeIds, { mode })
     this.refreshDisplay()
   }
 
-  scheduleSyncDuringDrag(triggerNodeId?: string): void {
-    if (this.syncDragRaf != null) return
-    this.syncDragRaf = requestAnimationFrame(() => {
+  /** 拖拽/缩放过程中立即同步（须在节点坐标更新之后调用） */
+  syncDuringDrag(triggerNodeId?: string, mode: GroupFrameBoundsSyncMode = 'fit'): void {
+    if (this.syncDragRaf != null) {
+      cancelAnimationFrame(this.syncDragRaf)
       this.syncDragRaf = null
-      const lf = this.ports.getLf()
-      if (!lf) return
-      const contentSelected = filterAlignableNodeIds(lf, collectOrderedSelectionIds(lf).nodeIds)
-      let syncIds: string[]
-      if (triggerNodeId) {
-        syncIds =
-          contentSelected.length >= 2 && contentSelected.includes(triggerNodeId)
-            ? contentSelected
-            : [triggerNodeId]
-      } else {
-        syncIds = contentSelected
-      }
-      if (!syncIds.length) return
-      this.syncForNodeIds(syncIds)
-    })
+    }
+    const lf = this.ports.getLf()
+    if (!lf) return
+    const contentSelected = filterAlignableNodeIds(lf, collectOrderedSelectionIds(lf).nodeIds)
+    let syncIds: string[]
+    if (triggerNodeId) {
+      syncIds =
+        contentSelected.length >= 2 && contentSelected.includes(triggerNodeId)
+          ? contentSelected
+          : [triggerNodeId]
+    } else {
+      syncIds = contentSelected
+    }
+    if (!syncIds.length) return
+    this.syncForNodeIds(syncIds, mode)
+  }
+
+  /** @deprecated 使用 syncDuringDrag（已改为立即同步） */
+  scheduleSyncDuringDrag(
+    triggerNodeId?: string,
+    mode: GroupFrameBoundsSyncMode = 'fit'
+  ): void {
+    this.syncDuringDrag(triggerNodeId, mode)
   }
 
   prepareFrameDragStart(nodeId: string): void {
@@ -195,7 +205,7 @@ export class DiagramGroupFrameCoordinator {
       if (memberNodeIds.length) {
         lf.graphModel.moveNodes(memberNodeIds, dx, dy, true)
       }
-      syncGroupFrameBounds(lf, nodeId)
+      syncGroupFrameBounds(lf, nodeId, { mode: 'fit' })
       const synced = lf.getNodeModelById(nodeId)
       if (synced) {
         this.dragLastPos.set(nodeId, { x: synced.x, y: synced.y })

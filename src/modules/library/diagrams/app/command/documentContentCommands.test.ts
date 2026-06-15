@@ -114,6 +114,86 @@ describe('FinishDrag command', () => {
   })
 })
 
+describe('FormatPainterApply command', () => {
+  it('applies node style snapshot via mutation', async () => {
+    const registry = new DiagramCommandRegistry()
+    registerDocumentContentCommands(registry)
+
+    const lf = {
+      getNodeModelById: () => ({
+        type: 'rect',
+        properties: { style: {} },
+        style: {},
+        setStyles: vi.fn()
+      }),
+      setProperties: vi.fn()
+    }
+    const ctx = baseCtx({
+      port: {
+        getLogicFlow: () => lf,
+        updateNodeProperties: vi.fn()
+      }
+    })
+
+    const result = await registry.execute(
+      DiagramCmd.Document.FormatPainterApply,
+      {
+        targetId: 'n1',
+        kind: 'node',
+        nodeSnapshot: {
+          fill: '#ff0000',
+          stroke: '#000',
+          strokeWidth: 1,
+          strokeDasharray: '',
+          shadow: 'none',
+          textStyle: { fontSize: 12, color: '#000', fontFamily: '', textAlign: 'center', fontWeight: 'normal', fontStyle: 'normal', underline: false, strikethrough: false },
+          isGroupFrame: false
+        }
+      },
+      ctx
+    )
+
+    expect(result.ok).toBe(true)
+  })
+})
+
+describe('InsertNodeOnEdge command', () => {
+  it('returns ok when split succeeds', async () => {
+    const registry = new DiagramCommandRegistry()
+    registerDocumentContentCommands(registry)
+
+    const lf = {
+      getEdgeModelById: () => ({
+        sourceNodeId: 's1',
+        targetNodeId: 't1',
+        type: 'polyline',
+        properties: {},
+        text: ''
+      }),
+      getNodeModelById: (id: string) => ({ id, x: 0, y: 0, width: 80, height: 40 }),
+      deleteEdge: vi.fn(),
+      addEdge: vi.fn()
+    }
+    const select = vi.fn()
+    const ctx = baseCtx({
+      port: {
+        getLogicFlow: () => lf,
+        select
+      }
+    })
+
+    const result = await registry.execute(
+      DiagramCmd.Document.InsertNodeOnEdge,
+      { nodeId: 'n1', edgeId: 'e1' },
+      ctx
+    )
+
+    expect(result.ok).toBe(true)
+    expect(lf.deleteEdge).toHaveBeenCalledWith('e1')
+    expect(select).toHaveBeenCalledWith(['n1'])
+  })
+})
+
 describe('Undo/Redo commands', () => {
   it('Undo invokes tx.undo inside withUndoRedoRestoreAsync', async () => {
     const registry = new DiagramCommandRegistry()

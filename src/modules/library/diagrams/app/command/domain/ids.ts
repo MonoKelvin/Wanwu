@@ -44,6 +44,8 @@ export const DiagramCmd = {
     NudgeSelection: 'Diagram.Document.NudgeSelection',
     FormatPainterStart: 'Diagram.Document.FormatPainterStart',
     FormatPainterCancel: 'Diagram.Document.FormatPainterCancel',
+    FormatPainterApply: 'Diagram.Document.FormatPainterApply',
+    InsertNodeOnEdge: 'Diagram.Document.InsertNodeOnEdge',
     ClearStyles: 'Diagram.Document.ClearStyles',
     /** 内部：拖拽结束提交 undo 栈 */
     FinishDrag: 'Diagram.Document.FinishDrag'

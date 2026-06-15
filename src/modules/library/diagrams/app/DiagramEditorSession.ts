@@ -33,6 +33,8 @@ export class DiagramEditorSession {
   readonly dirtyPageIds = new Set<string>()
   metaDirty = false
   readonly deletedPageIds = new Set<string>()
+  /** 每次画布/元数据变脏时递增，用于检测保存过程中的并发编辑 */
+  private saveGeneration = 0
 
   constructor(
     private readonly port: IDiagramEditorPort,
@@ -95,8 +97,13 @@ export class DiagramEditorSession {
 
   markActivePageDirty(): void {
     if (!this.activePageId) return
+    this.saveGeneration += 1
     this.dirty = true
     this.dirtyPageIds.add(this.activePageId)
+  }
+
+  getSaveGeneration(): number {
+    return this.saveGeneration
   }
 
   /** 仅同步视口到内存页数据，不触发 dirty / 自动保存 */
@@ -270,9 +277,42 @@ export class DiagramEditorSession {
     return this.port
   }
 
-  markSaved(meta: DiagramFileMeta): void {
+  /** 保存成功后更新元数据；仅清除本次落盘涵盖的 dirty 标记，保留保存期间新增编辑 */
+  markSaved(
+    meta: DiagramFileMeta,
+    options?: {
+      persistedPatch?: {
+        dirtyPageIds: string[]
+        metaDirty: boolean
+        deletedPageIds: string[]
+      }
+      saveGenerationAtStart?: number
+    }
+  ): void {
     this.fileId = meta.id
     this.fileMeta = meta
+    this.flushActivePage({ markDirty: false })
+
+    const concurrentEdit =
+      options?.saveGenerationAtStart != null &&
+      this.saveGeneration !== options.saveGenerationAtStart
+
+    if (concurrentEdit) {
+      this.dirty =
+        this.dirtyPageIds.size > 0 || this.metaDirty || this.deletedPageIds.size > 0
+      return
+    }
+
+    const patch = options?.persistedPatch
+    if (patch) {
+      for (const id of patch.dirtyPageIds) this.dirtyPageIds.delete(id)
+      for (const id of patch.deletedPageIds) this.deletedPageIds.delete(id)
+      if (patch.metaDirty) this.metaDirty = false
+      this.dirty =
+        this.dirtyPageIds.size > 0 || this.metaDirty || this.deletedPageIds.size > 0
+      return
+    }
+
     this.clearDirtyState()
   }
 
