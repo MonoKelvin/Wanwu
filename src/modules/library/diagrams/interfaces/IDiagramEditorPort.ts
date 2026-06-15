@@ -34,7 +34,9 @@ export interface IDiagramEditorPort {
   setTheme(resolved: 'light' | 'dark'): void
   exportPng(): Promise<Blob>
   exportSvg(): Promise<string>
+  /** @deprecated 撤销请走 DiagramCmd.Document.Undo → TransactionManager */
   undo(): void
+  /** @deprecated 重做请走 DiagramCmd.Document.Redo → TransactionManager */
   redo(): void
   zoom(delta?: number, scale?: number): void
   zoomToFit(): void

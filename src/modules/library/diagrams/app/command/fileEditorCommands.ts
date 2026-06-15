@@ -30,16 +30,16 @@ class FileOpenCommand extends DiagramAppCommandBase {
     const skipViewport = Boolean(p.skipViewport)
     if (p.fileId) {
       await session.openFromFile(p.fileId, { skipViewport })
-      return { ok: true, data: { fileId: session.fileId } }
+      return { ok: true as const, data: { fileId: session.fileId } }
     }
     if (p.templateId) {
       const tpl = getDiagramTemplate(p.templateId)
       if (!tpl) return diagramError('NOT_FOUND', '模板不存在')
       await session.openFromTemplate(tpl.content, { skipViewport })
-      return { ok: true, data: { templateId: p.templateId } }
+      return { ok: true as const, data: { templateId: p.templateId } }
     }
     session.openBlank()
-    return { ok: true }
+    return { ok: true as const }
   }
 }
 
@@ -71,7 +71,7 @@ class FileReloadCommand extends DiagramAppCommandBase {
     const session = ctx.session
     if (!session?.fileId) return diagramError('VALIDATION', '当前文档尚未保存')
     await session.openFromFile(session.fileId)
-    return { ok: true, data: { fileId: session.fileId } }
+    return { ok: true as const, data: { fileId: session.fileId } }
   }
 }
 
@@ -95,10 +95,10 @@ class FileExportCommand extends DiagramAppCommandBase {
         defaultName: session.content.meta.title
       })
       if (!exported.ok) {
-        if (exported.canceled) return { ok: true, data: { format: 'wfg', canceled: true } }
+        if (exported.canceled) return { ok: true as const, data: { format: 'wfg', canceled: true } }
         return diagramError('INTERNAL', exported.error ?? '导出失败')
       }
-      return { ok: true, data: { format: 'wfg', path: exported.path } }
+      return { ok: true as const, data: { format: 'wfg', path: exported.path } }
     }
 
     if (scope === 'all') {
@@ -114,7 +114,7 @@ class FileExportCommand extends DiagramAppCommandBase {
         }
       }
       if (restorePageId && restorePageId !== session.activePageId) session.switchPage(restorePageId)
-      return { ok: true, data: { format, scope: 'all', pages } }
+      return { ok: true as const, data: { format, scope: 'all', pages } }
     }
 
     if (p.pageId && p.pageId !== session.activePageId) {
@@ -123,9 +123,9 @@ class FileExportCommand extends DiagramAppCommandBase {
       session.flushActivePage({ markDirty: false })
     }
     if (format === 'svg') {
-      return { ok: true, data: { format, svg: await session.editorPort.exportSvg() } }
+      return { ok: true as const, data: { format, svg: await session.editorPort.exportSvg() } }
     }
-    return { ok: true, data: { format, blob: await session.editorPort.exportPng() } }
+    return { ok: true as const, data: { format, blob: await session.editorPort.exportPng() } }
   }
 }
 
@@ -153,10 +153,10 @@ class FileCloseCommand extends DiagramAppCommandBase {
 
   async execute(params: DiagramFileCloseParams | undefined, ctx: DiagramCommandExecutionContext) {
     const session = ctx.session
-    if (!session) return { ok: true }
+    if (!session) return { ok: true as const }
     const p = this.castParams<DiagramFileCloseParams>(params)
     if (!p.discard && session.dirty) return diagramError('VALIDATION', '文档有未保存更改')
-    return { ok: true }
+    return { ok: true as const }
   }
 }
 
@@ -169,7 +169,7 @@ class ProjectOpenRecentFileCommand extends DiagramAppCommandBase {
     if (!session) return diagramError('NO_SESSION', '无活跃编辑器会话')
     const p = this.castParams<DiagramProjectOpenRecentFileParams>(params)
     await session.openFromFile(p.fileId, { skipViewport: Boolean(p.skipViewport) })
-    return { ok: true, data: { fileId: session.fileId } }
+    return { ok: true as const, data: { fileId: session.fileId } }
   }
 }
 
@@ -185,7 +185,7 @@ async function importExternal(
   if (kind === 'wfg') {
     const imported = await session.repository.importWfg()
     if (!imported.ok) {
-      if (imported.canceled) return { ok: true, data: { canceled: true } }
+      if (imported.canceled) return { ok: true as const, data: { canceled: true } }
       return diagramError('INTERNAL', imported.error ?? '导入失败')
     }
     const record = await session.repository.importWfgFromSource(
@@ -195,12 +195,12 @@ async function importExternal(
     )
     if (!record) return diagramError('INTERNAL', '导入保存失败')
     await session.openFromFile(record.meta.id, { skipViewport: true })
-    return { ok: true, data: { fileId: record.meta.id, title: record.meta.title } }
+    return { ok: true as const, data: { fileId: record.meta.id, title: record.meta.title } }
   }
 
   const imported = await session.repository.importDrawio()
   if (!imported.ok) {
-    if (imported.canceled) return { ok: true, data: { canceled: true } }
+    if (imported.canceled) return { ok: true as const, data: { canceled: true } }
     return diagramError('INTERNAL', imported.error ?? '导入失败')
   }
   const record = await session.repository.createFile(
@@ -209,7 +209,7 @@ async function importExternal(
     imported.content
   )
   await session.openFromFile(record.meta.id, { skipViewport: true })
-  return { ok: true, data: { fileId: record.meta.id, title: record.meta.title } }
+  return { ok: true as const, data: { fileId: record.meta.id, title: record.meta.title } }
 }
 
 async function saveFile(
@@ -230,14 +230,14 @@ async function saveFile(
   }
 
   if (!session.dirty && !title && !force) {
-    return { ok: true, data: { noop: true, fileId: session.fileId } }
+    return { ok: true as const, data: { noop: true, fileId: session.fileId } }
   }
 
   if (!session.fileId) {
     if (auto) {
       const record = await session.repository.createFile(folderId || DG_FILES, content.meta.title, content)
       session.markSaved(record.meta)
-      return { ok: true, data: record }
+      return { ok: true as const, data: record }
     }
     const saved = await session.repository.saveNewWithDialog({
       folderId: folderId || DG_FILES,
@@ -249,7 +249,7 @@ async function saveFile(
       return diagramError('INTERNAL', saved.error ?? '保存失败')
     }
     session.markSaved(saved.record.meta)
-    return { ok: true, data: saved.record }
+    return { ok: true as const, data: saved.record }
   }
 
   const result = await session.repository.writeFile(
@@ -280,7 +280,7 @@ async function saveFile(
     meta = renamed
   }
   if (meta) session.markSaved(meta)
-  return { ok: true, data: { fileId: session.fileId, updatedAt: meta?.updatedAt ?? result.updatedAt, meta } }
+  return { ok: true as const, data: { fileId: session.fileId, updatedAt: meta?.updatedAt ?? result.updatedAt, meta } }
 }
 
 async function saveAsNew(
@@ -294,7 +294,7 @@ async function saveAsNew(
   if (title) content.meta.title = title
   const record = await session.repository.createFile(folderId || DG_FILES, content.meta.title, content)
   session.markSaved(record.meta)
-  return { ok: true, data: record }
+  return { ok: true as const, data: record }
 }
 
 export function registerFileEditorCommands(registry: DiagramCommandRegistry): void {

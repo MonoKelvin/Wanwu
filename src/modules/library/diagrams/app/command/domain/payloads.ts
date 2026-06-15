@@ -1,5 +1,6 @@
 import type { IDiagramCommandParams } from '@modules/library/diagrams/app/command/domain/base'
 import { DiagramCmd } from '@modules/library/diagrams/app/command/domain/ids'
+import type { DiagramContent } from '@shared/types/diagrams'
 
 export interface DiagramFileOpenParams extends IDiagramCommandParams {
   fileId?: string

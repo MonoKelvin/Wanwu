@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { ITransactionUnit, OperationResult, TransactionContext } from '@app/transaction'
+import type { ITransactionUnit, OperationResult, TransactionContext, UnitRecord } from '@app/transaction'
 import { runDiagramCommandTransaction } from '@modules/library/diagrams/app/transaction/canvasTransaction'
 
 class FlagUnit implements ITransactionUnit {
@@ -24,8 +24,14 @@ class FlagUnit implements ITransactionUnit {
     return { ok: true }
   }
 
-  toRecord() {
-    throw new Error('not serializable')
+  toRecord(): UnitRecord {
+    return {
+      unitType: this.meta.unitType,
+      codecId: 'json',
+      schemaVersion: 1,
+      body: '{}',
+      meta: this.meta
+    }
   }
 }
 

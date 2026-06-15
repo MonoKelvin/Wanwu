@@ -1,5 +1,5 @@
 import type LogicFlow from '@logicflow/core'
-import type BaseEdgeModel from '@logicflow/core/es/model/edge/BaseEdgeModel'
+import type BaseEdgeModel from '@logicflow/core/lib/model/edge/BaseEdgeModel'
 
 type DiagramPoint = { x: number; y: number }
 type DiagramRect = { left: number; right: number; top: number; bottom: number }
@@ -245,7 +245,7 @@ export function syncDiagramEdgeTextPosition(model: BaseEdgeModel): void {
     return
   }
 
-  model.setText({ x: pos.x, y: pos.y })
+  model.setText({ ...text, x: pos.x, y: pos.y })
 }
 
 export function syncDiagramEdgeTextById(lf: LogicFlow, edgeId: string): void {

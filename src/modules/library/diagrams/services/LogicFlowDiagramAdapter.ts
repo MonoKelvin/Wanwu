@@ -1,3 +1,7 @@
+/**
+ * LogicFlow 画布适配器：实现 IDiagramEditorPort，组合框选/剪贴板/选区等 coordinator。
+ * 撤销/重做走 TransactionManager + 图快照单元，不依赖 LogicFlow 内置 history（mount 时 history: false）。
+ */
 import LogicFlow from '@logicflow/core'
 import type { CanvasGraphPatch, DiagramViewport, IDiagramEditorPort } from '@modules/library/diagrams/interfaces/IDiagramEditorPort'
 import {
@@ -167,7 +171,6 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     clientToCanvas: (x, y) => this.clientToCanvas(x, y),
     getSnapGrid: () => this.canvasSettings.snapGrid,
     getLastCanvasPointerClient: () => this.getLastCanvasPointerClient(),
-    clearBoxSelectSnapshots: () => this.boxSelect.clearSnapshots(),
     collectLiveSelection: () => this.selectionBridge.collectLiveSelectedIds(),
     select: (nodeIds, edgeIds) => this.select(nodeIds, edgeIds),
     prepareSelectionForCopy: () => this.prepareSelectionForCopy(),
@@ -332,7 +335,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     })
   }
 
-  /** 单图元缩放结束：仅同步组合框，不吸附中心点（吸附会偏移对角锚定位置） */
+  /** 单图元缩放结束：同步布局副作用后提交 undo 事务 */
   private scheduleResizeFollowUp(nodeId: string): void {
     if (this.resizeSnapTimer) clearTimeout(this.resizeSnapTimer)
     this.resizeSnapTimer = setTimeout(() => {
@@ -342,6 +345,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       this.refreshMultiSelectResize?.()
       this.multiSelectOverlay.scheduleLayout()
       this.scheduleGraphChange()
+      this.commitDragUndoMutation()
     }, 120)
   }
 
@@ -377,7 +381,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       onViewportChange: () => this.viewportChangeHandler?.(),
       getSelectedContentNodeIds: () => this.getSelectedContentNodeIds(),
       scheduleGraphChange: () => this.scheduleGraphChange(),
-      refreshAxisOverlay: () => this.refreshAxisOverlay()
+      refreshAxisOverlay: () => this.refreshAxisOverlay(),
+      captureDragUndoBaseline: () => this.captureDragUndoBaseline(),
+      commitDragUndoMutation: () => this.commitDragUndoMutation()
     })
 
     this.lf = mounted.lf
@@ -479,6 +485,12 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     }
   }
 
+  /** 属性面板改布局后刷新多选缩放框与 overlay */
+  refreshAfterLayoutChange(): void {
+    this.refreshMultiSelectResize?.()
+    this.scheduleOverlayLayout()
+  }
+
   captureSelectionIds(): DiagramSelectionIds {
     if (!this.lf) return { nodeIds: [], edgeIds: [] }
     const selected = this.lf.getSelectElements(true)
@@ -498,6 +510,14 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
 
   captureDragUndoBaseline(): void {
     if (!this.dragUndoRecorder || !this.lf) return
+    if (this.dragUndoBaseline) {
+      if (import.meta.env.DEV) {
+        console.warn(
+          '[DiagramEditor] 拖拽/缩放 undo 基线被覆盖，先提交未完成的基线'
+        )
+      }
+      this.commitDragUndoMutation()
+    }
     this.dragUndoBaseline = {
       beforeGraph: cloneForIpc(this.getGraph()),
       beforeSelection: this.captureSelectionIds()
@@ -899,12 +919,18 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     return this.exportCoordinator.exportSvg()
   }
 
+  /** @deprecated 撤销请走 DiagramCmd.Document.Undo → TransactionManager，LogicFlow history 已关闭 */
   undo(): void {
-    this.lf?.undo()
+    if (import.meta.env.DEV) {
+      console.warn('[DiagramEditor] port.undo() 已废弃，请使用 DiagramCmd.Document.Undo')
+    }
   }
 
+  /** @deprecated 重做请走 DiagramCmd.Document.Redo → TransactionManager，LogicFlow history 已关闭 */
   redo(): void {
-    this.lf?.redo()
+    if (import.meta.env.DEV) {
+      console.warn('[DiagramEditor] port.redo() 已废弃，请使用 DiagramCmd.Document.Redo')
+    }
   }
 
   zoom(delta?: number, scale?: number): void {

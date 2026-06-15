@@ -83,7 +83,7 @@ export function ensureAllGroupFramesAtBottom(lf: LogicFlow): void {
   }
 }
 
-export function collectGroupIdsForNodes(lf: LogicFlow, nodeIds: string[]): Set<string> {
+export function collectGroupIdsForNodes(lf: LogicFlow, nodeIds: readonly string[]): Set<string> {
   const groupIds = new Set<string>()
   for (const id of nodeIds) {
     const model = lf.getNodeModelById(id)
@@ -100,7 +100,7 @@ export function collectGroupIdsForNodes(lf: LogicFlow, nodeIds: string[]): Set<s
   return groupIds
 }
 
-export function syncGroupFramesForNodes(lf: LogicFlow, nodeIds: string[]): void {
+export function syncGroupFramesForNodes(lf: LogicFlow, nodeIds: readonly string[]): void {
   for (const groupId of collectGroupIdsForNodes(lf, nodeIds)) {
     syncGroupFrameBounds(lf, groupId)
   }

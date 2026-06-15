@@ -1,3 +1,7 @@
+/**
+ * 画布事务辅助：属性改布局用 DiagramNodeLayoutUnit，结构性变更用 DiagramGraphSnapshotUnit。
+ * runDocumentMutation 按 patch 类型自动选择单元，命令层通过 runDiagramCommandTransaction 提交。
+ */
 import type { ITransactionUnit, OperationResult, TransactionContext, TransactionManager } from '@app/transaction'
 import type { DiagramEditorSession } from '@modules/library/diagrams/app/DiagramEditorSession'
 import { diagramError } from '@modules/library/diagrams/app/diagramCommandErrors'

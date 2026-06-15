@@ -28,7 +28,7 @@ export class DiagramTransactionStepSpill {
     const spillStart = Math.max(0, stack.index - MEMORY_RETAIN_STEPS)
     this.pendingSteps = stack.steps.slice(0, spillStart).flatMap((step) => {
       return step.units
-        .filter((u) => u.unitType.startsWith('diagram.graphSnapshot'))
+        .filter((u) => u.meta.unitType.startsWith('diagram.graphSnapshot'))
         .map((u) => ({
           resourceId,
           stepId: step.id,

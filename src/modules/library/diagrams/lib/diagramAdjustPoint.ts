@@ -68,46 +68,50 @@ export class DiagramAdjustPoint extends AdjustPoint {
           if (type === AdjustType.SOURCE) {
             const sourceNode = graphModel.getNodeModelById(info.node.id)
             const targetNode = graphModel.getNodeModelById(edgeModel.targetNodeId)
-            const edgeInfo = graphModel.edgeGenerator?.(
-              sourceNode?.getData(),
-              targetNode?.getData(),
-              createEdgeInfo
-            )
-            createEdgeInfo = {
-              ...edgeInfo,
-              sourceNodeId: info.node.id,
-              sourceAnchorId: info.anchor.id,
-              startPoint: { x: info.anchor.x, y: info.anchor.y },
-              targetNodeId: edgeModel.targetNodeId,
-              endPoint: { ...edgeModel.endPoint }
-            }
-            if (
-              edgeModel.sourceNodeId === info.node.id &&
-              edgeModel.sourceAnchorId === info.anchor.id
-            ) {
+            const sourceData = sourceNode?.getData()
+            const targetData = targetNode?.getData()
+            if (!sourceData || !targetData) {
               needRecoveryEdge = true
+            } else {
+              const edgeInfo = graphModel.edgeGenerator?.(sourceData, targetData, createEdgeInfo)
+              createEdgeInfo = {
+                ...edgeInfo,
+                sourceNodeId: info.node.id,
+                sourceAnchorId: info.anchor.id,
+                startPoint: { x: info.anchor.x, y: info.anchor.y },
+                targetNodeId: edgeModel.targetNodeId,
+                endPoint: { ...edgeModel.endPoint }
+              }
+              if (
+                edgeModel.sourceNodeId === info.node.id &&
+                edgeModel.sourceAnchorId === info.anchor.id
+              ) {
+                needRecoveryEdge = true
+              }
             }
           } else if (type === AdjustType.TARGET) {
             const sourceNode = graphModel.getNodeModelById(edgeModel.sourceNodeId)
             const targetNode = graphModel.getNodeModelById(info.node.id)
-            const edgeInfo = graphModel.edgeGenerator?.(
-              sourceNode?.getData(),
-              targetNode?.getData(),
-              createEdgeInfo
-            )
-            createEdgeInfo = {
-              ...edgeInfo,
-              sourceNodeId: edgeModel.sourceNodeId,
-              startPoint: { ...edgeModel.startPoint },
-              targetNodeId: info.node.id,
-              targetAnchorId: info.anchor.id,
-              endPoint: { x: info.anchor.x, y: info.anchor.y }
-            }
-            if (
-              edgeModel.targetNodeId === info.node.id &&
-              edgeModel.targetAnchorId === info.anchor.id
-            ) {
+            const sourceData = sourceNode?.getData()
+            const targetData = targetNode?.getData()
+            if (!sourceData || !targetData) {
               needRecoveryEdge = true
+            } else {
+              const edgeInfo = graphModel.edgeGenerator?.(sourceData, targetData, createEdgeInfo)
+              createEdgeInfo = {
+                ...edgeInfo,
+                sourceNodeId: edgeModel.sourceNodeId,
+                startPoint: { ...edgeModel.startPoint },
+                targetNodeId: info.node.id,
+                targetAnchorId: info.anchor.id,
+                endPoint: { x: info.anchor.x, y: info.anchor.y }
+              }
+              if (
+                edgeModel.targetNodeId === info.node.id &&
+                edgeModel.targetAnchorId === info.anchor.id
+              ) {
+                needRecoveryEdge = true
+              }
             }
           }
         } else {
@@ -127,7 +131,7 @@ export class DiagramAdjustPoint extends AdjustPoint {
       } else if (!needRecoveryEdge && createEdgeInfo) {
         const oldEdgeData = edgeModel.getData()
         graphModel.deleteEdgeById(edgeModel.id)
-        const edge = graphModel.addEdge({ ...createEdgeInfo })
+        const edge = graphModel.addEdge(createEdgeInfo as unknown as Parameters<typeof graphModel.addEdge>[0])
         graphModel.eventCenter.emit(EventType.EDGE_EXCHANGE_NODE, {
           data: {
             newEdge: edge.getData(),

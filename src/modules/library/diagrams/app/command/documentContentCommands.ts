@@ -79,7 +79,7 @@ class FinishDragCommand extends DiagramAppCommandBase {
 
   async execute(params: DiagramDocumentFinishDragParams | undefined, ctx: DiagramCommandExecutionContext) {
     const p = this.castParams<DiagramDocumentFinishDragParams>(params)
-    if (graphDataEqual(p.beforeGraph, p.afterGraph)) return { ok: true }
+    if (graphDataEqual(p.beforeGraph, p.afterGraph)) return { ok: true as const }
 
     const canvas = requireCanvas(ctx)
     if (!isCanvasContext(canvas)) return canvas
@@ -109,11 +109,11 @@ class UndoCommand extends DiagramAppCommandBase {
     const canvas = requireCanvas(ctx)
     if (!isCanvasContext(canvas)) return canvas
     const tx = canvas.tx
-    if (!tx?.canUndo()) return { ok: true }
+    if (!tx?.canUndo()) return { ok: true as const }
     const undoResult = await canvas.port.withUndoRedoRestoreAsync(() => tx.undo())
     if (!undoResult.ok) return diagramError('INTERNAL', undoResult.message ?? '撤销失败')
     canvas.session.markActivePageDirty()
-    return { ok: true }
+    return { ok: true as const }
   }
 }
 
@@ -125,11 +125,11 @@ class RedoCommand extends DiagramAppCommandBase {
     const canvas = requireCanvas(ctx)
     if (!isCanvasContext(canvas)) return canvas
     const tx = canvas.tx
-    if (!tx?.canRedo()) return { ok: true }
+    if (!tx?.canRedo()) return { ok: true as const }
     const redoResult = await canvas.port.withUndoRedoRestoreAsync(() => tx.redo())
     if (!redoResult.ok) return diagramError('INTERNAL', redoResult.message ?? '重做失败')
     canvas.session.markActivePageDirty()
-    return { ok: true }
+    return { ok: true as const }
   }
 }
 

@@ -1,5 +1,5 @@
 import { DIAGRAM_GRID_SIZE } from '@modules/library/diagrams/lib/diagramCanvasTheme'
-import type { CanvasNudgeDirection } from '@modules/library/diagrams/app/command/domain/payloads'
+import type { DiagramDocumentNudgeDirection } from '@modules/library/diagrams/app/command/domain/payloads'
 
 export interface CanvasNudgeDelta {
   dx: number
@@ -8,7 +8,7 @@ export interface CanvasNudgeDelta {
 
 /** 根据方向、步进与网格设置计算微移偏移 */
 export function resolveCanvasNudgeDelta(
-  direction: CanvasNudgeDirection,
+  direction: DiagramDocumentNudgeDirection,
   options: { snapGrid: boolean; large?: boolean; fine?: boolean }
 ): CanvasNudgeDelta | null {
   if (options.fine) {

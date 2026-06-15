@@ -1,3 +1,7 @@
+/**
+ * 编辑器组合根：绑定 CommandBus、TransactionManager、拖拽 undo recorder 与剪贴板 actions。
+ * session/port 就绪后注册 finishDrag 回调；销毁时释放 tx 与 bus 订阅。
+ */
 import { onBeforeUnmount, watch, type ShallowRef } from 'vue'
 import type { DiagramEditorSession } from '@modules/library/diagrams/app/DiagramEditorSession'
 import { createDiagramCommandBus } from '@modules/library/diagrams/app/command/createDiagramCommandBus'

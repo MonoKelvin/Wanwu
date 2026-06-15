@@ -17,6 +17,7 @@ import {
 } from '@modules/library/diagrams/lib/diagramShapeResize'
 import { diagramResizeControlStyle, diagramResizeTheme } from '@modules/library/diagrams/lib/diagramShapeResize'
 import { syncNodeTextLayout } from '@modules/library/diagrams/lib/diagramStyleBridge'
+import { finalizeNodeLayoutChange } from '@modules/library/diagrams/lib/diagramNodeLayoutPatch'
 
 type HandleDir = DiagramResizeHandleDir
 
@@ -311,7 +312,11 @@ export function mountDiagramMultiSelectResize(
   onGraphChange: () => void,
   onLayoutChange?: (layout: DiagramMultiSelectLayout) => void,
   onNodesTransform?: () => void,
-  mountRoot?: HTMLElement
+  mountRoot?: HTMLElement,
+  resizeUndo?: {
+    onStart: () => void
+    onEnd: () => void
+  }
 ): DiagramMultiSelectResizeHandle {
   const root = document.createElement('div')
   root.className = 'dg-multi-select-resize'
@@ -430,6 +435,7 @@ export function mountDiagramMultiSelectResize(
         snaps = snapNodes(lf, selected)
         groupResizing = true
         diagramGroupMultiResizing = true
+        resizeUndo?.onStart()
         aspectLock = false
         root.classList.add('dg-multi-select-resize--dragging')
         window.addEventListener('keydown', syncAspectLock, true)
@@ -466,6 +472,7 @@ export function mountDiagramMultiSelectResize(
         window.removeEventListener('keyup', syncAspectLock, true)
         root.classList.remove('dg-multi-select-resize--dragging')
         if (snaps.length) {
+          const nodeIds = snaps.map((snap) => snap.id)
           for (const snap of snaps) {
             const model = lf.getNodeModelById(snap.id)
             if (model) {
@@ -475,11 +482,13 @@ export function mountDiagramMultiSelectResize(
               }
             }
           }
+          finalizeNodeLayoutChange(lf, nodeIds)
         }
         startBounds = null
         fixedAnchor = null
         snaps = []
         onGraphChange()
+        resizeUndo?.onEnd()
         refresh(true)
       }
     })
@@ -557,7 +566,6 @@ export function mountDiagramMultiSelectResize(
   lf.on('selection:selected', onRefresh)
   lf.on('selection:mouseup', onRefresh)
   lf.on('blank:click', onRefresh)
-  lf.on('history:change', onRefresh)
 
   const destroy = () => {
     onDragEnd()
@@ -575,7 +583,6 @@ export function mountDiagramMultiSelectResize(
     lf.off('selection:selected', onRefresh)
     lf.off('selection:mouseup', onRefresh)
     lf.off('blank:click', onRefresh)
-    lf.off('history:change', onRefresh)
     for (const dir of HANDLE_DIRS) {
       handles[dir].drag.destroy()
     }

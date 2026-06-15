@@ -1,3 +1,7 @@
+/**
+ * 框选协调器：处理 modifier 框选、grace period 与选区坐标快照。
+ * 框选手势期间抑制 selection:drag，避免 LogicFlow 对快照坐标二次偏移。
+ */
 import type LogicFlow from '@logicflow/core'
 import { isForwardBoxSelect } from '@modules/library/diagrams/lib/diagramBoxSelection'
 import { collectOrderedSelectionIds } from '@modules/library/diagrams/lib/diagramGroupSelection'

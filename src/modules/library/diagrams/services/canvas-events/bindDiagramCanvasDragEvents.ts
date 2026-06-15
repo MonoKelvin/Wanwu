@@ -1,3 +1,7 @@
+/**
+ * 画布拖拽/缩放事件绑定：磁吸、对齐辅助线、拖拽/缩放 undo 基线捕获与提交。
+ * undo 通过 captureDragUndoBaseline → commitDragUndoMutation → FinishDrag 图快照事务。
+ */
 import { collectOrderedSelectionIds } from '@modules/library/diagrams/lib/diagramGroupSelection'
 import { isGroupFrameType } from '@modules/library/diagrams/lib/diagramGroupFrame'
 import { isDiagramGroupMultiResizing } from '@modules/library/diagrams/lib/diagramMultiSelectResize'
@@ -29,7 +33,8 @@ import {
 } from '@modules/library/diagrams/lib/diagramSnapBypass'
 import {
   isDiagramResizeSessionActive,
-  onDiagramResizeSessionEnd
+  onDiagramResizeSessionEnd,
+  onDiagramResizeSessionStart
 } from '@modules/library/diagrams/lib/diagramResizeSession'
 import {
   cancelScheduledDiagramEdgeTextSync,
@@ -148,6 +153,9 @@ function syncSelectionOnNodeDragStart(
 export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts): () => void {
   const lf = ports.getLf()
   const teardownBypass = bindDiagramSnapBypassListeners()
+  const teardownResizeStart = onDiagramResizeSessionStart(() => {
+    ports.captureDragUndoBaseline()
+  })
   const teardownResizeEnd = onDiagramResizeSessionEnd(({ nodeId, handleIndex }) => {
     if (isDiagramSnapBypassActive()) {
       cancelResizeSnapFeedback()
@@ -306,6 +314,7 @@ export function bindDiagramCanvasDragEvents(ports: DiagramCanvasEventBinderPorts
     cancelScheduledDiagramEdgeTextSync()
     cancelResizeSnapFeedback()
     lf.removeNodeSnapLine()
+    teardownResizeStart()
     teardownResizeEnd()
     teardownBypass()
   }

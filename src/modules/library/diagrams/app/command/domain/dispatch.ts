@@ -3,18 +3,22 @@ import type { DiagramCommandId } from '@modules/library/diagrams/app/command/dom
 import type { DiagramCommandPayloadMap } from '@modules/library/diagrams/app/command/domain/payloads'
 import type { DiagramCommandEnvelope } from '@modules/library/diagrams/app/command/domain/types'
 
-/** 构建流程图命令信封；调用方在此处组装具体参数 */
-export function diagramCmd<K extends DiagramCommandId>(
+export function diagramCmd<K extends keyof DiagramCommandPayloadMap>(
   type: K,
-  ...args: K extends keyof DiagramCommandPayloadMap
-    ? [payload: DiagramCommandPayloadMap[K]]
-    : [payload?: IDiagramCommandParams]
-): DiagramCommandEnvelope<K> {
-  const payload = args[0]
+  payload: DiagramCommandPayloadMap[K]
+): DiagramCommandEnvelope<K>
+export function diagramCmd(
+  type: DiagramCommandId,
+  payload?: IDiagramCommandParams
+): DiagramCommandEnvelope
+export function diagramCmd(
+  type: DiagramCommandId,
+  payload?: IDiagramCommandParams
+): DiagramCommandEnvelope {
   return {
     type,
-    payload: payload as IDiagramCommandParams | undefined
-  }
+    payload
+  } as DiagramCommandEnvelope
 }
 
 export function diagramCmdEmpty<K extends DiagramCommandId>(type: K): DiagramCommandEnvelope<K> {

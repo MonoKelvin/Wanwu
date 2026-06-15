@@ -9,7 +9,13 @@ export type DiagramResizeSessionEndHandler = (ctx: {
   handleIndex: number
 }) => void
 
+export type DiagramResizeSessionStartHandler = (ctx: {
+  nodeId: string
+  handleIndex: number
+}) => void
+
 const endHandlers = new Set<DiagramResizeSessionEndHandler>()
+const startHandlers = new Set<DiagramResizeSessionStartHandler>()
 
 export function isDiagramResizeSessionActive(): boolean {
   return active
@@ -33,6 +39,8 @@ export function beginDiagramResizeSession(
   activeNodeId = nodeId
   activeHandleIndex = handleIndex
   activeFixedAnchor = fixedAnchor ?? null
+  const ctx = { nodeId, handleIndex }
+  for (const handler of startHandlers) handler(ctx)
 }
 
 export function endDiagramResizeSession(): void {
@@ -55,5 +63,12 @@ export function onDiagramResizeSessionEnd(handler: DiagramResizeSessionEndHandle
   endHandlers.add(handler)
   return () => {
     endHandlers.delete(handler)
+  }
+}
+
+export function onDiagramResizeSessionStart(handler: DiagramResizeSessionStartHandler): () => void {
+  startHandlers.add(handler)
+  return () => {
+    startHandlers.delete(handler)
   }
 }

@@ -65,6 +65,8 @@ export interface DiagramEditorMountCoordinatorPorts {
   getSelectedContentNodeIds(): string[]
   scheduleGraphChange(): void
   refreshAxisOverlay(): void
+  captureDragUndoBaseline(): void
+  commitDragUndoMutation(): void
 }
 
 /** LogicFlow 实例创建与 DOM 交互绑定 */
@@ -127,7 +129,11 @@ export class DiagramEditorMountCoordinator {
         ports.multiSelectOverlay.flushLayout(layout)
       },
       () => ports.groupFrames.scheduleSyncDuringDrag(),
-      el
+      el,
+      {
+        onStart: () => ports.captureDragUndoBaseline(),
+        onEnd: () => ports.commitDragUndoMutation()
+      }
     )
 
     return {
