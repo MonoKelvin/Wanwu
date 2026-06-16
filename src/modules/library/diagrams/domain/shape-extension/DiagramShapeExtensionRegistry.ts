@@ -1,5 +1,10 @@
 import type LogicFlow from '@logicflow/core'
 import type {
+  DiagramContextMenuContributionContext,
+  DiagramExtensionMenuItem,
+  DiagramShapeCanvasInteractionBinder
+} from '@modules/library/diagrams/domain/shape-extension/canvasInteractionTypes'
+import type {
   DiagramShapeExtension,
   DiagramShapeKindRegistration,
   DiagramShapePaletteBinding,
@@ -82,6 +87,37 @@ export class DiagramShapeExtensionRegistry implements IDiagramShapeExtensionRegi
 
   listExtensions(): DiagramShapeExtension[] {
     return [...this.extensions.values()]
+  }
+
+  listCanvasInteractionBinders(): DiagramShapeCanvasInteractionBinder[] {
+    const binders: DiagramShapeCanvasInteractionBinder[] = []
+    for (const ext of this.listExtensions()) {
+      binders.push(...(ext.canvasInteractionBinders ?? []))
+      for (const kind of ext.kinds) {
+        binders.push(...(kind.canvasInteractionBinders ?? []))
+      }
+    }
+    return binders
+  }
+
+  collectContextMenuItems(ctx: DiagramContextMenuContributionContext): DiagramExtensionMenuItem[] {
+    const items: DiagramExtensionMenuItem[] = []
+    const lf = ctx.getLf()
+    let activeKind: DiagramShapeKindRegistration | undefined
+
+    if (ctx.nodeIds.length === 1 && lf) {
+      activeKind = this.getKindByLfType(String(lf.getNodeModelById(ctx.nodeIds[0]!)?.type ?? ''))
+    }
+
+    for (const ext of this.listExtensions()) {
+      if (ext.contextMenuContributor) {
+        items.push(...ext.contextMenuContributor(ctx))
+      }
+    }
+    if (activeKind?.contextMenuContributor) {
+      items.push(...activeKind.contextMenuContributor(ctx))
+    }
+    return items
   }
 
   /** 拖入画布：根据 paletteId 生成默认 dgShape 信封 */

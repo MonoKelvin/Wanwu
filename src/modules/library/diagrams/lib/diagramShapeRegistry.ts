@@ -51,9 +51,13 @@ export function buildDiagramNodeConfig(
       bootstrapEnvelope
     )
     const kindReg = registry.getKind(bootstrapEnvelope.kind)
-    const text = kindReg?.codec.serializeText?.(bootstrapEnvelope.data)
-    if (text != null) {
-      base.text = text
+    if (kindReg?.codec.syncLfText === false) {
+      base.text = ''
+    } else {
+      const text = kindReg?.codec.serializeText?.(bootstrapEnvelope.data)
+      if (text != null) {
+        base.text = text
+      }
     }
   }
 

@@ -11,8 +11,8 @@ const GROUP_MIN_WIDTH = 80
 const GROUP_MIN_HEIGHT = 60
 
 /**
- * tight：以内容为中心紧贴（新建/合并组合）
- * fit：左/上锚定，右/下随内容伸缩（拖拽中与松手后均实时生效）
+ * tight / fit：均按成员内容 + 内边距重算四边，拖拽与松手后实时贴合。
+ * （历史上 fit 曾左/上锚定导致仅右/下可收缩，已统一为四向同步。）
  */
 export type GroupFrameBoundsSyncMode = 'tight' | 'fit'
 
@@ -55,35 +55,13 @@ function readMemberBounds(
   return { minX, maxX, minY, maxY }
 }
 
-/** 左/上锚定：仅在被内容推动时向外扩展；fit 时右/下可随内容收缩 */
-function resolveAnchoredHorizontal(
-  curLeft: number,
-  curRight: number,
-  reqLeft: number,
-  reqRight: number,
-  mode: GroupFrameBoundsSyncMode
-): { left: number; right: number } {
-  if (mode === 'tight') {
-    return { left: reqLeft, right: reqRight }
-  }
-  const left = Math.min(curLeft, reqLeft)
-  const right = reqRight
-  return { left, right }
+/** 按内容需求边界计算组合框四边（四向均可扩展/收缩） */
+function resolveFrameHorizontal(reqLeft: number, reqRight: number): { left: number; right: number } {
+  return { left: reqLeft, right: reqRight }
 }
 
-function resolveAnchoredVertical(
-  curTop: number,
-  curBottom: number,
-  reqTop: number,
-  reqBottom: number,
-  mode: GroupFrameBoundsSyncMode
-): { top: number; bottom: number } {
-  if (mode === 'tight') {
-    return { top: reqTop, bottom: reqBottom }
-  }
-  const top = Math.min(curTop, reqTop)
-  const bottom = reqBottom
-  return { top, bottom }
+function resolveFrameVertical(reqTop: number, reqBottom: number): { top: number; bottom: number } {
+  return { top: reqTop, bottom: reqBottom }
 }
 
 /** 最小尺寸不足时向右/下扩展，保持左/上锚定 */
@@ -141,7 +119,6 @@ export function syncGroupFrameBounds(
   const group = lf.getNodeModelById(groupId)
   if (!group || !isGroupFrameType(group.type)) return
 
-  const mode = options?.mode ?? 'fit'
   const { memberNodeIds, memberEdgeIds } = collectDiagramGroupContent(lf, groupId)
   const bounds = readMemberBounds(lf, memberNodeIds, memberEdgeIds)
   if (!bounds) return
@@ -151,25 +128,8 @@ export function syncGroupFrameBounds(
   const reqTop = bounds.minY - GROUP_PAD
   const reqBottom = bounds.maxY + GROUP_PAD
 
-  const curLeft = group.x - group.width / 2
-  const curTop = group.y - group.height / 2
-  const curRight = group.x + group.width / 2
-  const curBottom = group.y + group.height / 2
-
-  const { left: hLeft, right: hRight } = resolveAnchoredHorizontal(
-    curLeft,
-    curRight,
-    reqLeft,
-    reqRight,
-    mode
-  )
-  const { top: vTop, bottom: vBottom } = resolveAnchoredVertical(
-    curTop,
-    curBottom,
-    reqTop,
-    reqBottom,
-    mode
-  )
+  const { left: hLeft, right: hRight } = resolveFrameHorizontal(reqLeft, reqRight)
+  const { top: vTop, bottom: vBottom } = resolveFrameVertical(reqTop, reqBottom)
 
   const rect = enforceMinSizeAnchored(hLeft, vTop, hRight, vBottom)
   applyFrameRect(lf, group, rect.left, rect.top, rect.right, rect.bottom)

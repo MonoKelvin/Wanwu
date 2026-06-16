@@ -9,15 +9,15 @@ let bootstrapped = false
 
 /**
  * 组合根：新增领域扩展时仅在此 register 一次。
- * 核心框架（PropertyHost、Bridge、Registry）无需修改。
+ * 各 kind 通过 resizePolicy / canvasInteractionBinders / contextMenuContributor 声明交互，框架自动聚合。
  */
 export function registerBuiltinDiagramShapeExtensions(
   registry: DiagramShapeExtensionRegistry = getDiagramShapeExtensionRegistry()
 ): void {
   if (bootstrapped) return
+  bootstrapped = true
   registry.register(umlShapeExtension)
   registry.register(tableShapeExtension)
-  bootstrapped = true
 }
 
 export function ensureDiagramShapeExtensions(): DiagramShapeExtensionRegistry {

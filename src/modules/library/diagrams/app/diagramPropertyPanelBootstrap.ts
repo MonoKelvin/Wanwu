@@ -63,7 +63,11 @@ const builtinSections: IDiagramPropertySectionProvider[] = [
     id: 'node-text',
     tab: 'node',
     order: 200,
-    visible: (ctx) => hasSelectedNodes(ctx) && !ctx.isGroupFrame && Boolean(ctx.selectedNode),
+    visible: (ctx) =>
+      hasSelectedNodes(ctx) &&
+      !ctx.isGroupFrame &&
+      Boolean(ctx.selectedNode) &&
+      ctx.sectionPolicy?.hideSections?.['node-text'] !== true,
     component: NodeTextSection
   },
   {

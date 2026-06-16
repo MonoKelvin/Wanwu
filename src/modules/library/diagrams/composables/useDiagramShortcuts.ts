@@ -10,6 +10,7 @@ import {
 } from '@modules/library/diagrams/composables/useDiagramDataCommand'
 import type { IDiagramCommandBus } from '@modules/library/diagrams/interfaces/IDiagramCommandBus'
 import { useDiagramCommandBus } from '@modules/library/diagrams/composables/useDiagramCommandBus'
+import { consumeDiagramKeyboardEvent } from '@modules/library/diagrams/lib/diagramKeyboardInterceptors'
 
 function isEditableTarget(target: EventTarget | null): boolean {
   const el = target as HTMLElement | null
@@ -49,6 +50,7 @@ export function useDiagramShortcuts(options?: {
   function onKeyDown(e: KeyboardEvent) {
     if (options?.isActive && !options.isActive()) return
     if (options?.isBlocked?.()) return
+    if (consumeDiagramKeyboardEvent(e)) return
 
     const mod = e.ctrlKey || e.metaKey
     if (mod && e.shiftKey && e.key.toLowerCase() === 's') {

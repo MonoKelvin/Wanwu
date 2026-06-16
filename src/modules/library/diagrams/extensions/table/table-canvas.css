@@ -1,0 +1,350 @@
+/* 表格画布交互样式 — 仅由 table 扩展引入，使用全局 ww 设计变量 */
+
+.dg-canvas-frame {
+  --dg-table-btn-fill: var(--ww-elevated, var(--ww-content));
+  --dg-table-btn-stroke: var(--ww-border-subtle);
+  --dg-table-btn-glyph: var(--ww-ink-muted);
+  --dg-table-btn-shadow: drop-shadow(0 1px 2px rgb(15 23 42 / 0.14));
+}
+
+[data-theme='dark'] .dg-canvas-frame {
+  --dg-table-btn-fill: var(--ww-elevated, color-mix(in srgb, var(--ww-ink) 6%, var(--ww-content)));
+  --dg-table-btn-stroke: color-mix(in srgb, var(--ww-ink) 14%, var(--ww-border-subtle));
+  --dg-table-btn-glyph: color-mix(in srgb, var(--ww-ink) 72%, var(--ww-ink-muted));
+  --dg-table-btn-shadow: drop-shadow(0 2px 6px rgb(0 0 0 / 0.55));
+}
+
+.dg-canvas-frame .dg-table-body-bg {
+  pointer-events: none;
+}
+
+.dg-canvas-frame .dg-table-body-border {
+  pointer-events: none;
+}
+
+.dg-canvas-frame .dg-table-header-cell {
+  fill: color-mix(in srgb, var(--ww-ink) 14%, var(--ww-content));
+  pointer-events: none;
+}
+
+[data-theme='dark'] .dg-canvas-frame .dg-table-header-cell {
+  fill: color-mix(in srgb, var(--ww-ink) 22%, var(--ww-content));
+}
+
+.dg-canvas-frame .dg-table-row-alt {
+  fill: color-mix(in srgb, var(--ww-ink) 3%, var(--ww-content));
+  pointer-events: none;
+}
+
+[data-theme='dark'] .dg-canvas-frame .dg-table-row-alt {
+  fill: color-mix(in srgb, var(--ww-ink) 6%, var(--ww-content));
+}
+
+.dg-canvas-frame .dg-table-header-divider {
+  pointer-events: none;
+  stroke: color-mix(in srgb, var(--ww-ink) 12%, var(--ww-border-subtle));
+}
+
+.dg-canvas-frame .dg-table-cell-active {
+  stroke: color-mix(in srgb, var(--ww-accent) 55%, transparent);
+  stroke-width: 1.5;
+  pointer-events: none;
+  opacity: 0.92;
+  transition:
+    stroke 0.16s var(--ww-ease-out, ease-out),
+    opacity 0.16s var(--ww-ease-out, ease-out),
+    stroke-width 0.16s var(--ww-ease-out, ease-out);
+}
+
+.dg-canvas-frame .dg-table-cell-hit:hover {
+  fill: color-mix(in srgb, var(--ww-accent) 8%, transparent);
+}
+
+.dg-canvas-frame .dg-table-grid-line {
+  pointer-events: none;
+}
+
+.dg-canvas-frame .dg-table-cell-hit {
+  pointer-events: all;
+  cursor: text;
+  fill: transparent;
+  transition: fill 0.14s var(--ww-ease-out, ease-out);
+}
+
+.dg-canvas-frame .dg-table-shape foreignObject,
+.dg-canvas-frame .dg-table-shape .lf-node-text-auto-wrap,
+.dg-canvas-frame .dg-table-shape .lf-node-text-auto-wrap-content,
+.dg-canvas-frame .dg-table-shape .lf-node-text--auto-wrap-inner {
+  pointer-events: none !important;
+  user-select: none;
+}
+
+.dg-canvas-frame .dg-table-interaction-layer {
+  pointer-events: auto;
+}
+
+.dg-canvas-frame .dg-table-interaction-layer .dg-table-cell-hit,
+.dg-canvas-frame .dg-table-interaction-layer .dg-table-edge-hit,
+.dg-canvas-frame .dg-table-interaction-layer .dg-table-col-divider,
+.dg-canvas-frame .dg-table-interaction-layer .dg-table-row-divider {
+  pointer-events: all;
+}
+
+.dg-canvas-frame .dg-table-edge-hit {
+  pointer-events: all;
+}
+
+.dg-canvas-frame .dg-table-edge-hit.dg-table-col-divider {
+  cursor: col-resize;
+}
+
+.dg-canvas-frame .dg-table-edge-hit.dg-table-row-divider {
+  cursor: row-resize;
+}
+
+.dg-canvas-frame .dg-table-tool-overlay,
+.dg-canvas-frame .dg-table-divider-overlay,
+.dg-canvas-frame .dg-table-tool-overlay .dg-table-add-col,
+.dg-canvas-frame .dg-table-tool-overlay .dg-table-add-row,
+.dg-canvas-frame .dg-table-tool-overlay .dg-table-remove-col,
+.dg-canvas-frame .dg-table-tool-overlay .dg-table-remove-row,
+.dg-canvas-frame .dg-table-divider-overlay .dg-table-divider-handle {
+  pointer-events: all;
+}
+
+.dg-canvas-frame .dg-table-tool-hit {
+  pointer-events: all;
+}
+
+.dg-canvas-frame .dg-table-add-col,
+.dg-canvas-frame .dg-table-add-row,
+.dg-canvas-frame .dg-table-remove-col,
+.dg-canvas-frame .dg-table-remove-row {
+  cursor: pointer;
+}
+
+.dg-canvas-frame .dg-table-add-col.is-disabled,
+.dg-canvas-frame .dg-table-add-row.is-disabled,
+.dg-canvas-frame .dg-table-remove-col.is-disabled,
+.dg-canvas-frame .dg-table-remove-row.is-disabled {
+  cursor: not-allowed;
+  pointer-events: all;
+}
+
+.dg-canvas-frame .dg-table-add-col.is-disabled .dg-table-tool-btn,
+.dg-canvas-frame .dg-table-add-row.is-disabled .dg-table-tool-btn {
+  fill: color-mix(in srgb, var(--ww-ink-muted) 10%, var(--dg-table-btn-fill));
+  stroke: var(--dg-table-btn-stroke);
+  opacity: 0.55;
+  filter: none;
+}
+
+.dg-canvas-frame .dg-table-add-col.is-disabled .dg-table-tool-btn__glyph,
+.dg-canvas-frame .dg-table-add-row.is-disabled .dg-table-tool-btn__glyph {
+  fill: var(--dg-table-btn-glyph);
+  opacity: 0.55;
+}
+
+.dg-canvas-frame .dg-table-tool-btn {
+  fill: var(--dg-table-btn-fill);
+  stroke: var(--dg-table-btn-stroke);
+  stroke-width: 1;
+  filter: var(--dg-table-btn-shadow);
+  transition:
+    fill var(--ww-duration-fast) var(--ww-ease-out),
+    stroke var(--ww-duration-fast) var(--ww-ease-out),
+    opacity var(--ww-duration-fast) var(--ww-ease-out);
+}
+
+.dg-canvas-frame .dg-table-tool-btn__glyph {
+  fill: var(--dg-table-btn-glyph);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: system-ui, sans-serif;
+  user-select: none;
+}
+
+.dg-canvas-frame .dg-table-add-col:hover .dg-table-tool-btn,
+.dg-canvas-frame .dg-table-add-row:hover .dg-table-tool-btn {
+  fill: color-mix(in srgb, var(--ww-accent) 12%, var(--dg-table-btn-fill));
+  stroke: color-mix(in srgb, var(--ww-accent) 35%, var(--dg-table-btn-stroke));
+}
+
+.dg-canvas-frame .dg-table-remove-col:hover .dg-table-tool-btn,
+.dg-canvas-frame .dg-table-remove-row:hover .dg-table-tool-btn {
+  fill: color-mix(in srgb, var(--ww-danger, #ef4444) 10%, var(--dg-table-btn-fill));
+  stroke: color-mix(in srgb, var(--ww-danger, #ef4444) 38%, var(--dg-table-btn-stroke));
+}
+
+.dg-canvas-frame .dg-table-add-col:hover .dg-table-tool-btn__glyph,
+.dg-canvas-frame .dg-table-add-row:hover .dg-table-tool-btn__glyph {
+  fill: var(--ww-accent);
+}
+
+.dg-canvas-frame .dg-table-remove-col:hover .dg-table-tool-btn__glyph,
+.dg-canvas-frame .dg-table-remove-row:hover .dg-table-tool-btn__glyph {
+  fill: var(--ww-danger, #ef4444);
+}
+
+.dg-canvas-frame .dg-table-divider-guide {
+  stroke: transparent;
+  stroke-width: 1;
+  pointer-events: none;
+  transition: stroke var(--ww-duration-fast, 0.15s) var(--ww-ease-out, ease-out);
+}
+
+.dg-canvas-frame .dg-table-tool-guide {
+  stroke: color-mix(in srgb, var(--ww-accent) 28%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  pointer-events: none;
+}
+
+[data-theme='dark'] .dg-canvas-frame .dg-table-tool-guide {
+  stroke: color-mix(in srgb, var(--ww-accent) 42%, transparent);
+}
+
+.dg-canvas-frame .dg-table-col-divider,
+.dg-canvas-frame .dg-table-row-divider {
+  pointer-events: all;
+}
+
+.dg-canvas-frame .lf-node-selected .dg-table-col-divider {
+  cursor: col-resize;
+}
+
+.dg-canvas-frame .lf-node-selected .dg-table-row-divider {
+  cursor: row-resize;
+}
+
+.dg-canvas-frame .dg-table-divider-handle--col.is-divider-active .dg-table-divider-guide,
+.dg-canvas-frame .dg-table-divider-handle--row.is-divider-active .dg-table-divider-guide {
+  stroke: color-mix(in srgb, var(--ww-accent) 70%, transparent);
+}
+
+.dg-canvas-frame .dg-table-divider-handle:hover .dg-table-divider-guide {
+  stroke: color-mix(in srgb, var(--ww-accent) 55%, transparent);
+}
+
+.dg-canvas-frame .dg-table-divider-handle:hover .dg-table-col-divider,
+.dg-canvas-frame .dg-table-divider-handle:hover .dg-table-row-divider,
+.dg-canvas-frame .lf-node-selected .dg-table-col-divider:hover,
+.dg-canvas-frame .lf-node-selected .dg-table-row-divider:hover {
+  fill: color-mix(in srgb, var(--ww-accent) 14%, transparent);
+}
+
+.dg-canvas-frame .dg-table-header-text,
+.dg-canvas-frame .dg-table-cell-text {
+  user-select: none;
+}
+
+/* 表格单元格：复用 LF 文本 HTML 层，与矩形等图元一致 */
+.dg-canvas-frame .dg-table-shape .lf-node-text-auto-wrap-content {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.dg-canvas-frame .dg-table-cell-marquee {
+  fill: color-mix(in srgb, var(--ww-accent) 10%, transparent);
+  stroke: color-mix(in srgb, var(--ww-accent) 55%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+  pointer-events: none;
+  transition:
+    x var(--ww-duration-fast, 0.12s) var(--ww-ease-out, ease-out),
+    y var(--ww-duration-fast, 0.12s) var(--ww-ease-out, ease-out),
+    width var(--ww-duration-fast, 0.12s) var(--ww-ease-out, ease-out),
+    height var(--ww-duration-fast, 0.12s) var(--ww-ease-out, ease-out);
+}
+
+.dg-canvas-frame .dg-table-move-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.14s var(--ww-ease-out, ease-out);
+}
+
+.dg-canvas-frame .dg-table-shape:hover > .dg-table-move-overlay,
+.dg-canvas-frame .lf-node-selected .dg-table-shape > .dg-table-move-overlay {
+  opacity: 1;
+}
+
+.dg-canvas-frame .dg-table-shape:hover > .dg-table-move-overlay .dg-table-move-handle-hit,
+.dg-canvas-frame .dg-table-shape:hover > .dg-table-move-overlay .dg-table-move-handle__hit,
+.dg-canvas-frame .lf-node-selected .dg-table-shape > .dg-table-move-overlay .dg-table-move-handle-hit,
+.dg-canvas-frame .lf-node-selected .dg-table-shape > .dg-table-move-overlay .dg-table-move-handle__hit {
+  pointer-events: all;
+}
+
+/* 缩放层：装饰元素不抢事件，命中元素保持可点（勿对 overlay 根 g 设 pointer-events:none，会阻断子元素） */
+.dg-canvas-frame .dg-resize-root .dg-table-divider-guide,
+.dg-canvas-frame .dg-resize-root .dg-table-move-handle__box,
+.dg-canvas-frame .dg-resize-root .dg-table-move-handle__glyph,
+.dg-canvas-frame .dg-resize-root .dg-table-move-handle__line {
+  pointer-events: none;
+}
+
+.dg-canvas-frame .dg-resize-root .dg-table-cell-hit,
+.dg-canvas-frame .dg-resize-root .dg-table-edge-hit,
+.dg-canvas-frame .dg-resize-root .dg-table-col-divider,
+.dg-canvas-frame .dg-resize-root .dg-table-row-divider,
+.dg-canvas-frame .dg-resize-root .dg-table-tool-hit,
+.dg-canvas-frame .dg-resize-root .dg-table-move-handle-hit,
+.dg-canvas-frame .dg-resize-root .dg-table-move-handle__hit {
+  pointer-events: all;
+}
+
+.dg-canvas-frame .dg-table-move-handle-hit {
+  cursor: move;
+  pointer-events: all;
+}
+
+.dg-canvas-frame .dg-table-move-handle__hit {
+  pointer-events: all;
+}
+
+.dg-canvas-frame .dg-table-move-handle__box {
+  fill: var(--dg-table-btn-fill);
+  stroke: var(--dg-table-btn-stroke);
+  stroke-width: 1;
+  filter: var(--dg-table-btn-shadow);
+  pointer-events: none;
+  transition:
+    fill var(--ww-duration-fast, 0.15s) var(--ww-ease-out, ease-out),
+    stroke var(--ww-duration-fast, 0.15s) var(--ww-ease-out, ease-out);
+}
+
+.dg-canvas-frame .dg-table-move-handle__glyph {
+  pointer-events: none;
+}
+
+.dg-canvas-frame .dg-table-move-handle__line {
+  stroke: var(--dg-table-btn-glyph);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.dg-canvas-frame .dg-table-move-handle-hit:hover .dg-table-move-handle__box {
+  fill: color-mix(in srgb, var(--ww-accent) 12%, var(--dg-table-btn-fill));
+  stroke: color-mix(in srgb, var(--ww-accent) 35%, var(--dg-table-btn-stroke));
+}
+
+.dg-canvas-frame .dg-table-move-handle-hit:hover .dg-table-move-handle__line {
+  stroke: var(--ww-accent);
+}
+
+.dg-table-cell-editor {
+  font-family: inherit;
+  border-radius: var(--ww-radius-sm, 4px);
+  box-shadow: var(--ww-shadow-soft);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.dg-table-toolbar-tooltip-anchor {
+  position: fixed;
+  z-index: 10050;
+  pointer-events: none;
+  opacity: 0;
+}

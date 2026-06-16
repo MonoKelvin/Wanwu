@@ -7,6 +7,7 @@ import type {
   DiagramEditorSelection,
   DiagramNodeProperties
 } from '@modules/library/diagrams/lib/diagramSelectionTypes'
+import { isDiagramTableNode, isTableCellTextFieldMixed } from '@modules/library/diagrams/extensions/table/integration'
 import { createDiagramPropertyAssetActions } from '@modules/library/diagrams/app/property/diagramPropertyAssetActions'
 import { createDiagramPropertyCommandDispatch } from '@modules/library/diagrams/app/property/diagramPropertyCommandDispatch'
 import { createDiagramPropertyEdgeActions } from '@modules/library/diagrams/app/property/diagramPropertyEdgeActions'
@@ -40,7 +41,13 @@ export function createDiagramPropertyActions(deps: DiagramPropertyActionsDeps): 
     deps
 
   function isMixed(field: string): boolean {
-    return isMultiNode() && getSelection().mixedNodeFields.includes(field)
+    if (isMultiNode()) return getSelection().mixedNodeFields.includes(field)
+    const node = getSelectedNode()
+    if (node && isDiagramTableNode(node)) {
+      const key = field.startsWith('textStyle.') ? field.slice('textStyle.'.length) : field
+      if (isTableCellTextFieldMixed(node.id, key)) return true
+    }
+    return false
   }
 
   const dispatch = createDiagramPropertyCommandDispatch({

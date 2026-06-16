@@ -1,4 +1,11 @@
 import type { DiagramPropertySectionPolicy } from '@modules/library/diagrams/domain/shape-extension/interfaces'
+import { getDiagramEditorRuntime } from '@modules/library/diagrams/composables/useDiagramEditorRuntime'
+import {
+  getTableSelectedCells,
+  isDiagramTableNode,
+  isTableCellTextFieldMixed,
+  patchTableCellTextStyleFromPanel
+} from '@modules/library/diagrams/extensions/table/integration'
 import { roundNodeTopLeft } from '@modules/library/diagrams/lib/diagramNodeLayoutPatch'
 import type { DiagramNodeProperties } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import type { DiagramPropertyCommandDispatch } from '@modules/library/diagrams/app/property/diagramPropertyCommandDispatch'
@@ -24,7 +31,17 @@ export function createDiagramPropertyNodeActions(deps: DiagramPropertyNodeAction
   }
 
   function patchNodeTextStyle(patch: Record<string, unknown>) {
-    const ts = getSelectedNode()?.textStyle
+    const node = getSelectedNode()
+    if (!node) return
+    if (isDiagramTableNode(node)) {
+      const lf = getDiagramEditorRuntime().port?.getLogicFlow()
+      const cells = getTableSelectedCells(node.id)
+      if (lf && cells.length > 0) {
+        patchTableCellTextStyleFromPanel(lf, node.id, cells, patch)
+        return
+      }
+    }
+    const ts = node.textStyle
     if (!ts) return
     const next = { ...ts, ...patch }
     if (typeof next.fontSize === 'number') {

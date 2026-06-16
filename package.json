@@ -16,8 +16,6 @@
         "build:app": "node scripts/electron-vite.mjs build && node scripts/run.mjs sqlite electron",
         "pack": "node scripts/run.mjs pack",
         "logo:ico": "node scripts/generate-app-ico.mjs",
-        "test": "vitest run",
-        "test:watch": "vitest",
         "check:mechanisms": "node scripts/check-mechanism-boundaries.mjs",
         "typecheck": "vue-tsc --noEmit -p tsconfig.web.json",
         "postinstall": "node scripts/run.mjs sqlite electron",
@@ -79,7 +77,6 @@
         "tsx": "^4.22.3",
         "typescript": "^6.0.3",
         "vite": "^7.3.3",
-        "vitest": "^3.2.6",
         "vue-tsc": "^3.3.1"
     },
     "engines": {

@@ -6,6 +6,8 @@ import {
 import type { DiagramShapePayloadEnvelope } from '@modules/library/diagrams/domain/shape-extension/types'
 import { ensureGroupFrameAtBottom } from '@modules/library/diagrams/lib/diagramGroupBounds'
 import { isGroupFrameModel } from '@modules/library/diagrams/lib/diagramGroupFrame'
+import { notifyTableExternalPropertyPatch } from '@modules/library/diagrams/extensions/table/interaction/tablePropertyBridge'
+import { DIAGRAM_TABLE_LF_TYPE } from '@modules/library/diagrams/extensions/table/kinds/tableTypes'
 
 export function applyDiagramNodePatch(
   lf: LogicFlow,
@@ -54,6 +56,19 @@ export function applyDiagramNodePatch(
 
     if (isGroupFrameModel(model)) {
       ensureGroupFrameAtBottom(lf, nodeId)
+    }
+  }
+
+  if (String(model.type) === DIAGRAM_TABLE_LF_TYPE) {
+    const props = patch.properties ?? patch.style
+    const dgShapePatch =
+      props && typeof props === 'object'
+        ? (props as Record<string, unknown>).dgShape
+        : undefined
+    const shapePatchHandled =
+      dgShapePatch != null && isDiagramShapePayloadEnvelope(dgShapePatch)
+    if (!shapePatchHandled) {
+      notifyTableExternalPropertyPatch(lf, nodeId)
     }
   }
   return true

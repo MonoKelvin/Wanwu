@@ -3159,6 +3159,33 @@
   gap: 0.375rem;
 }
 
+/* 表格属性编辑器 — 与 UML 面板控件对齐 */
+.dg-panel--props .dg-table {
+  --dg-table-field-label-width: 3.5rem;
+  --dg-table-field-control-min: 5.5rem;
+  gap: 0.25rem;
+}
+
+.dg-panel--props .dg-table .dg-table-field-row .ww-settings-row__label {
+  flex: 0 0 var(--dg-table-field-label-width);
+  min-width: var(--dg-table-field-label-width);
+  padding-right: 0.375rem;
+}
+
+.dg-panel--props .dg-table .dg-table-field-row .ww-settings-row__control {
+  flex: 1 1 var(--dg-table-field-control-min);
+  min-width: var(--dg-table-field-control-min);
+  max-width: none;
+}
+
+.dg-panel--props .dg-table .dg-table-field-row .ww-settings-row__control .p-inputtext {
+  width: 100%;
+}
+
+.dg-panel--props .dg-table .dg-table-field-row .ww-settings-row__title {
+  font-size: 0.6875rem;
+}
+
 .dg-canvas-frame .dg-uml-hit {
   pointer-events: all;
 }

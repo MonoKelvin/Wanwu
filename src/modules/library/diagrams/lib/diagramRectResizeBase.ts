@@ -1,4 +1,4 @@
-import LogicFlow, { DiamondNode, EllipseNode } from '@logicflow/core'
+import LogicFlow, { DiamondNode, EllipseNode, h } from '@logicflow/core'
 import { DiamondResizeModel } from '@logicflow/extension/lib/NodeResize/node/DiamondResize'
 import { EllipseResizeModel } from '@logicflow/extension/lib/NodeResize/node/EllipseResize'
 import { RectResizeModel, RectResizeView } from '@logicflow/extension/lib/NodeResize/node/RectResize'
@@ -64,9 +64,21 @@ export class DiagramDiamondResizeModel extends DiamondResizeModel {
 
 /** 矩形类图元 View */
 export class DiagramRectResizeView extends RectResizeView {
-  getResizeControl() {
+  getResizeControl(): ReturnType<RectResizeView['getResizeControl']> {
     const { model, graphModel } = this.props
-    return diagramGetResizeControl(model, graphModel)
+    const core = diagramGetResizeControl(model, graphModel)
+    const overlay = this.getResizeOverlay?.()
+    if (!core && !overlay) return null
+    if (!overlay) return core
+    if (!core) return overlay as ReturnType<RectResizeView['getResizeControl']>
+    return h('g', { className: 'dg-resize-root' }, [core, overlay]) as ReturnType<
+      RectResizeView['getResizeControl']
+    >
+  }
+
+  /** 扩展图元可覆盖：在缩放锚点之上绘制操作层（如表格增删行列按钮） */
+  getResizeOverlay?(): unknown {
+    return undefined
   }
 }
 

@@ -18,6 +18,7 @@ export const umlShapeExtension: DiagramShapeExtension = {
         hideSections: { 'node-text-content': true },
         textSectionTitle: '标题样式'
       }
+      // 后续 UML 画布交互（成员双击编辑等）在此注册 canvasInteractionBinders / contextMenuContributor
     }
   ],
   paletteBindings: [

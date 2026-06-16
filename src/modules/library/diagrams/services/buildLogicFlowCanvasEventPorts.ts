@@ -7,6 +7,7 @@ import type { DiagramEdgeInsertCoordinator } from '@modules/library/diagrams/ser
 import type { DiagramEditorSelectionBridge } from '@modules/library/diagrams/services/diagramEditorSelectionBridge'
 import type { DiagramFormatPainterCoordinator } from '@modules/library/diagrams/services/diagramFormatPainterCoordinator'
 import type { DiagramGroupFrameCoordinator } from '@modules/library/diagrams/services/diagramGroupFrameCoordinator'
+import { applyNodeSelectForPointer } from '@modules/library/diagrams/lib/diagramSelectionInteraction'
 import type { DiagramCanvasTheme } from '@modules/library/diagrams/lib/diagramCanvasTheme'
 import type { DiagramCanvasSettings } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import { syncGroupFramesForNodes } from '@modules/library/diagrams/lib/diagramGroupBounds'
@@ -58,6 +59,15 @@ export function buildLogicFlowCanvasEventPorts(
     selectionBridge: input.selectionBridge,
     getClickSelectionSnapshot: input.getClickSelectionSnapshot,
     scheduleGraphChange: input.scheduleGraphChange,
+    notifyUserSelectionChange: () => input.selectionBridge.afterUserSelectionChange(),
+    publishSelection: () => input.selectionBridge.publishSelection({ force: true }),
+    selectNodeForPropertyPanel: (nodeId, event) => {
+      applyNodeSelectForPointer(lf, nodeId, event, input.getClickSelectionSnapshot(event))
+      for (const edge of lf.getSelectElements(true).edges) {
+        lf.deselectElementById(edge.id)
+      }
+      input.selectionBridge.afterUserSelectionChange()
+    },
     scheduleMultiSelectOverlayRefresh: input.scheduleMultiSelectOverlayRefresh,
     scheduleOverlayLayout: input.scheduleOverlayLayout,
     refreshMultiSelectResize: input.refreshMultiSelectResize,

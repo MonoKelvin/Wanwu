@@ -2,8 +2,11 @@
 import { computed, ref } from 'vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import type { WwMenuItem } from '@shared/types/menu'
+import { ensureDiagramShapeExtensions } from '@modules/library/diagrams/app/diagramShapeExtensions'
+import type { DiagramContextMenuContributionContext } from '@modules/library/diagrams/domain/shape-extension/canvasInteractionTypes'
 import { useDiagramCanvasCommands } from '@modules/library/diagrams/composables/useDiagramCanvasCommands'
 import { useDiagramCanvasClipboard } from '@modules/library/diagrams/composables/useDiagramCanvasClipboard'
+import { getDiagramEditorRuntime } from '@modules/library/diagrams/composables/useDiagramEditorRuntime'
 import { DG_SHORTCUT } from '@modules/library/diagrams/lib/diagramKeyboardShortcuts'
 
 export type DiagramCanvasContextTarget = {
@@ -11,6 +14,7 @@ export type DiagramCanvasContextTarget = {
   targetId?: string
   nodeIds: string[]
   edgeIds: string[]
+  event?: MouseEvent
 }
 
 const canvas = useDiagramCanvasCommands()
@@ -31,6 +35,18 @@ const hasSelection = computed(
 
 function pasteAtCursor() {
   clipboard.paste()
+}
+
+function buildExtensionContext(): DiagramContextMenuContributionContext {
+  const { nodeIds, edgeIds, kind, event } = target.value
+  return {
+    targetKind: kind,
+    nodeIds,
+    edgeIds,
+    event,
+    getLf: () => getDiagramEditorRuntime().port?.getLogicFlow() ?? null,
+    modifyNode: (nodeId, patch) => canvas.modifyNode({ nodeId, patch })
+  }
 }
 
 const menuItems = computed<WwMenuItem[]>(() => {
@@ -82,6 +98,15 @@ const menuItems = computed<WwMenuItem[]>(() => {
         }
       )
     }
+
+    const extensionItems = ensureDiagramShapeExtensions().collectContextMenuItems(
+      buildExtensionContext()
+    )
+    if (extensionItems.length) {
+      items.push({ separator: true })
+      items.push(...(extensionItems as WwMenuItem[]))
+    }
+
     items.push({ separator: true })
     items.push({
       label: '删除',
@@ -125,7 +150,7 @@ function show(
   ungroupReady = false
 ) {
   event.preventDefault()
-  target.value = next
+  target.value = { ...next, event }
   clipboardReady.value = hasClipboard
   canGroup.value = groupReady
   canUngroup.value = ungroupReady

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import InputText from 'primevue/inputtext'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
-import WwIconButton from '@shared/components/WwIconButton.vue'
 import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import type { DiagramNodeShapeExtensionView } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'
+import { useTableActiveCell } from '@modules/library/diagrams/extensions/table/composables/useTableActiveCell'
 import { normalizeTableData } from '@modules/library/diagrams/extensions/table/kinds/tableLayout'
-import type { DiagramTableData } from '@modules/library/diagrams/extensions/table/kinds/tableTypes'
+import { getDefaultTableActiveCell } from '@modules/library/diagrams/extensions/table/kinds/tableCellNav'
+import { focusTableCellOnCanvas } from '@modules/library/diagrams/extensions/table/interaction/tablePropertyBridge'
+import { getDiagramEditorRuntime } from '@modules/library/diagrams/composables/useDiagramEditorRuntime'
+import { DIAGRAM_TABLE_KIND, type DiagramTableData } from '@modules/library/diagrams/extensions/table/kinds/tableTypes'
 
 const props = defineProps<{
   nodeId: string
@@ -19,6 +21,7 @@ const emit = defineEmits<{
 }>()
 
 const localData = ref(normalizeTableData(props.shapeExtension.data as DiagramTableData))
+useTableActiveCell(() => props.nodeId)
 
 watch(
   () => props.shapeExtension.data,
@@ -31,6 +34,15 @@ watch(
 )
 
 watch(
+  () => props.hasPendingPatch,
+  (pending, wasPending) => {
+    if (wasPending && !pending) {
+      localData.value = normalizeTableData(props.shapeExtension.data as DiagramTableData)
+    }
+  }
+)
+
+watch(
   () => props.nodeId,
   () => {
     localData.value = normalizeTableData(props.shapeExtension.data as DiagramTableData)
@@ -39,162 +51,47 @@ watch(
 
 const data = computed(() => localData.value)
 
-function emitPatch(immediate = false) {
-  emit('patch', normalizeTableData(localData.value), immediate)
+function patchNow(next: DiagramTableData) {
+  localData.value = normalizeTableData(next)
+  emit('patch', localData.value, true)
 }
 
-function setColumnCount(count: number) {
-  const next = Math.max(1, Math.min(8, count))
-  const columns = Array.from({ length: next }, (_, i) => data.value.columns[i] ?? `列 ${i + 1}`)
-  const rows = data.value.rows.map((row) =>
-    Array.from({ length: next }, (_, i) => row[i] ?? '')
-  )
-  localData.value = { ...data.value, columns, rows }
-  emitPatch(true)
-}
-
-function addRow() {
-  const colCount = data.value.columns.length
-  localData.value = {
-    ...data.value,
-    rows: [...data.value.rows, Array.from({ length: colCount }, () => '')]
-  }
-  emitPatch(true)
-}
-
-function removeRow(index: number) {
-  if (data.value.rows.length <= 1) return
-  localData.value = {
-    ...data.value,
-    rows: data.value.rows.filter((_, i) => i !== index)
-  }
-  emitPatch(true)
-}
-
-function updateHeader(col: number, value: string) {
-  const columns = [...data.value.columns]
-  columns[col] = value
-  localData.value = { ...data.value, columns }
-  emitPatch()
-}
-
-function updateCell(row: number, col: number, value: string) {
-  const rows = data.value.rows.map((r, ri) =>
-    ri === row ? r.map((c, ci) => (ci === col ? value : c)) : [...r]
-  )
-  localData.value = { ...data.value, rows }
-  emitPatch()
-}
 function onShowHeaderChange(value: boolean) {
-  localData.value = { ...localData.value, showHeader: value }
-  emitPatch(true)
+  const next = { ...data.value, showHeader: value }
+  const nextActive = getDefaultTableActiveCell(next)
+  const lf = getDiagramEditorRuntime().port?.getLogicFlow() ?? null
+  if (lf) focusTableCellOnCanvas(lf, props.nodeId, nextActive)
+  patchNow(next)
 }
 </script>
 
 <template>
-  <div class="dg-table-editor">
-    <SettingsRow label="显示表头">
-      <WwToggleSwitch :model-value="data.showHeader" @update:model-value="onShowHeaderChange" />
-    </SettingsRow>
-    <SettingsRow label="列数">
-      <div class="dg-table-editor__cols">
-        <WwIconButton
-          icon="minus"
-          icon-size="sm"
-          compact
-          aria-label="减少列"
-          @click="setColumnCount(data.columns.length - 1)"
-        />
-        <span>{{ data.columns.length }}</span>
-        <WwIconButton
-          icon="plus"
-          icon-size="sm"
-          compact
-          aria-label="增加列"
-          @click="setColumnCount(data.columns.length + 1)"
-        />
-      </div>
-    </SettingsRow>
-    <template v-if="data.showHeader">
-      <SettingsRow
-        v-for="(col, index) in data.columns"
-        :key="`h-${index}`"
-        :label="`表头 ${index + 1}`"
-      >
-        <InputText
-          :model-value="col"
-          class="dg-table-editor__input"
-          @update:model-value="(v) => updateHeader(index, String(v ?? ''))"
-        />
-      </SettingsRow>
-    </template>
-    <div class="dg-table-editor__rows-head">
-      <span>数据行</span>
-      <WwIconButton icon="plus" icon-size="sm" compact aria-label="添加行" @click="addRow" />
-    </div>
-    <div
-      v-for="(row, rowIndex) in data.rows"
-      :key="`r-${rowIndex}`"
-      class="dg-table-editor__row"
-    >
-      <div class="dg-table-editor__row-label">行 {{ rowIndex + 1 }}</div>
-      <SettingsRow
-        v-for="(cell, colIndex) in row"
-        :key="`c-${rowIndex}-${colIndex}`"
-        :label="data.columns[colIndex] ?? `列 ${colIndex + 1}`"
-      >
-        <InputText
-          :model-value="cell"
-          class="dg-table-editor__input"
-          @update:model-value="(v) => updateCell(rowIndex, colIndex, String(v ?? ''))"
-        />
-      </SettingsRow>
-      <WwIconButton
-        v-if="data.rows.length > 1"
-        icon="trash"
-        icon-size="sm"
-        compact
-        aria-label="删除行"
-        @click="removeRow(rowIndex)"
+  <section
+    v-if="shapeExtension.kind === DIAGRAM_TABLE_KIND"
+    class="dg-prop-section dg-prop-group dg-table"
+  >
+    <p class="dg-prop-section__title">表格</p>
+
+    <p class="dg-table__hint">
+      在画布中点击单元格编辑；拖拽框选多格；表上方 ✥ 移动表格；左侧 +/- 增删行，下方 +/- 增删列。
+    </p>
+
+    <SettingsRow label="显示表头" class="dg-settings-row--inline dg-settings-row--toggle">
+      <WwToggleSwitch
+        :model-value="data.showHeader"
+        :drag-to-change="false"
+        aria-label="显示表头"
+        @update:model-value="onShowHeaderChange"
       />
-    </div>
-  </div>
+    </SettingsRow>
+  </section>
 </template>
 
 <style scoped>
-.dg-table-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.dg-table-editor__cols {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.dg-table-editor__input {
-  width: 100%;
-}
-
-.dg-table-editor__rows-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 4px;
-  font-size: 12px;
-  color: var(--ww-text-secondary, #888);
-}
-
-.dg-table-editor__row {
-  padding: 8px 0;
-  border-top: 1px solid var(--ww-border-subtle, rgba(128, 128, 128, 0.2));
-}
-
-.dg-table-editor__row-label {
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 4px;
+.dg-table__hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--ww-ink-muted);
 }
 </style>

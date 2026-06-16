@@ -8,11 +8,19 @@ import type {
   DiagramPropertyContext,
   DiagramPropertyTab
 } from '@modules/library/diagrams/domain/property-panel/types'
-import type { DiagramCanvasSettings } from '@modules/library/diagrams/lib/diagramSelectionTypes'
+import type { DiagramCanvasSettings, DiagramNodeProperties } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import {
   effectiveEdgeCount,
   effectiveNodeCount
 } from '@modules/library/diagrams/lib/diagramSelectionSnapshot'
+import { getDiagramEditorRuntime } from '@modules/library/diagrams/composables/useDiagramEditorRuntime'
+import {
+  augmentTableNodeForPropertyPanel,
+  getTableSelectedCells,
+  isDiagramTableNode,
+  isTableCellTextFieldMixed,
+  patchTableCellTextStyleFromPanel
+} from '@modules/library/diagrams/extensions/table/integration'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 
 export type { DiagramPropertyActions }
@@ -40,12 +48,19 @@ export function provideDiagramPropertyContext(
     buildPropertyContext(activeTab.value, selection.value, fileId.value)
   )
 
+  function getSelectedNodeForPanel(): DiagramNodeProperties | null | undefined {
+    const node = ctx.value.selectedNode
+    if (!node) return node
+    const lf = getDiagramEditorRuntime().port?.getLogicFlow() ?? null
+    return augmentTableNodeForPropertyPanel(node, lf) ?? node
+  }
+
   const canvas = computed(() => selection.value.canvas)
 
   const actions = createDiagramPropertyActions({
     canvas: canvasCommands,
     getSelection: () => selection.value,
-    getSelectedNode: () => ctx.value.selectedNode,
+    getSelectedNode: getSelectedNodeForPanel,
     getSectionPolicy: () => ctx.value.sectionPolicy,
     getCanvas: () => canvas.value,
     isMultiNode: () => effectiveNodeCount(selection.value) > 1,

@@ -21,6 +21,9 @@ export interface DiagramCanvasEventBinderPorts {
   selectionBridge: DiagramEditorSelectionBridge
   getClickSelectionSnapshot(e?: MouseEvent | PointerEvent | null): string[]
   scheduleGraphChange(): void
+  notifyUserSelectionChange(): void
+  publishSelection(): void
+  selectNodeForPropertyPanel(nodeId: string, event?: PointerEvent): void
   scheduleMultiSelectOverlayRefresh(): void
   scheduleOverlayLayout(): void
   refreshMultiSelectResize(): void

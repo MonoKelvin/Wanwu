@@ -1,4 +1,5 @@
 import { bindDiagramEdgeEndpointPriority } from '@modules/library/diagrams/services/diagramEdgeEndpointBindings'
+import { bindDiagramShapeExtensionCanvasEvents } from '@modules/library/diagrams/services/canvas-events/bindDiagramShapeExtensionCanvasEvents'
 import { bindDiagramCanvasDragEvents } from '@modules/library/diagrams/services/canvas-events/bindDiagramCanvasDragEvents'
 import { bindDiagramCanvasLifecycleEvents } from '@modules/library/diagrams/services/canvas-events/bindDiagramCanvasLifecycleEvents'
 import { bindDiagramCanvasPointerEvents } from '@modules/library/diagrams/services/canvas-events/bindDiagramCanvasPointerEvents'
@@ -10,6 +11,7 @@ export type { DiagramCanvasEventBinderPorts } from '@modules/library/diagrams/se
 export function bindDiagramCanvasEvents(ports: DiagramCanvasEventBinderPorts): () => void {
   bindDiagramCanvasPointerEvents(ports)
   const teardownDrag = bindDiagramCanvasDragEvents(ports)
+  const teardownShapeExtensions = bindDiagramShapeExtensionCanvasEvents(ports)
   bindDiagramCanvasLifecycleEvents(ports)
 
   const container = ports.getContainer()
@@ -29,6 +31,7 @@ export function bindDiagramCanvasEvents(ports: DiagramCanvasEventBinderPorts): (
 
   return () => {
     teardownDrag()
+    teardownShapeExtensions()
     teardownEdgeEndpointPriority?.()
   }
 }

@@ -1,9 +1,15 @@
 import type LogicFlow from '@logicflow/core'
+import type { BaseNodeModel } from '@logicflow/core'
 import type { IDiagramShapePayloadCodec } from '@modules/library/diagrams/domain/shape-extension/interfaces'
 import type { DiagramShapePayloadEnvelope } from '@modules/library/diagrams/domain/shape-extension/types'
 import type { DiagramShapeItem } from '@modules/library/diagrams/lib/diagramShapeTypes'
 import {
+  isTableDividerDragging,
+  isTableNodeResizing
+} from '@modules/library/diagrams/extensions/table/interaction/tableCanvasRuntime'
+import {
   computeTableLayout,
+  computeTableMinSize,
   normalizeTableData,
   syncTableLayoutToNode
 } from '@modules/library/diagrams/extensions/table/kinds/tableLayout'
@@ -12,6 +18,7 @@ import {
   DIAGRAM_TABLE_KIND,
   type DiagramTableData
 } from '@modules/library/diagrams/extensions/table/kinds/tableTypes'
+import { toTableCellMeasureStyle } from '@modules/library/diagrams/extensions/table/kinds/tableTextStyle'
 
 export const tableCodec: IDiagramShapePayloadCodec<DiagramTableData> = {
   kind: DIAGRAM_TABLE_KIND,
@@ -43,16 +50,32 @@ export const tableCodec: IDiagramShapePayloadCodec<DiagramTableData> = {
   },
 
   syncLayoutToModel(model, data) {
-    syncTableLayoutToNode(model as { width: number; height: number }, data)
+    const node = model as BaseNodeModel
+    const measureOptions = {
+      cellStyle: toTableCellMeasureStyle(node, false),
+      headerStyle: toTableCellMeasureStyle(node, true)
+    }
+    if (isTableDividerDragging() || isTableNodeResizing()) {
+      const mins = computeTableMinSize(data, measureOptions)
+      node.minWidth = mins.minWidth
+      node.minHeight = mins.minHeight
+      return
+    }
+    syncTableLayoutToNode(
+      node as BaseNodeModel & { setProperties: (p: Record<string, unknown>) => void },
+      data,
+      measureOptions
+    )
   },
 
   computeLayout(data, width) {
     const layout = computeTableLayout(data, width)
+    const mins = computeTableMinSize(data)
     return {
       width: layout.width,
       height: layout.height,
-      minWidth: 72,
-      minHeight: 26
+      minWidth: mins.minWidth,
+      minHeight: mins.minHeight
     }
   },
 

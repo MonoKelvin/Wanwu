@@ -21,6 +21,7 @@ import {
   beginDiagramResizeSession,
   endDiagramResizeSession
 } from '@modules/library/diagrams/lib/diagramResizeSession'
+import { ensureDiagramShapeExtensions } from '@modules/library/diagrams/app/diagramShapeExtensions'
 
 type HandleDir = DiagramResizeHandleDir
 
@@ -48,17 +49,33 @@ function cornerPoint(
   }
 }
 
-function handleViewPos(dir: HandleDir, cornerX: number, cornerY: number, w: number, h: number) {
+function handleViewPos(
+  dir: HandleDir,
+  cornerX: number,
+  cornerY: number,
+  w: number,
+  h: number,
+  inset = 0
+) {
   switch (dir) {
     case 'nw':
-      return { x: cornerX - w / 2, y: cornerY - h / 2 }
+      return { x: cornerX - w / 2 + inset, y: cornerY - h / 2 + inset }
     case 'ne':
-      return { x: cornerX + w / 2, y: cornerY - h / 2 }
+      return { x: cornerX + w / 2 - inset, y: cornerY - h / 2 + inset }
     case 'se':
-      return { x: cornerX + w / 2, y: cornerY + h / 2 }
+      return { x: cornerX + w / 2 - inset, y: cornerY + h / 2 - inset }
     case 'sw':
-      return { x: cornerX - w / 2, y: cornerY + h / 2 }
+      return { x: cornerX - w / 2 + inset, y: cornerY + h / 2 - inset }
   }
+}
+
+const DEFAULT_HANDLE_DIRS: HandleDir[] = ['nw', 'ne', 'se', 'sw']
+
+function resolveResizePolicy(model: BaseNodeModel): { handles: HandleDir[]; handleInset: number } {
+  const kindReg = ensureDiagramShapeExtensions().getKindByLfType(String(model.type ?? ''))
+  const policy = kindReg?.resizePolicy
+  const handles = policy?.handles?.length ? ([...policy.handles] as HandleDir[]) : DEFAULT_HANDLE_DIRS
+  return { handles, handleInset: policy?.handleInset ?? 0 }
 }
 
 /** 单角缩放锚点：可见方块 + 更大透明热区，使用 onPointerDown + core handleResize */
@@ -148,16 +165,17 @@ class DiagramResizeHandleInner extends Component {
   }
 
   render() {
-    const { direction, model } = this.props as {
+    const { direction, model, handleInset = 0 } = this.props as {
       direction: HandleDir
       model: BaseNodeModel
+      handleInset?: number
     }
     const { x: cornerX, y: cornerY } = cornerPoint(direction, model)
     const style = model.getResizeControlStyle()
     const w = Number(style.width ?? 8)
     const ht = Number(style.height ?? 8)
     const hit = Math.max(w, ht) + 10
-    const { x, y } = handleViewPos(direction, cornerX, cornerY, w, ht)
+    const { x, y } = handleViewPos(direction, cornerX, cornerY, w, ht, handleInset)
 
     return h('g', { className: `dg-resize-handle dg-resize-handle--${direction}` }, [
       h(Rect, {
@@ -187,12 +205,13 @@ class DiagramResizeHandleInner extends Component {
 
 class DiagramResizeControlGroupInner extends Component {
   render() {
-    const { model, graphModel } = this.props as {
+    const { model, graphModel, handles, handleInset } = this.props as {
       model: BaseNodeModel & { x: number; y: number; width: number; height: number }
       graphModel: GraphModel
+      handles: HandleDir[]
+      handleInset: number
     }
     const outline = model.getResizeOutlineStyle()
-    const dirs: HandleDir[] = ['nw', 'ne', 'se', 'sw']
 
     return h('g', { className: 'dg-resize-group' }, [
       h(Rect, {
@@ -207,12 +226,13 @@ class DiagramResizeControlGroupInner extends Component {
         strokeWidth: Number(outline.strokeWidth ?? 1),
         strokeDasharray: String(outline.strokeDasharray ?? '4,4')
       }),
-      ...dirs.map((dir) =>
+      ...handles.map((dir) =>
         h(DiagramResizeHandle as never, {
           key: dir,
           direction: dir,
           model,
-          graphModel
+          graphModel,
+          handleInset
         })
       )
     ])
@@ -237,7 +257,8 @@ export function diagramGetResizeControl(
   ) {
     return null
   }
-  return h(DiagramResizeControlGroup as never, { model, graphModel })
+  const { handles, handleInset } = resolveResizePolicy(model)
+  return h(DiagramResizeControlGroup as never, { model, graphModel, handles, handleInset })
 }
 
 export { diagramResizeControlStyle, diagramResizeOutlineStyle }

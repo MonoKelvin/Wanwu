@@ -9,6 +9,19 @@ export type {
 } from '@modules/library/diagrams/domain/shape-extension/interfaces'
 
 export type {
+  DiagramContextMenuContributionContext,
+  DiagramContextMenuContributor,
+  DiagramExtensionMenuItem,
+  DiagramShapeCanvasInteractionBinder,
+  DiagramShapeCanvasInteractionPorts
+} from '@modules/library/diagrams/domain/shape-extension/canvasInteractionTypes'
+
+export type {
+  DiagramShapeResizePolicy,
+  DiagramResizeHandleDir
+} from '@modules/library/diagrams/domain/shape-extension/resizePolicyTypes'
+
+export type {
   DiagramShapeInteractionMode,
   DiagramShapePayloadEnvelope,
   DiagramShapePropertyEditorOrder
@@ -32,6 +45,7 @@ export type { DiagramNodeShapeExtensionView } from '@modules/library/diagrams/li
 
 export {
   applyNodeShapeExtension,
+  buildShapeExtensionModifyNodePatch,
   DG_SHAPE_RENDER_REV_KEY,
   patchNodeDgShape,
   readNodeShapeExtension,

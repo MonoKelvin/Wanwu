@@ -4,6 +4,8 @@ import { getDiagramShapeExtensionRegistry } from '@modules/library/diagrams/doma
 import { readDgShapeFromProperties } from '@modules/library/diagrams/domain/shape-extension/diagramShapePayload'
 import type { DiagramNodeShapeExtensionView } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import { syncNodeSizeProperties } from '@modules/library/diagrams/lib/diagramShapeResize'
+import { notifyTableExternalPropertyPatch } from '@modules/library/diagrams/extensions/table/interaction/tablePropertyBridge'
+import { DIAGRAM_TABLE_KIND } from '@modules/library/diagrams/extensions/table/kinds/tableTypes'
 import {
   DG_SHAPE_PAYLOAD_KEY,
   type DiagramShapePayloadEnvelope
@@ -74,7 +76,9 @@ export function patchNodeDgShape(
         syncNodeSizeProperties(updated)
       }
     }
-    refreshLayoutHandledShapeView(lf, nodeId)
+    if (envelope.kind === DIAGRAM_TABLE_KIND) {
+      notifyTableExternalPropertyPatch(lf, nodeId)
+    }
     return
   }
   syncNodeShapeExtensionEffects(lf, nodeId)
@@ -159,4 +163,18 @@ export function applyNodeShapeExtension(
   if (!kindReg) return
 
   patchNodeDgShape(lf, nodeId, kindReg.codec.toEnvelope(data))
+}
+
+/** 命令总线 / 右键菜单等：生成带 dgShape 的通用 modifyNode patch */
+export function buildShapeExtensionModifyNodePatch(
+  kind: string,
+  data: unknown
+): Record<string, unknown> | null {
+  const kindReg = ensureDiagramShapeExtensions().getKind(kind)
+  if (!kindReg) return null
+  return {
+    properties: {
+      [DG_SHAPE_PAYLOAD_KEY]: kindReg.codec.toEnvelope(data)
+    }
+  }
 }

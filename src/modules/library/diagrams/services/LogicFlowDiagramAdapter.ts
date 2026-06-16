@@ -39,6 +39,7 @@ import { DiagramCanvasViewportController } from '@modules/library/diagrams/servi
 import { DiagramEdgeInsertCoordinator } from '@modules/library/diagrams/services/diagramEdgeInsertCoordinator'
 import { DiagramGroupFrameCoordinator } from '@modules/library/diagrams/services/diagramGroupFrameCoordinator'
 import { buildLogicFlowCanvasEventPorts } from '@modules/library/diagrams/services/buildLogicFlowCanvasEventPorts'
+import { bindDiagramCanvasEvents } from '@modules/library/diagrams/services/bindDiagramCanvasEvents'
 import { DiagramEditorMountCoordinator } from '@modules/library/diagrams/services/diagramEditorMountCoordinator'
 import { DiagramExportCoordinator } from '@modules/library/diagrams/services/diagramExportCoordinator'
 import { DiagramEditorSelectionBridge } from '@modules/library/diagrams/services/diagramEditorSelectionBridge'
@@ -53,6 +54,8 @@ import { DiagramCanvasThemeCoordinator } from '@modules/library/diagrams/service
 import { DiagramContextMenuCoordinator } from '@modules/library/diagrams/services/diagramContextMenuCoordinator'
 import { applyDiagramCanvasGraphPatch } from '@modules/library/diagrams/lib/diagramGraphPatchApply'
 import { applyDiagramNodePatch } from '@modules/library/diagrams/lib/diagramNodePatchApply'
+import { notifyTableExternalPropertyPatch } from '@modules/library/diagrams/extensions/table/interaction/tablePropertyBridge'
+import { DIAGRAM_TABLE_LF_TYPE } from '@modules/library/diagrams/extensions/table/kinds/tableTypes'
 import {
   applyDiagramViewport,
   centerDiagramOnContent,
@@ -321,6 +324,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       while (this.container.firstChild) {
         el.appendChild(this.container.firstChild)
       }
+      this.teardownCanvasEvents?.()
+      this.teardownCanvasEvents = bindDiagramCanvasEvents(this.buildCanvasEventPorts(this.lf))
       this.container = el
       this.resize()
       return
@@ -898,6 +903,9 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       layoutProps.width != null ||
       layoutProps.height != null
     applyNodeProperties(this.lf, props)
+    if (String(this.lf.getNodeModelById(props.id)?.type ?? '') === DIAGRAM_TABLE_LF_TYPE) {
+      notifyTableExternalPropertyPatch(this.lf, props.id)
+    }
     if (affectsLayout) {
       finalizeNodeLayoutChange(this.lf, [props.id])
       this.refreshMultiSelectResize?.()

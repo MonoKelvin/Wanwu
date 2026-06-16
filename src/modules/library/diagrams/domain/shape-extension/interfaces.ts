@@ -1,5 +1,10 @@
 import type { Component } from 'vue'
 import type LogicFlow from '@logicflow/core'
+import type {
+  DiagramContextMenuContributor,
+  DiagramShapeCanvasInteractionBinder
+} from '@modules/library/diagrams/domain/shape-extension/canvasInteractionTypes'
+import type { DiagramShapeResizePolicy } from '@modules/library/diagrams/domain/shape-extension/resizePolicyTypes'
 import type { DiagramShapeCategory, DiagramShapeItem } from '@modules/library/diagrams/lib/diagramShapeTypes'
 import type {
   DiagramShapeInteractionMode,
@@ -59,7 +64,7 @@ export interface DiagramPropertySectionPolicy {
   /** 扩展区块排序，默认 100 */
   extensionOrder?: number
   /** 隐藏通用区块子项 */
-  hideSections?: Partial<Record<'node-text-content', true>>
+  hideSections?: Partial<Record<'node-text-content' | 'node-text', true>>
   textSectionTitle?: string
 }
 
@@ -79,6 +84,12 @@ export interface DiagramShapeKindRegistration<TData = unknown> {
   propertyEditor?: IDiagramShapePropertyEditorProvider
   propertyPanelPolicy?: DiagramPropertySectionPolicy
   renderer?: IDiagramShapeRenderer
+  /** 缩放锚点策略（默认四角） */
+  resizePolicy?: DiagramShapeResizePolicy
+  /** kind 级画布 DOM 交互 */
+  canvasInteractionBinders?: readonly DiagramShapeCanvasInteractionBinder[]
+  /** kind 级右键菜单 */
+  contextMenuContributor?: DiagramContextMenuContributor
 }
 
 /** 图形扩展注册表抽象 — 组合根注册扩展包与属性编辑器 */
@@ -103,4 +114,8 @@ export interface DiagramShapeExtension {
   readonly paletteBindings?: readonly DiagramShapePaletteBinding[]
   /** 可选：向图形面板贡献 catalog 分类（未来替代手写 catalog） */
   readonly catalogCategories?: readonly DiagramShapeCategory[]
+  /** 可选：画布 DOM 交互（双击编辑、拖拽分割线等） */
+  readonly canvasInteractionBinders?: readonly DiagramShapeCanvasInteractionBinder[]
+  /** 可选：画布右键菜单项 */
+  readonly contextMenuContributor?: DiagramContextMenuContributor
 }
