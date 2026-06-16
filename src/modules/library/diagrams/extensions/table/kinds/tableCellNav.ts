@@ -135,15 +135,19 @@ export function getTableCellClientRect(
   if (!region) return null
 
   const tm = lf.graphModel.transformModel
-  const left = model.x - model.width / 2 + region.x
-  const top = model.y - model.height / 2 + region.y
+  const cellLeft = model.x - model.width / 2 + region.x
+  const cellTop = model.y - model.height / 2 + region.y
   const pad = 1
-  const [x1, y1] = tm.CanvasPointToHtmlPoint([left + pad, top + pad])
-  const [x2, y2] = tm.CanvasPointToHtmlPoint([
-    left + region.width - pad,
-    top + region.height - pad
+  const [rx1, ry1] = tm.CanvasPointToHtmlPoint([cellLeft + pad, cellTop + pad])
+  const [rx2, ry2] = tm.CanvasPointToHtmlPoint([
+    cellLeft + region.width - pad,
+    cellTop + region.height - pad
   ])
-  const w = Math.max(1, x2 - x1)
-  const h = Math.max(1, y2 - y1)
-  return new DOMRect(x1, y1, w, h)
+  // CanvasPointToHtmlPoint 返回相对于 lf.container 的坐标
+  // textarea 用 fixed 定位，需要转换为 viewport 坐标
+  const containerEl = lf.container as HTMLElement | undefined
+  const containerRect = containerEl?.getBoundingClientRect?.() ?? { left: 0, top: 0 }
+  const w = Math.max(1, rx2 - rx1)
+  const h = Math.max(1, ry2 - ry1)
+  return new DOMRect(rx1 + containerRect.left, ry1 + containerRect.top, w, h)
 }

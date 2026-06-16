@@ -11,8 +11,10 @@ import {
   onDiagramResizeSessionStart
 } from '@modules/library/diagrams/lib/diagramResizeSession'
 import {
+  clearAllTableActiveCells,
   clearTableActiveCell,
   cellsInTableRect,
+  getLastActiveTableNodeId,
   getTableActiveCell,
   getTableSelectedCells,
   setTableCellMarquee,
@@ -48,17 +50,14 @@ import {
 } from '@modules/library/diagrams/extensions/table/kinds/tableToolbarOps'
 import { DIAGRAM_TABLE_KIND, DIAGRAM_TABLE_LF_TYPE, type DiagramTableData } from '@modules/library/diagrams/extensions/table/kinds/tableTypes'
 import {
+  getLastPointerCell,
   hideTableToolbarTooltip,
+  rememberTablePointerCell,
   readTableToolbarTooltipText,
   resolveTableToolbarTooltipTarget,
   setTableActiveDivider,
-  setTableCellDblClickHandler,
-  setTableCellPointerDownHandler,
   setTableDividerDragging,
-  setTableDividerPointerDownHandler,
-  setTableMovePointerDownHandler,
   setTableNodeResizing,
-  setTableToolbarPointerDownHandler,
   setTableExternalPatchHandler,
   shouldHideTableToolbar,
   showTableToolbarTooltip,
@@ -70,6 +69,7 @@ import {
   disposeTableToolbarTooltipHost,
   ensureTableToolbarTooltipHost
 } from '@modules/library/diagrams/extensions/table/interaction/tableToolbarTooltipMount'
+import { buildTableModifyNodePatch } from '@modules/library/diagrams/extensions/table/interaction/tableCanvasMutation'
 
 type DividerDrag = {
   kind: 'col' | 'row'
@@ -136,6 +136,11 @@ function patchTable(lf: LogicFlow, nodeId: string, data: DiagramTableData): void
   applyNodeShapeExtension(lf, nodeId, DIAGRAM_TABLE_KIND, data)
 }
 
+function isCellEditorTarget(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null
+  return Boolean(el?.classList?.contains('dg-table-cell-editor'))
+}
+
 function parseHitRow(value: string | null): number {
   const n = Number(value)
   return Number.isFinite(n) ? n : 0
@@ -155,9 +160,14 @@ function parseCellFromHit(hit: Element): TableActiveCell {
 
 function getSingleSelectedTableId(lf: LogicFlow): string | null {
   const nodes = lf.getSelectElements(true).nodes
-  if (nodes.length !== 1) return null
-  const id = nodes[0]!.id
-  return isTableNode(lf, id) ? id : null
+  if (nodes.length === 1) {
+    const id = nodes[0]!.id
+    if (isTableNode(lf, id)) return id
+  }
+  const lastActive = getLastActiveTableNodeId()
+  if (!lastActive) return null
+  const model = lf.getNodeModelById(lastActive)
+  return model && isTableNode(lf, lastActive) ? lastActive : null
 }
 
 /** 表格画布交互：单元格编辑、分割线拖拽、快捷增删行列（参考 draw.io Graph.js） */
@@ -170,29 +180,59 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
   let dividerDrag: DividerDrag | null = null
   let cellEdit: CellEdit | null = null
   let closingCellEditor = false
+  let openingCellEditor = false
+  let suppressCellEditorBlur = false
   let cellMarquee: CellMarqueeDrag | null = null
   let nodeMoveDrag: NodeMoveDrag | null = null
   let dividerRafId = 0
   let pendingDividerEvent: PointerEvent | null = null
+  let editorSyncRafId = 0
 
-  function getActiveContainer(): HTMLElement | null {
-    const container = ports.getContainer()
-    return container?.isConnected ? container : null
+  function getCanvasInteractionRoot(): HTMLElement | null {
+    const lfEl = (lf as { container?: HTMLElement }).container
+    if (lfEl?.isConnected) return lfEl
+    const fromPorts = ports.getContainer()
+    if (fromPorts?.isConnected) return fromPorts
+    return document.querySelector('.dg-canvas-frame') as HTMLElement | null
   }
 
-  function isPointerInsideCanvas(event: Event): boolean {
-    const container = getActiveContainer()
-    if (!container) return false
+  function isTablePointerTarget(event: PointerEvent): boolean {
+    for (const el of document.elementsFromPoint(event.clientX, event.clientY)) {
+      if (!(el instanceof Element)) continue
+      if (
+        el.closest(
+          '.dg-table-shape, .dg-table-cell-hit, .dg-table-col-divider, .dg-table-row-divider, .dg-table-edge-hit, .dg-table-tool-hit, .dg-table-move-handle-hit, .dg-table-move-handle__hit'
+        )
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  function getActiveContainer(): HTMLElement | null {
+    return getCanvasInteractionRoot()
+  }
+
+  function isPointerInsideCanvas(event: PointerEvent): boolean {
+    const root = getCanvasInteractionRoot()
     const target = event.target
-    return target instanceof Node && container.contains(target)
+    if (root && target instanceof Node && root.contains(target)) return true
+    const frame = document.querySelector('.dg-canvas-frame')
+    if (frame && target instanceof Node && frame.contains(target)) return true
+    return isTablePointerTarget(event)
   }
 
   /** 叠层命中：避免选中态交互层挡住移动柄/工具条/分割线 */
   function findHitInStack(event: PointerEvent, selector: string): Element | null {
-    const container = getActiveContainer()
-    if (!container) return null
+    const roots = [
+      getCanvasInteractionRoot(),
+      document.querySelector('.dg-canvas-frame')
+    ].filter(Boolean) as HTMLElement[]
+    if (roots.length === 0) return null
     for (const el of document.elementsFromPoint(event.clientX, event.clientY)) {
-      if (!(el instanceof Element) || !container.contains(el)) continue
+      if (!(el instanceof Element)) continue
+      if (!roots.some((root) => root.contains(el))) continue
       const hit = el.closest(selector)
       if (hit) return hit
     }
@@ -242,7 +282,7 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     const cells = cellsInTableRect(ctx.data, anchor, current)
     setTableCellSelection(nodeId, cells, anchor)
     const rect = boundingRectForTableCells(ctx.layout, cells)
-    setTableCellMarquee(rect)
+    setTableCellMarquee(nodeId, rect)
     bumpTableView(nodeId)
   }
 
@@ -253,8 +293,43 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     } catch {
       /* ignore */
     }
-    setTableCellMarquee(null)
+    setTableCellMarquee(cellMarquee.nodeId, null)
     cellMarquee = null
+  }
+
+  function clearTableMarquee(nodeId: string): void {
+    setTableCellMarquee(nodeId, null)
+  }
+
+  function stopCellEditorSync(): void {
+    if (editorSyncRafId !== 0) {
+      cancelAnimationFrame(editorSyncRafId)
+      editorSyncRafId = 0
+    }
+  }
+
+  function syncCellEditorPosition(): void {
+    if (!cellEdit) {
+      stopCellEditorSync()
+      return
+    }
+    const { nodeId, row, col, textarea } = cellEdit
+    const rect = resolveEditorClientRect(nodeId, row, col)
+    if (rect) {
+      textarea.style.left = `${rect.left}px`
+      textarea.style.top = `${rect.top}px`
+      textarea.style.width = `${Math.max(rect.width, 48)}px`
+      const minH = Math.max(rect.height, 24)
+      if (parseFloat(textarea.style.height) < minH) {
+        textarea.style.height = `${minH}px`
+      }
+    }
+    editorSyncRafId = requestAnimationFrame(syncCellEditorPosition)
+  }
+
+  function startCellEditorSync(): void {
+    stopCellEditorSync()
+    editorSyncRafId = requestAnimationFrame(syncCellEditorPosition)
   }
 
   function endNodeMoveDrag(commit: boolean) {
@@ -274,6 +349,40 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     refreshLayoutHandledShapeView(lf, nodeId)
   }
 
+  function commitTableDataChange(nodeId: string, data: DiagramTableData): void {
+    const patch = buildTableModifyNodePatch(data)
+    if (patch) ports.modifyNode(nodeId, patch)
+  }
+
+  function dismissCellEditorForPointer(event: PointerEvent): void {
+    if (!cellEdit) return
+    if (isCellEditorTarget(event.target)) return
+    closeCellEditor(true)
+  }
+
+  function resolveTableCellHitFromStack(
+    event: PointerEvent
+  ): { nodeId: string; cell: TableActiveCell; hitEl: Element } | null {
+    const cellHit =
+      findHitInStack(event, '.dg-table-cell-hit') ??
+      (event.target as Element).closest('.dg-table-cell-hit')
+    if (!cellHit) return null
+    const nodeId = resolveTableNodeId(cellHit, event)
+    if (!nodeId) return null
+    return { nodeId, cell: parseCellFromHit(cellHit), hitEl: cellHit }
+  }
+
+  function restoreTableNodeInteraction(nodeId: string): void {
+    const model = lf.getNodeModelById(nodeId)
+    if (model && model.draggable === false) {
+      model.draggable = true
+    }
+    setTableDividerDragging(false)
+    setTableActiveDivider(null)
+    setTableNodeResizing(false)
+    bumpTableView(nodeId)
+  }
+
   function focusCanvasForKeyboard(): void {
     const wrap = getActiveContainer()?.closest('.dg-canvas-wrap') as HTMLElement | null
     wrap?.focus({ preventScroll: true })
@@ -281,6 +390,13 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
 
   function activateTableNode(nodeId: string, event?: PointerEvent) {
     ports.selectNodeForPropertyPanel(nodeId, event)
+    const model = lf.getNodeModelById(nodeId)
+    const data = model ? readTableData(model) : null
+    if (data && !getTableActiveCell(nodeId)) {
+      const initial = getDefaultTableActiveCell(data)
+      setTableCellSelection(nodeId, [initial], initial, { force: true })
+      bumpTableView(nodeId)
+    }
     syncTableNodesFromGraph()
   }
 
@@ -291,7 +407,7 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     options?: { force?: boolean }
   ) {
     setTableCellSelection(nodeId, [cell], cell, options)
-    setTableCellMarquee(null)
+    clearTableMarquee(nodeId)
     ports.selectNodeForPropertyPanel(nodeId, event)
     syncTableNodesFromGraph()
     bumpTableView(nodeId)
@@ -305,11 +421,18 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
 
   function focusCell(nodeId: string, cell: TableActiveCell) {
     setTableCellSelection(nodeId, [cell], cell)
-    setTableCellMarquee(null)
+    clearTableMarquee(nodeId)
     bumpTableView(nodeId)
     syncTableSelectionToPanel()
     focusCanvasForKeyboard()
     ports.scheduleGraphChange()
+  }
+
+  /** 打开编辑器前仅同步选区，避免 bump 重绘导致命中元素失效、定位错位 */
+  function prepareCellForEdit(nodeId: string, cell: TableActiveCell) {
+    setTableCellSelection(nodeId, [cell], cell)
+    clearTableMarquee(nodeId)
+    syncTableSelectionToPanel()
   }
 
   function resolveActiveCell(nodeId: string, data: DiagramTableData): TableActiveCell {
@@ -320,31 +443,30 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     if (!cellEdit) return
     if (closingCellEditor) return
     closingCellEditor = true
+    // 关闭期间暂时清空 cellEdit，避免 patchTable 触发 externalPatchHandler 递归
+    const edit = cellEdit
+    cellEdit = null
     try {
-      const { nodeId, row, col, textarea } = cellEdit
+      const { nodeId, row, col, textarea } = edit
       if (commit) {
         const model = lf.getNodeModelById(nodeId)!
         const data = readTableData(model)
         if (data) {
-          ports.captureDragUndoBaseline()
-          patchTable(
-            lf,
-            nodeId,
-            patchTableCell(
-              data,
-              row,
-              col,
-              textarea.value,
-              toTableCellMeasureStyle(model, row === -1),
-              model.width,
-              model.height
-            )
+          const next = patchTableCell(
+            data,
+            row,
+            col,
+            textarea.value,
+            toTableCellMeasureStyle(model, row === -1),
+            model.width,
+            model.height
           )
-          ports.commitDragUndoMutation()
+          commitTableDataChange(nodeId, next)
         }
       }
       textarea.remove()
-      cellEdit = null
+      stopCellEditorSync()
+      focusCanvasForKeyboard()
       ports.scheduleGraphChange()
     } finally {
       closingCellEditor = false
@@ -354,46 +476,65 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
   function resolveEditorClientRect(
     nodeId: string,
     row: number,
-    col: number,
-    fallback?: Element | DOMRect | null
+    col: number
   ): DOMRect | null {
     const model = lf.getNodeModelById(nodeId)
     const data = model ? readTableData(model) : null
     if (!model || !data) return null
-    const rect = getTableCellClientRect(lf, nodeId, row, col, data)
-    if (rect) return rect
-    if (fallback instanceof Element) return fallback.getBoundingClientRect()
-    if (fallback instanceof DOMRect) return fallback
-    return null
+    return getTableCellClientRect(lf, nodeId, row, col, data)
   }
 
   function openCellEditor(
     nodeId: string,
     row: number,
     col: number,
-    anchor: Element | DOMRect,
     options?: { initialChar?: string; replaceContent?: boolean }
   ) {
+    if (closingCellEditor) return
+    if (openingCellEditor) return
+    // suppress blur 在整个 open 流程中保持 true，直到 textarea 真正 focus 后才释放
+    suppressCellEditorBlur = true
+    // 同步标记“正在打开”，使打开窗口期内的后续按键不会重复触发 open（避免孤儿 textarea）
+    openingCellEditor = true
     closeCellEditor(true)
     const model = lf.getNodeModelById(nodeId)
-    if (!model) return
+    if (!model) {
+      suppressCellEditorBlur = false
+      openingCellEditor = false
+      return
+    }
 
-    focusCell(nodeId, { row, col })
+    prepareCellForEdit(nodeId, { row, col })
     const initialChar = options?.initialChar
 
-    const mountEditor = () => {
+    const mountEditor = (attempt = 0) => {
       const freshModel = lf.getNodeModelById(nodeId)
       const freshData = freshModel ? readTableData(freshModel) : null
-      if (!freshModel || !freshData) return
+      if (!freshModel || !freshData) {
+        suppressCellEditorBlur = false
+        openingCellEditor = false
+        return
+      }
 
-      const rect = resolveEditorClientRect(nodeId, row, col, anchor)
-      if (!rect) return
+      const activeAtMount = getTableActiveCell(nodeId)
+      const mountRow = activeAtMount?.row ?? row
+      const mountCol = activeAtMount?.col ?? col
+      const rect = resolveEditorClientRect(nodeId, mountRow, mountCol)
+      if (!rect) {
+        if (attempt < 4) {
+          requestAnimationFrame(() => mountEditor(attempt + 1))
+        } else {
+          suppressCellEditorBlur = false
+          openingCellEditor = false
+        }
+        return
+      }
 
       const value =
         initialChar != null && options?.replaceContent !== false
           ? initialChar
-          : readTableCellValue(freshData, row, col)
-      const cellStyle = readTableCellTextStyle(freshModel, row === -1)
+          : readTableCellValue(freshData, mountRow, mountCol)
+      const cellStyle = readTableCellTextStyle(freshModel, mountRow === -1)
       const textarea = document.createElement('textarea')
       textarea.className = 'dg-table-cell-editor ww-scroll-main'
       textarea.value = value
@@ -442,44 +583,50 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
           e.preventDefault()
           const current = readTableData(freshModel)
           if (!current) return
-          const next = stepTableCell(current, row, col, e.shiftKey ? 'prev' : 'next')
-          if (next.row === row && next.col === col) return
+          const next = stepTableCell(current, mountRow, mountCol, e.shiftKey ? 'prev' : 'next')
+          if (next.row === mountRow && next.col === mountCol) return
           closeCellEditor(true)
-          const nextRect = getTableCellClientRect(lf, nodeId, next.row, next.col, current)
-          if (nextRect) {
-            openCellEditor(nodeId, next.row, next.col, nextRect)
-          }
+          openCellEditor(nodeId, next.row, next.col)
         }
       })
-      textarea.addEventListener('blur', () => closeCellEditor(true))
+      textarea.addEventListener('blur', () => {
+        if (suppressCellEditorBlur) return
+        closeCellEditor(true)
+      })
 
       document.body.appendChild(textarea)
       textarea.focus()
+      // 等 focus 事件完全冒泡完再解除 blur suppress，避免 focus 引发的 blur 误关编辑器
+      requestAnimationFrame(() => { suppressCellEditorBlur = false })
       if (initialChar != null) {
         textarea.setSelectionRange(textarea.value.length, textarea.value.length)
       } else {
         textarea.select()
       }
-      cellEdit = { nodeId, row, col, textarea }
+      cellEdit = { nodeId, row: mountRow, col: mountCol, textarea }
+      openingCellEditor = false
+      bumpTableView(nodeId)
+      startCellEditorSync()
     }
 
-    requestAnimationFrame(mountEditor)
+    // 单 rAF 让当前事件循环收尾；编辑框定位是纯几何计算，无需等待 DOM 重渲染
+    requestAnimationFrame(() => mountEditor(0))
   }
 
   function beginCellEdit(nodeId: string, data: DiagramTableData) {
-    const active = resolveActiveCell(nodeId, data)
-    const rect = getTableCellClientRect(lf, nodeId, active.row, active.col, data)
-    if (rect) openCellEditor(nodeId, active.row, active.col, rect)
+    const active = getTableActiveCell(nodeId) ?? resolveActiveCell(nodeId, data)
+    openCellEditor(nodeId, active.row, active.col)
   }
 
   function beginCellEditWithChar(
     nodeId: string,
-    _data: DiagramTableData,
+    data: DiagramTableData,
     cell: TableActiveCell,
     char: string
   ) {
-    focusCell(nodeId, cell)
-    openCellEditor(nodeId, cell.row, cell.col, new DOMRect(0, 0, 1, 1), {
+    const resolved = getTableActiveCell(nodeId) ?? cell
+    prepareCellForEdit(nodeId, resolved)
+    openCellEditor(nodeId, resolved.row, resolved.col, {
       initialChar: char,
       replaceContent: true
     })
@@ -567,7 +714,7 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     if (nodeMoveDrag) endNodeMoveDrag(false)
     if (cellMarquee) {
       releaseCapturedPointer(cellMarquee.captureEl, cellMarquee.pointerId)
-      setTableCellMarquee(null)
+      setTableCellMarquee(cellMarquee.nodeId, null)
       cellMarquee = null
     }
   }
@@ -578,7 +725,7 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     if (cellMarquee?.marqueeActive) return
     if (cellMarquee) {
       releaseCapturedPointer(cellMarquee.captureEl, cellMarquee.pointerId)
-      setTableCellMarquee(null)
+      setTableCellMarquee(cellMarquee.nodeId, null)
       cellMarquee = null
     }
   }
@@ -595,7 +742,7 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     const data = model ? readTableData(model) : null
     if (!model || !data) return
 
-    blockNodeDrag(event)
+    consumeTablePointer(event)
     hideTableToolbarTooltip()
     activateTableNode(nodeId)
     const measureOptions = {
@@ -626,20 +773,15 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     }
   }
 
-  function onDividerPointerDown(event: PointerEvent, context: TableDividerPointerContext) {
-    const target = (event.currentTarget ?? event.target) as Element | null
-    if (!target) return
-    beginDividerDrag(event, context, target)
-  }
-
   function onCellPointerDown(event: PointerEvent, ctx: TableCellPointerContext, hitEl: Element) {
-    blockNodeDrag(event)
-    stopLfBubble(event)
+    consumeTablePointer(event)
+    rememberTablePointerCell(ctx)
+    dismissCellEditorForPointer(event)
     const cell = { row: ctx.row, col: ctx.col }
-    if (event.shiftKey) {
+    if (event.shiftKey || event.ctrlKey || event.metaKey) {
       activateTableNode(ctx.nodeId, event)
       toggleCellInSelection(ctx.nodeId, cell)
-      setTableCellMarquee(null)
+      clearTableMarquee(ctx.nodeId)
       bumpTableView(ctx.nodeId)
       syncTableSelectionToPanel()
       focusCanvasForKeyboard()
@@ -647,6 +789,7 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
       return
     }
     selectTableCell(ctx.nodeId, cell, event, { force: true })
+    requestAnimationFrame(() => focusCanvasForKeyboard())
     cellMarquee = {
       nodeId: ctx.nodeId,
       anchor: cell,
@@ -659,13 +802,16 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     ports.scheduleGraphChange()
   }
 
-  function onCellDblClick(event: MouseEvent, ctx: TableCellPointerContext, hitEl: Element) {
-    stopLfBubble(event)
+  function onCellDblClick(event: MouseEvent, ctx: TableCellPointerContext) {
+    consumeTablePointer(event as unknown as PointerEvent)
+    rememberTablePointerCell(ctx)
+    dismissCellEditorForPointer(event as unknown as PointerEvent)
     activateTableNode(ctx.nodeId, event as unknown as PointerEvent)
-    openCellEditor(ctx.nodeId, ctx.row, ctx.col, hitEl)
+    openCellEditor(ctx.nodeId, ctx.row, ctx.col)
   }
 
   function onMovePointerDown(event: PointerEvent, nodeId: string, hitEl: Element) {
+    consumeTablePointer(event)
     activateTableNode(nodeId, event)
     beginNodeMoveDrag(event, hitEl, nodeId)
   }
@@ -679,15 +825,14 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
       '.dg-table-add-col, .dg-table-add-row, .dg-table-remove-col, .dg-table-remove-row'
     )
     if (group?.getAttribute('data-disabled') === '1') {
-      blockNodeDrag(event)
+      consumeTablePointer(event)
       return
     }
-    blockNodeDrag(event)
+    consumeTablePointer(event)
     activateTableNode(ctx.nodeId, event)
     const data = readTableData(lf.getNodeModelById(ctx.nodeId)!)
     if (!data) return
     const active = getTableActiveCell(ctx.nodeId)
-    ports.captureDragUndoBaseline()
     let changed = false
     if (ctx.action === 'addCol') {
       changed = applyToolbarMutation(ctx.nodeId, tableToolbarAddColumn(data, active))
@@ -699,16 +844,14 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
       changed = applyToolbarMutation(ctx.nodeId, tableToolbarRemoveRow(data, active))
     }
     if (changed) {
-      ports.commitDragUndoMutation()
-    } else {
-      ports.clearDragUndoBaseline()
+      ports.scheduleGraphChange()
     }
-    ports.scheduleGraphChange()
   }
 
   /** 容器 capture：统一命中表格控件（比 SVG onPointerDown 更可靠，避免重绘后失效） */
   const onContainerPointerDown = (event: PointerEvent) => {
     if (event.button !== 0) return
+    dismissCellEditorForPointer(event)
     resetStaleInteractionState()
 
     const moveHit =
@@ -720,16 +863,26 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
       return
     }
 
+    const toolHit =
+      findHitInStack(event, '.dg-table-tool-hit') ??
+      (event.target as Element).closest('.dg-table-tool-hit')
+    const toolGroup = toolHit?.closest(
+      '.dg-table-add-col, .dg-table-add-row, .dg-table-remove-col, .dg-table-remove-row'
+    )
     const addCol =
+      (toolGroup?.classList.contains('dg-table-add-col') ? toolGroup : null) ??
       findHitInStack(event, '.dg-table-add-col') ??
       (event.target as Element).closest('.dg-table-add-col')
     const addRow =
+      (toolGroup?.classList.contains('dg-table-add-row') ? toolGroup : null) ??
       findHitInStack(event, '.dg-table-add-row') ??
       (event.target as Element).closest('.dg-table-add-row')
     const removeCol =
+      (toolGroup?.classList.contains('dg-table-remove-col') ? toolGroup : null) ??
       findHitInStack(event, '.dg-table-remove-col') ??
       (event.target as Element).closest('.dg-table-remove-col')
     const removeRow =
+      (toolGroup?.classList.contains('dg-table-remove-row') ? toolGroup : null) ??
       findHitInStack(event, '.dg-table-remove-row') ??
       (event.target as Element).closest('.dg-table-remove-row')
     if (addCol || addRow || removeCol || removeRow) {
@@ -762,6 +915,16 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
       return
     }
 
+    const cellPointer = resolveTableCellHitFromStack(event)
+    if (cellPointer) {
+      onCellPointerDown(
+        event,
+        { nodeId: cellPointer.nodeId, row: cellPointer.cell.row, col: cellPointer.cell.col },
+        cellPointer.hitEl
+      )
+      return
+    }
+
     const bodyPointer = resolveTableBodyPointer(event)
     if (bodyPointer?.cell) {
       onCellPointerDown(
@@ -769,17 +932,6 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
         { nodeId: bodyPointer.nodeId, row: bodyPointer.cell.row, col: bodyPointer.cell.col },
         bodyPointer.hitEl
       )
-      return
-    }
-
-    const cellHit =
-      findHitInStack(event, '.dg-table-cell-hit') ??
-      (event.target as Element).closest('.dg-table-cell-hit')
-    if (cellHit) {
-      const nodeId = resolveTableNodeId(cellHit, event)
-      if (!nodeId) return
-      const cell = parseCellFromHit(cellHit)
-      onCellPointerDown(event, { nodeId, row: cell.row, col: cell.col }, cellHit)
       return
     }
 
@@ -791,31 +943,39 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
   }
 
   const onContainerDblClick = (event: MouseEvent) => {
+    const pointer = event as unknown as PointerEvent
+    const cellPointer = resolveTableCellHitFromStack(pointer)
+    if (cellPointer) {
+      onCellDblClick(event, {
+        nodeId: cellPointer.nodeId,
+        row: cellPointer.cell.row,
+        col: cellPointer.cell.col
+      })
+      return
+    }
+
     const hit =
-      findHitInStack(event as unknown as PointerEvent, '.dg-table-cell-hit') ??
+      findHitInStack(pointer, '.dg-table-cell-hit') ??
       (event.target as Element).closest('.dg-table-cell-hit')
     if (hit) {
       const nodeId = resolveTableNodeId(hit, event)
       if (!nodeId) return
       const cell = parseCellFromHit(hit)
-      onCellDblClick(event, { nodeId, row: cell.row, col: cell.col }, hit)
+      onCellDblClick(event, { nodeId, row: cell.row, col: cell.col })
       return
     }
 
     const bodyPointer = resolveTableBodyPointer(event as unknown as PointerEvent)
     if (!bodyPointer?.cell) return
-    onCellDblClick(
-      event,
-      {
-        nodeId: bodyPointer.nodeId,
-        row: bodyPointer.cell.row,
-        col: bodyPointer.cell.col
-      },
-      bodyPointer.hitEl
-    )
+    onCellDblClick(event, {
+      nodeId: bodyPointer.nodeId,
+      row: bodyPointer.cell.row,
+      col: bodyPointer.cell.col
+    })
   }
 
   const onInteractionInterrupt = () => {
+    if (cellEdit) closeCellEditor(true)
     if (dividerRafId !== 0) {
       cancelAnimationFrame(dividerRafId)
       dividerRafId = 0
@@ -836,27 +996,12 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     if (cellMarquee) endCellMarqueeDrag()
   }
 
-  setTableDividerPointerDownHandler(onDividerPointerDown)
-  setTableCellPointerDownHandler((event, ctx) => {
-    const hitEl = (event.currentTarget ?? event.target) as Element
-    onCellPointerDown(event, ctx, hitEl)
-  })
-  setTableCellDblClickHandler((event, ctx) => {
-    const hitEl = (event.currentTarget ?? event.target) as Element
-    onCellDblClick(event, ctx, hitEl)
-  })
-  setTableMovePointerDownHandler((event, nodeId) => {
-    const hitEl = (event.currentTarget ?? event.target) as Element
-    onMovePointerDown(event, nodeId, hitEl)
-  })
-  setTableToolbarPointerDownHandler(onToolbarPointerDown)
-
   setTableExternalPatchHandler((nodeId) => {
     if (cellEdit?.nodeId === nodeId) {
       closeCellEditor(true)
     }
     forceResetAllInteractionState()
-    bumpTableView(nodeId)
+    restoreTableNodeInteraction(nodeId)
   })
 
   function beginNodeMoveDrag(event: PointerEvent, hitEl: Element, nodeId: string) {
@@ -881,6 +1026,11 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     }
   }
 
+  function consumeTablePointer(event: PointerEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+
   function blockPointerDefault(event: Event) {
     event.preventDefault()
   }
@@ -899,9 +1049,9 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     result: ReturnType<typeof tableToolbarAddColumn>
   ): boolean {
     if (!result) return false
-    patchTable(lf, nodeId, result.data)
+    commitTableDataChange(nodeId, result.data)
     if (result.active) {
-      setTableCellSelection(nodeId, [result.active], result.active)
+      setTableCellSelection(nodeId, [result.active], result.active, { force: true })
     }
     bumpTableView(nodeId)
     return true
@@ -940,21 +1090,21 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     }
   }
 
-  const onTableNodeClick = ({ data, e }: { data: { id: string }; e?: MouseEvent }) => {
+  const onTableNodeClick = ({ data }: { data: { id: string }; e?: MouseEvent }) => {
     if (!isTableNode(lf, data.id)) return
-    if (e) {
-      const cell = resolveCellAtClient(data.id, e.clientX, e.clientY)
-      if (cell) {
-        setTableCellSelection(data.id, [cell], cell, { force: true })
-        bumpTableView(data.id)
-        focusCanvasForKeyboard()
-      }
+    const model = lf.getNodeModelById(data.id)
+    const tableData = model ? readTableData(model) : null
+    if (tableData && !getTableActiveCell(data.id)) {
+      const initial = getDefaultTableActiveCell(tableData)
+      setTableCellSelection(data.id, [initial], initial, { force: true })
+      bumpTableView(data.id)
     }
     syncTableNodesFromGraph()
     ports.notifyUserSelectionChange()
   }
 
   const onBlankClick = () => {
+    closeCellEditor(true)
     for (const node of lf.graphModel.nodes) {
       if (!isTableNode(lf, node.id)) continue
       clearTableActiveCell(node.id)
@@ -962,15 +1112,33 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
   }
 
   const onKeyDown = (event: KeyboardEvent): boolean => {
-    if (cellEdit || isEditableTarget(event.target)) return false
+    // 编辑器已打开或正在打开：交给 textarea 自身处理，避免重复 open 产生孤儿编辑框
+    if (cellEdit || openingCellEditor) return false
 
     const nodeId = getSingleSelectedTableId(lf)
     if (!nodeId) return false
 
-    const data = readTableData(lf.getNodeModelById(nodeId)!)
+    const model = lf.getNodeModelById(nodeId)
+    if (!model) return false
+    const data = readTableData(model)
     if (!data) return false
 
     const mod = event.ctrlKey || event.metaKey
+    let activeCell = getTableActiveCell(nodeId)
+    const printable =
+      !mod &&
+      !event.altKey &&
+      !event.isComposing &&
+      event.key.length === 1 &&
+      !event.key.startsWith('Arrow') &&
+      event.key !== 'Tab'
+
+    if (printable) {
+      focusCanvasForKeyboard()
+    } else if (isEditableTarget(event.target)) {
+      return false
+    }
+
     const arrowDir = !mod && !event.altKey ? ARROW_DIRS[event.key] : undefined
 
     if (arrowDir) {
@@ -1003,11 +1171,19 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
       !event.isComposing &&
       event.key.length === 1
     ) {
-      const printable = !event.key.startsWith('Arrow') && event.key !== 'Tab'
       if (printable) {
-        const active = resolveActiveCell(nodeId, data)
+        if (!activeCell) {
+          const last = getLastPointerCell()
+          if (last && last.nodeId === nodeId) {
+            activeCell = { row: last.row, col: last.col }
+          } else {
+            activeCell = resolveActiveCell(nodeId, data)
+          }
+          setTableCellSelection(nodeId, [activeCell], activeCell, { force: true })
+          bumpTableView(nodeId)
+        }
         event.preventDefault()
-        beginCellEditWithChar(nodeId, data, active, event.key)
+        beginCellEditWithChar(nodeId, data, activeCell, event.key)
         return true
       }
     }
@@ -1025,9 +1201,7 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
       const value = readTableCellValue(data, active.row, active.col)
       if (!value) return false
       event.preventDefault()
-      ports.captureDragUndoBaseline()
-      patchTable(
-        lf,
+      commitTableDataChange(
         nodeId,
         patchTableCell(
           data,
@@ -1039,7 +1213,6 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
           model.height
         )
       )
-      ports.commitDragUndoMutation()
       ports.scheduleGraphChange()
       return true
     }
@@ -1133,6 +1306,7 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
     if (cellMarquee) {
       endCellMarqueeDrag()
       ports.scheduleGraphChange()
+      focusCanvasForKeyboard()
     }
     if (dividerRafId !== 0) {
       cancelAnimationFrame(dividerRafId)
@@ -1238,16 +1412,13 @@ export function bindDiagramTableCanvasEvents(ports: DiagramShapeCanvasInteractio
 
   return () => {
     closeCellEditor(false)
+    stopCellEditorSync()
     hideTableToolbarTooltip()
-    setTableDividerPointerDownHandler(null)
-    setTableCellPointerDownHandler(null)
-    setTableCellDblClickHandler(null)
-    setTableMovePointerDownHandler(null)
-    setTableToolbarPointerDownHandler(null)
     setTableExternalPatchHandler(null)
     setTableDividerDragging(false)
     setTableActiveDivider(null)
     setTableNodeResizing(false)
+    clearAllTableActiveCells()
     disposeTableToolbarTooltipHost()
     lf.off('node:click', onTableNodeClick)
     lf.off('blank:click', onBlankClick)

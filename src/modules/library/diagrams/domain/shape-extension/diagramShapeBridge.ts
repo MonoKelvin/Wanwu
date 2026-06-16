@@ -4,8 +4,7 @@ import { getDiagramShapeExtensionRegistry } from '@modules/library/diagrams/doma
 import { readDgShapeFromProperties } from '@modules/library/diagrams/domain/shape-extension/diagramShapePayload'
 import type { DiagramNodeShapeExtensionView } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import { syncNodeSizeProperties } from '@modules/library/diagrams/lib/diagramShapeResize'
-import { notifyTableExternalPropertyPatch } from '@modules/library/diagrams/extensions/table/interaction/tablePropertyBridge'
-import { DIAGRAM_TABLE_KIND } from '@modules/library/diagrams/extensions/table/kinds/tableTypes'
+import type { DiagramShapeNodePatchContext } from '@modules/library/diagrams/domain/shape-extension/interfaces'
 import {
   DG_SHAPE_PAYLOAD_KEY,
   type DiagramShapePayloadEnvelope
@@ -41,6 +40,21 @@ export function refreshLayoutHandledShapeView(lf: LogicFlow, nodeId: string): vo
   const props = model.properties as Record<string, unknown>
   const nextRev = Number(props[DG_SHAPE_RENDER_REV_KEY] ?? 0) + 1
   lf.setProperties(nodeId, { [DG_SHAPE_RENDER_REV_KEY]: nextRev })
+  if ('setAttributes' in model && typeof model.setAttributes === 'function') {
+    ;(model as { setAttributes: () => void }).setAttributes()
+  }
+}
+
+/** 按 LF 节点类型分发扩展 onNodePatched 钩子 */
+export function dispatchShapeKindNodePatched(
+  lf: LogicFlow,
+  nodeId: string,
+  ctx: Omit<DiagramShapeNodePatchContext, 'lf' | 'nodeId'>
+): void {
+  const model = lf.getNodeModelById(nodeId)
+  if (!model) return
+  const kindReg = getDiagramShapeExtensionRegistry().getKindByLfType(String(model.type ?? ''))
+  kindReg?.onNodePatched?.({ lf, nodeId, ...ctx })
 }
 
 /** 合并并写入 dgShape，同步布局/文本副作用 */
@@ -76,9 +90,7 @@ export function patchNodeDgShape(
         syncNodeSizeProperties(updated)
       }
     }
-    if (envelope.kind === DIAGRAM_TABLE_KIND) {
-      notifyTableExternalPropertyPatch(lf, nodeId)
-    }
+    dispatchShapeKindNodePatched(lf, nodeId, { source: 'dgShape', envelope })
     return
   }
   syncNodeShapeExtensionEffects(lf, nodeId)

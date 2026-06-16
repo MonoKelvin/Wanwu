@@ -40,6 +40,7 @@ export interface BuildLogicFlowCanvasEventPortsInput {
   captureDragUndoBaseline: () => void
   clearDragUndoBaseline: () => void
   commitDragUndoMutation: () => void
+  requestModifyNode: (nodeId: string, patch: Record<string, unknown>) => void
 }
 
 /** 从适配器依赖组装画布事件绑定端口（减轻 LogicFlowDiagramAdapter 体积） */
@@ -87,6 +88,7 @@ export function buildLogicFlowCanvasEventPorts(
     requestFormatPainterApply: input.requestFormatPainterApply,
     captureDragUndoBaseline: input.captureDragUndoBaseline,
     clearDragUndoBaseline: input.clearDragUndoBaseline,
-    commitDragUndoMutation: input.commitDragUndoMutation
+    commitDragUndoMutation: input.commitDragUndoMutation,
+    modifyNode: input.requestModifyNode
   }
 }

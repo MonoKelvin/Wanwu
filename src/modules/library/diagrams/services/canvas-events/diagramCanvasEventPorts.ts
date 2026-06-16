@@ -41,4 +41,5 @@ export interface DiagramCanvasEventBinderPorts {
   captureDragUndoBaseline(): void
   clearDragUndoBaseline(): void
   commitDragUndoMutation(): void
+  modifyNode(nodeId: string, patch: Record<string, unknown>): void
 }

@@ -224,7 +224,8 @@ class DiagramResizeControlGroupInner extends Component {
         fill: 'none',
         stroke: String(outline.stroke ?? '#9a9aa2'),
         strokeWidth: Number(outline.strokeWidth ?? 1),
-        strokeDasharray: String(outline.strokeDasharray ?? '4,4')
+        strokeDasharray: String(outline.strokeDasharray ?? '4,4'),
+        pointerEvents: 'none'
       }),
       ...handles.map((dir) =>
         h(DiagramResizeHandle as never, {

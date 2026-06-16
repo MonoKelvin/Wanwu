@@ -1,4 +1,4 @@
-import LogicFlow, { h } from '@logicflow/core'
+import LogicFlow, { h, observer } from '@logicflow/core'
 import {
   DiagramRectResizeModel,
   DiagramRectResizeView
@@ -10,6 +10,7 @@ import {
   DG_SHAPE_RENDER_REV_KEY
 } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'
 import { DG_SHAPE_PAYLOAD_KEY } from '@modules/library/diagrams/domain/shape-extension/types'
+import { tableActiveCellRevision } from '@modules/library/diagrams/extensions/table/interaction/tableCellSelection'
 import {
   applyTableLayoutToModel,
   computeTableLayout,
@@ -43,6 +44,38 @@ import {
 } from '@modules/library/diagrams/extensions/table/interaction/tableCanvasRuntime'
 
 const TABLE_LF_TYPE = DIAGRAM_TABLE_LF_TYPE
+
+/** 强制 MobX 订阅 dgShape / 选区 / 尺寸，避免 patch 后仅缩放层刷新而主体层停滞 */
+function trackTableShapeForRender(
+  model: {
+    id: string
+    width: number
+    height: number
+    isSelected?: boolean
+    properties?: Record<string, unknown>
+  },
+  data: DiagramTableData | null
+): void {
+  void Number(model.properties?.[DG_SHAPE_RENDER_REV_KEY] ?? 0)
+  void model.properties?.[DG_SHAPE_PAYLOAD_KEY]
+  void model.properties?.style
+  void model.properties?.textStyle
+  if (typeof model.getNodeStyle === 'function') {
+    const style = model.getNodeStyle()
+    void style.stroke
+    void style.fill
+    void style.strokeWidth
+  }
+  void model.width
+  void model.height
+  void model.isSelected
+  void tableActiveCellRevision.value
+  void data?.showHeader
+  void data?.columns.length
+  void data?.rows.length
+  for (const w of data?.colWidths ?? []) void w
+  for (const h of data?.rowHeights ?? []) void h
+}
 
 export function readTableData(model: { properties?: Record<string, unknown> }): DiagramTableData | null {
   const envelope = model.properties?.[DG_SHAPE_PAYLOAD_KEY]
@@ -134,7 +167,7 @@ export function registerTableShape(lf: LogicFlow): void {
     }
   }
 
-  class View extends DiagramRectResizeView {
+  class TableViewInner extends DiagramRectResizeView {
     getText() {
       return h('g', {})
     }
@@ -142,11 +175,10 @@ export function registerTableShape(lf: LogicFlow): void {
     /** 角点在下、分割线在中、工具条在上，避免分割线被缩放层挡住 */
     getResizeControl() {
       const { model, graphModel } = this.props
-      void model.properties?.[DG_SHAPE_RENDER_REV_KEY]
+      const data = readTableData(model)
+      trackTableShapeForRender(model, data)
       const core = diagramGetResizeControl(model, graphModel)
       if (!model.isSelected) return core
-
-      const data = readTableData(model)
       if (!data) return core
 
       const { x, y, width, height } = model
@@ -166,11 +198,7 @@ export function registerTableShape(lf: LogicFlow): void {
         model.id,
         active
       )
-      const interaction =
-        layout && data
-          ? renderTableInteractionGroup(left, top, layout, data, model.id, true)
-          : null
-      const layers = [core, interaction, dividers, toolbar].filter(Boolean)
+      const layers = [core, dividers, toolbar].filter(Boolean)
       if (layers.length === 0) return null
       if (layers.length === 1) return layers[0] as ReturnType<DiagramRectResizeView['getResizeControl']>
       return h('g', { className: 'dg-resize-root' }, layers as never) as ReturnType<
@@ -185,11 +213,12 @@ export function registerTableShape(lf: LogicFlow): void {
     getResizeShape() {
       const { model } = this.props
       const { x, y, width, height } = model
+      const data = readTableData(model)
+      trackTableShapeForRender(model, data)
       const style = model.getNodeStyle()
       const appearance = readTableNodeAppearance(style as Record<string, unknown>)
       const left = x - width / 2
       const top = y - height / 2
-      const data = readTableData(model)
       const measureOptions = readTableLayoutMeasureOptions(model)
       const layout = data ? computeTableLayout(data, width, measureOptions, height) : null
       const colWidths = layout?.colWidths ?? [width]
@@ -319,7 +348,6 @@ export function registerTableShape(lf: LogicFlow): void {
           : null
       const moveLayer = renderTableMoveOverlay(left, top, width, height, model.id)
 
-      void model.properties?.[DG_SHAPE_RENDER_REV_KEY]
       shapes.push(
         h('defs', {}, [
           h('clipPath', { id: clipId }, [
@@ -357,7 +385,9 @@ export function registerTableShape(lf: LogicFlow): void {
     }
   }
 
-  lf.register({ type: TABLE_LF_TYPE, view: View, model: Model })
+  const TableView = observer(TableViewInner)
+
+  lf.register({ type: TABLE_LF_TYPE, view: TableView, model: Model })
 }
 
 export { TABLE_LF_TYPE }

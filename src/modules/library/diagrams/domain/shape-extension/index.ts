@@ -1,6 +1,8 @@
 export type {
   DiagramShapeExtension,
   DiagramShapeKindRegistration,
+  DiagramShapeNodePatchContext,
+  DiagramShapeNodePatchHook,
   DiagramShapePaletteBinding,
   IDiagramShapeExtensionRegistry,
   IDiagramShapePayloadCodec,
@@ -46,6 +48,7 @@ export type { DiagramNodeShapeExtensionView } from '@modules/library/diagrams/li
 export {
   applyNodeShapeExtension,
   buildShapeExtensionModifyNodePatch,
+  dispatchShapeKindNodePatched,
   DG_SHAPE_RENDER_REV_KEY,
   patchNodeDgShape,
   readNodeShapeExtension,

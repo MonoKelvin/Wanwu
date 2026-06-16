@@ -54,8 +54,7 @@ import { DiagramCanvasThemeCoordinator } from '@modules/library/diagrams/service
 import { DiagramContextMenuCoordinator } from '@modules/library/diagrams/services/diagramContextMenuCoordinator'
 import { applyDiagramCanvasGraphPatch } from '@modules/library/diagrams/lib/diagramGraphPatchApply'
 import { applyDiagramNodePatch } from '@modules/library/diagrams/lib/diagramNodePatchApply'
-import { notifyTableExternalPropertyPatch } from '@modules/library/diagrams/extensions/table/interaction/tablePropertyBridge'
-import { DIAGRAM_TABLE_LF_TYPE } from '@modules/library/diagrams/extensions/table/kinds/tableTypes'
+import { dispatchShapeKindNodePatched } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'
 import {
   applyDiagramViewport,
   centerDiagramOnContent,
@@ -441,7 +440,14 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       },
       captureDragUndoBaseline: () => this.captureDragUndoBaseline(),
       clearDragUndoBaseline: () => this.clearDragUndoBaseline(),
-      commitDragUndoMutation: () => this.commitDragUndoMutation()
+      commitDragUndoMutation: () => this.commitDragUndoMutation(),
+      requestModifyNode: (nodeId, patch) => {
+        if (this.documentCommandBridge?.modifyNode) {
+          this.documentCommandBridge.modifyNode({ nodeId, patch })
+        } else {
+          this.updateNode(nodeId, patch)
+        }
+      }
     })
   }
 
@@ -461,7 +467,8 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     this.setDocumentCommandBridge({
       finishDrag: recorder,
       formatPainterApply: () => {},
-      insertNodeOnEdge: () => {}
+      insertNodeOnEdge: () => {},
+      modifyNode: () => {}
     })
   }
 
@@ -903,9 +910,7 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
       layoutProps.width != null ||
       layoutProps.height != null
     applyNodeProperties(this.lf, props)
-    if (String(this.lf.getNodeModelById(props.id)?.type ?? '') === DIAGRAM_TABLE_LF_TYPE) {
-      notifyTableExternalPropertyPatch(this.lf, props.id)
-    }
+    dispatchShapeKindNodePatched(this.lf, props.id, { source: 'nodeProperties' })
     if (affectsLayout) {
       finalizeNodeLayoutChange(this.lf, [props.id])
       this.refreshMultiSelectResize?.()
@@ -1159,6 +1164,14 @@ export class LogicFlowDiagramAdapter implements IDiagramEditorPort {
     })
     this.select([], [edge.id])
     return edge.id
+  }
+
+  modifyNodeWithUndo(nodeId: string, patch: Record<string, unknown>): void {
+    if (this.documentCommandBridge?.modifyNode) {
+      this.documentCommandBridge.modifyNode({ nodeId, patch })
+    } else {
+      this.updateNode(nodeId, patch)
+    }
   }
 
   updateNode(nodeId: string, patch: Record<string, unknown>): void {

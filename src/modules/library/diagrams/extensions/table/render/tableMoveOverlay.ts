@@ -1,6 +1,5 @@
 import { h } from '@logicflow/core'
 import { TABLE_LAYOUT } from '@modules/library/diagrams/extensions/table/kinds/tableLayout'
-import { invokeTableMovePointerDown } from '@modules/library/diagrams/extensions/table/interaction/tableCanvasRuntime'
 
 /** 表格外上方居中：移动手柄（四向箭头，整块可点） */
 export function renderTableMoveOverlay(
@@ -55,10 +54,7 @@ export function renderTableMoveOverlay(
             fill: 'transparent',
             stroke: 'none',
             className: 'dg-table-move-handle__hit',
-            'data-dg-node-id': nodeId,
-            onPointerDown: (event: PointerEvent) => {
-              invokeTableMovePointerDown(event, nodeId)
-            }
+            'data-dg-node-id': nodeId
           }),
           h('rect', {
             x: cx - half,

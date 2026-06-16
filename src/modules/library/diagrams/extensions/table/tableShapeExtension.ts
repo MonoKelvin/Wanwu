@@ -3,6 +3,7 @@ import { tableCodec } from '@modules/library/diagrams/extensions/table/kinds/tab
 import { DIAGRAM_TABLE_KIND } from '@modules/library/diagrams/extensions/table/kinds/tableTypes'
 import { bindDiagramTableCanvasEvents } from '@modules/library/diagrams/extensions/table/interaction/bindDiagramTableCanvasEvents'
 import { tableContextMenuContributor } from '@modules/library/diagrams/extensions/table/tableContextMenuContributor'
+import { onTableShapeNodePatched } from '@modules/library/diagrams/extensions/table/tableShapeLifecycle'
 import { tableRenderer } from '@modules/library/diagrams/extensions/table/tableRenderer'
 
 export const tableShapeExtension: DiagramShapeExtension = {
@@ -24,7 +25,8 @@ export const tableShapeExtension: DiagramShapeExtension = {
         handles: ['nw', 'ne', 'se', 'sw']
       },
       canvasInteractionBinders: [bindDiagramTableCanvasEvents],
-      contextMenuContributor: tableContextMenuContributor
+      contextMenuContributor: tableContextMenuContributor,
+      onNodePatched: onTableShapeNodePatched
     }
   ],
   paletteBindings: [{ paletteId: 'dg-table', kind: DIAGRAM_TABLE_KIND }]

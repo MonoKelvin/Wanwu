@@ -72,6 +72,9 @@ export function useDiagramEditorCommandSetup(
       },
       insertNodeOnEdge: (payload) => {
         void canvasCommands.insertNodeOnEdge(payload)
+      },
+      modifyNode: (payload) => {
+        void canvasCommands.modifyNode(payload)
       }
     })
   }

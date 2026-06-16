@@ -58,6 +58,7 @@ let cellPointerDownHandler: TableCellPointerDownHandler | null = null
 let cellDblClickHandler: TableCellDblClickHandler | null = null
 let movePointerDownHandler: TableMovePointerDownHandler | null = null
 let toolbarPointerDownHandler: TableToolbarPointerDownHandler | null = null
+let lastPointerCell: TableCellPointerContext | null = null
 
 export function setTableCellPointerDownHandler(handler: TableCellPointerDownHandler | null): void {
   cellPointerDownHandler = handler
@@ -79,10 +80,12 @@ export function invokeTableCellPointerDown(
   event: PointerEvent,
   context: TableCellPointerContext
 ): void {
+  lastPointerCell = context
   cellPointerDownHandler?.(event, context)
 }
 
 export function invokeTableCellDblClick(event: MouseEvent, context: TableCellPointerContext): void {
+  lastPointerCell = context
   cellDblClickHandler?.(event, context)
 }
 
@@ -95,6 +98,14 @@ export function invokeTableToolbarPointerDown(
   context: { nodeId: string; action: 'addCol' | 'addRow' | 'removeCol' | 'removeRow' }
 ): void {
   toolbarPointerDownHandler?.(event, context)
+}
+
+export function getLastPointerCell(): TableCellPointerContext | null {
+  return lastPointerCell
+}
+
+export function rememberTablePointerCell(context: TableCellPointerContext): void {
+  lastPointerCell = context
 }
 
 // —— 属性面板等外部 patch 后清理瞬时交互 ——

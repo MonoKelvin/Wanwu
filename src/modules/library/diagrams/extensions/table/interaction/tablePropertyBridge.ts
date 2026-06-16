@@ -1,20 +1,21 @@
 import type LogicFlow from '@logicflow/core'
 import {
-  applyNodeShapeExtension,
   DG_SHAPE_RENDER_REV_KEY,
   refreshLayoutHandledShapeView
 } from '@modules/library/diagrams/domain/shape-extension/diagramShapeBridge'
 import {
   hideTableToolbarTooltip,
   invokeTableExternalPatchHandler,
-  setTableDividerDragging,
-  setTableNodeResizing
+  isTableDividerDragging,
+  isTableNodeResizing
 } from '@modules/library/diagrams/extensions/table/interaction/tableCanvasRuntime'
 import { DG_SHAPE_PAYLOAD_KEY } from '@modules/library/diagrams/domain/shape-extension/types'
 import type { DiagramNodeProperties } from '@modules/library/diagrams/lib/diagramSelectionTypes'
 import type { TableCellCoord } from '@modules/library/diagrams/extensions/table/kinds/tableCellNav'
 import { patchTableCellsTextStyle } from '@modules/library/diagrams/extensions/table/kinds/tableCellTextStyles'
 import { resolveTableCellsTextStyleForProperty } from '@modules/library/diagrams/extensions/table/kinds/tableCellTextStyles'
+import { buildTableModifyNodePatch } from '@modules/library/diagrams/extensions/table/interaction/tableCanvasMutation'
+import { getDiagramEditorRuntime } from '@modules/library/diagrams/composables/useDiagramEditorRuntime'
 import {
   materializeTableDimensions,
   type TableLayoutMeasureOptions
@@ -80,21 +81,33 @@ export function stabilizeTableNodeAfterShapePatch(lf: LogicFlow, nodeId: string)
     }
   }
 
-  if (model.isSelected) {
+  if (model.draggable === false) {
     model.draggable = true
   }
 }
 
+export type TableExternalPropertyPatchOptions = {
+  /** dgShape patch 已在同次 setProperties 中 bump 修订号时跳过额外刷新 */
+  skipRenderRefresh?: boolean
+}
+
 /** 属性面板 / 样式 patch 后：清理交互残留、固化布局并强制刷新命中层 */
-export function notifyTableExternalPropertyPatch(lf: LogicFlow, nodeId: string): void {
+export function notifyTableExternalPropertyPatch(
+  lf: LogicFlow,
+  nodeId: string,
+  options?: TableExternalPropertyPatchOptions
+): void {
   const model = lf.getNodeModelById(nodeId)
   if (!model || String(model.type) !== DIAGRAM_TABLE_LF_TYPE) return
+  // 分割线拖拽 / 节点缩放时每帧 patch dgShape，不得打断瞬时交互
+  if (isTableDividerDragging() || isTableNodeResizing()) return
+
   hideTableToolbarTooltip()
-  setTableDividerDragging(false)
-  setTableNodeResizing(false)
   invokeTableExternalPatchHandler(nodeId)
   stabilizeTableNodeAfterShapePatch(lf, nodeId)
-  refreshLayoutHandledShapeView(lf, nodeId)
+  if (!options?.skipRenderRefresh) {
+    refreshLayoutHandledShapeView(lf, nodeId)
+  }
 }
 
 /** 属性面板等外部入口：同步画布活动单元格并刷新表格操作层 */
@@ -137,7 +150,10 @@ export function patchTableCellTextStyleFromPanel(
   const data = model ? readTableData(model) : null
   if (!model || !data || cells.length === 0) return
   const next = patchTableCellsTextStyle(data, cells, patch)
-  applyNodeShapeExtension(lf, nodeId, DIAGRAM_TABLE_KIND, next)
+  const nodePatch = buildTableModifyNodePatch(next)
+  if (nodePatch) {
+    getDiagramEditorRuntime().port?.modifyNodeWithUndo(nodeId, nodePatch)
+  }
   const syncedModel = lf.getNodeModelById(nodeId)
   const synced = syncedModel ? readTableData(syncedModel) : next
   const { mixedFields } = resolveTableCellsTextStyleForProperty(model, synced ?? next, cells)

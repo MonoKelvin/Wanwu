@@ -12,6 +12,18 @@ import type {
   DiagramShapePropertyEditorOrder
 } from '@modules/library/diagrams/domain/shape-extension/types'
 
+/** 节点属性 / dgShape patch 后的扩展生命周期上下文 */
+export type DiagramShapeNodePatchContext = {
+  lf: LogicFlow
+  nodeId: string
+  /** dgShape 写入完成时携带 */
+  envelope?: DiagramShapePayloadEnvelope
+  source: 'dgShape' | 'nodeProperties'
+}
+
+/** 扩展在节点 patch 后清理瞬时交互、刷新自定义 View 等 */
+export type DiagramShapeNodePatchHook = (ctx: DiagramShapeNodePatchContext) => void
+
 /** 结构化载荷编解码 — 每种 kind 必须实现 */
 export interface IDiagramShapePayloadCodec<TData = unknown> {
   readonly kind: string
@@ -90,6 +102,8 @@ export interface DiagramShapeKindRegistration<TData = unknown> {
   canvasInteractionBinders?: readonly DiagramShapeCanvasInteractionBinder[]
   /** kind 级右键菜单 */
   contextMenuContributor?: DiagramContextMenuContributor
+  /** dgShape 或节点 properties 变更后的生命周期钩子 */
+  onNodePatched?: DiagramShapeNodePatchHook
 }
 
 /** 图形扩展注册表抽象 — 组合根注册扩展包与属性编辑器 */

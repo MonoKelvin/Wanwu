@@ -6,13 +6,9 @@ import {
   isTableCellSelected,
   tableActiveCellRevision
 } from '@modules/library/diagrams/extensions/table/interaction/tableCellSelection'
-import {
-  invokeTableCellDblClick,
-  invokeTableCellPointerDown
-} from '@modules/library/diagrams/extensions/table/interaction/tableCanvasRuntime'
 import { renderTableEdgeHits } from '@modules/library/diagrams/extensions/table/render/tableEdgeHits'
 
-/** 单元格命中、选区高亮、框选（始终在 shape 内，避免选中态仅依赖缩放层时 patch 后失效） */
+/** 单元格命中、选区高亮、框选（命中由 document capture 统一处理，此处仅保留几何与 data-*） */
 export function renderTableCellInteractionLayer(
   left: number,
   top: number,
@@ -37,21 +33,7 @@ export function renderTableCellInteractionLayer(
         'data-row': String(region.row),
         'data-col': String(region.col),
         'data-kind': region.kind,
-        'data-dg-node-id': nodeId,
-        onPointerDown: (event: PointerEvent) => {
-          invokeTableCellPointerDown(event, {
-            nodeId,
-            row: region.row,
-            col: region.col
-          })
-        },
-        onDblClick: (event: MouseEvent) => {
-          invokeTableCellDblClick(event, {
-            nodeId,
-            row: region.row,
-            col: region.col
-          })
-        }
+        'data-dg-node-id': nodeId
       })
     )
   }
@@ -60,7 +42,7 @@ export function renderTableCellInteractionLayer(
     ...renderTableEdgeHits(left, top, layout, data.showHeader !== false, selected, nodeId)
   )
 
-  const marquee = selected ? getTableCellMarquee() : null
+  const marquee = selected ? getTableCellMarquee(nodeId) : null
   if (marquee) {
     shapes.push(
       h('rect', {

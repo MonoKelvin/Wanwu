@@ -73,7 +73,7 @@ function onShowHeaderChange(value: boolean) {
     <p class="dg-prop-section__title">表格</p>
 
     <p class="dg-table__hint">
-      在画布中点击单元格编辑；拖拽框选多格；表上方 ✥ 移动表格；左侧 +/- 增删行，下方 +/- 增删列。
+      点击单元格输入；Shift/Ctrl+点击多选；拖拽框选多格；表上方 ✥ 移动表格；左侧 +/- 增删行，下方 +/- 增删列。
     </p>
 
     <SettingsRow label="显示表头" class="dg-settings-row--inline dg-settings-row--toggle">

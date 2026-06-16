@@ -7,10 +7,11 @@ const selectionByNode = new Map<string, TableCellCoord[]>()
 const anchorByNode = new Map<string, TableCellCoord>()
 const editFocusByNode = new Map<string, TableCellCoord>()
 const mixedFieldsByNode = new Map<string, string[]>()
+let lastActiveNodeId: string | null = null
 
 /** 框选过程中的矩形（画布局部坐标，相对节点左上） */
 export type TableCellMarqueeRect = { x: number; y: number; width: number; height: number }
-let marqueeRect: TableCellMarqueeRect | null = null
+const marqueeByNode = new Map<string, TableCellMarqueeRect>()
 
 export const tableActiveCellRevision = ref(0)
 
@@ -26,13 +27,14 @@ function cellKey(cell: TableCellCoord): string {
   return `${cell.row},${cell.col}`
 }
 
-export function setTableCellMarquee(rect: TableCellMarqueeRect | null): void {
-  marqueeRect = rect
+export function setTableCellMarquee(nodeId: string, rect: TableCellMarqueeRect | null): void {
+  if (rect) marqueeByNode.set(nodeId, rect)
+  else marqueeByNode.delete(nodeId)
   bumpRevision()
 }
 
-export function getTableCellMarquee(): TableCellMarqueeRect | null {
-  return marqueeRect
+export function getTableCellMarquee(nodeId: string): TableCellMarqueeRect | null {
+  return marqueeByNode.get(nodeId) ?? null
 }
 
 export function getTableSelectedCells(nodeId: string): TableCellCoord[] {
@@ -66,11 +68,15 @@ export function setTableCellSelection(
     anchorByNode.delete(nodeId)
     editFocusByNode.delete(nodeId)
     mixedFieldsByNode.delete(nodeId)
+    if (lastActiveNodeId === nodeId) {
+      lastActiveNodeId = null
+    }
   } else {
     selectionByNode.set(nodeId, normalized)
     if (nextAnchor) {
       anchorByNode.set(nodeId, nextAnchor)
       editFocusByNode.set(nodeId, nextAnchor)
+      lastActiveNodeId = nodeId
     }
   }
   bumpRevision()
@@ -78,6 +84,7 @@ export function setTableCellSelection(
 
 export function setTableActiveCell(nodeId: string, cell: TableCellCoord): void {
   setTableCellSelection(nodeId, [cell], cell)
+  lastActiveNodeId = nodeId
 }
 
 export function clearTableActiveCell(nodeId: string): void {
@@ -86,6 +93,9 @@ export function clearTableActiveCell(nodeId: string): void {
   anchorByNode.delete(nodeId)
   editFocusByNode.delete(nodeId)
   mixedFieldsByNode.delete(nodeId)
+  if (lastActiveNodeId === nodeId) {
+    lastActiveNodeId = null
+  }
   bumpRevision()
 }
 
@@ -104,12 +114,13 @@ export function isTableCellSelected(nodeId: string, row: number, col: number): b
 }
 
 export function clearAllTableActiveCells(): void {
-  if (selectionByNode.size === 0 && !marqueeRect) return
+  if (selectionByNode.size === 0 && marqueeByNode.size === 0) return
   selectionByNode.clear()
   anchorByNode.clear()
   editFocusByNode.clear()
   mixedFieldsByNode.clear()
-  marqueeRect = null
+  marqueeByNode.clear()
+  lastActiveNodeId = null
   bumpRevision()
 }
 
@@ -119,6 +130,10 @@ export function setTableCellStyleMixedFields(nodeId: string, fields: string[]): 
 
 export function getTableCellStyleMixedFields(nodeId: string): string[] {
   return mixedFieldsByNode.get(nodeId) ?? []
+}
+
+export function getLastActiveTableNodeId(): string | null {
+  return lastActiveNodeId
 }
 
 function dedupeCells(cells: TableCellCoord[]): TableCellCoord[] {

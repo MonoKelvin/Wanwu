@@ -14,6 +14,8 @@ export interface DiagramShapeCanvasInteractionPorts {
   captureDragUndoBaseline(): void
   commitDragUndoMutation(): void
   clearDragUndoBaseline(): void
+  /** 可撤销的节点 patch（表格 dgShape 等扩展数据变更） */
+  modifyNode(nodeId: string, patch: Record<string, unknown>): void
 }
 
 export type DiagramShapeCanvasInteractionBinder = (

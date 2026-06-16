@@ -263,8 +263,12 @@
   transition: opacity 0.14s var(--ww-ease-out, ease-out);
 }
 
-.dg-canvas-frame .dg-table-shape:hover > .dg-table-move-overlay,
 .dg-canvas-frame .lf-node-selected .dg-table-shape > .dg-table-move-overlay {
+  opacity: 0.9;
+}
+
+.dg-canvas-frame .dg-table-shape:hover > .dg-table-move-overlay,
+.dg-canvas-frame .lf-node-selected .dg-table-shape:hover > .dg-table-move-overlay {
   opacity: 1;
 }
 
@@ -275,21 +279,23 @@
   pointer-events: all;
 }
 
-/* 缩放层：装饰元素不抢事件，命中元素保持可点（勿对 overlay 根 g 设 pointer-events:none，会阻断子元素） */
+/* 缩放层：装饰元素不抢事件；命中由 document capture 处理 */
 .dg-canvas-frame .dg-resize-root .dg-table-divider-guide,
 .dg-canvas-frame .dg-resize-root .dg-table-move-handle__box,
 .dg-canvas-frame .dg-resize-root .dg-table-move-handle__glyph,
-.dg-canvas-frame .dg-resize-root .dg-table-move-handle__line {
+.dg-canvas-frame .dg-resize-root .dg-table-move-handle__line,
+.dg-canvas-frame .dg-resize-root .dg-table-edge-hit {
   pointer-events: none;
 }
 
-.dg-canvas-frame .dg-resize-root .dg-table-cell-hit,
-.dg-canvas-frame .dg-resize-root .dg-table-edge-hit,
 .dg-canvas-frame .dg-resize-root .dg-table-col-divider,
 .dg-canvas-frame .dg-resize-root .dg-table-row-divider,
 .dg-canvas-frame .dg-resize-root .dg-table-tool-hit,
 .dg-canvas-frame .dg-resize-root .dg-table-move-handle-hit,
-.dg-canvas-frame .dg-resize-root .dg-table-move-handle__hit {
+.dg-canvas-frame .dg-resize-root .dg-table-move-handle__hit,
+.dg-canvas-frame .dg-resize-root .dg-table-cell-hit,
+.dg-canvas-frame .dg-resize-root .dg-table-interaction-layer,
+.dg-canvas-frame .dg-resize-root .dg-table-interaction-layer .dg-table-cell-hit {
   pointer-events: all;
 }
 

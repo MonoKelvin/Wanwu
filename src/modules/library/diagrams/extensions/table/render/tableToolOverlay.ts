@@ -10,8 +10,6 @@ import {
 import type { DiagramTableData } from '@modules/library/diagrams/extensions/table/kinds/tableTypes'
 import {
   getTableActiveDivider,
-  invokeTableDividerPointerDown,
-  invokeTableToolbarPointerDown,
   isTableDividerDragging,
   shouldHideTableToolbar,
   TABLE_TOOLBAR_TOOLTIP_ATTR
@@ -102,14 +100,7 @@ function renderDividerHandle(
         stroke: 'none',
         className: isCol ? 'dg-table-col-divider' : 'dg-table-row-divider',
         'data-index': String(index),
-        'data-dg-node-id': nodeId,
-        onPointerDown: (event: PointerEvent) => {
-          invokeTableDividerPointerDown(event, {
-            kind,
-            index,
-            nodeId
-          })
-        }
+        'data-dg-node-id': nodeId
       })
     ]
   )
@@ -146,10 +137,7 @@ function renderToolButton(
         fill: 'transparent',
         stroke: 'none',
         class: 'dg-table-tool-hit',
-        'data-dg-node-id': nodeId,
-        onPointerDown: (event: PointerEvent) => {
-          invokeTableToolbarPointerDown(event, { nodeId, action })
-        }
+        'data-dg-node-id': nodeId
       }),
       h('rect', {
         x: cx - half,
