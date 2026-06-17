@@ -1,14 +1,20 @@
-import { ipcMain } from 'electron'
-import { importProfileImage, removeProfileFile } from '../../services/media/userProfile'
-import { toWanwuMediaUrl } from '../../services/media/wanwu'
+import { BrowserWindow, ipcMain } from 'electron'
 import type { AppServices } from '../types'
+
+function broadcastFavoritesChanged(): void {
+  for (const win of BrowserWindow.getAllWindows()) {
+    if (!win.isDestroyed()) {
+      win.webContents.send('user:favorites-changed')
+    }
+  }
+}
 
 export function registerUserHandlers(services: AppServices): void {
   ipcMain.handle('user:getProfile', () => {
-    return services.userData?.getProfile() ?? null
+    return services.personal?.getProfile() ?? null
   })
   ipcMain.handle('user:updateProfile', (_e, profile: unknown) => {
-    return services.userData?.updateProfile(
+    return services.personal?.updateProfile(
       profile as {
         nickname: string
         bio: string
@@ -21,88 +27,56 @@ export function registerUserHandlers(services: AppServices): void {
   ipcMain.handle(
     'user:importProfileImage',
     (_e, params: { kind: 'avatar' | 'background'; filePath: string }) => {
-      if (!services.media || !services.db) throw new Error('服务未就绪')
-      const relativePath = importProfileImage(services.media, params.kind, params.filePath)
-      const profile = services.userData?.getProfile()
-      if (!profile) throw new Error('用户资料不存在')
-      if (params.kind === 'avatar') {
-        if (profile.avatarPath && profile.avatarPath !== relativePath) {
-          removeProfileFile(services.media, profile.avatarPath)
-        }
-        services.userData?.updateProfile({
-          nickname: profile.nickname,
-          bio: profile.bio,
-          avatarPath: relativePath
-        })
-      } else {
-        services.userData?.updateProfile({
-          nickname: profile.nickname,
-          bio: profile.bio,
-          backgroundPath: relativePath,
-          backgroundConfig: profile.backgroundConfig ?? {
-            scale: 1,
-            offsetX: 0,
-            offsetY: 0,
-            opacity: 1,
-            crop: null
-          }
-        })
-      }
-      return { relativePath, url: toWanwuMediaUrl(relativePath) }
+      if (!services.personal) throw new Error('服务未就绪')
+      return services.personal.importProfileImage(params)
     }
   )
   ipcMain.handle('user:clearBackground', () => {
-    if (!services.media || !services.db) return
-    const profile = services.userData?.getProfile()
-    if (!profile?.backgroundPath) return
-    removeProfileFile(services.media, profile.backgroundPath)
-    services.userData?.updateProfile({
-      nickname: profile.nickname,
-      bio: profile.bio,
-      backgroundPath: null,
-      backgroundConfig: null
-    })
+    services.personal?.clearBackground()
   })
   ipcMain.handle('user:listFavorites', () => {
-    return services.library?.listFavoriteEntries() ?? []
+    return services.personal?.listFavoriteEntries() ?? []
   })
   ipcMain.handle('user:listFavoriteGroups', () => {
-    return services.library?.listFavoriteGroups() ?? []
+    return services.personal?.listFavoriteGroups() ?? []
   })
   ipcMain.handle('user:listFavoriteGroupsForPicker', () => {
-    return services.db?.listFavoriteGroups().map((g) => ({
-      id: g.id,
-      name: g.name,
-      sortOrder: g.sort_order
-    })) ?? []
+    return services.personal?.listFavoriteGroupsForPicker() ?? []
   })
   ipcMain.handle('user:createFavoriteGroup', (_e, name: string) => {
-    return services.db?.createFavoriteGroup(name) ?? null
+    if (!services.personal) throw new Error('服务未就绪')
+    return services.personal.createFavoriteGroup(name)
   })
   ipcMain.handle('user:isFavorite', (_e, params: { itemId: string; source: string }) => {
-    return services.db?.isFavorite(params.itemId, params.source) ?? false
+    return services.personal?.isFavorite(params.itemId, params.source) ?? false
   })
   ipcMain.handle(
     'user:addFavorite',
     (_e, params: { itemId: string; source: string; groupId: string }) => {
-      services.db?.addFavorite(params.itemId, params.source, params.groupId)
-      return true
+      if (!services.personal) return false
+      const ok = services.personal.addFavorite(params.itemId, params.source, params.groupId)
+      if (ok) broadcastFavoritesChanged()
+      return ok
     }
   )
   ipcMain.handle('user:removeFavorite', (_e, params: { itemId: string; source: string }) => {
-    return services.db?.removeFavorite(params.itemId, params.source) ?? false
+    const ok = services.personal?.removeFavorite(params.itemId, params.source) ?? false
+    if (ok) broadcastFavoritesChanged()
+    return ok
   })
   ipcMain.handle('user:toggleFavorite', (_e, params: { itemId: string; source: string }) => {
-    return services.db?.toggleFavorite(params.itemId, params.source) ?? false
+    const toggledOn = services.personal?.toggleFavorite(params.itemId, params.source) ?? false
+    broadcastFavoritesChanged()
+    return toggledOn
   })
   ipcMain.handle('user:isLiked', (_e, params: { itemId: string; source: string }) => {
-    return services.db?.isLiked(params.itemId, params.source) ?? false
+    return services.personal?.isLiked(params.itemId, params.source) ?? false
   })
   ipcMain.handle('user:addLike', (_e, params: { itemId: string; source: string }) => {
-    services.db?.addLike(params.itemId, params.source)
+    services.personal?.addLike(params.itemId, params.source)
     return true
   })
   ipcMain.handle('user:removeLike', (_e, params: { itemId: string; source: string }) => {
-    return services.db?.removeLike(params.itemId, params.source) ?? false
+    return services.personal?.removeLike(params.itemId, params.source) ?? false
   })
 }

@@ -20,7 +20,7 @@
   background: rgb(8 8 10 / 0.35);
 }
 
-/* Ä¬ÈÏ¼´±£³ÖÄ£ºı£¨±ÜÃâ enter-to ½áÊøºó»Øµ½ blur(0)£© */
+/* é»˜è®¤å³ä¿æŒæ¨¡ç³Šï¼ˆé¿å… enter-to ç»“æŸåå›åˆ° blur(0)ï¼‰ */
 .ww-image-viewer__blur {
   position: absolute;
   inset: 0;
@@ -310,7 +310,7 @@
   -webkit-user-drag: none;
 }
 
-/* ´ò¿ª/¹Ø±Õ£ºÕÚÕÖµ­Èë + Ä£ºı²ã¶¯»­£¨Í¼Æ¬ÔÚ chrome ²ã±£³ÖÇåÎú£© */
+/* æ‰“å¼€/å…³é—­ï¼šé®ç½©æ·¡å…¥ + æ¨¡ç³Šå±‚åŠ¨ç”»ï¼ˆå›¾ç‰‡åœ¨ chrome å±‚ä¿æŒæ¸…æ™°ï¼‰ */
 .ww-image-viewer-enter-active,
 .ww-image-viewer-leave-active {
   transition: opacity var(--ww-duration-slow) var(--ww-ease-out-slow);

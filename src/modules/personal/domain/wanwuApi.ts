@@ -30,6 +30,7 @@ export interface WanwuUserApi {
     addFavorite: (params: { itemId: string; source: string; groupId: string }) => Promise<boolean>
     removeFavorite: (params: { itemId: string; source: string }) => Promise<boolean>
     toggleFavorite: (params: { itemId: string; source: string }) => Promise<boolean>
+    onFavoritesChanged: (listener: () => void) => () => void
     isLiked: (params: { itemId: string; source: string }) => Promise<boolean>
     addLike: (params: { itemId: string; source: string }) => Promise<boolean>
     removeLike: (params: { itemId: string; source: string }) => Promise<boolean>

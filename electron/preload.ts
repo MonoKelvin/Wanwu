@@ -259,6 +259,13 @@ const api: WanwuApi = {
     addFavorite: (params) => ipcRenderer.invoke('user:addFavorite', params),
     removeFavorite: (params) => ipcRenderer.invoke('user:removeFavorite', params),
     toggleFavorite: (params) => ipcRenderer.invoke('user:toggleFavorite', params),
+    onFavoritesChanged: (listener: () => void) => {
+      const handler = () => listener()
+      ipcRenderer.on('user:favorites-changed', handler)
+      return () => {
+        ipcRenderer.removeListener('user:favorites-changed', handler)
+      }
+    },
     isLiked: (params) => ipcRenderer.invoke('user:isLiked', params),
     addLike: (params) => ipcRenderer.invoke('user:addLike', params),
     removeLike: (params) => ipcRenderer.invoke('user:removeLike', params)

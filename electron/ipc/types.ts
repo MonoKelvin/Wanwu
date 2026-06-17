@@ -8,9 +8,11 @@ import type { MediaService } from '../services/media/service'
 import type { NotesService } from '../services/notes/service'
 import type { UserDataGateway } from '../services/storage/userDataGateway'
 import type { CloudAbodeService } from '../services/cloud-abode/service'
+import type { PersonalService } from '../services/personal/service'
 
 export interface AppServices {
   db: DatabaseService | null
+  personal: PersonalService | null
   library: LibraryService | null
   links: LinksService | null
   diagrams: DiagramService | null

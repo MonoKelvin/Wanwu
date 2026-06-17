@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import type { IAppModule } from '@app/modules/types'
+import { flushPersonalBeforeNavigation } from '@modules/personal/lib/personalNavigationLifecycle'
 
 export const personalAppModule: IAppModule = {
   id: 'wanwu.personal',
@@ -17,6 +18,13 @@ export const personalAppModule: IAppModule = {
 
   loadShellView() {
     return import('@modules/personal/PersonalView.vue').then((m) => m.default)
+  },
+
+  registerNavigation(register) {
+    register({
+      id: 'wanwu.personal.profile',
+      teardownBeforeNavigation: flushPersonalBeforeNavigation
+    })
   },
 
   getRoutes(): RouteRecordRaw[] {

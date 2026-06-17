@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * 全库左侧「模块树」面板：展示大类（链接/笔记/图鉴/流程图等）及子目录。
+ * 全库左侧「模块树」面板：展示大类（链接、笔记、图鉴、流程图等）及子目录。
  * 搜索框过滤树节点；链接大类下支持右键新建/删除本地目录。
  */
 import { computed, onMounted, ref, watch } from 'vue'
@@ -442,6 +442,7 @@ async function onNodeSelect(node: TreeNode) {
         :default-expanded-keys="catalogDefaultExpanded"
         major-key-prefix="major:"
         :show-child-icons="true"
+        hide-child-icon-key-prefix="hb:"
         child-icon="folder"
         :node-badge="catalogNodeBadge"
         tree-class="ww-catalog-tree--library-majors"

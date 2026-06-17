@@ -32,6 +32,8 @@ const props = withDefaults(
     expandToggleOnSelect?: boolean
     /** 仅对该 key 前缀的子节点显示 childIcon */
     childIconKeyPrefix?: string
+    /** 对该 key 前缀的子节点不显示图标（如全库图鉴下的分类与子分类） */
+    hideChildIconKeyPrefix?: string
     /** 搜索时是否自动展开所有可见分支 */
     expandOnSearch?: boolean
   }>(),
@@ -46,6 +48,7 @@ const props = withDefaults(
     treeClass: '',
     expandToggleOnSelect: true,
     childIconKeyPrefix: '',
+    hideChildIconKeyPrefix: '',
     expandOnSearch: true
   }
 )
@@ -144,8 +147,11 @@ function nodeIcon(node: TreeNode): WwIconName | null {
     return (node.icon as WwIconName) || 'folder'
   }
   if (!props.showChildIcons) return null
+  const key = String(node.key)
+  const hidePrefix = props.hideChildIconKeyPrefix
+  if (hidePrefix && key.startsWith(hidePrefix)) return null
   const prefix = props.childIconKeyPrefix
-  if (prefix && !String(node.key).startsWith(prefix)) return null
+  if (prefix && !key.startsWith(prefix)) return null
   return (node.icon as WwIconName) || props.childIcon
 }
 

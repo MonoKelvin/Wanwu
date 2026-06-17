@@ -2,18 +2,18 @@
 import { inject } from 'vue'
 import { PERSONAL_PAGE_KEY } from '@modules/personal/composables/personalPageContext'
 
-const page = inject(PERSONAL_PAGE_KEY)!
+const { backgroundUrl, backgroundStyle, hasBackground, bgEditorOpen } = inject(PERSONAL_PAGE_KEY)!
 </script>
 
 <template>
   <div
-    v-if="page.backgroundUrl && page.backgroundStyle"
+    v-if="backgroundUrl && backgroundStyle"
     class="ww-personal__bg"
-    :style="page.backgroundStyle"
+    :style="backgroundStyle"
     aria-hidden="true"
   />
   <div
-    v-if="!page.hasBackground && !page.bgEditorOpen"
+    v-if="!hasBackground && !bgEditorOpen"
     class="ww-personal__ambient"
     aria-hidden="true"
   >

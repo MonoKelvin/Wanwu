@@ -136,7 +136,7 @@
   pointer-events: none;
 }
 
-/* ¸²¸Ç .ww-glass-blur µÄ position:relative Óë z-index:0£¬±ÜÃâ±»ÕıÎÄ/Markdown ²ãÕÚµ² */
+/* è¦†ç›– .ww-glass-blur çš„ position:relative ä¸ z-index:0ï¼Œé¿å…è¢«æ­£æ–‡/Markdown å±‚é®æŒ¡ */
 .ww-product-detail__float-dock.ww-glass-blur {
   position: fixed;
   top: auto;
@@ -721,7 +721,7 @@
   background: var(--ww-accent-hover, var(--ww-accent));
 }
 
-/* ¿É¹Ø±ÕµÄÈ·ÈÏ¶Ô»°¿ò */
+/* å¯å…³é—­çš„ç¡®è®¤å¯¹è¯æ¡† */
 .ww-dismiss-confirm__message {
   margin: 0 0 0.875rem;
   font-size: 0.875rem;

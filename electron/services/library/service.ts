@@ -1,4 +1,4 @@
-﻿/** 图鉴条目查询、收藏聚合、用户上传配图 */
+﻿/** 图鉴条目查询、用户上传配图 */
 import { createHash, randomUUID } from 'crypto'
 import type { DatabaseService } from '../core/database'
 import { loadLibraryCategories } from './seed'
@@ -24,28 +24,14 @@ export interface LibrarySearchHit {
   subCategoryName: string | null
 }
 
-export interface FavoriteGroupDto {
+export interface LibraryItemListSummary {
   id: string
   name: string
-  sortOrder: number
-  items: FavoriteEntryDto[]
-}
-
-export interface FavoriteEntryDto {
-  id: string
-  itemId: string
-  source: 'library' | 'rss'
-  groupId: string
-  createdAt: string
-  item: {
-    id: string
-    name: string
-    summary: string | null
-    coverPath: string | null
-    categoryId: string
-    subCategoryName: string | null
-    source: 'library' | 'rss'
-  } | null
+  summary: string | null
+  coverPath: string | null
+  categoryId: string
+  subCategoryName: string | null
+  source: 'library'
 }
 
 export interface ItemDto {
@@ -170,8 +156,12 @@ export class LibraryService {
   }
 
   /** 批量查图鉴条目摘要（收藏列表等） */
-  private findLibraryListSummariesByIds(ids: Iterable<string>): Map<string, FavoriteEntryDto['item']> {
-    const out = new Map<string, FavoriteEntryDto['item']>()
+  listItemSummariesByIds(ids: Iterable<string>): Map<string, LibraryItemListSummary> {
+    return this.findLibraryListSummariesByIds(ids)
+  }
+
+  private findLibraryListSummariesByIds(ids: Iterable<string>): Map<string, LibraryItemListSummary> {
+    const out = new Map<string, LibraryItemListSummary>()
     const pending = new Set(ids)
     if (pending.size === 0) return out
 
@@ -251,54 +241,6 @@ export class LibraryService {
       createdAt: r.created_at as string,
       updatedAt: r.updated_at as string
     }
-  }
-
-  private mapFavoriteRow(
-    row: {
-      id: string
-      item_id: string
-      source: string
-      group_id: string
-      created_at: string
-    },
-    libraryItems: Map<string, FavoriteEntryDto['item']>
-  ): FavoriteEntryDto {
-    const source = row.source === 'rss' ? 'rss' : 'library'
-    const item = source === 'library' ? (libraryItems.get(row.item_id) ?? null) : null
-
-    return {
-      id: row.id,
-      itemId: row.item_id,
-      source,
-      groupId: row.group_id,
-      createdAt: row.created_at,
-      item
-    }
-  }
-
-  listFavoriteEntries(): FavoriteEntryDto[] {
-    const rows = this.db.listFavorites()
-    const libraryIds = rows.filter((r) => r.source !== 'rss').map((r) => r.item_id)
-    const libraryItems = this.findLibraryListSummariesByIds(libraryIds)
-    return rows.map((row) => this.mapFavoriteRow(row, libraryItems))
-  }
-
-  listFavoriteGroups(): FavoriteGroupDto[] {
-    const groups = this.db.listFavoriteGroups()
-    const entries = this.listFavoriteEntries()
-    const byGroup = new Map<string, FavoriteEntryDto[]>()
-    for (const g of groups) byGroup.set(g.id, [])
-    for (const entry of entries) {
-      const list = byGroup.get(entry.groupId) ?? []
-      list.push(entry)
-      byGroup.set(entry.groupId, list)
-    }
-    return groups.map((g) => ({
-      id: g.id,
-      name: g.name,
-      sortOrder: g.sort_order,
-      items: byGroup.get(g.id) ?? []
-    }))
   }
 
   getItem(id: string): ItemDto | null {

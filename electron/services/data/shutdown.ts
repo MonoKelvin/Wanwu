@@ -29,6 +29,7 @@ export function shutdownDataServices(services: AppServices): void {
   }
 
   services.db = null
+  services.personal = null
   services.library = null
   services.links = null
   services.diagrams = null

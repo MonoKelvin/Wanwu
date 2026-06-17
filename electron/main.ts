@@ -31,6 +31,7 @@ import {
 } from './services/notes/noteWindowManager'
 import { SqliteNotesStorage } from './services/notes/storage'
 import { SqliteUserDataGateway, type UserDataGateway } from './services/storage/userDataGateway'
+import { PersonalService } from './services/personal/service'
 import { resolveWanwuPath } from './services/data/paths'
 import { applyRssAutoRefreshSchedule } from './services/rss/scheduler'
 import { runStartupLibrarySeed } from './services/library/seed'
@@ -112,6 +113,7 @@ let mainWindow: BrowserWindow | null = null
 
 const services = {
   db: null as DatabaseService | null,
+  personal: null as PersonalService | null,
   library: null as LibraryService | null,
   links: null as LinksService | null,
   diagrams: null as DiagramService | null,
@@ -246,6 +248,12 @@ async function initServices(): Promise<void> {
   services.music = new MusicService(services.db, userData)
   services.media = new MediaService(userData)
   services.userData = new SqliteUserDataGateway(services.db)
+  services.personal = new PersonalService(
+    services.db,
+    services.library,
+    services.userData,
+    services.media
+  )
   services.notes = new NotesService(new SqliteNotesStorage(services.userData, userData))
   // 云斋暂下线（GLSL / 展厅 3D 未就绪）
   // services.cloudAbode = new CloudAbodeService()

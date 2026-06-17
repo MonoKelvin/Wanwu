@@ -25,6 +25,12 @@ import {
 
 export const DEFAULT_FAVORITE_GROUP_ID = 'default'
 
+function normalizeFavoriteSource(source: string): string {
+  const trimmed = source?.trim()
+  if (trimmed === 'rss') return 'rss'
+  return 'library'
+}
+
 export class DatabaseService {
   private readonly layout: WanwuPathLayout
   private userDb: Database.Database
@@ -585,6 +591,11 @@ export class DatabaseService {
     this.userDb
       .prepare("UPDATE favorites SET group_id = ? WHERE group_id IS NULL OR group_id = ''")
       .run(DEFAULT_FAVORITE_GROUP_ID)
+    this.userDb
+      .prepare(
+        "UPDATE favorites SET source = 'library' WHERE source IS NULL OR TRIM(source) = '' OR source = 'undefined'"
+      )
+      .run()
   }
 
   listFavoriteGroups(): Array<{
@@ -635,14 +646,16 @@ export class DatabaseService {
   }
 
   isFavorite(itemId: string, source: string): boolean {
+    const normalized = normalizeFavoriteSource(source)
     const row = this.userDb
       .prepare('SELECT 1 FROM favorites WHERE item_id = ? AND source = ?')
-      .get(itemId, source)
+      .get(itemId, normalized)
     return Boolean(row)
   }
 
   addFavorite(itemId: string, source: string, groupId: string): boolean {
-    if (this.isFavorite(itemId, source)) return true
+    const normalized = normalizeFavoriteSource(source)
+    if (this.isFavorite(itemId, normalized)) return true
     const groupExists = this.userDb
       .prepare('SELECT id FROM favorite_groups WHERE id = ?')
       .get(groupId) as { id: string } | undefined
@@ -651,14 +664,15 @@ export class DatabaseService {
       .prepare(
         'INSERT INTO favorites (id, item_id, source, group_id, created_at) VALUES (?, ?, ?, ?, ?)'
       )
-      .run(randomUUID(), itemId, source, gid, new Date().toISOString())
+      .run(randomUUID(), itemId, normalized, gid, new Date().toISOString())
     return true
   }
 
   removeFavorite(itemId: string, source: string): boolean {
+    const normalized = normalizeFavoriteSource(source)
     const existing = this.userDb
       .prepare('SELECT id FROM favorites WHERE item_id = ? AND source = ?')
-      .get(itemId, source) as { id: string } | undefined
+      .get(itemId, normalized) as { id: string } | undefined
     if (!existing) return false
     this.userDb.prepare('DELETE FROM favorites WHERE id = ?').run(existing.id)
     return true
@@ -666,29 +680,33 @@ export class DatabaseService {
 
   /** @deprecated 使用 addFavorite / removeFavorite */
   toggleFavorite(itemId: string, source: string): boolean {
-    if (this.isFavorite(itemId, source)) return !this.removeFavorite(itemId, source)
-    return this.addFavorite(itemId, source, DEFAULT_FAVORITE_GROUP_ID)
+    const normalized = normalizeFavoriteSource(source)
+    if (this.isFavorite(itemId, normalized)) return !this.removeFavorite(itemId, normalized)
+    return this.addFavorite(itemId, normalized, DEFAULT_FAVORITE_GROUP_ID)
   }
 
   isLiked(itemId: string, source: string): boolean {
+    const normalized = normalizeFavoriteSource(source)
     const row = this.userDb
       .prepare('SELECT 1 FROM likes WHERE item_id = ? AND source = ?')
-      .get(itemId, source)
+      .get(itemId, normalized)
     return Boolean(row)
   }
 
   addLike(itemId: string, source: string): boolean {
-    if (this.isLiked(itemId, source)) return true
+    const normalized = normalizeFavoriteSource(source)
+    if (this.isLiked(itemId, normalized)) return true
     this.userDb
       .prepare('INSERT INTO likes (id, item_id, source, created_at) VALUES (?, ?, ?, ?)')
-      .run(randomUUID(), itemId, source, new Date().toISOString())
+      .run(randomUUID(), itemId, normalized, new Date().toISOString())
     return true
   }
 
   removeLike(itemId: string, source: string): boolean {
+    const normalized = normalizeFavoriteSource(source)
     const existing = this.userDb
       .prepare('SELECT id FROM likes WHERE item_id = ? AND source = ?')
-      .get(itemId, source) as { id: string } | undefined
+      .get(itemId, normalized) as { id: string } | undefined
     if (!existing) return false
     this.userDb.prepare('DELETE FROM likes WHERE id = ?').run(existing.id)
     return true

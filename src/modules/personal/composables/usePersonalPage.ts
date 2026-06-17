@@ -1,13 +1,19 @@
-﻿import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+﻿import { computed, nextTick, onActivated, onDeactivated, onMounted, onUnmounted, ref, watch } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { useItemDetailNavigation } from '@app/composables/useItemDetailNavigation'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
+import { registerPersonalNavigationFlush } from '@modules/personal/lib/personalNavigationLifecycle'
+import {
+  fetchFavoriteGroups,
+  fetchPersonalProfile,
+  savePersonalProfile
+} from '@modules/personal/services/personalProfileService'
 import type { PersonalBackgroundConfig } from '@shared/types/profile'
 import { DEFAULT_BACKGROUND_CONFIG } from '@shared/types/profile'
 import {
   backgroundLayerStyle,
   loadImageDimensions,
   normalizeBackgroundConfig,
-  profileConfigForIpc,
   toWanwuMediaUrl
 } from '@shared/utils/profileMedia'
 import type { FavoriteGroup } from '@shared/types/favorite'
@@ -234,6 +240,31 @@ function isProfileFieldActionTarget(target: EventTarget | null): boolean {
   return target instanceof Element && Boolean(target.closest('[data-profile-field-action]'))
 }
 
+function prepareNicknameCommit(): boolean {
+  if (!nicknameEditing.value) return false
+  const next = nicknameDraft.value.trim().slice(0, NICKNAME_MAX)
+  nicknameEditing.value = false
+  if (next === savedNickname.value.trim()) {
+    nickname.value = savedNickname.value
+    return false
+  }
+  nickname.value = next
+  return true
+}
+
+/** 离开编辑态或切换页面前，将未保存的昵称/简介写入本地库 */
+async function flushPendingProfileEdits(silent = true) {
+  const nicknameChanged = prepareNicknameCommit()
+  const bioChanged = bioDirty.value
+  if (!nicknameChanged && !bioChanged) return
+  let message: string | undefined
+  if (!silent) {
+    message =
+      nicknameChanged && bioChanged ? '资料已更新' : nicknameChanged ? '昵称已更新' : '简介已更新'
+  }
+  await persistProfile(message)
+}
+
 function onProfileDismiss(e: PointerEvent) {
   const target = e.target
   if (!(target instanceof Node)) return
@@ -241,14 +272,14 @@ function onProfileDismiss(e: PointerEvent) {
   if (nicknameEditing.value) {
     if (isProfileFieldActionTarget(target)) return
     if (nicknameEditRoot.value && !nicknameEditRoot.value.contains(target)) {
-      cancelNicknameEdit()
+      void flushPendingProfileEdits()
       return
     }
   }
 
   if (bioEditRoot.value && !bioEditRoot.value.contains(target)) {
-    if (bioDirty.value) revertBio()
-    blurBioField()
+    if (bioDirty.value) void flushPendingProfileEdits()
+    else blurBioField()
   }
 }
 
@@ -266,7 +297,7 @@ function onBioFocusOut(e: FocusEvent) {
   requestAnimationFrame(() => {
     if (bioFocused.value) return
     if (bioEditRoot.value?.contains(document.activeElement)) return
-    if (bioDirty.value) revertBio()
+    if (bioDirty.value) void flushPendingProfileEdits()
   })
 }
 
@@ -280,7 +311,7 @@ function onNicknameFieldFocusOut(e: FocusEvent) {
     if (!nicknameEditing.value) return
     if (root?.contains(document.activeElement)) return
     if (isProfileFieldActionTarget(document.activeElement)) return
-    cancelNicknameEdit()
+    void flushPendingProfileEdits()
   })
 }
 
@@ -289,42 +320,61 @@ watch(profileEditActive, (active) => {
   else unbindProfileDismiss()
 })
 
+let persistChain: Promise<void> = Promise.resolve()
+
 async function persistProfile(message?: string) {
-  saving.value = true
-  try {
-    await window.wanwu.user.updateProfile({
-      nickname: nickname.value,
-      bio: bio.value,
-      avatarPath: avatarPath.value,
-      backgroundPath: backgroundPath.value,
-      backgroundConfig: profileConfigForIpc(backgroundConfig.value)
-    })
-    syncSavedProfileFields()
-    if (message) toast.success(message)
-  } finally {
-    saving.value = false
+  persistChain = persistChain.then(async () => {
+    saving.value = true
+    try {
+      await savePersonalProfile({
+        nickname: nickname.value,
+        bio: bio.value,
+        avatarPath: avatarPath.value,
+        backgroundPath: backgroundPath.value,
+        backgroundConfig: backgroundConfig.value
+      })
+      syncSavedProfileFields()
+      if (message) toast.success(message)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '保存失败')
+      throw err
+    } finally {
+      saving.value = false
+    }
+  })
+  await persistChain
+}
+
+function applyProfileSnapshot(profile: NonNullable<Awaited<ReturnType<typeof fetchPersonalProfile>>>) {
+  nickname.value = profile.nickname
+  bio.value = profile.bio
+  clampProfileTextFields()
+  syncSavedProfileFields()
+  avatarPath.value = profile.avatarPath
+  if (profile.avatarPath) avatarMediaKey.value = Date.now()
+  backgroundPath.value = profile.backgroundPath
+  if (profile.backgroundPath) backgroundMediaKey.value = Date.now()
+  backgroundConfig.value = normalizeBackgroundConfig(profile.backgroundConfig)
+}
+
+async function loadProfile() {
+  const profile = await fetchPersonalProfile()
+  if (profile) {
+    applyProfileSnapshot(profile)
+    await refreshBackgroundImageSize()
   }
+}
+
+async function loadFavoriteGroups() {
+  groups.value = await fetchFavoriteGroups()
 }
 
 async function load() {
   loading.value = true
   try {
-    const [profile, list] = await Promise.all([
-      window.wanwu.user.getProfile(),
-      window.wanwu.user.listFavoriteGroups()
-    ])
+    const [profile, list] = await Promise.all([fetchPersonalProfile(), fetchFavoriteGroups()])
     if (profile) {
-      nickname.value = profile.nickname
-      bio.value = profile.bio
-      clampProfileTextFields()
-      syncSavedProfileFields()
-      avatarPath.value = profile.avatarPath
-      if (profile.avatarPath) avatarMediaKey.value = Date.now()
-      backgroundPath.value = profile.backgroundPath
-      if (profile.backgroundPath) backgroundMediaKey.value = Date.now()
-      backgroundConfig.value = normalizeBackgroundConfig(
-        profile.backgroundConfig as PersonalBackgroundConfig | null
-      )
+      applyProfileSnapshot(profile)
     }
     groups.value = list
     await refreshBackgroundImageSize()
@@ -334,8 +384,11 @@ async function load() {
 }
 
 let viewportResizeObserver: ResizeObserver | null = null
+let stopFavoritesChanged: (() => void) | null = null
+let unregisterNavigationFlush: (() => void) | null = null
 
 onMounted(async () => {
+  unregisterNavigationFlush = registerPersonalNavigationFlush(() => flushPendingProfileEdits())
   await load()
   await refreshBackgroundImageSize()
   await nextTick()
@@ -344,10 +397,33 @@ onMounted(async () => {
     viewportResizeObserver = new ResizeObserver(() => refreshViewportSize())
     viewportResizeObserver.observe(personalRoot.value)
   }
+  if (window.wanwu.user.onFavoritesChanged) {
+    stopFavoritesChanged = window.wanwu.user.onFavoritesChanged(() => {
+      void loadFavoriteGroups()
+    })
+  }
+})
+
+onActivated(() => {
+  void loadProfile()
+  void loadFavoriteGroups()
+})
+
+onBeforeRouteLeave(async () => {
+  await flushPendingProfileEdits()
+})
+
+onDeactivated(() => {
+  void flushPendingProfileEdits()
 })
 
 onUnmounted(() => {
+  void flushPendingProfileEdits()
   viewportResizeObserver?.disconnect()
+  stopFavoritesChanged?.()
+  stopFavoritesChanged = null
+  unregisterNavigationFlush?.()
+  unregisterNavigationFlush = null
   unbindProfileDismiss()
 })
 
@@ -378,13 +454,9 @@ function cancelNicknameEdit() {
 }
 
 async function applyNicknameEdit() {
-  const next = nicknameDraft.value.trim().slice(0, NICKNAME_MAX)
-  nicknameEditing.value = false
-  if (next === savedNickname.value.trim()) {
-    nickname.value = savedNickname.value
-    return
-  }
-  nickname.value = next
+  if (!nicknameEditing.value) return
+  const changed = prepareNicknameCommit()
+  if (!changed) return
   await persistProfile('昵称已更新')
 }
 

@@ -7,10 +7,10 @@ export function registerNavigationContributor(contributor: INavigationContributo
   contributors.push(contributor)
 }
 
-export function teardownNavigationContributors(): void {
-  for (const contributor of contributors) {
-    contributor.teardownBeforeNavigation()
-  }
+export async function teardownNavigationContributors(): Promise<void> {
+  await Promise.all(
+    contributors.map((contributor) => Promise.resolve(contributor.teardownBeforeNavigation()))
+  )
 }
 
 export function resumeNavigationContributors(to: RouteLocationNormalized): void {

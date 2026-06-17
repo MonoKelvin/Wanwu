@@ -13,6 +13,7 @@ const {
   loading,
   saving,
   nickname,
+  bio,
   nicknameEditing,
   nicknameDraft,
   nicknameInputRef,

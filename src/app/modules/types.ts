@@ -23,7 +23,7 @@ export interface ModuleNavDescriptor {
 
 export interface INavigationContributor {
   readonly id: string
-  teardownBeforeNavigation(): void
+  teardownBeforeNavigation(): void | Promise<void>
   shouldResumeAfterNavigation?(to: RouteLocationNormalized): boolean
   resumeAfterNavigation?(to: RouteLocationNormalized): void
 }

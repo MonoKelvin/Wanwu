@@ -99,6 +99,9 @@ function bindThumbsStrip() {
 
 const isLibrary = computed(() => (route.params.source as string) === 'library')
 
+/** 收藏/点赞 IPC 使用的条目来源（图鉴固定为 library） */
+const itemRefSource = computed(() => (isLibrary.value ? 'library' : item.value?.source ?? 'library'))
+
 const specEntries = computed(() =>
   Object.entries(item.value?.specs ?? {}).filter(([key]) => key !== '摘要')
 )
@@ -179,7 +182,7 @@ async function loadItem() {
     item.value = await window.wanwu.library.getItem(id)
     activeImage.value = item.value ? pickActiveImage(item.value) : null
     if (item.value) {
-      const ref = { itemId: item.value.id, source: item.value.source }
+      const ref = { itemId: item.value.id, source: itemRefSource.value }
       isFavorited.value = await window.wanwu.user.isFavorite(ref)
       isLiked.value = await window.wanwu.user.isLiked(ref)
     }
@@ -224,7 +227,7 @@ async function onFavoriteClick() {
   if (isFavorited.value) {
     await window.wanwu.user.removeFavorite({
       itemId: item.value.id,
-      source: item.value.source
+      source: itemRefSource.value
     })
     isFavorited.value = false
     showToast(U.toastUnfav)
@@ -237,7 +240,7 @@ async function onFavoriteGroupPicked(groupId: string) {
   if (!item.value) return
   await window.wanwu.user.addFavorite({
     itemId: item.value.id,
-    source: item.value.source,
+    source: itemRefSource.value,
     groupId
   })
   isFavorited.value = true
@@ -249,14 +252,14 @@ async function onLikeClick() {
   if (isLiked.value) {
     await window.wanwu.user.removeLike({
       itemId: item.value.id,
-      source: item.value.source
+      source: itemRefSource.value
     })
     isLiked.value = false
     showToast(U.toastUnlike)
   } else {
     await window.wanwu.user.addLike({
       itemId: item.value.id,
-      source: item.value.source
+      source: itemRefSource.value
     })
     isLiked.value = true
     showToast(U.toastLike)

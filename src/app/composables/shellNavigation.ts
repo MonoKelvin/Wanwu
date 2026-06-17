@@ -19,10 +19,10 @@ async function waitForEditorDomRelease() {
   await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
 }
 
-/** 导航前：blur → 各模块注册的拆卸逻辑 → 等 DOM 释放后再 push */
+/** 导航前：blur → 各模块注册的拆卸逻辑（可 async）→ 等 DOM 释放后再 push */
 export async function prepareShellNavigation() {
   releaseFocusBeforeNavigation()
-  teardownNavigationContributors()
+  await teardownNavigationContributors()
   await waitForEditorDomRelease()
 }
 

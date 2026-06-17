@@ -190,7 +190,7 @@ export function searchFavoriteHits(services: AppServices, term: string): QuickAc
   const hits: QuickAccessHit[] = []
   const perKind = new Map<QuickAccessHitKind, number>()
   const lower = term.toLowerCase()
-  for (const entry of services.library?.listFavoriteEntries() ?? []) {
+  for (const entry of services.personal?.listFavoriteEntries() ?? []) {
     const name = entry.item?.name ?? ''
     if (!name.toLowerCase().includes(lower)) continue
     pushHit(
