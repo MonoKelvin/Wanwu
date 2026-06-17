@@ -7,6 +7,7 @@ import { setCommandRuntime } from '@app/bootstrap/commandRuntimeStore'
 import { loadStylesForMode } from '@app/bootstrap/loadStyles'
 import { loadWebFonts } from '@app/bootstrap/loadWebFonts'
 import { installUiPlugins } from '@app/bootstrap/uiPlugins'
+import { loadBootRootComponent } from '@app/modules/bootModeRegistry'
 import router from '@app/router'
 
 async function syncThemeBeforePaint(): Promise<void> {
@@ -23,13 +24,18 @@ async function syncThemeBeforePaint(): Promise<void> {
 }
 
 async function resolveRootComponent(mode: BootMode): Promise<Component> {
+  if (mode === 'main') {
+    return (await import('@app/App.vue')).default
+  }
+
+  const fromModule = await loadBootRootComponent(mode)
+  if (fromModule) return fromModule
+
   switch (mode) {
     case 'tray-menu':
       return (await import('@app/shell/AppTray.vue')).default
     case 'daily-widget':
       return (await import('@app/shell/AppDailyWidget.vue')).default
-    case 'note-popout':
-      return (await import('@app/shell/AppNotePopout.vue')).default
     default:
       return (await import('@app/App.vue')).default
   }

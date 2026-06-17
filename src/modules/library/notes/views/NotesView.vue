@@ -1,36 +1,35 @@
 ﻿<script setup lang="ts">
 defineOptions({ name: 'LibraryNotesView' })
 
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ModulePageLayout from '@app/components/ModulePageLayout.vue'
 import PageHeader from '@app/components/PageHeader.vue'
 import EmptyState from '@app/components/EmptyState.vue'
 import WwButton from '@shared/components/WwButton.vue'
 import { useNotePopout, type PopoutScreenAnchor } from '@modules/library/notes/lib/useNotePopout'
+import { readNoteEditorScrollTop } from '@modules/library/notes/lib/useNotePopoutScroll'
 import { useNotePopoutsBatch } from '@modules/library/notes/lib/useNotePopoutsBatch'
 import { useNotePopoutAutoRestoreOnEnter } from '@modules/library/notes/lib/useNotePopoutAutoRestore'
 import { useNotesBrowse } from '@modules/library/notes/lib/useNotesBrowse'
 import { NOTE_COLORS, NOTE_COLOR_LABELS } from '@shared/constants/noteColors'
 import { pruneUnreferencedNoteImages } from '@modules/library/notes/app/pruneNoteImages'
 import { useNotesStore } from '@shared/stores/notes'
-import type { NoteColor } from '@shared/types/notes'
-import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import NotesSidebar from '@modules/library/notes/components/NotesSidebar.vue'
 import NotesEditor from '@modules/library/notes/components/NotesEditor.vue'
 import { useNotesDraft } from '@modules/library/notes/lib/useNotesDraft'
-import { registerNotePopoutSelectHandler } from '@modules/library/notes/lib/notePopoutFocusSync'
+import { registerNotePopoutSelectHandler } from '@modules/library/notes/lib/notePopoutSync'
 import {
   registerNotesEditorDestroy,
   registerNotesNavigationSync
-} from '@modules/library/notes/lib/notesNavigationTeardown'
-import { notesEditorMountAllowed } from '@modules/library/notes/lib/notesEditorMount'
-import { normalizeNotePlainText } from '@modules/library/notes/lib/noteContentText'
-import type { NoteItem } from '@shared/types/notes'
+} from '@modules/library/notes/lib/notesEditorLifecycle'
+import { notesEditorMountAllowed } from '@modules/library/notes/lib/notesEditorLifecycle'
+import { useNotesActions, useNoteEditorActions } from '@modules/library/notes/lib/useNotesActions'
+import { useNotesSelection } from '@modules/library/notes/lib/useNotesSelection'
+import { useNoteEditorSync } from '@modules/library/notes/lib/noteEditorSync'
 
 const notesStore = useNotesStore()
 const toast = useWanwuToast()
-const confirm = useWanwuConfirm()
 
 const browse = useNotesBrowse()
 const {
@@ -52,11 +51,8 @@ const {
 const draftTitle = ref('')
 const draftContent = ref('')
 const notesEditorRef = ref<InstanceType<typeof NotesEditor> | null>(null)
-
-/** 列表从空变为非空时重建编辑器，避免 Tiptap 在 v-if 卸载后状态残留 */
 const editorSessionKey = ref(0)
 
-/** 用 id + 列表解析，避免 store 数组更新瞬间 selectedNote 为 null 导致草稿被清空 */
 const editorNote = computed(() => {
   const id = selectedNoteId.value
   if (!id) return null
@@ -65,7 +61,13 @@ const editorNote = computed(() => {
 
 const showEditor = computed(() => Boolean(editorNote.value))
 
-const { isPopoutVisible, popoutToggleLabel, togglePopout } = useNotePopout(selectedNoteId)
+const syncDraftFromEditor = () => {
+  notesEditorRef.value?.syncToDraft()
+}
+
+/** 以当前编辑器便笺为准，避免 selectedNoteId 与列表短暂不同步时无法打开独立窗口 */
+const popoutNoteId = computed(() => editorNote.value?.id ?? selectedNoteId.value)
+const { isPopoutVisible, popoutToggleLabel, togglePopout } = useNotePopout(popoutNoteId)
 const { batchDisabled, batchLabel, refreshBatchState, toggleAllPopouts } = useNotePopoutsBatch()
 
 useNotePopoutAutoRestoreOnEnter()
@@ -78,20 +80,24 @@ const headerSubtitle = computed(() => {
   return `共 ${total} 条${pinnedCount > 0 ? `，置顶 ${pinnedCount} 条` : ''}`
 })
 
+const hydrateEditor = () => {
+  notesEditorRef.value?.hydrateFromDraft?.()
+}
+
 const {
   saveUiState,
   saveUiLabel,
   saveUiVisible,
   saveUiCancellable,
   cancelSave,
-  flushDraft
+  flushDraft,
+  applyRemoteNote
 } = useNotesDraft({
   selected: editorNote,
   draftTitle,
   draftContent,
-  beforePersist: () => {
-    notesEditorRef.value?.syncToDraft()
-  },
+  beforePersist: syncDraftFromEditor,
+  onRemoteApplied: hydrateEditor,
   persist: async (noteId, title, content, options) => {
     await notesStore.updateNote(noteId, { title, content, touchUpdatedAt: options?.touchUpdatedAt })
   },
@@ -100,18 +106,41 @@ const {
   }
 })
 
-const unregisterNotesNavigationSync = registerNotesNavigationSync(() => {
-  notesEditorRef.value?.syncToDraft()
+const notesActions = useNotesActions({ beforeMutate: syncDraftFromEditor })
+
+const { selectNote } = useNotesSelection({
+  selectedNoteId,
+  notes,
+  showEditor,
+  isSearchActive,
+  pickedInSearch,
+  markPickedInSearch,
+  draftContent,
+  syncDraft: syncDraftFromEditor,
+  flushDraft,
+  hydrateEditor: () => notesEditorRef.value?.hydrateFromDraft?.(),
+  removeImage: (imageId) => notesStore.removeImage(imageId)
 })
 
+const editorActions = useNoteEditorActions({
+  getNoteId: () => editorNote.value?.id,
+  syncDraft: syncDraftFromEditor
+})
+
+useNoteEditorSync({
+  getNoteId: () => editorNote.value?.id,
+  applyRemoteNote,
+  hydrateEditor
+})
+
+const unregisterNotesNavigationSync = registerNotesNavigationSync(syncDraftFromEditor)
 const unregisterNotesEditorDestroy = registerNotesEditorDestroy(() => {
   notesEditorRef.value?.destroyEditor()
 })
 
 onMounted(async () => {
-  try {
-    await loadNotes()
-  } catch {
+  const result = await notesActions.loadAll()
+  if (!result.ok) {
     toast.error('加载便笺失败')
   }
 })
@@ -127,39 +156,6 @@ watch(
   }
 )
 
-async function selectNote(id: string) {
-  const sameSelection = selectedNoteId.value === id
-  if (sameSelection && showEditor.value && (!isSearchActive.value || pickedInSearch.value)) {
-    return
-  }
-
-  notesEditorRef.value?.syncToDraft()
-  const leavingId = selectedNoteId.value
-
-  if (leavingId && leavingId !== id) {
-    const leavingContent = draftContent.value
-    const leavingNote = notesStore.notes.find((item) => item.id === leavingId)
-    await flushDraft({ touchUpdatedAt: false })
-    if (leavingNote) {
-      await pruneUnreferencedNoteImages(leavingNote.images, leavingContent, (imageId) =>
-        notesStore.removeImage(imageId)
-      )
-    }
-  }
-
-  markPickedInSearch()
-
-  // 选中 id 未变但编辑器已卸载（如删光后重建）时，需先清空再设回以触发草稿重载
-  if (sameSelection) {
-    notesStore.setSelected(null)
-    await nextTick()
-  }
-
-  notesStore.setSelected(id)
-  await nextTick()
-  notesEditorRef.value?.hydrateFromDraft?.()
-}
-
 const unregisterPopoutSelectHandler = registerNotePopoutSelectHandler((id) => selectNote(id))
 
 onBeforeUnmount(() => {
@@ -169,7 +165,7 @@ onBeforeUnmount(() => {
   const noteId = notesStore.selectedNoteId
   const content = draftContent.value
   const note = noteId ? notesStore.notes.find((item) => item.id === noteId) : null
-  notesEditorRef.value?.syncToDraft()
+  syncDraftFromEditor()
   void flushDraft().then(() => {
     if (note) {
       void pruneUnreferencedNoteImages(note.images, content, (imageId) =>
@@ -180,120 +176,40 @@ onBeforeUnmount(() => {
 })
 
 async function onTogglePopout(anchor?: PopoutScreenAnchor) {
-  notesEditorRef.value?.syncToDraft()
-  await togglePopout(undefined, anchor)
+  if (!popoutNoteId.value) return
+  syncDraftFromEditor()
+  await flushDraft()
+  await togglePopout(readNoteEditorScrollTop(), anchor)
   await refreshBatchState()
 }
 
 async function createNote() {
   if (isSearchActive.value) return
-  notesEditorRef.value?.syncToDraft()
+  syncDraftFromEditor()
   await flushDraft()
-  try {
-    await notesStore.createNote()
-  } catch {
-    toast.error('创建便笺失败')
-  }
-}
-
-async function togglePinned() {
-  const note = editorNote.value
-  if (!note) return
-  try {
-    await notesStore.updateNote(note.id, { pinned: !note.pinned })
-  } catch {
-    toast.error('更新置顶状态失败')
-  }
-}
-
-async function setColor(color: NoteColor) {
-  const note = editorNote.value
-  if (!note || note.color === color) return
-  try {
-    await notesStore.updateNote(note.id, { color })
-  } catch {
-    toast.error('更新颜色失败')
-  }
+  await notesActions.createNote()
 }
 
 async function removeCurrent() {
   const note = editorNote.value
   if (!note) return
-  const ok = await confirm.ask({
-    header: '删除便笺',
-    message: '删除后无法恢复，确定删除这张便笺吗？',
-    acceptLabel: '删除',
-    danger: true
-  })
-  if (!ok) return
-  try {
-    if (selectedNoteId.value === note.id) {
-      notesEditorRef.value?.syncToDraft()
-      await flushDraft()
-    }
-    await notesStore.deleteNote(note.id)
-  } catch {
-    toast.error('删除便笺失败')
+  if (selectedNoteId.value === note.id) {
+    syncDraftFromEditor()
+    await flushDraft()
   }
+  await notesActions.deleteNote(note.id)
 }
 
 async function removeById(noteId: string) {
   const note = notesStore.notes.find((item) => item.id === noteId)
   if (!note) return
-  const ok = await confirm.ask({
-    header: '删除便笺',
-    message: `确定删除「${note.title || '未命名便笺'}」吗？删除后无法恢复。`,
-    acceptLabel: '删除',
-    danger: true
+  if (selectedNoteId.value === noteId) {
+    syncDraftFromEditor()
+    await flushDraft()
+  }
+  await notesActions.deleteNote(noteId, {
+    message: `确定删除「${note.title.trim() || '未命名便笺'}」吗？删除后无法恢复。`
   })
-  if (!ok) return
-  try {
-    if (selectedNoteId.value === noteId) {
-      notesEditorRef.value?.syncToDraft()
-      await flushDraft()
-    }
-    await notesStore.deleteNote(noteId)
-  } catch {
-    toast.error('删除便笺失败')
-  }
-}
-
-async function pickImage() {
-  const note = editorNote.value
-  if (!note) return
-  const picked = await window.wanwu.shell.pickImageFile()
-  if (!picked.ok || !picked.path) return
-  try {
-    await notesStore.addImage(note.id, picked.path)
-  } catch {
-    toast.error('添加图片失败')
-  }
-}
-
-async function insertImageByPath(filePath: string) {
-  const note = editorNote.value
-  if (!note || !filePath) return
-  try {
-    await notesStore.addImage(note.id, filePath)
-  } catch {
-    toast.error('插入图片失败')
-  }
-}
-
-function getNoteTitle(note: NoteItem) {
-  return note.title.trim() || '未命名便笺'
-}
-
-async function copyNote(noteId: string) {
-  const note = notesStore.notes.find((item) => item.id === noteId)
-  if (!note) return
-  const text = `${getNoteTitle(note)}\n\n${normalizeNotePlainText(note.content || '')}`.trim()
-  try {
-    await window.wanwu.shell.copyText(text)
-    toast.success('已复制便笺内容')
-  } catch {
-    toast.error('复制失败')
-  }
 }
 
 async function onSidebarAction(payload: {
@@ -305,14 +221,11 @@ async function onSidebarAction(payload: {
     return
   }
   if (payload.action === 'copy') {
-    await copyNote(payload.noteId)
+    await notesActions.copyContent(payload.noteId)
     return
   }
   if (payload.action === 'toggle-pinned') {
-    const note = notesStore.notes.find((item) => item.id === payload.noteId)
-    if (!note) return
-    await notesStore.updateNote(note.id, { pinned: !note.pinned })
-    return
+    await notesActions.togglePinned(payload.noteId)
   }
 }
 </script>
@@ -381,7 +294,6 @@ async function onSidebarAction(payload: {
           @action="onSidebarAction"
         />
 
-        <!-- 始终占 2fr 列；隐藏时用 visibility 占位，避免列表被撑满（勿用 v-if/v-show 卸掉整栏） -->
         <div
           class="ww-notes-pane ww-notes-pane--editor"
           :class="{ 'ww-notes-pane--inactive': !showRightPane }"
@@ -393,16 +305,16 @@ async function onSidebarAction(payload: {
             ref="notesEditorRef"
             v-model:draftTitle="draftTitle"
             v-model:draftContent="draftContent"
-            :note="editorNote"
+            :note="editorNote!"
             :note-colors="NOTE_COLORS"
             :color-labels="NOTE_COLOR_LABELS"
             :popout-open="isPopoutVisible"
             :popout-toggle-label="popoutToggleLabel"
             @flush="flushDraft"
-            @toggle-pinned="togglePinned"
-            @set-color="setColor"
-            @pick-image="pickImage"
-            @insert-image-by-path="insertImageByPath"
+            @toggle-pinned="editorActions.togglePinned"
+            @set-color="editorActions.setColor"
+            @pick-image="editorActions.pickImage"
+            @insert-image-by-path="editorActions.insertImageByPath"
             @remove-note="removeCurrent"
             @toggle-popout="onTogglePopout"
           />

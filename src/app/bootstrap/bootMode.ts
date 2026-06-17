@@ -1,13 +1,14 @@
 import { isDailyWidgetHash } from '@app/utils/dailyWidgetEntry'
-import { isNotePopoutHash } from '@app/utils/notePopoutEntry'
 import { isTrayMenuHash } from '@app/utils/trayMenuEntry'
+import { detectRegisteredBootMode } from '@app/modules/bootModeRegistry'
 
 export type BootMode = 'main' | 'tray-menu' | 'daily-widget' | 'note-popout'
 
 export function detectBootMode(): BootMode {
   if (isTrayMenuHash()) return 'tray-menu'
   if (isDailyWidgetHash()) return 'daily-widget'
-  if (isNotePopoutHash()) return 'note-popout'
+  const registered = detectRegisteredBootMode()
+  if (registered) return registered
   return 'main'
 }
 

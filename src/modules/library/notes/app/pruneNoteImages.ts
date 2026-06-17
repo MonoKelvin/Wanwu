@@ -1,5 +1,5 @@
 ﻿import type { NoteImage } from '@shared/types/notes'
-import { collectNoteImageIdsFromHtml } from '@modules/library/notes/lib/noteImageContent'
+import { collectNoteImageIdsFromHtml } from '@shared/notes/noteBodyContent'
 
 export const IMAGE_PRUNE_GRACE_MS = 3000
 

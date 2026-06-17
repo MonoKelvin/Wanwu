@@ -1,8 +1,9 @@
 import { nextTick } from 'vue'
 import type { RouteLocationRaw, Router } from 'vue-router'
-import { LIBRARY_NOTES_ROUTE } from '@modules/library/notes/domain/noteRoutes'
-import { resumeNotesEditorMount } from '@modules/library/notes/lib/notesEditorMount'
-import { teardownNotesEditorBeforeNavigation } from '@modules/library/notes/lib/notesNavigationTeardown'
+import {
+  resumeNavigationContributors,
+  teardownNavigationContributors
+} from '@app/modules/navigationRegistry'
 
 export function releaseFocusBeforeNavigation() {
   const active = document.activeElement
@@ -18,10 +19,10 @@ async function waitForEditorDomRelease() {
   await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
 }
 
-/** 导航前：blur → 卸 Tiptap → 等 DOM 释放后再 push */
+/** 导航前：blur → 各模块注册的拆卸逻辑 → 等 DOM 释放后再 push */
 export async function prepareShellNavigation() {
   releaseFocusBeforeNavigation()
-  teardownNotesEditorBeforeNavigation()
+  teardownNavigationContributors()
   await waitForEditorDomRelease()
 }
 
@@ -39,8 +40,6 @@ export async function pushShellRoute(router: Router, to: RouteLocationRaw) {
 
 export function setupShellNavigationHooks(router: Router) {
   router.afterEach((to) => {
-    if (to.name === LIBRARY_NOTES_ROUTE) {
-      resumeNotesEditorMount()
-    }
+    resumeNavigationContributors(to)
   })
 }

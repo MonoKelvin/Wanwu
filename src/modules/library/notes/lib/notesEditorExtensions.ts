@@ -3,7 +3,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 
-/** 便笺正文仅保留基础 Markdown 能力：加粗、小标题、有序/无序列表、链接、图片 */
+/** 便笺 Tiptap 扩展：仅保留基础 Markdown 能力（加粗、小标题、列表、链接、图片） */
 export function createNotesEditorExtensions(options: {
   placeholder: () => string
   noteImageExtension: AnyExtension

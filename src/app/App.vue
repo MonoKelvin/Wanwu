@@ -10,8 +10,7 @@ import WwPopTipHost from '@shared/components/WwPopTipHost.vue'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
 import { useSettingsStore } from '@shared/stores/settings'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
-import { tryRestoreNotePopouts } from '@modules/library/notes/lib/useNotePopoutAutoRestore'
-import { useNotePopoutFocusSync } from '@modules/library/notes/lib/useNotePopoutFocusSync'
+import { runMainAppStartupHooks, useMainAppIntegrations } from '@app/modules/mainAppRegistry'
 import { useCloseAppDialog } from '@app/composables/useCloseAppDialog'
 import { useQuickAccessHost } from '@app/composables/useQuickAccessHost'
 import {
@@ -53,7 +52,7 @@ watch(closeDialogVisible, (visible) => {
   if (visible) closeDialogMounted.value = true
 })
 
-useNotePopoutFocusSync()
+useMainAppIntegrations()
 
 function showLibraryNotice(text: string) {
   toast.info(text, '图鉴数据', { life: 12_000 })
@@ -76,9 +75,10 @@ onMounted(async () => {
   if (!settingsStore.loaded) await settingsStore.load()
 
   runWhenIdle(() => {
-    if (settingsStore.settings.notesPopoutRestore === 'on-startup') {
-      void tryRestoreNotePopouts('on-startup')
-    }
+    runMainAppStartupHooks({
+      runWhenIdle,
+      settings: settingsStore.settings
+    })
     void (async () => {
       for (const text of await window.wanwu.app.getStartupNotices()) {
         showLibraryNotice(text)

@@ -4,12 +4,19 @@ import { canonicalNoteBodyContent } from '@modules/library/notes/lib/noteContent
 
 export type NoteSaveUiState = 'idle' | 'saving' | 'timeout' | 'error'
 
+/**
+ * 便笺草稿与自动保存：本地 title/content 与 store 的脏检查、防抖落盘、远程同步。
+ * 切换便笺前请调用 flushDraft；命令更新后通过 applyRemoteNote 拉取 store。
+ */
+
 interface UseNotesDraftOptions {
   selected: Ref<NoteItem | null>
   draftTitle: Ref<string>
   draftContent: Ref<string>
   /** 落盘前从 Tiptap 同步最新 HTML，避免草稿与编辑器短暂不一致 */
   beforePersist?: () => void
+  /** 远程/命令更新已写入草稿后，刷新 Tiptap */
+  onRemoteApplied?: () => void
   persist: (
     noteId: string,
     title: string,
@@ -84,6 +91,25 @@ export function useNotesDraft(options: UseNotesDraftOptions) {
     options.draftContent.value = canonicalNoteBodyContent(note.content ?? '')
     syncBaselineFromDraft()
     draftRevision = 0
+  }
+
+  /**
+   * 将 store 中的便笺应用到本地草稿。
+   * @returns 是否已应用（脏草稿且非 force 时返回 false）
+   */
+  function applyRemoteNote(note: NoteItem, opts?: { force?: boolean }): boolean {
+    if (opts?.force) {
+      saveGeneration += 1
+      clearSaveTimeoutTimer()
+      saveUiState.value = 'idle'
+      loadDraftFromNote(note)
+      finishHydrate()
+      return true
+    }
+    if (hydrating || isDirty() || saveUiState.value === 'saving') return false
+    loadDraftFromNote(note)
+    finishHydrate()
+    return true
   }
 
   function finishHydrate() {
@@ -278,14 +304,14 @@ export function useNotesDraft(options: UseNotesDraftOptions) {
     { immediate: true, flush: 'sync' }
   )
 
-  /** 其他窗口落盘后同步草稿（当前无未保存编辑时） */
+  /** 其他窗口或 IPC 落盘后同步草稿（当前无未保存编辑时） */
   watch(
     () => options.selected.value?.updatedAt,
     () => {
       const note = options.selected.value
-      if (!note || hydrating || isDirty() || saveUiState.value === 'saving') return
-      loadDraftFromNote(note)
-      finishHydrate()
+      if (!note) return
+      if (!applyRemoteNote(note)) return
+      options.onRemoteApplied?.()
     }
   )
 
@@ -308,6 +334,7 @@ export function useNotesDraft(options: UseNotesDraftOptions) {
     saveUiVisible,
     saveUiCancellable,
     cancelSave,
-    flushDraft
+    flushDraft,
+    applyRemoteNote
   }
 }

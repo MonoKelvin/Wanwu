@@ -36,3 +36,25 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+.ww-note-popout-shell__view {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ww-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.ww-icon--spin {
+  animation: ww-icon-spin 0.85s linear infinite;
+}
+
+@keyframes ww-icon-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

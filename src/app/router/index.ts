@@ -1,14 +1,18 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupModulePathMemory } from '@app/router/moduleMemory'
 import { setupShellNavigationHooks } from '@app/composables/shellNavigation'
-// import { CLOUD_ABODE_ENABLED } from '@app/config/modules'
-// import { cloudAbodeChildRoutes } from '@modules/cloud-abode/router'
+import {
+  collectLibraryChildRoutes,
+  collectModuleRoutes,
+  getLibraryHomeRouteName,
+  resolveModuleLegacyLibraryPath
+} from '@app/modules/moduleRegistry'
+import { ROUTE_OUTLET_SHELL } from '@app/router/outletPlaceholder'
 import { useSettingsStore } from '@shared/stores/settings'
 import { resolveStartupPath } from '@shared/utils/startupModule'
 import { isLibraryMajorId } from '@modules/library/core/config/majors'
 
-/** 便笺由 AppShell 直接挂载（含 Tiptap），此处仅占位以保持路由 meta/名称 */
-const ROUTE_OUTLET_SHELL = { template: '<div />' }
+const libraryHomeRouteName = getLibraryHomeRouteName() ?? 'library-notes'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -28,9 +32,11 @@ const router = createRouter({
       redirect: (to) => {
         const cat = String(to.params.legacyCat ?? '')
         if (isLibraryMajorId(cat)) {
-          if (cat === 'notes') {
-            return { path: '/notes' }
-          }
+          const modulePath = resolveModuleLegacyLibraryPath(
+            cat,
+            to.params.legacySub as string | undefined
+          )
+          if (modulePath) return modulePath
           if (cat === 'links') {
             return {
               name: 'library-links',
@@ -57,12 +63,7 @@ const router = createRouter({
         }
       }
     },
-    {
-      path: '/notes',
-      name: 'library-notes',
-      component: ROUTE_OUTLET_SHELL,
-      meta: { module: 'library', major: 'notes', title: '便笺' }
-    },
+    ...collectModuleRoutes(),
     {
       path: '/diagrams/edit/:fileId',
       name: 'library-diagrams-editor',
@@ -89,12 +90,9 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: { name: 'library-notes' }
+          redirect: { name: libraryHomeRouteName }
         },
-        {
-          path: 'notes',
-          redirect: { path: '/notes', replace: true }
-        },
+        ...collectLibraryChildRoutes(),
         {
           path: 'links/:folderId?',
           name: 'library-links',
@@ -277,12 +275,6 @@ const router = createRouter({
       name: 'item-detail',
       component: () => import('@modules/item/ItemDetailView.vue'),
       meta: { fullscreen: true }
-    },
-    {
-      path: '/note-popout/:noteId',
-      name: 'note-popout',
-      component: () => import('@modules/library/notes/views/NotePopoutView.vue'),
-      meta: { notePopout: true }
     },
     {
       path: '/daily-widget',

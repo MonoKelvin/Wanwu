@@ -1,4 +1,18 @@
-import { suspendNotesEditorForNavigation } from '@modules/library/notes/lib/notesEditorMount'
+/**
+ * Tiptap 编辑器挂载生命周期：跨模块导航前同步草稿、销毁实例、暂停挂载。
+ */
+import { ref } from 'vue'
+
+/** 跨模块导航前暂停挂载 Tiptap，避免与 RouterView 切换在同一 tick 冲突 */
+export const notesEditorMountAllowed = ref(true)
+
+export function suspendNotesEditorForNavigation() {
+  notesEditorMountAllowed.value = false
+}
+
+export function resumeNotesEditorMount() {
+  notesEditorMountAllowed.value = true
+}
 
 /** 便笺页在 router.push 前同步 Tiptap → 草稿（不卸载编辑器，避免中断导航） */
 let syncHook: (() => void) | null = null

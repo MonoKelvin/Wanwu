@@ -2,15 +2,10 @@
 import { storeToRefs } from 'pinia'
 import { useNotesStore } from '@shared/stores/notes'
 import { noteMatchesQuery } from '@modules/library/notes/lib/noteContentText'
-import { sortNotesList } from '@modules/library/notes/lib/noteListOrder'
+import { sortNotesList } from '@modules/library/notes/lib/noteContentText'
 
 /**
- * 便笺主界面：搜索 + 列表 + 选中 + 右侧栏显隐（单一状态源）
- *
- * 无搜索：全量列表；无选中 → 右侧空状态提示；有选中 → 编辑器
- * 有搜索有结果：默认不选中、隐藏右侧；可点选
- * 有搜索无结果：侧栏大空态、隐藏右侧
- * 清空搜索：恢复搜索前选中，或保留搜索期间用户点选的项
+ * 便笺主界面浏览状态：搜索、列表、选中与右侧栏显隐（单一状态源）。
  */
 export function useNotesBrowse() {
   const notesStore = useNotesStore()

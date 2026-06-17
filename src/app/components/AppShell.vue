@@ -1,22 +1,26 @@
 ﻿<script setup lang="ts">
-import { KeepAlive, computed, defineAsyncComponent, watch } from 'vue'
+import {
+  KeepAlive,
+  computed,
+  defineAsyncComponent,
+  shallowRef,
+  watch,
+  type Component
+} from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import ModuleSidebar from '@app/components/ModuleSidebar.vue'
 import SubItemPanel from '@app/components/SubItemPanel.vue'
 import { useRouteModule } from '@app/composables/useRouteModule'
 import { useShellModule } from '@app/composables/useShellModule'
 import { moduleViewComponent } from '@app/shell/moduleShell'
+import { resolveShellOutlet } from '@app/modules/shellOutletRegistry'
 import { isDiagramEditorRoute } from '@modules/library/diagrams/domain/diagramRoutes'
 import DiagramEditorView from '@modules/library/diagrams/views/DiagramEditorView.vue'
-import { LIBRARY_NOTES_ROUTE } from '@modules/library/notes/domain/noteRoutes'
 import { mvPageActive } from '@modules/music/lib/musicMvOverlayState'
 import { useAppStore } from '@shared/stores/app'
 import { useSettingsStore } from '@shared/stores/settings'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
 
-const NotesView = defineAsyncComponent(
-  () => import('@modules/library/notes/views/NotesView.vue')
-)
 const ItemDetailView = defineAsyncComponent(
   () => import('@modules/item/ItemDetailView.vue')
 )
@@ -29,7 +33,19 @@ const routeModule = useRouteModule()
 const shellModule = useShellModule()
 const appStore = useAppStore()
 const isItemDetail = computed(() => isItemDetailRoute(route.name))
-const isNotesRoute = computed(() => route.name === LIBRARY_NOTES_ROUTE)
+const activeShellOutlet = computed(() => resolveShellOutlet(route))
+const shellOutletComponent = shallowRef<Component | null>(null)
+
+watch(
+  activeShellOutlet,
+  (outlet) => {
+    shellOutletComponent.value = outlet
+      ? defineAsyncComponent(() => outlet.loadComponent())
+      : null
+  },
+  { immediate: true }
+)
+
 const showDiagramEditor = computed(() => isDiagramEditorRoute(route.name, route.path))
 /** 仅 fileId 参与 key；template 只在首次 open 使用，纳入 key 会在 query 变化时整页 remount 画布 */
 const diagramEditorKey = computed(
@@ -87,8 +103,12 @@ watch(showDiagramEditor, (active, wasActive) => {
       class="relative flex min-w-0 flex-1 flex-col overflow-hidden"
       :class="routeModule === 'cloud-abode' ? 'bg-transparent' : 'bg-ww-content'"
     >
-      <!-- 便笺含 Tiptap：必须在 RouterView 外渲染，否则切模块时 outlet 卡死 -->
-      <NotesView v-if="isNotesRoute" class="h-full min-h-0 flex flex-1 flex-col" />
+      <!-- 模块注册的 Shell 直挂视图（如便笺 Tiptap，须在 RouterView 外渲染） -->
+      <component
+        v-if="shellOutletComponent"
+        :is="shellOutletComponent"
+        class="h-full min-h-0 flex flex-1 flex-col"
+      />
       <!-- 编辑器不走 RouterView，避免 vue-router 5 卸载时 vnode 为 null 触发 component 读取错误 -->
       <!-- KeepAlive 避免短暂 v-if 切换销毁编辑器实例；勿绑 :key=fileId -->
       <KeepAlive v-else-if="showDiagramEditor" include="DiagramEditorView">

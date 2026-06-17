@@ -549,6 +549,17 @@ watch(notesSpellcheckEnabled, (enabled) => {
   if (dom) dom.spellcheck = enabled
 })
 
+function refreshPopoutEditorLayout(instance: NonNullable<typeof editor.value>) {
+  if (!isPopout.value || instance.isDestroyed) return
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (instance.isDestroyed) return
+      instance.view.updateState(instance.state)
+      instance.commands.focus('end', { scrollIntoView: false })
+    })
+  })
+}
+
 watch(
   () => editor.value,
   (instance, prev) => {
@@ -557,6 +568,9 @@ watch(
     }
     if (instance?.view?.dom) {
       bindEditorDomListeners(instance.view.dom)
+      if (isPopout.value) {
+        refreshPopoutEditorLayout(instance)
+      }
     }
   },
   { immediate: true }
