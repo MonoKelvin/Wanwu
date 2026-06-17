@@ -3,9 +3,6 @@ import { computed, nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
-import StarterKit from '@tiptap/starter-kit'
-import Link from '@tiptap/extension-link'
-import Placeholder from '@tiptap/extension-placeholder'
 import WwIconButton from '@shared/components/WwIconButton.vue'
 import NoteColorPicker from '@modules/library/notes/components/NoteColorPicker.vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
@@ -22,6 +19,7 @@ import {
   type NoteImageMenuTarget
 } from '@modules/library/notes/lib/noteImageEditorContext'
 import { createNoteImageExtension, isSafeExternalHref } from '@modules/library/notes/lib/noteImageExtension'
+import { createNotesEditorExtensions } from '@modules/library/notes/lib/notesEditorExtensions'
 import {
   canonicalNoteBodyContent,
   normalizeNotePlainText
@@ -277,24 +275,10 @@ function refreshBodyPlaceholder() {
 const NoteImageExtension = createNoteImageExtension()
 
 const editor = useEditor({
-  extensions: [
-    StarterKit,
-    Placeholder.configure({
-      placeholder: () => bodyPlaceholder.value,
-      emptyEditorClass: 'is-editor-empty'
-    }),
-    NoteImageExtension,
-    Link.configure({
-      openOnClick: false,
-      autolink: true,
-      linkOnPaste: true,
-      enableClickSelection: true,
-      defaultProtocol: 'https',
-      HTMLAttributes: {
-        rel: 'noopener noreferrer'
-      }
-    })
-  ],
+  extensions: createNotesEditorExtensions({
+    placeholder: () => bodyPlaceholder.value,
+    noteImageExtension: NoteImageExtension
+  }),
   content: normalizeEditorHtml(draftContent.value),
   editorProps: {
     attributes: {

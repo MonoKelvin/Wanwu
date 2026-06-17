@@ -392,6 +392,57 @@
   cursor: pointer;
 }
 
+.ww-notes-editor__content :deep(.tiptap strong) {
+  font-weight: 650;
+}
+
+.ww-notes-editor__content :deep(.tiptap h2) {
+  margin: 0.75rem 0 0.35rem;
+  font-size: 1.28em;
+  font-weight: 650;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+
+.ww-notes-editor__content :deep(.tiptap h3) {
+  margin: 0.55rem 0 0.25rem;
+  font-size: 0.9375em;
+  font-weight: 600;
+  line-height: 1.4;
+  color: color-mix(in oklab, var(--ww-ink) 88%, var(--ww-ink-muted));
+}
+
+.ww-notes-editor__content :deep(.tiptap ul),
+.ww-notes-editor__content :deep(.tiptap ol) {
+  margin: 0.35rem 0 0.45rem;
+  padding-left: 1.35rem;
+}
+
+.ww-notes-editor__content :deep(.tiptap ul) {
+  list-style-type: disc;
+}
+
+.ww-notes-editor__content :deep(.tiptap ol) {
+  list-style-type: decimal;
+}
+
+.ww-notes-editor__content :deep(.tiptap li) {
+  margin: 0.12rem 0;
+}
+
+.ww-notes-editor__content :deep(.tiptap li > p) {
+  margin: 0;
+}
+
+.ww-notes-editor__content :deep(.tiptap p + ul),
+.ww-notes-editor__content :deep(.tiptap p + ol),
+.ww-notes-editor__content :deep(.tiptap h2 + ul),
+.ww-notes-editor__content :deep(.tiptap h2 + ol),
+.ww-notes-editor__content :deep(.tiptap h3 + ul),
+.ww-notes-editor__content :deep(.tiptap h3 + ol) {
+  margin-top: 0.2rem;
+}
+
 .ww-notes-editor__content :deep(.ww-note-image-node) {
   position: relative;
   display: inline-block;
