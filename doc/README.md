@@ -21,6 +21,8 @@
 | [user-requirements-v1.0.docx](requirements/user-requirements-v1.0.docx) | 用户需求文档（v1.0） |
 | [user-requirements-v1.1-cloud-abode.docx](requirements/user-requirements-v1.1-cloud-abode.docx) | **云斋模块用户需求（v1.1）** |
 | [software-requirements-v1.1.txt](requirements/software-requirements-v1.1.txt) | 云斋 v1.1 需求摘要（txt） |
+| [leisure-read-requirements-v1.2.5.md](requirements/leisure-read-requirements-v1.2.5.md) | **闲读 v1.2.5** — 需求与 API 资源 |
+| [leisure-read-detailed-design-v1.2.5.md](design/leisure-read-detailed-design-v1.2.5.md) | **闲读 v1.2.5** — 详细设计 |
 
 ### 设计
 
