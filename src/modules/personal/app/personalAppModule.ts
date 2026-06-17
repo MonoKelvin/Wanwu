@@ -1,6 +1,9 @@
 import type { RouteRecordRaw } from 'vue-router'
 import type { IAppModule } from '@app/modules/types'
+import { initPersonalProfileSession } from '@modules/personal/composables/personalProfileSession'
 import { flushPersonalBeforeNavigation } from '@modules/personal/lib/personalNavigationLifecycle'
+
+initPersonalProfileSession()
 
 export const personalAppModule: IAppModule = {
   id: 'wanwu.personal',

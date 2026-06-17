@@ -38,6 +38,22 @@ export async function savePersonalProfile(input: {
   })
 }
 
+export function savePersonalProfileSync(input: {
+  nickname: string
+  bio: string
+  avatarPath: string | null
+  backgroundPath: string | null
+  backgroundConfig: PersonalBackgroundConfig
+}): void {
+  window.wanwu.user.saveProfileSync({
+    nickname: input.nickname,
+    bio: input.bio,
+    avatarPath: input.avatarPath,
+    backgroundPath: input.backgroundPath,
+    backgroundConfig: profileConfigForIpc(input.backgroundConfig)
+  })
+}
+
 export async function fetchFavoriteGroups(): Promise<FavoriteGroup[]> {
   return window.wanwu.user.listFavoriteGroups()
 }

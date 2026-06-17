@@ -17,6 +17,14 @@ export interface WanwuUserApi {
       backgroundPath?: string | null
       backgroundConfig?: Record<string, unknown> | null
     }) => Promise<void>
+    /** 进程退出前同步写入（beforeunload） */
+    saveProfileSync: (profile: {
+      nickname: string
+      bio: string
+      avatarPath?: string | null
+      backgroundPath?: string | null
+      backgroundConfig?: Record<string, unknown> | null
+    }) => void
     importProfileImage: (params: {
       kind: 'avatar' | 'background'
       filePath: string

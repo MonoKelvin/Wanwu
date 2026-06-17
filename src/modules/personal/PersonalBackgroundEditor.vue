@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import Slider from 'primevue/slider'
+import WwSlider from '@shared/components/WwSlider.vue'
 import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import WwButton from '@shared/components/WwButton.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
@@ -136,7 +136,7 @@ const {
       <div class="ww-bg-editor__panel-body">
         <SettingsRow label="缩放">
           <div class="ww-bg-editor__slider-field">
-            <Slider
+            <WwSlider
               v-model="scaleSliderValue"
               class="ww-bg-editor__slider"
               :min="BACKGROUND_SCALE_MIN"
@@ -152,7 +152,7 @@ const {
 
         <SettingsRow label="透明度">
           <div class="ww-bg-editor__slider-field">
-            <Slider v-model="opacityUi" class="ww-bg-editor__slider" :min="0" :max="100" :step="1" />
+            <WwSlider v-model="opacityUi" class="ww-bg-editor__slider" :min="0" :max="100" :step="1" />
             <span class="ww-bg-editor__value">{{ opacityUi }}%</span>
           </div>
         </SettingsRow>

@@ -10,9 +10,8 @@ import {
   getLibrarySeedRoot,
   ILLUSTRATED_HANDBOOK_MEDIA_DIR
 } from './paths'
-import type { LibraryCatalog, LibraryCatalogItem } from './seed'
-
-const LIBRARY_CATALOG_SCHEMA = 3
+import type { LibraryCatalog, LibraryCatalogItem } from './catalogTypes'
+import { LIBRARY_CATALOG_SCHEMA } from './catalogTypes'
 
 const COVER_FILENAMES = ['cover.jpg', 'cover.jpeg', 'cover.png', 'cover.webp']
 const GALLERY_PATTERN = /^gallery-\d+\.(jpe?g|png|webp)$/i

@@ -1,17 +1,12 @@
 /**
- * 个人页跨模块导航前刷新资料草稿（与 notes 模块的 navigation lifecycle 同模式）。
+ * 个人页跨模块导航前刷新资料（与 notes 模块 navigation lifecycle 同模式）。
+ * 实际持久化由 personalProfileSession 承担，不依赖页面组件挂载时机。
  */
+import { flushPersonalProfileBeforeNavigation } from '@modules/personal/composables/personalProfileSession'
 
-let flushHook: (() => Promise<void>) | null = null
-
-export function registerPersonalNavigationFlush(hook: () => Promise<void>): () => void {
-  flushHook = hook
-  return () => {
-    if (flushHook === hook) flushHook = null
-  }
-}
+export { registerPersonalUiFlush } from '@modules/personal/composables/personalProfileSession'
 
 /** router.push 之前由 navigation contributor 调用，需 await 完成 IPC 写入 */
 export async function flushPersonalBeforeNavigation(): Promise<void> {
-  await flushHook?.()
+  await flushPersonalProfileBeforeNavigation()
 }

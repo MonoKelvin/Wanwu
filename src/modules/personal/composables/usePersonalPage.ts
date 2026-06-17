@@ -2,12 +2,8 @@
 import { onBeforeRouteLeave } from 'vue-router'
 import { useItemDetailNavigation } from '@app/composables/useItemDetailNavigation'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
-import { registerPersonalNavigationFlush } from '@modules/personal/lib/personalNavigationLifecycle'
-import {
-  fetchFavoriteGroups,
-  fetchPersonalProfile,
-  savePersonalProfile
-} from '@modules/personal/services/personalProfileService'
+import { registerPersonalUiFlush } from '@modules/personal/lib/personalNavigationLifecycle'
+import { usePersonalProfileSession } from '@modules/personal/composables/personalProfileSession'
 import type { PersonalBackgroundConfig } from '@shared/types/profile'
 import { DEFAULT_BACKGROUND_CONFIG } from '@shared/types/profile'
 import {
@@ -16,20 +12,33 @@ import {
   normalizeBackgroundConfig,
   toWanwuMediaUrl
 } from '@shared/utils/profileMedia'
-import type { FavoriteGroup } from '@shared/types/favorite'
 import type { ImageViewerSlide } from '@shared/types/image-viewer'
 
 export function usePersonalPage() {
   const { openItemDetail } = useItemDetailNavigation()
-const toast = useWanwuToast()
+  const toast = useWanwuToast()
+  const session = usePersonalProfileSession()
+  const {
+    nickname,
+    bio,
+    savedNickname,
+    savedBio,
+    avatarPath,
+    backgroundPath,
+    backgroundConfig,
+    groups,
+    saving,
+    syncSavedProfileFields,
+    isProfileDirty,
+    persistPersonalProfile,
+    loadPersonalProfileFromDb,
+    refreshPersonalFavoriteGroups,
+    loadPersonalPageData
+  } = session
 
 const NICKNAME_MAX = 12
 const BIO_MAX = 50
 
-const nickname = ref('')
-const bio = ref('')
-const savedNickname = ref('')
-const savedBio = ref('')
 const nicknameEditing = ref(false)
 const nicknameDraft = ref('')
 const nicknameInputRef = ref<{ $el?: HTMLElement } | null>(null)
@@ -48,15 +57,10 @@ const NICKNAME_ICON_AREA_PX = 44
 /** 用于左右各留一字宽的参考汉字 */
 const NICKNAME_CHAR_SAMPLE = '汉'
 
-const avatarPath = ref<string | null>(null)
 const avatarMediaKey = ref(0)
-const backgroundPath = ref<string | null>(null)
 const previewBackgroundPath = ref<string | null>(null)
 const backgroundMediaKey = ref(0)
-const backgroundConfig = ref<PersonalBackgroundConfig>({ ...DEFAULT_BACKGROUND_CONFIG })
-const groups = ref<FavoriteGroup[]>([])
 const loading = ref(true)
-const saving = ref(false)
 const bgEditorOpen = ref(false)
 const bgEditorAutoFit = ref(false)
 const bgDraftClearsImage = ref(false)
@@ -173,11 +177,6 @@ const favoriteCount = computed(() =>
   groups.value.reduce((sum, g) => sum + g.items.length, 0)
 )
 
-function syncSavedProfileFields() {
-  savedNickname.value = nickname.value
-  savedBio.value = bio.value
-}
-
 function clampProfileTextFields() {
   if (nickname.value.length > NICKNAME_MAX) nickname.value = nickname.value.slice(0, NICKNAME_MAX)
   if (bio.value.length > BIO_MAX) bio.value = bio.value.slice(0, BIO_MAX)
@@ -252,15 +251,27 @@ function prepareNicknameCommit(): boolean {
   return true
 }
 
-/** 离开编辑态或切换页面前，将未保存的昵称/简介写入本地库 */
-async function flushPendingProfileEdits(silent = true) {
+/** 离开编辑态或切换页面前，将未保存的资料写入本地库 */
+async function flushProfileBeforeLeave(silent = true) {
   const nicknameChanged = prepareNicknameCommit()
-  const bioChanged = bioDirty.value
-  if (!nicknameChanged && !bioChanged) return
+
+  if (bgEditorOpen.value) {
+    await commitBackgroundDraft(silent)
+    return
+  }
+
+  if (!nicknameChanged && !bioDirty.value && !isProfileDirty()) return
+
   let message: string | undefined
   if (!silent) {
     message =
-      nicknameChanged && bioChanged ? '资料已更新' : nicknameChanged ? '昵称已更新' : '简介已更新'
+      nicknameChanged && bioDirty.value
+        ? '资料已更新'
+        : nicknameChanged
+          ? '昵称已更新'
+          : bioDirty.value
+            ? '简介已更新'
+            : '资料已更新'
   }
   await persistProfile(message)
 }
@@ -272,13 +283,13 @@ function onProfileDismiss(e: PointerEvent) {
   if (nicknameEditing.value) {
     if (isProfileFieldActionTarget(target)) return
     if (nicknameEditRoot.value && !nicknameEditRoot.value.contains(target)) {
-      void flushPendingProfileEdits()
+      void flushProfileBeforeLeave()
       return
     }
   }
 
   if (bioEditRoot.value && !bioEditRoot.value.contains(target)) {
-    if (bioDirty.value) void flushPendingProfileEdits()
+    if (bioDirty.value) void flushProfileBeforeLeave()
     else blurBioField()
   }
 }
@@ -297,7 +308,7 @@ function onBioFocusOut(e: FocusEvent) {
   requestAnimationFrame(() => {
     if (bioFocused.value) return
     if (bioEditRoot.value?.contains(document.activeElement)) return
-    if (bioDirty.value) void flushPendingProfileEdits()
+    if (bioDirty.value) void flushProfileBeforeLeave()
   })
 }
 
@@ -311,7 +322,7 @@ function onNicknameFieldFocusOut(e: FocusEvent) {
     if (!nicknameEditing.value) return
     if (root?.contains(document.activeElement)) return
     if (isProfileFieldActionTarget(document.activeElement)) return
-    void flushPendingProfileEdits()
+    void flushProfileBeforeLeave()
   })
 }
 
@@ -320,63 +331,27 @@ watch(profileEditActive, (active) => {
   else unbindProfileDismiss()
 })
 
-let persistChain: Promise<void> = Promise.resolve()
-
 async function persistProfile(message?: string) {
-  persistChain = persistChain.then(async () => {
-    saving.value = true
-    try {
-      await savePersonalProfile({
-        nickname: nickname.value,
-        bio: bio.value,
-        avatarPath: avatarPath.value,
-        backgroundPath: backgroundPath.value,
-        backgroundConfig: backgroundConfig.value
-      })
-      syncSavedProfileFields()
-      if (message) toast.success(message)
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : '保存失败')
-      throw err
-    } finally {
-      saving.value = false
-    }
-  })
-  await persistChain
-}
-
-function applyProfileSnapshot(profile: NonNullable<Awaited<ReturnType<typeof fetchPersonalProfile>>>) {
-  nickname.value = profile.nickname
-  bio.value = profile.bio
-  clampProfileTextFields()
-  syncSavedProfileFields()
-  avatarPath.value = profile.avatarPath
-  if (profile.avatarPath) avatarMediaKey.value = Date.now()
-  backgroundPath.value = profile.backgroundPath
-  if (profile.backgroundPath) backgroundMediaKey.value = Date.now()
-  backgroundConfig.value = normalizeBackgroundConfig(profile.backgroundConfig)
-}
-
-async function loadProfile() {
-  const profile = await fetchPersonalProfile()
-  if (profile) {
-    applyProfileSnapshot(profile)
-    await refreshBackgroundImageSize()
+  try {
+    await persistPersonalProfile()
+    if (message) toast.success(message)
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : '保存失败')
+    throw err
   }
 }
 
-async function loadFavoriteGroups() {
-  groups.value = await fetchFavoriteGroups()
+function touchProfileMediaKeys() {
+  if (avatarPath.value) avatarMediaKey.value = Date.now()
+  if (backgroundPath.value) backgroundMediaKey.value = Date.now()
 }
 
 async function load() {
   loading.value = true
   try {
-    const [profile, list] = await Promise.all([fetchPersonalProfile(), fetchFavoriteGroups()])
-    if (profile) {
-      applyProfileSnapshot(profile)
-    }
-    groups.value = list
+    await loadPersonalPageData({ respectDirtyProfile: true })
+    clampProfileTextFields()
+    touchProfileMediaKeys()
     await refreshBackgroundImageSize()
   } finally {
     loading.value = false
@@ -384,11 +359,10 @@ async function load() {
 }
 
 let viewportResizeObserver: ResizeObserver | null = null
-let stopFavoritesChanged: (() => void) | null = null
-let unregisterNavigationFlush: (() => void) | null = null
+let unregisterUiFlush: (() => void) | null = null
 
 onMounted(async () => {
-  unregisterNavigationFlush = registerPersonalNavigationFlush(() => flushPendingProfileEdits())
+  unregisterUiFlush = registerPersonalUiFlush(() => flushProfileBeforeLeave())
   await load()
   await refreshBackgroundImageSize()
   await nextTick()
@@ -397,33 +371,32 @@ onMounted(async () => {
     viewportResizeObserver = new ResizeObserver(() => refreshViewportSize())
     viewportResizeObserver.observe(personalRoot.value)
   }
-  if (window.wanwu.user.onFavoritesChanged) {
-    stopFavoritesChanged = window.wanwu.user.onFavoritesChanged(() => {
-      void loadFavoriteGroups()
+})
+
+onActivated(() => {
+  void refreshPersonalFavoriteGroups()
+  if (!isProfileDirty()) {
+    void loadPersonalProfileFromDb().then(() => {
+      clampProfileTextFields()
+      touchProfileMediaKeys()
+      void refreshBackgroundImageSize()
     })
   }
 })
 
-onActivated(() => {
-  void loadProfile()
-  void loadFavoriteGroups()
-})
-
 onBeforeRouteLeave(async () => {
-  await flushPendingProfileEdits()
+  await flushProfileBeforeLeave()
 })
 
 onDeactivated(() => {
-  void flushPendingProfileEdits()
+  void flushProfileBeforeLeave()
 })
 
 onUnmounted(() => {
-  void flushPendingProfileEdits()
+  void flushProfileBeforeLeave()
   viewportResizeObserver?.disconnect()
-  stopFavoritesChanged?.()
-  stopFavoritesChanged = null
-  unregisterNavigationFlush?.()
-  unregisterNavigationFlush = null
+  unregisterUiFlush?.()
+  unregisterUiFlush = null
   unbindProfileDismiss()
 })
 
@@ -480,6 +453,7 @@ async function pickAvatar() {
   try {
     const result = await window.wanwu.user.importProfileImage({ kind: 'avatar', filePath: pick.path })
     avatarPath.value = result.relativePath
+    syncSavedProfileFields()
     avatarMediaKey.value = Date.now()
     toast.success('头像已更新')
   } catch (err) {
@@ -545,13 +519,14 @@ function onBackgroundButtonClick() {
   else void startBackgroundSetup()
 }
 
-async function onBackgroundConfirm(config: PersonalBackgroundConfig) {
+async function commitBackgroundDraft(silent = false) {
+  const config = normalizeBackgroundConfig(bgEditDraft.value)
   if (bgDraftClearsImage.value) {
     try {
       await window.wanwu.user.clearBackground()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : '无法清除背景图')
-      return
+      throw err
     }
     backgroundPath.value = null
     backgroundConfig.value = { ...DEFAULT_BACKGROUND_CONFIG }
@@ -562,12 +537,17 @@ async function onBackgroundConfirm(config: PersonalBackgroundConfig) {
       backgroundPath.value = previewBackgroundPath.value
       backgroundMediaKey.value = Date.now()
     }
-    backgroundConfig.value = normalizeBackgroundConfig(config)
+    backgroundConfig.value = config
   }
   previewBackgroundPath.value = null
   bgDraftClearsImage.value = false
   bgEditorOpen.value = false
-  await persistProfile('背景已应用')
+  await persistProfile(silent ? undefined : '背景已应用')
+}
+
+async function onBackgroundConfirm(config: PersonalBackgroundConfig) {
+  bgEditDraft.value = normalizeBackgroundConfig(config)
+  await commitBackgroundDraft()
 }
 
 function onBackgroundCancel() {
@@ -589,12 +569,9 @@ function openFavorite(itemId: string, source: string) {
   void openItemDetail({ source, id: itemId })
 }
 
-async function removeFavorite(itemId: string, source: string, groupId: string) {
+async function removeFavorite(itemId: string, source: string, _groupId: string) {
   await window.wanwu.user.removeFavorite({ itemId, source })
-  const group = groups.value.find((g) => g.id === groupId)
-  if (group) {
-    group.items = group.items.filter((f) => f.itemId !== itemId)
-  }
+  await refreshPersonalFavoriteGroups()
 }
   return {
     NICKNAME_MAX,

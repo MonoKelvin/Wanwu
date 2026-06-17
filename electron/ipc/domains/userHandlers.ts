@@ -1,6 +1,18 @@
 import { BrowserWindow, ipcMain } from 'electron'
 import type { AppServices } from '../types'
 
+type ProfileUpdatePayload = {
+  nickname: string
+  bio: string
+  avatarPath?: string | null
+  backgroundPath?: string | null
+  backgroundConfig?: Record<string, unknown> | null
+}
+
+function applyProfileUpdate(services: AppServices, profile: ProfileUpdatePayload): void {
+  services.personal?.updateProfile(profile)
+}
+
 function broadcastFavoritesChanged(): void {
   for (const win of BrowserWindow.getAllWindows()) {
     if (!win.isDestroyed()) {
@@ -14,15 +26,10 @@ export function registerUserHandlers(services: AppServices): void {
     return services.personal?.getProfile() ?? null
   })
   ipcMain.handle('user:updateProfile', (_e, profile: unknown) => {
-    return services.personal?.updateProfile(
-      profile as {
-        nickname: string
-        bio: string
-        avatarPath?: string | null
-        backgroundPath?: string | null
-        backgroundConfig?: Record<string, unknown> | null
-      }
-    )
+    applyProfileUpdate(services, profile as ProfileUpdatePayload)
+  })
+  ipcMain.on('user:saveProfileSync', (_e, profile: unknown) => {
+    applyProfileUpdate(services, profile as ProfileUpdatePayload)
   })
   ipcMain.handle(
     'user:importProfileImage',

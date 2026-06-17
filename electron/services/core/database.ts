@@ -7,6 +7,7 @@ import { existsSync, mkdirSync, readdirSync } from 'fs'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
 import { LIBRARY_CATEGORIES, loadLibraryCategories } from '../library/categories'
+import { ensureLibraryItemColumns } from '../library/itemSchema'
 import { seedDefaultRssFeeds } from '../rss/defaults'
 import { canonicalNoteBodyContent } from '../../../src/modules/library/notes/lib/noteBodyContent'
 import type {
@@ -240,6 +241,7 @@ export class DatabaseService {
         })
       }
     }
+    ensureLibraryItemColumns(db)
     return db
   }
 
@@ -343,7 +345,7 @@ export class DatabaseService {
         ? profile.backgroundConfig
         : current?.backgroundConfig ?? null
 
-    this.userDb
+    const result = this.userDb
       .prepare(
         `UPDATE profiles SET nickname = ?, bio = ?, avatar_path = ?, background_path = ?, background_config = ?, updated_at = ?
          WHERE id = (SELECT id FROM profiles LIMIT 1)`
@@ -356,6 +358,23 @@ export class DatabaseService {
         backgroundConfig ? JSON.stringify(backgroundConfig) : null,
         new Date().toISOString()
       )
+
+    if (result.changes === 0) {
+      this.userDb
+        .prepare(
+          `INSERT INTO profiles (id, nickname, bio, avatar_path, background_path, background_config, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`
+        )
+        .run(
+          randomUUID(),
+          profile.nickname,
+          profile.bio,
+          avatarPath,
+          backgroundPath,
+          backgroundConfig ? JSON.stringify(backgroundConfig) : null,
+          new Date().toISOString()
+        )
+    }
   }
 
   listNotes(): NoteItem[] {

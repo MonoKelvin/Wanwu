@@ -6,7 +6,6 @@ import { join } from 'path'
 import { randomUUID } from 'crypto'
 import type Database from 'better-sqlite3'
 import type { DatabaseService } from '../core/database'
-import type { MediaAttribution } from '../../../src/shared/types/unsplash'
 import {
   loadLibraryCategories,
   syncLibraryCategories,
@@ -20,40 +19,14 @@ import {
   loadLibrarySeedCatalog,
   loadLibrarySeedItems
 } from './itemSource'
+import { ensureLibraryItemColumns } from './itemSchema'
+import type { LibraryCatalog, LibraryCatalogItem } from './catalogTypes'
 
+export type { LibraryCatalog, LibraryCatalogItem } from './catalogTypes'
+export { LIBRARY_CATALOG_SCHEMA } from './catalogTypes'
 export type { LibraryCategoriesFile, LibraryCategoryDef } from './categories'
 export { loadLibraryCategories } from './categories'
 export { loadLibrarySeedCatalog, loadLibrarySeedItems, computeSeedFingerprint } from './itemSource'
-
-export const LIBRARY_CATALOG_SCHEMA = 3
-
-export interface LibraryCatalogItem {
-  /** 全库唯一稳定 id（种子配置必填，禁止入库时随机生成） */
-  id: string
-  slug: string
-  categoryId: string
-  subCategoryId: string
-  name: string
-  summary: string
-  /** 已废弃：正文仅存 content.md，catalog 留空 */
-  description?: string
-  tags: string[]
-  specs: Record<string, string>
-  coverFile?: string
-  galleryFiles?: string[]
-  contentFile?: string
-  coverAttribution?: MediaAttribution
-  galleryAttributions?: MediaAttribution[]
-  mediaProvider?: string
-}
-
-export interface LibraryCatalog {
-  schema?: number
-  version?: number
-  mediaProvider?: string
-  mediaConfigVersion?: number
-  items: LibraryCatalogItem[]
-}
 
 export interface ImportLibraryProgress {
   stage: 'prepare-categories' | 'import-items' | 'cleanup-category'
@@ -143,7 +116,7 @@ export function collectExistingItemIds(dbService: DatabaseService): Map<string, 
   for (const catId of dbService.listLibraryCategoryIds()) {
     const libDb = dbService.getLibraryDb(catId)
     if (!libDb) continue
-    ensureItemColumns(libDb)
+    ensureLibraryItemColumns(libDb)
     const rows = libDb.prepare('SELECT id FROM items').all() as Array<{ id: string }>
     map.set(catId, new Set(rows.map((r) => r.id)))
   }
@@ -163,7 +136,7 @@ function prepareLibraryDbsForImport(
   for (const catId of catIds) {
     const catDef = categoryDefs.find((c) => c.id === catId)
     const libDb = dbService.createLibraryDbForImport(catId, catDef?.name ?? catId)
-    ensureItemColumns(libDb)
+    ensureLibraryItemColumns(libDb)
     if (catDef) syncLibraryCategories(libDb, catDef)
     current++
     onProgress?.({
@@ -172,22 +145,6 @@ function prepareLibraryDbsForImport(
       total,
       detail: catId
     })
-  }
-}
-
-function ensureItemColumns(db: Database.Database): void {
-  const cols = db.prepare('PRAGMA table_info(items)').all() as Array<{ name: string }>
-  const names = new Set(cols.map((c) => c.name))
-  if (!names.has('slug')) db.exec('ALTER TABLE items ADD COLUMN slug TEXT')
-  if (!names.has('specs')) db.exec('ALTER TABLE items ADD COLUMN specs TEXT')
-  if (!names.has('cover_attribution')) db.exec('ALTER TABLE items ADD COLUMN cover_attribution TEXT')
-  if (!names.has('content_file')) db.exec('ALTER TABLE items ADD COLUMN content_file TEXT')
-  db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_items_slug ON items(slug) WHERE slug IS NOT NULL')
-  db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_items_id ON items(id)')
-
-  const mediaCols = db.prepare('PRAGMA table_info(item_media)').all() as Array<{ name: string }>
-  if (!mediaCols.some((c) => c.name === 'attribution')) {
-    db.exec('ALTER TABLE item_media ADD COLUMN attribution TEXT')
   }
 }
 
