@@ -15,8 +15,8 @@ import {
   readLinksFolderTreeSelection,
   writeLinksFolderTreeSelection
 } from '@modules/library/links/lib/linksFolderTreeMemory'
-import { LOCAL_COLLECTIONS_ROOT_ID } from '@shared/stores/links'
-import type { LinkFolder } from '@shared/types/links'
+import { LOCAL_COLLECTIONS_ROOT_ID } from '@modules/library/links/domain/constants'
+import type { LinkFolder } from '@modules/library/links/domain/types'
 
 const FOLDER_TREE_EXPANDED_KEY = 'wanwu:links:folder-tree-expanded'
 

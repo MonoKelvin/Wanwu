@@ -1,4 +1,8 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
+/**
+ * 全库左侧「模块树」面板：展示大类（链接/笔记/图鉴/流程图等）及子目录。
+ * 搜索框过滤树节点；链接大类下支持右键新建/删除本地目录。
+ */
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router'
 import type { TreeNode } from 'primevue/treenode'
@@ -10,14 +14,15 @@ import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import LinkFolderNameDialog from '@modules/library/links/components/LinkFolderNameDialog.vue'
 import LinkFolderDeleteDialog from '@modules/library/links/components/LinkFolderDeleteDialog.vue'
 import { useLinksFolderDialogs } from '@modules/library/links/lib/useLinksFolderDialogs'
-import type { CatalogNode } from '@modules/library/core/types/catalog'
+import type { CatalogNode } from '@shared/types/catalog'
 import type { WwMenuItem } from '@shared/types/menu'
 import { isLibraryMajorId, type LibraryMajorId } from '@modules/library/core/config/majors'
 import { useLibraryCatalogTrees } from '@modules/library/core/composables/useLibraryCatalogTrees'
 import { isCatalogLoadingNodeKey } from '@modules/library/core/composables/libraryCategoryTree'
-import { useIllustratedHandbookStore } from '@shared/stores/illustratedHandbook'
-import { LINKS_RECYCLE_BIN_ID, LOCAL_COLLECTIONS_ROOT_ID, useLinksStore } from '@shared/stores/links'
-import { useDiagramsStore } from '@shared/stores/diagrams'
+import { useIllustratedHandbookStore } from '@modules/library/illustrated-handbook/services/illustratedHandbookStore'
+import { LINKS_RECYCLE_BIN_ID, LOCAL_COLLECTIONS_ROOT_ID } from '@modules/library/links/domain/constants'
+import { useLinksStore } from '@modules/library/links/services/linksStore'
+import { useDiagramsStore } from '@modules/library/diagrams/services/diagramsStore'
 import {
   DG_FILES,
   DG_HOME,

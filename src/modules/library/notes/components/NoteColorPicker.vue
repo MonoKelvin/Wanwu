@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
 import { onBeforeUnmount, ref } from 'vue'
-import type { NoteColor } from '@shared/types/notes'
+import type { NoteColor } from '@modules/library/notes/domain/types'
 
 const props = defineProps<{
   modelValue: NoteColor

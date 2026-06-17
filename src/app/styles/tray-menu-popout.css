@@ -15,7 +15,7 @@ html.ww-tray-menu-root #app {
 }
 
 html.ww-tray-menu-root .ww-tray-menu-app,
-html.ww-tray-menu-root .ww-note-popout-shell {
+html.ww-tray-menu-root .ww-popout-shell {
   display: block !important;
   height: auto !important;
   min-height: 0 !important;

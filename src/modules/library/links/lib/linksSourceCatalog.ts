@@ -1,13 +1,17 @@
-﻿import type { CatalogNode } from '@modules/library/core/types/catalog'
-import type { LinkFolder } from '@shared/types/links'
+﻿import type { CatalogNode } from '@shared/types/catalog'
+import type { LinkFolder } from '@modules/library/links/domain/types'
 import {
   LINKS_RECYCLE_BIN_ID,
   LOCAL_COLLECTIONS_ROOT_ID
-} from '@shared/stores/links'
+} from '@modules/library/links/domain/constants'
 import { browserBrandIconUrl } from '@modules/library/links/domain/browserBrandIcons'
 import { LINK_BROWSER_SOURCES } from '@modules/library/links/domain/sources'
 
-/** 全库侧栏「链接」：仅顶级来源（浏览器 / 收藏夹 / 回收站），不展开子文件夹 */
+/** 全库侧栏「链接」顶级来源节点：各浏览器根、本地收藏夹、回收站（不展开子文件夹） */
+/**
+ * 根据文件夹根列表构建链接模块在全库侧栏的顶级目录节点。
+ * @param roots 链接 store 中的扁平/树形文件夹根（含浏览器根、本地根、回收站）
+ */
 export function buildLinksSourceCatalog(roots: LinkFolder[]): CatalogNode[] {
   const byId = new Map(roots.map((f) => [f.id, f]))
   const nodes: CatalogNode[] = []

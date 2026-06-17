@@ -1,9 +1,9 @@
-﻿/**
+/**
  * 链接来源注册表：侧栏展示与浏览器同步扩展点。
  * Chromium 系：electron/services/links/browser/registry.ts
  * 独立引擎（Firefox / Safari）：同上注册后在此同步一项。
  */
-import type { BrowserBookmarkSourceId } from '@shared/types/links'
+import type { BrowserBookmarkSourceId } from '@modules/library/links/domain/types'
 
 export interface LinkBrowserSourceDefinition {
   id: BrowserBookmarkSourceId

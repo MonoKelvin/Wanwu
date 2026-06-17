@@ -1,8 +1,8 @@
-/**
+﻿/**
  * 便笺仓储：抽象 store/IPC，供命令层与测试替换实现。
  */
-import { useNotesStore } from '@shared/stores/notes'
-import type { NoteCreateInput, NoteImage, NoteItem } from '@shared/types/notes'
+import { useNotesStore } from '@modules/library/notes/services/notesStore'
+import type { NoteCreateInput, NoteImage, NoteItem } from '@modules/library/notes/domain/types'
 
 export interface INotesRepositoryPort {
   loadAll(): Promise<NoteItem[]>

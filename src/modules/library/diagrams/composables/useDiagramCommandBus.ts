@@ -1,7 +1,7 @@
 import { inject, provide, type InjectionKey } from 'vue'
 import type { IDiagramCommandBus } from '@modules/library/diagrams/interfaces/IDiagramCommandBus'
 import { DIAGRAM_COMMAND_BUS } from '@modules/library/diagrams/interfaces/IDiagramCommandBus'
-import { initDiagramCatalogCommandBus } from '@shared/stores/diagrams'
+import { initDiagramCatalogCommandBus } from '@modules/library/diagrams/services/diagramsStore'
 
 const busKey = DIAGRAM_COMMAND_BUS as InjectionKey<IDiagramCommandBus>
 

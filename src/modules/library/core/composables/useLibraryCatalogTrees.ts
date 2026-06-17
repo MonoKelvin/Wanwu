@@ -1,18 +1,17 @@
 ﻿import { computed, reactive, watch, type Ref } from 'vue'
 import type { TreeNode } from 'primevue/treenode'
 import { isLibraryMajorId, type LibraryMajorId } from '@modules/library/core/config/majors'
-import { filterTreeNodes } from '@modules/library/core/catalog/filterTreeNodes'
+import { filterTreeNodes } from '@shared/lib/filterTreeNodes'
 import { composeLibraryTree } from '@modules/library/core/composables/libraryCategoryTree'
 import {
-  LIBRARY_SUBMODULES,
   libraryMajorIds,
   librarySubmoduleById,
   type LibrarySubmoduleContext
 } from '@modules/library/core/registry/libraryModules'
 import { filterLinksSourceTreeNodes } from '@modules/library/links/lib/linksSearch'
-import type { useIllustratedHandbookStore } from '@shared/stores/illustratedHandbook'
-import type { useLinksStore } from '@shared/stores/links'
-import type { useDiagramsStore } from '@shared/stores/diagrams'
+import type { useIllustratedHandbookStore } from '@modules/library/illustrated-handbook/services/illustratedHandbookStore'
+import type { useLinksStore } from '@modules/library/links/services/linksStore'
+import type { useDiagramsStore } from '@modules/library/diagrams/services/diagramsStore'
 
 type HandbookStore = ReturnType<typeof useIllustratedHandbookStore>
 type LinksStore = ReturnType<typeof useLinksStore>

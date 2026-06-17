@@ -22,7 +22,8 @@
     "scripts/**/*",
     "src/shared/types/**/*",
     "src/shared/constants/**/*",
-    "src/shared/notes/**/*",
+    "src/modules/library/notes/lib/**/*.ts",
+    "src/modules/library/notes/domain/**/*.ts",
     "src/shared/documentPackage/**/*",
     "src/modules/library/diagrams/lib/**/*.ts"
   ],

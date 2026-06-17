@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type { WanwuApi } from '../src/shared/types/api'
+import '../src/app/platform/wanwuApiRegistry'
 import type { AppSettings } from '../src/shared/types/settings'
 
 const api: WanwuApi = {
@@ -187,7 +188,7 @@ const api: WanwuApi = {
     addImage: (params) => ipcRenderer.invoke('notes:addImage', params),
     removeImage: (imageId) => ipcRenderer.invoke('notes:removeImage', imageId),
     onChanged: (listener) => {
-      const handler = (_: unknown, note: import('../src/shared/types/notes').NoteItem) =>
+      const handler = (_: unknown, note: import('../src/modules/library/notes/domain/types').NoteItem) =>
         listener(note)
       ipcRenderer.on('notes:changed', handler)
       return () => ipcRenderer.removeListener('notes:changed', handler)

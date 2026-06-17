@@ -1,27 +1,30 @@
 ﻿<script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import WwButton from '@shared/components/WwButton.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
+import DataMigrateDialog from '@modules/settings/DataMigrateDialog.vue'
 import { useSettingsMaintenance } from '@modules/settings/composables/useSettingsMaintenance'
 
-defineProps<{
-  paths: {
-    userData: string
-    wanwu: string
-    defaultWanwu: string
-    isCustom: boolean
-  } | null
-}>()
-
-const emit = defineEmits<{
-  openMigrate: []
-}>()
-
+const paths = ref<{
+  userData: string
+  wanwu: string
+  defaultWanwu: string
+  isCustom: boolean
+} | null>(null)
+const migrateDialogVisible = ref(false)
 const dbEncryptionEnabled = ref(false)
 const { busy, onCreateBackup, onRestoreBackup, onClearCache, onResetSettings, onExportDiagnostics } =
   useSettingsMaintenance()
+
+onMounted(async () => {
+  paths.value = await window.wanwu.app.getPaths()
+})
+
+async function refreshPaths() {
+  paths.value = await window.wanwu.app.getPaths()
+}
 
 async function openDataFolder() {
   await window.wanwu.app.openDataDirectory()
@@ -41,7 +44,7 @@ async function openDataFolder() {
             label="迁移目录…"
             icon="folder"
             size="small"
-            @click="emit('openMigrate')"
+            @click="migrateDialogVisible = true"
           />
         </div>
         <button
@@ -133,5 +136,12 @@ async function openDataFolder() {
         />
       </SettingsRow>
     </div>
+
+    <DataMigrateDialog
+      v-if="paths"
+      v-model:visible="migrateDialogVisible"
+      :current-path="paths.wanwu"
+      @done="refreshPaths"
+    />
   </div>
 </template>

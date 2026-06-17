@@ -1,4 +1,5 @@
 import type { BootMode } from '@app/bootstrap/bootMode'
+import { getBootModeContributor } from '@app/modules/bootModeRegistry'
 
 export async function loadStylesForMode(mode: BootMode): Promise<void> {
   await import('@app/styles/tokens.css')
@@ -20,12 +21,9 @@ export async function loadStylesForMode(mode: BootMode): Promise<void> {
     return
   }
 
-  if (mode === 'note-popout') {
-    await Promise.all([
-      import('@app/styles/popout-base.css'),
-      import('@app/styles/theme-dark.css'),
-      import('@app/styles/scrollbars.css')
-    ])
+  const bootContributor = getBootModeContributor(mode)
+  if (bootContributor?.loadStyles) {
+    await bootContributor.loadStyles()
     return
   }
 

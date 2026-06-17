@@ -11,10 +11,10 @@ import {
   useNotePopoutScrollPersistence
 } from '@modules/library/notes/lib/useNotePopoutScroll'
 import { pruneUnreferencedNoteImages } from '@modules/library/notes/app/pruneNoteImages'
-import { NOTE_COLORS, NOTE_COLOR_LABELS } from '@shared/constants/noteColors'
-import { useNotesStore } from '@shared/stores/notes'
+import { NOTE_COLORS, NOTE_COLOR_LABELS } from '@modules/library/notes/domain/noteColors'
+import { useNotesStore } from '@modules/library/notes/services/notesStore'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
-import type { NoteColor } from '@shared/types/notes'
+import type { NoteColor } from '@modules/library/notes/domain/types'
 
 const route = useRoute()
 const notesStore = useNotesStore()

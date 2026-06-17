@@ -1,4 +1,4 @@
-﻿import type { BrowserBookmarkSourceId } from '@shared/types/links'
+import type { BrowserBookmarkSourceId } from '@modules/library/links/domain/types'
 import browserChrome from '@assets/icons/browser-chrome.svg'
 import browserEdge from '@assets/icons/browser-edge.svg'
 import browserFirefox from '@assets/icons/browser-firefox.svg'

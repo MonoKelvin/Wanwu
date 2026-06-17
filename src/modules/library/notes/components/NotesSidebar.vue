@@ -5,7 +5,7 @@ import InputText from 'primevue/inputtext'
 import EmptyState from '@app/components/EmptyState.vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import WwInputIcon from '@shared/components/WwInputIcon.vue'
-import type { NoteItem } from '@shared/types/notes'
+import type { NoteItem } from '@modules/library/notes/domain/types'
 import type { WwMenuItem } from '@shared/types/menu'
 import {
   noteMatchesQuery,

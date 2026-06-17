@@ -3,8 +3,8 @@ import { isBrowserRootFolderId } from '@modules/library/links/domain/sources'
 import {
   LINKS_RECYCLE_BIN_ID,
   LOCAL_COLLECTIONS_ROOT_ID
-} from '@shared/stores/links'
-import type { LinkBookmark, LinkFolder } from '@shared/types/links'
+} from '@modules/library/links/domain/constants'
+import type { LinkBookmark, LinkFolder } from '@modules/library/links/domain/types'
 import { findLinkFolder } from '@modules/library/links/lib/linksFolderTree'
 
 export function bookmarkMatchesQuery(bookmark: LinkBookmark, query: string): boolean {

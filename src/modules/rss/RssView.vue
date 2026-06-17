@@ -1,14 +1,14 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 defineOptions({ name: 'RssView' })
 
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import WwButton from '@shared/components/WwButton.vue'
 import Skeleton from 'primevue/skeleton'
-import { useRssStore } from '@shared/stores/rss'
+import { useRssStore } from '@modules/rss/services/rssStore'
 import { useSettingsStore } from '@shared/stores/settings'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
-import { DEFAULT_RSS_DISPLAY } from '@shared/types/rss'
+import { DEFAULT_RSS_DISPLAY } from '@modules/rss/domain/types'
 import ModulePageLayout from '@app/components/ModulePageLayout.vue'
 import PageHeader from '@app/components/PageHeader.vue'
 import EmptyState from '@app/components/EmptyState.vue'

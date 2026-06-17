@@ -2,7 +2,7 @@
 defineOptions({ name: 'LibraryView' })
 
 import { computed } from 'vue'
-import { initDiagramCatalogCommandBus } from '@shared/stores/diagrams'
+import { initDiagramCatalogCommandBus } from '@modules/library/diagrams/services/diagramsStore'
 import { RouterView, useRoute } from 'vue-router'
 import { isLibraryMajorId } from '@modules/library/core/config/majors'
 

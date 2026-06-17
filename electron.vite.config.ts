@@ -45,6 +45,12 @@ export default defineConfig({
   },
   preload: {
     plugins: [externalizeDepsPlugin()],
+    resolve: {
+      alias: {
+        '@app': resolve(__dirname, 'src/app'),
+        ...sharedAlias
+      }
+    },
     build: {
       rollupOptions: {
         input: {

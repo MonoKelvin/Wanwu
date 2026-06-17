@@ -9,7 +9,7 @@
 } from 'electron'
 import { existsSync } from 'fs'
 import { join } from 'path'
-import type { NoteItem } from '../../../src/shared/types/notes'
+import type { NoteItem } from '../../../src/modules/library/notes/domain/types'
 import { resolveAppLogoPath } from '../media/appAssets'
 import { getMainWindow } from '../../windowState'
 import { isAppQuitting } from '../quickAccess/quickAccessManager'

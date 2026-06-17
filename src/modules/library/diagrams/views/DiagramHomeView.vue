@@ -23,7 +23,7 @@ import {
 import { useDiagramCatalogFileActions } from '@modules/library/diagrams/composables/useDiagramCatalogFileActions'
 import { useDiagramCatalogCommands } from '@modules/library/diagrams/composables/useDiagramCatalogCommands'
 import { cloneForIpc } from '@shared/lib/cloneForIpc'
-import { useDiagramsStore } from '@shared/stores/diagrams'
+import { useDiagramsStore } from '@modules/library/diagrams/services/diagramsStore'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import {
   diagramTitleBase,

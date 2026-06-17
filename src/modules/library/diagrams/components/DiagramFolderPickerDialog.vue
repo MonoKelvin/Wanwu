@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import WwButton from '@shared/components/WwButton.vue'
-import { useDiagramsStore } from '@shared/stores/diagrams'
+import { useDiagramsStore } from '@modules/library/diagrams/services/diagramsStore'
 import {
   DG_DRAFTS,
   DG_FILES,

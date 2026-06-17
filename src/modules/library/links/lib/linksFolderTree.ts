@@ -1,5 +1,8 @@
-﻿import type { TreeNode } from 'primevue/treenode'
-import { catalogToTreeNodes, type CatalogNode } from '@modules/library/core/types/catalog'
+﻿/**
+ * 链接工作区目录树工具：解析当前 folderId 所属分组，并生成 PrimeVue Tree 节点。
+ */
+import type { TreeNode } from 'primevue/treenode'
+import { catalogToTreeNodes, type CatalogNode } from '@shared/types/catalog'
 import { browserBrandIconUrl } from '@modules/library/links/domain/browserBrandIcons'
 import {
   browserSourceForRootFolderId,
@@ -9,9 +12,10 @@ import {
 import {
   LINKS_RECYCLE_BIN_ID,
   LOCAL_COLLECTIONS_ROOT_ID
-} from '@shared/stores/links'
-import type { BrowserBookmarkSourceId, LinkFolder } from '@shared/types/links'
+} from '@modules/library/links/domain/constants'
+import type { BrowserBookmarkSourceId, LinkFolder } from '@modules/library/links/domain/types'
 
+/** 在文件夹树中按 id 深度优先查找节点 */
 export function findLinkFolder(
   folders: LinkFolder[],
   id: string
@@ -139,6 +143,7 @@ export function buildGroupFolderTreeNodes(group: LinksGroupRoot): TreeNode[] {
   return buildLinksWorkspaceFolderTree(group)
 }
 
+/** 进入某文件夹时需展开的祖先节点 key（`src:` / `fld:` 前缀） */
 export function ancestorExpandedKeysForFolder(
   group: LinksGroupRoot,
   folderId: string
@@ -164,6 +169,7 @@ export function ancestorExpandedKeysForFolder(
   return keys
 }
 
+/** 首次进入某来源时的默认展开 key（含来源根与当前路径祖先） */
 export function defaultExpandedKeysForFolder(
   group: LinksGroupRoot,
   folderId: string

@@ -1,9 +1,9 @@
-/**
+﻿/**
  * 独立窗口与主界面之间的选中同步。
  */
 import { onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useNotesStore } from '@shared/stores/notes'
+import { useNotesStore } from '@modules/library/notes/services/notesStore'
 import { LIBRARY_NOTES_ROUTE } from '@modules/library/notes/domain/noteRoutes'
 
 type NoteSelectHandler = (noteId: string) => void | Promise<void>

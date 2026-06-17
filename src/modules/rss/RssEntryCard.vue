@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { computed } from 'vue'
 import WwButton from '@shared/components/WwButton.vue'
 import RssAsyncThumb from '@modules/rss/RssAsyncThumb.vue'
@@ -10,7 +10,7 @@ import {
   resolveFeedIconUrl
 } from '@shared/utils/rssIcon'
 import type { RssThumbSource } from '@modules/rss/RssAsyncThumb.vue'
-import type { RssDisplayOptions, RssEntry } from '@shared/types/rss'
+import type { RssDisplayOptions, RssEntry } from '@modules/rss/domain/types'
 
 const props = defineProps<{
   entry: RssEntry

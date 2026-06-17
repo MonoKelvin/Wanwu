@@ -1,6 +1,7 @@
 ﻿import { useRouter } from 'vue-router'
 import { isModuleId, modulePathById, type ModuleId } from '@app/config/modules'
 import { prepareShellNavigation } from '@app/composables/shellNavigation'
+import { belongsToLibraryModulePath } from '@app/modules/moduleRegistry'
 import { useAppStore } from '@shared/stores/app'
 import { isItemDetailPath, moduleIdForItemDetailSource } from '@shared/utils/itemDetailRoute'
 
@@ -8,7 +9,7 @@ function belongsToModule(path: string, id: ModuleId): boolean {
   const normalized = path.replace(/^#/, '')
   const seg = normalized.split('?')[0]?.split('/').filter(Boolean)[0]
   if (seg === id) return true
-  if (id === 'library' && (seg === 'notes' || seg === 'diagrams')) return true
+  if (id === 'library' && belongsToLibraryModulePath(normalized)) return true
   if (isItemDetailPath(normalized)) {
     const source = normalized.split('?')[0]?.split('/')[2]
     return moduleIdForItemDetailSource(source) === id

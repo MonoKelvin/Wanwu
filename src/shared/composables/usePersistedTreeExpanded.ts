@@ -1,6 +1,6 @@
 ﻿import { ref, watch } from 'vue'
 import type { TreeNode } from 'primevue/treenode'
-import { collectExpandableKeys } from '@modules/library/core/utils/treeKeys'
+import { collectExpandableKeys } from '@shared/lib/treeKeys'
 
 function readStorage(key: string): Record<string, boolean> {
   try {

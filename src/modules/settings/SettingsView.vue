@@ -1,42 +1,40 @@
 ﻿<script setup lang="ts">
 defineOptions({ name: 'SettingsView' })
 
-import { computed, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, shallowRef, watch } from 'vue'
 import { useSettingsStore } from '@shared/stores/settings'
-import DataMigrateDialog from '@modules/settings/DataMigrateDialog.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
-import SettingsAppSection from '@modules/settings/sections/SettingsAppSection.vue'
-import SettingsLibrarySection from '@modules/settings/sections/SettingsLibrarySection.vue'
-import SettingsRssSection from '@modules/settings/sections/SettingsRssSection.vue'
-import SettingsMusicSection from '@modules/settings/sections/SettingsMusicSection.vue'
-import SettingsDataSection from '@modules/settings/sections/SettingsDataSection.vue'
-import SettingsAboutSection from '@modules/settings/sections/SettingsAboutSection.vue'
-import { SETTINGS_NAV_ITEMS } from '@modules/settings/sections/settingsNav'
-import type { SettingsSection } from '@modules/settings/sections/types'
+import { collectSettingsSections } from '@app/modules/settingsSectionRegistry'
+import type { SettingsSection } from '@app/modules/settingsSectionRegistry'
+import type { Component } from 'vue'
 
 const settingsStore = useSettingsStore()
 
+const settingsSections = computed(() => collectSettingsSections())
 const activeSection = ref<SettingsSection>('app')
-const paths = ref<{
-  userData: string
-  wanwu: string
-  defaultWanwu: string
-  isCustom: boolean
-} | null>(null)
-const migrateDialogVisible = ref(false)
 
 const sectionTitle = computed(
-  () => SETTINGS_NAV_ITEMS.find((n) => n.id === activeSection.value)?.label ?? '设置'
+  () => settingsSections.value.find((n) => n.id === activeSection.value)?.label ?? '设置'
+)
+
+const panelComponents = shallowRef<Partial<Record<SettingsSection, Component>>>({})
+
+watch(
+  settingsSections,
+  (sections) => {
+    const next: Partial<Record<SettingsSection, Component>> = {}
+    for (const section of sections) {
+      if (!section.loadPanel) continue
+      next[section.id] = defineAsyncComponent(() => section.loadPanel!())
+    }
+    panelComponents.value = next
+  },
+  { immediate: true }
 )
 
 onMounted(async () => {
-  paths.value = await window.wanwu.app.getPaths()
   if (!settingsStore.loaded) await settingsStore.load()
 })
-
-async function refreshPaths() {
-  paths.value = await window.wanwu.app.getPaths()
-}
 </script>
 
 <template>
@@ -50,7 +48,7 @@ async function refreshPaths() {
     <nav class="ww-settings-nav" aria-label="设置分类">
       <p class="ww-settings-nav__heading">设置</p>
       <button
-        v-for="item in SETTINGS_NAV_ITEMS"
+        v-for="item in settingsSections"
         :key="item.id"
         type="button"
         class="ww-settings-nav__item"
@@ -68,25 +66,16 @@ async function refreshPaths() {
       </header>
 
       <div class="ww-settings-panel__body">
-        <SettingsAppSection v-show="activeSection === 'app'" />
-        <SettingsLibrarySection v-show="activeSection === 'library'" />
-        <SettingsRssSection v-show="activeSection === 'rss'" />
-        <SettingsMusicSection v-show="activeSection === 'music'" />
-        <SettingsDataSection
-          v-show="activeSection === 'data'"
-          :paths="paths"
-          @open-migrate="migrateDialogVisible = true"
-        />
-        <SettingsAboutSection v-show="activeSection === 'about'" :visible="activeSection === 'about'" />
+        <template v-for="section in settingsSections" :key="section.id">
+          <component
+            v-if="panelComponents[section.id]"
+            v-show="activeSection === section.id"
+            :is="panelComponents[section.id]"
+            :visible="section.id === 'about' ? activeSection === 'about' : undefined"
+          />
+        </template>
       </div>
     </div>
-
-    <DataMigrateDialog
-      v-if="paths"
-      v-model:visible="migrateDialogVisible"
-      :current-path="paths.wanwu"
-      @done="refreshPaths"
-    />
   </div>
   </div>
 </template>
@@ -713,6 +702,28 @@ async function refreshPaths() {
   font-size: 0.8125rem;
   line-height: 1.65;
   color: var(--ww-ink-muted);
+}
+
+.ww-settings-about-intro p {
+  margin: 0;
+}
+
+.ww-settings-about-intro p + .ww-settings-about-intro__list,
+.ww-settings-about-intro__list + p {
+  margin-top: 0.625rem;
+}
+
+.ww-settings-about-intro__list {
+  margin: 0;
+  padding-left: 1.125rem;
+}
+
+.ww-settings-about-intro__list li {
+  margin: 0.25rem 0;
+}
+
+.ww-settings-about-intro__list li::marker {
+  color: var(--ww-ink-faint);
 }
 
 .ww-settings-dev-list {

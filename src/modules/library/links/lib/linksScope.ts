@@ -1,5 +1,5 @@
-﻿import { findLinkFolder } from '@modules/library/links/lib/linksFolderTree'
-import type { LinkBookmark, LinkFolder } from '@shared/types/links'
+import { findLinkFolder } from '@modules/library/links/lib/linksFolderTree'
+import type { LinkBookmark, LinkFolder } from '@modules/library/links/domain/types'
 
 /** 当前目录及其所有子文件夹 id */
 export function collectFolderScopeIds(folders: LinkFolder[], rootFolderId: string): Set<string> {

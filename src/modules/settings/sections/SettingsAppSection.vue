@@ -41,7 +41,7 @@ async function onResetDismissiblePrompts() {
   toast.success('已重置确认提示')
 }
 
-const startupModuleOptions = computed(() => buildStartupModuleOptions(MODULE_NAV_ITEMS))
+const startupModuleOptions = computed(() => buildStartupModuleOptions(MODULE_NAV_ITEMS()))
 
 const navAlignOptions = [
   { label: '居中', value: 'center' as NavAlign },

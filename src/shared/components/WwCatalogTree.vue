@@ -1,13 +1,16 @@
 ﻿<script setup lang="ts">
+/**
+ * 通用目录树组件（PrimeVue Tree 封装）。
+ * 支持搜索过滤、展开状态 localStorage 持久化、大类/子级图标、右键与徽章等。
+ */
 import { computed, onMounted, ref, watch } from 'vue'
 import Tree from 'primevue/tree'
 import type { TreeNode } from 'primevue/treenode'
 import Badge from 'primevue/badge'
 import WwIcon from '@shared/components/WwIcon.vue'
-import { releaseFocusBeforeNavigation } from '@app/composables/shellNavigation'
 import { usePersistedTreeExpanded } from '@shared/composables/usePersistedTreeExpanded'
-import { filterTreeNodes } from '@modules/library/core/catalog/filterTreeNodes'
-import { collectExpandableKeys } from '@modules/library/core/utils/treeKeys'
+import { filterTreeNodes } from '@shared/lib/filterTreeNodes'
+import { collectExpandableKeys } from '@shared/lib/treeKeys'
 import type { WwIconName } from '@shared/icons/registry'
 
 const props = withDefaults(
@@ -135,29 +138,15 @@ function nodeIconSrc(node: TreeNode): string | null {
   return src || null
 }
 
-function shouldShowChildIcon(node: TreeNode): boolean {
-  const key = String(node.key)
-  if ((node.data as { kind?: string } | undefined)?.kind === 'loading') return false
-
-  const explicitPrefix = props.childIconKeyPrefix
-  if (explicitPrefix) return key.startsWith(explicitPrefix)
-
-  // 全库侧栏：图鉴分类不显示图标；链接/流程图子节点始终显示
-  if (key.startsWith('hb:')) return false
-  if (key.startsWith('ln:') || key.startsWith('dg:')) return true
-
-  return true
-}
-
 function nodeIcon(node: TreeNode): WwIconName | null {
   if (nodeIconSrc(node)) return null
-  const data = node.data as { icon?: string } | undefined
-  const resolvedIcon = (node.icon ?? data?.icon) as WwIconName | undefined
   if (isMajorNode(node)) {
-    return resolvedIcon || 'folder'
+    return (node.icon as WwIconName) || 'folder'
   }
-  if (!props.showChildIcons || !shouldShowChildIcon(node)) return null
-  return resolvedIcon || props.childIcon
+  if (!props.showChildIcons) return null
+  const prefix = props.childIconKeyPrefix
+  if (prefix && !String(node.key).startsWith(prefix)) return null
+  return (node.icon as WwIconName) || props.childIcon
 }
 
 function isExpandableNode(node: TreeNode): boolean {
@@ -212,7 +201,6 @@ function badgeForNode(node: TreeNode): string | number | null | undefined {
     :value="filteredNodes"
     selection-mode="single"
     :class="['ww-catalog-tree w-full border-0 bg-transparent p-0', treeClass]"
-    @pointerdown.capture="releaseFocusBeforeNavigation"
     @node-select="onNodeSelect"
     @node-expand="onTreeNodeExpand"
     @node-collapse="onTreeNodeCollapse"
@@ -343,19 +331,8 @@ function badgeForNode(node: TreeNode): string | number | null | undefined {
   box-shadow: none !important;
 }
 
-.ww-library-tree--majors .p-tree-root-children > .p-tree-node > .p-tree-node-content {
+.ww-library-tree--majors > .p-tree-root-children > .p-tree-node > .p-tree-node-content {
   font-weight: 600;
-}
-
-/* 全库侧栏：顶级子模块（便笺 / 链接 / 图鉴）略高、字号略大 */
-.ww-catalog-tree--library-majors .p-tree-node-content.ww-catalog-tree__major-row {
-  min-height: 2.375rem;
-  padding-block: 0.5rem !important;
-  font-size: 0.875rem;
-}
-
-.ww-catalog-tree--library-majors .p-tree-node-content.ww-catalog-tree__major-row .ww-catalog-tree__major-text {
-  font-size: inherit;
 }
 
 .ww-catalog-tree__brand-icon,

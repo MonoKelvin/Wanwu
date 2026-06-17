@@ -141,15 +141,6 @@ export const CLOSE_BEHAVIOR_OPTIONS: Array<{ label: string; value: CloseBehavior
   { label: '每次询问', value: 'ask' }
 ]
 
-export const NOTES_POPOUT_RESTORE_OPTIONS: Array<{
-  label: string
-  value: NotesPopoutRestoreMode
-}> = [
-  { label: '启动软件', value: 'on-startup' },
-  { label: '进入便笺', value: 'on-enter-notes' },
-  { label: '不自动还原', value: 'never' }
-]
-
 /** 写入 localStorage 的键（重置设置时清除） */
 export const APP_LOCAL_STORAGE_KEYS = [
   'wanwu.library.viewMode',

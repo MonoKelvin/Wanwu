@@ -1,16 +1,19 @@
-﻿import type { TreeNode } from 'primevue/treenode'
+﻿/**
+ * 全库模块树数据：将各大类与子模块目录转为 PrimeVue TreeNode。
+ */
+import type { TreeNode } from 'primevue/treenode'
 import { LIBRARY_MAJORS, type LibraryMajorId } from '@modules/library/core/config/majors'
-import { catalogToTreeNodes, type CatalogNode } from '@modules/library/core/types/catalog'
+import { catalogToTreeNodes, type CatalogNode } from '@shared/types/catalog'
 import { buildLinksSourceCatalog } from '@modules/library/links/lib/linksSourceCatalog'
-import type { LinkFolder } from '@shared/types/links'
+import type { LinkFolder } from '@modules/library/links/domain/types'
 
+/** 构建全库顶层大类节点（链接、笔记、图鉴等） */
 export function buildMajorTreeNodes(): TreeNode[] {
   return LIBRARY_MAJORS.map((m) => ({
     key: `major:${m.id}`,
     label: m.name,
     icon: m.icon,
     selectable: true,
-    styleClass: 'ww-catalog-tree__major-row',
     children: undefined,
     data: { kind: 'major', majorId: m.id }
   }))

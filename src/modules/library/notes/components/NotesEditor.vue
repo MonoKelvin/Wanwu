@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'
@@ -7,7 +7,7 @@ import WwIconButton from '@shared/components/WwIconButton.vue'
 import NoteColorPicker from '@modules/library/notes/components/NoteColorPicker.vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import ImageViewer from '@shared/components/ImageViewer.vue'
-import type { NoteColor, NoteItem } from '@shared/types/notes'
+import type { NoteColor, NoteItem } from '@modules/library/notes/domain/types'
 import type { ImageViewerSlide } from '@shared/types/image-viewer'
 import type { WwMenuItem } from '@shared/types/menu'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'

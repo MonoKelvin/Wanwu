@@ -1,27 +1,19 @@
 ﻿import { defineAsyncComponent, type Component } from 'vue'
-import { CLOUD_ABODE_ENABLED, isModuleId, type ModuleId } from '@app/config/modules'
+import { isModuleId, type ModuleId } from '@app/config/modules'
+import { isModuleNavEnabled } from '@app/modules/moduleNavRegistry'
+import { loadShellView } from '@app/modules/moduleRegistry'
 import { isItemDetailPath, moduleIdForItemDetailSource } from '@shared/utils/itemDetailRoute'
 
-type ModuleLoader = () => Promise<{ default: Component }>
+const shellViewCache = new Map<ModuleId, Component>()
 
-const MODULE_LOADERS: Partial<Record<ModuleId, ModuleLoader>> = {
-  library: () => import('@modules/library/LibraryShellView.vue'),
-  rss: () => import('@modules/rss/RssView.vue'),
-  music: () => import('@modules/music/MusicView.vue'),
-  personal: () => import('@modules/personal/PersonalView.vue'),
-  settings: () => import('@modules/settings/SettingsView.vue')
+function getShellViewComponent(id: ModuleId): Component | undefined {
+  if (shellViewCache.has(id)) return shellViewCache.get(id)
+  const loader = loadShellView(id)
+  if (!loader) return undefined
+  const component = defineAsyncComponent(loader)
+  shellViewCache.set(id, component)
+  return component
 }
-
-if (CLOUD_ABODE_ENABLED) {
-  MODULE_LOADERS['cloud-abode'] = () => import('@modules/cloud-abode/CloudAbodeView.vue')
-}
-
-const MODULE_VIEW = Object.fromEntries(
-  Object.entries(MODULE_LOADERS).map(([id, loader]) => [
-    id,
-    defineAsyncComponent(() => loader!().then((m) => m.default))
-  ])
-) as Record<ModuleId, Component>
 
 function moduleIdFromPath(path: string): ModuleId | undefined {
   const seg = path.replace(/^#/, '').split('/').filter(Boolean)[0]
@@ -38,8 +30,12 @@ export function shellModuleFromReturnPath(returnPath: string | null | undefined)
 }
 
 export function moduleViewComponent(id: ModuleId): Component {
-  if (id === 'cloud-abode' && !CLOUD_ABODE_ENABLED) {
-    return MODULE_VIEW.library
+  if (!isModuleNavEnabled(id)) {
+    return getShellViewComponent('library') ?? emptyShellComponent()
   }
-  return MODULE_VIEW[id] ?? MODULE_VIEW.library
+  return getShellViewComponent(id) ?? getShellViewComponent('library') ?? emptyShellComponent()
+}
+
+function emptyShellComponent(): Component {
+  return defineAsyncComponent(() => Promise.resolve({ template: '<div class="h-full" />' }))
 }

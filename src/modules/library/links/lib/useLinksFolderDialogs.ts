@@ -6,8 +6,13 @@ import {
   countBookmarksInFolderScope,
   countChildFoldersInScope
 } from '@modules/library/links/lib/linksScope'
-import { LOCAL_COLLECTIONS_ROOT_ID, useLinksStore } from '@shared/stores/links'
+import { LOCAL_COLLECTIONS_ROOT_ID } from '@modules/library/links/domain/constants'
+import { useLinksStore } from '@modules/library/links/services/linksStore'
 
+/**
+ * 链接本地目录的新建/删除对话框状态与确认逻辑。
+ * 供 LinksView 与全库侧栏 LibraryCategoryPanel 复用。
+ */
 export function useLinksFolderDialogs(options?: {
   /** 删除后若当前正在查看被删目录，跳转到该 id */
   navigateFolder?: (folderId: string) => void

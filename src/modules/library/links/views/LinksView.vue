@@ -1,6 +1,10 @@
 ﻿<script setup lang="ts">
 defineOptions({ name: 'LinksView' })
 
+/**
+ * 链接（收藏夹）主视图：顶栏工具、左侧目录树、右侧书签列表/卡片。
+ * 支持浏览器收藏夹同步、全局搜索、回收站、链接可达性检测等。
+ */
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
@@ -25,7 +29,7 @@ import {
 } from '@modules/library/links/lib/linksSyncToast'
 import { formatLinksProbeDetail } from '@modules/library/links/lib/linksProbeToast'
 import WwBlockingLoader from '@shared/components/WwBlockingLoader.vue'
-import type { LinksProbeProgress } from '@shared/types/links'
+import type { LinksProbeProgress, LinkBookmark } from '@modules/library/links/domain/types'
 import { resolveLinksGroupRoot } from '@modules/library/links/lib/linksFolderTree'
 import {
   folderIdFromRoute,
@@ -40,10 +44,9 @@ import {
 import { isBrowserRootFolderId } from '@modules/library/links/domain/sources'
 import {
   LINKS_RECYCLE_BIN_ID,
-  LOCAL_COLLECTIONS_ROOT_ID,
-  useLinksStore
-} from '@shared/stores/links'
-import type { LinkBookmark } from '@shared/types/links'
+  LOCAL_COLLECTIONS_ROOT_ID
+} from '@modules/library/links/domain/constants'
+import { useLinksStore } from '@modules/library/links/services/linksStore'
 import type { WwViewMode } from '@shared/components/WwViewModeToggle.vue'
 
 const VIEW_KEY = 'wanwu:links:viewMode'
@@ -601,8 +604,6 @@ watch(folderId, async (id) => {
 .ww-links-scroll-body {
   overflow-x: hidden;
   overflow-y: auto;
-  /* 为卡片/列表项 hover 上浮与阴影留出空间，避免顶部被裁切 */
-  padding-top: 0.375rem;
   padding-bottom: 0.5rem;
 }
 

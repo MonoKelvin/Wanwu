@@ -1,14 +1,14 @@
 ﻿import {
-  CLOUD_ABODE_ENABLED,
   DEFAULT_MODULE_ID,
   isModuleId,
   modulePathById,
   type ModuleId
 } from '@app/config/modules'
+import { isModuleNavEnabled } from '@app/modules/moduleNavRegistry'
 import type { AppSettings, StartupModule } from '@shared/types/settings'
 
 function resolveEnabledModule(id: ModuleId): ModuleId {
-  if (id === 'cloud-abode' && !CLOUD_ABODE_ENABLED) return DEFAULT_MODULE_ID
+  if (!isModuleNavEnabled(id)) return DEFAULT_MODULE_ID
   return id
 }
 
@@ -26,10 +26,13 @@ export function resolveStartupPath(settings: AppSettings): string {
 }
 
 export function buildStartupModuleOptions(
-  modules: ReadonlyArray<{ id: string; label: string }>
+  modules: ReadonlyArray<{ label: string; moduleId?: string; id?: string }>
 ): Array<{ label: string; value: StartupModule }> {
   return [
     { label: '上次退出时所在模块', value: 'last' },
-    ...modules.map((m) => ({ label: m.label, value: m.id as StartupModule }))
+    ...modules.map((m) => ({
+      label: m.label,
+      value: (m.moduleId ?? m.id) as StartupModule
+    }))
   ]
 }

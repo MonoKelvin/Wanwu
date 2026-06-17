@@ -1,9 +1,9 @@
-/**
+﻿/**
  * 便笺命令层类型定义：命令 ID、载荷、信封与结果。
  * UI / 脚本 / MCP 通过 bus.dispatch({ type, payload }) 调用。
  */
 import type { CommandMeta } from '@app/command'
-import type { NoteColor } from '@shared/types/notes'
+import type { NoteColor } from '@modules/library/notes/domain/types'
 
 // ── 命令 ID ──────────────────────────────────────────────
 

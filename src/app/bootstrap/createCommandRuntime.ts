@@ -10,7 +10,6 @@ import {
   type ICommandContributor
 } from '@app/command'
 import { collectCommandContributors } from '@app/modules/moduleRegistry'
-import { diagramsCommandContributor } from '@modules/library/diagrams/app/command/DiagramCommandContributor'
 
 export interface CommandRuntime {
   manager: CommandManager
@@ -30,11 +29,7 @@ export function createCommandRuntime(contributors: ICommandContributor[] = []): 
   const log = new CommandExecutionLog({ maxEntries: 200 })
   const manager = new CommandManager(dispatcher, log)
 
-  const allContributors = [
-    diagramsCommandContributor,
-    ...collectCommandContributors(),
-    ...contributors
-  ]
+  const allContributors = [...collectCommandContributors(), ...contributors]
   for (const contributor of allContributors) {
     contributor.contribute({ catalog, handlers: registry, pipeline })
   }

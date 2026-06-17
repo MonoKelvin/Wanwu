@@ -22,22 +22,22 @@ body {
   box-sizing: border-box;
 }
 
-/** 便笺/日签等小窗壳：不依赖 Tailwind，保证 flex 高度链 */
-.ww-note-popout-shell {
+/** 独立小窗（日签、便笺等）壳：不依赖 Tailwind，保证 flex 高度链 */
+.ww-popout-shell {
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
 }
 
-.ww-note-popout-shell__outlet {
+.ww-popout-shell__outlet {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
 }
 
-.ww-note-popout-shell__view {
+.ww-popout-shell__view {
   flex: 1;
   min-height: 0;
   display: flex;

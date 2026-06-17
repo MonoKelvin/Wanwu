@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
@@ -10,7 +10,7 @@ import Badge from 'primevue/badge'
 import WwButton from '@shared/components/WwButton.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import type { WwMenuItem } from '@shared/types/menu'
-import { useRssStore } from '@shared/stores/rss'
+import { useRssStore } from '@modules/rss/services/rssStore'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import {
@@ -18,7 +18,7 @@ import {
   RSS_RECYCLE_GROUP_ID,
   type RssFeed,
   type RssGroup
-} from '@shared/types/rss'
+} from '@modules/rss/domain/types'
 import RssFeedDialog from '@modules/rss/RssFeedDialog.vue'
 import RssMoveDialog from '@modules/rss/RssMoveDialog.vue'
 import RssGroupDialog from '@modules/rss/RssGroupDialog.vue'

@@ -10,6 +10,10 @@ export function registerBootModeContributor(contributor: IBootModeContributor): 
   contributors.push(contributor)
 }
 
+export function getBootModeContributor(mode: BootMode): IBootModeContributor | undefined {
+  return contributors.find((item) => item.mode === mode)
+}
+
 export function detectRegisteredBootMode(): BootMode | null {
   for (const contributor of contributors) {
     if (contributor.detect()) return contributor.mode
@@ -18,7 +22,7 @@ export function detectRegisteredBootMode(): BootMode | null {
 }
 
 export async function loadBootRootComponent(mode: BootMode): Promise<Component | null> {
-  const contributor = contributors.find((item) => item.mode === mode)
+  const contributor = getBootModeContributor(mode)
   if (!contributor) return null
   return contributor.loadRootComponent()
 }

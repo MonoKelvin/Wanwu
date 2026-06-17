@@ -1,4 +1,6 @@
 ﻿import { createApp, type Component } from 'vue'
+import '@app/platform/wanwuApiRegistry'
+import '@app/modules/moduleRegistry'
 import { createPinia } from 'pinia'
 import { applyColorScheme, readStoredColorScheme } from '@app/theme/applyTheme'
 import { detectBootMode, isPopoutBootMode, type BootMode } from '@app/bootstrap/bootMode'
@@ -7,7 +9,7 @@ import { setCommandRuntime } from '@app/bootstrap/commandRuntimeStore'
 import { loadStylesForMode } from '@app/bootstrap/loadStyles'
 import { loadWebFonts } from '@app/bootstrap/loadWebFonts'
 import { installUiPlugins } from '@app/bootstrap/uiPlugins'
-import { loadBootRootComponent } from '@app/modules/bootModeRegistry'
+import { loadBootRootComponent, getBootModeContributor } from '@app/modules/bootModeRegistry'
 import router from '@app/router'
 
 async function syncThemeBeforePaint(): Promise<void> {
@@ -50,9 +52,7 @@ async function bootstrap(): Promise<void> {
 
   await loadStylesForMode(mode)
   loadWebFonts(mode)
-  if (mode === 'main') {
-    await import('@app/styles/toast-stack.css')
-  } else if (mode === 'note-popout') {
+  if (mode === 'main' || getBootModeContributor(mode)?.needsToastStack) {
     await import('@app/styles/toast-stack.css')
   }
 
@@ -76,4 +76,10 @@ async function bootstrap(): Promise<void> {
   app.mount('#app')
 }
 
-void bootstrap()
+void bootstrap().catch((err: unknown) => {
+  console.error('[bootstrap] 启动失败', err)
+  const root = document.getElementById('app')
+  if (!root) return
+  const message = err instanceof Error ? err.message : String(err)
+  root.textContent = `启动失败：${message}`
+})

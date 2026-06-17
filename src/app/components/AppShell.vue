@@ -13,85 +13,99 @@ import SubItemPanel from '@app/components/SubItemPanel.vue'
 import { useRouteModule } from '@app/composables/useRouteModule'
 import { useShellModule } from '@app/composables/useShellModule'
 import { moduleViewComponent } from '@app/shell/moduleShell'
+import { loadItemDetailView } from '@app/modules/moduleRegistry'
 import { resolveShellOutlet } from '@app/modules/shellOutletRegistry'
-import { isDiagramEditorRoute } from '@modules/library/diagrams/domain/diagramRoutes'
-import DiagramEditorView from '@modules/library/diagrams/views/DiagramEditorView.vue'
-import { mvPageActive } from '@modules/music/lib/musicMvOverlayState'
+import { collectVisibleShellChrome } from '@app/modules/shellChromeRegistry'
+import { resolveShellMainClass } from '@app/modules/shellThemeRegistry'
+import { moduleHasSubPanel } from '@app/modules/subPanelRegistry'
 import { useAppStore } from '@shared/stores/app'
 import { useSettingsStore } from '@shared/stores/settings'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
-
-const ItemDetailView = defineAsyncComponent(
-  () => import('@modules/item/ItemDetailView.vue')
-)
-const MusicMiniBar = defineAsyncComponent(
-  () => import('@modules/music/player/MusicMiniBar.vue')
-)
 
 const route = useRoute()
 const routeModule = useRouteModule()
 const shellModule = useShellModule()
 const appStore = useAppStore()
+const settingsStore = useSettingsStore()
+
 const isItemDetail = computed(() => isItemDetailRoute(route.name))
+const isFullscreen = computed(() => !!route.meta.fullscreen)
+const shellMainClass = computed(() => resolveShellMainClass(routeModule.value))
+
 const activeShellOutlet = computed(() => resolveShellOutlet(route))
 const shellOutletComponent = shallowRef<Component | null>(null)
 
 watch(
   activeShellOutlet,
-  (outlet) => {
+  (outlet, prev) => {
     shellOutletComponent.value = outlet
-      ? defineAsyncComponent(() => outlet.loadComponent())
+      ? defineAsyncComponent({
+          loader: () => outlet.loadComponent(),
+          onError(err, _retry, fail) {
+            console.error('[AppShell] shell outlet 加载失败:', outlet.id, err)
+            fail()
+          }
+        })
       : null
+    if (prev?.keepAliveInclude && !outlet) {
+      appStore.bumpShellOutlet()
+    }
   },
   { immediate: true }
 )
 
-const showDiagramEditor = computed(() => isDiagramEditorRoute(route.name, route.path))
-/** 仅 fileId 参与 key；template 只在首次 open 使用，纳入 key 会在 query 变化时整页 remount 画布 */
-const diagramEditorKey = computed(
-  () => `diagrams-editor:${String(route.params.fileId ?? 'new')}`
-)
+const itemDetailLoader = loadItemDetailView()
+const ItemDetailView = itemDetailLoader ? defineAsyncComponent(itemDetailLoader) : null
 const itemDetailShell = computed(() => moduleViewComponent(shellModule.value))
 
-const activeShellKey = computed(() => {
+const shellOutletKey = computed(() => {
+  if (activeShellOutlet.value?.getActiveShellKey) {
+    return activeShellOutlet.value.getActiveShellKey(route)
+  }
   if (isItemDetail.value) return `item:${shellModule.value}`
-  if (isDiagramEditorRoute(route.name, route.path)) {
-    return diagramEditorKey.value
-  }
-  if (route.meta.module === 'library') {
-    return `library#${appStore.shellOutletRevision}`
-  }
-  return `${route.fullPath}#${appStore.shellOutletRevision}`
+  const mod = routeModule.value
+  if (mod === 'library') return `library#${appStore.shellOutletRevision}`
+  return `${mod ?? 'app'}:${route.fullPath}#${appStore.shellOutletRevision}`
 })
 
-const settingsStore = useSettingsStore()
-const isFullscreen = computed(() => !!route.meta.fullscreen)
-const minibarHidden = computed(() => mvPageActive.value)
-const showMusicBar = computed(
-  () => routeModule.value === 'music' && !isFullscreen.value && !minibarHidden.value
+const shellChromeCtx = computed(() => ({
+  route,
+  routeModule: routeModule.value,
+  isFullscreen: isFullscreen.value
+}))
+
+const shellChromeItems = computed(() => collectVisibleShellChrome(shellChromeCtx.value))
+const shellChromeComponents = shallowRef<Record<string, Component>>({})
+
+watch(
+  shellChromeItems,
+  (items) => {
+    const next: Record<string, Component> = {}
+    for (const item of items) {
+      next[item.id] = defineAsyncComponent(() => item.loadComponent())
+    }
+    shellChromeComponents.value = next
+  },
+  { immediate: true }
 )
 
 const showSubPanel = computed(() => {
   if (isItemDetail.value || isFullscreen.value || route.meta.hideSubPanel) return false
-  const mod = routeModule.value
-  return mod === 'library' || mod === 'rss'
+  return routeModule.value ? moduleHasSubPanel(routeModule.value) : false
 })
 
 watch(
   routeModule,
-  (m) => {
+  (m, prev) => {
+    if (m && prev && m !== prev) {
+      appStore.bumpShellOutlet()
+    }
     if (!m) return
     appStore.setModule(m)
     if (settingsStore.loaded) void settingsStore.patchLastActiveModule(m)
   },
   { immediate: true }
 )
-
-watch(showDiagramEditor, (active, wasActive) => {
-  if (wasActive && !active) {
-    appStore.bumpShellOutlet()
-  }
-})
 </script>
 
 <template>
@@ -99,35 +113,43 @@ watch(showDiagramEditor, (active, wasActive) => {
     <ModuleSidebar v-show="!isFullscreen" />
     <SubItemPanel v-if="showSubPanel" class="shrink-0" />
     <main
-      :key="showDiagramEditor ? 'diagram-editor-shell' : `shell-${activeShellKey}`"
+      :key="`shell-${shellOutletKey}`"
       class="relative flex min-w-0 flex-1 flex-col overflow-hidden"
-      :class="routeModule === 'cloud-abode' ? 'bg-transparent' : 'bg-ww-content'"
+      :class="shellMainClass"
     >
-      <!-- 模块注册的 Shell 直挂视图（如便笺 Tiptap，须在 RouterView 外渲染） -->
+      <KeepAlive
+        v-if="shellOutletComponent && activeShellOutlet?.keepAliveInclude"
+        :include="activeShellOutlet.keepAliveInclude"
+      >
+        <component
+          :is="shellOutletComponent"
+          :key="shellOutletKey"
+          class="h-full min-h-0 flex flex-1 flex-col"
+        />
+      </KeepAlive>
       <component
-        v-if="shellOutletComponent"
+        v-else-if="shellOutletComponent"
         :is="shellOutletComponent"
+        :key="shellOutletKey"
         class="h-full min-h-0 flex flex-1 flex-col"
       />
-      <!-- 编辑器不走 RouterView，避免 vue-router 5 卸载时 vnode 为 null 触发 component 读取错误 -->
-      <!-- KeepAlive 避免短暂 v-if 切换销毁编辑器实例；勿绑 :key=fileId -->
-      <KeepAlive v-else-if="showDiagramEditor" include="DiagramEditorView">
-        <DiagramEditorView class="h-full min-h-0 flex flex-1 flex-col" />
-      </KeepAlive>
-      <template v-else-if="isItemDetail">
+      <template v-else-if="isItemDetail && ItemDetailView">
         <component
           :is="itemDetailShell"
-          :key="activeShellKey"
+          :key="shellOutletKey"
           class="h-full min-h-0 flex flex-1 flex-col"
         />
         <Transition name="ww-item-detail">
           <ItemDetailView class="ww-item-detail-layer" />
         </Transition>
       </template>
-      <RouterView v-else :key="activeShellKey" class="h-full min-h-0 flex flex-1 flex-col" />
-      <Transition name="ww-music-minibar">
-        <MusicMiniBar v-if="showMusicBar" />
-      </Transition>
+      <RouterView v-else :key="shellOutletKey" class="h-full min-h-0 flex flex-1 flex-col" />
+      <template v-for="chrome in shellChromeItems" :key="chrome.id">
+        <Transition v-if="chrome.transitionName" :name="chrome.transitionName">
+          <component :is="shellChromeComponents[chrome.id]" />
+        </Transition>
+        <component v-else :is="shellChromeComponents[chrome.id]" />
+      </template>
     </main>
   </div>
 </template>
@@ -159,24 +181,5 @@ watch(showDiagramEditor, (active, wasActive) => {
 .ww-item-detail-leave-to {
   opacity: 0;
   transform: translateY(10px);
-}
-
-.ww-music-minibar-enter-active,
-.ww-music-minibar-leave-active {
-  transition:
-    transform 0.44s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.34s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.ww-music-minibar-enter-from,
-.ww-music-minibar-leave-to {
-  opacity: 0;
-  transform: translateY(calc(100% + var(--ww-music-minibar-inset, 1.125rem) + 0.75rem));
-}
-
-.ww-music-minibar-enter-to,
-.ww-music-minibar-leave-from {
-  opacity: 1;
-  transform: translateY(0);
 }
 </style>

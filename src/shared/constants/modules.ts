@@ -8,29 +8,6 @@ export const CLOUD_ABODE_ENABLED = false
 
 export const DEFAULT_MODULE_ID: ModuleId = 'library'
 
-const MODULE_PATH_BY_ID: Record<ModuleId, string> = {
-  library: '/library',
-  rss: '/rss',
-  music: '/music',
-  'cloud-abode': '/cloud-abode',
-  personal: '/personal',
-  settings: '/settings'
-}
-
 export function isModuleId(value: string): value is ModuleId {
   return (MODULE_IDS as readonly string[]).includes(value)
 }
-
-export function modulePathById(id: ModuleId): string {
-  return MODULE_PATH_BY_ID[id]
-}
-
-/** 与各模块根视图 defineOptions({ name }) 一致，供 AppShell KeepAlive */
-export const MODULE_KEEP_ALIVE = [
-  'LibraryView',
-  'RssView',
-  'MusicView',
-  'CloudAbodeView',
-  'PersonalView',
-  'SettingsView'
-] as const

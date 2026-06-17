@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue'
 import { useDiagramCatalogCommands } from '@modules/library/diagrams/composables/useDiagramCatalogCommands'
-import { useDiagramsStore } from '@shared/stores/diagrams'
+import { useDiagramsStore } from '@modules/library/diagrams/services/diagramsStore'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import type { DiagramFolder } from '@shared/types/diagrams'

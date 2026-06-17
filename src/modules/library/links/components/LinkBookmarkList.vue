@@ -1,9 +1,9 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import WwIconButton from '@shared/components/WwIconButton.vue'
 import LinkFavicon from '@modules/library/links/components/LinkFavicon.vue'
 import LinkOpenUrl from '@modules/library/links/components/LinkOpenUrl.vue'
 import WwTruncatedText from '@shared/components/WwTruncatedText.vue'
-import type { LinkBookmark } from '@shared/types/links'
+import type { LinkBookmark } from '@modules/library/links/domain/types'
 
 defineProps<{
   bookmarks: LinkBookmark[]

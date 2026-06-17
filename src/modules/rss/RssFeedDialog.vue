@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
@@ -6,8 +6,8 @@ import Checkbox from 'primevue/checkbox'
 import WwDialogFooterButton from '@shared/components/WwDialogFooterButton.vue'
 import WwSelect from '@shared/components/WwSelect'
 import { useFormFieldHighlight } from '@shared/composables/useFormFieldHighlight'
-import type { RssFeed, RssGroup } from '@shared/types/rss'
-import { DEFAULT_RSS_DISPLAY, RSS_DEFAULT_GROUP_ID } from '@shared/types/rss'
+import type { RssFeed, RssGroup } from '@modules/rss/domain/types'
+import { DEFAULT_RSS_DISPLAY, RSS_DEFAULT_GROUP_ID } from '@modules/rss/domain/types'
 
 const props = defineProps<{
   visible: boolean

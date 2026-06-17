@@ -59,18 +59,24 @@ function showLibraryNotice(text: string) {
 }
 
 let stopSettingsSync: (() => void) | null = null
-const stopStartupNotice = window.wanwu.app.onStartupNotice(showLibraryNotice)
+let stopStartupNotice: (() => void) | null = null
 
 onUnmounted(() => {
   stopSettingsSync?.()
   stopSettingsSync = null
-  stopStartupNotice()
+  stopStartupNotice?.()
+  stopStartupNotice = null
 })
 
 onMounted(async () => {
-  stopSettingsSync = window.wanwu.app.onAppSettingsChanged((remote) => {
-    settingsStore.syncFromRemote(remote)
-  })
+  if (window.wanwu?.app?.onAppSettingsChanged) {
+    stopSettingsSync = window.wanwu.app.onAppSettingsChanged((remote) => {
+      settingsStore.syncFromRemote(remote)
+    })
+  }
+  if (window.wanwu?.app?.onStartupNotice) {
+    stopStartupNotice = window.wanwu.app.onStartupNotice(showLibraryNotice)
+  }
 
   if (!settingsStore.loaded) await settingsStore.load()
 

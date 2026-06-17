@@ -1,7 +1,7 @@
-import { nextTick, type Ref } from 'vue'
-import { useNotesStore } from '@shared/stores/notes'
+﻿import { nextTick, type Ref } from 'vue'
+import { useNotesStore } from '@modules/library/notes/services/notesStore'
 import { pruneUnreferencedNoteImages } from '@modules/library/notes/app/pruneNoteImages'
-import type { NoteItem } from '@shared/types/notes'
+import type { NoteItem } from '@modules/library/notes/domain/types'
 
 interface UseNotesSelectionOptions {
   selectedNoteId: Ref<string | null>

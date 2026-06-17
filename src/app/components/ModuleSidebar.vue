@@ -14,7 +14,7 @@ const routeModule = useRouteModule()
 const { navigateToModule } = useModuleNavigation()
 const { settings } = storeToRefs(useSettingsStore())
 
-const modules = MODULE_NAV_ITEMS
+const modules = computed(() => MODULE_NAV_ITEMS())
 
 const showLabel = computed(() => settings.value.navDisplay === 'both')
 const useTooltip = computed(() => !showLabel.value)
@@ -52,17 +52,17 @@ function isActive(id: ModuleId) {
       <div class="ww-module-nav__group">
         <button
           v-for="m in modules"
-          :key="m.id"
+          :key="m.moduleId"
           v-tooltip.right="useTooltip ? m.label : undefined"
           type="button"
           class="ww-module-btn"
           :class="{
-            'is-active': isActive(m.id),
+            'is-active': isActive(m.moduleId),
             'ww-module-btn--labeled': showLabel
           }"
           :aria-label="m.label"
-          :aria-current="isActive(m.id) ? 'page' : undefined"
-          @click="onModuleClick(m.id as ModuleId)"
+          :aria-current="isActive(m.moduleId) ? 'page' : undefined"
+          @click="onModuleClick(m.moduleId as ModuleId)"
         >
           <WwIcon :name="m.icon" size="md" class="ww-module-btn__icon" />
           <span v-if="showLabel" class="ww-module-btn__label">{{ m.label }}</span>

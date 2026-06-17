@@ -3,10 +3,10 @@
   isNoteBodyEmpty,
   normalizeNotePlainText,
   noteContentPlainText
-} from '@shared/notes/noteBodyContent'
+} from '@modules/library/notes/lib/noteBodyContent'
 
-import { normalizeNotePlainText } from '@shared/notes/noteBodyContent'
-import type { NoteItem } from '@shared/types/notes'
+import { normalizeNotePlainText } from '@modules/library/notes/lib/noteBodyContent'
+import type { NoteItem } from '@modules/library/notes/domain/types'
 
 /** 便笺列表排序：置顶优先，置顶内保持原序，其余按更新时间倒序 */
 export function sortNotesList(notes: readonly NoteItem[]): NoteItem[] {

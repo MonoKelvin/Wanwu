@@ -6,7 +6,7 @@ import type {
   NoteImage,
   NoteItem,
   NoteUpdateInput
-} from '../../../src/shared/types/notes'
+} from '../../../src/modules/library/notes/domain/types'
 import { ensureWanwuDataLayout, getWanwuPathLayout, type WanwuPathLayout } from '../data/paths'
 import type { UserDataGateway } from '../storage/userDataGateway'
 

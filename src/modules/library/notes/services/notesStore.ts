@@ -1,8 +1,8 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { NOTE_COLORS } from '@shared/constants/noteColors'
+import { NOTE_COLORS } from '@modules/library/notes/domain/noteColors'
 import { sortNotesList } from '@modules/library/notes/lib/noteContentText'
-import type { NoteColor, NoteCreateInput, NoteItem, NoteUpdateInput } from '@shared/types/notes'
+import type { NoteColor, NoteCreateInput, NoteItem, NoteUpdateInput } from '@modules/library/notes/domain/types'
 
 let remoteSyncBound = false
 let remoteSyncUnsubs: Array<() => void> = []

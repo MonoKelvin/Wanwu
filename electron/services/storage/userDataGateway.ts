@@ -1,5 +1,5 @@
 ﻿import type { DatabaseService } from '../core/database'
-import type { NoteCreateInput, NoteImage, NoteItem, NoteUpdateInput } from '../../../src/shared/types/notes'
+import type { NoteCreateInput, NoteImage, NoteItem, NoteUpdateInput } from '../../../src/modules/library/notes/domain/types'
 import type { AppSettings } from '../../../src/shared/types/settings'
 
 export interface UserDataGateway {

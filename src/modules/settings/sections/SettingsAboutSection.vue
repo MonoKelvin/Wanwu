@@ -16,7 +16,17 @@ const heroHover = ref(false)
 const copyrightYear = new Date().getFullYear()
 const githubUrl = 'https://github.com/MonoKelvin/Wanwu'
 
-const appIntro = '桌面端事物图鉴：分类条目、收藏与 RSS，数据保存在本机。'
+const appIntroLead =
+  '万物是安装在您电脑上的桌面软件，帮您把日常内容和兴趣资料集中整理、随时打开使用。'
+
+const appIntroPoints = [
+  '全库：写便笺、收藏链接、画流程图、浏览图鉴',
+  'RSS：订阅网站资讯，在软件内阅读',
+  '音乐：搜索与播放歌曲（部分功能需登录对应平台）',
+  '个人空间：管理收藏与简单资料'
+]
+
+const appIntroFooter = '数据保存在本机，不联网也能查看已保存的内容。'
 
 const developers = [
   { name: 'Cursor', href: 'https://cursor.com', note: 'AI 辅助设计与开发' },
@@ -48,7 +58,13 @@ const developers = [
 
     <div class="ww-settings-group">
       <h3 class="ww-settings-group__label">软件简介</h3>
-      <p class="ww-settings-prose">{{ appIntro }}</p>
+      <div class="ww-settings-prose ww-settings-about-intro">
+        <p>{{ appIntroLead }}</p>
+        <ul class="ww-settings-about-intro__list">
+          <li v-for="item in appIntroPoints" :key="item">{{ item }}</li>
+        </ul>
+        <p>{{ appIntroFooter }}</p>
+      </div>
     </div>
 
     <div class="ww-settings-group">

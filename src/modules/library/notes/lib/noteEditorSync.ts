@@ -1,9 +1,9 @@
-/**
+﻿/**
  * 命令/API 更新便笺后，通知正在编辑的 UI 同步草稿与 Tiptap。
  */
 import { onBeforeUnmount, onMounted } from 'vue'
-import { useNotesStore } from '@shared/stores/notes'
-import type { NoteItem } from '@shared/types/notes'
+import { useNotesStore } from '@modules/library/notes/services/notesStore'
+import type { NoteItem } from '@modules/library/notes/domain/types'
 
 export interface NoteEditorSyncEvent {
   noteId: string

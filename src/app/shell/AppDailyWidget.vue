@@ -1,6 +1,6 @@
 <template>
-  <div class="ww-note-popout-shell">
-    <div class="ww-note-popout-shell__outlet">
+  <div class="ww-popout-shell">
+    <div class="ww-popout-shell__outlet">
       <RouterView />
     </div>
   </div>

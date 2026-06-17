@@ -1,4 +1,4 @@
-/**
+﻿/**
  * UI 层便笺操作：封装命令总线 + toast/confirm，供视图与编辑器共用。
  */
 import {
@@ -7,7 +7,7 @@ import {
   type NoteCommandEnvelope,
   type NoteCommandResult
 } from '@modules/library/notes/app/command'
-import type { NoteColor } from '@shared/types/notes'
+import type { NoteColor } from '@modules/library/notes/domain/types'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 

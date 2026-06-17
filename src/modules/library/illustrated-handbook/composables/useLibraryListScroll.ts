@@ -1,7 +1,7 @@
 ﻿import { nextTick, onActivated, onDeactivated, watch, type Ref } from 'vue'
 import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import type { useLibraryRouteContext } from '@modules/library/core/composables/useLibraryRouteContext'
-import { useLibraryStore } from '@shared/stores/library'
+import { useIllustratedHandbookStore } from '@modules/library/illustrated-handbook/services/illustratedHandbookStore'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
 
 /** 全库列表滚动位置记忆（进入物品详情、切换模块后返回时恢复） */
@@ -10,7 +10,7 @@ export function useLibraryListScroll(
   routeCtx: ReturnType<typeof useLibraryRouteContext>
 ) {
   const route = useRoute()
-  const libraryStore = useLibraryStore()
+  const libraryStore = useIllustratedHandbookStore()
 
   function scrollElement(): HTMLElement | null {
     return pageRoot.value?.querySelector<HTMLElement>('.ww-scroll-main') ?? null

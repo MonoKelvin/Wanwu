@@ -1,0 +1,18 @@
+.ww-music-minibar-enter-active,
+.ww-music-minibar-leave-active {
+  transition:
+    transform 0.44s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ww-music-minibar-enter-from,
+.ww-music-minibar-leave-to {
+  opacity: 0;
+  transform: translateY(calc(100% + var(--ww-music-minibar-inset, 1.125rem) + 0.75rem));
+}
+
+.ww-music-minibar-enter-to,
+.ww-music-minibar-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}

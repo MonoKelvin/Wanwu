@@ -1,9 +1,9 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import WwDialogFooterButton from '@shared/components/WwDialogFooterButton.vue'
-import type { LinkBookmark } from '@shared/types/links'
+import type { LinkBookmark } from '@modules/library/links/domain/types'
 
 const props = defineProps<{
   visible: boolean

@@ -8,13 +8,13 @@ import { join } from 'path'
 import { randomUUID } from 'crypto'
 import { LIBRARY_CATEGORIES, loadLibraryCategories } from '../library/categories'
 import { seedDefaultRssFeeds } from '../rss/defaults'
-import { canonicalNoteBodyContent } from '@shared/notes/noteBodyContent'
+import { canonicalNoteBodyContent } from '../../../src/modules/library/notes/lib/noteBodyContent'
 import type {
   NoteCreateInput,
   NoteImage,
   NoteItem,
   NoteUpdateInput
-} from '../../../src/shared/types/notes'
+} from '../../../src/modules/library/notes/domain/types'
 import type { AppSettings } from '../../../src/shared/types/settings'
 import {
   ensureWanwuDataLayout,

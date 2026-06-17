@@ -1,5 +1,5 @@
 ﻿import { computed, nextTick, onBeforeUnmount, ref, watch, type Ref } from 'vue'
-import type { NoteItem } from '@shared/types/notes'
+import type { NoteItem } from '@modules/library/notes/domain/types'
 import { canonicalNoteBodyContent } from '@modules/library/notes/lib/noteContentText'
 
 export type NoteSaveUiState = 'idle' | 'saving' | 'timeout' | 'error'

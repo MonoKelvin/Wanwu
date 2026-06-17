@@ -17,8 +17,9 @@ import {
 } from '@app/lib/commandPaletteHistory'
 import {
   mergePaletteHits,
-  PALETTE_KIND_ORDER
+  getPaletteKindOrder
 } from '@app/lib/commandPaletteSearch'
+import { getQuickAccessKindMeta } from '@app/modules/quickAccessKindRegistry'
 
 const open = defineModel<boolean>('open', { default: false })
 
@@ -39,17 +40,12 @@ const { openTarget, hitToOpenTarget: toTarget } = useQuickAccessTargets()
 let searchTimer: ReturnType<typeof setTimeout> | null = null
 let searchGen = 0
 
-const KIND_META: Record<
-  QuickAccessHitKind,
-  { label: string; wwIcon: WwIconName }
-> = {
-  library: { label: '图鉴', wwIcon: 'book-open' },
-  note: { label: '便笺', wwIcon: 'pencil' },
-  diagram: { label: '流程图', wwIcon: 'layers' },
-  link: { label: '链接', wwIcon: 'link' },
-  rss: { label: 'RSS', wwIcon: 'inbox' },
-  music: { label: '音乐', wwIcon: 'disc-3' },
-  favorite: { label: '收藏', wwIcon: 'heart' }
+const KIND_META = (kind: QuickAccessHitKind) => {
+  const meta = getQuickAccessKindMeta(kind)
+  return {
+    label: meta?.label ?? kind,
+    wwIcon: meta?.icon ?? ('search' as WwIconName)
+  }
 }
 
 const trimmedQuery = computed(() => query.value.trim())
@@ -104,7 +100,7 @@ async function runSearch(q: string) {
   loading.value = true
   hits.value = []
 
-  const tasks = PALETTE_KIND_ORDER.map(async (kind) => {
+  const tasks = getPaletteKindOrder().map(async (kind) => {
     try {
       const chunk = await window.wanwu.quickAccess.searchByKind({ kind, query: q })
       if (gen !== searchGen) return
@@ -356,12 +352,12 @@ onUnmounted(() => {
                   @click="activateRow({ kind: 'hit', hit })"
                   @mouseenter="activeIndex = visibleHistory.length + hitIndex"
                 >
-                  <WwIcon :name="KIND_META[hit.kind].wwIcon" size="sm" class="ww-command-palette__item-icon" />
+                  <WwIcon :name="KIND_META(hit.kind).wwIcon" size="sm" class="ww-command-palette__item-icon" />
                   <span class="ww-command-palette__item-body">
                     <span class="ww-command-palette__item-title">{{ hit.title }}</span>
                     <span v-if="hit.subtitle" class="ww-command-palette__item-sub">{{ hit.subtitle }}</span>
                   </span>
-                  <span class="ww-command-palette__item-kind">{{ KIND_META[hit.kind].label }}</span>
+                  <span class="ww-command-palette__item-kind">{{ KIND_META(hit.kind).label }}</span>
                 </button>
               </li>
             </ul>
