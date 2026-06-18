@@ -1,5 +1,13 @@
 export type LeisureReadTabId = 'quote' | 'joke' | 'riddle' | 'article'
 
+export type LeisureReadFavoriteKind = 'full' | 'snippet'
+
+export interface LeisureReadSnippetRange {
+  start: number
+  end: number
+  text?: string
+}
+
 export interface LeisureReadContent {
   tab: LeisureReadTabId
   contentId: string
@@ -10,6 +18,7 @@ export interface LeisureReadContent {
   htmlBody?: string
   answer?: string
   providerId: string
+  highlightRanges?: LeisureReadSnippetRange[]
 }
 
 export interface LeisureReadFavorite {
@@ -22,6 +31,10 @@ export interface LeisureReadFavorite {
   footer: string | null
   providerId: string | null
   createdAt: number
+  articleId?: string | null
+  kind?: LeisureReadFavoriteKind
+  snippets?: string[]
+  snippetRanges?: LeisureReadSnippetRange[]
 }
 
 export interface LeisureReadFavoriteInput {
@@ -32,6 +45,20 @@ export interface LeisureReadFavoriteInput {
   subtitle?: string
   footer?: string
   providerId?: string
+  kind?: LeisureReadFavoriteKind
+  articleId?: string
+  snippet?: string
+  snippetRange?: LeisureReadSnippetRange
+}
+
+export interface LeisureReadUpdateArticleSnippetsInput {
+  articleId: string
+  body: string
+  title?: string | null
+  subtitle?: string | null
+  footer?: string | null
+  providerId?: string | null
+  ranges: LeisureReadSnippetRange[]
 }
 
 export class LeisureReadFetchError extends Error {

@@ -491,6 +491,10 @@ export class MusicService {
     return this.platformOps.platformLogout()
   }
 
+  async getPlatformLoginStatus(): Promise<MusicNeteaseLoginStatus> {
+    return this.platformOps.getPlatformLoginStatus()
+  }
+
   async getNewAlbums(limit = 12, seed = 0) {
     return this.platformOps.getNewAlbums(limit, seed)
   }

@@ -1,14 +1,67 @@
 <script setup lang="ts">
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { LeisureReadTabId } from '@modules/library/leisure-read/domain/types'
 import { LEISURE_READ_TAB_LABELS } from '@modules/library/leisure-read/domain/settings'
+import WwIcon from '@shared/components/WwIcon.vue'
+import type { WwIconName } from '@shared/icons/registry'
 
 const tabs: LeisureReadTabId[] = ['quote', 'joke', 'riddle', 'article']
 
+const TAB_ICONS: Record<LeisureReadTabId, WwIconName> = {
+  quote: 'sparkles',
+  joke: 'thumbs-up',
+  riddle: 'circle-help',
+  article: 'book-open'
+}
+
 const model = defineModel<LeisureReadTabId>({ required: true })
+
+const listRef = ref<HTMLElement | null>(null)
+const indicator = ref({ width: 0, x: 0 })
+
+function updateIndicator() {
+  const list = listRef.value
+  if (!list) return
+  const active = list.querySelector<HTMLElement>(`[data-tab="${model.value}"]`)
+  if (!active) return
+  const listRect = list.getBoundingClientRect()
+  const tabRect = active.getBoundingClientRect()
+  indicator.value = {
+    width: tabRect.width,
+    x: tabRect.left - listRect.left
+  }
+}
+
+function onSelect(tab: LeisureReadTabId) {
+  if (tab === model.value) return
+  model.value = tab
+}
+
+onMounted(() => {
+  void nextTick(updateIndicator)
+  window.addEventListener('resize', updateIndicator)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateIndicator)
+})
+
+watch(model, () => {
+  void nextTick(updateIndicator)
+})
 </script>
 
 <template>
-  <div class="lr-tabs" role="tablist">
+  <nav class="lr-tabs-wrap" aria-label="闲读分类导航">
+    <div ref="listRef" class="lr-tabs" role="tablist">
+    <span
+      class="lr-tabs__indicator"
+      aria-hidden="true"
+      :style="{
+        width: `${indicator.width}px`,
+        transform: `translateX(${indicator.x}px)`
+      }"
+    />
     <button
       v-for="tab in tabs"
       :key="tab"
@@ -16,35 +69,13 @@ const model = defineModel<LeisureReadTabId>({ required: true })
       role="tab"
       class="lr-tabs__item"
       :class="{ 'is-active': model === tab }"
+      :data-tab="tab"
       :aria-selected="model === tab"
-      @click="model = tab"
+      @click="onSelect(tab)"
     >
-      {{ LEISURE_READ_TAB_LABELS[tab] }}
+      <WwIcon :name="TAB_ICONS[tab]" size="xs" />
+      <span class="lr-tabs__label">{{ LEISURE_READ_TAB_LABELS[tab] }}</span>
     </button>
-  </div>
+    </div>
+  </nav>
 </template>
-
-<style scoped>
-.lr-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.lr-tabs__item {
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid var(--ww-border-subtle, rgba(128, 128, 128, 0.25));
-  background: var(--ww-surface-muted, rgba(128, 128, 128, 0.08));
-  color: var(--ww-text-secondary);
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-}
-
-.lr-tabs__item.is-active {
-  background: var(--ww-accent-soft, rgba(99, 102, 241, 0.15));
-  border-color: var(--ww-accent, #6366f1);
-  color: var(--ww-text-primary);
-}
-</style>

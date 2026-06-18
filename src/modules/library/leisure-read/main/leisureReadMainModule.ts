@@ -17,7 +17,8 @@ import {
 } from '@modules/library/leisure-read/main/service'
 import type {
   LeisureReadFavoriteInput,
-  LeisureReadTabId
+  LeisureReadTabId,
+  LeisureReadUpdateArticleSnippetsInput
 } from '@modules/library/leisure-read/domain/types'
 
 const QUICK_ACCESS_KIND = 'leisure-read'
@@ -67,6 +68,15 @@ export const leisureReadMainModule: IMainProcessModule = {
     ipcMain.handle('leisureRead:removeFavorite', (_e, params: { id: string }) => {
       return getService(ctx)?.removeFavorite(params.id) ?? false
     })
+
+    ipcMain.handle(
+      'leisureRead:updateArticleSnippets',
+      (_e, input: LeisureReadUpdateArticleSnippetsInput) => {
+        const service = getService(ctx)
+        if (!service) throw new Error('闲读服务未就绪')
+        return service.updateArticleSnippetRanges(input)
+      }
+    )
 
     ipcMain.handle(
       'leisureRead:isFavorite',

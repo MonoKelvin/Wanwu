@@ -141,7 +141,7 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
         ('leisureReadJokeLang' in raw || 'leisureReadArticleMode' in raw)
       ) {
         base['wanwu.leisure-read'] = {
-          jokeLang: raw.leisureReadJokeLang === 'en' ? 'en' : 'zh',
+          riddleLang: raw.leisureReadJokeLang === 'en' ? 'en' : 'zh',
           articleMode: raw.leisureReadArticleMode === 'today' ? 'today' : 'random'
         }
       }
@@ -159,9 +159,36 @@ function applySettingsToDocument(settings: AppSettings) {
 
 let stopSystemThemeWatch: (() => void) | null = null
 
+/** 本窗口正在写入设置时，忽略主进程广播回显，避免覆盖乐观更新 */
+let settingsWriteDepth = 0
+
+function beginSettingsWrite(): void {
+  settingsWriteDepth++
+}
+
+function endSettingsWrite(): void {
+  settingsWriteDepth = Math.max(0, settingsWriteDepth - 1)
+}
+
 export const useSettingsStore = defineStore('settings', () => {
   const settings = ref<AppSettings>({ ...DEFAULT_APP_SETTINGS })
   const loaded = ref(false)
+
+  async function persistSettingsPatch(
+    patch: Partial<AppSettings>,
+    optimistic: AppSettings
+  ): Promise<AppSettings> {
+    beginSettingsWrite()
+    try {
+      const saved = await window.wanwu.app.patchSettings(patch)
+      const next = normalizeSettings({ ...optimistic, ...saved })
+      settings.value = next
+      applySettingsToDocument(next)
+      return next
+    } finally {
+      endSettingsWrite()
+    }
+  }
 
   if (!stopSystemThemeWatch) {
     stopSystemThemeWatch = watchSystemColorScheme(() => {
@@ -201,12 +228,17 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 
   async function save(patch: Partial<AppSettings>) {
-    const optimistic = normalizeSettings({ ...settings.value, ...patch })
+    const snapshot = settings.value
+    const optimistic = normalizeSettings({ ...snapshot, ...patch })
     settings.value = optimistic
     applySettingsToDocument(optimistic)
-    const saved = await window.wanwu.app.updateSettings(optimistic)
-    settings.value = normalizeSettings({ ...saved, ...optimistic })
-    applySettingsToDocument(settings.value)
+    try {
+      await persistSettingsPatch(patch, optimistic)
+    } catch (err) {
+      settings.value = snapshot
+      applySettingsToDocument(snapshot)
+      throw err
+    }
   }
 
   async function patchSetting<K extends keyof AppSettings>(key: K, value: AppSettings[K]) {
@@ -215,9 +247,7 @@ export const useSettingsStore = defineStore('settings', () => {
     settings.value = optimistic
     applySettingsToDocument(optimistic)
     try {
-      const saved = await window.wanwu.app.patchSettings({ [key]: value } as Partial<AppSettings>)
-      settings.value = normalizeSettings({ ...snapshot, ...saved })
-      applySettingsToDocument(settings.value)
+      await persistSettingsPatch({ [key]: value } as Partial<AppSettings>, optimistic)
     } catch (err) {
       settings.value = snapshot
       applySettingsToDocument(snapshot)
@@ -228,13 +258,17 @@ export const useSettingsStore = defineStore('settings', () => {
   async function patchLastActiveModule(moduleId: ModuleId) {
     if (settings.value.lastActiveModule === moduleId) return
     const snapshot = settings.value
-    settings.value = normalizeSettings({ ...snapshot, lastActiveModule: moduleId })
-    const saved = await window.wanwu.app.patchSettings({ lastActiveModule: moduleId })
-    settings.value = normalizeSettings({
-      ...saved,
-      colorScheme: snapshot.colorScheme
-    })
-    applySettingsToDocument(settings.value)
+    const optimistic = normalizeSettings({ ...snapshot, lastActiveModule: moduleId })
+    settings.value = optimistic
+    beginSettingsWrite()
+    try {
+      await window.wanwu.app.patchSettings({ lastActiveModule: moduleId })
+    } catch (err) {
+      settings.value = snapshot
+      throw err
+    } finally {
+      endSettingsWrite()
+    }
   }
 
   function clearLocalPreferences() {
@@ -308,9 +342,7 @@ export const useSettingsStore = defineStore('settings', () => {
     settings.value = optimistic
     applySettingsToDocument(optimistic)
     try {
-      const saved = await window.wanwu.app.patchSettings(patch)
-      settings.value = normalizeSettings({ ...snapshot, ...saved })
-      applySettingsToDocument(settings.value)
+      await persistSettingsPatch(patch, optimistic)
     } catch (err) {
       settings.value = snapshot
       applySettingsToDocument(snapshot)
@@ -357,6 +389,7 @@ export const useSettingsStore = defineStore('settings', () => {
 
   /** 主进程或其它窗口修改设置后同步（含主题） */
   function syncFromRemote(remote: Partial<AppSettings>) {
+    if (settingsWriteDepth > 0) return
     const snapshot = settings.value
     const merged = normalizeSettings({ ...snapshot, ...remote })
     settings.value = merged

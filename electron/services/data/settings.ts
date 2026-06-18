@@ -77,7 +77,7 @@ function normalizeModuleSettings(
 
   if (!base[LEISURE_READ_MODULE_ID] && ('leisureReadJokeLang' in raw || 'leisureReadArticleMode' in raw)) {
     base[LEISURE_READ_MODULE_ID] = {
-      jokeLang: raw.leisureReadJokeLang === 'en' ? 'en' : 'zh',
+      riddleLang: raw.leisureReadJokeLang === 'en' ? 'en' : 'zh',
       articleMode: raw.leisureReadArticleMode === 'today' ? 'today' : 'random'
     }
   }
@@ -129,37 +129,41 @@ function readRssFetchLimit(
   raw: Partial<AppSettings> & Record<string, unknown>,
   moduleSettings: Record<string, Record<string, unknown>>
 ): RssFetchLimit {
+  if ('rssFetchLimit' in raw) return normalizeRssFetchLimit(raw.rssFetchLimit)
   const rss = moduleSettings[RSS_MODULE_ID]
   const fromModule = rss?.fetchLimit ?? rss?.rssFetchLimit
-  return normalizeRssFetchLimit(fromModule ?? raw.rssFetchLimit)
+  return normalizeRssFetchLimit(fromModule)
 }
 
 function readRssAutoRefreshMinutes(
   raw: Partial<AppSettings> & Record<string, unknown>,
   moduleSettings: Record<string, Record<string, unknown>>
 ): RssAutoRefreshMinutes {
+  if ('rssAutoRefreshMinutes' in raw) return normalizeRssAutoRefreshMinutes(raw.rssAutoRefreshMinutes)
   const rss = moduleSettings[RSS_MODULE_ID]
   const fromModule = rss?.autoRefreshMinutes ?? rss?.rssAutoRefreshMinutes
-  return normalizeRssAutoRefreshMinutes(fromModule ?? raw.rssAutoRefreshMinutes)
+  return normalizeRssAutoRefreshMinutes(fromModule)
 }
 
 function readNotesPopoutRestore(
   raw: Partial<AppSettings> & Record<string, unknown>,
   moduleSettings: Record<string, Record<string, unknown>>
 ): NotesPopoutRestoreMode {
+  if ('notesPopoutRestore' in raw) return normalizeNotesPopoutRestore(raw.notesPopoutRestore)
   const notes = moduleSettings[NOTES_MODULE_ID]
   const fromModule = notes?.popoutRestore ?? notes?.notesPopoutRestore
-  return normalizeNotesPopoutRestore(fromModule ?? raw.notesPopoutRestore)
+  return normalizeNotesPopoutRestore(fromModule)
 }
 
 function readNotesSpellcheckEnabled(
   raw: Partial<AppSettings> & Record<string, unknown>,
   moduleSettings: Record<string, Record<string, unknown>>
 ): boolean {
+  if ('notesSpellcheckEnabled' in raw) return raw.notesSpellcheckEnabled === true
   const notes = moduleSettings[NOTES_MODULE_ID]
   if (typeof notes?.spellcheckEnabled === 'boolean') return notes.spellcheckEnabled
   if (typeof notes?.notesSpellcheckEnabled === 'boolean') return notes.notesSpellcheckEnabled
-  return raw.notesSpellcheckEnabled === true
+  return false
 }
 
 function readMusicField<T>(
@@ -168,20 +172,79 @@ function readMusicField<T>(
   raw: Partial<AppSettings>,
   fallback: T
 ): T {
+  if (keys.legacyKey in raw) {
+    const legacy = raw[keys.legacyKey]
+    return (legacy !== undefined ? legacy : fallback) as T
+  }
   const music = moduleSettings[MUSIC_MODULE_ID]
   const fromModule = music?.[keys.moduleKey]
   if (fromModule !== undefined && fromModule !== null) return fromModule as T
-  const legacy = raw[keys.legacyKey]
-  return (legacy !== undefined ? legacy : fallback) as T
+  return fallback
 }
 
 function readDiagramRecentShapes(
   raw: Partial<AppSettings> & Record<string, unknown>,
   moduleSettings: Record<string, Record<string, unknown>>
 ): string[] {
+  if ('diagramRecentShapes' in raw) {
+    return normalizeRecentStringList(raw.diagramRecentShapes, MAX_RECENT_DIAGRAM_SHAPES)
+  }
   const diagrams = moduleSettings[DIAGRAMS_MODULE_ID]
   const fromModule = diagrams?.recentShapes ?? diagrams?.diagramRecentShapes
-  return normalizeRecentStringList(fromModule ?? raw.diagramRecentShapes, MAX_RECENT_DIAGRAM_SHAPES)
+  return normalizeRecentStringList(fromModule, MAX_RECENT_DIAGRAM_SHAPES)
+}
+
+function syncLegacyFieldsToModuleSettings(
+  patch: Partial<AppSettings>,
+  moduleSettings: Record<string, Record<string, unknown>>
+): Record<string, Record<string, unknown>> {
+  const next: Record<string, Record<string, unknown>> = { ...moduleSettings }
+
+  if ('rssFetchLimit' in patch) {
+    next[RSS_MODULE_ID] = { ...next[RSS_MODULE_ID], fetchLimit: patch.rssFetchLimit }
+  }
+  if ('rssAutoRefreshMinutes' in patch) {
+    next[RSS_MODULE_ID] = { ...next[RSS_MODULE_ID], autoRefreshMinutes: patch.rssAutoRefreshMinutes }
+  }
+  if ('notesPopoutRestore' in patch) {
+    next[NOTES_MODULE_ID] = { ...next[NOTES_MODULE_ID], popoutRestore: patch.notesPopoutRestore }
+  }
+  if ('notesSpellcheckEnabled' in patch) {
+    next[NOTES_MODULE_ID] = {
+      ...next[NOTES_MODULE_ID],
+      spellcheckEnabled: patch.notesSpellcheckEnabled
+    }
+  }
+  if ('diagramRecentShapes' in patch) {
+    next[DIAGRAMS_MODULE_ID] = { ...next[DIAGRAMS_MODULE_ID], recentShapes: patch.diagramRecentShapes }
+  }
+
+  const musicFieldMap: Array<{ legacyKey: keyof AppSettings; moduleKey: string }> = [
+    { legacyKey: 'musicApiBaseUrl', moduleKey: 'apiBaseUrl' },
+    { legacyKey: 'musicApiMode', moduleKey: 'apiMode' },
+    { legacyKey: 'musicApiLocalPort', moduleKey: 'apiLocalPort' },
+    { legacyKey: 'musicDiscoverCountry', moduleKey: 'discoverCountry' },
+    { legacyKey: 'musicJamendoClientId', moduleKey: 'jamendoClientId' },
+    { legacyKey: 'musicAudiusApiKey', moduleKey: 'audiusApiKey' },
+    { legacyKey: 'musicPrimarySource', moduleKey: 'primarySource' },
+    { legacyKey: 'musicNeteasePort', moduleKey: 'neteasePort' },
+    { legacyKey: 'musicNeteaseRealIp', moduleKey: 'neteaseRealIp' },
+    { legacyKey: 'musicNeteaseProxy', moduleKey: 'neteaseProxy' },
+    { legacyKey: 'musicNeteaseQuality', moduleKey: 'neteaseQuality' }
+  ]
+  for (const { legacyKey, moduleKey } of musicFieldMap) {
+    if (legacyKey in patch) {
+      next[MUSIC_MODULE_ID] = { ...next[MUSIC_MODULE_ID], [moduleKey]: patch[legacyKey] }
+    }
+  }
+
+  if (patch.moduleSettings) {
+    for (const [moduleId, modulePatch] of Object.entries(patch.moduleSettings)) {
+      next[moduleId] = { ...next[moduleId], ...modulePatch }
+    }
+  }
+
+  return next
 }
 
 export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppSettings {
@@ -277,5 +340,11 @@ export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppS
 }
 
 export function mergeAppSettings(patch: Partial<AppSettings>, current?: AppSettings): AppSettings {
-  return normalizeAppSettings({ ...DEFAULT_APP_SETTINGS, ...current, ...patch })
+  const merged = { ...DEFAULT_APP_SETTINGS, ...current, ...patch } as Partial<AppSettings> &
+    Record<string, unknown>
+  const moduleSettings = syncLegacyFieldsToModuleSettings(
+    patch,
+    normalizeModuleSettings(merged)
+  )
+  return normalizeAppSettings({ ...merged, moduleSettings })
 }

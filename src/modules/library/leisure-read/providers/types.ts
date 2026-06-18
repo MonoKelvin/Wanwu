@@ -3,7 +3,10 @@ import type {
   LeisureReadTabId
 } from '@modules/library/leisure-read/domain/types'
 
-export type FetchFn = (url: string, init?: RequestInit) => Promise<Response>
+export type FetchFn = (
+  url: string,
+  init?: RequestInit & { timeoutMs?: number }
+) => Promise<Response>
 
 export interface IContentProvider {
   readonly id: string

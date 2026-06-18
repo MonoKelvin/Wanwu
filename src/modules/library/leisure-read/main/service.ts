@@ -2,12 +2,13 @@ import type Database from 'better-sqlite3'
 import { readLeisureReadModuleSettings } from '@modules/library/leisure-read/domain/settings'
 import { leisureReadHttpFetch } from '@modules/library/leisure-read/main/httpFetch'
 import { LeisureReadFavoriteStorage } from '@modules/library/leisure-read/main/favoriteStorage'
-import { fetchViaProviderChain } from '@modules/library/leisure-read/providers/providerChain'
+import { fetchViaProviderChain } from '@modules/library/leisure-read/providers/registry'
 import type {
   LeisureReadContent,
   LeisureReadFavorite,
   LeisureReadFavoriteInput,
-  LeisureReadTabId
+  LeisureReadTabId,
+  LeisureReadUpdateArticleSnippetsInput
 } from '@modules/library/leisure-read/domain/types'
 
 interface UserDatabaseHost {
@@ -48,6 +49,12 @@ export class LeisureReadService {
 
   removeFavorite(id: string): boolean {
     return this.favorites.removeFavorite(id)
+  }
+
+  updateArticleSnippetRanges(
+    input: LeisureReadUpdateArticleSnippetsInput
+  ): LeisureReadFavorite | null {
+    return this.favorites.updateArticleSnippetRanges(input)
   }
 
   isFavorite(tab: LeisureReadTabId, contentId: string): boolean {
