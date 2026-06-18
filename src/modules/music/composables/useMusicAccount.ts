@@ -1,7 +1,7 @@
-import { computed, ref, watch } from 'vue'
+﻿import { computed, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'
-import type { MusicPlatformUserProfile } from '@shared/types/music'
+import type { MusicPlatformUserProfile } from '@modules/music/domain/types'
 
 const emptyProfile = (platform: 'netease' | 'kugou' | null): MusicPlatformUserProfile => ({
   platform: platform ?? 'kugou',

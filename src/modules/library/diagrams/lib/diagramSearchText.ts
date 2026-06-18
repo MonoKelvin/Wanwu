@@ -1,5 +1,5 @@
-import { diagramBodyPlainText } from '@modules/library/diagrams/lib/diagramContentText'
-import type { DiagramContent } from '@shared/types/diagrams'
+﻿import { diagramBodyPlainText } from '@modules/library/diagrams/lib/diagramContentText'
+import type { DiagramContent } from '@modules/library/diagrams/domain/types'
 import {
   formatDiagramFileName,
   diagramTitleBase
@@ -9,7 +9,7 @@ import {
   escapePlainText,
   findMatchRange,
   highlightQueryHtml
-} from '@modules/library/notes/lib/noteContentText'
+} from '@shared/lib/searchText'
 
 export { highlightQueryHtml }
 

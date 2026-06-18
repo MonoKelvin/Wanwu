@@ -72,7 +72,7 @@ export const rssAppModule: IAppModule = {
       label: 'RSS',
       icon: 'globe',
       order: 30,
-      loadPanel: () => import('@modules/settings/sections/SettingsRssSection.vue').then((m) => m.default)
+      loadPanel: () => import('@modules/rss/settings/RssSettingsPanel.vue').then((m) => m.default)
     })
   }
 }

@@ -1,4 +1,4 @@
-import type { DiagramContent, DiagramTemplate } from '@shared/types/diagrams'
+﻿import type { DiagramContent, DiagramTemplate } from '@modules/library/diagrams/domain/types'
 import { createBlankDiagramContent } from './blankContent'
 
 const templates: DiagramTemplate[] = [

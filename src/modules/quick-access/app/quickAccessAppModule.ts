@@ -1,8 +1,17 @@
 import type { RouteRecordRaw } from 'vue-router'
 import type { IAppModule } from '@app/modules/types'
+import { registerAppShellOverlay } from '@app/modules/mainAppRegistry'
 
 export const quickAccessAppModule: IAppModule = {
   id: 'wanwu.quick-access',
+
+  registerMainAppIntegration(register) {
+    register(() => {
+      registerAppShellOverlay(() =>
+        import('@modules/quick-access/app/QuickAccessShell.vue').then((m) => m.default)
+      )
+    })
+  },
 
   getRoutes(): RouteRecordRaw[] {
     return [

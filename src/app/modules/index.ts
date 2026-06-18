@@ -30,6 +30,8 @@ export {
 export {
   registerMainAppIntegration,
   registerMainAppStartup,
+  registerAppShellOverlay,
+  getAppShellOverlayLoaders,
   useMainAppIntegrations,
   runMainAppStartupHooks
 } from '@app/modules/mainAppRegistry'
@@ -58,22 +60,27 @@ export {
 
 export {
   registerQuickAccessTargetHandler,
-  getQuickAccessTargetHandler,
   getQuickAccessTargetHandlers,
   dispatchQuickAccessTarget
-} from '@app/modules/quickAccessRegistry'
+} from '@shared/module-bridge/quickAccessRendererBridge'
 
 export {
   registerQuickAccessKind,
   getQuickAccessKindMeta,
-  collectQuickAccessKindOrder
-} from '@app/modules/quickAccessKindRegistry'
+  collectQuickAccessKindOrder,
+  isQuickAccessRendererReady
+} from '@shared/module-bridge/quickAccessRendererBridge'
 
 export {
   registerSettingsSection,
   collectSettingsSections,
   getSettingsSection
 } from '@app/modules/settingsSectionRegistry'
+
+export {
+  registerLibrarySettingsGroup,
+  collectLibrarySettingsGroups
+} from '@app/modules/librarySettingsGroupRegistry'
 
 export {
   registerSubPanelContributor,

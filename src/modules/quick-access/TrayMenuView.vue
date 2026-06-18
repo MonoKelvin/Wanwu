@@ -72,14 +72,13 @@ function runItem(item: WwMenuItem, event: MouseEvent) {
 }
 
 async function runAction(action: TrayMenuAction) {
-  await window.wanwu.quickAccess.trayMenuAction(action)
+  await window.wanwu?.quickAccess?.trayMenuAction(action)
 }
 
 async function refreshMenu() {
-  const [trayStatus, ctx] = await Promise.all([
-    window.wanwu.quickAccess.getTrayStatus(),
-    window.wanwu.quickAccess.getTrayMenuContext()
-  ])
+  const api = window.wanwu?.quickAccess
+  if (!api) return
+  const [trayStatus, ctx] = await Promise.all([api.getTrayStatus(), api.getTrayMenuContext()])
   status.value = trayStatus
   dailyWidgetOpen.value = ctx.dailyWidgetOpen
   menuItems.value = buildMenuItems()
@@ -101,7 +100,7 @@ async function reportLayout() {
   const width = Math.ceil(panel.offsetWidth || rect.width)
   const height = Math.ceil(panel.offsetHeight || rect.height)
   if (width < 1 || height < 1) return
-  await window.wanwu.quickAccess.reportTrayMenuLayout({ width, height })
+  await window.wanwu?.quickAccess?.reportTrayMenuLayout({ width, height })
 }
 
 let stopTrayMenuShow: (() => void) | undefined
@@ -112,7 +111,7 @@ onMounted(async () => {
   const settingsStore = useSettingsStore()
   if (!settingsStore.loaded) await settingsStore.load()
 
-  stopTrayMenuShow = window.wanwu.quickAccess.onTrayMenuShow(() => {
+  stopTrayMenuShow = window.wanwu?.quickAccess?.onTrayMenuShow(() => {
     void refreshMenu()
   })
 

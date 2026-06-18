@@ -1,37 +1,26 @@
-﻿/** 全库顶级大分类（侧栏树第一层） */
-export const LIBRARY_MAJORS = [
-  {
-    id: 'notes',
-    name: '便笺',
-    icon: 'pencil',
-    description: '文本与图片便笺'
-  },
-  {
-    id: 'links',
-    name: '链接',
-    icon: 'link',
-    description: '浏览器收藏与网址'
-  },
-  {
-    id: 'diagrams',
-    name: '流程图',
-    icon: 'layers',
-    description: '本地流程图绘制与整理'
-  },
-  {
-    id: 'illustrated-handbook',
-    name: '图鉴',
-    icon: 'book-open',
-    description: '图鉴条目与分类'
-  }
-] as const
+﻿import { collectLibrarySubmodules } from '@app/modules/moduleRegistryCore'
+import type { LibraryMajorDescriptor, LibraryMajorId } from '@app/modules/libraryMajorTypes'
+import { libraryMajorById as findMajorById } from '@app/modules/libraryMajorTypes'
 
-export type LibraryMajorId = (typeof LIBRARY_MAJORS)[number]['id']
+export type { LibraryMajorDescriptor, LibraryMajorId } from '@app/modules/libraryMajorTypes'
+export { isLibraryMajorId } from '@app/modules/libraryMajorTypes'
 
-export function isLibraryMajorId(value: string): value is LibraryMajorId {
-  return LIBRARY_MAJORS.some((m) => m.id === value)
+/** 全库顶级大分类（由各文库子模块注册，运行时聚合） */
+export function collectLibraryMajors(): LibraryMajorDescriptor[] {
+  return collectLibrarySubmodules()
+    .map((config) => config.major)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 }
 
-export function libraryMajorById(id: string) {
-  return LIBRARY_MAJORS.find((m) => m.id === id)
+/** @deprecated 使用 collectLibraryMajors()；保留兼容旧引用 */
+export function getLibraryMajorsSnapshot(): LibraryMajorDescriptor[] {
+  return collectLibraryMajors()
+}
+
+export function libraryMajorById(id: string): LibraryMajorDescriptor | undefined {
+  return findMajorById(id, collectLibraryMajors())
+}
+
+export function libraryMajorIds(): LibraryMajorId[] {
+  return collectLibraryMajors().map((m) => m.id)
 }

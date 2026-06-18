@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import EmptyState from '@app/components/EmptyState.vue'
@@ -9,7 +9,7 @@ import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useMusicSearch, type MusicSearchFilter } from '@modules/music/composables/useMusicSearch'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
-import type { NormalizedTrack } from '@shared/types/music'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 import '@modules/music/styles/music-shared.css'
 
 const router = useRouter()

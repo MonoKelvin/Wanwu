@@ -1,10 +1,10 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useMinuteClock } from '@shared/composables/useMinuteClock'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
-import type { DiagramFileMeta, DiagramFolder } from '@shared/types/diagrams'
+import type { DiagramFileMeta, DiagramFolder } from '@modules/library/diagrams/domain/types'
 import type { WwMenuItem } from '@shared/types/menu'
 import {
   diagramTitleBase,

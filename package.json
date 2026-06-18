@@ -1,6 +1,6 @@
 {
     "name": "wanwu",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "type": "module",
     "description": "万物 - 事物收集与浏览桌面应用",
     "main": "out/main/index.js",
@@ -12,8 +12,8 @@
     },
     "scripts": {
         "dev": "node scripts/run.mjs dev && node scripts/electron-vite.mjs dev",
-        "build": "node scripts/run.mjs sqlite electron && node scripts/run.mjs library-pack && node scripts/electron-vite.mjs build",
-        "build:app": "node scripts/electron-vite.mjs build && node scripts/run.mjs sqlite electron",
+        "build": "node scripts/run.mjs sqlite electron && node scripts/run.mjs library-pack && node scripts/build-main.mjs",
+        "build:app": "node scripts/build-main.mjs && node scripts/run.mjs sqlite electron",
         "pack": "node scripts/run.mjs pack",
         "logo:ico": "node scripts/generate-app-ico.mjs",
         "check:mechanisms": "node scripts/check-mechanism-boundaries.mjs",

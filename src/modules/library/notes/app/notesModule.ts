@@ -52,6 +52,13 @@ export const notesAppModule: IAppModule = {
   getLibrarySubmodule() {
     return {
       id: 'notes',
+      major: {
+        id: 'notes',
+        name: '便笺',
+        icon: 'pencil',
+        description: '文本与图片便笺',
+        order: 5
+      },
       routeName: LIBRARY_NOTES_ROUTE,
       buildSectionTree() {
         return []
@@ -139,12 +146,11 @@ export const notesAppModule: IAppModule = {
     })
   },
 
-  registerSettingsSection(register) {
+  registerLibrarySettingsGroup(register) {
     register({
-      id: 'library',
-      label: '全库',
-      icon: 'book-open',
-      order: 20,
+      id: 'notes',
+      label: '便笺',
+      order: 10,
       loadPanel: () =>
         import('@modules/library/notes/settings/NotesSettingsPanel.vue').then((m) => m.default)
     })

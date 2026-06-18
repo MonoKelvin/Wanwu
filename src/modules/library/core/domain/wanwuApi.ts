@@ -1,4 +1,4 @@
-import type { Category, Item, LibrarySearchHit } from '@shared/types/item'
+﻿import type { Category, Item, LibrarySearchHit } from '@modules/library/illustrated-handbook/domain/itemTypes'
 
 /** 全库（图鉴条目）IPC 能力块，通过模块 augmentation 合并进 WanwuApi */
 export interface WanwuLibraryApi {

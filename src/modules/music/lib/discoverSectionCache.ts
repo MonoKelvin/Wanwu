@@ -1,4 +1,4 @@
-import type { DiscoverSectionKey } from '@shared/types/music'
+﻿import type { DiscoverSectionKey } from '@modules/music/domain/types'
 
 const CACHE_PREFIX = 'wanwu.music.discover.section.'
 const DEFAULT_TTL_MS = 10 * 60 * 1000

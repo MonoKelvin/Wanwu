@@ -1,6 +1,6 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref } from 'vue'
-import type { MusicChartCard } from '@shared/types/music'
+import type { MusicChartCard } from '@modules/music/domain/types'
 import MusicCover from '@modules/music/components/MusicCover.vue'
 import WwMarqueeText from '@shared/components/WwMarqueeText.vue'
 import { useDragScroll } from '@modules/music/composables/useDragScroll'

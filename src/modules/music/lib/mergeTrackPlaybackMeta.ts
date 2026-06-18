@@ -1,4 +1,4 @@
-import type { MusicTrackBadge, NormalizedTrack } from '@shared/types/music'
+﻿import type { MusicTrackBadge, NormalizedTrack } from '@modules/music/domain/types'
 
 /** 合并试听等播放期元数据到曲目 */
 export function mergeTrackPlaybackMeta(

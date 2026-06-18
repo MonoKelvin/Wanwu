@@ -1,5 +1,5 @@
-import { reactive } from 'vue'
-import type { MusicSearchResult } from '@shared/types/music'
+﻿import { reactive } from 'vue'
+import type { MusicSearchResult } from '@modules/music/domain/types'
 import {
   clearMusicSearchHistory,
   filterMusicSearchHistory,

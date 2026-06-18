@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import type { NormalizedTrack } from '@shared/types/music'
+﻿<script setup lang="ts">
+import type { NormalizedTrack } from '@modules/music/domain/types'
 
 const labels: Record<NormalizedTrack['provider'], string> = {
   netease: '网易云',

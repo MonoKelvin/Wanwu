@@ -1,6 +1,7 @@
 ﻿import { mkdirSync } from 'fs'
 import { join } from 'path'
-import { ensureWanwuDataLayout, getWanwuPathLayout, type WanwuPathLayout } from '../data/paths'
+import { ensureWanwuDataLayout, getWanwuPathLayout } from '../data/paths'
+import type { WanwuPathLayout } from '@shared/lib/wanwuPaths'
 
 export class MediaService {
   readonly layout: WanwuPathLayout

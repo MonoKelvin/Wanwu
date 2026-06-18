@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   DiagramContent,
   DiagramExportWfgResult,
   DiagramImportWfgResult,
@@ -8,7 +8,7 @@ import type {
   DiagramFolder,
   DiagramWritePatch,
   WriteResult
-} from '@shared/types/diagrams'
+} from '@modules/library/diagrams/domain/types'
 
 export interface IDiagramRepositoryPort {
   listFolders(): Promise<DiagramFolder[]>
@@ -28,7 +28,7 @@ export interface IDiagramRepositoryPort {
     sourcePath: string,
     content: DiagramContent
   ): Promise<DiagramFileRecord | null>
-  importDrawio(): Promise<import('@shared/types/diagrams').DiagramImportDrawioResult>
+  importDrawio(): Promise<import('@modules/library/diagrams/domain/types').DiagramImportDrawioResult>
   exportWfg(input: {
     fileId?: string | null
     content?: DiagramContent

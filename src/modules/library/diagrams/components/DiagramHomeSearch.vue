@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
 import { useMinuteClock } from '@shared/composables/useMinuteClock'
 import IconField from 'primevue/iconfield'
@@ -6,7 +6,7 @@ import InputText from 'primevue/inputtext'
 import WwInputIcon from '@shared/components/WwInputIcon.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
-import type { DiagramSearchHit } from '@shared/types/diagrams'
+import type { DiagramSearchHit } from '@modules/library/diagrams/domain/types'
 import { prepareDiagramSearchDisplay } from '@modules/library/diagrams/lib/diagramSearchText'
 import { formatFileSize, formatRelativeTime } from '@modules/library/diagrams/lib/diagramHomeUtils'
 

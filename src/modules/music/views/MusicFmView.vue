@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicTrackRow from '@modules/music/components/MusicTrackRow.vue'
@@ -10,7 +10,7 @@ import { useMusicAccount } from '@modules/music/composables/useMusicAccount'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import { useMusicPlatformRecStore } from '@modules/music/stores/musicPlatformRec'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
-import type { NormalizedTrack } from '@shared/types/music'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 import '@modules/music/styles/music-shared.css'
 
 defineOptions({ name: 'MusicFmView' })

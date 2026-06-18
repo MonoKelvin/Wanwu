@@ -1,10 +1,10 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onActivated, onDeactivated, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import MusicAlbumHero from '@modules/music/components/MusicAlbumHero.vue'
 import MusicInlineMvPlayer from '@modules/music/components/MusicInlineMvPlayer.vue'
 import { useMusicMvPlayback } from '@modules/music/composables/useMusicMvPlayback'
-import type { MusicMvDetail } from '@shared/types/music'
+import type { MusicMvDetail } from '@modules/music/domain/types'
 import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import '@modules/music/styles/music-shared.css'
 

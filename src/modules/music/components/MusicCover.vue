@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import MusicGlassPlayButton from '@modules/music/player/components/MusicGlassPlayButton.vue'
@@ -7,7 +7,7 @@ import {
   upgradeCoverUrl,
   type CoverSize
 } from '@shared/utils/musicCoverUrl'
-import type { NormalizedTrack } from '@shared/types/music'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 
 const props = withDefaults(
   defineProps<{

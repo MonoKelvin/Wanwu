@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
@@ -6,7 +6,7 @@ import MusicChartList from '@modules/music/components/MusicChartList.vue'
 import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useAsyncTask } from '@modules/music/composables/useAsyncTask'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
-import type { NormalizedTrack } from '@shared/types/music'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 import '@modules/music/styles/music-shared.css'
 
 defineOptions({ name: 'MusicRadioTracksView' })

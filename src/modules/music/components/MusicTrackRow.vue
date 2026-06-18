@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import type { NormalizedTrack } from '@shared/types/music'
+﻿<script setup lang="ts">
+import type { NormalizedTrack } from '@modules/music/domain/types'
 import MusicCover from '@modules/music/components/MusicCover.vue'
 import MusicPlayingBars from '@modules/music/components/MusicPlayingBars.vue'
 import MusicProviderBadge from '@modules/music/components/MusicProviderBadge.vue'

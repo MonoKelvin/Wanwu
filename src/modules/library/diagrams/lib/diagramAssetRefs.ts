@@ -1,4 +1,4 @@
-import type { DiagramGraphData } from '@shared/types/diagrams'
+﻿import type { DiagramGraphData } from '@modules/library/diagrams/domain/types'
 
 export function buildDiagramAssetRelPath(fileId: string, assetId: string, ext: string): string {
   return `diagrams/${fileId}/assets/${assetId}.${ext}`

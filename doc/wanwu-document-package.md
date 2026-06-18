@@ -72,15 +72,13 @@ assets/                # 图片、图标等二进制
 
 ## 代码位置
 
-- 共享类型：`src/shared/documentPackage/`
-- Electron 实现：`electron/services/documentPackage/`
-- 流程图适配：`electron/services/diagrams/wfgDiagramDocument.ts`
+- 共享类型与接口：`src/shared/documentPackage/`
+- Node 实现（通用类、目录/ZIP 存储）：`src/shared/documentPackage/node/`
+- 流程图适配：`src/modules/library/diagrams/main/service/wfgDiagramDocument.ts`
 
 ## 自测
 
-```bash
-npx tsx electron/services/documentPackage/verifyDocumentPackage.ts
-```
+验证脚本待统一补充（见后续 `scripts/verify-*`）。
 
 ## 迁移
 

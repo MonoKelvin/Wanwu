@@ -1,4 +1,4 @@
-import type { DiagramContent } from '@shared/types/diagrams'
+﻿import type { DiagramContent } from '@modules/library/diagrams/domain/types'
 
 export function createBlankDiagramContent(title = '未命名流程图'): DiagramContent {
   return {

@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import type { MusicMoodCategory } from '@shared/types/music'
+﻿<script setup lang="ts">
+import type { MusicMoodCategory } from '@modules/music/domain/types'
 import MusicCover from '@modules/music/components/MusicCover.vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 

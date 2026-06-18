@@ -1,6 +1,6 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
-import type { DiagramPage } from '@shared/types/diagrams'
+import type { DiagramPage } from '@modules/library/diagrams/domain/types'
 import InputText from 'primevue/inputtext'
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'

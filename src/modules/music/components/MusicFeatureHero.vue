@@ -1,7 +1,7 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
 import MusicCover from '@modules/music/components/MusicCover.vue'
-import type { NormalizedTrack } from '@shared/types/music'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 
 const props = defineProps<{
   title: string

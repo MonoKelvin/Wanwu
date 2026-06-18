@@ -1,6 +1,6 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import { onScopeDispose, ref } from 'vue'
-import type { DiscoverSectionKey, MusicChartCard, NormalizedTrack } from '@shared/types/music'
+import type { DiscoverSectionKey, MusicChartCard, NormalizedTrack } from '@modules/music/domain/types'
 import {
   clearDiscoverSectionCache,
   readDiscoverSectionCache,

@@ -1,4 +1,4 @@
-import type { DiagramContent, DiagramGraphData } from '@shared/types/diagrams'
+﻿import type { DiagramContent, DiagramGraphData } from '@modules/library/diagrams/domain/types'
 
 export interface ExtractedInlineAsset {
   assetId: string

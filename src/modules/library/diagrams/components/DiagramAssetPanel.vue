@@ -29,7 +29,7 @@ const CATEGORY_ICONS: Record<string, string> = {
   flowchart: 'rows',
   polygon: 'star',
   uml: 'box',
-  architecture: 'cloud-abode',
+  architecture: 'layers',
   bpmn: 'layers',
   annotation: 'message-circle'
 }

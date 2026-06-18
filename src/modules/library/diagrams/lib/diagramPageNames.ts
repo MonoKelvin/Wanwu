@@ -1,4 +1,4 @@
-import type { DiagramPage } from '@shared/types/diagrams'
+﻿import type { DiagramPage } from '@modules/library/diagrams/domain/types'
 
 export function normalizePageName(name: string): string {
   return name.trim()

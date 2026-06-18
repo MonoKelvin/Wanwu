@@ -1,6 +1,6 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, inject, ref, watch } from 'vue'
-import type { NormalizedTrack } from '@shared/types/music'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 import MusicTrackRow from '@modules/music/components/MusicTrackRow.vue'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import { musicScrollBodyKey } from '@modules/music/lib/musicScrollBodyKey'

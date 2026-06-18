@@ -9,7 +9,6 @@ function defaultModulePaths(): Record<ModuleId, string> {
     library: modulePathById('library'),
     rss: modulePathById('rss'),
     music: modulePathById('music'),
-    'cloud-abode': modulePathById('cloud-abode'),
     personal: modulePathById('personal'),
     settings: modulePathById('settings')
   }

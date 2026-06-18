@@ -1,7 +1,7 @@
-import { computed } from 'vue'
+﻿import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'
-import type { MusicPlatformId } from '@shared/types/music'
+import type { MusicPlatformId } from '@modules/music/domain/types'
 
 export function parseBrowseId(
   browseId: string

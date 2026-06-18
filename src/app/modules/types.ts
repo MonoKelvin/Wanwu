@@ -5,9 +5,10 @@ import type { BootMode } from '@app/bootstrap/bootMode'
 import type { AppSettings } from '@shared/types/settings'
 import type { ModuleId } from '@shared/constants/modules'
 import type { LibrarySubmoduleConfig } from '@app/modules/librarySubmoduleTypes'
-import type { IQuickAccessTargetHandler } from '@app/modules/quickAccessRegistry'
+import type { IQuickAccessTargetHandler } from '@shared/module-bridge/quickAccessRendererBridge'
 import type { IPathMemoryContributor } from '@app/modules/pathMemoryRegistry'
 import type { ISettingsSectionContributor } from '@app/modules/settingsSectionRegistry'
+import type { ILibrarySettingsGroupContributor } from '@app/modules/librarySettingsGroupRegistry'
 import type { IShellChromeContributor } from '@app/modules/shellChromeRegistry'
 import type { IShellThemeContributor } from '@app/modules/shellThemeRegistry'
 import type { ISubPanelContributor } from '@app/modules/subPanelRegistry'
@@ -79,6 +80,9 @@ export interface IAppModule {
   registerMainAppStartup?(register: (hook: (ctx: MainAppStartupContext) => void) => void): void
   registerQuickAccess?(register: (handler: IQuickAccessTargetHandler) => void): void
   registerSettingsSection?(register: (contributor: ISettingsSectionContributor) => void): void
+  registerLibrarySettingsGroup?(
+    register: (contributor: ILibrarySettingsGroupContributor) => void
+  ): void
   registerSubPanel?(register: (contributor: ISubPanelContributor) => void): void
   registerShellChrome?(register: (contributor: IShellChromeContributor) => void): void
   registerShellTheme?(register: (contributor: IShellThemeContributor) => void): void

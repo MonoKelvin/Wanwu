@@ -1,4 +1,4 @@
-import type { NormalizedTrack } from '@shared/types/music'
+﻿import type { NormalizedTrack } from '@modules/music/domain/types'
 
 /** 平台评论 API 使用的歌曲 ID */
 export function resolveCommentSongId(track: NormalizedTrack | null | undefined): string {

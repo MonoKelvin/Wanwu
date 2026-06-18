@@ -14,7 +14,7 @@
   <img src="screenshots/light.png" alt="万物主界面" width="720" />
 </p>
 
-**当前版本：v1.2.4**
+**当前版本：v1.2.5**
 
 ---
 
@@ -55,8 +55,6 @@
 | **链接** | 浏览器书签与网址收藏 | 文件夹分组、导入、打开与探测 |
 | **流程图** | LogicFlow 矢量画布，命令化编辑与撤销栈 | 绘图、多页文档、表格/UML 等扩展图元、导出 PNG/SVG |
 | **图鉴** | 内置多主题条目（猫狗、植物、电影等） | 搜索、看图与文字介绍、规格参数、收藏 |
-
-> **云斋**（三维展车）模块代码在仓库中，当前默认不对用户开放；可在 `src/shared/constants/modules.ts` 将 `CLOUD_ABODE_ENABLED` 设为 `true` 后自行体验。
 
 ### 界面预览
 
@@ -170,11 +168,10 @@ npm run dev
 | `src/modules/library/illustrated-handbook` | 图鉴浏览 |
 | `src/modules/rss` | 订阅与阅读 |
 | `src/modules/music` | 音乐发现与播放 |
-| `src/modules/cloud-abode` | 云斋（展车、车型配置，默认关闭） |
 | `src/modules/personal`、`settings` | 个人与设置 |
 | `src/shared/` | 通用组件、stores、工具与常量 |
 | `src/renderer/` | 通用 WebGL / Three.js 渲染 |
-| `assets/` | 图鉴种子与媒体、云斋 3D 资源、应用图标等 |
+| `assets/` | 图鉴种子与媒体、应用图标等 |
 
 流程图模块的设计细节见 [doc/design/flowchart-v1.2-requirements.md](doc/design/flowchart-v1.2-requirements.md) 与 [doc/design/transaction-command-architecture.md](doc/design/transaction-command-architecture.md)。
 

@@ -1,6 +1,6 @@
-import { readDgShapeFromProperties } from '@modules/library/diagrams/domain/shape-extension/diagramShapePayload'
+﻿import { readDgShapeFromProperties } from '@modules/library/diagrams/domain/shape-extension/diagramShapePayload'
 import { serializeDiagramShapeEnvelopeText } from '@modules/library/diagrams/lib/diagramShapeTextCodecs'
-import type { DiagramContent } from '@shared/types/diagrams'
+import type { DiagramContent } from '@modules/library/diagrams/domain/types'
 
 function nodeTextValue(text: unknown): string {
   if (typeof text === 'string') return text.trim()

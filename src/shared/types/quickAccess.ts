@@ -1,6 +1,16 @@
 /** 全局唤起器 / 托盘 / 剪贴板联想 共用 */
 
-export type QuickAccessHitKind = 'library' | 'note' | 'link' | 'rss' | 'music' | 'favorite' | 'diagram'
+/** 核心 kind；插件模块可注册任意 string kind */
+export type CoreQuickAccessHitKind =
+  | 'library'
+  | 'note'
+  | 'link'
+  | 'rss'
+  | 'music'
+  | 'favorite'
+  | 'diagram'
+
+export type QuickAccessHitKind = CoreQuickAccessHitKind | (string & {})
 
 export interface QuickAccessHit {
   kind: QuickAccessHitKind
@@ -20,6 +30,8 @@ export interface QuickAccessHit {
   musicProvider?: string
   musicTrackKey?: string
   musicPayloadJson?: string
+  /** 插件模块扩展字段（如闲读 tab、favoriteId） */
+  payload?: Record<string, unknown>
 }
 
 export interface DailyPickPreview {
@@ -52,6 +64,7 @@ export interface QuickAccessOpenTarget {
   musicProvider?: string
   musicTrackKey?: string
   musicPayloadJson?: string
+  payload?: Record<string, unknown>
 }
 
 export interface ClipboardAssistPayload {

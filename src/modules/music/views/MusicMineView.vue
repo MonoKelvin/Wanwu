@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onActivated, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import WwIcon from '@shared/components/WwIcon.vue'
@@ -14,7 +14,7 @@ import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useMusicAccount } from '@modules/music/composables/useMusicAccount'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
-import type { MusicPlatformSubscribedItem, NormalizedTrack } from '@shared/types/music'
+import type { MusicPlatformSubscribedItem, NormalizedTrack } from '@modules/music/domain/types'
 import '@modules/music/styles/music-shared.css'
 import '@modules/music/styles/music-mine.css'
 

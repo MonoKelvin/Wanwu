@@ -1,8 +1,8 @@
-import { diagramTitleBase } from '@modules/library/diagrams/lib/diagramHomeUtils'
+﻿import { diagramTitleBase } from '@modules/library/diagrams/lib/diagramHomeUtils'
 import { useDiagramCatalogCommands } from '@modules/library/diagrams/composables/useDiagramCatalogCommands'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
-import type { DiagramFileMeta, DiagramFileRecord } from '@shared/types/diagrams'
+import type { DiagramFileMeta, DiagramFileRecord } from '@modules/library/diagrams/domain/types'
 
 export function useDiagramCatalogFileActions(options?: {
   afterMutate?: () => void | Promise<void>

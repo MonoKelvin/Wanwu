@@ -2,12 +2,12 @@ import { app, BrowserWindow } from 'electron'
 import type { AppServices } from '../../ipc/types'
 import { setMainWindow } from '../../windowState'
 import { shutdownDataServices } from '../data/shutdown'
-import { closeAllNotePopoutsForAppExit } from '../notes/noteWindowManager'
 import {
   disposeQuickAccess,
   isAppQuitting,
-  markAppQuitting
-} from '../quickAccess/quickAccessManager'
+  markAppQuitting,
+  closeAllNotePopoutsForAppExit
+} from '../../app/frameworkLifecycleBridge'
 
 let servicesRef: AppServices | null = null
 

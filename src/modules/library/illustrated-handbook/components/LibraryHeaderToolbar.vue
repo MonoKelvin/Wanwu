@@ -10,7 +10,7 @@ import WwViewModeToggle, { type WwViewMode } from '@shared/components/WwViewMode
 import WwInputIcon from '@shared/components/WwInputIcon.vue'
 import type { WwIconName } from '@shared/icons/registry'
 import type { WwMenuItem } from '@shared/types/menu'
-import type { Item } from '@shared/types/item'
+import type { Item } from '@modules/library/illustrated-handbook/domain/itemTypes'
 
 export type LibraryViewMode = WwViewMode
 export type LibrarySortField = 'updatedAt' | 'createdAt' | 'name'

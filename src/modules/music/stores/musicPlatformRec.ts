@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
-import type { NormalizedTrack } from '@shared/types/music'
+﻿import { defineStore } from 'pinia'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 
 function todayKey(): string {
   return new Date().toISOString().slice(0, 10)

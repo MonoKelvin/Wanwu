@@ -1,10 +1,10 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
 import MusicMoodGrid from '@modules/music/components/MusicMoodGrid.vue'
 import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
-import type { MusicMoodCategory } from '@shared/types/music'
+import type { MusicMoodCategory } from '@modules/music/domain/types'
 import '@modules/music/styles/music-shared.css'
 
 defineOptions({ name: 'MusicCategoriesView' })

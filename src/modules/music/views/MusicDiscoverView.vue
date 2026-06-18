@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onActivated, onDeactivated, onBeforeUnmount, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
@@ -20,7 +20,7 @@ import {
   readMusicViewCache,
   writeMusicViewCache
 } from '@modules/music/lib/musicViewCache'
-import type { MusicChartCard, MusicChartSection, NormalizedTrack } from '@shared/types/music'
+import type { MusicChartCard, MusicChartSection, NormalizedTrack } from '@modules/music/domain/types'
 import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import '@modules/music/styles/music-shared.css'
 

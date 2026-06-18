@@ -1,4 +1,5 @@
 import type { RouteLocationRaw, RouteRecordRaw } from 'vue-router'
+import { watch } from 'vue'
 import type { IAppModule } from '@app/modules/types'
 import { ROUTE_OUTLET_SHELL } from '@app/router/outletPlaceholder'
 import { diagramsCommandContributor } from '@modules/library/diagrams/app/command/DiagramCommandContributor'
@@ -7,6 +8,7 @@ import {
   LIBRARY_DIAGRAMS_EDITOR_ROUTE
 } from '@modules/library/diagrams/domain/diagramRoutes'
 import { buildDiagramCatalogTree } from '@modules/library/diagrams/lib/diagramCatalogTree'
+import { useDiagramsStore } from '@modules/library/diagrams/services/diagramsStore'
 
 export const diagramsAppModule: IAppModule = {
   id: 'wanwu.library.diagrams',
@@ -56,13 +58,31 @@ export const diagramsAppModule: IAppModule = {
   getLibrarySubmodule() {
     return {
       id: 'diagrams',
-      routeName: 'library-diagrams-home',
-      buildSectionTree(ctx) {
-        return buildDiagramCatalogTree(ctx.diagramsStore.folders)
+      major: {
+        id: 'diagrams',
+        name: '流程图',
+        icon: 'layers',
+        description: '流程图与思维导图',
+        order: 20
       },
-      async ensureLoaded(ctx) {
-        await ctx.diagramsStore.loadFolders()
-        await ctx.diagramsStore.refreshRecycleCount()
+      routeName: 'library-diagrams-home',
+      buildSectionTree() {
+        return buildDiagramCatalogTree(useDiagramsStore().folders)
+      },
+      async ensureLoaded() {
+        const store = useDiagramsStore()
+        await store.loadFolders()
+        await store.refreshRecycleCount()
+      },
+      watchCatalogRefresh(onRefresh) {
+        const store = useDiagramsStore()
+        return watch(
+          () =>
+            store.folders
+              .map((f) => `${f.id}:${f.name}:${f.sortOrder}:${f.deletedAt ?? ''}`)
+              .join('|'),
+          () => onRefresh()
+        )
       }
     }
   },

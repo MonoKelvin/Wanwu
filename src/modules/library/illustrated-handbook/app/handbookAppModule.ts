@@ -1,4 +1,6 @@
 import type { RouteLocationRaw, RouteRecordRaw } from 'vue-router'
+import type { Component } from 'vue'
+import { watch } from 'vue'
 import type { IAppModule } from '@app/modules/types'
 import {
   handbookCatalogFromCategories,
@@ -6,11 +8,27 @@ import {
 } from '@modules/library/core/composables/libraryCategoryTree'
 import { isLibraryMajorId } from '@modules/library/core/config/majors'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
+import { useIllustratedHandbookStore } from '@modules/library/illustrated-handbook/services/illustratedHandbookStore'
 
 const HANDBOOK_HOME_ROUTE = 'library-illustrated-handbook'
 
 export const handbookAppModule: IAppModule = {
   id: 'wanwu.library.illustrated-handbook',
+
+  loadItemDetailView(): Promise<Component> {
+    return import('@modules/library/illustrated-handbook/item/ItemDetailView.vue').then((m) => m.default)
+  },
+
+  getRoutes(): RouteRecordRaw[] {
+    return [
+      {
+        path: '/item/:source/:id',
+        name: 'item-detail',
+        component: () => import('@modules/library/illustrated-handbook/item/ItemDetailView.vue'),
+        meta: { fullscreen: true }
+      }
+    ]
+  },
 
   getLibraryChildRoutes(): RouteRecordRaw[] {
     return [
@@ -27,15 +45,27 @@ export const handbookAppModule: IAppModule = {
   getLibrarySubmodule() {
     return {
       id: 'illustrated-handbook',
+      major: {
+        id: 'illustrated-handbook',
+        name: '图鉴',
+        icon: 'book-open',
+        description: '图鉴条目与分类',
+        order: 30
+      },
       routeName: 'library-illustrated-handbook',
-      buildSectionTree(ctx) {
+      buildSectionTree() {
+        const store = useIllustratedHandbookStore()
         return sectionTreeForMajor('illustrated-handbook', {
-          handbookCategories: handbookCatalogFromCategories(ctx.handbookStore.categories),
+          handbookCategories: handbookCatalogFromCategories(store.categories),
           linkSourceRoots: []
         })
       },
-      async ensureLoaded(ctx) {
-        await ctx.handbookStore.loadCategories()
+      async ensureLoaded() {
+        await useIllustratedHandbookStore().loadCategories()
+      },
+      watchCatalogRefresh(onRefresh) {
+        const store = useIllustratedHandbookStore()
+        return watch(() => store.categories, () => onRefresh(), { deep: true })
       }
     }
   },

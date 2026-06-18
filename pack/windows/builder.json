@@ -22,8 +22,7 @@
   ],
   "afterPack": "pack/windows/pack-lib.mjs",
   "extraResources": [
-    { "from": "assets/logo", "to": "assets/logo" },
-    { "from": "assets/cloud-abode/video", "to": "assets/cloud-abode/video" }
+    { "from": "assets/logo", "to": "assets/logo" }
   ],
   "forceCodeSigning": false,
   "win": {

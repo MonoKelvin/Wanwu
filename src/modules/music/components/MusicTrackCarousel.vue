@@ -1,6 +1,6 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref } from 'vue'
-import type { NormalizedTrack } from '@shared/types/music'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 import MusicCover from '@modules/music/components/MusicCover.vue'
 import MusicTrackBadges from '@modules/music/components/MusicTrackBadges.vue'
 import WwMarqueeText from '@shared/components/WwMarqueeText.vue'

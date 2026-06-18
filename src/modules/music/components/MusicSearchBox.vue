@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import IconField from 'primevue/iconfield'
 import InputText from 'primevue/inputtext'
@@ -6,7 +6,7 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import WwInputIcon from '@shared/components/WwInputIcon.vue'
 import { useMusicSearch } from '@modules/music/composables/useMusicSearch'
 import { useMusicPlatform } from '@modules/music/composables/useMusicPlatform'
-import type { MusicHotSearchEntry } from '@shared/types/music'
+import type { MusicHotSearchEntry } from '@modules/music/domain/types'
 
 const wrapRef = ref<HTMLElement | null>(null)
 const inputRef = ref<InstanceType<typeof InputText> | null>(null)

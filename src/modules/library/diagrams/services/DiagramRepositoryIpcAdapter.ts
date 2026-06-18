@@ -1,5 +1,5 @@
-import type { IDiagramRepositoryPort } from '@modules/library/diagrams/interfaces/IDiagramRepositoryPort'
-import type { DiagramContent, DiagramWritePatch } from '@shared/types/diagrams'
+﻿import type { IDiagramRepositoryPort } from '@modules/library/diagrams/interfaces/IDiagramRepositoryPort'
+import type { DiagramContent, DiagramWritePatch } from '@modules/library/diagrams/domain/types'
 import { cloneForIpc } from '@shared/lib/cloneForIpc'
 
 export class DiagramRepositoryIpcAdapter implements IDiagramRepositoryPort {

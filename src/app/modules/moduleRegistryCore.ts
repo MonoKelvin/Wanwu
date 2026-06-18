@@ -16,9 +16,9 @@ import { registerMainAppIntegration, registerMainAppStartup } from '@app/modules
 import { registerNavigationContributor } from '@app/modules/navigationRegistry'
 import { registerModuleNav } from '@app/modules/moduleNavRegistry'
 import { registerPathMemoryContributor } from '@app/modules/pathMemoryRegistry'
-import { registerQuickAccessKind } from '@app/modules/quickAccessKindRegistry'
-import { registerQuickAccessTargetHandler } from '@app/modules/quickAccessRegistry'
+import { registerQuickAccessKind, registerQuickAccessTargetHandler } from '@shared/module-bridge/quickAccessRendererBridge'
 import { registerSettingsSection } from '@app/modules/settingsSectionRegistry'
+import { registerLibrarySettingsGroup } from '@app/modules/librarySettingsGroupRegistry'
 import { registerShellChromeContributor } from '@app/modules/shellChromeRegistry'
 import { registerShellOutletContributor } from '@app/modules/shellOutletRegistry'
 import { registerShellThemeContributor } from '@app/modules/shellThemeRegistry'
@@ -61,6 +61,7 @@ function wireModule(module: IAppModule): void {
     registerQuickAccessTargetHandler(handler)
   })
   module.registerSettingsSection?.(registerSettingsSection)
+  module.registerLibrarySettingsGroup?.(registerLibrarySettingsGroup)
   module.registerSubPanel?.(registerSubPanelContributor)
   module.registerShellChrome?.(registerShellChromeContributor)
   module.registerShellTheme?.(registerShellThemeContributor)

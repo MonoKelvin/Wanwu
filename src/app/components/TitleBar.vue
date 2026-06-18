@@ -6,8 +6,10 @@ const isMaximized = ref(false)
 let unsubscribe: (() => void) | undefined
 
 onMounted(async () => {
-  isMaximized.value = await window.wanwu.window.isMaximized()
-  unsubscribe = window.wanwu.window.onMaximizedChange((maximized) => {
+  const winApi = window.wanwu?.window
+  if (!winApi) return
+  isMaximized.value = await winApi.isMaximized()
+  unsubscribe = winApi.onMaximizedChange((maximized) => {
     isMaximized.value = maximized
   })
 })
@@ -17,15 +19,15 @@ onUnmounted(() => {
 })
 
 async function minimize() {
-  await window.wanwu.window.minimize()
+  await window.wanwu?.window?.minimize()
 }
 
 async function toggleMaximize() {
-  isMaximized.value = await window.wanwu.window.toggleMaximize()
+  isMaximized.value = (await window.wanwu?.window?.toggleMaximize()) ?? isMaximized.value
 }
 
 async function closeWin() {
-  await window.wanwu.window.close()
+  await window.wanwu?.window?.close()
 }
 </script>
 

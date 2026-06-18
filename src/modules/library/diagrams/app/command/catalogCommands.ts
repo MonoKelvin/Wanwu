@@ -1,4 +1,4 @@
-import { DiagramAppCommandBase } from '@modules/library/diagrams/app/command/DiagramAppCommand'
+﻿import { DiagramAppCommandBase } from '@modules/library/diagrams/app/command/DiagramAppCommand'
 import type { DiagramCommandRegistry } from '@modules/library/diagrams/app/command/DiagramCommandRegistry'
 import type { DiagramCommandExecutionContext } from '@modules/library/diagrams/app/command/DiagramAppCommand'
 import { diagramError } from '@modules/library/diagrams/app/diagramCommandErrors'
@@ -20,7 +20,7 @@ import type {
   DiagramCatalogFolderRenameParams,
   DiagramCatalogFolderReorderParams
 } from '@modules/library/diagrams/app/command/domain/payloads'
-import type { DiagramContent } from '@shared/types/diagrams'
+import type { DiagramContent } from '@modules/library/diagrams/domain/types'
 
 class CatalogFileListCommand extends DiagramAppCommandBase {
   readonly id = DiagramCmd.Catalog.File.List

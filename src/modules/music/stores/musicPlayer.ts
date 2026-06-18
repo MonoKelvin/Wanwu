@@ -1,11 +1,11 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import type {
   MusicPlayMode,
   MusicPlayerLayoutMode,
   NormalizedTrack
-} from '@shared/types/music'
-import { plainTrack } from '@shared/utils/plainTrack'
+} from '@modules/music/domain/types'
+import { plainTrack } from '@modules/music/lib/plainTrack'
 import { useMusicPlayer } from '@modules/music/composables/useMusicPlayer'
 import {
   clearMusicPlaybackSnapshot,

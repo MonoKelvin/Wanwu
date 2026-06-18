@@ -1,7 +1,7 @@
-function newId(prefix: string): string {
+﻿function newId(prefix: string): string {
   return `${prefix}-${crypto.randomUUID()}`
 }
-import type { DiagramContent, DiagramFileMeta, DiagramPage } from '@shared/types/diagrams'
+import type { DiagramContent, DiagramFileMeta, DiagramPage } from '@modules/library/diagrams/domain/types'
 import type { IDiagramEditorPort } from '@modules/library/diagrams/interfaces/IDiagramEditorPort'
 import type { IDiagramRepositoryPort } from '@modules/library/diagrams/interfaces/IDiagramRepositoryPort'
 import { createBlankDiagramContent } from '@modules/library/diagrams/lib/blankContent'

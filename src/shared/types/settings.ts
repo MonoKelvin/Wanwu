@@ -80,6 +80,8 @@ export interface AppSettings {
   recentColors: string[]
   /** 流程图最近使用的图元 id */
   diagramRecentShapes: string[]
+  /** 各业务模块独立设置（按 module id 索引） */
+  moduleSettings: Record<string, Record<string, unknown>>
 }
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -111,7 +113,8 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   musicNeteaseQuality: 'standard',
   recentFonts: [],
   recentColors: [],
-  diagramRecentShapes: []
+  diagramRecentShapes: [],
+  moduleSettings: {}
 }
 
 export const COLOR_SCHEME_OPTIONS: Array<{ label: string; value: ColorScheme }> = [

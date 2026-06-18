@@ -1,74 +1,57 @@
-﻿import { computed, reactive, watch, type Ref } from 'vue'
+﻿import { computed, onScopeDispose, reactive, watch, type Ref } from 'vue'
 import type { TreeNode } from 'primevue/treenode'
 import { isLibraryMajorId, type LibraryMajorId } from '@modules/library/core/config/majors'
 import { filterTreeNodes } from '@shared/lib/filterTreeNodes'
 import { composeLibraryTree } from '@modules/library/core/composables/libraryCategoryTree'
-import {
-  libraryMajorIds,
-  librarySubmoduleById,
-  type LibrarySubmoduleContext
-} from '@modules/library/core/registry/libraryModules'
-import { filterLinksSourceTreeNodes } from '@modules/library/links/lib/linksSearch'
-import type { useIllustratedHandbookStore } from '@modules/library/illustrated-handbook/services/illustratedHandbookStore'
-import type { useLinksStore } from '@modules/library/links/services/linksStore'
-import type { useDiagramsStore } from '@modules/library/diagrams/services/diagramsStore'
-
-type HandbookStore = ReturnType<typeof useIllustratedHandbookStore>
-type LinksStore = ReturnType<typeof useLinksStore>
-type DiagramsStore = ReturnType<typeof useDiagramsStore>
+import { libraryMajorIds, librarySubmoduleById } from '@modules/library/core/registry/libraryModules'
 
 const MAJOR_IDS: LibraryMajorId[] = libraryMajorIds()
 
-function emptyMajorState() {
-  return {
-    notes: false,
-    'illustrated-handbook': false,
-    links: false,
-    diagrams: false
-  } as Record<LibraryMajorId, boolean>
+function emptyMajorState(): Record<LibraryMajorId, boolean> {
+  return Object.fromEntries(MAJOR_IDS.map((id) => [id, false])) as Record<
+    LibraryMajorId,
+    boolean
+  >
 }
 
-/** 全库侧栏：各大分类独立子树 + 异步加载章节数据 */
-export function useLibraryCatalogTrees(options: {
-  categorySearch: Ref<string>
-  handbookStore: HandbookStore
-  linksStore: LinksStore
-  diagramsStore: DiagramsStore
-}) {
-  const sectionByMajor = reactive<Record<LibraryMajorId, TreeNode[]>>({
-    notes: [],
-    'illustrated-handbook': [],
-    links: [],
-    diagrams: []
-  })
+function emptyMajorTreeState(): Record<LibraryMajorId, TreeNode[]> {
+  return Object.fromEntries(MAJOR_IDS.map((id) => [id, [] as TreeNode[]])) as Record<
+    LibraryMajorId,
+    TreeNode[]
+  >
+}
+
+/** 全库侧栏：各大分类独立子树 + 异步加载章节数据（不依赖具体子模块 store 类型） */
+export function useLibraryCatalogTrees(options: { categorySearch: Ref<string> }) {
+  const sectionByMajor = reactive(emptyMajorTreeState())
   const loadingMajor = reactive(emptyMajorState())
   const loadedMajor = reactive(emptyMajorState())
 
   const loadPromises = new Map<LibraryMajorId, Promise<void>>()
-  const moduleContext: LibrarySubmoduleContext = {
-    handbookStore: options.handbookStore,
-    linksStore: options.linksStore,
-    diagramsStore: options.diagramsStore
-  }
+  const refreshStops: Array<() => void> = []
 
   function buildSectionForMajor(major: LibraryMajorId): TreeNode[] {
     const mod = librarySubmoduleById(major)
     if (!mod) return []
-    let tree = mod.buildSectionTree(moduleContext)
-    if (major === 'links' && options.linksStore.isGlobalSearch) {
-      tree = filterLinksSourceTreeNodes(
-        tree,
-        options.linksStore.folders,
-        options.linksStore.globalSearchMatches
-      )
-    }
-    return tree
+    return mod.buildSectionTree()
   }
 
   function refreshSection(major: LibraryMajorId) {
     if (!loadedMajor[major]) return
     sectionByMajor[major] = buildSectionForMajor(major)
   }
+
+  function bindCatalogRefreshWatchers() {
+    for (const stop of refreshStops) stop()
+    refreshStops.length = 0
+    for (const major of MAJOR_IDS) {
+      const mod = librarySubmoduleById(major)
+      const stop = mod?.watchCatalogRefresh?.(() => refreshSection(major))
+      if (typeof stop === 'function') refreshStops.push(stop)
+    }
+  }
+
+  bindCatalogRefreshWatchers()
 
   async function ensureMajorLoaded(major: LibraryMajorId): Promise<void> {
     if (!isLibraryMajorId(major)) return
@@ -81,7 +64,7 @@ export function useLibraryCatalogTrees(options: {
       try {
         const mod = librarySubmoduleById(major)
         if (mod?.ensureLoaded) {
-          await mod.ensureLoaded(moduleContext)
+          await mod.ensureLoaded()
         }
         loadedMajor[major] = true
         refreshSection(major)
@@ -116,57 +99,39 @@ export function useLibraryCatalogTrees(options: {
   }
 
   const libraryTree = computed(() => {
-    let tree = composeLibraryTree(
-      {
-        notes: sectionByMajor.notes,
-        'illustrated-handbook': sectionByMajor['illustrated-handbook'],
-        links: sectionByMajor.links,
-        diagrams: sectionByMajor.diagrams
-      },
-      {
-        majorLoading: {
-          notes: loadingMajor.notes,
-          'illustrated-handbook': loadingMajor['illustrated-handbook'],
-          links: loadingMajor.links,
-          diagrams: loadingMajor.diagrams
-        },
-        majorLoaded: loadedMajor
-      }
-    )
+    const sectionTrees = Object.fromEntries(
+      MAJOR_IDS.map((id) => [id, sectionByMajor[id]])
+    ) as Record<LibraryMajorId, TreeNode[]>
+    const majorLoading = Object.fromEntries(
+      MAJOR_IDS.map((id) => [id, loadingMajor[id]])
+    ) as Record<LibraryMajorId, boolean>
+    let tree = composeLibraryTree(sectionTrees, {
+      majorLoading,
+      majorLoaded: loadedMajor
+    })
     const q = options.categorySearch.value.trim()
     if (q) tree = filterTreeNodes(tree, q)
     return tree
   })
 
-  const expandAllBranches = computed(
-    () =>
-      options.linksStore.isGlobalSearch || !!options.categorySearch.value.trim()
-  )
+  const expandAllBranches = computed(() => {
+    if (options.categorySearch.value.trim()) return true
+    for (const major of MAJOR_IDS) {
+      if (librarySubmoduleById(major)?.catalogExpandsAll?.()) return true
+    }
+    return false
+  })
 
   watch(
-    () => options.handbookStore.categories,
-    () => refreshSection('illustrated-handbook'),
-    { deep: true }
+    () => MAJOR_IDS.join(','),
+    () => {
+      bindCatalogRefreshWatchers()
+    }
   )
 
-  watch(
-    () => options.linksStore.folders,
-    () => refreshSection('links'),
-    { deep: true }
-  )
-
-  watch(
-    () =>
-      options.diagramsStore.folders
-        .map((f) => `${f.id}:${f.name}:${f.sortOrder}:${f.deletedAt ?? ''}`)
-        .join('|'),
-    () => refreshSection('diagrams')
-  )
-
-  watch(
-    [() => options.linksStore.isGlobalSearch, () => options.linksStore.globalSearchMatches],
-    () => refreshSection('links')
-  )
+  onScopeDispose(() => {
+    for (const stop of refreshStops) stop()
+  })
 
   return {
     libraryTree,

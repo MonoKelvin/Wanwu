@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import InputText from 'primevue/inputtext'
@@ -7,7 +7,7 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import WwGlassDialog from '@shared/components/WwGlassDialog.vue'
 import { useMusicLoginFlow } from '@modules/music/composables/useMusicLoginFlow'
 import { useSettingsStore } from '@shared/stores/settings'
-import type { MusicNeteaseLoginStatus } from '@shared/types/music'
+import type { MusicNeteaseLoginStatus } from '@modules/music/domain/types'
 import '@modules/music/styles/music-login.css'
 
 const visible = defineModel<boolean>('visible', { default: false })

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import WwButton from '@shared/components/WwButton.vue'
@@ -9,7 +9,7 @@ import {
   DG_HOME,
   DG_RECYCLE
 } from '@modules/library/diagrams/domain/diagramFolderIds'
-import type { DiagramFolder } from '@shared/types/diagrams'
+import type { DiagramFolder } from '@modules/library/diagrams/domain/types'
 
 const props = withDefaults(
   defineProps<{

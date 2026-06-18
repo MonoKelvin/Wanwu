@@ -1,5 +1,5 @@
 ﻿import { app, dialog } from 'electron'
-import { ZipArchive } from '../zipArchive'
+import { ZipArchive } from '@shared/lib/zipArchive'
 import { createRequire } from 'node:module'
 import { cpSync, createWriteStream, existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'fs'
 import { mkdir, stat, writeFile } from 'fs/promises'
@@ -7,10 +7,10 @@ import { join } from 'path'
 import { tmpdir } from 'os'
 import { randomUUID } from 'crypto'
 import { getMainWindow } from '../../windowState'
-import { getWanwuPathLayout, wanwuMusicCacheDir } from './paths'
+import { getWanwuPathLayout } from './paths'
 import { resolveExistingFilePath } from '../media/shell'
 import type { DatabaseService } from '../core/database'
-import type { RssService } from '../rss/service'
+import type { RssDiagnosticsSource } from '@shared/types/rssDiagnostics'
 import { normalizeAppSettings } from '../data/settings'
 import { APP_VERSION } from '@shared/constants/appVersion'
 import { DEFAULT_APP_SETTINGS } from '../../../src/shared/types/settings'
@@ -156,7 +156,8 @@ export async function restoreDataBackup(
 export function clearCacheDirectory(wanwuPath: string): { ok: true; bytesFreed: number } {
   let bytesFreed = 0
   const layout = getWanwuPathLayout(wanwuPath)
-  const cacheDirs = [layout.cache, wanwuMusicCacheDir(layout)]
+  const musicCacheDir = join(layout.music, 'cache')
+  const cacheDirs = [layout.cache, musicCacheDir]
 
   function measureDir(dir: string) {
     if (!existsSync(dir)) return
@@ -191,7 +192,7 @@ export function resetAppSettingsInDb(db: DatabaseService): void {
 export async function buildDiagnosticsReport(params: {
   wanwuPath: string
   db: DatabaseService | null
-  rss: RssService | null
+  rss: RssDiagnosticsSource | null
 }): Promise<string> {
   const { wanwuPath, db, rss } = params
   const settings = normalizeAppSettings(db?.getAppSettings() ?? {})
@@ -234,7 +235,7 @@ export async function buildDiagnosticsReport(params: {
     }
     return total
   }
-  const musicCacheBytes = dirBytes(wanwuMusicCacheDir(layout))
+  const musicCacheBytes = dirBytes(join(layout.music, 'cache'))
 
   const lines = [
     'Wanwu Diagnostics',

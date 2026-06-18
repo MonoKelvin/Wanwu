@@ -10,16 +10,16 @@ const coverUrl = ref<string | null>(null)
 onMounted(async () => {
   const settingsStore = useSettingsStore()
   if (!settingsStore.loaded) await settingsStore.load()
-  daily.value = await window.wanwu.quickAccess.getDailyPick()
+  daily.value = (await window.wanwu?.quickAccess?.getDailyPick()) ?? null
   coverUrl.value = toWanwuMediaUrl(daily.value?.coverPath ?? null)
 })
 
 async function openInMain() {
-  await window.wanwu.quickAccess.openDailyInMain()
+  await window.wanwu?.quickAccess?.openDailyInMain()
 }
 
 function closeWidget() {
-  void window.wanwu.quickAccess.hideDailyWidget()
+  void window.wanwu?.quickAccess?.hideDailyWidget()
 }
 </script>
 

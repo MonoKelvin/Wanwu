@@ -1,7 +1,7 @@
 /**
  * 链接来源注册表：侧栏展示与浏览器同步扩展点。
- * Chromium 系：electron/services/links/browser/registry.ts
- * 独立引擎（Firefox / Safari）：同上注册后在此同步一项。
+ * 主进程浏览器探测：`src/modules/library/links/main/service/browser/registry.ts`
+ * 渲染层展示定义与此处 `LINK_BROWSER_SOURCES` 对齐 id / rootFolderId。
  */
 import type { BrowserBookmarkSourceId } from '@modules/library/links/domain/types'
 
@@ -15,7 +15,7 @@ export interface LinkBrowserSourceDefinition {
   supportsWriteBack: boolean
 }
 
-/** 与 electron/services/links/browser/registry 中 id、rootFolderId 保持一致 */
+/** 与 links/main/service/browser/registry 中 id、rootFolderId 保持一致 */
 export const DEFAULT_BROWSER_SOURCE_ID: BrowserBookmarkSourceId = 'edge'
 
 export const LINK_BROWSER_SOURCES: readonly LinkBrowserSourceDefinition[] = [

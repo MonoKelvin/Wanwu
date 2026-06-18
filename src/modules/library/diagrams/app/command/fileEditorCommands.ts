@@ -1,4 +1,4 @@
-import { DiagramAppCommandBase } from '@modules/library/diagrams/app/command/DiagramAppCommand'
+﻿import { DiagramAppCommandBase } from '@modules/library/diagrams/app/command/DiagramAppCommand'
 import type { DiagramCommandRegistry } from '@modules/library/diagrams/app/command/DiagramCommandRegistry'
 import type { DiagramCommandExecutionContext } from '@modules/library/diagrams/app/command/DiagramAppCommand'
 import { diagramError } from '@modules/library/diagrams/app/diagramCommandErrors'
@@ -19,7 +19,7 @@ import type {
 } from '@modules/library/diagrams/app/command/domain/payloads'
 import type { DiagramCommandResult } from '@modules/library/diagrams/app/command/domain/types'
 import { withDiagramSaveMutex } from '@modules/library/diagrams/lib/diagramSaveMutex'
-import type { WriteResult } from '@shared/types/diagrams'
+import type { WriteResult } from '@modules/library/diagrams/domain/types'
 
 class FileOpenCommand extends DiagramAppCommandBase {
   readonly id = DiagramCmd.File.Open

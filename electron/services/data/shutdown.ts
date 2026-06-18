@@ -1,42 +1,27 @@
 import type { AppServices } from '../../ipc/types'
+import { getMainProcessModules } from '../../../src/shared/module-bridge/mainProcessRegistry'
+import { createMainProcessContext } from '../../app/mainProcessContext'
 
 /** 备份/迁移/恢复前关闭所有 SQLite 与其它数据服务，避免 Windows 文件锁 */
 export function shutdownDataServices(services: AppServices): void {
-  try {
-    services.music?.close()
-  } catch {
-    /* ignore */
+  const ctx = createMainProcessContext(services)
+
+  for (const mod of getMainProcessModules()) {
+    try {
+      mod.onDispose?.(ctx)
+    } catch {
+      /* ignore */
+    }
   }
-  try {
-    services.cloudAbode?.close()
-  } catch {
-    /* ignore */
-  }
-  try {
-    services.links?.close()
-  } catch {
-    /* ignore */
-  }
-  try {
-    services.diagrams?.close()
-  } catch {
-    /* ignore */
-  }
+
   try {
     services.db?.close()
   } catch {
     /* ignore */
   }
 
+  services.moduleRuntime.clear()
   services.db = null
-  services.personal = null
-  services.library = null
-  services.links = null
-  services.diagrams = null
-  services.rss = null
-  services.music = null
   services.media = null
-  services.notes = null
   services.userData = null
-  services.cloudAbode = null
 }

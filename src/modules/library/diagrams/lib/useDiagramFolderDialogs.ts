@@ -1,9 +1,9 @@
-import { computed, ref } from 'vue'
+﻿import { computed, ref } from 'vue'
 import { useDiagramCatalogCommands } from '@modules/library/diagrams/composables/useDiagramCatalogCommands'
 import { useDiagramsStore } from '@modules/library/diagrams/services/diagramsStore'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
-import type { DiagramFolder } from '@shared/types/diagrams'
+import type { DiagramFolder } from '@modules/library/diagrams/domain/types'
 
 export function useDiagramFolderDialogs(options?: {
   navigateFolder?: (folderId: string) => void

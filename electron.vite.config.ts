@@ -29,6 +29,8 @@ function rendererManualChunks(id: string): string | undefined {
   return undefined
 }
 
+const skipRenderer = process.env.WANWU_SKIP_RENDERER === '1'
+
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
@@ -59,6 +61,9 @@ export default defineConfig({
       }
     }
   },
+  ...(skipRenderer
+    ? {}
+    : {
   renderer: {
     root: '.',
     server: {
@@ -103,4 +108,5 @@ export default defineConfig({
     },
     plugins: [vue(), rendererFullReloadInDev()]
   }
+  })
 })

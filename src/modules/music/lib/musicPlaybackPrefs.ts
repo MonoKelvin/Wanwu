@@ -1,4 +1,4 @@
-import type { MusicPlayMode, MusicPlayerLayoutMode, NormalizedTrack } from '@shared/types/music'
+﻿import type { MusicPlayMode, MusicPlayerLayoutMode, NormalizedTrack } from '@modules/music/domain/types'
 
 const PLAYBACK_KEY = 'wanwu.music.playback'
 

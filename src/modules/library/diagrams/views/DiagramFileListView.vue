@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 defineOptions({ name: 'DiagramFileListView' })
 
 import { computed, onMounted, ref, watch } from 'vue'
@@ -29,7 +29,7 @@ import WwInputIcon from '@shared/components/WwInputIcon.vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import type { WwIconName } from '@shared/icons/registry'
 import type { WwMenuItem } from '@shared/types/menu'
-import type { DiagramFileMeta } from '@shared/types/diagrams'
+import type { DiagramFileMeta } from '@modules/library/diagrams/domain/types'
 import { useDiagramsStore } from '@modules/library/diagrams/services/diagramsStore'
 import { useDiagramCatalogCommands } from '@modules/library/diagrams/composables/useDiagramCatalogCommands'
 import { useWanwuConfirm } from '@shared/composables/useWanwuConfirm'

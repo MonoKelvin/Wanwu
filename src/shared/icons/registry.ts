@@ -93,7 +93,6 @@ import {
     X,
     Zap
 } from '@lucide/vue'
-import { CloudAbode } from './CloudAbode'
 import { Github } from './Github'
 
 /** 全局描边宽度（px），absoluteStrokeWidth 下视觉更一致 */
@@ -118,7 +117,6 @@ export const wwIcons = {
     box: Box,
     'calendar-plus': CalendarPlus,
     car: Car,
-    'cloud-abode': CloudAbode,
     check: Check,
     'chevron-down': ChevronDown,
     'chevron-left': ChevronLeft,

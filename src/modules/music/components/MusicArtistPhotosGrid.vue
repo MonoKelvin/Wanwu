@@ -1,8 +1,8 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, ref } from 'vue'
 import ImageViewer from '@shared/components/ImageViewer.vue'
 import type { ImageViewerSlide } from '@shared/types/image-viewer'
-import type { MusicArtistPhoto } from '@shared/types/music'
+import type { MusicArtistPhoto } from '@modules/music/domain/types'
 
 const props = defineProps<{
   photos: MusicArtistPhoto[]

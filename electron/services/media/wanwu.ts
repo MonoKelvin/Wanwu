@@ -1,11 +1,13 @@
-/** wanwu-media:// 协议路径解析（用户媒体 + 图鉴静态资源 + 捆绑 seed） */
+/** wanwu-media:// 协议路径解析（用户媒体 + 捆绑 seed + 可选模块注册的解析器） */
 import { existsSync } from 'fs'
 import { join } from 'path'
 import { getBundledAssetsRoot } from '../core/assetsRoot'
 import { getWanwuPathLayout } from '../data/paths'
-import { ILLUSTRATED_HANDBOOK_MEDIA_DIR } from '../library/paths'
-import { resolveLibraryMediaAbsolute } from '../media/library'
-import { resolveDiagramMediaAbsolute } from '../diagrams/diagramMediaResolver'
+import { ILLUSTRATED_HANDBOOK_MEDIA_DIR } from '@shared/constants/handbookMedia'
+import {
+  resolveHandbookMediaAbsolute,
+  resolveDiagramMediaAbsoluteAsync
+} from '../../app/mediaResolverBridge'
 
 function normalizeRel(path: string): string {
   return path.replace(/^\/+/, '').replace(/\\/g, '/').split(/[?#]/)[0]
@@ -17,15 +19,10 @@ export function resolveWanwuMediaAbsolute(relativePath: string): string | null {
   if (!rel) return null
 
   if (rel.startsWith(`${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/`)) {
-    return resolveLibraryMediaAbsolute(rel)
+    return resolveHandbookMediaAbsolute(rel)
   }
 
   if (rel.startsWith('seed/')) {
-    const bundled = join(getBundledAssetsRoot(), rel)
-    if (existsSync(bundled)) return bundled
-  }
-
-  if (rel.startsWith('cloud-abode/')) {
     const bundled = join(getBundledAssetsRoot(), rel)
     if (existsSync(bundled)) return bundled
   }
@@ -48,7 +45,7 @@ export function resolveWanwuMediaAbsolute(relativePath: string): string | null {
   const underMedia = join(layout.media, rel)
   if (existsSync(underMedia)) return underMedia
 
-  return resolveLibraryMediaAbsolute(rel)
+  return resolveHandbookMediaAbsolute(rel)
 }
 
 export function toWanwuMediaUrl(relativePath: string | null | undefined): string | null {
@@ -71,5 +68,5 @@ export async function resolveWanwuMediaAbsoluteAsync(
   const rel = normalizeRel(relativePath)
   if (!rel) return null
   const layout = getWanwuPathLayout()
-  return resolveDiagramMediaAbsolute(rel, layout)
+  return resolveDiagramMediaAbsoluteAsync(rel, layout)
 }

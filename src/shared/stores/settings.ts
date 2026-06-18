@@ -129,7 +129,24 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
     diagramRecentShapes: normalizeRecentStringList(
       data.diagramRecentShapes,
       MAX_RECENT_DIAGRAM_SHAPES
-    )
+    ),
+    moduleSettings: (() => {
+      const raw = data as Partial<AppSettings> & Record<string, unknown>
+      const base =
+        raw.moduleSettings && typeof raw.moduleSettings === 'object'
+          ? { ...(raw.moduleSettings as Record<string, Record<string, unknown>>) }
+          : {}
+      if (
+        !base['wanwu.leisure-read'] &&
+        ('leisureReadJokeLang' in raw || 'leisureReadArticleMode' in raw)
+      ) {
+        base['wanwu.leisure-read'] = {
+          jokeLang: raw.leisureReadJokeLang === 'en' ? 'en' : 'zh',
+          articleMode: raw.leisureReadArticleMode === 'today' ? 'today' : 'random'
+        }
+      }
+      return base
+    })()
   }
 }
 
@@ -192,6 +209,22 @@ export const useSettingsStore = defineStore('settings', () => {
     applySettingsToDocument(settings.value)
   }
 
+  async function patchSetting<K extends keyof AppSettings>(key: K, value: AppSettings[K]) {
+    const snapshot = settings.value
+    const optimistic = normalizeSettings({ ...snapshot, [key]: value })
+    settings.value = optimistic
+    applySettingsToDocument(optimistic)
+    try {
+      const saved = await window.wanwu.app.patchSettings({ [key]: value } as Partial<AppSettings>)
+      settings.value = normalizeSettings({ ...snapshot, ...saved })
+      applySettingsToDocument(settings.value)
+    } catch (err) {
+      settings.value = snapshot
+      applySettingsToDocument(snapshot)
+      throw err
+    }
+  }
+
   async function patchLastActiveModule(moduleId: ModuleId) {
     if (settings.value.lastActiveModule === moduleId) return
     const snapshot = settings.value
@@ -246,28 +279,51 @@ export const useSettingsStore = defineStore('settings', () => {
     await save({ notesSpellcheckEnabled })
   }
 
+  async function patchModuleSettings(moduleId: string, patch: Record<string, unknown>) {
+    const current = settings.value.moduleSettings ?? {}
+    await save({
+      moduleSettings: {
+        ...current,
+        [moduleId]: { ...(current[moduleId] ?? {}), ...patch }
+      }
+    })
+  }
+
   async function setLaunchAtStartup(launchAtStartup: boolean) {
-    await save({ launchAtStartup })
+    await patchSetting('launchAtStartup', launchAtStartup)
   }
 
   async function setTrayEnabled(trayEnabled: boolean) {
-    await save({ trayEnabled })
+    await patchSetting('trayEnabled', trayEnabled)
   }
 
   async function setCloseBehavior(closeBehavior: CloseBehavior) {
+    if (closeBehavior === settings.value.closeBehavior) return
+    const snapshot = settings.value
     const patch: Partial<AppSettings> = { closeBehavior }
     if (closeBehavior === 'tray' || closeBehavior === 'ask') {
       patch.trayEnabled = true
     }
-    await save(patch)
+    const optimistic = normalizeSettings({ ...snapshot, ...patch })
+    settings.value = optimistic
+    applySettingsToDocument(optimistic)
+    try {
+      const saved = await window.wanwu.app.patchSettings(patch)
+      settings.value = normalizeSettings({ ...snapshot, ...saved })
+      applySettingsToDocument(settings.value)
+    } catch (err) {
+      settings.value = snapshot
+      applySettingsToDocument(snapshot)
+      throw err
+    }
   }
 
   async function setDailyWidgetEnabled(dailyWidgetEnabled: boolean) {
-    await save({ dailyWidgetEnabled })
+    await patchSetting('dailyWidgetEnabled', dailyWidgetEnabled)
   }
 
   async function setClipboardAssistEnabled(clipboardAssistEnabled: boolean) {
-    await save({ clipboardAssistEnabled })
+    await patchSetting('clipboardAssistEnabled', clipboardAssistEnabled)
   }
 
   async function appendRecentFont(family: string) {
@@ -331,6 +387,7 @@ export const useSettingsStore = defineStore('settings', () => {
     setColorScheme,
     setNotesPopoutRestore,
     setNotesSpellcheckEnabled,
+    patchModuleSettings,
     setLaunchAtStartup,
     setTrayEnabled,
     setCloseBehavior,

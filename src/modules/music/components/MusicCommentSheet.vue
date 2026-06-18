@@ -1,8 +1,8 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import WwIcon from '@shared/components/WwIcon.vue'
 import { useScrollNearEnd } from '@modules/music/composables/useScrollNearEnd'
-import type { MusicSongComment } from '@shared/types/music'
+import type { MusicSongComment } from '@modules/music/domain/types'
 import '@modules/music/styles/music-popover.css'
 
 const visible = defineModel<boolean>('visible', { default: false })

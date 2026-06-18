@@ -1,6 +1,6 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
-import type { MusicTrackBadge, NormalizedTrack } from '@shared/types/music'
+import type { MusicTrackBadge, NormalizedTrack } from '@modules/music/domain/types'
 
 const props = defineProps<{
   track: Pick<NormalizedTrack, 'badges' | 'isTrial'>

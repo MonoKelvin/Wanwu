@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MusicAlbumHero from '@modules/music/components/MusicAlbumHero.vue'
@@ -7,7 +7,7 @@ import MusicCoverRow from '@modules/music/components/MusicCoverRow.vue'
 import MusicArtistPhotosGrid from '@modules/music/components/MusicArtistPhotosGrid.vue'
 import { useAsyncTask } from '@modules/music/composables/useAsyncTask'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
-import type { MusicArtistPayload, NormalizedTrack } from '@shared/types/music'
+import type { MusicArtistPayload, NormalizedTrack } from '@modules/music/domain/types'
 import { musicScrollKey } from '@modules/music/lib/musicScrollKey'
 import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import '@modules/music/styles/music-shared.css'

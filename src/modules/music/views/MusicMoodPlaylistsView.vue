@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
@@ -6,7 +6,7 @@ import MusicCoverRow from '@modules/music/components/MusicCoverRow.vue'
 import MusicDiscoverSection from '@modules/music/components/MusicDiscoverSection.vue'
 import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
-import type { MusicMoodPlaylist } from '@shared/types/music'
+import type { MusicMoodPlaylist } from '@modules/music/domain/types'
 import '@modules/music/styles/music-shared.css'
 
 defineOptions({ name: 'MusicMoodPlaylistsView' })

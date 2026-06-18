@@ -2,7 +2,7 @@ import type { Component } from 'vue'
 import type { WwIconName } from '@shared/icons/registry'
 
 /** 设置页分区 ID（由各模块通过 registerSettingsSection 注册） */
-export type SettingsSection = 'app' | 'library' | 'rss' | 'music' | 'data' | 'about'
+export type SettingsSection = string
 
 export interface ISettingsSectionContributor {
   readonly id: SettingsSection

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onActivated, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import MusicPageHeading from '@modules/music/components/MusicPageHeading.vue'
@@ -7,7 +7,7 @@ import MusicCover from '@modules/music/components/MusicCover.vue'
 import MusicScrollBody from '@modules/music/components/MusicScrollBody.vue'
 import { useMusicPlayerStore } from '@modules/music/stores/musicPlayer'
 import { useScrollNearEnd } from '@modules/music/composables/useScrollNearEnd'
-import type { NormalizedTrack } from '@shared/types/music'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 import '@modules/music/styles/music-shared.css'
 
 defineOptions({ name: 'MusicNewView' })

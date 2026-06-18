@@ -7,7 +7,7 @@ import {
   ensureTrayForWindowHide,
   isAppQuitting,
   isTrayActive
-} from '../quickAccess/quickAccessManager'
+} from '../../app/frameworkLifecycleBridge'
 
 export type MainWindowCloseResult = 'hidden' | 'quit' | 'cancelled'
 export type ClosePromptChoice = 'tray' | 'quit' | 'cancel'
@@ -25,7 +25,9 @@ function currentSettings() {
 
 /** 关闭主窗口后是否保持进程（已缩到托盘） */
 export function shouldKeepAppRunningAfterWindowClose(): boolean {
-  return !isAppQuitting() && isTrayActive()
+  if (isAppQuitting()) return false
+  const { trayEnabled } = currentSettings()
+  return trayEnabled && isTrayActive()
 }
 
 function focusForClosePrompt(win: BrowserWindow): void {

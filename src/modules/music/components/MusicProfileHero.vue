@@ -1,8 +1,8 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import WwIcon from '@shared/components/WwIcon.vue'
 import WwButton from '@shared/components/WwButton.vue'
 import MusicCoverArt from '@modules/music/components/MusicCoverArt.vue'
-import type { MusicPlatformUserProfile } from '@shared/types/music'
+import type { MusicPlatformUserProfile } from '@modules/music/domain/types'
 
 const props = defineProps<{
   profile: MusicPlatformUserProfile

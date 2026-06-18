@@ -1,11 +1,11 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import {
   listTrackCoverFallbacks,
   upgradeCoverUrl,
   type CoverSize
 } from '@shared/utils/musicCoverUrl'
-import type { NormalizedTrack } from '@shared/types/music'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 
 const props = defineProps<{
   src?: string

@@ -7,15 +7,18 @@
  */
 import { createWriteStream, existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import { ZipArchive } from '../electron/services/zipArchive'
-import { DatabaseService } from '../electron/services/core/database'
-import type { ImportLibraryProgress } from '../electron/services/library/seed'
+import { ZipArchive } from '../src/shared/lib/zipArchive'
+import { LibraryDatabaseHost } from '../src/modules/library/illustrated-handbook/main/libraryDatabaseHost'
+import type { ImportLibraryProgress } from '../src/modules/library/illustrated-handbook/main/service/seed'
 import {
   importLibraryCatalog,
   loadLibraryCatalog,
   writeCatalogImportMarker
-} from '../electron/services/library/seed'
-import { buildManifestFromCatalog, LIBRARY_PACK_MARKER } from '../electron/services/library/pack'
+} from '../src/modules/library/illustrated-handbook/main/service/seed'
+import {
+  buildManifestFromCatalog,
+  LIBRARY_PACK_MARKER
+} from '../src/modules/library/illustrated-handbook/main/service/pack'
 
 const root = process.cwd()
 const outDir = join(root, 'assets', 'packed')
@@ -231,9 +234,8 @@ async function main(): Promise<void> {
   mkdirSync(join(cacheDir, 'db'), { recursive: true })
 
   log.step(`根据种子 JSON 生成 SQLite（约 1–3 分钟）`, 'import')
-  const db = new DatabaseService(cacheDir)
-  await db.init({ skipLibrarySeed: true })
-  const result = importLibraryCatalog(db, {
+  const dbHost = new LibraryDatabaseHost(cacheDir)
+  const result = importLibraryCatalog(dbHost, {
     full: true,
     onProgress: (p) => mapSeedProgress(log, p)
   })
@@ -250,7 +252,7 @@ async function main(): Promise<void> {
     `v${catalog.schema ?? 0}-${catalog.mediaConfigVersion ?? 0}\n`,
     'utf-8'
   )
-  db.close()
+  dbHost.closeAllLibraryDbs()
 
   const dbDir = join(cacheDir, 'db')
   const libraryDbCount = readdirSync(dbDir).filter(

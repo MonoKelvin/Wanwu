@@ -1,6 +1,6 @@
-import { Howl } from 'howler'
+﻿import { Howl } from 'howler'
 import { onUnmounted, ref, watch } from 'vue'
-import type { MusicStreamResult } from '@shared/types/music'
+import type { MusicStreamResult } from '@modules/music/domain/types'
 import { loadMusicVolumePrefs, saveMusicVolumePrefs } from '@modules/music/lib/musicVolumePrefs'
 
 type HowlFormat = NonNullable<MusicStreamResult['format']>

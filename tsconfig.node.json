@@ -22,10 +22,14 @@
     "scripts/**/*",
     "src/shared/types/**/*",
     "src/shared/constants/**/*",
+    "src/shared/module-bridge/**/*.ts",
+    "src/shared/lib/**/*.ts",
     "src/modules/library/notes/lib/**/*.ts",
     "src/modules/library/notes/domain/**/*.ts",
     "src/shared/documentPackage/**/*",
-    "src/modules/library/diagrams/lib/**/*.ts"
+    "src/modules/library/diagrams/lib/**/*.ts",
+    "src/modules/**/main/**/*.ts",
+    "src/modules/**/domain/**/*.ts"
   ],
   "exclude": [
     "src/shared/types/menu.ts",

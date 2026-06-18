@@ -2,14 +2,14 @@
  * 全库模块树数据：将各大类与子模块目录转为 PrimeVue TreeNode。
  */
 import type { TreeNode } from 'primevue/treenode'
-import { LIBRARY_MAJORS, type LibraryMajorId } from '@modules/library/core/config/majors'
+import { collectLibraryMajors, type LibraryMajorId } from '@modules/library/core/config/majors'
 import { catalogToTreeNodes, type CatalogNode } from '@shared/types/catalog'
 import { buildLinksSourceCatalog } from '@modules/library/links/lib/linksSourceCatalog'
 import type { LinkFolder } from '@modules/library/links/domain/types'
 
 /** 构建全库顶层大类节点（链接、笔记、图鉴等） */
 export function buildMajorTreeNodes(): TreeNode[] {
-  return LIBRARY_MAJORS.map((m) => ({
+  return collectLibraryMajors().map((m) => ({
     key: `major:${m.id}`,
     label: m.name,
     icon: m.icon,

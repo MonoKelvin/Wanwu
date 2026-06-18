@@ -1,11 +1,8 @@
-﻿import { LIBRARY_MAJORS, type LibraryMajorId } from '@modules/library/core/config/majors'
-import { collectLibrarySubmodules } from '@app/modules/moduleRegistryCore'
-import type {
-  LibrarySubmoduleConfig,
-  LibrarySubmoduleContext
-} from '@app/modules/librarySubmoduleTypes'
+﻿import { collectLibrarySubmodules } from '@app/modules/moduleRegistryCore'
+import type { LibrarySubmoduleConfig } from '@app/modules/librarySubmoduleTypes'
+import type { LibraryMajorId } from '@modules/library/core/config/majors'
 
-export type { LibrarySubmoduleConfig, LibrarySubmoduleContext } from '@app/modules/librarySubmoduleTypes'
+export type { LibrarySubmoduleConfig } from '@app/modules/librarySubmoduleTypes'
 
 let librarySubmodulesCache: LibrarySubmoduleConfig[] | null = null
 
@@ -17,12 +14,7 @@ function getLibrarySubmodules(): LibrarySubmoduleConfig[] {
 }
 
 function sortSubmodulesByMajorOrder(configs: LibrarySubmoduleConfig[]): LibrarySubmoduleConfig[] {
-  const byId = new Map(
-    configs.map((config) => [config.id as LibraryMajorId, config])
-  )
-  return LIBRARY_MAJORS.map((major) => byId.get(major.id)).filter(
-    (config): config is LibrarySubmoduleConfig => Boolean(config)
-  )
+  return [...configs].sort((a, b) => (a.major.order ?? 0) - (b.major.order ?? 0))
 }
 
 export function librarySubmoduleById(id: LibraryMajorId): LibrarySubmoduleConfig | undefined {
@@ -30,5 +22,10 @@ export function librarySubmoduleById(id: LibraryMajorId): LibrarySubmoduleConfig
 }
 
 export function libraryMajorIds(): LibraryMajorId[] {
-  return LIBRARY_MAJORS.map((m) => m.id)
+  return getLibrarySubmodules().map((m) => m.id)
+}
+
+/** 模块注册变更后刷新缓存（测试/热插拔预留） */
+export function invalidateLibrarySubmodulesCache(): void {
+  librarySubmodulesCache = null
 }

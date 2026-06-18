@@ -1,0 +1,10 @@
+/** 框架与主进程桥接使用的模块 ID（与各模块 domain/moduleId 保持一致） */
+export const LINKS_MODULE_ID = 'wanwu.library.links'
+export const ILLUSTRATED_HANDBOOK_MODULE_ID = 'wanwu.library.illustrated-handbook'
+export const NOTES_MODULE_ID = 'wanwu.library.notes'
+export const DIAGRAMS_MODULE_ID = 'wanwu.library.diagrams'
+export const LEISURE_READ_MODULE_ID = 'wanwu.leisure-read'
+export const RSS_MODULE_ID = 'wanwu.rss'
+export const MUSIC_MODULE_ID = 'wanwu.music'
+export const PERSONAL_MODULE_ID = 'wanwu.personal'
+export const QUICK_ACCESS_MODULE_ID = 'wanwu.quick-access'

@@ -9,7 +9,7 @@ import {
 } from '../../services/data/paths'
 import { migrateWanwuData } from '../../services/data/migration'
 import { shutdownDataServices } from '../../services/data/shutdown'
-import { consumeStartupNotices } from '../../services/library/pack'
+import { consumeStartupNotices } from '../../app/frameworkLifecycleBridge'
 import { normalizeAppSettings, mergeAppSettings } from '../../services/data/settings'
 import {
   applyLaunchAtStartup,
@@ -25,9 +25,11 @@ import {
   restoreDataBackup
 } from '../../services/data/maintenance'
 import { DEFAULT_APP_SETTINGS, type AppSettings } from '../../../src/shared/types/settings'
-import { applyRssAutoRefreshSchedule } from '../../services/rss/scheduler'
-import { syncQuickAccessFromSettings } from '../../services/quickAccess/quickAccessManager'
-import { broadcastToAllWindows } from '../../services/notes/noteWindowManager'
+import { dispatchSettingsChanged } from '../../app/settingsSideEffects'
+import { syncQuickAccessFromSettings } from '../../app/frameworkLifecycleBridge'
+import { broadcastToAllWindows } from '../../app/windowBroadcast'
+import { getRuntimeService } from '../../app/moduleRuntimeBridge'
+import { RSS_MODULE_ID } from '../../../src/shared/module-bridge/moduleIds'
 import type { AppServices } from '../types'
 
 export function registerAppHandlers(services: AppServices): void {
@@ -84,8 +86,8 @@ export function registerAppHandlers(services: AppServices): void {
   )
   function publishAppSettings(next: AppSettings): AppSettings {
     services.userData?.updateAppSettings(next)
-    applyRssAutoRefreshSchedule(services)
-    syncQuickAccessFromSettings()
+    dispatchSettingsChanged(services, next)
+    syncQuickAccessFromSettings(next)
     applyLaunchAtStartup(next.launchAtStartup)
     broadcastToAllWindows('app:settings-changed', next)
     return next
@@ -140,7 +142,7 @@ export function registerAppHandlers(services: AppServices): void {
     const content = await buildDiagnosticsReport({
       wanwuPath,
       db: services.db,
-      rss: services.rss
+      rss: getRuntimeService(services, RSS_MODULE_ID)
     })
     return exportDiagnosticsToFile(content)
   })

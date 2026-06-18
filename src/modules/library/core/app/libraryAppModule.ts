@@ -64,5 +64,16 @@ export const libraryAppModule: IAppModule = {
       loadComponent: () =>
         import('@modules/library/core/components/LibraryCategoryPanel.vue').then((m) => m.default)
     })
+  },
+
+  registerSettingsSection(register) {
+    register({
+      id: 'library',
+      label: '全库',
+      icon: 'book-open',
+      order: 20,
+      loadPanel: () =>
+        import('@modules/library/core/settings/LibrarySettingsPanel.vue').then((m) => m.default)
+    })
   }
 }

@@ -1,5 +1,5 @@
-import type { TreeNode } from 'primevue/treenode'
-import type { DiagramFolder } from '@shared/types/diagrams'
+﻿import type { TreeNode } from 'primevue/treenode'
+import type { DiagramFolder } from '@modules/library/diagrams/domain/types'
 import {
   DG_FILES,
   DG_HOME,

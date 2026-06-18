@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, shallowRef, watch, type Component } from 'vue'
 import { useRoute } from 'vue-router'
 import Toast from 'primevue/toast'
 import WwIcon from '@shared/components/WwIcon.vue'
@@ -10,9 +10,8 @@ import WwPopTipHost from '@shared/components/WwPopTipHost.vue'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
 import { useSettingsStore } from '@shared/stores/settings'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
-import { runMainAppStartupHooks, useMainAppIntegrations } from '@app/modules/mainAppRegistry'
+import { runMainAppStartupHooks, useMainAppIntegrations, getAppShellOverlayLoaders } from '@app/modules/mainAppRegistry'
 import { useCloseAppDialog } from '@app/composables/useCloseAppDialog'
-import { useQuickAccessHost } from '@app/composables/useQuickAccessHost'
 import {
   confirmDialogMounted,
   dismissibleConfirmMounted,
@@ -23,7 +22,6 @@ const ConfirmDialog = defineAsyncComponent(() => import('primevue/confirmdialog'
 const WwDismissibleConfirmHost = defineAsyncComponent(
   () => import('@app/components/WwDismissibleConfirmHost.vue')
 )
-const CommandPalette = defineAsyncComponent(() => import('@app/components/CommandPalette.vue'))
 const CloseAppDialog = defineAsyncComponent(() => import('@app/components/CloseAppDialog.vue'))
 
 const route = useRoute()
@@ -33,7 +31,6 @@ const isFullscreenRoute = computed(
   () => Boolean(route.meta.fullscreen) && !isItemDetailRoute(route.name)
 )
 
-const { paletteOpen } = useQuickAccessHost()
 const {
   closeDialogVisible,
   onCloseTray,
@@ -41,12 +38,9 @@ const {
   onCloseCancel
 } = useCloseAppDialog()
 
-const paletteMounted = ref(false)
-const closeDialogMounted = ref(false)
+const shellOverlays = shallowRef<Component[]>([])
 
-watch(paletteOpen, (open) => {
-  if (open) paletteMounted.value = true
-})
+const closeDialogMounted = ref(false)
 
 watch(closeDialogVisible, (visible) => {
   if (visible) closeDialogMounted.value = true
@@ -69,6 +63,11 @@ onUnmounted(() => {
 })
 
 onMounted(async () => {
+  const loaders = getAppShellOverlayLoaders()
+  if (loaders.length > 0) {
+    shellOverlays.value = await Promise.all(loaders.map((load) => load()))
+  }
+
   if (window.wanwu?.app?.onAppSettingsChanged) {
     stopSettingsSync = window.wanwu.app.onAppSettingsChanged((remote) => {
       settingsStore.syncFromRemote(remote)
@@ -86,7 +85,9 @@ onMounted(async () => {
       settings: settingsStore.settings
     })
     void (async () => {
-      for (const text of await window.wanwu.app.getStartupNotices()) {
+      const notices = await window.wanwu?.app?.getStartupNotices?.()
+      if (!notices) return
+      for (const text of notices) {
         showLibraryNotice(text)
       }
     })()
@@ -115,7 +116,7 @@ onMounted(async () => {
     <WwPopTipHost />
     <TitleBar v-if="!isFullscreenRoute" />
     <AppShell class="min-h-0 flex-1" />
-    <CommandPalette v-if="paletteMounted" v-model:open="paletteOpen" />
+    <component v-for="(overlay, index) in shellOverlays" :key="index" :is="overlay" />
     <CloseAppDialog
       v-if="closeDialogMounted"
       v-model:visible="closeDialogVisible"

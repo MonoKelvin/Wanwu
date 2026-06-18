@@ -10,11 +10,11 @@ import { useIllustratedHandbookStore } from '@modules/library/illustrated-handbo
 import ModulePageLayout from '@app/components/ModulePageLayout.vue'
 import PageHeader from '@app/components/PageHeader.vue'
 import EmptyState from '@app/components/EmptyState.vue'
-import ItemCard from '@modules/item/ItemCard.vue'
+import ItemCard from '@modules/library/illustrated-handbook/item/ItemCard.vue'
 import LibraryItemList from '@modules/library/illustrated-handbook/components/LibraryItemList.vue'
 import LibraryHeaderToolbar from '@modules/library/illustrated-handbook/components/LibraryHeaderToolbar.vue'
 import type { LibrarySortField, LibraryViewMode } from '@modules/library/illustrated-handbook/components/LibraryHeaderToolbar.vue'
-import type { Item } from '@shared/types/item'
+import type { Item } from '@modules/library/illustrated-handbook/domain/itemTypes'
 import { useLibraryListScroll } from '@modules/library/illustrated-handbook/composables/useLibraryListScroll'
 import { libraryCategoryKey } from '@modules/library/core/composables/useLibraryRouteContext'
 

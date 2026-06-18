@@ -1,4 +1,6 @@
 ﻿<script setup lang="ts">
+import WwSettingsRow from '@shared/components/settings/WwSettingsRow.vue'
+
 defineProps<{
   label: string
   subtitle?: string
@@ -6,13 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="ww-settings-row">
-    <div class="ww-settings-row__label" :class="{ 'is-centered': !subtitle }">
-      <span class="ww-settings-row__title">{{ label }}</span>
-      <span v-if="subtitle" class="ww-settings-row__subtitle">{{ subtitle }}</span>
-    </div>
-    <div v-if="$slots.default" class="ww-settings-row__control">
-      <slot />
-    </div>
-  </div>
+  <WwSettingsRow :label="label" :subtitle="subtitle">
+    <slot />
+  </WwSettingsRow>
 </template>

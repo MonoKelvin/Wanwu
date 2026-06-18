@@ -1,9 +1,9 @@
-import { createBlankDiagramContent } from './blankContent'
+﻿import { createBlankDiagramContent } from './blankContent'
 import {
   normalizeEdgeStyleProperties,
   normalizeNodeStyleProperties
 } from '@modules/library/diagrams/lib/diagramStyleBridge'
-import type { DiagramContent, DiagramGraphData, DiagramPage } from '@shared/types/diagrams'
+import type { DiagramContent, DiagramGraphData, DiagramPage } from '@modules/library/diagrams/domain/types'
 
 export interface DrawioParsePage {
   name: string

@@ -1,13 +1,26 @@
-﻿/** 主模块 ID（Electron 与渲染进程共用，勿依赖 UI 图标配置） */
-export const MODULE_IDS = ['library', 'rss', 'music', 'cloud-abode', 'personal', 'settings'] as const
+﻿/** 主模块 ID（运行时由 moduleNavRegistry 注册，类型层面为 string） */
+export type ModuleId = string
 
-export type ModuleId = (typeof MODULE_IDS)[number]
-
-/** 云斋模块是否对用户开放（false = 侧栏隐藏，路由重定向） */
-export const CLOUD_ABODE_ENABLED = false
-
+/** 启动/设置持久化时的默认主模块（模块未注册前的兜底） */
 export const DEFAULT_MODULE_ID: ModuleId = 'library'
 
+/**
+ * 主进程或模块尚未完成注册时的已知 ID 白名单（仅用于设置归一化兜底）。
+ * 渲染进程优先使用 moduleNavRegistry.isModuleIdRegistered()。
+ */
+export const KNOWN_MODULE_IDS = [
+  'library',
+  'rss',
+  'music',
+  'personal',
+  'settings'
+] as const
+
+export function isKnownModuleId(value: string): boolean {
+  return KNOWN_MODULE_IDS.includes(value as (typeof KNOWN_MODULE_IDS)[number])
+}
+
+/** @deprecated 使用 isKnownModuleId 或 moduleNavRegistry.isModuleIdRegistered */
 export function isModuleId(value: string): value is ModuleId {
-  return (MODULE_IDS as readonly string[]).includes(value)
+  return typeof value === 'string' && value.length > 0 && isKnownModuleId(value)
 }

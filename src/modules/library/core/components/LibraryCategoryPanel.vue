@@ -19,6 +19,7 @@ import type { WwMenuItem } from '@shared/types/menu'
 import { isLibraryMajorId, type LibraryMajorId } from '@modules/library/core/config/majors'
 import { useLibraryCatalogTrees } from '@modules/library/core/composables/useLibraryCatalogTrees'
 import { isCatalogLoadingNodeKey } from '@modules/library/core/composables/libraryCategoryTree'
+import { librarySubmoduleById } from '@modules/library/core/registry/libraryModules'
 import { useIllustratedHandbookStore } from '@modules/library/illustrated-handbook/services/illustratedHandbookStore'
 import { LINKS_RECYCLE_BIN_ID, LOCAL_COLLECTIONS_ROOT_ID } from '@modules/library/links/domain/constants'
 import { useLinksStore } from '@modules/library/links/services/linksStore'
@@ -123,10 +124,7 @@ const {
   preloadAllMajors,
   onCatalogNodeExpand
 } = useLibraryCatalogTrees({
-  categorySearch,
-  handbookStore,
-  linksStore,
-  diagramsStore
+  categorySearch
 })
 
 const catalogDefaultExpanded = computed(() => {
@@ -258,21 +256,20 @@ watch(
 )
 
 async function navigateMajor(majorId: LibraryMajorId) {
-  if (majorId === 'notes') {
-    await pushLibraryRoute({ name: 'library-notes' })
+  if (majorId === 'links') {
+    const target = resolveLinksEntryTarget()
+    if (typeof target === 'string') await pushLibraryRoute(target)
+    else await pushLibraryRoute(target)
+    return
+  }
+  const mod = librarySubmoduleById(majorId)
+  if (mod?.routeName) {
+    await pushLibraryRoute({ name: mod.routeName })
     return
   }
   if (majorId === 'diagrams') {
     await pushLibraryRoute({ name: 'library-diagrams-home' })
-    return
   }
-  if (majorId === 'illustrated-handbook') {
-    await pushLibraryRoute({ name: 'library-illustrated-handbook' })
-    return
-  }
-  const target = resolveLinksEntryTarget()
-  if (typeof target === 'string') await pushLibraryRoute(target)
-  else await pushLibraryRoute(target)
 }
 
 function diagramsCatalogNodeBadge(node: TreeNode): number | undefined {

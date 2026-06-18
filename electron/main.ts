@@ -1,4 +1,5 @@
 import './bootstrap/quietDotenv'
+import './mainProcessBootstrap'
 import { app, BrowserWindow, nativeImage, protocol, shell } from 'electron'
 import { existsSync, statSync } from 'fs'
 import { createReadStream } from 'fs'
@@ -16,35 +17,24 @@ import {
   readWindowStateModeFromSettings
 } from './services/app/window'
 import { DatabaseService } from './services/core/database'
-import { LibraryService } from './services/library/service'
-import { LinksService } from './services/links/service'
-import { DiagramService } from './services/diagrams/service'
-import { RssService } from './services/rss/service'
-import { MusicService } from './services/music/service'
 import { MediaService } from './services/media/service'
-import { NotesService } from './services/notes/service'
-import {
-  attachMainWindowNotePopoutCleanup,
-  closeAllNotePopoutsForAppExit,
-  configureNotePopoutPersistence,
-  registerNotePopoutAppLifecycle
-} from './services/notes/noteWindowManager'
-import { SqliteNotesStorage } from './services/notes/storage'
-import { SqliteUserDataGateway, type UserDataGateway } from './services/storage/userDataGateway'
-import { PersonalService } from './services/personal/service'
+import { SqliteUserDataGateway } from './services/storage/userDataGateway'
 import { resolveWanwuPath } from './services/data/paths'
-import { applyRssAutoRefreshSchedule } from './services/rss/scheduler'
-import { runStartupLibrarySeed } from './services/library/seed'
-import { startLibraryBootstrap } from './services/library/pack'
-import { runInstallerLibraryPackImport } from './services/library/installerImport'
-// import { CloudAbodeService } from './services/cloud-abode/service'
+import { dispatchSettingsChanged } from './app/settingsSideEffects'
+import { normalizeAppSettings } from './services/data/settings'
 import {
   disposeQuickAccess,
   focusMainWindow,
-  isAppQuitting
-} from './services/quickAccess/quickAccessManager'
+  isAppQuitting,
+  closeAllNotePopoutsForAppExit,
+  notifyMainWindowCreated,
+  registerNotePopoutLifecycleFromModule
+} from './app/frameworkLifecycleBridge'
 import { attachMainWindowCloseBehavior, shouldKeepAppRunningAfterWindowClose } from './services/app/windowClose'
 import { shutdownDataServices } from './services/data/shutdown'
+import { initMainProcessModules } from './app/mainProcessContext'
+import { getInstallerLibraryPackImport } from './app/installerImportBridge'
+import type { AppServices } from './ipc/types'
 
 const isDev = !app.isPackaged
 const INSTALLER_IMPORT_FLAG = '--installer-import-library-pack'
@@ -111,18 +101,11 @@ protocol.registerSchemesAsPrivileged([
 
 let mainWindow: BrowserWindow | null = null
 
-const services = {
-  db: null as DatabaseService | null,
-  personal: null as PersonalService | null,
-  library: null as LibraryService | null,
-  links: null as LinksService | null,
-  diagrams: null as DiagramService | null,
-  rss: null as RssService | null,
-  music: null as MusicService | null,
-  media: null as MediaService | null,
-  notes: null as NotesService | null,
-  userData: null as UserDataGateway | null,
-  cloudAbode: null
+const services: AppServices = {
+  db: null,
+  userData: null,
+  media: null,
+  moduleRuntime: new Map()
 }
 
 async function loadDevRenderer(win: BrowserWindow, urls: string[]): Promise<void> {
@@ -181,7 +164,7 @@ function createWindow(): void {
 
   setMainWindow(mainWindow)
   attachMainWindowCloseBehavior(mainWindow)
-  attachMainWindowNotePopoutCleanup(mainWindow)
+  notifyMainWindowCreated(mainWindow)
 
   attachWindowStatePersistence(mainWindow, {
     getBasePath: () => services.db?.getBasePath() ?? resolveWanwuPath(),
@@ -235,32 +218,17 @@ function createWindow(): void {
 }
 
 async function initServices(): Promise<void> {
-  const userData = resolveWanwuPath()
-  services.db = new DatabaseService(userData)
+  const userDataPath = resolveWanwuPath()
+  services.db = new DatabaseService(userDataPath)
   await services.db.init({ skipLibrarySeed: true })
-  services.library = new LibraryService(services.db)
-  services.links = new LinksService(userData)
-  services.diagrams = new DiagramService(userData)
-  void services.diagrams.migrateStorageToWfg().catch((err) => {
-    console.error('[wanwu:diagrams] 启动迁移失败', err)
-  })
-  services.rss = new RssService(services.db)
-  services.music = new MusicService(services.db, userData)
-  services.media = new MediaService(userData)
   services.userData = new SqliteUserDataGateway(services.db)
-  services.personal = new PersonalService(
-    services.db,
-    services.library,
-    services.userData,
-    services.media
-  )
-  services.notes = new NotesService(new SqliteNotesStorage(services.userData, userData))
-  // 云斋暂下线（GLSL / 展厅 3D 未就绪）
-  // services.cloudAbode = new CloudAbodeService()
-  // services.cloudAbode.open(userData)
-  configureNotePopoutPersistence(userData)
+  services.media = new MediaService(userDataPath)
+  await initMainProcessModules(services)
   registerIpcHandlers(services)
-  applyRssAutoRefreshSchedule(services)
+  dispatchSettingsChanged(
+    services,
+    normalizeAppSettings(services.userData?.getAppSettings() ?? {})
+  )
 }
 
 const gotSingleInstanceLock = app.requestSingleInstanceLock()
@@ -276,6 +244,12 @@ app.whenReady().then(async () => {
   if (!gotSingleInstanceLock) return
 
   if (installerImportRequest) {
+    const runInstallerLibraryPackImport = getInstallerLibraryPackImport()
+    if (!runInstallerLibraryPackImport) {
+      console.error('[wanwu] 图鉴模块未加载，无法执行安装包导入')
+      app.exit(1)
+      return
+    }
     try {
       const result = await runInstallerLibraryPackImport(
         installerImportRequest.dataPath,
@@ -334,15 +308,9 @@ app.whenReady().then(async () => {
     app.dock.setIcon(nativeImage.createFromPath(appIcon))
   }
 
-  registerNotePopoutAppLifecycle()
+  registerNotePopoutLifecycleFromModule()
   createWindow()
   focusMainWindow()
-
-  if (services.db) {
-    startLibraryBootstrap(services.db, () => runStartupLibrarySeed(services.db!))
-  }
-
-  void services.rss?.pruneUnhealthyDefaultFeeds().catch(() => {})
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()

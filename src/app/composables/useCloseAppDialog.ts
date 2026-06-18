@@ -9,13 +9,13 @@ export function useCloseAppDialog() {
 
   async function resolveChoice(choice: 'tray' | 'quit' | 'cancel') {
     closeDialog()
-    await window.wanwu.window.resolveClosePrompt(choice)
+    await window.wanwu?.window?.resolveClosePrompt(choice)
   }
 
   let stopPrompt: (() => void) | undefined
 
   onMounted(() => {
-    stopPrompt = window.wanwu.window.onClosePrompt(() => {
+    stopPrompt = window.wanwu?.window?.onClosePrompt(() => {
       closeDialogVisible.value = true
     })
   })

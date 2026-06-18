@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 defineOptions({ name: 'DiagramHomeView' })
 
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -33,7 +33,7 @@ import { DG_FILES, DG_HOME, DG_RECYCLE } from '@modules/library/diagrams/domain/
 import { pushShellRoute } from '@app/composables/shellNavigation'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
-import type { DiagramContent, DiagramFileMeta, DiagramSearchHit } from '@shared/types/diagrams'
+import type { DiagramContent, DiagramFileMeta, DiagramSearchHit } from '@modules/library/diagrams/domain/types'
 
 const router = useRouter()
 const store = useDiagramsStore()

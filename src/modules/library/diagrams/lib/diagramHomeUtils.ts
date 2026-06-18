@@ -1,4 +1,4 @@
-import type { DiagramFileMeta } from '@shared/types/diagrams'
+﻿import type { DiagramFileMeta } from '@modules/library/diagrams/domain/types'
 
 const STORAGE_KEY = 'wanwu.diagram.recentDismissed'
 

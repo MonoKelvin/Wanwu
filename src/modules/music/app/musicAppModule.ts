@@ -1,8 +1,8 @@
-import type { RouteRecordRaw } from 'vue-router'
+﻿import type { RouteRecordRaw } from 'vue-router'
 import type { IAppModule } from '@app/modules/types'
 import { mvPageActive } from '@modules/music/lib/musicMvOverlayState'
 import { MUSIC_CHILD_ROUTES, MUSIC_RETURN_ROUTE_NAMES } from '@modules/music/app/musicRoutes'
-import type { NormalizedTrack } from '@shared/types/music'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 
 export const musicAppModule: IAppModule = {
   id: 'wanwu.music',
@@ -101,7 +101,7 @@ export const musicAppModule: IAppModule = {
       label: '音乐',
       icon: 'disc-3',
       order: 40,
-      loadPanel: () => import('@modules/settings/sections/SettingsMusicSection.vue').then((m) => m.default)
+      loadPanel: () => import('@modules/music/settings/MusicSettingsPanel.vue').then((m) => m.default)
     })
   }
 }

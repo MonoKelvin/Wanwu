@@ -1,16 +1,27 @@
 ﻿import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { dirname, join, normalize, resolve } from 'path'
 import { ELECTRON_USER_DATA_FOLDER, getElectronPath } from '../core/electronRuntime'
+import {
+  WANWU_DATA_SUBDIRS,
+  buildWanwuPathLayout,
+  resolveWanwuPathUnderParent,
+  validateMigrationTarget,
+  type WanwuPathConfig,
+  type WanwuPathLayout
+} from '@shared/lib/wanwuPaths'
 
 const CONFIG_FILE = 'wanwu-path.json'
 
 export { ELECTRON_USER_DATA_FOLDER }
-
-export interface WanwuPathConfig {
-  wanwuPath?: string
-  /** 图鉴数据包 zip（安装程序或用户指定） */
-  libraryPackPath?: string
-}
+export {
+  WANWU_DATA_SUBDIRS,
+  buildWanwuPathLayout,
+  resolveWanwuPathUnderParent,
+  validateMigrationTarget,
+  wanwuDbMarkerFile,
+  type WanwuPathConfig,
+  type WanwuPathLayout
+} from '@shared/lib/wanwuPaths'
 
 function parseConfigFile(file: string): WanwuPathConfig {
   if (!existsSync(file)) return {}
@@ -94,66 +105,9 @@ export function getWanwuResourcesDirectory(): string {
   return getWanwuPathLayout().resources
 }
 
-/** 音乐缓存根目录（含 audio、covers） */
-export function wanwuMusicCacheDir(layout: WanwuPathLayout): string {
-  return join(layout.music, 'cache')
-}
-
-/** 分类图鉴 SQLite 文件路径 */
-export function libraryCategoryDbFile(layout: WanwuPathLayout, categoryId: string): string {
-  return join(layout.db, `library_${categoryId}.sqlite`)
-}
-
-/** db 目录下的标记文件（图鉴包版本等） */
-export function wanwuDbMarkerFile(layout: WanwuPathLayout, markerName: string): string {
-  return join(layout.db, markerName)
-}
-
-/** 万物数据根目录下的一级子目录（备份/迁移会整包复制 root） */
-export const WANWU_DATA_SUBDIRS = ['db', 'media', 'cache', 'resources', 'music'] as const
-
-/** 相对万物数据根的路径布局（所有落盘模块应通过此结构解析，勿写死其它根路径） */
-export interface WanwuPathLayout {
-  root: string
-  db: string
-  media: string
-  cache: string
-  resources: string
-  music: string
-  musicCacheAudio: string
-  musicCacheCovers: string
-  musicDbFile: string
-  userDbFile: string
-  rssDbFile: string
-  linksDbFile: string
-  diagramsDbFile: string
-  diagramsMediaDir: string
-  notePopoutSessionsFile: string
-  windowStateFile: string
-  cloudAbodeDir: string
-}
-
 export function getWanwuPathLayout(basePath?: string): WanwuPathLayout {
   const root = basePath ? normalize(resolve(basePath)) : getWanwuDataDirectory()
-  return {
-    root,
-    db: join(root, 'db'),
-    media: join(root, 'media'),
-    cache: join(root, 'cache'),
-    resources: join(root, 'resources'),
-    music: join(root, 'music'),
-    musicCacheAudio: join(root, 'music', 'cache', 'audio'),
-    musicCacheCovers: join(root, 'music', 'cache', 'covers'),
-    musicDbFile: join(root, 'db', 'music.sqlite'),
-    userDbFile: join(root, 'db', 'user.sqlite'),
-    rssDbFile: join(root, 'db', 'rss.sqlite'),
-    linksDbFile: join(root, 'db', 'library_links.sqlite'),
-    diagramsDbFile: join(root, 'db', 'library_diagrams.sqlite'),
-    diagramsMediaDir: join(root, 'media', 'diagrams'),
-    notePopoutSessionsFile: join(root, 'note-popout-sessions.json'),
-    windowStateFile: join(root, 'window-state.json'),
-    cloudAbodeDir: join(root, 'cloud-abode')
-  }
+  return buildWanwuPathLayout(root)
 }
 
 /** 确保万物数据目录及标准子目录存在（写文件前应使用 layout.root 或 resolveWanwuPath） */
@@ -163,8 +117,6 @@ export function ensureWanwuDataLayout(basePath?: string): string {
   for (const sub of WANWU_DATA_SUBDIRS) {
     mkdirSync(join(layout.root, sub), { recursive: true })
   }
-  mkdirSync(layout.musicCacheAudio, { recursive: true })
-  mkdirSync(layout.musicCacheCovers, { recursive: true })
   return layout.root
 }
 
@@ -189,37 +141,4 @@ export function patchWanwuPathConfig(patch: Partial<WanwuPathConfig>): void {
   const next: WanwuPathConfig = { ...existing, ...patch }
   if (patch.libraryPackPath === '') delete next.libraryPackPath
   writeWanwuPathConfigFile(next)
-}
-
-/** 迁移/安装时使用的数据目录（与所选目录一致，不再追加 wanwu 子目录） */
-export function resolveWanwuPathUnderParent(parentDir: string): string {
-  return normalize(resolve(parentDir))
-}
-
-export function validateMigrationTarget(
-  currentPath: string,
-  targetParentDir: string
-): { ok: true; targetPath: string } | { ok: false; error: string } {
-  const current = normalize(resolve(currentPath))
-  const parent = normalize(resolve(targetParentDir))
-  const target = resolveWanwuPathUnderParent(parent)
-
-  if (parent === current) {
-    return { ok: false, error: '请选择新的数据目录，而非当前数据目录本身' }
-  }
-
-  if (target === current) {
-    return { ok: false, error: '目标路径与当前数据目录相同' }
-  }
-
-  const currentLower = current.toLowerCase()
-  const targetLower = target.toLowerCase()
-  if (targetLower.startsWith(`${currentLower}\\`) || targetLower.startsWith(`${currentLower}/`)) {
-    return { ok: false, error: '目标目录不能位于当前数据目录内部' }
-  }
-  if (currentLower.startsWith(`${targetLower}\\`) || currentLower.startsWith(`${targetLower}/`)) {
-    return { ok: false, error: '目标目录不能包含当前数据目录' }
-  }
-
-  return { ok: true, targetPath: target }
 }

@@ -1,5 +1,6 @@
 import type { WwIconName } from '@shared/icons/registry'
 import type { ModuleId } from '@shared/constants/modules'
+import { isKnownModuleId } from '@shared/constants/modules'
 
 export interface IModuleNavContributor {
   readonly moduleId: ModuleId
@@ -34,4 +35,22 @@ export function isModuleNavEnabled(moduleId: ModuleId): boolean {
 
 export function modulePathById(moduleId: ModuleId): string {
   return getModuleNavItem(moduleId)?.path ?? '/library'
+}
+
+/** 渲染进程：模块是否已在导航注册表中 */
+export function isModuleIdRegistered(value: string): value is ModuleId {
+  if (!value || typeof value !== 'string') return false
+  return collectModuleNavItems().some((item) => item.moduleId === value)
+}
+
+/** 渲染进程：校验模块 ID（注册表优先，兜底已知列表） */
+export function isModuleId(value: string): value is ModuleId {
+  if (!value || typeof value !== 'string') return false
+  if (isModuleIdRegistered(value)) return true
+  return isKnownModuleId(value)
+}
+
+export function resolveDefaultModuleId(): ModuleId {
+  const first = collectModuleNavItems()[0]
+  return first?.moduleId ?? 'library'
 }

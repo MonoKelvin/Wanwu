@@ -4,6 +4,13 @@
   type ModuleId
 } from '../../../src/shared/constants/modules'
 import {
+  DIAGRAMS_MODULE_ID,
+  LEISURE_READ_MODULE_ID,
+  MUSIC_MODULE_ID,
+  NOTES_MODULE_ID,
+  RSS_MODULE_ID
+} from '../../../src/shared/module-bridge/moduleIds'
+import {
   MAX_RECENT_COLORS,
   MAX_RECENT_DIAGRAM_SHAPES,
   MAX_RECENT_FONTS,
@@ -60,71 +67,212 @@ function normalizeCloseBehavior(v: unknown): CloseBehavior {
   return 'quit'
 }
 
+function normalizeModuleSettings(
+  raw: Partial<AppSettings> & Record<string, unknown>
+): Record<string, Record<string, unknown>> {
+  const base =
+    raw.moduleSettings && typeof raw.moduleSettings === 'object'
+      ? { ...(raw.moduleSettings as Record<string, Record<string, unknown>>) }
+      : {}
+
+  if (!base[LEISURE_READ_MODULE_ID] && ('leisureReadJokeLang' in raw || 'leisureReadArticleMode' in raw)) {
+    base[LEISURE_READ_MODULE_ID] = {
+      jokeLang: raw.leisureReadJokeLang === 'en' ? 'en' : 'zh',
+      articleMode: raw.leisureReadArticleMode === 'today' ? 'today' : 'random'
+    }
+  }
+
+  if (!base[RSS_MODULE_ID] && ('rssFetchLimit' in raw || 'rssAutoRefreshMinutes' in raw)) {
+    base[RSS_MODULE_ID] = {
+      fetchLimit: raw.rssFetchLimit,
+      autoRefreshMinutes: raw.rssAutoRefreshMinutes
+    }
+  }
+
+  if (!base[NOTES_MODULE_ID] && ('notesPopoutRestore' in raw || 'notesSpellcheckEnabled' in raw)) {
+    base[NOTES_MODULE_ID] = {
+      popoutRestore: raw.notesPopoutRestore,
+      spellcheckEnabled: raw.notesSpellcheckEnabled
+    }
+  }
+
+  if (
+    !base[MUSIC_MODULE_ID] &&
+    ('musicApiBaseUrl' in raw ||
+      'musicApiMode' in raw ||
+      'musicPrimarySource' in raw ||
+      'musicNeteaseQuality' in raw)
+  ) {
+    base[MUSIC_MODULE_ID] = {
+      apiBaseUrl: raw.musicApiBaseUrl,
+      apiMode: raw.musicApiMode,
+      apiLocalPort: raw.musicApiLocalPort,
+      discoverCountry: raw.musicDiscoverCountry,
+      jamendoClientId: raw.musicJamendoClientId,
+      audiusApiKey: raw.musicAudiusApiKey,
+      primarySource: raw.musicPrimarySource,
+      neteasePort: raw.musicNeteasePort,
+      neteaseRealIp: raw.musicNeteaseRealIp,
+      neteaseProxy: raw.musicNeteaseProxy,
+      neteaseQuality: raw.musicNeteaseQuality
+    }
+  }
+
+  if (!base[DIAGRAMS_MODULE_ID] && 'diagramRecentShapes' in raw) {
+    base[DIAGRAMS_MODULE_ID] = { recentShapes: raw.diagramRecentShapes }
+  }
+
+  return base
+}
+
+function readRssFetchLimit(
+  raw: Partial<AppSettings> & Record<string, unknown>,
+  moduleSettings: Record<string, Record<string, unknown>>
+): RssFetchLimit {
+  const rss = moduleSettings[RSS_MODULE_ID]
+  const fromModule = rss?.fetchLimit ?? rss?.rssFetchLimit
+  return normalizeRssFetchLimit(fromModule ?? raw.rssFetchLimit)
+}
+
+function readRssAutoRefreshMinutes(
+  raw: Partial<AppSettings> & Record<string, unknown>,
+  moduleSettings: Record<string, Record<string, unknown>>
+): RssAutoRefreshMinutes {
+  const rss = moduleSettings[RSS_MODULE_ID]
+  const fromModule = rss?.autoRefreshMinutes ?? rss?.rssAutoRefreshMinutes
+  return normalizeRssAutoRefreshMinutes(fromModule ?? raw.rssAutoRefreshMinutes)
+}
+
+function readNotesPopoutRestore(
+  raw: Partial<AppSettings> & Record<string, unknown>,
+  moduleSettings: Record<string, Record<string, unknown>>
+): NotesPopoutRestoreMode {
+  const notes = moduleSettings[NOTES_MODULE_ID]
+  const fromModule = notes?.popoutRestore ?? notes?.notesPopoutRestore
+  return normalizeNotesPopoutRestore(fromModule ?? raw.notesPopoutRestore)
+}
+
+function readNotesSpellcheckEnabled(
+  raw: Partial<AppSettings> & Record<string, unknown>,
+  moduleSettings: Record<string, Record<string, unknown>>
+): boolean {
+  const notes = moduleSettings[NOTES_MODULE_ID]
+  if (typeof notes?.spellcheckEnabled === 'boolean') return notes.spellcheckEnabled
+  if (typeof notes?.notesSpellcheckEnabled === 'boolean') return notes.notesSpellcheckEnabled
+  return raw.notesSpellcheckEnabled === true
+}
+
+function readMusicField<T>(
+  moduleSettings: Record<string, Record<string, unknown>>,
+  keys: { moduleKey: string; legacyKey: keyof AppSettings },
+  raw: Partial<AppSettings>,
+  fallback: T
+): T {
+  const music = moduleSettings[MUSIC_MODULE_ID]
+  const fromModule = music?.[keys.moduleKey]
+  if (fromModule !== undefined && fromModule !== null) return fromModule as T
+  const legacy = raw[keys.legacyKey]
+  return (legacy !== undefined ? legacy : fallback) as T
+}
+
+function readDiagramRecentShapes(
+  raw: Partial<AppSettings> & Record<string, unknown>,
+  moduleSettings: Record<string, Record<string, unknown>>
+): string[] {
+  const diagrams = moduleSettings[DIAGRAMS_MODULE_ID]
+  const fromModule = diagrams?.recentShapes ?? diagrams?.diagramRecentShapes
+  return normalizeRecentStringList(fromModule ?? raw.diagramRecentShapes, MAX_RECENT_DIAGRAM_SHAPES)
+}
+
 export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppSettings {
-  const raw = (data && typeof data === 'object' ? data : {}) as Partial<AppSettings>
+  const raw = (data && typeof data === 'object' ? data : {}) as Partial<AppSettings> & Record<string, unknown>
+  const moduleSettings = normalizeModuleSettings(raw)
   return {
     navAlign: raw.navAlign === 'center' ? 'center' : 'start',
     navDisplay: raw.navDisplay === 'both' ? 'both' : 'icon',
-    rssFetchLimit: normalizeRssFetchLimit(raw.rssFetchLimit),
+    rssFetchLimit: readRssFetchLimit(raw, moduleSettings),
     startupModule: normalizeStartupModule(raw.startupModule),
     lastActiveModule: normalizeLastActiveModule(raw.lastActiveModule),
-    rssAutoRefreshMinutes: normalizeRssAutoRefreshMinutes(raw.rssAutoRefreshMinutes),
+    rssAutoRefreshMinutes: readRssAutoRefreshMinutes(raw, moduleSettings),
     windowStateMode: normalizeWindowStateMode(raw.windowStateMode),
     colorScheme: normalizeColorScheme(raw.colorScheme),
-    notesPopoutRestore: normalizeNotesPopoutRestore(raw.notesPopoutRestore),
-    notesSpellcheckEnabled: raw.notesSpellcheckEnabled === true,
+    notesPopoutRestore: readNotesPopoutRestore(raw, moduleSettings),
+    notesSpellcheckEnabled: readNotesSpellcheckEnabled(raw, moduleSettings),
     launchAtStartup: raw.launchAtStartup === true,
     trayEnabled: raw.trayEnabled !== false,
     closeBehavior: normalizeCloseBehavior(raw.closeBehavior),
     dailyWidgetEnabled: raw.dailyWidgetEnabled === true,
     clipboardAssistEnabled: raw.clipboardAssistEnabled === true,
-    musicApiBaseUrl:
-      typeof raw.musicApiBaseUrl === 'string' && raw.musicApiBaseUrl.trim()
-        ? raw.musicApiBaseUrl.trim()
-        : DEFAULT_APP_SETTINGS.musicApiBaseUrl,
-    musicApiMode: raw.musicApiMode === 'local' ? 'local' : 'remote',
-    musicApiLocalPort:
-      typeof raw.musicApiLocalPort === 'number' && raw.musicApiLocalPort > 0
-        ? raw.musicApiLocalPort
-        : DEFAULT_APP_SETTINGS.musicApiLocalPort,
-    musicDiscoverCountry:
-      typeof raw.musicDiscoverCountry === 'string' && raw.musicDiscoverCountry.trim()
-        ? raw.musicDiscoverCountry.trim()
-        : DEFAULT_APP_SETTINGS.musicDiscoverCountry,
-    musicJamendoClientId:
-      typeof raw.musicJamendoClientId === 'string' ? raw.musicJamendoClientId : '',
-    musicAudiusApiKey: typeof raw.musicAudiusApiKey === 'string' ? raw.musicAudiusApiKey : '',
-    musicPrimarySource:
-      raw.musicPrimarySource === 'verome' ||
-      raw.musicPrimarySource === 'kugou' ||
-      raw.musicPrimarySource === 'netease'
-        ? raw.musicPrimarySource
-        : DEFAULT_APP_SETTINGS.musicPrimarySource,
-    musicNeteasePort:
-      typeof raw.musicNeteasePort === 'number' && raw.musicNeteasePort > 0
-        ? raw.musicNeteasePort
-        : DEFAULT_APP_SETTINGS.musicNeteasePort,
-    musicNeteaseRealIp:
-      typeof raw.musicNeteaseRealIp === 'string' ? raw.musicNeteaseRealIp : '',
-    musicNeteaseProxy: typeof raw.musicNeteaseProxy === 'string' ? raw.musicNeteaseProxy : '',
-    musicNeteaseQuality:
-      raw.musicNeteaseQuality === 'standard' ||
-      raw.musicNeteaseQuality === 'higher' ||
-      raw.musicNeteaseQuality === 'exhigh' ||
-      raw.musicNeteaseQuality === 'lossless' ||
-      raw.musicNeteaseQuality === 'hires' ||
-      raw.musicNeteaseQuality === 'jyeffect' ||
-      raw.musicNeteaseQuality === 'sky' ||
-      raw.musicNeteaseQuality === 'dolby' ||
-      raw.musicNeteaseQuality === 'jymaster'
-        ? raw.musicNeteaseQuality
-        : DEFAULT_APP_SETTINGS.musicNeteaseQuality,
+    musicApiBaseUrl: readMusicField(
+      moduleSettings,
+      { moduleKey: 'apiBaseUrl', legacyKey: 'musicApiBaseUrl' },
+      raw,
+      DEFAULT_APP_SETTINGS.musicApiBaseUrl
+    ),
+    musicApiMode: readMusicField(
+      moduleSettings,
+      { moduleKey: 'apiMode', legacyKey: 'musicApiMode' },
+      raw,
+      DEFAULT_APP_SETTINGS.musicApiMode
+    ),
+    musicApiLocalPort: readMusicField(
+      moduleSettings,
+      { moduleKey: 'apiLocalPort', legacyKey: 'musicApiLocalPort' },
+      raw,
+      DEFAULT_APP_SETTINGS.musicApiLocalPort
+    ),
+    musicDiscoverCountry: readMusicField(
+      moduleSettings,
+      { moduleKey: 'discoverCountry', legacyKey: 'musicDiscoverCountry' },
+      raw,
+      DEFAULT_APP_SETTINGS.musicDiscoverCountry
+    ),
+    musicJamendoClientId: readMusicField(
+      moduleSettings,
+      { moduleKey: 'jamendoClientId', legacyKey: 'musicJamendoClientId' },
+      raw,
+      ''
+    ),
+    musicAudiusApiKey: readMusicField(
+      moduleSettings,
+      { moduleKey: 'audiusApiKey', legacyKey: 'musicAudiusApiKey' },
+      raw,
+      ''
+    ),
+    musicPrimarySource: readMusicField(
+      moduleSettings,
+      { moduleKey: 'primarySource', legacyKey: 'musicPrimarySource' },
+      raw,
+      DEFAULT_APP_SETTINGS.musicPrimarySource
+    ),
+    musicNeteasePort: readMusicField(
+      moduleSettings,
+      { moduleKey: 'neteasePort', legacyKey: 'musicNeteasePort' },
+      raw,
+      DEFAULT_APP_SETTINGS.musicNeteasePort
+    ),
+    musicNeteaseRealIp: readMusicField(
+      moduleSettings,
+      { moduleKey: 'neteaseRealIp', legacyKey: 'musicNeteaseRealIp' },
+      raw,
+      ''
+    ),
+    musicNeteaseProxy: readMusicField(
+      moduleSettings,
+      { moduleKey: 'neteaseProxy', legacyKey: 'musicNeteaseProxy' },
+      raw,
+      ''
+    ),
+    musicNeteaseQuality: readMusicField(
+      moduleSettings,
+      { moduleKey: 'neteaseQuality', legacyKey: 'musicNeteaseQuality' },
+      raw,
+      DEFAULT_APP_SETTINGS.musicNeteaseQuality
+    ),
     recentFonts: normalizeRecentStringList(raw.recentFonts, MAX_RECENT_FONTS),
     recentColors: normalizeRecentStringList(raw.recentColors, MAX_RECENT_COLORS),
-    diagramRecentShapes: normalizeRecentStringList(
-      raw.diagramRecentShapes,
-      MAX_RECENT_DIAGRAM_SHAPES
-    )
+    diagramRecentShapes: readDiagramRecentShapes(raw, moduleSettings),
+    moduleSettings
   }
 }
 

@@ -90,6 +90,10 @@ function closeBehaviorTrayHint(): string {
   return ''
 }
 
+const trayToggleLocked = computed(
+  () => settings.value.trayEnabled && closeBehaviorNeedsTray()
+)
+
 async function onTrayEnabledChange(enabled: boolean) {
   if (enabled === settings.value.trayEnabled) return
   if (!enabled && closeBehaviorNeedsTray()) {
@@ -98,7 +102,11 @@ async function onTrayEnabledChange(enabled: boolean) {
     )
     return
   }
-  await settingsStore.setTrayEnabled(enabled)
+  try {
+    await settingsStore.setTrayEnabled(enabled)
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : '托盘设置保存失败')
+  }
 }
 
 async function onCloseBehaviorChange(v: unknown) {
@@ -206,6 +214,7 @@ async function onLaunchAtStartupChange(enabled: boolean) {
       >
         <WwToggleSwitch
           :model-value="settings.trayEnabled"
+          :disabled="trayToggleLocked"
           aria-label="系统托盘图标"
           @update:model-value="onTrayEnabledChange"
         />

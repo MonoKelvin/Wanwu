@@ -1,6 +1,6 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import MusicChartList from '@modules/music/components/MusicChartList.vue'
-import type { NormalizedTrack } from '@shared/types/music'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 
 defineProps<{
   tracks: NormalizedTrack[]

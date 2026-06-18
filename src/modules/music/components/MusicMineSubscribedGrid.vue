@@ -1,7 +1,7 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { useRouter } from 'vue-router'
 import MusicCoverArt from '@modules/music/components/MusicCoverArt.vue'
-import type { MusicPlatformSubscribedItem } from '@shared/types/music'
+import type { MusicPlatformSubscribedItem } from '@modules/music/domain/types'
 
 defineProps<{
   items: MusicPlatformSubscribedItem[]
