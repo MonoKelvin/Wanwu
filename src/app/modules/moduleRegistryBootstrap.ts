@@ -8,3 +8,5 @@ import.meta.glob(
   ['../../modules/**/app/register.ts', '!../../modules/cloud-abode/**'],
   { eager: true }
 )
+import '@shared/settings/settingsContributorBootstrap'
+import '@shared/settings/localStorageKeysBootstrap'

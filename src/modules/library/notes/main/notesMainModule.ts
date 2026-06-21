@@ -5,7 +5,7 @@ import {
   getModuleRuntimeService,
   setModuleRuntimeService
 } from '@shared/module-bridge/mainProcessRegistry'
-import { registerOptionalModuleHooks } from '../../../../../electron/app/frameworkLifecycleBridge'
+import { registerFrameworkLifecycleContributor } from '../../../../../electron/app/frameworkLifecycleBridge'
 import { NOTES_MODULE_ID } from '@modules/library/notes/domain/moduleId'
 import type { DatabaseService } from '../../../../../electron/services/core/database'
 import { NotesService } from './service/service'
@@ -64,10 +64,12 @@ export const notesMainModule: IMainProcessModule = {
   onModulesReady(ctx) {
     const db = ctx.services.db as DatabaseService | null
     if (db) configureNotePopoutPersistence(db.getBasePath())
-    registerOptionalModuleHooks({
-      closeAllNotePopoutsForAppExit: () => closeAllNotePopoutsForAppExit(),
+    registerFrameworkLifecycleContributor({
+      id: NOTES_MODULE_ID,
+      order: 11,
+      onWindowAllClosed: () => closeAllNotePopoutsForAppExit(),
       onMainWindowCreated: (win) => attachMainWindowNotePopoutCleanup(win),
-      registerNotePopoutLifecycle: () => registerNotePopoutAppLifecycle()
+      onAppReady: () => registerNotePopoutAppLifecycle()
     })
   },
 
@@ -194,7 +196,7 @@ export const notesMainModule: IMainProcessModule = {
         id: note.id,
         title: note.title.trim() || '无标题便笺',
         subtitle: '便笺',
-        noteId: note.id
+        payload: { noteId: note.id }
       })
     }
     return hits

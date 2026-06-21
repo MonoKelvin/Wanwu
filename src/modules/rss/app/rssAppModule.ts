@@ -1,4 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router'
+import { readQuickAccessPayload } from '@shared/types/quickAccess'
 import type { IAppModule } from '@app/modules/types'
 
 export const rssAppModule: IAppModule = {
@@ -37,13 +38,21 @@ export const rssAppModule: IAppModule = {
     })
   },
 
+  registerMainAppIntegration(register) {
+    register(() => {
+      void import('@modules/rss/styles/rss-theme.css')
+    })
+  },
+
   registerQuickAccess(register) {
     register({
       kind: 'rss',
       paletteMeta: { label: 'RSS', icon: 'inbox', order: 40 },
       async open(target, ctx) {
-        if (target.feedId) {
-          await ctx.pushRoute({ name: 'rss', params: { feedId: target.feedId } })
+        const payload = readQuickAccessPayload(target)
+        const feedId = typeof payload.feedId === 'string' ? payload.feedId : undefined
+        if (feedId) {
+          await ctx.pushRoute({ name: 'rss', params: { feedId } })
         } else {
           await ctx.pushRoute({ name: 'rss' })
         }
@@ -53,9 +62,10 @@ export const rssAppModule: IAppModule = {
       kind: 'favorite',
       order: 20,
       async open(target, ctx) {
-        const source = target.itemSource ?? 'library'
+        const payload = readQuickAccessPayload(target)
+        const source = payload.itemSource === 'rss' ? 'rss' : null
         if (source !== 'rss') return false
-        const id = target.itemId ?? target.id
+        const id = (typeof payload.itemId === 'string' ? payload.itemId : undefined) ?? target.id
         if (!id) return false
         await ctx.pushRoute({ name: 'rss' })
         await ctx.afterRouteReady()

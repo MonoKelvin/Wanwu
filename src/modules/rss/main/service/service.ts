@@ -591,16 +591,16 @@ export class RssService {
       id: row.id,
       title: row.title?.trim() || '无标题文章',
       subtitle: row.feedTitle,
-      feedId: row.feedId
+      payload: { feedId: row.feedId }
     }))
   }
 
-  getTrayStatusSlice(): { rssEntryCount: number; rssFeedCount: number } {
+  getTrayStatusSlice(): { entryCount: number; feedCount: number } {
     ensureRssSchema(this.rssDb)
-    const rssEntryCount = (this.rssDb.prepare('SELECT COUNT(*) as c FROM rss_entries').get() as { c: number }).c
-    const rssFeedCount = (
+    const entryCount = (this.rssDb.prepare('SELECT COUNT(*) as c FROM rss_entries').get() as { c: number }).c
+    const feedCount = (
       this.rssDb.prepare(`SELECT COUNT(*) as c FROM rss_feeds WHERE deleted_at IS NULL`).get() as { c: number }
     ).c
-    return { rssEntryCount, rssFeedCount }
+    return { entryCount, feedCount }
   }
 }

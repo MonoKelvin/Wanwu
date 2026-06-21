@@ -1,6 +1,6 @@
 import type { IpcRenderer } from 'electron'
 import type { IPreloadModule } from '@shared/module-bridge/preloadRegistry'
-import { DIAGRAMS_MODULE_ID } from '@shared/module-bridge/moduleIds'
+import { DIAGRAMS_MODULE_ID } from '@modules/library/diagrams/domain/moduleId'
 
 export const diagramsPreloadModule: IPreloadModule = {
   id: DIAGRAMS_MODULE_ID,

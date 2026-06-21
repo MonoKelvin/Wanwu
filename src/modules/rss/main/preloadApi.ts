@@ -1,6 +1,6 @@
 import type { IpcRenderer } from 'electron'
 import type { IPreloadModule } from '@shared/module-bridge/preloadRegistry'
-import { RSS_MODULE_ID } from '@shared/module-bridge/moduleIds'
+import { RSS_MODULE_ID } from '@modules/rss/domain/moduleId'
 
 export const rssPreloadModule: IPreloadModule = {
   id: RSS_MODULE_ID,

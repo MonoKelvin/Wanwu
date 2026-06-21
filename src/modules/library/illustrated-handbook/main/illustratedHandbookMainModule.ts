@@ -8,10 +8,11 @@ import {
 import { ILLUSTRATED_HANDBOOK_MODULE_ID } from '@modules/library/illustrated-handbook/domain/moduleId'
 import type { DatabaseService } from '../../../../../electron/services/core/database'
 import {
-  registerOptionalModuleHooks,
-  waitForLibraryBootstrap
+  registerFrameworkLifecycleContributor,
+  waitForBootstrap
 } from '../../../../../electron/app/frameworkLifecycleBridge'
-import { registerMediaResolverHooks } from '../../../../../electron/app/mediaResolverBridge'
+import { registerMediaPathResolver } from '../../../../../electron/app/mediaResolverBridge'
+import { ILLUSTRATED_HANDBOOK_MEDIA_DIR } from '@modules/library/illustrated-handbook/main/service/paths'
 import { resolveLibraryMediaAbsolute } from './service/mediaResolver'
 import { LibraryDatabaseHost } from './libraryDatabaseHost'
 import { LibraryService } from './service/service'
@@ -43,12 +44,22 @@ export const illustratedHandbookMainModule: IMainProcessModule = {
 
   onModulesReady() {
     if (!handbookDbHost) return
-    registerOptionalModuleHooks({
-      waitForLibraryBootstrap: () => waitForLibraryBootstrapImpl(),
+    registerFrameworkLifecycleContributor({
+      id: ILLUSTRATED_HANDBOOK_MODULE_ID,
+      order: 1,
+      waitForBootstrap: () => waitForLibraryBootstrapImpl(),
       consumeStartupNotices: () => consumeStartupNoticesImpl()
     })
-    registerMediaResolverHooks({
-      resolveHandbookMediaAbsolute: (rel) => resolveLibraryMediaAbsolute(rel)
+    registerMediaPathResolver({
+      id: `${ILLUSTRATED_HANDBOOK_MODULE_ID}:prefixed`,
+      order: 10,
+      prefix: `${ILLUSTRATED_HANDBOOK_MEDIA_DIR}/`,
+      resolveSync: (rel) => resolveLibraryMediaAbsolute(rel)
+    })
+    registerMediaPathResolver({
+      id: `${ILLUSTRATED_HANDBOOK_MODULE_ID}:fallback`,
+      order: 900,
+      resolveSync: (rel) => resolveLibraryMediaAbsolute(rel)
     })
     startLibraryBootstrap(handbookDbHost, () => runStartupLibrarySeed(handbookDbHost!))
   },
@@ -61,15 +72,15 @@ export const illustratedHandbookMainModule: IMainProcessModule = {
   registerIpcHandlers(ctx) {
     ipcMain.handle('library:listCategories', () => getService(ctx)?.listCategories() ?? [])
     ipcMain.handle('library:listItems', async (_e, params: { categoryId: string; subCategoryId?: string }) => {
-      await waitForLibraryBootstrap()
+      await waitForBootstrap()
       return getService(ctx)?.listItems(params.categoryId, params.subCategoryId) ?? []
     })
     ipcMain.handle('library:searchItems', async (_e, params: { query: string; limit?: number }) => {
-      await waitForLibraryBootstrap()
+      await waitForBootstrap()
       return getService(ctx)?.searchItems(params.query, params.limit) ?? []
     })
     ipcMain.handle('library:getItem', async (_e, id: string) => {
-      await waitForLibraryBootstrap()
+      await waitForBootstrap()
       return getService(ctx)?.getItem(id) ?? null
     })
     ipcMain.handle('library:updateItem', (_e, item: unknown) => {
@@ -94,7 +105,7 @@ export const illustratedHandbookMainModule: IMainProcessModule = {
   },
 
   async searchQuickAccess(ctx, query, limit) {
-    await waitForLibraryBootstrap()
+    await waitForBootstrap()
     const service = getService(ctx)
     if (!service) return []
     const hits: QuickAccessHit[] = []
@@ -104,22 +115,21 @@ export const illustratedHandbookMainModule: IMainProcessModule = {
         id: row.id,
         title: row.name,
         subtitle: [row.categoryName, row.subCategoryName].filter(Boolean).join(' · ') || null,
-        itemSource: 'library',
-        itemId: row.id
+        payload: { itemSource: 'library', itemId: row.id }
       })
     }
     return hits
   },
 
   async getTrayStatusSlice(ctx) {
-    await waitForLibraryBootstrap()
+    await waitForBootstrap()
     return { daily: getService(ctx)?.pickDailyItem() ?? null }
   },
 
   async getClipboardAssistHints(ctx, text, limit) {
     const term = text.trim()
     if (term.length < 2 || term.length > 120) return []
-    await waitForLibraryBootstrap()
+    await waitForBootstrap()
     const service = getService(ctx)
     if (!service) return []
     return service.searchItems(term, limit).map((row) => ({
@@ -127,8 +137,7 @@ export const illustratedHandbookMainModule: IMainProcessModule = {
       id: row.id,
       title: row.name,
       subtitle: row.categoryName,
-      itemSource: 'library' as const,
-      itemId: row.id
+      payload: { itemSource: 'library' as const, itemId: row.id }
     }))
   }
 }

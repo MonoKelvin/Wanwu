@@ -9,7 +9,7 @@ import { DIAGRAMS_MODULE_ID } from '@modules/library/diagrams/domain/moduleId'
 import type { DatabaseService } from '../../../../../electron/services/core/database'
 import { DiagramService } from './service/service'
 import { registerDiagramCommandBridge } from './diagramCommandBridge'
-import { registerMediaResolverHooks } from '../../../../../electron/app/mediaResolverBridge'
+import { registerMediaPathResolver } from '../../../../../electron/app/mediaResolverBridge'
 import { resolveDiagramMediaAbsolute } from './service/diagramMediaResolver'
 import type { DiagramContent, DiagramWritePatch } from '@modules/library/diagrams/domain/types'
 
@@ -30,8 +30,12 @@ export const diagramsMainModule: IMainProcessModule = {
   },
 
   onModulesReady(ctx) {
-    registerMediaResolverHooks({
-      resolveDiagramMediaAbsoluteAsync: (rel, layout) => resolveDiagramMediaAbsolute(rel, layout)
+    registerMediaPathResolver({
+      id: `${DIAGRAMS_MODULE_ID}:diagrams`,
+      order: 20,
+      prefix: 'diagrams/',
+      allowUrlWithoutFile: true,
+      resolveAsync: (rel, layout) => resolveDiagramMediaAbsolute(rel, layout)
     })
     void getService(ctx)?.migrateStorageToWfg().catch((err) => {
       console.error('[wanwu:diagrams] 启动迁移失败', err)
@@ -197,7 +201,7 @@ export const diagramsMainModule: IMainProcessModule = {
         id: row.meta.id,
         title: row.meta.title.trim() || '未命名流程图',
         subtitle: row.matchedInContent ? '流程图 · 内容匹配' : '流程图',
-        diagramFileId: row.meta.id
+        payload: { fileId: row.meta.id }
       })
     }
     return hits

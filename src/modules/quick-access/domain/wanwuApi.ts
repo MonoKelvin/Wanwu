@@ -1,11 +1,11 @@
 import type {
   ClipboardAssistPayload,
-  DailyPickPreview,
   QuickAccessHit,
   QuickAccessHitKind,
   QuickAccessOpenTarget,
   QuickAccessTrayStatus
 } from '@shared/types/quickAccess'
+import type { DailyPickPreview } from '@modules/quick-access/domain/dailyPick'
 import type { TrayMenuAction, TrayMenuContext } from '@shared/types/trayMenu'
 
 /** 快捷访问 / 托盘 / 命令面板 IPC 能力块 */

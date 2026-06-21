@@ -11,9 +11,9 @@ interface WwSettingsFieldBase {
 
 export interface WwSettingsSegmentField extends WwSettingsFieldBase {
   readonly type: 'segment'
-  readonly options: readonly WwSettingsOption<string>[]
+  readonly options: readonly WwSettingsOption<string | number>[]
   readonly wide?: boolean
-  readonly modelValue: string
+  readonly modelValue: string | number
 }
 
 export interface WwSettingsToggleField extends WwSettingsFieldBase {

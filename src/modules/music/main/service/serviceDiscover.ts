@@ -27,7 +27,7 @@ import { parseBrowseId } from './platform/browseId'
 import { CHINESE_MOOD_FALLBACK } from './moodLabels'
 import { resolvePlayableStream } from './streamResolver'
 import type { TtlRequestCache } from './ttlRequestCache'
-import type { AppSettings } from '@shared/types/settings'
+import { readMusicModuleSettings } from '@modules/music/domain/settings'
 import type {
   MusicChartsPayload,
   MusicDiscoverFeed,
@@ -577,7 +577,7 @@ export class MusicServiceDiscover {
         ? enrichTrackCover(track)
         : await normalizeForPlayback(this.host.verome, track)
 
-    const quality = qualityOverride ?? this.host.getSettings().musicNeteaseQuality
+    const quality = qualityOverride ?? readMusicModuleSettings(this.host.getSettings()).neteaseQuality
 
     if (normalized.provider === 'netease' || normalized.provider === 'kugou') {
       try {

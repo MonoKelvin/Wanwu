@@ -1,6 +1,7 @@
 ﻿<script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { readNotesModuleSettings } from '@modules/library/notes/domain/settings'
 import { useSettingsStore } from '@shared/stores/settings'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import WwIconButton from '@shared/components/WwIconButton.vue'
@@ -30,7 +31,9 @@ const toast = useWanwuToast()
 const popTip = usePopTip()
 const settingsStore = useSettingsStore()
 const { settings } = storeToRefs(settingsStore)
-const notesSpellcheckEnabled = computed(() => settings.value.notesSpellcheckEnabled)
+const notesSpellcheckEnabled = computed(() =>
+  readNotesModuleSettings(settings.value).spellcheckEnabled
+)
 
 const draftTitle = defineModel<string>('draftTitle', { required: true })
 const draftContent = defineModel<string>('draftContent', { required: true })

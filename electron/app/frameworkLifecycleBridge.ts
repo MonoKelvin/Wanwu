@@ -1,75 +1,132 @@
 import type { AppSettings } from '../../src/shared/types/settings'
 
-/** 可选模块向框架注册的跨切面钩子（删除模块后回退为安全默认行为） */
-export interface OptionalModuleHooks {
+/** 模块向框架注册的跨切面生命周期钩子 */
+export interface FrameworkLifecycleContributor {
+  readonly id: string
+  order?: number
+  onMainWindowCreated?: (mainWindow: import('electron').BrowserWindow) => void
+  onAppReady?: () => void
+  onBeforeAppQuit?: () => void
+  onWindowAllClosed?: () => void
+  onSettingsSync?: (settings?: AppSettings) => void
+  waitForBootstrap?: () => Promise<void>
+  consumeStartupNotices?: () => string[]
+  focusMainWindow?: () => void
   isAppQuitting?: () => boolean
   markAppQuitting?: () => void
   isTrayActive?: () => boolean
   ensureTrayForWindowHide?: () => void
-  disposeQuickAccess?: () => void
-  syncQuickAccessFromSettings?: (settings?: AppSettings) => void
-  focusMainWindow?: () => void
-  waitForLibraryBootstrap?: () => Promise<void>
-  closeAllNotePopoutsForAppExit?: () => void
-  onMainWindowCreated?: (mainWindow: import('electron').BrowserWindow) => void
-  registerNotePopoutLifecycle?: () => void
-  consumeStartupNotices?: () => string[]
 }
 
-let hooks: OptionalModuleHooks = {}
+const contributors: FrameworkLifecycleContributor[] = []
 
-export function registerOptionalModuleHooks(next: OptionalModuleHooks): void {
-  hooks = { ...hooks, ...next }
+function sortContributors(): void {
+  contributors.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 }
 
-export function clearOptionalModuleHooks(): void {
-  hooks = {}
+export function registerFrameworkLifecycleContributor(
+  contributor: FrameworkLifecycleContributor
+): void {
+  contributors.push(contributor)
+  sortContributors()
+}
+
+export function clearFrameworkLifecycleContributors(): void {
+  contributors.length = 0
+}
+
+function findLastHook<T extends keyof FrameworkLifecycleContributor>(
+  key: T
+): NonNullable<FrameworkLifecycleContributor[T]> | undefined {
+  for (let i = contributors.length - 1; i >= 0; i--) {
+    const hook = contributors[i][key]
+    if (hook) return hook as NonNullable<FrameworkLifecycleContributor[T]>
+  }
+  return undefined
+}
+
+function runAllHooks(key: 'onAppReady' | 'onBeforeAppQuit' | 'onWindowAllClosed'): void
+function runAllHooks(
+  key: 'onMainWindowCreated',
+  mainWindow: import('electron').BrowserWindow
+): void
+function runAllHooks(
+  key: 'onMainWindowCreated' | 'onAppReady' | 'onBeforeAppQuit' | 'onWindowAllClosed',
+  mainWindow?: import('electron').BrowserWindow
+): void {
+  for (const contributor of contributors) {
+    if (key === 'onMainWindowCreated') {
+      contributor.onMainWindowCreated?.(mainWindow!)
+      continue
+    }
+    if (key === 'onAppReady') contributor.onAppReady?.()
+    if (key === 'onBeforeAppQuit') contributor.onBeforeAppQuit?.()
+    if (key === 'onWindowAllClosed') contributor.onWindowAllClosed?.()
+  }
 }
 
 export function isAppQuitting(): boolean {
-  return hooks.isAppQuitting?.() ?? false
+  return findLastHook('isAppQuitting')?.() ?? false
 }
 
 export function markAppQuitting(): void {
-  hooks.markAppQuitting?.()
+  findLastHook('markAppQuitting')?.()
 }
 
 export function isTrayActive(): boolean {
-  return hooks.isTrayActive?.() ?? false
+  return findLastHook('isTrayActive')?.() ?? false
 }
 
 export function ensureTrayForWindowHide(): void {
-  hooks.ensureTrayForWindowHide?.()
+  findLastHook('ensureTrayForWindowHide')?.()
 }
 
 export function disposeQuickAccess(): void {
-  hooks.disposeQuickAccess?.()
+  runAllHooks('onBeforeAppQuit')
 }
 
 export function syncQuickAccessFromSettings(settings?: AppSettings): void {
-  hooks.syncQuickAccessFromSettings?.(settings)
+  for (const contributor of contributors) {
+    contributor.onSettingsSync?.(settings)
+  }
 }
 
 export function focusMainWindow(): void {
-  hooks.focusMainWindow?.()
+  findLastHook('focusMainWindow')?.()
 }
 
+export function waitForBootstrap(): Promise<void> {
+  const hook = findLastHook('waitForBootstrap')
+  return hook?.() ?? Promise.resolve()
+}
+
+/** @deprecated 使用 waitForBootstrap */
 export function waitForLibraryBootstrap(): Promise<void> {
-  return hooks.waitForLibraryBootstrap?.() ?? Promise.resolve()
+  return waitForBootstrap()
 }
 
 export function closeAllNotePopoutsForAppExit(): void {
-  hooks.closeAllNotePopoutsForAppExit?.()
+  runAllHooks('onWindowAllClosed')
 }
 
 export function notifyMainWindowCreated(mainWindow: import('electron').BrowserWindow): void {
-  hooks.onMainWindowCreated?.(mainWindow)
+  runAllHooks('onMainWindowCreated', mainWindow)
 }
 
+export function runAppReadyLifecycleHooks(): void {
+  runAllHooks('onAppReady')
+}
+
+/** @deprecated 使用 runAppReadyLifecycleHooks */
 export function registerNotePopoutLifecycleFromModule(): void {
-  hooks.registerNotePopoutLifecycle?.()
+  runAppReadyLifecycleHooks()
 }
 
 export function consumeStartupNotices(): string[] {
-  return hooks.consumeStartupNotices?.() ?? []
+  const lines: string[] = []
+  for (const contributor of contributors) {
+    const chunk = contributor.consumeStartupNotices?.()
+    if (chunk?.length) lines.push(...chunk)
+  }
+  return lines
 }

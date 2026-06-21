@@ -3,7 +3,8 @@ import type { AppSettings } from '@shared/types/settings'
 import type { MainProcessInitContext } from '@shared/module-bridge/mainProcessRegistry'
 import { getModuleRuntimeService } from '@shared/module-bridge/mainProcessRegistry'
 import { WEATHER_MODULE_ID } from '@modules/weather/domain/moduleId'
-import { normalizeAppSettings } from '../../../../electron/services/data/settings'
+import { readWeatherModuleSettings } from '@modules/weather/domain/settings'
+import { normalizeAppSettings } from '@shared/settings/normalizeAppSettings'
 import type { DatabaseService } from '../../../../electron/services/core/database'
 import type { WeatherService } from '@modules/weather/main/weatherService'
 
@@ -25,9 +26,10 @@ export function applyWeatherRefreshSchedule(settings: AppSettings): void {
     clearInterval(timer)
     timer = null
   }
-  const minutes = settings.weatherRefreshMinutes
+  const weatherSettings = readWeatherModuleSettings(settings)
+  const minutes = weatherSettings.refreshMinutes
   const service = getService()
-  if (!settings.weatherEnabled || !service) return
+  if (!weatherSettings.enabled || !service) return
   const ms = minutes * 60 * 1000
   timer = setInterval(() => {
     void service.refresh({ reason: 'schedule' })
@@ -46,18 +48,20 @@ export async function runInitialWeatherRefresh(): Promise<void> {
   const db = ctxRef?.services.db as DatabaseService | null
   if (!db) return
   const settings = normalizeAppSettings(db.getAppSettings() ?? {})
-  lastWeatherEnabled = settings.weatherEnabled
-  if (!settings.weatherEnabled) return
+  const weatherSettings = readWeatherModuleSettings(settings)
+  lastWeatherEnabled = weatherSettings.enabled
+  if (!weatherSettings.enabled) return
   applyWeatherRefreshSchedule(settings)
 }
 
 /** 仅在天气开关从关→开时立即拉取一次 */
 export function handleWeatherSettingsChanged(settings: AppSettings): void {
+  const weatherSettings = readWeatherModuleSettings(settings)
   const wasEnabled = lastWeatherEnabled
-  lastWeatherEnabled = settings.weatherEnabled
+  lastWeatherEnabled = weatherSettings.enabled
   applyWeatherRefreshSchedule(settings)
 
-  if (!settings.weatherEnabled) return
+  if (!weatherSettings.enabled) return
   const service = getService()
   if (!service) return
 

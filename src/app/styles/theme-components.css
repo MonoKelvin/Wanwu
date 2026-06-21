@@ -6,11 +6,6 @@
   border-bottom-color: var(--ww-border-subtle);
 }
 
-.ww-rss-panel {
-  border-right-color: var(--ww-border-subtle);
-  box-shadow: var(--ww-panel-edge-highlight);
-}
-
 .ww-pop-tip {
   color: var(--ww-ink);
   border-color: var(--ww-glass-border);
@@ -61,36 +56,6 @@
 
 .ww-product-card__credit .ww-unsplash-attribution__label {
   color: var(--ww-on-media-fg-muted);
-}
-
-.ww-personal.has-bg .ww-personal__bg-btn,
-.ww-personal.has-bg .ww-personal-profile__surface {
-  background: var(--ww-surface-float);
-}
-
-.ww-personal.has-bg .ww-page-header {
-  background: var(--ww-header-veil);
-}
-
-/* 背景编辑器：组件内已用 --ww-glass-* / --ww-menu-panel-bg，深色由 theme-dark token 覆盖 */
-
-.ww-personal-profile__toolbar .p-button {
-  background: var(--ww-glass-bg) !important;
-  border: none !important;
-}
-
-.ww-personal-profile__toolbar .p-button:hover,
-.ww-personal-profile__toolbar .p-button:focus-visible {
-  background: var(--ww-glass-bg-soft) !important;
-}
-
-.ww-personal-profile__toolbar .p-button.is-active {
-  background: var(--ww-list-hover-bg) !important;
-  box-shadow: 0 0 0 1px var(--ww-border-subtle) !important;
-}
-
-.ww-favorite-row:hover:not(.ww-favorite-row--muted) {
-  background: var(--ww-list-hover-bg);
 }
 
 .ww-share-image-dialog__html-preview {

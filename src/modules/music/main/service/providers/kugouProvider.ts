@@ -1,5 +1,5 @@
 ﻿import type { NormalizedTrack } from '@modules/music/domain/types'
-import type { AppSettings } from '@shared/types/settings'
+import type { MusicModuleSettings } from '@modules/music/domain/settings'
 import type { PickedStream } from '../streamUrl'
 import type { IMusicProvider } from './IMusicProvider'
 import type { KugouPlatformService } from '../platform/kugou/kugouPlatformService'
@@ -11,7 +11,7 @@ export class KugouMusicProvider implements IMusicProvider {
 
   constructor(
     private readonly platform: KugouPlatformService,
-    private readonly getSettings: () => AppSettings
+    private readonly getSettings: () => MusicModuleSettings
   ) {}
 
   enabled(): boolean {
@@ -24,7 +24,7 @@ export class KugouMusicProvider implements IMusicProvider {
   }
 
   async resolveStream(track: NormalizedTrack): Promise<PickedStream> {
-    const quality = this.getSettings().musicNeteaseQuality
+    const quality = this.getSettings().neteaseQuality
     const picked = await this.platform.resolveStream(track.videoId, quality)
     if (!picked?.url) throw new Error('酷狗无法解析流地址')
     return { url: picked.url, format: picked.format }

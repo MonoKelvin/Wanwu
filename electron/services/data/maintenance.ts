@@ -10,7 +10,7 @@ import { getMainWindow } from '../../windowState'
 import { getWanwuPathLayout } from './paths'
 import { resolveExistingFilePath } from '../media/shell'
 import type { DatabaseService } from '../core/database'
-import type { RssDiagnosticsSource } from '@shared/types/rssDiagnostics'
+import { collectCacheDirectories, collectDiagnosticsLines } from '../../app/maintenanceBridge'
 import { normalizeAppSettings } from '../data/settings'
 import { APP_VERSION } from '@shared/constants/appVersion'
 import { DEFAULT_APP_SETTINGS } from '../../../src/shared/types/settings'
@@ -156,8 +156,7 @@ export async function restoreDataBackup(
 export function clearCacheDirectory(wanwuPath: string): { ok: true; bytesFreed: number } {
   let bytesFreed = 0
   const layout = getWanwuPathLayout(wanwuPath)
-  const musicCacheDir = join(layout.music, 'cache')
-  const cacheDirs = [layout.cache, musicCacheDir]
+  const cacheDirs = collectCacheDirectories(layout)
 
   function measureDir(dir: string) {
     if (!existsSync(dir)) return
@@ -192,19 +191,9 @@ export function resetAppSettingsInDb(db: DatabaseService): void {
 export async function buildDiagnosticsReport(params: {
   wanwuPath: string
   db: DatabaseService | null
-  rss: RssDiagnosticsSource | null
 }): Promise<string> {
-  const { wanwuPath, db, rss } = params
+  const { wanwuPath, db } = params
   const settings = normalizeAppSettings(db?.getAppSettings() ?? {})
-  let feedCount = 0
-  let groupCount = 0
-  try {
-    groupCount = rss?.listGroups().length ?? 0
-    feedCount = rss?.listFeeds().length ?? 0
-  } catch {
-    /* db may be closed */
-  }
-
   const layout = getWanwuPathLayout(wanwuPath)
   const dbFiles: string[] = []
   const dbDir = layout.db
@@ -221,21 +210,7 @@ export async function buildDiagnosticsReport(params: {
     }
   }
 
-  function dirBytes(dir: string): number {
-    if (!existsSync(dir)) return 0
-    let total = 0
-    for (const name of readdirSync(dir)) {
-      const full = join(dir, name)
-      try {
-        const st = statSync(full)
-        total += st.isDirectory() ? dirBytes(full) : st.size
-      } catch {
-        /* skip */
-      }
-    }
-    return total
-  }
-  const musicCacheBytes = dirBytes(join(layout.music, 'cache'))
+  const moduleLines = await collectDiagnosticsLines({ wanwuPath, layout, settings })
 
   const lines = [
     'Wanwu Diagnostics',
@@ -248,10 +223,8 @@ export async function buildDiagnosticsReport(params: {
     `platform: ${process.platform} ${process.arch}`,
     `wanwuPath: ${wanwuPath}`,
     `settings: ${JSON.stringify(settings, null, 2)}`,
-    `rssGroups: ${groupCount}`,
-    `rssFeeds: ${feedCount}`,
     `databases: ${dbFiles.length ? dbFiles.join(', ') : 'n/a'}`,
-    `musicCacheApproxKb: ${Math.round(musicCacheBytes / 1024)}`
+    ...moduleLines
   ]
   return lines.join('\n')
 }

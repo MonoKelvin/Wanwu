@@ -1,7 +1,7 @@
 import { app, BrowserWindow, nativeTheme, screen, type Tray } from 'electron'
 import { existsSync } from 'fs'
 import { join } from 'path'
-import { normalizeAppSettings } from '../../../../../electron/services/data/settings'
+import { normalizeAppSettings } from '@shared/settings/normalizeAppSettings'
 import { resolveAppLogoPath } from '../../../../../electron/services/media/appAssets'
 import type { AppServices } from '../../../../../electron/ipc/types'
 

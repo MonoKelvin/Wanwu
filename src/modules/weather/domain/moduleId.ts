@@ -1,1 +1,1 @@
-export { WEATHER_MODULE_ID } from '@shared/module-bridge/moduleIds'
+export const WEATHER_MODULE_ID = 'wanwu.weather'

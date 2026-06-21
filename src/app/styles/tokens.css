@@ -159,8 +159,6 @@
     0 6px 18px -8px rgb(18 18 22 / 0.04);
 
   /* RSS 侧栏订阅源站点 favicon */
-  --ww-rss-feed-icon-size: 0.875rem;
-
   /* 有背景图时的半透明衬层（深浅色各自覆盖） */
   --ww-header-veil: rgb(255 255 255 / 0.92);
   --ww-scroll-veil-rgb: 255 255 255;

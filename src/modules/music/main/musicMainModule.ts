@@ -5,7 +5,7 @@ import {
   getModuleRuntimeService,
   setModuleRuntimeService
 } from '@shared/module-bridge/mainProcessRegistry'
-import { MUSIC_MODULE_ID } from '@shared/module-bridge/moduleIds'
+import { MUSIC_MODULE_ID } from '@modules/music/domain/moduleId'
 import type { DatabaseService } from '../../../../../electron/services/core/database'
 import { MusicService } from './service/service'
 import type { MusicPlatformQuality } from './service/platform/types'

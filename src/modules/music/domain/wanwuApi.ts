@@ -1,4 +1,4 @@
-import type { AppSettings } from '@shared/types/settings'
+import type { MusicNeteaseQuality } from '@modules/music/domain/settings'
 import type {
   DiscoverSectionKey,
   MusicArtistPayload,
@@ -54,7 +54,7 @@ export interface WanwuMusicApi {
     resolveStream: (
       track: NormalizedTrack,
       useCache?: boolean,
-      quality?: AppSettings['musicNeteaseQuality']
+      quality?: MusicNeteaseQuality
     ) => Promise<MusicStreamResult>
     testConnection: () => Promise<MusicConnectionTestResult>
     getRadio: (videoId: string) => Promise<NormalizedTrack[]>

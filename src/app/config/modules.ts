@@ -1,10 +1,10 @@
 ﻿import type { WwIconName } from '@shared/icons/registry'
 export {
   DEFAULT_MODULE_ID,
-  isKnownModuleId,
   type ModuleId
 } from '@shared/constants/modules'
 export {
+  collectModuleNavItems,
   collectModuleNavItems as MODULE_NAV_ITEMS,
   isModuleId,
   isModuleIdRegistered,

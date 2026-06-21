@@ -28,7 +28,7 @@ import {
   isAppQuitting,
   closeAllNotePopoutsForAppExit,
   notifyMainWindowCreated,
-  registerNotePopoutLifecycleFromModule
+  runAppReadyLifecycleHooks
 } from './app/frameworkLifecycleBridge'
 import { attachMainWindowCloseBehavior, shouldKeepAppRunningAfterWindowClose } from './services/app/windowClose'
 import { shutdownDataServices } from './services/data/shutdown'
@@ -220,7 +220,7 @@ function createWindow(): void {
 async function initServices(): Promise<void> {
   const userDataPath = resolveWanwuPath()
   services.db = new DatabaseService(userDataPath)
-  await services.db.init({ skipLibrarySeed: true })
+  await services.db.init()
   services.userData = new SqliteUserDataGateway(services.db)
   services.media = new MediaService(userDataPath)
   await initMainProcessModules(services)
@@ -308,7 +308,7 @@ app.whenReady().then(async () => {
     app.dock.setIcon(nativeImage.createFromPath(appIcon))
   }
 
-  registerNotePopoutLifecycleFromModule()
+  runAppReadyLifecycleHooks()
   createWindow()
   focusMainWindow()
 

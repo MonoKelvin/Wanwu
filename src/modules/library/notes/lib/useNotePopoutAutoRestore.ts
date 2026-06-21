@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router'
 import { LIBRARY_NOTES_ROUTE } from '@modules/library/notes/domain/noteRoutes'
 import { useSettingsStore } from '@shared/stores/settings'
-import type { NotesPopoutRestoreMode } from '@shared/types/settings'
+import { readNotesModuleSettings, type NotesPopoutRestoreMode } from '@modules/library/notes/domain/settings'
 
 let restoredOnStartup = false
 let restoredOnEnterNotes = false
@@ -40,7 +40,7 @@ export function useNotePopoutAutoRestoreOnEnter() {
       if (restoredOnEnterNotes) return
       try {
         if (!settingsStore.loaded) await settingsStore.load()
-        if (settingsStore.settings.notesPopoutRestore !== 'on-enter-notes') return
+        if (readNotesModuleSettings(settingsStore.settings).popoutRestore !== 'on-enter-notes') return
         await tryRestoreNotePopouts('on-enter-notes')
       } catch {
         restoredOnEnterNotes = false

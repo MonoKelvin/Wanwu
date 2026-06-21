@@ -1,4 +1,5 @@
-export const LEISURE_READ_MODULE_ID = 'wanwu.leisure-read'
+import { LEISURE_READ_MODULE_ID } from './moduleId'
+
 export const LEISURE_READ_FETCH_TIMEOUT_MS = 8000
 
 export type { LeisureReadJokeLang as LeisureReadRiddleLang } from '@shared/types/settings'

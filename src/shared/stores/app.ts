@@ -1,24 +1,22 @@
 ﻿import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { modulePathById, type ModuleId } from '@app/config/modules'
+import { collectModuleNavItems, modulePathById, type ModuleId } from '@app/config/modules'
 
 export type { ModuleId }
 
-function defaultModulePaths(): Record<ModuleId, string> {
-  return {
-    library: modulePathById('library'),
-    rss: modulePathById('rss'),
-    music: modulePathById('music'),
-    personal: modulePathById('personal'),
-    settings: modulePathById('settings')
+function defaultModulePaths(): Partial<Record<ModuleId, string>> {
+  const paths: Partial<Record<ModuleId, string>> = {}
+  for (const item of collectModuleNavItems()) {
+    paths[item.moduleId] = item.path
   }
+  return paths
 }
 
 export const useAppStore = defineStore('app', () => {
   const activeModule = ref<ModuleId>('library')
   const subPanelTitle = ref('')
   /** 会话内各模块上次访问路径（切换主导航时恢复，可含物品详情） */
-  const lastPathByModule = ref<Record<ModuleId, string>>(defaultModulePaths())
+  const lastPathByModule = ref<Partial<Record<ModuleId, string>>>(defaultModulePaths())
   /** 本次打开物品详情前的页面（详情返回用，与主导航历史栈无关） */
   const itemDetailReturnPath = ref<string | null>(null)
 

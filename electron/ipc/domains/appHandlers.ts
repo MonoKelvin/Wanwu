@@ -28,8 +28,6 @@ import { DEFAULT_APP_SETTINGS, type AppSettings } from '../../../src/shared/type
 import { dispatchSettingsChanged } from '../../app/settingsSideEffects'
 import { syncQuickAccessFromSettings } from '../../app/frameworkLifecycleBridge'
 import { broadcastToAllWindows } from '../../app/windowBroadcast'
-import { getRuntimeService } from '../../app/moduleRuntimeBridge'
-import { RSS_MODULE_ID } from '../../../src/shared/module-bridge/moduleIds'
 import type { AppServices } from '../types'
 
 export function registerAppHandlers(services: AppServices): void {
@@ -141,8 +139,7 @@ export function registerAppHandlers(services: AppServices): void {
     const wanwuPath = services.db?.getBasePath() ?? resolveWanwuPath()
     const content = await buildDiagnosticsReport({
       wanwuPath,
-      db: services.db,
-      rss: getRuntimeService(services, RSS_MODULE_ID)
+      db: services.db
     })
     return exportDiagnosticsToFile(content)
   })

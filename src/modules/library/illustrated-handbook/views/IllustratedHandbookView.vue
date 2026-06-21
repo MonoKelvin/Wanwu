@@ -17,9 +17,13 @@ import type { LibrarySortField, LibraryViewMode } from '@modules/library/illustr
 import type { Item } from '@modules/library/illustrated-handbook/domain/itemTypes'
 import { useLibraryListScroll } from '@modules/library/illustrated-handbook/composables/useLibraryListScroll'
 import { libraryCategoryKey } from '@modules/library/core/composables/useLibraryRouteContext'
+import {
+  HANDBOOK_SORT_FIELD_KEY,
+  HANDBOOK_VIEW_MODE_KEY
+} from '@modules/library/illustrated-handbook/domain/localStorageKeys'
 
-const VIEW_KEY = 'wanwu.library.viewMode'
-const SORT_KEY = 'wanwu.library.sortField'
+const VIEW_KEY = HANDBOOK_VIEW_MODE_KEY
+const SORT_KEY = HANDBOOK_SORT_FIELD_KEY
 
 const route = useRoute()
 const store = useIllustratedHandbookStore()

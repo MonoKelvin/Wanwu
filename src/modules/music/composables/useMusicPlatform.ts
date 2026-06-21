@@ -1,6 +1,7 @@
 ﻿import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'
+import { readMusicModuleSettings } from '@modules/music/domain/settings'
 import type { MusicPlatformId } from '@modules/music/domain/types'
 
 export function parseBrowseId(
@@ -15,7 +16,7 @@ export function useMusicPlatform() {
   const { settings } = storeToRefs(useSettingsStore())
 
   const platformId = computed<'netease' | 'kugou' | null>(() => {
-    const s = settings.value.musicPrimarySource
+    const s = readMusicModuleSettings(settings.value).primarySource
     return s === 'kugou' || s === 'netease' ? s : null
   })
 

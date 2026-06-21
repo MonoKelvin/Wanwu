@@ -1,6 +1,6 @@
 import type { IpcRenderer } from 'electron'
 import type { IPreloadModule } from '@shared/module-bridge/preloadRegistry'
-import { MUSIC_MODULE_ID } from '@shared/module-bridge/moduleIds'
+import { MUSIC_MODULE_ID } from '@modules/music/domain/moduleId'
 
 export const musicPreloadModule: IPreloadModule = {
   id: MUSIC_MODULE_ID,

@@ -1,7 +1,7 @@
 /** 个人中心：资料、收藏分组与聚合（业务层，不直接暴露 IPC） */
 import type { HandbookFavoriteItemSource } from '@modules/personal/domain/handbookFavoriteSource'
 import type { MediaService } from '../../../../../electron/services/media/service'
-import { importProfileImage, removeProfileFile } from '../../../../../electron/services/media/userProfile'
+import { importProfileImage, removeProfileFile } from '@modules/personal/main/media/profileMedia'
 import { toWanwuMediaUrl } from '../../../../../electron/services/media/wanwu'
 import { DEFAULT_FAVORITE_GROUP_ID } from '../constants'
 import type { PersonalUserSqliteRepository } from './userSqliteRepository'

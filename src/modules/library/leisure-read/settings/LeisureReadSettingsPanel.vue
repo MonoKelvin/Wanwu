@@ -5,7 +5,12 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import { WwSettingsPanel } from '@shared/components/settings'
 import type { WwSettingsField } from '@shared/components/settings'
 import { useSettingsStore } from '@shared/stores/settings'
-import type { LeisureReadJokeLang, LeisureReadArticleMode, LeisureReadRiddleThinkDelay } from '@shared/types/settings'
+import { LEISURE_READ_MODULE_ID } from '@modules/library/leisure-read/domain/moduleId'
+import type {
+  LeisureReadJokeLang,
+  LeisureReadArticleMode,
+  LeisureReadRiddleThinkDelay
+} from '@modules/library/leisure-read/domain/settings'
 import {
   resolveLeisureReadApiGroups,
   type LeisureReadApiGroup
@@ -29,11 +34,11 @@ const fields = computed((): WwSettingsField[] => [
     label: '脑筋急转弯语言',
     subtitle: '默认中文；英文使用 JokeAPI 问答格式',
     options: LEISURE_READ_RIDDLE_LANG_OPTIONS,
-    modelValue: settings.value.leisureReadJokeLang,
+    modelValue: moduleSettings.value.riddleLang,
     onUpdate: async (value) => {
       const next = value as LeisureReadJokeLang
-      if (!next || next === settings.value.leisureReadJokeLang) return
-      await settingsStore.setLeisureReadJokeLang(next)
+      if (!next || next === moduleSettings.value.riddleLang) return
+      await settingsStore.patchModuleSettings(LEISURE_READ_MODULE_ID, { riddleLang: next })
     }
   },
   {
@@ -44,13 +49,13 @@ const fields = computed((): WwSettingsField[] => [
       label: o.label,
       value: String(o.value)
     })),
-    modelValue: String(settings.value.leisureReadRiddleThinkDelay),
+    modelValue: String(moduleSettings.value.riddleThinkDelay),
     onUpdate: async (value) => {
       const delay = Number(value)
       const next: LeisureReadRiddleThinkDelay =
         delay === 0 || delay === 5 || delay === 10 || delay === 30 ? delay : 5
-      if (next === settings.value.leisureReadRiddleThinkDelay) return
-      await settingsStore.setLeisureReadRiddleThinkDelay(next)
+      if (next === moduleSettings.value.riddleThinkDelay) return
+      await settingsStore.patchModuleSettings(LEISURE_READ_MODULE_ID, { riddleThinkDelay: next })
     }
   },
   {
@@ -58,11 +63,11 @@ const fields = computed((): WwSettingsField[] => [
     label: '每日一文',
     subtitle: '默认随机；可切换为今日一文',
     options: LEISURE_READ_ARTICLE_MODE_OPTIONS,
-    modelValue: settings.value.leisureReadArticleMode,
+    modelValue: moduleSettings.value.articleMode,
     onUpdate: async (value) => {
       const next = value as LeisureReadArticleMode
-      if (!next || next === settings.value.leisureReadArticleMode) return
-      await settingsStore.setLeisureReadArticleMode(next)
+      if (!next || next === moduleSettings.value.articleMode) return
+      await settingsStore.patchModuleSettings(LEISURE_READ_MODULE_ID, { articleMode: next })
     }
   }
 ])
@@ -86,7 +91,7 @@ function toggleGroup(group: LeisureReadApiGroup) {
 </script>
 
 <template>
-  <WwSettingsPanel :fields="fields" />
+  <WwSettingsPanel :fields="fields" layout="bare" />
 
   <div class="lr-settings-apis">
     <h3 class="lr-settings-apis__heading">内容接口</h3>

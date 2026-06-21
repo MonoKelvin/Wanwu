@@ -1,9 +1,20 @@
 import type { RouteRecordRaw } from 'vue-router'
 import type { IAppModule } from '@app/modules/types'
+import { registerAppSettingsGroup } from '@app/modules/appSettingsGroupRegistry'
 import { registerAppShellOverlay } from '@app/modules/mainAppRegistry'
 
 export const quickAccessAppModule: IAppModule = {
   id: 'wanwu.quick-access',
+
+  registerAppSettingsGroup(register) {
+    register({
+      id: 'quick-access',
+      label: '快捷访问',
+      order: 10,
+      loadPanel: () =>
+        import('@modules/quick-access/settings/QuickAccessAppSettingsGroup.vue').then((m) => m.default)
+    })
+  },
 
   registerMainAppIntegration(register) {
     register(() => {

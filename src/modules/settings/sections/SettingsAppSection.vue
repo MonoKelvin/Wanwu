@@ -133,11 +133,6 @@ async function onCloseBehaviorChange(v: unknown) {
   await settingsStore.setCloseBehavior(mode)
 }
 
-async function onClipboardAssistEnabledChange(enabled: boolean) {
-  if (enabled === settings.value.clipboardAssistEnabled) return
-  await settingsStore.setClipboardAssistEnabled(enabled)
-}
-
 async function onLaunchAtStartupChange(enabled: boolean) {
   if (enabled === settings.value.launchAtStartup) return
   await settingsStore.setLaunchAtStartup(enabled)
@@ -235,16 +230,6 @@ async function onLaunchAtStartupChange(enabled: boolean) {
           :disabled="trayToggleLocked"
           aria-label="系统托盘图标"
           @update:model-value="onTrayEnabledChange"
-        />
-      </SettingsRow>
-      <SettingsRow
-        label="剪贴板联想"
-        subtitle="复制文字后提示万物中可能相关的图鉴（默认关闭）"
-      >
-        <WwToggleSwitch
-          :model-value="settings.clipboardAssistEnabled"
-          aria-label="剪贴板联想"
-          @update:model-value="onClipboardAssistEnabledChange"
         />
       </SettingsRow>
       <SettingsRow label="全局搜索" subtitle="Ctrl+Shift+P 唤起命令面板" />

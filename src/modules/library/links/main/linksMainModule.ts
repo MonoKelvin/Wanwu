@@ -125,7 +125,7 @@ export const linksMainModule: IMainProcessModule = {
         id: bookmark.id,
         title: bookmark.title.trim() || bookmark.url,
         subtitle: bookmark.url,
-        linkUrl: bookmark.url
+        payload: { linkUrl: bookmark.url }
       })
       if (hits.length >= limit) break
     }

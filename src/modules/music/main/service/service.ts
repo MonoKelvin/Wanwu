@@ -1,6 +1,8 @@
 ﻿import { randomUUID } from 'crypto'
 import type { DatabaseService } from '../../../../../electron/services/core/database'
 import type { AppSettings } from '@shared/types/settings'
+import { normalizeAppSettings } from '@shared/settings/normalizeAppSettings'
+import { readMusicModuleSettings } from '@modules/music/domain/settings'
 import { DEFAULT_VEROME_BASE_URL, VeromeClient } from './veromeClient'
 import { MusicDatabase } from './db'
 import { StreamCacheService } from './streamCacheService'
@@ -80,17 +82,17 @@ export class MusicService {
 
 
   private isNeteasePrimary(): boolean {
-    return this.getSettings().musicPrimarySource === 'netease'
+    return this.getMusicSettings().primarySource === 'netease'
   }
 
   private isPlatformPrimary(): boolean {
-    const s = this.getSettings().musicPrimarySource
+    const s = this.getMusicSettings().primarySource
     return s === 'netease' || s === 'kugou'
   }
 
   /** 发现页/歌手列表使用的平台：主源为平台时跟随主源，否则回退到已登录的网易/酷狗 */
   private resolveDiscoverPlatform(): import('./platform/IMusicPlatformService').IMusicPlatformService | null {
-    const src = this.getSettings().musicPrimarySource
+    const src = this.getMusicSettings().primarySource
     if (src === 'netease' || src === 'kugou') {
       return this.primaryPlatform()
     }
@@ -106,7 +108,7 @@ export class MusicService {
   }
 
   private primaryPlatform() {
-    return this.platforms.primary(this.getSettings())
+    return this.platforms.primary(this.getMusicSettings())
   }
 
   private netease() {
@@ -114,7 +116,7 @@ export class MusicService {
   }
 
   private accountPlatformId(): 'netease' | 'kugou' {
-    return this.getSettings().musicPrimarySource === 'kugou' ? 'kugou' : 'netease'
+    return this.getMusicSettings().primarySource === 'kugou' ? 'kugou' : 'netease'
   }
 
   private accountPlatform() {
@@ -126,15 +128,19 @@ export class MusicService {
   }
 
   private getSettings(): AppSettings {
-    return this.db.getAppSettings()
+    return normalizeAppSettings(this.db.getAppSettings())
+  }
+
+  private getMusicSettings() {
+    return readMusicModuleSettings(this.getSettings())
   }
 
   async refreshApiClient(): Promise<{ localModeFallback?: boolean }> {
-    const s = this.getSettings()
-    let base = s.musicApiBaseUrl?.trim() || DEFAULT_VEROME_BASE_URL
+    const s = this.getMusicSettings()
+    let base = s.apiBaseUrl?.trim() || DEFAULT_VEROME_BASE_URL
     let localModeFallback = false
-    if (s.musicApiMode === 'local') {
-      const port = s.musicApiLocalPort ?? 8000
+    if (s.apiMode === 'local') {
+      const port = s.apiLocalPort ?? 8000
       const ok = await probeLocalVerome(port)
       if (ok) {
         base = getLocalVeromeBaseUrl(port)
@@ -143,12 +149,12 @@ export class MusicService {
       }
     }
     this.verome.setBaseUrl(base)
-    if (s.musicJamendoClientId?.trim()) {
-      this.jamendo = new JamendoProvider(s.musicJamendoClientId.trim())
+    if (s.jamendoClientId?.trim()) {
+      this.jamendo = new JamendoProvider(s.jamendoClientId.trim())
     } else {
       this.jamendo = null
     }
-    this.audius = new AudiusProvider(s.musicAudiusApiKey?.trim() || undefined)
+    this.audius = new AudiusProvider(s.audiusApiKey?.trim() || undefined)
     this.platforms.applySettings(s)
     await ensureNeteaseApiReady()
     await this.platforms.netease.refreshLoginIfNeeded()
@@ -160,7 +166,7 @@ export class MusicService {
       this.audius,
       this.platforms.netease,
       this.platforms.kugou,
-      () => this.getSettings()
+      () => this.getMusicSettings()
     )
     this.aggregator = new MusicAggregator()
     this.aggregator.bindRegistry(this.registry)
@@ -178,7 +184,7 @@ export class MusicService {
     const start = Date.now()
 
     if (this.isPlatformPrimary()) {
-      const src = this.getSettings().musicPrimarySource
+      const src = this.getMusicSettings().primarySource
       const platform = this.primaryPlatform()
       try {
         if (src === 'kugou') {
@@ -236,7 +242,7 @@ export class MusicService {
   }
 
   private discoverCountry(): string {
-    return this.getSettings().musicDiscoverCountry?.trim() || 'China'
+    return this.getMusicSettings().discoverCountry?.trim() || 'China'
   }
 
 
@@ -367,7 +373,7 @@ export class MusicService {
 
   trackFromVideoId(videoId: string, title: string, artist: string, coverUrl?: string): NormalizedTrack {
     if (this.isPlatformPrimary()) {
-      const provider = this.getSettings().musicPrimarySource === 'kugou' ? 'kugou' : 'netease'
+      const provider = this.getMusicSettings().primarySource === 'kugou' ? 'kugou' : 'netease'
       return {
         trackKey: `${provider}:${videoId}`,
         provider,

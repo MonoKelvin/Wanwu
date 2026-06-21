@@ -1,19 +1,22 @@
 import type { QuickAccessTrayStatus } from '@shared/types/quickAccess'
 import { getMainProcessModules } from '@shared/module-bridge/mainProcessRegistry'
 import type { MainProcessInitContext } from '@shared/module-bridge/mainProcessRegistry'
+import { emptyTrayStatus } from '@modules/quick-access/domain/trayStatus'
 
 export async function aggregateTrayStatus(ctx: MainProcessInitContext): Promise<QuickAccessTrayStatus> {
-  let daily: QuickAccessTrayStatus['daily'] = null
-  let rssEntryCount = 0
-  let rssFeedCount = 0
+  const status = emptyTrayStatus()
 
   for (const mod of getMainProcessModules()) {
     if (!mod.getTrayStatusSlice) continue
     const slice = await mod.getTrayStatusSlice(ctx)
-    if ('daily' in slice) daily = (slice.daily as QuickAccessTrayStatus['daily']) ?? daily
-    if (typeof slice.rssEntryCount === 'number') rssEntryCount = slice.rssEntryCount
-    if (typeof slice.rssFeedCount === 'number') rssFeedCount = slice.rssFeedCount
+    if (slice.daily) {
+      status.daily = slice.daily as QuickAccessTrayStatus['daily']
+    }
+    const { daily: _daily, ...rest } = slice
+    if (Object.keys(rest).length > 0) {
+      status.slices[mod.id] = rest
+    }
   }
 
-  return { daily, rssEntryCount, rssFeedCount }
+  return status
 }

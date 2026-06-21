@@ -1,6 +1,7 @@
 ﻿import { computed, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'
+import { readMusicModuleSettings } from '@modules/music/domain/settings'
 import type { MusicPlatformUserProfile } from '@modules/music/domain/types'
 
 const emptyProfile = (platform: 'netease' | 'kugou' | null): MusicPlatformUserProfile => ({
@@ -17,7 +18,7 @@ export function useMusicAccount() {
   const { settings } = storeToRefs(useSettingsStore())
 
   const platformSource = computed<'netease' | 'kugou' | null>(() => {
-    const s = settings.value.musicPrimarySource
+    const s = readMusicModuleSettings(settings.value).primarySource
     return s === 'kugou' || s === 'netease' ? s : null
   })
 

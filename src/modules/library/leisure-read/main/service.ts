@@ -1,4 +1,5 @@
 import type Database from 'better-sqlite3'
+import { normalizeAppSettings } from '@shared/settings/normalizeAppSettings'
 import { readLeisureReadModuleSettings } from '@modules/library/leisure-read/domain/settings'
 import { leisureReadHttpFetch } from '@modules/library/leisure-read/main/httpFetch'
 import { LeisureReadFavoriteStorage } from '@modules/library/leisure-read/main/favoriteStorage'
@@ -32,7 +33,9 @@ export class LeisureReadService {
   }
 
   private getSettings() {
-    return readLeisureReadModuleSettings(this.userData.getAppSettings())
+    return readLeisureReadModuleSettings(
+      normalizeAppSettings(this.userData.getAppSettings())
+    )
   }
 
   async fetch(tab: LeisureReadTabId): Promise<LeisureReadContent> {

@@ -1,4 +1,5 @@
-﻿import type { NormalizedTrack } from '@modules/music/domain/types'
+﻿import type { MusicModuleSettings } from '@modules/music/domain/settings'
+import type { NormalizedTrack } from '@modules/music/domain/types'
 import type { VeromeClient } from '../veromeClient'
 import type { JamendoProvider } from './jamendoProvider'
 import type { AudiusProvider } from './audiusProvider'
@@ -141,7 +142,7 @@ export class MusicProviderRegistry {
     audius: AudiusProvider | null,
     netease: NeteasePlatformService | null,
     kugou: KugouPlatformService | null,
-    getSettings: () => import('../../../src/shared/types/settings').AppSettings
+    getSettings: () => MusicModuleSettings
   ) {
     this.providers = [
       ...(netease ? [new NeteaseMusicProvider(netease, getSettings)] : []),

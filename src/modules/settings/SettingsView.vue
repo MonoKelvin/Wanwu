@@ -68,8 +68,7 @@ onMounted(async () => {
       <div class="ww-settings-panel__body">
         <template v-for="section in settingsSections" :key="section.id">
           <component
-            v-if="panelComponents[section.id]"
-            v-show="activeSection === section.id"
+            v-if="panelComponents[section.id] && activeSection === section.id"
             :is="panelComponents[section.id]"
             :visible="section.id === 'about' ? activeSection === 'about' : undefined"
           />

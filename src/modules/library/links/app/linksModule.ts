@@ -4,6 +4,7 @@ import type { IAppModule } from '@app/modules/types'
 import { sectionTreeForMajor } from '@modules/library/core/composables/libraryCategoryTree'
 import { filterLinksSourceTreeNodes } from '@modules/library/links/lib/linksSearch'
 import { useLinksStore } from '@modules/library/links/services/linksStore'
+import { readQuickAccessPayload } from '@shared/types/quickAccess'
 
 export const linksAppModule: IAppModule = {
   id: 'wanwu.library.links',
@@ -70,13 +71,21 @@ export const linksAppModule: IAppModule = {
     }
   },
 
+  registerMainAppIntegration(register) {
+    register(() => {
+      void import('@modules/library/links/styles/links-theme.css')
+    })
+  },
+
   registerQuickAccess(register) {
     register({
       kind: 'link',
       paletteMeta: { label: '链接', icon: 'link', order: 35 },
       async open(target) {
-        if (!target.linkUrl) return false
-        await window.wanwu.shell.openExternal(target.linkUrl)
+        const payload = readQuickAccessPayload(target)
+        const linkUrl = typeof payload.linkUrl === 'string' ? payload.linkUrl : undefined
+        if (!linkUrl) return false
+        await window.wanwu.shell.openExternal(linkUrl)
       }
     })
   }

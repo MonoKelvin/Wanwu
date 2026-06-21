@@ -256,10 +256,6 @@
   background: radial-gradient(circle at center, rgb(255 255 255 / 0.04) 0%, transparent 72%);
 }
 
-[data-theme='dark'] .ww-personal__ambient-glow--warm {
-  opacity: 0.2;
-}
-
 [data-theme='dark'] .ww-settings-layout .p-button-outlined {
   border-color: var(--ww-border-subtle) !important;
   color: var(--ww-ink-muted) !important;
@@ -353,16 +349,6 @@
   box-shadow: 0 0 0 1px var(--ww-border-subtle);
 }
 
-[data-theme='dark'] .ww-links-folder-panel {
-  background: color-mix(in srgb, var(--ww-bg) 92%, black);
-}
-
-[data-theme='dark'] .ww-link-card,
-[data-theme='dark'] .ww-links-bookmark-list__row {
-  background: var(--ww-panel);
-  border-color: var(--ww-border-subtle);
-}
-
 [data-theme='dark'] .ww-side-nav-panel {
   background: var(--ww-elevated);
   border-color: var(--ww-border-subtle);
@@ -370,23 +356,6 @@
 
 [data-theme='dark'] .ww-side-nav-panel:hover {
   box-shadow: 0 4px 18px rgb(0 0 0 / 0.22);
-}
-
-[data-theme='dark'] .ww-link-open-url:hover {
-  color: var(--ww-ink);
-}
-
-[data-theme='dark'] .ww-link-favicon__skeleton {
-  background: color-mix(in srgb, var(--ww-elevated) 88%, var(--ww-bg));
-}
-
-[data-theme='dark'] .ww-link-favicon__skeleton::after {
-  background: linear-gradient(
-    115deg,
-    transparent 38%,
-    color-mix(in srgb, var(--ww-ink) 14%, transparent) 50%,
-    transparent 62%
-  );
 }
 
 /* 标题栏窗口控制：默认透明，仅 hover 显底 */
@@ -411,43 +380,6 @@
 [data-theme='dark'] .ww-win-btn--close:hover {
   background: #c42b1c;
   color: #fff;
-}
-
-/* 个人收藏：深色层次 */
-[data-theme='dark'] .ww-personal-favorites__head {
-  border-bottom-color: var(--ww-border-subtle);
-}
-
-[data-theme='dark'] .ww-fav-group__list {
-  background: var(--ww-elevated);
-  border-color: var(--ww-border-subtle);
-}
-
-[data-theme='dark'] .ww-personal.has-bg .ww-fav-group__list {
-  background: var(--ww-surface-float);
-  border-color: var(--ww-glass-border);
-}
-
-[data-theme='dark'] .ww-favorite-row__thumb {
-  border-color: var(--ww-border-subtle);
-  background: var(--ww-inset);
-}
-
-[data-theme='dark'] .ww-fav-group__list > li + li {
-  border-top-color: var(--ww-border-subtle);
-}
-
-[data-theme='dark'] .p-tree .p-tree-node-toggle-button {
-  color: var(--ww-ink-faint) !important;
-}
-
-[data-theme='dark'] .p-tree .p-tree-node-toggle-button:hover:not(:disabled) {
-  color: var(--ww-ink) !important;
-  background: var(--ww-list-hover-bg) !important;
-}
-
-[data-theme='dark'] .p-tree-node-selected .p-tree-node-content .p-tree-node-toggle-button {
-  color: var(--ww-ink-muted) !important;
 }
 
 /* 弹出菜单：深色下内高光与点击态 */

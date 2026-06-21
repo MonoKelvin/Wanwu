@@ -6,10 +6,8 @@ import {
   getModuleRuntimeService,
   setModuleRuntimeService
 } from '@shared/module-bridge/mainProcessRegistry'
-import {
-  LEISURE_READ_MODULE_ID,
-  LEISURE_READ_TAB_LABELS
-} from '@modules/library/leisure-read/domain/settings'
+import { LEISURE_READ_MODULE_ID } from '@modules/library/leisure-read/domain/moduleId'
+import { LEISURE_READ_TAB_LABELS } from '@modules/library/leisure-read/domain/settings'
 import { ensureLeisureReadSchema } from '@modules/library/leisure-read/main/schema'
 import {
   createLeisureReadService,

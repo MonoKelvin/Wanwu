@@ -4,6 +4,7 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import { useSettingsStore } from '@shared/stores/settings'
 import { wwMenuItemHasCheckColumn, type WwMenuItem } from '@shared/types/menu'
 import type { QuickAccessTrayStatus } from '@shared/types/quickAccess'
+import { readRssTrayCounts } from '@modules/quick-access/domain/trayStatus'
 import type { TrayMenuAction } from '@shared/types/trayMenu'
 
 const panelRef = ref<HTMLElement | null>(null)
@@ -17,10 +18,9 @@ function buildMenuItems(): WwMenuItem[] {
   const dailyLabel = s?.daily
     ? `今日一物：${s.daily.name}`
     : '今日一物：（图鉴未就绪）'
+  const { entryCount, feedCount } = s ? readRssTrayCounts(s) : { entryCount: 0, feedCount: 0 }
   const rssLabel =
-    s && s.rssFeedCount > 0
-      ? `RSS 文章 ${s.rssEntryCount} 篇 / ${s.rssFeedCount} 源`
-      : 'RSS：暂无订阅'
+    feedCount > 0 ? `RSS 文章 ${entryCount} 篇 / ${feedCount} 源` : 'RSS：暂无订阅'
 
   return [
     {
@@ -32,7 +32,7 @@ function buildMenuItems(): WwMenuItem[] {
     {
       label: rssLabel,
       wwIcon: 'inbox',
-      disabled: !s || s.rssFeedCount <= 0,
+      disabled: feedCount <= 0,
       command: () => runAction('open-rss')
     },
     { separator: true },

@@ -14,6 +14,7 @@ import {
 } from '@modules/music/lib/musicPlaybackPrefs'
 import { formatPlayError } from '@modules/music/lib/formatPlayError'
 import { mergeTrackPlaybackMeta } from '@modules/music/lib/mergeTrackPlaybackMeta'
+import { readMusicModuleSettings } from '@modules/music/domain/settings'
 import { useSettingsStore } from '@shared/stores/settings'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { useMusicAccount } from '@modules/music/composables/useMusicAccount'
@@ -32,7 +33,8 @@ export const useMusicPlayerStore = defineStore('musicPlayer', () => {
   const playMode = ref<MusicPlayMode>('sequence')
   const layoutMode = ref<MusicPlayerLayoutMode>('gallery')
   const playbackQuality = ref<MusicPlaybackQuality>(
-    (settingsStore.settings.musicNeteaseQuality as MusicPlaybackQuality) || 'standard'
+    (readMusicModuleSettings(settingsStore.settings).neteaseQuality as MusicPlaybackQuality) ||
+      'standard'
   )
   const favoriteKeys = ref<Set<string>>(new Set())
   const loading = ref(false)

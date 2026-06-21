@@ -3,6 +3,7 @@ import { watch } from 'vue'
 import type { IAppModule } from '@app/modules/types'
 import { ROUTE_OUTLET_SHELL } from '@app/router/outletPlaceholder'
 import { diagramsCommandContributor } from '@modules/library/diagrams/app/command/DiagramCommandContributor'
+import { readQuickAccessPayload } from '@shared/types/quickAccess'
 import {
   isDiagramEditorRoute,
   LIBRARY_DIAGRAMS_EDITOR_ROUTE
@@ -102,13 +103,21 @@ export const diagramsAppModule: IAppModule = {
       kind: 'diagram',
       paletteMeta: { label: '流程图', icon: 'layers', order: 30 },
       async open(target, ctx) {
-        const fileId = target.diagramFileId ?? target.id
+        const payload = readQuickAccessPayload(target)
+        const fileId =
+          (typeof payload.fileId === 'string' ? payload.fileId : undefined) ?? target.id
         if (!fileId) return false
         await ctx.pushRoute({
           name: LIBRARY_DIAGRAMS_EDITOR_ROUTE,
           params: { fileId }
         })
       }
+    })
+  },
+
+  registerMainAppIntegration(register) {
+    register(() => {
+      void import('./migrateLegacyDiagramSettings').then((m) => m.migrateLegacyDiagramSettings())
     })
   },
 

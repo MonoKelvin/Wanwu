@@ -4,7 +4,8 @@ import { getModuleRuntimeService } from '@shared/module-bridge/mainProcessRegist
 import { RSS_MODULE_ID } from '@modules/rss/domain/moduleId'
 import { RSS_RECYCLE_GROUP_ID } from '@modules/rss/domain/types'
 import type { DatabaseService } from '../../../../electron/services/core/database'
-import { normalizeAppSettings } from '../../../../electron/services/data/settings'
+import { normalizeAppSettings } from '@shared/settings/normalizeAppSettings'
+import { readRssModuleSettings } from '@modules/rss/domain/settings'
 import type { RssService } from './service/service'
 
 let timer: ReturnType<typeof setInterval> | null = null
@@ -23,12 +24,13 @@ async function runRefresh(): Promise<void> {
   running = true
   try {
     const settings = normalizeAppSettings(db.getAppSettings() ?? {})
+    const rssSettings = readRssModuleSettings(settings)
     const feeds = rss
       .listFeeds()
       .filter((f) => f.groupId !== RSS_RECYCLE_GROUP_ID && !f.deletedAt && f.enabled)
     for (const feed of feeds) {
       try {
-        await rss.fetchFeed(feed.id, settings.rssFetchLimit)
+        await rss.fetchFeed(feed.id, rssSettings.fetchLimit)
       } catch (err) {
         console.warn('[wanwu] rss auto-refresh failed', feed.id, err)
       }
@@ -47,7 +49,8 @@ export function applyRssAutoRefreshSchedule(settings: AppSettings): void {
     clearInterval(timer)
     timer = null
   }
-  const minutes = settings.rssAutoRefreshMinutes
+  const rssSettings = readRssModuleSettings(settings)
+  const minutes = rssSettings.autoRefreshMinutes
   if (!minutes || !getService()) return
   const ms = minutes * 60 * 1000
   timer = setInterval(() => {

@@ -1,6 +1,6 @@
 import type { IpcRenderer } from 'electron'
 import type { IPreloadModule } from '@shared/module-bridge/preloadRegistry'
-import { QUICK_ACCESS_MODULE_ID } from '@shared/module-bridge/moduleIds'
+import { QUICK_ACCESS_MODULE_ID } from '@modules/quick-access/domain/moduleId'
 
 export const quickAccessPreloadModule: IPreloadModule = {
   id: QUICK_ACCESS_MODULE_ID,

@@ -93,3 +93,26 @@
   border-top: 1px solid var(--ww-border-faint);
 }
 
+[data-theme='dark'] .ww-personal-favorites__head {
+  border-bottom-color: var(--ww-border-subtle);
+}
+
+[data-theme='dark'] .ww-fav-group__list {
+  background: var(--ww-elevated);
+  border-color: var(--ww-border-subtle);
+}
+
+[data-theme='dark'] .ww-personal.has-bg .ww-fav-group__list {
+  background: var(--ww-surface-float);
+  border-color: var(--ww-glass-border);
+}
+
+[data-theme='dark'] .ww-favorite-row__thumb {
+  border-color: var(--ww-border-subtle);
+  background: var(--ww-inset);
+}
+
+[data-theme='dark'] .ww-fav-group__list > li + li {
+  border-top-color: var(--ww-border-subtle);
+}
+

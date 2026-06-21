@@ -5,7 +5,8 @@ import {
   getModuleRuntimeService,
   setModuleRuntimeService
 } from '@shared/module-bridge/mainProcessRegistry'
-import { PERSONAL_MODULE_ID, ILLUSTRATED_HANDBOOK_MODULE_ID } from '@shared/module-bridge/moduleIds'
+import { PERSONAL_MODULE_ID } from '@modules/personal/domain/moduleId'
+import { ILLUSTRATED_HANDBOOK_MODULE_ID } from '@modules/library/illustrated-handbook/domain/moduleId'
 import type { DatabaseService } from '../../../../electron/services/core/database'
 import type { HandbookFavoriteItemSource } from '@modules/personal/domain/handbookFavoriteSource'
 import type { MediaService } from '../../../../electron/services/media/service'
@@ -139,8 +140,7 @@ export const personalMainModule: IMainProcessModule = {
         id: entry.id,
         title: name,
         subtitle: '收藏',
-        itemSource: entry.source,
-        itemId: entry.itemId
+        payload: { itemSource: entry.source, itemId: entry.itemId }
       })
     }
     return hits

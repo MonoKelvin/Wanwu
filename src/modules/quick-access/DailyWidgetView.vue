@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useSettingsStore } from '@shared/stores/settings'
-import type { DailyPickPreview } from '@shared/types/quickAccess'
+import type { DailyPickPreview } from '@modules/quick-access/domain/dailyPick'
 import { toWanwuMediaUrl } from '@shared/utils/profileMedia'
 
 const daily = ref<DailyPickPreview | null>(null)

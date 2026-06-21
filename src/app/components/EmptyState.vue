@@ -3,11 +3,12 @@ import { computed } from 'vue'
 import emptyGhost from '@assets/icons/empty-ghost.svg'
 import emptyLibrary from '@assets/icons/empty-library.svg'
 import emptyNotFound from '@assets/icons/empty-not-found.svg'
-import emptyRss from '@assets/icons/empty-rss.svg'
 
 const props = withDefaults(
   defineProps<{
-    variant?: 'empty' | 'ghost' | 'rss' | 'not-found'
+    variant?: 'empty' | 'ghost' | 'not-found'
+    /** 自定义插图；未传时按 variant 使用默认资源 */
+    image?: string
     title: string
     description?: string
     code?: string
@@ -16,14 +17,13 @@ const props = withDefaults(
   { variant: 'empty', compact: false }
 )
 
-const EMPTY_ART: Record<typeof props.variant, string> = {
+const DEFAULT_ART: Record<typeof props.variant, string> = {
   empty: emptyLibrary,
   ghost: emptyGhost,
-  rss: emptyRss,
   'not-found': emptyNotFound
 }
 
-const artSrc = computed(() => EMPTY_ART[props.variant])
+const artSrc = computed(() => props.image ?? DEFAULT_ART[props.variant])
 </script>
 
 <template>

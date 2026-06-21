@@ -3,6 +3,7 @@ import type { IAppModule } from '@app/modules/types'
 import { mvPageActive } from '@modules/music/lib/musicMvOverlayState'
 import { MUSIC_CHILD_ROUTES, MUSIC_RETURN_ROUTE_NAMES } from '@modules/music/app/musicRoutes'
 import type { NormalizedTrack } from '@modules/music/domain/types'
+import { readQuickAccessPayload } from '@shared/types/quickAccess'
 
 export const musicAppModule: IAppModule = {
   id: 'wanwu.music',
@@ -74,10 +75,11 @@ export const musicAppModule: IAppModule = {
       kind: 'music',
       paletteMeta: { label: '音乐', icon: 'disc-3', order: 50 },
       async open(target, ctx) {
+        const payload = readQuickAccessPayload(target)
         let track: NormalizedTrack | null = null
-        if (target.musicPayloadJson) {
+        if (typeof payload.trackJson === 'string') {
           try {
-            track = JSON.parse(target.musicPayloadJson) as NormalizedTrack
+            track = JSON.parse(payload.trackJson) as NormalizedTrack
           } catch {
             track = null
           }

@@ -1,6 +1,6 @@
 import type { IpcRenderer } from 'electron'
 import type { IPreloadModule } from '@shared/module-bridge/preloadRegistry'
-import { PERSONAL_MODULE_ID } from '@shared/module-bridge/moduleIds'
+import { PERSONAL_MODULE_ID } from '@modules/personal/domain/moduleId'
 
 export const personalPreloadModule: IPreloadModule = {
   id: PERSONAL_MODULE_ID,

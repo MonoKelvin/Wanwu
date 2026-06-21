@@ -1,6 +1,7 @@
 /** 侧栏天气：注册 sidebarFooter、设置分组与样式 */
 import type { IAppModule } from '@app/modules/types'
 import { WEATHER_MODULE_ID } from '@modules/weather/domain/moduleId'
+import { readWeatherModuleSettings } from '@modules/weather/domain/settings'
 
 export const weatherAppModule: IAppModule = {
   id: WEATHER_MODULE_ID,
@@ -10,7 +11,7 @@ export const weatherAppModule: IAppModule = {
       id: 'weather',
       order: 10,
       isEnabled(ctx) {
-        return !ctx.isFullscreen && ctx.settings.weatherEnabled
+        return !ctx.isFullscreen && readWeatherModuleSettings(ctx.settings).enabled
       },
       loadComponent: () =>
         import('@modules/weather/components/WeatherSidebarWidget.vue').then((m) => m.default)

@@ -7,11 +7,12 @@ import WwButton from '@shared/components/WwButton.vue'
 import Skeleton from 'primevue/skeleton'
 import { useRssStore } from '@modules/rss/services/rssStore'
 import { useSettingsStore } from '@shared/stores/settings'
+import { readRssModuleSettings } from '@modules/rss/domain/settings'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 import { DEFAULT_RSS_DISPLAY } from '@modules/rss/domain/types'
 import ModulePageLayout from '@app/components/ModulePageLayout.vue'
 import PageHeader from '@app/components/PageHeader.vue'
-import EmptyState from '@app/components/EmptyState.vue'
+import RssEmptyState from '@modules/rss/components/RssEmptyState.vue'
 import RssEntryCard from '@modules/rss/RssEntryCard.vue'
 
 const route = useRoute()
@@ -83,9 +84,8 @@ watch(
         </PageHeader>
       </template>
 
-      <EmptyState
+      <RssEmptyState
       v-if="!feedId"
-      variant="rss"
       title="选择订阅源"
       description="左侧选择分组与订阅，将自动拉取最新文章。"
     />
@@ -97,9 +97,8 @@ watch(
       <Skeleton v-for="i in 4" :key="i" height="6rem" class="!rounded-lg !bg-ww-panel" />
     </div>
 
-    <EmptyState
+    <RssEmptyState
       v-else-if="!isRefreshing && rssStore.entries.length === 0"
-      variant="rss"
       title="尚无文章"
       description="暂无内容，点击右上角重试。"
     />
@@ -124,7 +123,7 @@ watch(
           @click="loadMore"
         >
           <i class="pi" :class="loadingMore ? 'pi-spin pi-spinner' : 'pi-arrow-down'" />
-          <span>{{ loadingMore ? '加载中…' : `加载更多（每次 ${settingsStore.settings.rssFetchLimit} 条）` }}</span>
+          <span>{{ loadingMore ? '加载中…' : `加载更多（每次 ${readRssModuleSettings(settingsStore.settings).fetchLimit} 条）` }}</span>
         </button>
         <p class="ww-rss-load-more__hint">
           已显示 {{ rssStore.entries.length }} / {{ rssStore.entryTotal }} 条

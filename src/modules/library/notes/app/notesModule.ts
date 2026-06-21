@@ -10,6 +10,8 @@ import {
   NOTES_POPOUT_ROUTE
 } from '@modules/library/notes/domain/noteRoutes'
 import { isNotePopoutHash } from '@modules/library/notes/domain/notePopoutEntry'
+import { readNotesModuleSettings } from '@modules/library/notes/domain/settings'
+import { readQuickAccessPayload } from '@shared/types/quickAccess'
 import {
   resumeNotesEditorMount,
   teardownNotesEditorBeforeNavigation
@@ -122,7 +124,7 @@ export const notesAppModule: IAppModule = {
 
   registerMainAppStartup(register) {
     register(({ runWhenIdle, settings }) => {
-      if (settings.notesPopoutRestore === 'on-startup') {
+      if (readNotesModuleSettings(settings).popoutRestore === 'on-startup') {
         runWhenIdle(() => {
           void tryRestoreNotePopouts('on-startup')
         })
@@ -135,7 +137,9 @@ export const notesAppModule: IAppModule = {
       kind: 'note',
       paletteMeta: { label: '便笺', icon: 'pencil', order: 20 },
       async open(target, ctx) {
-        const noteId = target.noteId ?? target.id
+        const payload = readQuickAccessPayload(target)
+        const noteId =
+          (typeof payload.noteId === 'string' ? payload.noteId : undefined) ?? target.id
         if (!noteId) return false
         const notesStore = useNotesStore()
         if (!notesStore.notes.length) await notesStore.loadAll()

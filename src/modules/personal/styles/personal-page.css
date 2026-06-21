@@ -109,3 +109,7 @@
   }
 }
 
+[data-theme='dark'] .ww-personal__ambient-glow--warm {
+  opacity: 0.2;
+}
+

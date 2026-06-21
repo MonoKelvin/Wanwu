@@ -1,6 +1,7 @@
 ﻿import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useSettingsStore } from '@shared/stores/settings'
+import { readRssModuleSettings } from '@modules/rss/domain/settings'
 import {
   RSS_DEFAULT_GROUP_ID,
   RSS_RECYCLE_GROUP_ID,
@@ -69,7 +70,7 @@ export const useRssStore = defineStore('rss', () => {
   }
 
   function pageSize() {
-    return useSettingsStore().settings.rssFetchLimit
+    return readRssModuleSettings(useSettingsStore().settings).fetchLimit
   }
 
   async function loadAll() {

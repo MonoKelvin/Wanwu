@@ -2,7 +2,8 @@
  * 天气服务：持有快照与会话坐标；刷新严格遵循设置中的 weatherRefreshMinutes。
  */
 import type { AppSettings } from '@shared/types/settings'
-import { normalizeAppSettings } from '../../../../electron/services/data/settings'
+import { normalizeAppSettings } from '@shared/settings/normalizeAppSettings'
+import { readWeatherModuleSettings } from '@modules/weather/domain/settings'
 import { getMainWindow } from '../../../../electron/windowState'
 import type { WeatherCoordinates, WeatherSnapshot } from '@modules/weather/domain/types'
 import { fetchWeatherSnapshot } from '@modules/weather/main/forecastRouter'
@@ -69,7 +70,8 @@ export class WeatherService {
   private shouldFetch(settings: AppSettings, options: WeatherRefreshOptions): boolean {
     if (options.force) return true
     if (options.reason === 'settings' || options.reason === 'location') return true
-    return isSnapshotStale(this.snapshot, settings.weatherRefreshMinutes)
+    const weatherSettings = readWeatherModuleSettings(settings)
+    return isSnapshotStale(this.snapshot, weatherSettings.refreshMinutes)
   }
 
   /** 将当前快照推送给渲染进程，不发起网络请求 */
@@ -104,7 +106,7 @@ export class WeatherService {
   /** 解析定位 → 拉取天气 → 推送 weather:updated（默认遵守刷新间隔） */
   async refresh(options: WeatherRefreshOptions = {}): Promise<WeatherSnapshot | null> {
     const settings = this.readSettings()
-    if (!settings.weatherEnabled) {
+    if (!readWeatherModuleSettings(settings).enabled) {
       this.snapshot = null
       this.emitUpdated()
       return null

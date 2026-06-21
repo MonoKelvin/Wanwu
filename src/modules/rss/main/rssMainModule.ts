@@ -11,6 +11,9 @@ import {
   applyRssAutoRefreshSchedule,
   bindRssSchedulerContext
 } from './scheduler'
+import {
+  registerMaintenanceDiagnosticsContributor
+} from '../../../../electron/app/maintenanceBridge'
 
 const QUICK_ACCESS_KIND = 'rss'
 
@@ -31,6 +34,23 @@ export const rssMainModule: IMainProcessModule = {
   onModulesReady(ctx) {
     bindRssSchedulerContext(ctx)
     void getService(ctx)?.pruneUnhealthyDefaultFeeds().catch(() => {})
+
+    registerMaintenanceDiagnosticsContributor({
+      id: RSS_MODULE_ID,
+      order: 10,
+      appendLines: () => {
+        const service = getService(ctx)
+        let groupCount = 0
+        let feedCount = 0
+        try {
+          groupCount = service?.listGroups().length ?? 0
+          feedCount = service?.listFeeds().length ?? 0
+        } catch {
+          /* db may be closed */
+        }
+        return [`rssGroups: ${groupCount}`, `rssFeeds: ${feedCount}`]
+      }
+    })
   },
 
   onSettingsChanged(ctx, settings) {
@@ -104,6 +124,6 @@ export const rssMainModule: IMainProcessModule = {
   },
 
   getTrayStatusSlice(ctx) {
-    return getService(ctx)?.getTrayStatusSlice() ?? { rssEntryCount: 0, rssFeedCount: 0 }
+    return getService(ctx)?.getTrayStatusSlice() ?? { entryCount: 0, feedCount: 0 }
   }
 }

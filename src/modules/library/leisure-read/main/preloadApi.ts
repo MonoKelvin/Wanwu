@@ -1,6 +1,6 @@
 import type { IpcRenderer } from 'electron'
 import type { IPreloadModule } from '@shared/module-bridge/preloadRegistry'
-import { LEISURE_READ_MODULE_ID } from '@shared/module-bridge/moduleIds'
+import { LEISURE_READ_MODULE_ID } from '@modules/library/leisure-read/domain/moduleId'
 import type {
   LeisureReadFavoriteInput,
   LeisureReadTabId,

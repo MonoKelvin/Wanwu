@@ -7,14 +7,16 @@ import {
 import type { AppServices } from '../../../../../electron/ipc/types'
 import { createMainProcessContext } from '../../../../../electron/app/mainProcessContext'
 import { broadcastToAllWindows } from '../../../../../electron/app/windowBroadcast'
-import { mergeAppSettings, normalizeAppSettings } from '../../../../../electron/services/data/settings'
+import { mergeAppSettings, normalizeAppSettings } from '@shared/settings/normalizeAppSettings'
 import { resolveAppLogoPath } from '../../../../../electron/services/media/appAssets'
 import { requestAppQuit } from '../../../../../electron/services/app/appQuit'
 import { getMainWindow } from '../../../../../electron/windowState'
-import { registerOptionalModuleHooks } from '../../../../../electron/app/frameworkLifecycleBridge'
+import { registerFrameworkLifecycleContributor } from '../../../../../electron/app/frameworkLifecycleBridge'
 import { getModuleRuntimeService } from '@shared/module-bridge/mainProcessRegistry'
-import { ILLUSTRATED_HANDBOOK_MODULE_ID } from '@shared/module-bridge/moduleIds'
+import { QUICK_ACCESS_MODULE_ID } from '@modules/quick-access/domain/moduleId'
+import { ILLUSTRATED_HANDBOOK_MODULE_ID } from '@modules/library/illustrated-handbook/domain/moduleId'
 import type { AppSettings } from '@shared/types/settings'
+import { readQuickAccessModuleSettings } from '@modules/quick-access/domain/settings'
 import type {
   ClipboardAssistPayload,
   QuickAccessOpenTarget,
@@ -22,6 +24,7 @@ import type {
 } from '@shared/types/quickAccess'
 import type { TrayMenuAction } from '@shared/types/trayMenu'
 import { clipboardLibraryHints, searchHitsByKind, unifiedSearch } from './unifiedSearch'
+import { readRssTrayCounts, emptyTrayStatus } from '@modules/quick-access/domain/trayStatus'
 import {
   closeDailyWidgetForAppExit,
   hideDailyWidget,
@@ -96,17 +99,16 @@ function sendOpenTarget(target: QuickAccessOpenTarget): void {
 }
 
 async function buildTrayStatus(): Promise<QuickAccessTrayStatus> {
-  if (!servicesRef) return { daily: null, rssEntryCount: 0, rssFeedCount: 0 }
+  if (!servicesRef) return emptyTrayStatus()
   return aggregateTrayStatus(createMainProcessContext(servicesRef))
 }
 
 async function syncTrayTooltip(): Promise<void> {
   if (!tray) return
   const status = await buildTrayStatus()
+  const { entryCount, feedCount } = readRssTrayCounts(status)
   const rssLabel =
-    status.rssFeedCount > 0
-      ? `RSS 文章 ${status.rssEntryCount} 篇 / ${status.rssFeedCount} 源`
-      : 'RSS：暂无订阅'
+    feedCount > 0 ? `RSS 文章 ${entryCount} 篇 / ${feedCount} 源` : 'RSS：暂无订阅'
   tray.setToolTip(
     status.daily ? `万物 · ${status.daily.name}` : `万物 · ${rssLabel}`
   )
@@ -133,7 +135,7 @@ export function executeTrayMenuAction(action: TrayMenuAction): void {
       openDailyInMain()
       break
     case 'open-rss':
-      sendOpenTarget({ kind: 'rss', id: 'rss-home', feedId: undefined })
+      sendOpenTarget({ kind: 'rss', id: 'rss-home' })
       break
     case 'focus-main':
       focusMainWindowFromQuickAccess()
@@ -200,7 +202,8 @@ function startClipboardWatch(): void {
   clipboardTimer = setInterval(() => {
     void (async () => {
       const settings = normalizeAppSettings(servicesRef?.userData?.getAppSettings() ?? {})
-      if (!settings.clipboardAssistEnabled || !servicesRef) return
+      const quickAccess = readQuickAccessModuleSettings(settings)
+      if (!quickAccess.clipboardAssistEnabled || !servicesRef) return
 
       const text = clipboard.readText().trim()
       if (!text || text === lastClipboardText) return
@@ -238,6 +241,8 @@ export function syncQuickAccessFromSettings(override?: AppSettings): void {
   const settings =
     override ?? normalizeAppSettings(servicesRef?.userData?.getAppSettings() ?? {})
 
+  const quickAccess = readQuickAccessModuleSettings(settings)
+
   registerGlobalShortcut()
 
   if (settings.trayEnabled) {
@@ -246,13 +251,13 @@ export function syncQuickAccessFromSettings(override?: AppSettings): void {
     destroyTray()
   }
 
-  if (settings.clipboardAssistEnabled) {
+  if (quickAccess.clipboardAssistEnabled) {
     startClipboardWatch()
   } else {
     stopClipboardWatch()
   }
 
-  if (settings.dailyWidgetEnabled) {
+  if (quickAccess.dailyWidgetEnabled) {
     void showDailyWidget()
   } else {
     hideDailyWidget()
@@ -300,19 +305,20 @@ export function openDailyInMain(): void {
   sendOpenTarget({
     kind: 'library',
     id: daily.id,
-    itemSource: 'library',
-    itemId: daily.id
+    payload: { itemSource: 'library', itemId: daily.id }
   })
 }
 
 export function registerQuickAccessLifecycleHooks(): void {
-  registerOptionalModuleHooks({
+  registerFrameworkLifecycleContributor({
+    id: QUICK_ACCESS_MODULE_ID,
+    order: 0,
     isAppQuitting: isAppQuittingState,
     markAppQuitting: markAppQuittingState,
     isTrayActive: isTrayActiveState,
     ensureTrayForWindowHide,
-    disposeQuickAccess: disposeQuickAccessRuntime,
-    syncQuickAccessFromSettings,
+    onBeforeAppQuit: disposeQuickAccessRuntime,
+    onSettingsSync: syncQuickAccessFromSettings,
     focusMainWindow: focusMainWindowFromQuickAccess
   })
 }

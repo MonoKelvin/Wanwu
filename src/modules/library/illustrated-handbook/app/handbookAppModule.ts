@@ -8,6 +8,7 @@ import {
 } from '@modules/library/core/composables/libraryCategoryTree'
 import { isLibraryMajorId } from '@modules/library/core/config/majors'
 import { isItemDetailRoute } from '@shared/utils/itemDetailRoute'
+import { readQuickAccessPayload } from '@shared/types/quickAccess'
 import { useIllustratedHandbookStore } from '@modules/library/illustrated-handbook/services/illustratedHandbookStore'
 
 const HANDBOOK_HOME_ROUTE = 'library-illustrated-handbook'
@@ -94,7 +95,8 @@ export const handbookAppModule: IAppModule = {
       kind: 'library',
       paletteMeta: { label: '图鉴', icon: 'book-open', order: 10 },
       async open(target, ctx) {
-        const id = target.itemId ?? target.id
+        const payload = readQuickAccessPayload(target)
+        const id = (typeof payload.itemId === 'string' ? payload.itemId : undefined) ?? target.id
         if (!id) return false
         const router = (await import('@app/router')).default
         const { useItemDetailNavigation } = await import('@app/composables/useItemDetailNavigation')
@@ -114,9 +116,10 @@ export const handbookAppModule: IAppModule = {
       kind: 'favorite',
       order: 10,
       async open(target, ctx) {
-        const source = target.itemSource ?? 'library'
+        const payload = readQuickAccessPayload(target)
+        const source = payload.itemSource === 'library' ? 'library' : null
         if (source !== 'library') return false
-        const id = target.itemId ?? target.id
+        const id = (typeof payload.itemId === 'string' ? payload.itemId : undefined) ?? target.id
         if (!id) return false
         const router = (await import('@app/router')).default
         const { useItemDetailNavigation } = await import('@app/composables/useItemDetailNavigation')

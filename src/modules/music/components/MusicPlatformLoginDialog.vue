@@ -7,6 +7,7 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import WwGlassDialog from '@shared/components/WwGlassDialog.vue'
 import { useMusicLoginFlow } from '@modules/music/composables/useMusicLoginFlow'
 import { useSettingsStore } from '@shared/stores/settings'
+import { readMusicModuleSettings } from '@modules/music/domain/settings'
 import type { MusicNeteaseLoginStatus } from '@modules/music/domain/types'
 import '@modules/music/styles/music-login.css'
 
@@ -24,7 +25,7 @@ const { settings } = storeToRefs(useSettingsStore())
 
 const activePlatform = computed<'netease' | 'kugou'>(() => {
   if (props.platform) return props.platform
-  return settings.value.musicPrimarySource === 'kugou' ? 'kugou' : 'netease'
+  return readMusicModuleSettings(settings.value).primarySource === 'kugou' ? 'kugou' : 'netease'
 })
 
 const platformLabel = computed(() => (activePlatform.value === 'kugou' ? '酷狗音乐' : '网易云音乐'))

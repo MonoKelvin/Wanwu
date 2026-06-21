@@ -5,7 +5,12 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import { WwSettingsPanel } from '@shared/components/settings'
 import type { WwSettingsField } from '@shared/components/settings'
 import { useSettingsStore } from '@shared/stores/settings'
-import { WEATHER_REFRESH_OPTIONS, type WeatherRefreshMinutes } from '@shared/types/settings'
+import { WEATHER_MODULE_ID } from '@modules/weather/domain/moduleId'
+import {
+  WEATHER_REFRESH_OPTIONS,
+  readWeatherModuleSettings,
+  type WeatherRefreshMinutes
+} from '@modules/weather/domain/settings'
 import {
   resolveWeatherApiGroups,
   type WeatherApiGroup
@@ -15,17 +20,19 @@ import './weather-settings.css'
 const settingsStore = useSettingsStore()
 const { settings } = storeToRefs(settingsStore)
 
+const weatherSettings = computed(() => readWeatherModuleSettings(settings.value))
+
 const fields = computed((): WwSettingsField[] => [
   {
     type: 'toggle',
     label: '显示侧栏天气',
     subtitle: '控制左侧导航底部是否展示当前城市天气状况',
     ariaLabel: '显示侧栏天气',
-    modelValue: settings.value.weatherEnabled,
+    modelValue: weatherSettings.value.enabled,
     onUpdate: async (value) => {
       const enabled = Boolean(value)
-      if (enabled === settings.value.weatherEnabled) return
-      await settingsStore.setWeatherEnabled(enabled)
+      if (enabled === weatherSettings.value.enabled) return
+      await settingsStore.patchModuleSettings(WEATHER_MODULE_ID, { enabled })
     }
   },
   {
@@ -33,13 +40,13 @@ const fields = computed((): WwSettingsField[] => [
     label: '刷新间隔',
     subtitle: '后台自动更新天气数据',
     size: 'narrow',
-    disabled: !settings.value.weatherEnabled,
-    modelValue: settings.value.weatherRefreshMinutes,
+    disabled: !weatherSettings.value.enabled,
+    modelValue: weatherSettings.value.refreshMinutes,
     options: WEATHER_REFRESH_OPTIONS,
     onUpdate: async (value) => {
       const minutes = value as WeatherRefreshMinutes | null
-      if (minutes == null || minutes === settings.value.weatherRefreshMinutes) return
-      await settingsStore.setWeatherRefreshMinutes(minutes)
+      if (minutes == null || minutes === weatherSettings.value.refreshMinutes) return
+      await settingsStore.patchModuleSettings(WEATHER_MODULE_ID, { refreshMinutes: minutes })
     }
   }
 ])
@@ -62,7 +69,7 @@ function toggleGroup(group: WeatherApiGroup) {
 </script>
 
 <template>
-  <WwSettingsPanel :fields="fields" />
+  <WwSettingsPanel :fields="fields" layout="bare" />
 
   <div class="ww-weather-settings-apis">
     <h3 class="ww-weather-settings-apis__heading">数据接口</h3>

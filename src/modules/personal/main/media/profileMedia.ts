@@ -1,13 +1,13 @@
-﻿import { copyFileSync, existsSync, mkdirSync, unlinkSync } from 'fs'
+import { copyFileSync, existsSync, mkdirSync, unlinkSync } from 'fs'
 import { extname, join } from 'path'
 import { randomUUID } from 'crypto'
-import type { MediaService } from '../media/service'
+import type { MediaService } from '../../../../../electron/services/media/service'
 
 const ALLOWED_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif'])
 
 export type ProfileMediaKind = 'avatar' | 'background'
 
-function profileDir(media: MediaService, _kind: ProfileMediaKind): string {
+function profileDir(media: MediaService): string {
   const dir = media.resolveMediaPath('user/profile')
   mkdirSync(dir, { recursive: true })
   return dir
@@ -24,7 +24,7 @@ export function importProfileImage(
     throw new Error('仅支持 JPG、PNG、WebP、GIF 图片')
   }
 
-  const dir = profileDir(media, kind)
+  const dir = profileDir(media)
   const filename = kind === 'avatar' ? `avatar${ext}` : `background-${randomUUID().slice(0, 8)}${ext}`
   const abs = join(dir, filename)
   copyFileSync(sourceFilePath, abs)

@@ -2,7 +2,8 @@
  * SQLite 连接：用户库。业务表由模块 registerDatabaseSchema 扩展；独立库由各模块自行管理。
  */
 import Database from 'better-sqlite3'
-import type { AppSettings } from '../../../src/shared/types/settings'
+import { DEFAULT_APP_SETTINGS, type AppSettings } from '../../../src/shared/types/settings'
+import { normalizeAppSettings } from '../../../src/shared/settings/normalizeAppSettings'
 import { applyModuleDatabaseSchemas } from '../../app/databaseSchemaBridge'
 import {
   ensureWanwuDataLayout,
@@ -25,7 +26,7 @@ export class DatabaseService {
     return this.layout.root
   }
 
-  async init(_options?: { skipLibrarySeed?: boolean }): Promise<void> {
+  async init(): Promise<void> {
     this.initUserSchema()
   }
 
@@ -41,16 +42,7 @@ export class DatabaseService {
     if (!settingsRow) {
       this.userDb
         .prepare('INSERT INTO app_settings (id, json) VALUES (1, ?)')
-        .run(JSON.stringify({
-          navAlign: 'start',
-          navDisplay: 'icon',
-          rssFetchLimit: 20,
-          startupModule: 'last',
-          lastActiveModule: 'library',
-          rssAutoRefreshMinutes: 0,
-          windowStateMode: 'remember',
-          colorScheme: 'system'
-        }))
+        .run(JSON.stringify(normalizeAppSettings(DEFAULT_APP_SETTINGS)))
     }
   }
 

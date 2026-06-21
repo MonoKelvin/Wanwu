@@ -7,10 +7,24 @@ import SettingsRow from '@modules/settings/SettingsRow.vue'
 import WwButton from '@shared/components/WwButton.vue'
 import MusicPlatformLoginDialog from '@modules/music/components/MusicPlatformLoginDialog.vue'
 import type { MusicConnectionTestResult, MusicKugouLoginStatus, MusicNeteaseLoginStatus, MusicProviderHealth } from '@modules/music/domain/types'
+import { MUSIC_MODULE_ID } from '@modules/music/domain/moduleId'
+import {
+  readMusicModuleSettings,
+  type MusicApiMode,
+  type MusicModuleSettings,
+  type MusicNeteaseQuality,
+  type MusicPrimarySource
+} from '@modules/music/domain/settings'
 import './music-settings.css'
 
 const settingsStore = useSettingsStore()
 const { settings } = storeToRefs(settingsStore)
+
+const musicSettings = computed(() => readMusicModuleSettings(settings.value))
+
+async function patchMusic(patch: Partial<MusicModuleSettings>) {
+  await settingsStore.patchModuleSettings(MUSIC_MODULE_ID, patch)
+}
 
 const apiModeOptions = [
   { label: '线上 API', value: 'remote' as const },
@@ -56,22 +70,22 @@ const loginOpen = ref(false)
 const loginStatus = ref<MusicNeteaseLoginStatus | MusicKugouLoginStatus>({ loggedIn: false, loginType: 'none' })
 
 const accountPlatformLabel = computed(() => {
-  if (settings.value.musicPrimarySource === 'kugou') return '酷狗'
-  if (settings.value.musicPrimarySource === 'netease') return '网易云'
+  if (musicSettings.value.primarySource === 'kugou') return '酷狗'
+  if (musicSettings.value.primarySource === 'netease') return '网易云'
   return ''
 })
 
 const showPlatformLogin = computed(
-  () => settings.value.musicPrimarySource === 'kugou' || settings.value.musicPrimarySource === 'netease'
+  () => musicSettings.value.primarySource === 'kugou' || musicSettings.value.primarySource === 'netease'
 )
 
-const showNeteaseNetwork = computed(() => settings.value.musicPrimarySource === 'netease')
+const showNeteaseNetwork = computed(() => musicSettings.value.primarySource === 'netease')
 
 const showPlatformNetwork = computed(
-  () => settings.value.musicPrimarySource === 'kugou' || settings.value.musicPrimarySource === 'netease'
+  () => musicSettings.value.primarySource === 'kugou' || musicSettings.value.primarySource === 'netease'
 )
 
-const isVeromePrimary = computed(() => settings.value.musicPrimarySource === 'verome')
+const isVeromePrimary = computed(() => musicSettings.value.primarySource === 'verome')
 
 const testing = ref(false)
 const testResult = ref<MusicConnectionTestResult | null>(null)
@@ -94,7 +108,7 @@ async function runConnectionTest() {
   } catch (e) {
     testResult.value = {
       ok: false,
-      baseUrl: settings.value.musicApiBaseUrl,
+      baseUrl: musicSettings.value.apiBaseUrl,
       error: e instanceof Error ? e.message : '测试失败'
     }
   } finally {
@@ -102,31 +116,31 @@ async function runConnectionTest() {
   }
 }
 
-async function onApiModeChange(v: 'remote' | 'local' | null) {
-  if (!v || v === settings.value.musicApiMode) return
-  await settingsStore.save({ musicApiMode: v })
+async function onApiModeChange(v: MusicApiMode | null) {
+  if (!v || v === musicSettings.value.apiMode) return
+  await patchMusic({ apiMode: v })
 }
 
 async function onApiBaseUrlChange() {
-  await settingsStore.save({ musicApiBaseUrl: settings.value.musicApiBaseUrl })
+  await settingsStore.save({ musicApiBaseUrl: musicSettings.value.apiBaseUrl })
 }
 
 async function onLocalPortChange(e: Event) {
   const value = Number((e.target as HTMLInputElement).value) || 8000
-  if (value === settings.value.musicApiLocalPort) return
-  await settingsStore.save({ musicApiLocalPort: value })
+  if (value === musicSettings.value.apiLocalPort) return
+  await patchMusic({ apiLocalPort: value })
 }
 
 async function onDiscoverCountryChange() {
-  await settingsStore.save({ musicDiscoverCountry: settings.value.musicDiscoverCountry })
+  await settingsStore.save({ musicDiscoverCountry: musicSettings.value.discoverCountry })
 }
 
 async function onJamendoClientIdChange() {
-  await settingsStore.save({ musicJamendoClientId: settings.value.musicJamendoClientId })
+  await settingsStore.save({ musicJamendoClientId: musicSettings.value.jamendoClientId })
 }
 
 async function onAudiusApiKeyChange() {
-  await settingsStore.save({ musicAudiusApiKey: settings.value.musicAudiusApiKey })
+  await settingsStore.save({ musicAudiusApiKey: musicSettings.value.audiusApiKey })
 }
 
 async function loadLoginStatus() {
@@ -141,23 +155,23 @@ async function loadLoginStatus() {
   }
 }
 
-async function onPrimarySourceChange(v: 'netease' | 'verome' | 'kugou' | null) {
-  if (!v || v === settings.value.musicPrimarySource) return
-  await settingsStore.save({ musicPrimarySource: v })
+async function onPrimarySourceChange(v: MusicPrimarySource | null) {
+  if (!v || v === musicSettings.value.primarySource) return
+  await patchMusic({ primarySource: v })
   void loadLoginStatus()
 }
 
-async function onQualityChange(v: typeof settings.value.musicNeteaseQuality | null) {
-  if (!v || v === settings.value.musicNeteaseQuality) return
-  await settingsStore.save({ musicNeteaseQuality: v })
+async function onQualityChange(v: typeof musicSettings.value.neteaseQuality | null) {
+  if (!v || v === musicSettings.value.neteaseQuality) return
+  await patchMusic({ neteaseQuality: v })
 }
 
 async function onNeteaseRealIpChange() {
-  await settingsStore.save({ musicNeteaseRealIp: settings.value.musicNeteaseRealIp })
+  await settingsStore.save({ musicNeteaseRealIp: musicSettings.value.neteaseRealIp })
 }
 
 async function onNeteaseProxyChange() {
-  await settingsStore.save({ musicNeteaseProxy: settings.value.musicNeteaseProxy })
+  await settingsStore.save({ musicNeteaseProxy: musicSettings.value.neteaseProxy })
 }
 
 onMounted(() => {
@@ -174,7 +188,7 @@ onMounted(() => {
       <SettingsRow label="主音源" subtitle="默认酷狗；可切换网易云或 Verome 备用">
         <SelectButton
           class="ww-settings-segment ww-settings-segment--wide"
-          :model-value="settings.musicPrimarySource"
+          :model-value="musicSettings.primarySource"
           :options="primarySourceOptions"
           option-label="label"
           option-value="value"
@@ -203,7 +217,7 @@ onMounted(() => {
       <SettingsRow v-if="showPlatformNetwork" label="播放音质" subtitle="酷狗 / 网易云共用此选项">
         <SelectButton
           class="ww-settings-segment"
-          :model-value="settings.musicNeteaseQuality"
+          :model-value="musicSettings.neteaseQuality"
           :options="qualityOptions"
           option-label="label"
           option-value="value"
@@ -218,7 +232,7 @@ onMounted(() => {
         subtitle="仅网易云 · 接口 301/403 时可填国内 IP"
       >
         <input
-          v-model="settings.musicNeteaseRealIp"
+          :value="musicSettings.neteaseRealIp"
           type="text"
           class="ww-music-settings-field ww-music-settings-field--medium"
           @change="onNeteaseRealIpChange"
@@ -231,7 +245,7 @@ onMounted(() => {
         subtitle="酷狗 / 网易云 · 如 http://127.0.0.1:7890"
       >
         <input
-          v-model="settings.musicNeteaseProxy"
+          :value="musicSettings.neteaseProxy"
           type="text"
           class="ww-music-settings-field ww-music-settings-field--wide"
           @change="onNeteaseProxyChange"
@@ -280,7 +294,7 @@ onMounted(() => {
 
       <SettingsRow label="API 地址" subtitle="默认 https://verome-api.deno.dev">
         <input
-          v-model="settings.musicApiBaseUrl"
+          :value="musicSettings.apiBaseUrl"
           type="url"
           class="ww-music-settings-field ww-music-settings-field--wide"
           @change="onApiBaseUrlChange"
@@ -290,7 +304,7 @@ onMounted(() => {
       <SettingsRow label="API 模式">
         <SelectButton
           class="ww-settings-segment ww-settings-segment--wide"
-          :model-value="settings.musicApiMode"
+          :model-value="musicSettings.apiMode"
           :options="apiModeOptions"
           option-label="label"
           option-value="value"
@@ -299,9 +313,9 @@ onMounted(() => {
         />
       </SettingsRow>
 
-      <SettingsRow v-if="settings.musicApiMode === 'local'" label="本地端口" subtitle="本地 Verome 进程监听端口">
+      <SettingsRow v-if="musicSettings.apiMode === 'local'" label="本地端口" subtitle="本地 Verome 进程监听端口">
         <input
-          :value="settings.musicApiLocalPort"
+          :value="musicSettings.apiLocalPort"
           type="number"
           min="1"
           max="65535"
@@ -316,7 +330,7 @@ onMounted(() => {
 
       <SettingsRow label="API 地址" subtitle="主源为酷狗/网易云时作 fallback">
         <input
-          v-model="settings.musicApiBaseUrl"
+          :value="musicSettings.apiBaseUrl"
           type="url"
           class="ww-music-settings-field ww-music-settings-field--wide"
           @change="onApiBaseUrlChange"
@@ -325,7 +339,7 @@ onMounted(() => {
 
       <SettingsRow label="发现页地区" subtitle="Verome 趋势/榜单地区名">
         <input
-          v-model="settings.musicDiscoverCountry"
+          :value="musicSettings.discoverCountry"
           type="text"
           class="ww-music-settings-field ww-music-settings-field--medium"
           @change="onDiscoverCountryChange"
@@ -338,7 +352,7 @@ onMounted(() => {
 
       <SettingsRow label="Jamendo Client ID" subtitle="可选 · 留空不启用">
         <input
-          v-model="settings.musicJamendoClientId"
+          :value="musicSettings.jamendoClientId"
           type="text"
           class="ww-music-settings-field ww-music-settings-field--wide"
           autocomplete="off"
@@ -348,7 +362,7 @@ onMounted(() => {
 
       <SettingsRow label="Audius API Key" subtitle="可选 Bearer · 留空仍可用公开接口">
         <input
-          v-model="settings.musicAudiusApiKey"
+          :value="musicSettings.audiusApiKey"
           type="password"
           class="ww-music-settings-field ww-music-settings-field--wide"
           autocomplete="off"
