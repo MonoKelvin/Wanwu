@@ -83,6 +83,18 @@ export {
 } from '@app/modules/librarySettingsGroupRegistry'
 
 export {
+  registerAppSettingsGroup,
+  collectAppSettingsGroups
+} from '@app/modules/appSettingsGroupRegistry'
+
+export {
+  registerSidebarFooterContributor,
+  collectSidebarFooterContributors
+} from '@app/modules/sidebarFooterRegistry'
+
+export type { SidebarFooterContext } from '@app/modules/sidebarFooterRegistry'
+
+export {
   registerSubPanelContributor,
   resolveSubPanel,
   moduleHasSubPanel

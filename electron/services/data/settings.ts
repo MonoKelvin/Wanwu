@@ -27,7 +27,11 @@ import {
   type ColorScheme,
   type WindowStateMode,
   type NotesPopoutRestoreMode,
-  type CloseBehavior
+  type CloseBehavior,
+  type LeisureReadJokeLang,
+  type LeisureReadArticleMode,
+  type LeisureReadRiddleThinkDelay,
+  type WeatherRefreshMinutes
 } from '../../../src/shared/types/settings'
 
 function normalizeRssFetchLimit(limit: unknown): RssFetchLimit {
@@ -67,6 +71,26 @@ function normalizeCloseBehavior(v: unknown): CloseBehavior {
   return 'quit'
 }
 
+function normalizeLeisureReadJokeLang(v: unknown): LeisureReadJokeLang {
+  return v === 'en' ? 'en' : 'zh'
+}
+
+function normalizeLeisureReadArticleMode(v: unknown): LeisureReadArticleMode {
+  return v === 'today' ? 'today' : 'random'
+}
+
+function normalizeLeisureReadRiddleThinkDelay(v: unknown): LeisureReadRiddleThinkDelay {
+  const delay = Number(v)
+  return delay === 0 || delay === 5 || delay === 10 || delay === 30 ? delay : 5
+}
+
+function normalizeWeatherRefreshMinutes(v: unknown): WeatherRefreshMinutes {
+  const minutes = Number(v)
+  if (minutes === 1 || minutes === 15 || minutes === 30 || minutes === 60) return minutes
+  // 旧版「仅启动时」(0) 与其它非法值统一迁移为 1 分钟
+  return 1
+}
+
 function normalizeModuleSettings(
   raw: Partial<AppSettings> & Record<string, unknown>
 ): Record<string, Record<string, unknown>> {
@@ -75,10 +99,16 @@ function normalizeModuleSettings(
       ? { ...(raw.moduleSettings as Record<string, Record<string, unknown>>) }
       : {}
 
-  if (!base[LEISURE_READ_MODULE_ID] && ('leisureReadJokeLang' in raw || 'leisureReadArticleMode' in raw)) {
+  if (
+    !base[LEISURE_READ_MODULE_ID] &&
+    ('leisureReadJokeLang' in raw ||
+      'leisureReadArticleMode' in raw ||
+      'leisureReadRiddleThinkDelay' in raw)
+  ) {
     base[LEISURE_READ_MODULE_ID] = {
       riddleLang: raw.leisureReadJokeLang === 'en' ? 'en' : 'zh',
-      articleMode: raw.leisureReadArticleMode === 'today' ? 'today' : 'random'
+      articleMode: raw.leisureReadArticleMode === 'today' ? 'today' : 'random',
+      riddleThinkDelay: normalizeLeisureReadRiddleThinkDelay(raw.leisureReadRiddleThinkDelay)
     }
   }
 
@@ -166,6 +196,37 @@ function readNotesSpellcheckEnabled(
   return false
 }
 
+function readLeisureReadJokeLang(
+  raw: Partial<AppSettings> & Record<string, unknown>,
+  moduleSettings: Record<string, Record<string, unknown>>
+): LeisureReadJokeLang {
+  if ('leisureReadJokeLang' in raw) return normalizeLeisureReadJokeLang(raw.leisureReadJokeLang)
+  const leisure = moduleSettings[LEISURE_READ_MODULE_ID]
+  return normalizeLeisureReadJokeLang(leisure?.riddleLang ?? leisure?.jokeLang)
+}
+
+function readLeisureReadArticleMode(
+  raw: Partial<AppSettings> & Record<string, unknown>,
+  moduleSettings: Record<string, Record<string, unknown>>
+): LeisureReadArticleMode {
+  if ('leisureReadArticleMode' in raw) {
+    return normalizeLeisureReadArticleMode(raw.leisureReadArticleMode)
+  }
+  const leisure = moduleSettings[LEISURE_READ_MODULE_ID]
+  return normalizeLeisureReadArticleMode(leisure?.articleMode)
+}
+
+function readLeisureReadRiddleThinkDelay(
+  raw: Partial<AppSettings> & Record<string, unknown>,
+  moduleSettings: Record<string, Record<string, unknown>>
+): LeisureReadRiddleThinkDelay {
+  if ('leisureReadRiddleThinkDelay' in raw) {
+    return normalizeLeisureReadRiddleThinkDelay(raw.leisureReadRiddleThinkDelay)
+  }
+  const leisure = moduleSettings[LEISURE_READ_MODULE_ID]
+  return normalizeLeisureReadRiddleThinkDelay(leisure?.riddleThinkDelay)
+}
+
 function readMusicField<T>(
   moduleSettings: Record<string, Record<string, unknown>>,
   keys: { moduleKey: string; legacyKey: keyof AppSettings },
@@ -213,6 +274,24 @@ function syncLegacyFieldsToModuleSettings(
     next[NOTES_MODULE_ID] = {
       ...next[NOTES_MODULE_ID],
       spellcheckEnabled: patch.notesSpellcheckEnabled
+    }
+  }
+  if ('leisureReadJokeLang' in patch) {
+    next[LEISURE_READ_MODULE_ID] = {
+      ...next[LEISURE_READ_MODULE_ID],
+      riddleLang: normalizeLeisureReadJokeLang(patch.leisureReadJokeLang)
+    }
+  }
+  if ('leisureReadArticleMode' in patch) {
+    next[LEISURE_READ_MODULE_ID] = {
+      ...next[LEISURE_READ_MODULE_ID],
+      articleMode: normalizeLeisureReadArticleMode(patch.leisureReadArticleMode)
+    }
+  }
+  if ('leisureReadRiddleThinkDelay' in patch) {
+    next[LEISURE_READ_MODULE_ID] = {
+      ...next[LEISURE_READ_MODULE_ID],
+      riddleThinkDelay: normalizeLeisureReadRiddleThinkDelay(patch.leisureReadRiddleThinkDelay)
     }
   }
   if ('diagramRecentShapes' in patch) {
@@ -335,6 +414,11 @@ export function normalizeAppSettings(data: Partial<AppSettings> | unknown): AppS
     recentFonts: normalizeRecentStringList(raw.recentFonts, MAX_RECENT_FONTS),
     recentColors: normalizeRecentStringList(raw.recentColors, MAX_RECENT_COLORS),
     diagramRecentShapes: readDiagramRecentShapes(raw, moduleSettings),
+    leisureReadJokeLang: readLeisureReadJokeLang(raw, moduleSettings),
+    leisureReadArticleMode: readLeisureReadArticleMode(raw, moduleSettings),
+    leisureReadRiddleThinkDelay: readLeisureReadRiddleThinkDelay(raw, moduleSettings),
+    weatherEnabled: raw.weatherEnabled !== false,
+    weatherRefreshMinutes: normalizeWeatherRefreshMinutes(raw.weatherRefreshMinutes),
     moduleSettings
   }
 }

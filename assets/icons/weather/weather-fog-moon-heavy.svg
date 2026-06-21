@@ -1,0 +1,28 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="filter77_i_17_1692" x="480" y="384" width="46" height="36" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="-2" dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_17_1692"/>
+</filter>
+<linearGradient id="paint143_linear_17_1692" x1="485.082" y1="384" x2="526.487" y2="415.357" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#B4E6FB"/>
+</linearGradient>
+<linearGradient id="paint144_linear_17_1692" x1="483" y1="408" x2="483" y2="424" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4CAFFF"/>
+<stop offset="1" stop-color="#8FD5FF"/>
+</linearGradient>
+</defs>
+<g transform="translate(-580.348 -457.391) scale(1.217391)">
+<g filter="url(#filter77_i_17_1692)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M498 384C489.163 384 482 391.163 482 400L482.003 400.331C482.167 408.373 488.283 415.016 496.204 415.9L496.468 415.927L496.56 415.952C496.702 415.983 496.849 416 497 416H515L515.294 415.996C521.262 415.823 526 410.954 526 405C526 398.925 521.075 394 515 394L514.568 394.008C514.138 394.025 513.711 394.067 513.29 394.133L512.915 394.198L512.811 393.936C510.397 388.033 504.604 384 498 384Z" fill="url(#paint143_linear_17_1692)"/>
+</g>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M519 414C520.105 414 521 414.895 521 416C521 417.105 520.105 418 519 418H505C503.895 418 503 417.105 503 416C503 414.895 503.895 414 505 414H519ZM499 414C500.105 414 501 414.895 501 416C501 417.105 500.105 418 499 418H485C483.895 418 483 417.105 483 416C483 414.895 483.895 414 485 414H499ZM520 408C521.105 408 522 408.895 522 410C522 411.105 521.105 412 520 412H514C512.895 412 512 411.105 512 410C512 408.895 512.895 408 514 408H520ZM507 420C508.105 420 509 420.895 509 422C509 423.105 508.105 424 507 424H489C487.895 424 487 423.105 487 422C487 420.895 487.895 420 489 420H507ZM523 420C524.105 420 525 420.895 525 422C525 423.105 524.105 424 523 424H513C511.895 424 511 423.105 511 422C511 420.895 511.895 420 513 420H523ZM508 408C509.105 408 510 408.895 510 410C510 411.105 509.105 412 508 412H489C487.895 412 487 411.105 487 410C487 408.895 487.895 408 489 408H508Z" fill="url(#paint144_linear_17_1692)"/>
+</g>
+</svg>

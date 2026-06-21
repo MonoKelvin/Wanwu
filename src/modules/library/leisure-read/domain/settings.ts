@@ -1,13 +1,17 @@
 export const LEISURE_READ_MODULE_ID = 'wanwu.leisure-read'
 export const LEISURE_READ_FETCH_TIMEOUT_MS = 8000
 
-export type LeisureReadRiddleLang = 'zh' | 'en'
-export type LeisureReadArticleMode = 'random' | 'today'
-/** 急转弯揭晓前思考等待（秒）；0 表示不等待 */
-export type LeisureReadRiddleThinkDelay = 0 | 5 | 10 | 30
+export type { LeisureReadJokeLang as LeisureReadRiddleLang } from '@shared/types/settings'
+export type { LeisureReadArticleMode, LeisureReadRiddleThinkDelay } from '@shared/types/settings'
+
+import type {
+  LeisureReadJokeLang,
+  LeisureReadArticleMode,
+  LeisureReadRiddleThinkDelay
+} from '@shared/types/settings'
 
 export interface LeisureReadModuleSettings {
-  riddleLang: LeisureReadRiddleLang
+  riddleLang: LeisureReadJokeLang
   articleMode: LeisureReadArticleMode
   riddleThinkDelay: LeisureReadRiddleThinkDelay
 }
@@ -18,7 +22,7 @@ export const DEFAULT_LEISURE_READ_MODULE_SETTINGS: LeisureReadModuleSettings = {
   riddleThinkDelay: 5
 }
 
-function readRiddleLang(raw: Record<string, unknown> | undefined): LeisureReadRiddleLang {
+function readRiddleLang(raw: Record<string, unknown> | undefined): LeisureReadJokeLang {
   if (raw?.riddleLang === 'en') return 'en'
   if (raw?.riddleLang === 'zh') return 'zh'
   if (raw?.jokeLang === 'en') return 'en'
@@ -39,24 +43,35 @@ export function normalizeLeisureReadModuleSettings(
   }
 }
 
+function hasStoredModuleSettings(stored: Record<string, unknown> | undefined): boolean {
+  return Boolean(stored && typeof stored === 'object' && Object.keys(stored).length > 0)
+}
+
 export function readLeisureReadModuleSettings(
   appSettings: Record<string, unknown>
 ): LeisureReadModuleSettings {
-  const moduleSettings = appSettings.moduleSettings as Record<string, Record<string, unknown>> | undefined
-  const stored = moduleSettings?.[LEISURE_READ_MODULE_ID]
-  if (stored) return normalizeLeisureReadModuleSettings(stored)
-
-  if ('leisureReadJokeLang' in appSettings || 'leisureReadArticleMode' in appSettings) {
+  if (
+    'leisureReadJokeLang' in appSettings ||
+    'leisureReadArticleMode' in appSettings ||
+    'leisureReadRiddleThinkDelay' in appSettings
+  ) {
     return normalizeLeisureReadModuleSettings({
       jokeLang: appSettings.leisureReadJokeLang,
-      articleMode: appSettings.leisureReadArticleMode
+      articleMode: appSettings.leisureReadArticleMode,
+      riddleThinkDelay: appSettings.leisureReadRiddleThinkDelay
     })
+  }
+
+  const moduleSettings = appSettings.moduleSettings as Record<string, Record<string, unknown>> | undefined
+  const stored = moduleSettings?.[LEISURE_READ_MODULE_ID]
+  if (hasStoredModuleSettings(stored)) {
+    return normalizeLeisureReadModuleSettings(stored)
   }
 
   return { ...DEFAULT_LEISURE_READ_MODULE_SETTINGS }
 }
 
-export const LEISURE_READ_RIDDLE_LANG_OPTIONS: Array<{ label: string; value: LeisureReadRiddleLang }> = [
+export const LEISURE_READ_RIDDLE_LANG_OPTIONS: Array<{ label: string; value: LeisureReadJokeLang }> = [
   { label: '中文', value: 'zh' },
   { label: 'English', value: 'en' }
 ]

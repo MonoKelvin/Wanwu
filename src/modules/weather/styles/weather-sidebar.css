@@ -1,0 +1,98 @@
+.ww-weather-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1875rem;
+  width: 100%;
+  max-width: 100%;
+  padding: 0.5625rem 0;
+  color: var(--ww-ink-muted);
+  user-select: none;
+  pointer-events: none;
+}
+
+.ww-weather-sidebar__icon {
+  color: var(--ww-ink-faint);
+}
+
+.ww-weather-sidebar__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1875rem;
+  width: 100%;
+  min-width: 0;
+}
+
+/* 数字与 ° 分列：数字垂直居中，° 贴右侧略小 */
+.ww-weather-sidebar__temp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.0625rem;
+  min-height: 1.125rem;
+  line-height: 1;
+  color: var(--ww-ink-muted);
+}
+
+.ww-weather-sidebar__temp-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.ww-weather-sidebar__temp-unit {
+  flex-shrink: 0;
+  font-size: 0.625rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ww-ink-faint);
+}
+
+.ww-weather-sidebar__area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--ww-ink-faint);
+}
+
+.ww-weather-sidebar__area-line {
+  display: block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.ww-weather-icon {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.ww-weather-icon--pulse {
+  animation: ww-weather-icon-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes ww-weather-icon-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-weather-icon--pulse {
+    animation: none;
+    opacity: 0.75;
+  }
+}

@@ -1,0 +1,28 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="filter40_i_17_1692" x="96" y="194" width="46" height="36" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="-2" dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_17_1692"/>
+</filter>
+<linearGradient id="paint57_linear_17_1692" x1="101.082" y1="194" x2="142.487" y2="225.357" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#B4E6FB"/>
+</linearGradient>
+<linearGradient id="paint58_linear_17_1692" x1="110" y1="217" x2="110" y2="236" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4CAFFF"/>
+<stop offset="1" stop-color="#8FD5FF"/>
+</linearGradient>
+</defs>
+<g transform="translate(-112.870 -226.087) scale(1.217391)">
+<g filter="url(#filter40_i_17_1692)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M114 194C105.163 194 98 201.163 98 210L98.0034 210.331C98.1672 218.373 104.283 225.016 112.204 225.9L112.468 225.927L112.56 225.952C112.702 225.983 112.849 226 113 226H131L131.294 225.996C137.262 225.823 142 220.954 142 215C142 208.925 137.075 204 131 204L130.568 204.008C130.138 204.025 129.711 204.067 129.29 204.133L128.915 204.198L128.811 203.936C126.397 198.033 120.604 194 114 194Z" fill="url(#paint57_linear_17_1692)"/>
+</g>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M116 224C117.054 224 117.918 224.816 117.995 225.851L118 226V228H120L120.149 228.005C121.184 228.082 122 228.946 122 230C122 231.054 121.184 231.918 120.149 231.995L120 232H118V234L117.994 234.157C117.918 235.139 117.132 235.922 116.149 235.995L116 236L115.843 235.994C114.861 235.918 114.078 235.132 114.005 234.149L114 234V232H112L111.851 231.995C110.816 231.918 110 231.054 110 230C110 228.946 110.816 228.082 111.851 228.005L112 228H114V226L114.005 225.851C114.082 224.816 114.946 224 116 224ZM126 217C127.054 217 127.918 217.816 127.995 218.851L128 219V221H130L130.149 221.005C131.184 221.082 132 221.946 132 223C132 224.054 131.184 224.918 130.149 224.995L130 225H128V227L127.994 227.157C127.918 228.139 127.132 228.922 126.149 228.995L126 229L125.843 228.994C124.861 228.918 124.078 228.132 124.005 227.149L124 227V225H122L121.851 224.995C120.816 224.918 120 224.054 120 223C120 221.946 120.816 221.082 121.851 221.005L122 221H124V219L124.005 218.851C124.082 217.816 124.946 217 126 217Z" fill="url(#paint58_linear_17_1692)"/>
+</g>
+</svg>

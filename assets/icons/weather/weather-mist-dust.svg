@@ -1,0 +1,23 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="filter80_i_17_1692" x="770" y="384" width="44" height="42" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="2"/>
+<feGaussianBlur stdDeviation="4"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.831313 0 0 0 0 0.98288 0 0 0 0 0.98288 0 0 0 1 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_17_1692"/>
+</filter>
+<linearGradient id="paint147_linear_17_1692" x1="770" y1="384" x2="770" y2="424" gradientUnits="userSpaceOnUse">
+<stop stop-color="#8FD5FF"/>
+<stop offset="1" stop-color="#4CAFFF"/>
+</linearGradient>
+</defs>
+<g transform="translate(-976.000 -483.455) scale(1.272727)">
+<g filter="url(#filter80_i_17_1692)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M804 393C809.965 393 814 397.767 814 404C814 410.233 809.965 415 804 415C799.746 415 795.423 411.737 791.999 407.402C788.577 411.737 784.254 415 780 415C774.035 415 770 410.233 770 404C770 397.767 774.035 393 780 393C784.254 393 788.577 396.263 792.001 400.598C795.423 396.263 799.746 393 804 393ZM781 390C782.657 390 784 388.657 784 387C784 385.343 782.657 384 781 384C779.343 384 778 385.343 778 387C778 388.657 779.343 390 781 390ZM792 390C793.657 390 795 388.657 795 387C795 385.343 793.657 384 792 384C790.343 384 789 385.343 789 387C789 388.657 790.343 390 792 390ZM781 424C782.657 424 784 422.657 784 421C784 419.343 782.657 418 781 418C779.343 418 778 419.343 778 421C778 422.657 779.343 424 781 424ZM792 424C793.657 424 795 422.657 795 421C795 419.343 793.657 418 792 418C790.343 418 789 419.343 789 421C789 422.657 790.343 424 792 424ZM803 390C804.657 390 806 388.657 806 387C806 385.343 804.657 384 803 384C801.343 384 800 385.343 800 387C800 388.657 801.343 390 803 390ZM803 424C804.657 424 806 422.657 806 421C806 419.343 804.657 418 803 418C801.343 418 800 419.343 800 421C800 422.657 801.343 424 803 424Z" fill="url(#paint147_linear_17_1692)"/>
+</g>
+</g>
+</svg>

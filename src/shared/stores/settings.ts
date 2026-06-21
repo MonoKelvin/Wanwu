@@ -13,9 +13,14 @@ import {
   type StartupModule,
   type WindowStateMode,
   type NotesPopoutRestoreMode,
-  type CloseBehavior
+  type CloseBehavior,
+  type LeisureReadJokeLang,
+  type LeisureReadArticleMode,
+  type LeisureReadRiddleThinkDelay,
+  type WeatherRefreshMinutes
 } from '@shared/types/settings'
 import { isModuleId } from '@app/config/modules'
+import { mergeModuleSettingsMaps, cloneModuleSettingsMap } from '@shared/lib/moduleSettings'
 import { applyColorScheme, readStoredColorScheme, watchSystemColorScheme } from '@app/theme/applyTheme'
 import {
   bumpRecentString,
@@ -70,6 +75,28 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
     data.closeBehavior === 'tray' || data.closeBehavior === 'ask' ? data.closeBehavior : 'quit'
   const dailyWidgetEnabled = data.dailyWidgetEnabled === true
   const clipboardAssistEnabled = data.clipboardAssistEnabled === true
+
+  const leisureReadJokeLang: LeisureReadJokeLang = data.leisureReadJokeLang === 'en' ? 'en' : 'zh'
+  const leisureReadArticleMode: LeisureReadArticleMode =
+    data.leisureReadArticleMode === 'today' ? 'today' : 'random'
+  const leisureReadDelay = Number(data.leisureReadRiddleThinkDelay)
+  const leisureReadRiddleThinkDelay: LeisureReadRiddleThinkDelay =
+    leisureReadDelay === 0 ||
+    leisureReadDelay === 5 ||
+    leisureReadDelay === 10 ||
+    leisureReadDelay === 30
+      ? leisureReadDelay
+      : 5
+
+  const weatherEnabled = data.weatherEnabled !== false
+  const weatherRefreshRaw = Number(data.weatherRefreshMinutes)
+  const weatherRefreshMinutes: WeatherRefreshMinutes =
+    weatherRefreshRaw === 1 ||
+    weatherRefreshRaw === 15 ||
+    weatherRefreshRaw === 30 ||
+    weatherRefreshRaw === 60
+      ? weatherRefreshRaw
+      : 1
 
   return {
     navAlign: data.navAlign === 'center' ? 'center' : 'start',
@@ -130,23 +157,14 @@ function normalizeSettings(data: Partial<AppSettings>): AppSettings {
       data.diagramRecentShapes,
       MAX_RECENT_DIAGRAM_SHAPES
     ),
-    moduleSettings: (() => {
-      const raw = data as Partial<AppSettings> & Record<string, unknown>
-      const base =
-        raw.moduleSettings && typeof raw.moduleSettings === 'object'
-          ? { ...(raw.moduleSettings as Record<string, Record<string, unknown>>) }
-          : {}
-      if (
-        !base['wanwu.leisure-read'] &&
-        ('leisureReadJokeLang' in raw || 'leisureReadArticleMode' in raw)
-      ) {
-        base['wanwu.leisure-read'] = {
-          riddleLang: raw.leisureReadJokeLang === 'en' ? 'en' : 'zh',
-          articleMode: raw.leisureReadArticleMode === 'today' ? 'today' : 'random'
-        }
-      }
-      return base
-    })()
+    leisureReadJokeLang,
+    leisureReadArticleMode,
+    leisureReadRiddleThinkDelay,
+    weatherEnabled,
+    weatherRefreshMinutes,
+    moduleSettings: cloneModuleSettingsMap(
+      data.moduleSettings as Record<string, Record<string, unknown>> | undefined
+    )
   }
 }
 
@@ -181,7 +199,11 @@ export const useSettingsStore = defineStore('settings', () => {
     beginSettingsWrite()
     try {
       const saved = await window.wanwu.app.patchSettings(patch)
-      const next = normalizeSettings({ ...optimistic, ...saved })
+      const next = normalizeSettings({
+        ...saved,
+        ...optimistic,
+        moduleSettings: mergeModuleSettingsMaps(saved.moduleSettings, optimistic.moduleSettings)
+      })
       settings.value = next
       applySettingsToDocument(next)
       return next
@@ -313,13 +335,40 @@ export const useSettingsStore = defineStore('settings', () => {
     await save({ notesSpellcheckEnabled })
   }
 
+  async function setLeisureReadJokeLang(leisureReadJokeLang: LeisureReadJokeLang) {
+    await save({ leisureReadJokeLang })
+  }
+
+  async function setLeisureReadArticleMode(leisureReadArticleMode: LeisureReadArticleMode) {
+    await save({ leisureReadArticleMode })
+  }
+
+  async function setLeisureReadRiddleThinkDelay(
+    leisureReadRiddleThinkDelay: LeisureReadRiddleThinkDelay
+  ) {
+    await save({ leisureReadRiddleThinkDelay })
+  }
+
+  async function setWeatherEnabled(weatherEnabled: boolean) {
+    await patchSetting('weatherEnabled', weatherEnabled)
+  }
+
+  async function setWeatherRefreshMinutes(weatherRefreshMinutes: WeatherRefreshMinutes) {
+    await save({ weatherRefreshMinutes })
+  }
+
   async function patchModuleSettings(moduleId: string, patch: Record<string, unknown>) {
     const current = settings.value.moduleSettings ?? {}
     await save({
-      moduleSettings: {
-        ...current,
-        [moduleId]: { ...(current[moduleId] ?? {}), ...patch }
-      }
+      moduleSettings: mergeModuleSettingsMaps(current, { [moduleId]: patch })
+    })
+  }
+
+  /** 整段替换某模块的 moduleSettings（不做字段级 merge） */
+  async function setModuleSettings(moduleId: string, value: Record<string, unknown>) {
+    const current = settings.value.moduleSettings ?? {}
+    await save({
+      moduleSettings: { ...current, [moduleId]: value }
     })
   }
 
@@ -391,7 +440,11 @@ export const useSettingsStore = defineStore('settings', () => {
   function syncFromRemote(remote: Partial<AppSettings>) {
     if (settingsWriteDepth > 0) return
     const snapshot = settings.value
-    const merged = normalizeSettings({ ...snapshot, ...remote })
+    const merged = normalizeSettings({
+      ...snapshot,
+      ...remote,
+      moduleSettings: mergeModuleSettingsMaps(snapshot.moduleSettings, remote.moduleSettings)
+    })
     settings.value = merged
     applySettingsToDocument(merged)
   }
@@ -420,7 +473,13 @@ export const useSettingsStore = defineStore('settings', () => {
     setColorScheme,
     setNotesPopoutRestore,
     setNotesSpellcheckEnabled,
+    setLeisureReadJokeLang,
+    setLeisureReadArticleMode,
+    setLeisureReadRiddleThinkDelay,
+    setWeatherEnabled,
+    setWeatherRefreshMinutes,
     patchModuleSettings,
+    setModuleSettings,
     setLaunchAtStartup,
     setTrayEnabled,
     setCloseBehavior,

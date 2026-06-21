@@ -1,0 +1,48 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="filter60_i_17_1692" x="400" y="308" width="10" height="26" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="-2" dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_17_1692"/>
+</filter>
+<linearGradient id="paint103_linear_17_1692" x1="402.56" y1="308" x2="413.949" y2="310.281" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#B4E6FB"/>
+</linearGradient>
+<linearGradient id="paint104_linear_17_1692" x1="408" y1="288" x2="408" y2="312" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFAA85"/>
+<stop offset="1" stop-color="#FF6161"/>
+</linearGradient>
+<linearGradient id="paint105_linear_17_1692" x1="397" y1="288" x2="397" y2="312" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7AC7FF"/>
+<stop offset="1" stop-color="#2E69FF"/>
+</linearGradient>
+<linearGradient id="paint106_linear_17_1692" x1="408" y1="288" x2="408" y2="312" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFFB95"/>
+<stop offset="1" stop-color="#FFB812"/>
+</linearGradient>
+<linearGradient id="paint107_linear_17_1692" x1="507" y1="313" x2="507" y2="329" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4CAFFF"/>
+<stop offset="1" stop-color="#8FD5FF"/>
+</linearGradient>
+<linearGradient id="paint108_linear_17_1692" x1="487" y1="314" x2="487" y2="326" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4CAFFF"/>
+<stop offset="1" stop-color="#8FD5FF"/>
+</linearGradient>
+</defs>
+<g transform="translate(-840.308 -659.385) scale(2.153846)">
+<g filter="url(#filter60_i_17_1692)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M408 308C409.105 308 410 308.895 410 310V324C410 327.314 407.314 330 404 330C402.895 330 402 329.105 402 328C402 326.895 402.895 326 404 326C405.105 326 406 325.105 406 324V310C406 308.895 406.895 308 408 308Z" fill="url(#paint103_linear_17_1692)"/>
+</g>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M408 288C420.15 288 430 297.85 430 310C430 311.105 429.105 312 428 312H388C386.895 312 386 311.105 386 310C386 297.85 395.85 288 408 288Z" fill="url(#paint104_linear_17_1692)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M408 312C403.556 312 396.889 312 388 312C386.895 312 386 311.105 386 310C386 297.85 395.85 288 408 288V312Z" fill="url(#paint105_linear_17_1692)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M416 312C416 298.745 412.418 288 408 288C403.582 288 400 298.745 400 312H416Z" fill="url(#paint106_linear_17_1692)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M512 319C513.054 319 513.918 319.816 513.995 320.851L514 321V322H515C516.105 322 517 322.895 517 324C517 325.054 516.184 325.918 515.149 325.995L515 326H514V327C514 328.105 513.105 329 512 329C510.946 329 510.082 328.184 510.005 327.149L510 327V326H509C507.895 326 507 325.105 507 324C507 322.946 507.816 322.082 508.851 322.005L509 322H510V321C510 319.895 510.895 319 512 319ZM520 313C521.054 313 521.918 313.816 521.995 314.851L522 315V316H523C524.105 316 525 316.895 525 318C525 319.054 524.184 319.918 523.149 319.995L523 320H522V321C522 322.105 521.105 323 520 323C518.946 323 518.082 322.184 518.005 321.149L518 321V320H517C515.895 320 515 319.105 515 318C515 316.946 515.816 316.082 516.851 316.005L517 316H518V315C518 313.895 518.895 313 520 313Z" fill="url(#paint107_linear_17_1692)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M493 314C494.054 314 494.918 314.816 494.995 315.851L495 316V318H497C498.105 318 499 318.895 499 320C499 321.054 498.184 321.918 497.149 321.995L497 322H495V324C495 325.105 494.105 326 493 326C491.946 326 491.082 325.184 491.005 324.149L491 324V322H489C487.895 322 487 321.105 487 320C487 318.946 487.816 318.082 488.851 318.005L489 318H491V316C491 314.895 491.895 314 493 314Z" fill="url(#paint108_linear_17_1692)"/>
+</g>
+</svg>

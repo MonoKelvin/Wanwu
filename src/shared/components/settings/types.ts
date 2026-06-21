@@ -26,12 +26,28 @@ export interface WwSettingsSelectField extends WwSettingsFieldBase {
   readonly type: 'select'
   readonly options: readonly WwSettingsOption<unknown>[]
   readonly modelValue: unknown
+  readonly disabled?: boolean
+  readonly size?: 'narrow' | 'default' | 'block'
+}
+
+export type WwSettingsInputSize = 'narrow' | 'default'
+
+export interface WwSettingsTextField extends WwSettingsFieldBase {
+  readonly type: 'text'
+  readonly modelValue: string
+  readonly placeholder?: string
+  readonly disabled?: boolean
+  readonly ariaLabel?: string
+  readonly size?: WwSettingsInputSize
+  /** 输入防抖毫秒；默认 0 即立即提交 */
+  readonly debounceMs?: number
 }
 
 export type WwSettingsField =
   | WwSettingsSegmentField
   | WwSettingsToggleField
   | WwSettingsSelectField
+  | WwSettingsTextField
 
 export interface WwSettingsGroupConfig {
   readonly label?: string

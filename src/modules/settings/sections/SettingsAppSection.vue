@@ -1,12 +1,15 @@
 ﻿<script setup lang="ts">
-import { computed } from 'vue'
+import { computed, defineAsyncComponent, shallowRef, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import SelectButton from 'primevue/selectbutton'
 import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import { MODULE_NAV_ITEMS } from '@app/config/modules'
+import { collectAppSettingsGroups } from '@app/modules/appSettingsGroupRegistry'
 import { useSettingsStore } from '@shared/stores/settings'
 import SettingsRow from '@modules/settings/SettingsRow.vue'
 import WwSelect from '@shared/components/WwSelect'
+import { WwSettingsGroup } from '@shared/components/settings'
+import type { Component } from 'vue'
 import { buildStartupModuleOptions } from '@shared/utils/startupModule'
 import WwButton from '@shared/components/WwButton.vue'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
@@ -28,6 +31,21 @@ const settingsStore = useSettingsStore()
 const { settings } = storeToRefs(settingsStore)
 const toast = useWanwuToast()
 const confirm = useWanwuConfirm()
+
+const appSettingsGroups = computed(() => collectAppSettingsGroups())
+const appSettingsGroupComponents = shallowRef<Record<string, Component>>({})
+
+watch(
+  appSettingsGroups,
+  (items) => {
+    const next: Record<string, Component> = {}
+    for (const group of items) {
+      next[group.id] = defineAsyncComponent(() => group.loadPanel())
+    }
+    appSettingsGroupComponents.value = next
+  },
+  { immediate: true }
+)
 
 async function onResetDismissiblePrompts() {
   const ok = await confirm.ask({
@@ -231,5 +249,14 @@ async function onLaunchAtStartupChange(enabled: boolean) {
       </SettingsRow>
       <SettingsRow label="全局搜索" subtitle="Ctrl+Shift+P 唤起命令面板" />
     </div>
+
+    <WwSettingsGroup
+      v-for="group in appSettingsGroups"
+      :key="group.id"
+      :label="group.label"
+      class="ww-settings-group"
+    >
+      <component :is="appSettingsGroupComponents[group.id]" />
+    </WwSettingsGroup>
   </div>
 </template>

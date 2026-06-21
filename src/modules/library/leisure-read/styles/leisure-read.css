@@ -1567,8 +1567,16 @@ body:has(.lr-fav-overlay) .ww-action-menu-wrap {
 
 .lr-fav-drawer__card {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   contain: layout style;
+}
+
+/* 拖拽/退场动画时裁剪滑出内容；常态 overflow:visible 避免 hover 左移时左边框被裁切 */
+.lr-fav-drawer__card.is-dragging,
+.lr-fav-drawer__card.is-snap-back,
+.lr-fav-drawer__card.is-exiting,
+.lr-fav-drawer__card.is-motion-animated {
+  overflow: hidden;
 }
 
 .lr-fav-drawer__card-slide {

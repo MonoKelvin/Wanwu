@@ -1,0 +1,28 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="filter30_i_17_1692" x="384" y="99" width="46" height="36" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="-2" dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_17_1692"/>
+</filter>
+<linearGradient id="paint38_linear_17_1692" x1="389.082" y1="99" x2="430.487" y2="130.357" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#B4E6FB"/>
+</linearGradient>
+<linearGradient id="paint39_linear_17_1692" x1="397" y1="129.999" x2="397" y2="139.001" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4CAFFF"/>
+<stop offset="1" stop-color="#8FD5FF"/>
+</linearGradient>
+</defs>
+<g transform="translate(-463.478 -110.435) scale(1.217391)">
+<g filter="url(#filter30_i_17_1692)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M402 99C393.163 99 386 106.163 386 115L386.003 115.331C386.167 123.373 392.283 130.016 400.204 130.9L400.468 130.927L400.56 130.952C400.702 130.983 400.849 131 401 131H419L419.294 130.996C425.262 130.823 430 125.954 430 120C430 113.925 425.075 109 419 109L418.568 109.008C418.138 109.025 417.711 109.067 417.29 109.133L416.915 109.198L416.811 108.936C414.397 103.033 408.604 99 402 99Z" fill="url(#paint38_linear_17_1692)"/>
+</g>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M399.143 131.257C399.553 130.232 400.717 129.733 401.743 130.143C402.72 130.534 403.219 131.608 402.909 132.595L402.857 132.743L400.857 137.743C400.447 138.768 399.283 139.267 398.257 138.857C397.281 138.466 396.782 137.392 397.091 136.405L397.143 136.257L399.143 131.257ZM408.143 131.257C408.553 130.232 409.717 129.733 410.743 130.143C411.72 130.534 412.219 131.608 411.909 132.595L411.857 132.743L409.857 137.743C409.447 138.768 408.283 139.267 407.257 138.857C406.281 138.466 405.782 137.392 406.091 136.405L406.143 136.257L408.143 131.257ZM417.143 131.257C417.553 130.232 418.717 129.733 419.743 130.143C420.72 130.534 421.219 131.608 420.909 132.595L420.857 132.743L418.857 137.743C418.447 138.768 417.283 139.267 416.257 138.857C415.281 138.466 414.782 137.392 415.091 136.405L415.143 136.257L417.143 131.257Z" fill="url(#paint39_linear_17_1692)"/>
+</g>
+</svg>

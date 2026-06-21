@@ -5,8 +5,10 @@ export { default as WwSettingsRow } from './WwSettingsRow.vue'
 export type {
   WwSettingsField,
   WwSettingsGroupConfig,
+  WwSettingsInputSize,
   WwSettingsOption,
   WwSettingsSegmentField,
   WwSettingsSelectField,
+  WwSettingsTextField,
   WwSettingsToggleField
 } from './types'

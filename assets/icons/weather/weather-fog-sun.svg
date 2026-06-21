@@ -1,0 +1,28 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="filter74_i_17_1692" x="192" y="384" width="46" height="36" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="-2" dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_17_1692"/>
+</filter>
+<linearGradient id="paint137_linear_17_1692" x1="197.082" y1="384" x2="238.487" y2="415.357" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#B4E6FB"/>
+</linearGradient>
+<linearGradient id="paint138_linear_17_1692" x1="203" y1="408" x2="203" y2="424" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4CAFFF"/>
+<stop offset="1" stop-color="#8FD5FF"/>
+</linearGradient>
+</defs>
+<g transform="translate(-229.739 -457.391) scale(1.217391)">
+<g filter="url(#filter74_i_17_1692)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M210 384C201.163 384 194 391.163 194 400L194.003 400.331C194.167 408.373 200.283 415.016 208.204 415.9L208.468 415.927L208.56 415.952C208.702 415.983 208.849 416 209 416H227L227.294 415.996C233.262 415.823 238 410.954 238 405C238 398.925 233.075 394 227 394L226.568 394.008C226.138 394.025 225.711 394.067 225.29 394.133L224.915 394.198L224.811 393.936C222.397 388.033 216.604 384 210 384Z" fill="url(#paint137_linear_17_1692)"/>
+</g>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M230 414C231.105 414 232 414.895 232 416C232 417.105 231.105 418 230 418H216C214.895 418 214 417.105 214 416C214 414.895 214.895 414 216 414H230ZM222 408C223.105 408 224 408.895 224 410C224 411.105 223.105 412 222 412H208C206.895 412 206 411.105 206 410C206 408.895 206.895 408 208 408H222ZM227 420C228.105 420 229 420.895 229 422C229 423.105 228.105 424 227 424H205C203.895 424 203 423.105 203 422C203 420.895 203.895 420 205 420H227Z" fill="url(#paint138_linear_17_1692)"/>
+</g>
+</svg>

@@ -2,9 +2,12 @@
 import SelectButton from 'primevue/selectbutton'
 import WwSelect from '@shared/components/WwSelect'
 import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
+import WwSettingsInput from '@shared/components/settings/WwSettingsInput.vue'
 import WwSettingsGroup from '@shared/components/settings/WwSettingsGroup.vue'
 import WwSettingsRow from '@shared/components/settings/WwSettingsRow.vue'
 import type { WwSettingsField, WwSettingsGroupConfig } from '@shared/components/settings/types'
+
+const textDebounceTimers = new Map<WwSettingsField, ReturnType<typeof setTimeout>>()
 
 const props = defineProps<{
   /** 完整分区：含分组卡片 */
@@ -13,6 +16,10 @@ const props = defineProps<{
   fields?: readonly WwSettingsField[]
 }>()
 
+function fieldRowKey(field: WwSettingsField, fieldIndex: number): string {
+  return `${fieldIndex}-${field.label}`
+}
+
 function segmentClass(field: WwSettingsField): string {
   if (field.type !== 'segment') return 'ww-settings-segment'
   return field.wide ? 'ww-settings-segment ww-settings-segment--wide' : 'ww-settings-segment'
@@ -20,7 +27,7 @@ function segmentClass(field: WwSettingsField): string {
 
 async function onSegmentChange(field: WwSettingsField, value: unknown) {
   if (field.type !== 'segment') return
-  if (!value || value === field.modelValue) return
+  if (value == null || value === '' || value === field.modelValue) return
   await field.onUpdate(value as never)
 }
 
@@ -35,6 +42,25 @@ async function onSelectChange(field: WwSettingsField, value: unknown) {
   if (value === null || value === undefined || value === field.modelValue) return
   await field.onUpdate(value as never)
 }
+
+function onTextChange(field: WwSettingsField, value: string) {
+  if (field.type !== 'text') return
+  const prev = textDebounceTimers.get(field)
+  if (prev) clearTimeout(prev)
+  const debounceMs = field.debounceMs ?? 0
+  if (debounceMs <= 0) {
+    void field.onUpdate(value)
+    return
+  }
+  textDebounceTimers.set(
+    field,
+    setTimeout(() => {
+      textDebounceTimers.delete(field)
+      if (value === field.modelValue) return
+      void field.onUpdate(value)
+    }, debounceMs)
+  )
+}
 </script>
 
 <template>
@@ -42,7 +68,7 @@ async function onSelectChange(field: WwSettingsField, value: unknown) {
     <WwSettingsGroup v-for="(group, index) in groups" :key="index" :label="group.label">
       <WwSettingsRow
         v-for="(field, fieldIndex) in group.fields"
-        :key="`${index}-${fieldIndex}-${field.label}`"
+        :key="`${index}-${fieldRowKey(field, fieldIndex)}`"
         :label="field.label"
         :subtitle="field.subtitle"
       >
@@ -66,7 +92,18 @@ async function onSelectChange(field: WwSettingsField, value: unknown) {
           v-else-if="field.type === 'select'"
           :model-value="field.modelValue"
           :options="[...field.options]"
+          :size="field.size"
+          :disabled="field.disabled"
           @update:model-value="onSelectChange(field, $event)"
+        />
+        <WwSettingsInput
+          v-else-if="field.type === 'text'"
+          :model-value="field.modelValue"
+          :placeholder="field.placeholder"
+          :disabled="field.disabled"
+          :aria-label="field.ariaLabel ?? field.label"
+          :size="field.size"
+          @update:model-value="onTextChange(field, $event)"
         />
       </WwSettingsRow>
     </WwSettingsGroup>
@@ -75,7 +112,7 @@ async function onSelectChange(field: WwSettingsField, value: unknown) {
   <template v-else-if="fields?.length">
     <WwSettingsRow
       v-for="(field, fieldIndex) in fields"
-      :key="`${fieldIndex}-${field.label}`"
+      :key="fieldRowKey(field, fieldIndex)"
       :label="field.label"
       :subtitle="field.subtitle"
     >
@@ -99,7 +136,18 @@ async function onSelectChange(field: WwSettingsField, value: unknown) {
         v-else-if="field.type === 'select'"
         :model-value="field.modelValue"
         :options="[...field.options]"
+        :size="field.size"
+        :disabled="field.disabled"
         @update:model-value="onSelectChange(field, $event)"
+      />
+      <WwSettingsInput
+        v-else-if="field.type === 'text'"
+        :model-value="field.modelValue"
+        :placeholder="field.placeholder"
+        :disabled="field.disabled"
+        :aria-label="field.ariaLabel ?? field.label"
+        :size="field.size"
+        @update:model-value="onTextChange(field, $event)"
       />
     </WwSettingsRow>
   </template>

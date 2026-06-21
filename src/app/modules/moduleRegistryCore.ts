@@ -19,6 +19,8 @@ import { registerPathMemoryContributor } from '@app/modules/pathMemoryRegistry'
 import { registerQuickAccessKind, registerQuickAccessTargetHandler } from '@shared/module-bridge/quickAccessRendererBridge'
 import { registerSettingsSection } from '@app/modules/settingsSectionRegistry'
 import { registerLibrarySettingsGroup } from '@app/modules/librarySettingsGroupRegistry'
+import { registerAppSettingsGroup } from '@app/modules/appSettingsGroupRegistry'
+import { registerSidebarFooterContributor } from '@app/modules/sidebarFooterRegistry'
 import { registerShellChromeContributor } from '@app/modules/shellChromeRegistry'
 import { registerShellOutletContributor } from '@app/modules/shellOutletRegistry'
 import { registerShellThemeContributor } from '@app/modules/shellThemeRegistry'
@@ -62,6 +64,8 @@ function wireModule(module: IAppModule): void {
   })
   module.registerSettingsSection?.(registerSettingsSection)
   module.registerLibrarySettingsGroup?.(registerLibrarySettingsGroup)
+  module.registerAppSettingsGroup?.(registerAppSettingsGroup)
+  module.registerSidebarFooter?.(registerSidebarFooterContributor)
   module.registerSubPanel?.(registerSubPanelContributor)
   module.registerShellChrome?.(registerShellChromeContributor)
   module.registerShellTheme?.(registerShellThemeContributor)

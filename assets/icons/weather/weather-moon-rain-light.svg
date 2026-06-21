@@ -1,0 +1,45 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="filter25_i_17_1692" x="96" y="99" width="46" height="36" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="-2" dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_17_1692"/>
+</filter>
+<linearGradient id="paint30_linear_17_1692" x1="101.082" y1="99" x2="142.487" y2="130.357" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#B4E6FB"/>
+</linearGradient>
+<filter id="filter26_i_17_1692" x="112.593" y="117" width="16.0154" height="26.0081" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="2"/>
+<feGaussianBlur stdDeviation="4"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="overlay" in2="shape" result="effect1_innerShadow_17_1692"/>
+</filter>
+<linearGradient id="paint31_linear_17_1692" x1="120.6" y1="117" x2="120.6" y2="141.008" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FA6C21"/>
+<stop offset="1" stop-color="#FFD358"/>
+</linearGradient>
+<linearGradient id="paint32_linear_17_1692" x1="101" y1="129.999" x2="101" y2="139.001" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4CAFFF"/>
+<stop offset="1" stop-color="#8FD5FF"/>
+</linearGradient>
+</defs>
+<g transform="translate(-112.870 -115.309) scale(1.217391)">
+<g filter="url(#filter25_i_17_1692)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M114 99C105.163 99 98 106.163 98 115L98.0034 115.331C98.1672 123.373 104.283 130.016 112.204 130.9L112.468 130.927L112.56 130.952C112.702 130.983 112.849 131 113 131H131L131.294 130.996C137.262 130.823 142 125.954 142 120C142 113.925 137.075 109 131 109L130.568 109.008C130.138 109.025 129.711 109.067 129.29 109.133L128.915 109.198L128.811 108.936C126.397 103.033 120.604 99 114 99Z" fill="url(#paint30_linear_17_1692)"/>
+</g>
+<g filter="url(#filter26_i_17_1692)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M128.2 119.4L124 125L127.244 125.295C128.069 125.37 128.677 126.1 128.602 126.925C128.584 127.125 128.525 127.32 128.43 127.497L121.758 139.953C120.689 141.927 117.721 140.905 118.014 138.753L118.039 138.608L119.623 130.68L113.864 129.788C113.045 129.662 112.484 128.895 112.611 128.077C112.628 127.964 112.658 127.855 112.7 127.749L116.497 118.257C116.801 117.498 117.536 117 118.354 117H127C127.828 117 128.5 117.672 128.5 118.5C128.5 118.825 128.395 119.14 128.2 119.4Z" fill="url(#paint31_linear_17_1692)"/>
+</g>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M110.143 131.257C110.553 130.232 111.717 129.733 112.743 130.143C113.72 130.534 114.219 131.608 113.909 132.595L113.857 132.743L111.857 137.743C111.447 138.768 110.283 139.267 109.257 138.857C108.281 138.466 107.782 137.392 108.091 136.405L108.143 136.257L110.143 131.257ZM103.143 131.257C103.553 130.232 104.717 129.733 105.743 130.143C106.72 130.534 107.219 131.608 106.909 132.595L106.857 132.743L104.857 137.743C104.447 138.768 103.283 139.267 102.257 138.857C101.281 138.466 100.782 137.392 101.091 136.405L101.143 136.257L103.143 131.257ZM130.143 131.257C130.553 130.232 131.717 129.733 132.743 130.143C133.72 130.534 134.219 131.608 133.909 132.595L133.857 132.743L131.857 137.743C131.447 138.768 130.283 139.267 129.257 138.857C128.281 138.466 127.782 137.392 128.091 136.405L128.143 136.257L130.143 131.257ZM137.143 131.257C137.553 130.232 138.717 129.733 139.743 130.143C140.72 130.534 141.219 131.608 140.909 132.595L140.857 132.743L138.857 137.743C138.447 138.768 137.283 139.267 136.257 138.857C135.281 138.466 134.782 137.392 135.091 136.405L135.143 136.257L137.143 131.257Z" fill="url(#paint32_linear_17_1692)"/>
+</g>
+</svg>

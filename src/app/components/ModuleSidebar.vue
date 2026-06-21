@@ -1,20 +1,47 @@
 ﻿<script setup lang="ts">
-import { computed } from 'vue'
+import { computed, defineAsyncComponent, shallowRef, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@shared/stores/settings'
 import { MODULE_NAV_ITEMS } from '@app/config/modules'
 import { useModuleNavigation } from '@app/composables/useModuleNavigation'
 import { useRouteModule } from '@app/composables/useRouteModule'
+import { collectSidebarFooterContributors } from '@app/modules/sidebarFooterRegistry'
 import WwIcon from '@shared/components/WwIcon.vue'
 import { useAppLogo } from '@shared/composables/useAppLogo'
 import type { ModuleId } from '@shared/stores/app'
+import type { Component } from 'vue'
 
 const { nav: appLogoNav } = useAppLogo()
+const route = useRoute()
 const routeModule = useRouteModule()
 const { navigateToModule } = useModuleNavigation()
 const { settings } = storeToRefs(useSettingsStore())
 
 const modules = computed(() => MODULE_NAV_ITEMS())
+const isFullscreen = computed(() => !!route.meta.fullscreen)
+
+const footerContributors = computed(() =>
+  collectSidebarFooterContributors({
+    isFullscreen: isFullscreen.value,
+    navDisplay: settings.value.navDisplay,
+    settings: settings.value
+  })
+)
+
+const footerComponents = shallowRef<Record<string, Component>>({})
+
+watch(
+  footerContributors,
+  (items) => {
+    const next: Record<string, Component> = {}
+    for (const contributor of items) {
+      next[contributor.id] = defineAsyncComponent(() => contributor.loadComponent())
+    }
+    footerComponents.value = next
+  },
+  { immediate: true }
+)
 
 const showLabel = computed(() => settings.value.navDisplay === 'both')
 const useTooltip = computed(() => !showLabel.value)
@@ -68,6 +95,14 @@ function isActive(id: ModuleId) {
           <span v-if="showLabel" class="ww-module-btn__label">{{ m.label }}</span>
         </button>
       </div>
+
+      <div v-if="footerContributors.length" class="ww-module-nav__footer">
+        <component
+          v-for="contributor in footerContributors"
+          :key="contributor.id"
+          :is="footerComponents[contributor.id]"
+        />
+      </div>
     </div>
   </nav>
 </template>
@@ -89,6 +124,7 @@ function isActive(id: ModuleId) {
   align-items: center;
   width: 100%;
   min-height: 100%;
+  flex: 1;
   justify-content: flex-start;
 }
 
@@ -233,6 +269,17 @@ function isActive(id: ModuleId) {
 .ww-module-btn.is-active .ww-module-btn__label {
   color: var(--ww-ink);
   font-weight: 600;
+}
+
+/* 侧栏底部插槽（由各模块通过 sidebarFooterRegistry 贡献） */
+.ww-module-nav__footer {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: auto;
+  padding: 0.5rem 0 0.75rem;
 }
 
 /* 二级导航 */

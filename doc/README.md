@@ -23,6 +23,8 @@
 | [software-requirements-v1.1.txt](requirements/software-requirements-v1.1.txt) | 云斋 v1.1 需求摘要（txt） |
 | [leisure-read-requirements-v1.2.5.md](requirements/leisure-read-requirements-v1.2.5.md) | **闲读 v1.2.5** — 需求与 API 资源 |
 | [leisure-read-detailed-design-v1.2.5.md](design/leisure-read-detailed-design-v1.2.5.md) | **闲读 v1.2.5** — 详细设计 |
+| [weather-requirements-v1.0.md](requirements/weather-requirements-v1.0.md) | **侧栏天气 v1.0** — 需求 |
+| [weather-detailed-design-v1.0.md](design/weather-detailed-design-v1.0.md) | **侧栏天气 v1.0** — 详细设计 |
 
 ### 设计
 
