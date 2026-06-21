@@ -1,5 +1,5 @@
 /**
- * 天气服务：持有快照与会话坐标，响应 refresh / adoptCoordinates IPC。
+ * 天气服务：持有快照与会话坐标；刷新严格遵循设置中的 weatherRefreshMinutes。
  */
 import type { AppSettings } from '@shared/types/settings'
 import { normalizeAppSettings } from '../../../../electron/services/data/settings'
@@ -10,6 +10,34 @@ import { resolveWeatherLocation } from '@modules/weather/main/locationResolver'
 
 export interface WeatherServiceOptions {
   getRawSettings(): Record<string, unknown>
+}
+
+export type WeatherRefreshReason = 'schedule' | 'settings' | 'location' | 'ui'
+
+export interface WeatherRefreshOptions {
+  /** 忽略刷新间隔，立即拉取 */
+  force?: boolean
+  reason?: WeatherRefreshReason
+}
+
+const COORD_EPSILON = 0.002
+
+function coordsEqual(a: WeatherCoordinates | null, b: WeatherCoordinates): boolean {
+  if (!a) return false
+  return (
+    Math.abs(a.latitude - b.latitude) < COORD_EPSILON &&
+    Math.abs(a.longitude - b.longitude) < COORD_EPSILON
+  )
+}
+
+function isSnapshotStale(
+  snapshot: WeatherSnapshot | null,
+  intervalMinutes: number,
+  now = Date.now()
+): boolean {
+  if (!snapshot?.fetchedAt) return true
+  const intervalMs = intervalMinutes * 60 * 1000
+  return now - snapshot.fetchedAt >= intervalMs
 }
 
 export class WeatherService {
@@ -24,14 +52,6 @@ export class WeatherService {
     return this.snapshot
   }
 
-  adoptCoordinates(coords: WeatherCoordinates): void {
-    if (!Number.isFinite(coords.latitude) || !Number.isFinite(coords.longitude)) return
-    this.sessionCoordinates = {
-      latitude: coords.latitude,
-      longitude: coords.longitude
-    }
-  }
-
   private readSettings(): AppSettings {
     return normalizeAppSettings(this.options.getRawSettings())
   }
@@ -41,20 +61,65 @@ export class WeatherService {
     win?.webContents.send('weather:updated', this.snapshot)
   }
 
-  /** 解析定位 → 拉取天气 → 推送 weather:updated */
-  async refresh(): Promise<WeatherSnapshot | null> {
-    if (this.refreshing) return this.snapshot
-    this.refreshing = true
+  private emitRefreshing(): void {
     const win = getMainWindow()
     win?.webContents.send('weather:refreshing')
-    try {
-      const settings = this.readSettings()
-      if (!settings.weatherEnabled) {
-        this.snapshot = null
-        this.emitUpdated()
-        return null
-      }
+  }
 
+  private shouldFetch(settings: AppSettings, options: WeatherRefreshOptions): boolean {
+    if (options.force) return true
+    if (options.reason === 'settings' || options.reason === 'location') return true
+    return isSnapshotStale(this.snapshot, settings.weatherRefreshMinutes)
+  }
+
+  /** 将当前快照推送给渲染进程，不发起网络请求 */
+  syncToRenderer(): void {
+    this.emitUpdated()
+  }
+
+  /**
+   * 写入会话坐标；仅当坐标变化或尚无快照时才会在 adoptCoordinates 中触发拉取。
+   */
+  setSessionCoordinates(coords: WeatherCoordinates): boolean {
+    if (!Number.isFinite(coords.latitude) || !Number.isFinite(coords.longitude)) {
+      return false
+    }
+    const changed = !coordsEqual(this.sessionCoordinates, coords)
+    this.sessionCoordinates = {
+      latitude: coords.latitude,
+      longitude: coords.longitude
+    }
+    return changed
+  }
+
+  /** 采纳 geolocation 坐标并按规则刷新 */
+  async adoptCoordinates(coords: WeatherCoordinates): Promise<WeatherSnapshot | null> {
+    const locationChanged = this.setSessionCoordinates(coords)
+    if (locationChanged) {
+      return this.refresh({ force: true, reason: 'location' })
+    }
+    return this.refresh({ reason: 'ui' })
+  }
+
+  /** 解析定位 → 拉取天气 → 推送 weather:updated（默认遵守刷新间隔） */
+  async refresh(options: WeatherRefreshOptions = {}): Promise<WeatherSnapshot | null> {
+    const settings = this.readSettings()
+    if (!settings.weatherEnabled) {
+      this.snapshot = null
+      this.emitUpdated()
+      return null
+    }
+
+    if (!this.shouldFetch(settings, options)) {
+      this.syncToRenderer()
+      return this.snapshot
+    }
+
+    if (this.refreshing) return this.snapshot
+
+    this.refreshing = true
+    this.emitRefreshing()
+    try {
       const location = await resolveWeatherLocation(this.sessionCoordinates)
       this.snapshot = await fetchWeatherSnapshot(location)
       this.emitUpdated()

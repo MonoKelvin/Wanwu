@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { weatherIconUrl } from '@modules/weather/components/weatherIconAssets'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { readAppIconTheme, weatherIconUrl } from '@modules/weather/components/weatherIconAssets'
 import type { WeatherIconId } from '@modules/weather/domain/weatherIconIds'
 
 const props = withDefaults(
@@ -16,7 +16,26 @@ const props = withDefaults(
   }
 )
 
-const src = computed(() => weatherIconUrl(props.name))
+const theme = ref(readAppIconTheme())
+let themeObserver: MutationObserver | null = null
+
+onMounted(() => {
+  theme.value = readAppIconTheme()
+  themeObserver = new MutationObserver(() => {
+    theme.value = readAppIconTheme()
+  })
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme', 'class']
+  })
+})
+
+onUnmounted(() => {
+  themeObserver?.disconnect()
+  themeObserver = null
+})
+
+const src = computed(() => weatherIconUrl(props.name, theme.value))
 </script>
 
 <template>

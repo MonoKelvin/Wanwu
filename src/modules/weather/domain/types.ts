@@ -1,4 +1,5 @@
 /** 天气模块共享类型：定位、快照、坐标 */
+import type { WeatherForecastProviderId } from '@modules/weather/domain/providerChains'
 import type { WeatherIconId } from '@modules/weather/domain/weatherIconIds'
 
 /** 定位来源（用于调试，不含敏感坐标） */
@@ -30,6 +31,8 @@ export interface WeatherSnapshot {
   icon: WeatherIconId
   isDay: boolean
   source: WeatherLocationSource
+  /** 本次预报使用的数据源 */
+  forecastProvider?: WeatherForecastProviderId
   fetchedAt: number
   error?: string
 }

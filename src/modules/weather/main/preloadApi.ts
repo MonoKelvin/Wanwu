@@ -13,6 +13,7 @@ export const weatherPreloadModule: IPreloadModule = {
       weather: {
         getSnapshot: () => ipcRenderer.invoke('weather:getSnapshot') as Promise<WeatherSnapshot | null>,
         refresh: () => ipcRenderer.invoke('weather:refresh') as Promise<WeatherSnapshot | null>,
+        sync: () => ipcRenderer.invoke('weather:sync') as Promise<WeatherSnapshot | null>,
         adoptCoordinates: (coords: WeatherCoordinates) =>
           ipcRenderer.invoke('weather:adoptCoordinates', coords) as Promise<WeatherSnapshot | null>,
         onUpdated: (listener: (snapshot: WeatherSnapshot | null) => void) => {

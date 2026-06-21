@@ -9,8 +9,8 @@ import { WEATHER_MODULE_ID } from '@modules/weather/domain/moduleId'
 import type { WeatherCoordinates } from '@modules/weather/domain/types'
 import type { DatabaseService } from '../../../../electron/services/core/database'
 import {
-  applyWeatherRefreshSchedule,
   bindWeatherSchedulerContext,
+  handleWeatherSettingsChanged,
   runInitialWeatherRefresh,
   stopWeatherRefreshSchedule
 } from '@modules/weather/main/scheduler'
@@ -70,10 +70,7 @@ export const weatherMainModule: IMainProcessModule = {
 
   onSettingsChanged(ctx, settings) {
     bindWeatherSchedulerContext(ctx)
-    applyWeatherRefreshSchedule(settings)
-    if (settings.weatherEnabled) {
-      void getService(ctx)?.refresh()
-    }
+    handleWeatherSettingsChanged(settings)
   },
 
   onDispose() {
@@ -83,13 +80,18 @@ export const weatherMainModule: IMainProcessModule = {
   registerIpcHandlers(ctx) {
     ipcMain.handle('weather:getSnapshot', () => getService(ctx)?.getSnapshot() ?? null)
 
-    ipcMain.handle('weather:refresh', () => getService(ctx)?.refresh() ?? null)
+    ipcMain.handle('weather:refresh', () => getService(ctx)?.refresh({ reason: 'ui' }) ?? null)
+
+    ipcMain.handle('weather:sync', () => {
+      const service = getService(ctx)
+      service?.syncToRenderer()
+      return service?.getSnapshot() ?? null
+    })
 
     ipcMain.handle('weather:adoptCoordinates', async (_e, coords: WeatherCoordinates) => {
       const service = getService(ctx)
       if (!service) return null
-      service.adoptCoordinates(coords)
-      return service.refresh()
+      return service.adoptCoordinates(coords)
     })
   }
 }

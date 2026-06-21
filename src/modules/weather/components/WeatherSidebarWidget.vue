@@ -1,8 +1,12 @@
 <script setup lang="ts">
-/** 侧栏底部天气挂件：geolocation → IPC refresh，订阅 weather:updated */
+/** 侧栏底部天气挂件：首屏读缓存，仅在间隔到期或坐标变化时刷新 */
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import WeatherIcon from '@modules/weather/components/WeatherIcon.vue'
 import WeatherSidebarPlaceLabel from '@modules/weather/components/WeatherSidebarPlaceLabel.vue'
+import {
+  markWeatherGeoAttempted,
+  wasWeatherGeoAttempted
+} from '@modules/weather/components/weatherSessionState'
 import type { WeatherSnapshot } from '@modules/weather/domain/types'
 import { WEATHER_ICON_LOADING, type WeatherIconId } from '@modules/weather/domain/weatherIconIds'
 import { formatWeatherPlaceLabel } from '@modules/weather/domain/placeLabel'
@@ -12,7 +16,6 @@ const snapshot = ref<WeatherSnapshot | null>(null)
 const refreshing = ref(true)
 let stopListen: (() => void) | null = null
 let stopRefreshing: (() => void) | null = null
-let geoAttemptDone = false
 
 const tempValue = computed(() => {
   if (refreshing.value && !snapshot.value) return '—'
@@ -39,47 +42,28 @@ const ariaLabel = computed(() => {
   return `${place} ${s.summary} ${temp}`
 })
 
-function refreshFromMain() {
-  if (!window.wanwu?.weather) {
-    refreshing.value = false
-    return
-  }
-  refreshing.value = true
-  void window.wanwu.weather.refresh()
-}
-
-function finishGeoAttempt() {
-  if (geoAttemptDone) return
-  geoAttemptDone = true
-  refreshFromMain()
-}
-
 function tryAdoptSystemLocation() {
   if (!navigator.geolocation || !window.wanwu?.weather) {
-    finishGeoAttempt()
+    void window.wanwu?.weather?.refresh()
     return
   }
 
-  refreshing.value = true
+  markWeatherGeoAttempted()
   navigator.geolocation.getCurrentPosition(
     (pos) => {
-      geoAttemptDone = true
       void window.wanwu.weather.adoptCoordinates({
         latitude: pos.coords.latitude,
         longitude: pos.coords.longitude
       })
     },
     () => {
-      finishGeoAttempt()
+      void window.wanwu?.weather?.refresh()
     },
     { enableHighAccuracy: true, timeout: 12000, maximumAge: 300_000 }
   )
 }
 
-onMounted(() => {
-  refreshing.value = true
-  tryAdoptSystemLocation()
-
+onMounted(async () => {
   stopListen =
     window.wanwu?.weather?.onUpdated((next) => {
       snapshot.value = next
@@ -89,6 +73,18 @@ onMounted(() => {
     window.wanwu?.weather?.onRefreshing(() => {
       refreshing.value = true
     }) ?? null
+
+  const cached = await window.wanwu?.weather?.getSnapshot()
+  if (cached) {
+    snapshot.value = cached
+    refreshing.value = false
+  }
+
+  if (!wasWeatherGeoAttempted()) {
+    tryAdoptSystemLocation()
+  } else {
+    void window.wanwu?.weather?.refresh()
+  }
 })
 
 onUnmounted(() => {

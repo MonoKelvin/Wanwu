@@ -9,6 +9,7 @@ import type { WeatherService } from '@modules/weather/main/weatherService'
 
 let timer: ReturnType<typeof setInterval> | null = null
 let ctxRef: MainProcessInitContext | null = null
+let lastWeatherEnabled: boolean | null = null
 
 function getService(): WeatherService | null {
   if (!ctxRef) return null
@@ -29,7 +30,7 @@ export function applyWeatherRefreshSchedule(settings: AppSettings): void {
   if (!settings.weatherEnabled || !service) return
   const ms = minutes * 60 * 1000
   timer = setInterval(() => {
-    void service.refresh()
+    void service.refresh({ reason: 'schedule' })
   }, ms)
 }
 
@@ -45,6 +46,22 @@ export async function runInitialWeatherRefresh(): Promise<void> {
   const db = ctxRef?.services.db as DatabaseService | null
   if (!db) return
   const settings = normalizeAppSettings(db.getAppSettings() ?? {})
+  lastWeatherEnabled = settings.weatherEnabled
   if (!settings.weatherEnabled) return
   applyWeatherRefreshSchedule(settings)
+}
+
+/** 仅在天气开关从关→开时立即拉取一次 */
+export function handleWeatherSettingsChanged(settings: AppSettings): void {
+  const wasEnabled = lastWeatherEnabled
+  lastWeatherEnabled = settings.weatherEnabled
+  applyWeatherRefreshSchedule(settings)
+
+  if (!settings.weatherEnabled) return
+  const service = getService()
+  if (!service) return
+
+  if (wasEnabled === false || wasEnabled === null) {
+    void service.refresh({ force: true, reason: 'settings' })
+  }
 }
