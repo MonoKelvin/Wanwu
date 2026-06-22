@@ -4,7 +4,7 @@ import {
   getModuleRuntimeService,
   setModuleRuntimeService
 } from '@shared/module-bridge/mainProcessRegistry'
-import { PIXEL_ART_MODULE_ID } from '@modules/library/pixel-art/domain/moduleId'
+import { PIXEL_ART_MODULE_ID } from '@modules/library/pixel-art/domain/meta'
 import type { DatabaseService } from '../../../../../electron/services/core/database'
 import { PixelArtService } from '@modules/library/pixel-art/main/service/service'
 import type { PixelWritePatch } from '@modules/library/pixel-art/domain/types'
@@ -102,9 +102,6 @@ export const pixelArtMainModule: IMainProcessModule = {
     ipcMain.handle('pixel-art:renameFile', (_e, params: { fileId: string; title: string }) =>
       getService(ctx)?.renameFile(params.fileId, params.title)
     )
-    ipcMain.handle('pixel-art:moveFile', (_e, params: { fileId: string; folderId: string }) =>
-      getService(ctx)?.moveFile(params.fileId, params.folderId)
-    )
     ipcMain.handle('pixel-art:softDeleteFile', (_e, params: { fileId: string }) =>
       getService(ctx)?.softDeleteFile(params.fileId)
     )
@@ -114,15 +111,6 @@ export const pixelArtMainModule: IMainProcessModule = {
     ipcMain.handle('pixel-art:purgeFile', (_e, params: { fileId: string }) =>
       getService(ctx)?.purgeFile(params.fileId)
     )
-    ipcMain.handle('pixel-art:createFolder', (_e, params: { name: string }) =>
-      getService(ctx)?.createFolder(params.name)
-    )
-    ipcMain.handle('pixel-art:renameFolder', (_e, params: { folderId: string; name: string }) => {
-      getService(ctx)?.renameFolder(params.folderId, params.name)
-    })
-    ipcMain.handle('pixel-art:deleteFolder', (_e, params: { folderId: string }) => {
-      getService(ctx)?.deleteFolder(params.folderId)
-    })
     ipcMain.handle('pixel-art:exportImage', (_e, params: unknown) =>
       getService(ctx)?.exportImageWithDialog(params as Parameters<PixelArtService['exportImageWithDialog']>[0])
     )

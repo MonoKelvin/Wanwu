@@ -1,4 +1,4 @@
-import { PixelCmd } from '@modules/library/pixel-art/app/command/domain/ids'
+import { PixelCmd } from '@modules/library/pixel-art/app/command/PixelCommandRegistry'
 import { onMounted, onUnmounted } from 'vue'
 import type { IPixelCommandBus } from '@modules/library/pixel-art/app/command/PixelCommandRegistry'
 import type { ToolId } from '@modules/library/pixel-art/domain/tools'
@@ -28,7 +28,6 @@ export function usePixelShortcuts(options: {
   bus: IPixelCommandBus
   isActive?: () => boolean
   getCanvasWrap?: () => HTMLElement | null
-  onSpacePan?: (active: boolean) => void
 }) {
   let spaceHeld = false
 
@@ -43,7 +42,7 @@ export function usePixelShortcuts(options: {
     if (e.key === ' ' && !isEditableTarget(e.target)) {
       if (!spaceHeld) {
         spaceHeld = true
-        options.onSpacePan?.(true)
+        dispatch(PixelCmd.Tool.HoldPan, { active: true })
         e.preventDefault()
       }
       return
@@ -54,6 +53,11 @@ export function usePixelShortcuts(options: {
       dispatch(PixelCmd.File.SaveAs)
       return
     }
+    if (mod && e.key.toLowerCase() === 'a') {
+      e.preventDefault()
+      dispatch(PixelCmd.Document.SelectAll)
+      return
+    }
     if (mod && e.key.toLowerCase() === 's') {
       e.preventDefault()
       dispatch(PixelCmd.File.Save)
@@ -61,12 +65,12 @@ export function usePixelShortcuts(options: {
     }
     if (mod && e.key.toLowerCase() === 'n') {
       e.preventDefault()
-      dispatch('Pixel.File.New')
+      dispatch(PixelCmd.File.New)
       return
     }
     if (mod && e.key.toLowerCase() === 'o') {
       e.preventDefault()
-      dispatch('Pixel.File.OpenRecent')
+      dispatch(PixelCmd.File.OpenRecent)
       return
     }
     if (mod && e.key === 'z' && !e.shiftKey) {
@@ -104,25 +108,50 @@ export function usePixelShortcuts(options: {
     }
 
     if (!mod && !isEditableTarget(e.target)) {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault()
+        dispatch(PixelCmd.Document.ClearSelection)
+        return
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        dispatch(PixelCmd.Document.MoveSelection, { dx: -1, dy: 0 })
+        return
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        dispatch(PixelCmd.Document.MoveSelection, { dx: 1, dy: 0 })
+        return
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        dispatch(PixelCmd.Document.MoveSelection, { dx: 0, dy: -1 })
+        return
+      }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        dispatch(PixelCmd.Document.MoveSelection, { dx: 0, dy: 1 })
+        return
+      }
       const tool = TOOL_KEYS[e.key.toLowerCase()]
       if (tool) {
         e.preventDefault()
-        dispatch('Pixel.Tool.Select', { tool })
+        dispatch(PixelCmd.Tool.Select, { tool })
         return
       }
       if (e.key === '[') {
         e.preventDefault()
-        dispatch('Pixel.Tool.BrushSize', { delta: -1 })
+        dispatch(PixelCmd.Tool.BrushSize, { delta: -1 })
         return
       }
       if (e.key === ']') {
         e.preventDefault()
-        dispatch('Pixel.Tool.BrushSize', { delta: 1 })
+        dispatch(PixelCmd.Tool.BrushSize, { delta: 1 })
         return
       }
       if (e.key.toLowerCase() === 'x') {
         e.preventDefault()
-        dispatch('Pixel.Tool.SwapColors')
+        dispatch(PixelCmd.Tool.SwapColors)
       }
     }
   }
@@ -130,7 +159,7 @@ export function usePixelShortcuts(options: {
   function onKeyUp(e: KeyboardEvent) {
     if (e.key === ' ' && spaceHeld) {
       spaceHeld = false
-      options.onSpacePan?.(false)
+      dispatch(PixelCmd.Tool.HoldPan, { active: false })
     }
   }
 

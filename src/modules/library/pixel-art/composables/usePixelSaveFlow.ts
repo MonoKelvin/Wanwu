@@ -1,15 +1,30 @@
 import type { Ref } from 'vue'
+import { ref } from 'vue'
 import type { Router } from 'vue-router'
 import type { PixelEditorSession } from '@modules/library/pixel-art/app/PixelEditorSession'
-import { PA_FILES } from '@modules/library/pixel-art/domain/folderIds'
+import { PA_FILES } from '@modules/library/pixel-art/domain/meta'
 import { pushShellRoute } from '@app/composables/shellNavigation'
+
+type SaveOutcome = 'ok' | 'needs_save_as' | 'failed'
 
 export function usePixelSaveFlow(
   sessionRef: Ref<PixelEditorSession | null>,
   router: Router,
-  onError?: (msg: string) => void
+  options?: {
+    onError?: (msg: string) => void
+    onReload?: () => void | Promise<void>
+  }
 ) {
-  async function saveDocument(force = false): Promise<'ok' | 'needs_save_as' | 'failed'> {
+  const conflictOpen = ref(false)
+  let conflictResolve: ((outcome: SaveOutcome) => void) | null = null
+
+  function finishConflict(outcome: SaveOutcome) {
+    conflictOpen.value = false
+    conflictResolve?.(outcome)
+    conflictResolve = null
+  }
+
+  async function saveDocument(force = false): Promise<SaveOutcome> {
     const session = sessionRef.value
     if (!session) return 'failed'
     const result = await session.save(force)
@@ -18,12 +33,13 @@ export function usePixelSaveFlow(
       return 'ok'
     }
     if (result.reason === 'conflict') {
-      const action = confirm('文件已被其他窗口修改。确定覆盖保存？取消则放弃本次保存。')
-      if (action) return saveDocument(true)
-      return 'failed'
+      return new Promise((resolve) => {
+        conflictResolve = resolve
+        conflictOpen.value = true
+      })
     }
     if (!result.ok) {
-      onError?.(result.message ?? '保存失败')
+      options?.onError?.(result.message ?? '保存失败')
       return 'failed'
     }
     return 'ok'
@@ -42,5 +58,46 @@ export function usePixelSaveFlow(
     }
   }
 
-  return { saveDocument, saveAsNew }
+  async function promptSaveAs() {
+    await saveAsNew(PA_FILES)
+  }
+
+  function onConflictDismiss() {
+    if (!conflictResolve) return
+    finishConflict('failed')
+  }
+
+  async function onConflictReload() {
+    if (!conflictResolve) return
+    try {
+      await options?.onReload?.()
+      finishConflict('ok')
+    } catch (err) {
+      options?.onError?.(err instanceof Error ? err.message : '重新加载失败')
+      finishConflict('failed')
+    }
+  }
+
+  async function onConflictOverwrite() {
+    if (!conflictResolve) return
+    const outcome = await saveDocument(true)
+    finishConflict(outcome)
+  }
+
+  function onConflictSaveAs() {
+    if (!conflictResolve) return
+    finishConflict('failed')
+    void promptSaveAs()
+  }
+
+  return {
+    saveDocument,
+    saveAsNew,
+    promptSaveAs,
+    conflictOpen,
+    onConflictDismiss,
+    onConflictReload,
+    onConflictOverwrite,
+    onConflictSaveAs
+  }
 }

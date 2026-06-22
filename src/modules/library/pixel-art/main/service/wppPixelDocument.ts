@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
+import { nativeImage } from 'electron'
 import { MANIFEST_ENTRY_PATH } from '@shared/documentPackage'
 import type { IWanwuDocumentPackage } from '@shared/documentPackage'
 import {
@@ -10,14 +11,46 @@ import {
   saveDirtyEntriesToFolder,
   savePackageToZip
 } from '@shared/documentPackage/node'
-import { PIXEL_PACKAGE_PATHS } from '@modules/library/pixel-art/domain/packagePaths'
+import { PIXEL_ART_DOC_TYPE } from '@modules/library/pixel-art/domain/meta'
+import { PIXEL_PACKAGE_PATHS } from '@modules/library/pixel-art/domain/meta'
 import type {
   PixelDocument,
   PixelFrame,
   WppFrameFile,
   WppMetaFile
 } from '@modules/library/pixel-art/domain/types'
-import { pngBufferToRgba, rgbaToPngBuffer } from '@modules/library/pixel-art/main/service/pixelLayerCodec'
+
+function rgbaToPngBuffer(rgba: Uint8ClampedArray, width: number, height: number): Buffer {
+  const bgra = Buffer.alloc(width * height * 4)
+  for (let i = 0; i < width * height; i++) {
+    bgra[i * 4] = rgba[i * 4 + 2]!
+    bgra[i * 4 + 1] = rgba[i * 4 + 1]!
+    bgra[i * 4 + 2] = rgba[i * 4]!
+    bgra[i * 4 + 3] = rgba[i * 4 + 3]!
+  }
+  return nativeImage.createFromBitmap(bgra, { width, height }).toPNG()
+}
+
+function pngBufferToRgba(png: Buffer, width: number, height: number): Uint8ClampedArray {
+  const img = nativeImage.createFromBuffer(png)
+  const size = img.getSize()
+  if (size.width !== width || size.height !== height) {
+    const resized = img.resize({ width, height })
+    return bitmapToRgba(resized.toBitmap(), width, height)
+  }
+  return bitmapToRgba(img.toBitmap(), width, height)
+}
+
+function bitmapToRgba(bitmap: Buffer, width: number, height: number): Uint8ClampedArray {
+  const rgba = new Uint8ClampedArray(width * height * 4)
+  for (let i = 0; i < width * height; i++) {
+    rgba[i * 4] = bitmap[i * 4 + 2]!
+    rgba[i * 4 + 1] = bitmap[i * 4 + 1]!
+    rgba[i * 4 + 2] = bitmap[i * 4]!
+    rgba[i * 4 + 3] = bitmap[i * 4 + 3]!
+  }
+  return rgba
+}
 
 export function isPixelPackageLayoutDir(dir: string): boolean {
   return existsSync(join(dir, MANIFEST_ENTRY_PATH))
@@ -50,7 +83,7 @@ export class WppPixelDocument {
 
   static create(fileId: string, title: string, content?: PixelDocument): WppPixelDocument {
     const pkg = WanwuDocumentPackage.create({
-      docType: 'pixel-art',
+      docType: PIXEL_ART_DOC_TYPE,
       docId: fileId,
       title: content?.meta.title ?? title
     })

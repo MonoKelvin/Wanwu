@@ -21,6 +21,10 @@ export function librarySubmoduleById(id: LibraryMajorId): LibrarySubmoduleConfig
   return getLibrarySubmodules().find((m) => m.id === id)
 }
 
+export function librarySubmodulesWithCatalog(): LibrarySubmoduleConfig[] {
+  return getLibrarySubmodules().filter((m) => m.catalog)
+}
+
 export function libraryMajorIds(): LibraryMajorId[] {
   return getLibrarySubmodules().map((m) => m.id)
 }

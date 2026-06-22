@@ -8,9 +8,8 @@ import { getMainWindow } from '../../../../../../electron/windowState'
 import {
   PA_FILES,
   PA_HOME,
-  PA_RECYCLE,
-  isPixelSystemFolderId
-} from '@modules/library/pixel-art/domain/folderIds'
+  PA_RECYCLE
+} from '@modules/library/pixel-art/domain/meta'
 import { createBlankPixelDocument } from '@modules/library/pixel-art/lib/blankDocument'
 import {
   clonePixelDocumentForIpc
@@ -89,7 +88,30 @@ export class PixelArtService {
     this.db = new Database(pixelArtDbFile(layout))
     this.initSchema()
     this.ensureSystemFolders()
+    this.migrateAwayCustomFolders()
     this.refreshWppPathRegistry()
+  }
+
+  /** \u5c06\u65e7\u7248\u81ea\u5b9a\u4e49\u5206\u7ec4\u4e2d\u7684\u6587\u4ef6\u5f52\u5e76\u5230\u300c\u6587\u4ef6\u300d\u5206\u7ec4 */
+  private migrateAwayCustomFolders(): void {
+    const customRows = this.db
+      .prepare(`SELECT id FROM pa_folders WHERE kind = 'custom' AND deleted_at IS NULL`)
+      .all() as Array<{ id: string }>
+    if (!customRows.length) return
+    const now = new Date().toISOString()
+    const moveFiles = this.db.prepare(
+      `UPDATE pa_files SET folder_id = ? WHERE folder_id = ? AND deleted_at IS NULL`
+    )
+    const markDeleted = this.db.prepare(`UPDATE pa_folders SET deleted_at = ? WHERE id = ?`)
+    for (const row of customRows) {
+      moveFiles.run(PA_FILES, row.id)
+      markDeleted.run(now, row.id)
+    }
+    this.db
+      .prepare(
+        `UPDATE pa_files SET previous_folder_id = ? WHERE previous_folder_id IN (SELECT id FROM pa_folders WHERE kind = 'custom')`
+      )
+      .run(PA_FILES)
   }
 
   private refreshWppPathRegistry(): void {
@@ -147,7 +169,7 @@ export class PixelArtService {
   listFolders(): PixelFolder[] {
     const rows = this.db
       .prepare(
-        `SELECT id, name, kind, parent_id, sort_order, created_at, deleted_at FROM pa_folders WHERE deleted_at IS NULL ORDER BY sort_order`
+        `SELECT id, name, kind, parent_id, sort_order, created_at, deleted_at FROM pa_folders WHERE deleted_at IS NULL AND kind = 'system' ORDER BY sort_order`
       )
       .all() as Array<{
       id: string
@@ -206,9 +228,7 @@ export class PixelArtService {
     height = 32,
     content?: PixelDocument
   ): Promise<PixelFileRecord> {
-    if (folderId === PA_HOME || folderId === PA_RECYCLE) {
-      throw new Error('不能在该分组创建文件')
-    }
+    folderId = PA_FILES
     const normalizedTitle = stripWppExtension(title)
     const id = randomUUID()
     const now = new Date().toISOString()
@@ -277,16 +297,6 @@ export class PixelArtService {
     return { ...mapFileRow(row), title: normalizedTitle, updatedAt: now }
   }
 
-  moveFile(fileId: string, folderId: string): PixelFileMeta | null {
-    const row = this.getFileRow(fileId)
-    if (!row || folderId === PA_HOME) return null
-    const now = new Date().toISOString()
-    this.db
-      .prepare(`UPDATE pa_files SET folder_id = ?, updated_at = ? WHERE id = ?`)
-      .run(folderId, now, fileId)
-    return { ...mapFileRow(row), folderId, updatedAt: now }
-  }
-
   softDeleteFile(fileId: string): boolean {
     const row = this.getFileRow(fileId)
     if (!row || row.deleted_at) return false
@@ -302,7 +312,7 @@ export class PixelArtService {
   restoreFile(fileId: string): PixelFileMeta | null {
     const row = this.getFileRow(fileId)
     if (!row || !row.deleted_at) return null
-    const folderId = row.previous_folder_id ?? PA_FILES
+    const folderId = PA_FILES
     const now = new Date().toISOString()
     this.db
       .prepare(
@@ -318,48 +328,6 @@ export class PixelArtService {
     unregisterPixelWppPath(fileId)
     this.db.prepare(`DELETE FROM pa_files WHERE id = ?`).run(fileId)
     return true
-  }
-
-  createFolder(name: string): PixelFolder {
-    const id = `pa-custom-${randomUUID()}`
-    const now = new Date().toISOString()
-    const sortOrder =
-      ((
-        this.db
-          .prepare(`SELECT MAX(sort_order) as m FROM pa_folders WHERE kind = 'custom'`)
-          .get() as { m: number | null }
-      ).m ?? 100) + 1
-    this.db
-      .prepare(
-        `INSERT INTO pa_folders (id, name, kind, parent_id, sort_order, created_at, deleted_at)
-         VALUES (?, ?, 'custom', ?, ?, ?, NULL)`
-      )
-      .run(id, name.trim(), PA_FILES, sortOrder, now)
-    return {
-      id,
-      name: name.trim(),
-      kind: 'custom',
-      parentId: PA_FILES,
-      sortOrder,
-      createdAt: now,
-      deletedAt: null
-    }
-  }
-
-  renameFolder(folderId: string, name: string): void {
-    if (isPixelSystemFolderId(folderId)) throw new Error('不能重命名系统分组')
-    this.db.prepare(`UPDATE pa_folders SET name = ? WHERE id = ?`).run(name.trim(), folderId)
-  }
-
-  deleteFolder(folderId: string): void {
-    if (isPixelSystemFolderId(folderId)) throw new Error('不能删除系统分组')
-    const count = (
-      this.db
-        .prepare(`SELECT COUNT(*) as c FROM pa_files WHERE folder_id = ? AND deleted_at IS NULL`)
-        .get(folderId) as { c: number }
-    ).c
-    if (count > 0) throw new Error('分组内仍有文件')
-    this.db.prepare(`UPDATE pa_folders SET deleted_at = ? WHERE id = ?`).run(new Date().toISOString(), folderId)
   }
 
   async exportImageWithDialog(params: {

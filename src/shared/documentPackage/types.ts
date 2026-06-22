@@ -1,6 +1,7 @@
 import type { WANWU_DOCUMENT_PACKAGE_FORMAT } from './constants'
 
-export type WanwuDocType = 'flow-graph' | 'generic' | 'pixel-art'
+/** 文档类型标识；具体值由各业务模块自行注册，shared 层不枚举业务类型 */
+export type WanwuDocType = string
 
 export type PackageEncryptionAlgorithm = 'none' | 'aes-256-gcm'
 

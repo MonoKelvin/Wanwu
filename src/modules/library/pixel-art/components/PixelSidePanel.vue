@@ -1,35 +1,43 @@
 <script setup lang="ts">
 defineOptions({ name: 'PixelSidePanel' })
 
-import PixelLayerPanel from '@modules/library/pixel-art/components/PixelLayerPanel.vue'
+import { computed, ref, toRef } from 'vue'
+import WwButton from '@shared/components/WwButton.vue'
 import WwColorInput from '@shared/components/WwColorInput.vue'
+import WwIcon from '@shared/components/WwIcon.vue'
+import WwIconButton from '@shared/components/WwIconButton.vue'
 import WwNumberInput from '@shared/components/WwNumberInput/WwNumberInput.vue'
 import WwSelect from '@shared/components/WwSelect/WwSelect.vue'
+import WwSettingsRow from '@shared/components/settings/WwSettingsRow.vue'
+import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import type { PixelDocument } from '@modules/library/pixel-art/domain/types'
-import type { PixelCanvasEngine } from '@modules/library/pixel-art/services/PixelCanvasEngine'
 import type { ToolOptions, ToolId } from '@modules/library/pixel-art/domain/tools'
-import type { IPixelCommandBus } from '@modules/library/pixel-art/app/command/PixelCommandRegistry'
-import { PIXEL_PALETTE_PRESETS } from '@modules/library/pixel-art/domain/constants'
+import { PixelCmd, type IPixelCommandBus } from '@modules/library/pixel-art/app/command/PixelCommandRegistry'
+import type { PixelCanvasCommands } from '@modules/library/pixel-art/app/command/pixelCanvasCommands'
+import { getActiveFrame } from '@modules/library/pixel-art/lib/blankDocument'
+import { usePixelSidePanelResize } from '@modules/library/pixel-art/composables/usePixelEditorState'
 
 const props = defineProps<{
   document: PixelDocument | null
-  engine: PixelCanvasEngine | null
+  canvas: PixelCanvasCommands
   toolOptions: ToolOptions
   activeTool: ToolId
   tab: 'props' | 'layers' | 'palette' | 'doc'
   bus?: IPixelCommandBus | null
+  panelWidth?: number
 }>()
 
 const emit = defineEmits<{
   'update:tab': [tab: 'props' | 'layers' | 'palette' | 'doc']
-  change: []
+  collapse: []
+  resizeWidth: [width: number]
 }>()
 
 const tabs = [
-  { id: 'props' as const, label: '属性' },
-  { id: 'layers' as const, label: '图层' },
-  { id: 'palette' as const, label: '调色板' },
-  { id: 'doc' as const, label: '文档' }
+  { id: 'props' as const, label: '属性', icon: 'sliders-horizontal' as const },
+  { id: 'layers' as const, label: '图层', icon: 'layers' as const },
+  { id: 'palette' as const, label: '调色板', icon: 'palette' as const },
+  { id: 'doc' as const, label: '文档', icon: 'layout-grid' as const }
 ]
 
 const brushShapeOptions = [
@@ -39,33 +47,44 @@ const brushShapeOptions = [
 
 const shapeTools: ToolId[] = ['rect', 'ellipse', 'line']
 
+const panelWidthRef = toRef(props, 'panelWidth')
+const { startResize } = usePixelSidePanelResize((width) => emit('resizeWidth', width))
+
+const renamingId = ref<string | null>(null)
+const renameValue = ref('')
+
+const layers = computed(() => {
+  if (!props.document) return []
+  return getActiveFrame(props.document).layers.slice().reverse()
+})
+
+const activeTabMeta = computed(() => tabs.find((t) => t.id === props.tab) ?? tabs[0])
+
+const gridVisible = computed(() => props.document?.meta.grid.visible ?? true)
+const checkerVisible = computed(() => props.document?.meta.checkerboard.visible ?? true)
+
+function dispatch(type: string, payload?: Record<string, unknown>) {
+  if (props.bus) void props.bus.dispatch({ type, payload })
+}
+
 function patchToolOptions(patch: Partial<ToolOptions>) {
-  const tool = props.engine?.getTool()
-  if (!tool || !props.engine) return
-  props.engine.setTool(tool.id, patch)
-  emit('change')
+  props.canvas.setToolOptions(patch)
 }
 
 function setForeground(color: string) {
-  if (props.document) props.document.meta.foreground = color
-  props.engine?.setForeground(color)
-  emit('change')
+  props.canvas.setForeground(color)
 }
 
 function setBackground(color: string) {
-  if (props.document) props.document.meta.backgroundColor = color
-  props.engine?.setBackgroundColor(color)
-  emit('change')
+  props.canvas.setBackground(color)
 }
 
 function pickPalette(color: string) {
   setForeground(color)
 }
 
-function applyPalettePreset(key: keyof typeof PIXEL_PALETTE_PRESETS) {
-  if (!props.document) return
-  props.document.meta.palette = [...PIXEL_PALETTE_PRESETS[key]]
-  emit('change')
+function applyPalettePreset(key: 'default' | 'retro') {
+  props.canvas.applyPalettePreset(key)
 }
 
 function updateBrushSize(v: number | null) {
@@ -79,233 +98,255 @@ function updateFillTolerance(v: number | null) {
 }
 
 function setCanvasBackground(value: string) {
-  if (!props.document) return
-  props.document.meta.background = value === 'transparent' ? 'transparent' : value
-  props.engine?.render()
-  emit('change')
+  props.canvas.setCanvasBackground(value === 'transparent' ? 'transparent' : value)
+}
+
+function onResizePointerDown(e: PointerEvent) {
+  startResize(e, panelWidthRef.value ?? 280)
+}
+
+function setActiveLayer(id: string) {
+  dispatch(PixelCmd.Layer.SetActive, { layerId: id })
+}
+
+function toggleLayerVisible(layerId: string, visible: boolean) {
+  dispatch(PixelCmd.Layer.SetVisible, { layerId, visible: !visible })
+}
+
+function toggleLayerLocked(layerId: string, locked: boolean) {
+  dispatch(PixelCmd.Layer.SetLocked, { layerId, locked: !locked })
+}
+
+function addLayer() {
+  dispatch(PixelCmd.Layer.Add)
+}
+
+function deleteLayer(layerId: string) {
+  dispatch(PixelCmd.Layer.Delete, { layerId })
+}
+
+function mergeVisibleLayers() {
+  dispatch(PixelCmd.Layer.MergeVisible)
+}
+
+function startRename(layerId: string, name: string) {
+  renamingId.value = layerId
+  renameValue.value = name
+}
+
+function commitRename(layerId: string) {
+  const name = renameValue.value.trim()
+  if (name) dispatch(PixelCmd.Layer.Rename, { layerId, name })
+  renamingId.value = null
 }
 </script>
 
 <template>
-  <aside class="pixel-side-panel">
-    <div class="tabs">
+  <aside class="pa-side-panel pa-panel-enter">
+    <div class="pa-side-panel__resize" aria-hidden="true" @pointerdown="onResizePointerDown" />
+
+    <header class="pa-side-panel__head">
+      <WwIcon :name="activeTabMeta.icon" size="sm" class="pa-side-panel__head-icon" />
+      <span class="pa-side-panel__head-title">{{ activeTabMeta.label }}</span>
+      <WwIconButton
+        icon="chevron-right"
+        icon-size="sm"
+        class="pa-side-panel__collapse"
+        ariaLabel="收起侧面板"
+        compact
+        v-tooltip.bottom="'收起侧面板'"
+        @click="emit('collapse')"
+      />
+    </header>
+
+    <div class="pa-side-panel__tabs" role="tablist">
       <button
         v-for="t in tabs"
         :key="t.id"
         type="button"
-        :class="{ active: tab === t.id }"
+        role="tab"
+        class="pa-side-panel__tab"
+        :class="{ 'pa-side-panel__tab--active': tab === t.id }"
+        :aria-selected="tab === t.id"
+        v-tooltip.bottom="t.label"
         @click="emit('update:tab', t.id)"
       >
-        {{ t.label }}
+        <WwIcon :name="t.icon" size="xs" />
+        <span class="pa-side-panel__tab-label">{{ t.label }}</span>
       </button>
     </div>
 
-    <div v-if="tab === 'props'" class="panel-body">
-      <label class="field">
-        <span>前景色</span>
-        <WwColorInput :model-value="document?.meta.foreground ?? '#000'" @update:model-value="setForeground" />
-      </label>
-      <label class="field">
-        <span>背景色（绘画）</span>
-        <WwColorInput :model-value="document?.meta.backgroundColor ?? '#fff'" @update:model-value="setBackground" />
-      </label>
-      <label class="field">
-        <span>笔刷大小</span>
-        <WwNumberInput :model-value="toolOptions.brushSize" :min="1" :max="8" @update:model-value="updateBrushSize" />
-      </label>
-      <label class="field">
-        <span>笔刷形状</span>
-        <WwSelect
-          :model-value="toolOptions.brushShape"
-          :options="brushShapeOptions"
-          option-label="label"
-          option-value="value"
-          @update:model-value="patchToolOptions({ brushShape: $event as 'square' | 'circle' })"
-        />
-      </label>
-      <label v-if="activeTool === 'fill'" class="field">
-        <span>填充容差</span>
-        <WwNumberInput
-          :model-value="toolOptions.fillTolerance"
-          :min="0"
-          :max="255"
-          @update:model-value="updateFillTolerance"
-        />
-      </label>
-      <template v-if="shapeTools.includes(activeTool)">
-        <label class="field row">
-          <input
-            type="checkbox"
-            :checked="toolOptions.shapeFilled"
-            @change="patchToolOptions({ shapeFilled: ($event.target as HTMLInputElement).checked })"
-          />
-          <span>实心形状</span>
-        </label>
-      </template>
-      <template v-if="activeTool === 'gradient'">
-        <label class="field">
-          <span>渐变终止色</span>
+    <div class="pa-side-panel__body">
+      <div v-if="tab === 'props'" class="pa-side-panel__section">
+        <WwSettingsRow label="前景色">
+          <WwColorInput :model-value="document?.meta.foreground ?? '#000'" @update:model-value="setForeground" />
+        </WwSettingsRow>
+        <WwSettingsRow label="背景色" subtitle="绘画用">
           <WwColorInput
-            :model-value="toolOptions.gradientEndColor"
-            @update:model-value="patchToolOptions({ gradientEndColor: $event })"
+            :model-value="document?.meta.backgroundColor ?? '#fff'"
+            @update:model-value="setBackground"
           />
-        </label>
-        <label class="field row">
-          <input
-            type="checkbox"
-            :checked="toolOptions.gradientDither"
-            @change="patchToolOptions({ gradientDither: ($event.target as HTMLInputElement).checked })"
+        </WwSettingsRow>
+        <WwSettingsRow label="笔刷大小">
+          <WwNumberInput :model-value="toolOptions.brushSize" :min="1" :max="8" @update:model-value="updateBrushSize" />
+        </WwSettingsRow>
+        <WwSettingsRow label="笔刷形状">
+          <WwSelect
+            :model-value="toolOptions.brushShape"
+            :options="brushShapeOptions"
+            option-label="label"
+            option-value="value"
+            @update:model-value="patchToolOptions({ brushShape: $event as 'square' | 'circle' })"
           />
-          <span>有序抖动</span>
-        </label>
-      </template>
-    </div>
-
-    <PixelLayerPanel
-      v-else-if="tab === 'layers'"
-      :document="document"
-      :engine="engine"
-      :bus="bus"
-      @change="emit('change')"
-    />
-
-    <div v-else-if="tab === 'palette'" class="panel-body palette">
-      <div class="preset-row">
-        <button type="button" class="preset-btn" @click="applyPalettePreset('default')">默认</button>
-        <button type="button" class="preset-btn" @click="applyPalettePreset('retro')">复古</button>
+        </WwSettingsRow>
+        <WwSettingsRow v-if="activeTool === 'fill'" label="填充容差">
+          <WwNumberInput
+            :model-value="toolOptions.fillTolerance"
+            :min="0"
+            :max="255"
+            @update:model-value="updateFillTolerance"
+          />
+        </WwSettingsRow>
+        <WwSettingsRow v-if="shapeTools.includes(activeTool)" label="实心形状">
+          <WwToggleSwitch
+            :model-value="toolOptions.shapeFilled"
+            :drag-to-change="false"
+            aria-label="实心形状"
+            @update:model-value="patchToolOptions({ shapeFilled: $event })"
+          />
+        </WwSettingsRow>
+        <template v-if="activeTool === 'gradient'">
+          <WwSettingsRow label="渐变终止色">
+            <WwColorInput
+              :model-value="toolOptions.gradientEndColor"
+              @update:model-value="patchToolOptions({ gradientEndColor: $event })"
+            />
+          </WwSettingsRow>
+          <WwSettingsRow label="有序抖动">
+            <WwToggleSwitch
+              :model-value="toolOptions.gradientDither"
+              :drag-to-change="false"
+              aria-label="有序抖动"
+              @update:model-value="patchToolOptions({ gradientDither: $event })"
+            />
+          </WwSettingsRow>
+        </template>
       </div>
-      <button
-        v-for="(color, i) in document?.meta.palette ?? []"
-        :key="i"
-        type="button"
-        class="swatch"
-        :style="{ background: color }"
-        :title="color"
-        @click="pickPalette(color)"
-      />
-    </div>
 
-    <div v-else class="panel-body">
-      <p class="meta-line">尺寸：{{ document?.meta.width }}×{{ document?.meta.height }}</p>
-      <label class="field">
-        <span>画布底色</span>
-        <WwSelect
-          :model-value="document?.meta.background === 'transparent' ? 'transparent' : 'custom'"
-          :options="[
-            { label: '透明', value: 'transparent' },
-            { label: '自定义', value: 'custom' }
-          ]"
-          option-label="label"
-          option-value="value"
-          @update:model-value="setCanvasBackground($event === 'transparent' ? 'transparent' : '#FFFFFF')"
+      <div v-else-if="tab === 'layers'" class="pa-side-panel__section pa-side-panel__section--layers">
+        <div class="pa-layer-panel__head">
+          <span class="pa-layer-panel__count">{{ layers.length }} 层</span>
+          <div class="pa-layer-panel__actions">
+            <WwButton size="sm" variant="ghost" @click="mergeVisibleLayers">合并可见</WwButton>
+            <WwIconButton icon="plus" ariaLabel="新增图层" compact v-tooltip.bottom="'新增图层'" @click="addLayer" />
+          </div>
+        </div>
+        <ul class="pa-layer-panel__list">
+          <li
+            v-for="layer in layers"
+            :key="layer.id"
+            class="pa-layer-panel__row"
+            :class="{ 'pa-layer-panel__row--active': document?.meta.activeLayerId === layer.id }"
+            @click="setActiveLayer(layer.id)"
+          >
+            <input
+              v-if="renamingId === layer.id"
+              v-model="renameValue"
+              class="pa-layer-panel__rename"
+              @click.stop
+              @keydown.enter="commitRename(layer.id)"
+              @blur="commitRename(layer.id)"
+            />
+            <span v-else class="pa-layer-panel__name" @dblclick.stop="startRename(layer.id, layer.name)">{{
+              layer.name
+            }}</span>
+            <div class="pa-layer-panel__row-actions" @click.stop>
+              <WwIconButton
+                :icon="layer.visible ? 'eye' : 'eye-off'"
+                :ariaLabel="layer.visible ? '隐藏' : '显示'"
+                compact
+                @click="toggleLayerVisible(layer.id, layer.visible)"
+              />
+              <WwIconButton
+                :icon="layer.locked ? 'pin' : 'pin-off'"
+                :ariaLabel="layer.locked ? '解锁' : '锁定'"
+                compact
+                @click="toggleLayerLocked(layer.id, layer.locked)"
+              />
+              <WwIconButton icon="trash-2" ariaLabel="删除" compact @click="deleteLayer(layer.id)" />
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div v-else-if="tab === 'palette'" class="pa-side-panel__section pa-side-panel__section--palette">
+        <div class="pa-palette-presets">
+          <button type="button" class="pa-palette-preset-btn" @click="applyPalettePreset('default')">默认</button>
+          <button type="button" class="pa-palette-preset-btn" @click="applyPalettePreset('retro')">复古</button>
+        </div>
+        <button
+          v-for="(color, i) in document?.meta.palette ?? []"
+          :key="i"
+          type="button"
+          class="pa-palette-swatch"
+          :style="{ background: color }"
+          v-tooltip.bottom="color"
+          @click="pickPalette(color)"
         />
-      </label>
-      <label v-if="document?.meta.background !== 'transparent'" class="field">
-        <WwColorInput
-          :model-value="document?.meta.background ?? '#FFFFFF'"
-          @update:model-value="setCanvasBackground($event)"
-        />
-      </label>
-      <label class="field row">
-        <input
-          type="checkbox"
-          :checked="document?.meta.grid.visible"
-          @change="engine?.setGridVisible(($event.target as HTMLInputElement).checked)"
-        />
-        <span>显示网格</span>
-      </label>
-      <label class="field row">
-        <input
-          type="checkbox"
-          :checked="document?.meta.checkerboard.visible"
-          @change="engine?.setCheckerboardVisible(($event.target as HTMLInputElement).checked)"
-        />
-        <span>显示棋盘格</span>
-      </label>
+      </div>
+
+      <div v-else class="pa-side-panel__section">
+        <p class="pa-doc-meta">尺寸 {{ document?.meta.width }}×{{ document?.meta.height }} px</p>
+        <WwSettingsRow label="画布底色">
+          <WwSelect
+            :model-value="document?.meta.background === 'transparent' ? 'transparent' : 'custom'"
+            :options="[
+              { label: '透明', value: 'transparent' },
+              { label: '自定义', value: 'custom' }
+            ]"
+            option-label="label"
+            option-value="value"
+            @update:model-value="setCanvasBackground($event === 'transparent' ? 'transparent' : '#FFFFFF')"
+          />
+        </WwSettingsRow>
+        <WwSettingsRow v-if="document?.meta.background !== 'transparent'" label="底色">
+          <WwColorInput
+            :model-value="document?.meta.background ?? '#FFFFFF'"
+            @update:model-value="setCanvasBackground($event)"
+          />
+        </WwSettingsRow>
+        <WwSettingsRow label="显示网格">
+          <WwToggleSwitch
+            :model-value="gridVisible"
+            :drag-to-change="false"
+            aria-label="显示网格"
+            @update:model-value="canvas.toggleGrid($event)"
+          />
+        </WwSettingsRow>
+        <WwSettingsRow label="显示棋盘格">
+          <WwToggleSwitch
+            :model-value="checkerVisible"
+            :drag-to-change="false"
+            aria-label="显示棋盘格"
+            @update:model-value="canvas.toggleCheckerboard($event)"
+          />
+        </WwSettingsRow>
+      </div>
     </div>
   </aside>
 </template>
 
 <style scoped>
-.pixel-side-panel {
-  border-left: 1px solid var(--ww-border);
-  background: var(--ww-surface);
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
+.pa-side-panel__section :deep(.ww-settings-row) {
+  gap: 0.625rem;
 }
 
-.tabs {
-  display: flex;
-  border-bottom: 1px solid var(--ww-border);
+.pa-side-panel__section :deep(.ww-settings-row__label) {
+  min-width: 4.75rem;
 }
 
-.tabs button {
+.pa-side-panel__section :deep(.ww-settings-row__control) {
   flex: 1;
-  padding: 8px 4px;
-  font-size: 12px;
-  background: transparent;
-  border: none;
-  color: var(--ww-text-muted);
-  cursor: pointer;
-}
-
-.tabs button.active {
-  color: var(--ww-text);
-  box-shadow: inset 0 -2px 0 var(--ww-accent);
-}
-
-.panel-body {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 12px;
-}
-
-.field.row {
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-}
-
-.palette {
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-
-.preset-row {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-}
-
-.preset-btn {
-  font-size: 12px;
-  padding: 4px 8px;
-  border: 1px solid var(--ww-border);
-  border-radius: 4px;
-  background: var(--ww-inset);
-  cursor: pointer;
-}
-
-.swatch {
-  width: 24px;
-  height: 24px;
-  border: 1px solid var(--ww-border);
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.meta-line {
-  font-size: 12px;
-  color: var(--ww-text-muted);
-  margin: 0;
+  min-width: 0;
 }
 </style>

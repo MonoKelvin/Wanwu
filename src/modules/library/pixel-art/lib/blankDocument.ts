@@ -1,4 +1,4 @@
-import { DEFAULT_FRAME_ID } from '@modules/library/pixel-art/domain/constants'
+import { DEFAULT_FRAME_ID } from '@modules/library/pixel-art/domain/meta'
 import type { PixelDocument, PixelLayerMeta } from '@modules/library/pixel-art/domain/types'
 
 function newLayerId(): string {

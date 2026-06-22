@@ -1,4 +1,4 @@
-import type { IPixelEditorPort, PixelPointerHandlers } from '@modules/library/pixel-art/interfaces/IPixelEditorPort'
+import type { IPixelEditorPort, PixelPointerHandlers } from '@modules/library/pixel-art/services/IPixelEditorPort'
 import type {
   LayerPixelPatch,
   PixelDocument,
@@ -17,6 +17,13 @@ import { floodFillScanline } from '@modules/library/pixel-art/lib/floodFill'
 import { applyLinearGradient, pickColorFromPixels } from '@modules/library/pixel-art/lib/gradientFill'
 import { normalizeSelection } from '@modules/library/pixel-art/lib/selection'
 import {
+  clampSelection,
+  clearRegion,
+  copyRegion,
+  pasteRegion,
+  type PixelSelection
+} from '@modules/library/pixel-art/lib/selection'
+import {
   ellipsePoints,
   filledEllipsePoints,
   linePoints,
@@ -28,8 +35,7 @@ import {
   exportDocumentPng,
   exportDocumentSvg
 } from '@modules/library/pixel-art/lib/exportImage'
-import { PIXEL_MAX_LAYERS, PIXEL_ZOOM_LEVELS } from '@modules/library/pixel-art/domain/constants'
-import type { PixelSelection } from '@modules/library/pixel-art/lib/selection'
+import { PIXEL_MAX_LAYERS, PIXEL_ZOOM_LEVELS } from '@modules/library/pixel-art/domain/meta'
 
 interface UndoEntry {
   layerId: string
@@ -80,6 +86,8 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   private animFrameId: number | null = null
   private undoStack: UndoEntry[] = []
   private redoStack: UndoEntry[] = []
+  private strokeRecorder: ((layerId: string, before: Uint8ClampedArray, after: Uint8ClampedArray) => void) | null =
+    null
   private boundOnPointerDown = (e: PointerEvent) => this.onPointerDown(e)
   private boundOnPointerMove = (e: PointerEvent) => this.onPointerMove(e)
   private boundOnPointerUp = (e: PointerEvent) => this.onPointerUp(e)
@@ -91,6 +99,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.root = el
     this.canvas = document.createElement('canvas')
     this.canvas.className = 'pixel-art-canvas'
+    this.canvas.tabIndex = -1
     this.canvas.style.imageRendering = 'pixelated'
     this.canvas.style.touchAction = 'none'
     el.appendChild(this.canvas)
@@ -157,18 +166,21 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   setForeground(color: string): void {
     if (!this.doc) return
     this.doc.meta.foreground = color
-    this.handlers.onDocumentChange?.()
   }
 
   setBackgroundColor(color: string): void {
     if (!this.doc) return
     this.doc.meta.backgroundColor = color
-    this.handlers.onDocumentChange?.()
   }
 
   setViewport(viewport: Partial<PixelViewport>): void {
     this.viewport = { ...this.viewport, ...viewport }
+    this.bumpViewport()
+  }
+
+  private bumpViewport(): void {
     this.render()
+    this.handlers.onViewportChange?.()
   }
 
   getViewport(): PixelViewport {
@@ -213,6 +225,20 @@ export class PixelCanvasEngine implements IPixelEditorPort {
 
   bindPointerHandlers(handlers: PixelPointerHandlers): void {
     this.handlers = handlers
+  }
+
+  setStrokeRecorder(
+    recorder: ((layerId: string, before: Uint8ClampedArray, after: Uint8ClampedArray) => void) | null
+  ): void {
+    this.strokeRecorder = recorder
+  }
+
+  replaceLayerPixels(layerId: string, pixels: Uint8ClampedArray): void {
+    if (!this.doc) return
+    const layer = this.doc.layerPixels[layerId]
+    if (!layer) return
+    layer.set(pixels)
+    this.render()
   }
 
   undo(): boolean {
@@ -266,14 +292,14 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     const idx = PIXEL_ZOOM_LEVELS.indexOf(this.viewport.zoom as (typeof PIXEL_ZOOM_LEVELS)[number])
     const next = PIXEL_ZOOM_LEVELS[Math.min(idx + 1, PIXEL_ZOOM_LEVELS.length - 1)] ?? this.viewport.zoom * 2
     this.viewport.zoom = next
-    this.render()
+    this.bumpViewport()
   }
 
   zoomOut(): void {
     const idx = PIXEL_ZOOM_LEVELS.indexOf(this.viewport.zoom as (typeof PIXEL_ZOOM_LEVELS)[number])
     const prev = PIXEL_ZOOM_LEVELS[Math.max(idx - 1, 0)] ?? Math.max(1, this.viewport.zoom / 2)
     this.viewport.zoom = prev
-    this.render()
+    this.bumpViewport()
   }
 
   zoomToFit(containerWidth: number, containerHeight: number): void {
@@ -285,12 +311,12 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.viewport.zoom = zoom
     this.viewport.panX = Math.floor((containerWidth - this.doc.meta.width * zoom) / 2)
     this.viewport.panY = Math.floor((containerHeight - this.doc.meta.height * zoom) / 2)
-    this.render()
+    this.bumpViewport()
   }
 
   zoomReset(): void {
     this.viewport.zoom = 1
-    this.render()
+    this.bumpViewport()
   }
 
   setLayerVisible(layerId: string, visible: boolean): void {
@@ -356,6 +382,84 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     return this.selection ? { ...this.selection } : null
   }
 
+  selectAll(): void {
+    if (!this.doc) return
+    this.selection = {
+      x: 0,
+      y: 0,
+      width: this.doc.meta.width,
+      height: this.doc.meta.height
+    }
+    this.previewSelection = null
+    this.handlers.onSelectionChange?.(this.selection)
+    this.ensureSelectionAnimation()
+    this.render()
+  }
+
+  moveSelection(dx: number, dy: number): boolean {
+    if (!this.selection || !this.doc || (dx === 0 && dy === 0)) return false
+    const layerMeta = getActiveLayerMeta(this.doc)
+    if (!layerMeta || layerMeta.locked || !layerMeta.visible) return false
+    const layer = this.doc.layerPixels[layerMeta.id]
+    if (!layer) return false
+
+    const { width: docW, height: docH } = this.doc.meta
+    const moved = clampSelection(
+      {
+        x: this.selection.x + dx,
+        y: this.selection.y + dy,
+        width: this.selection.width,
+        height: this.selection.height
+      },
+      docW,
+      docH
+    )
+    const actualDx = moved.x - this.selection.x
+    const actualDy = moved.y - this.selection.y
+    if (actualDx === 0 && actualDy === 0) return false
+
+    const before = new Uint8ClampedArray(layer)
+    const patch = copyRegion(layer, docW, this.selection)
+    clearRegion(layer, docW, this.selection)
+    pasteRegion(layer, docW, moved, patch)
+    this.selection = moved
+    this.handlers.onSelectionChange?.(this.selection)
+    const after = new Uint8ClampedArray(layer)
+    this.pushUndo(layerMeta.id, before, after)
+    this.handlers.onDocumentChange?.()
+    this.ensureSelectionAnimation()
+    this.render()
+    return true
+  }
+
+  clearSelectionContent(): boolean {
+    if (!this.selection || !this.doc) return false
+    const layerMeta = getActiveLayerMeta(this.doc)
+    if (!layerMeta || layerMeta.locked || !layerMeta.visible) return false
+    const layer = this.doc.layerPixels[layerMeta.id]
+    if (!layer) return false
+
+    const before = new Uint8ClampedArray(layer)
+    clearRegion(layer, this.doc.meta.width, this.selection)
+    const after = new Uint8ClampedArray(layer)
+    this.pushUndo(layerMeta.id, before, after)
+    this.handlers.onDocumentChange?.()
+    this.render()
+    return true
+  }
+
+  clearSelection(): void {
+    if (!this.selection) return
+    this.selection = null
+    this.previewSelection = null
+    this.handlers.onSelectionChange?.(null)
+    if (this.animFrameId != null) {
+      cancelAnimationFrame(this.animFrameId)
+      this.animFrameId = null
+    }
+    this.render()
+  }
+
   getLayerCount(): number {
     if (!this.doc) return 0
     return getActiveFrame(this.doc).layers.length
@@ -380,6 +484,14 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     const sel = this.previewSelection ?? this.selection
     if (sel) this.drawSelection(sel)
     this.ctx.restore()
+  }
+
+  resize(): void {
+    this.render()
+  }
+
+  focusCanvas(): void {
+    this.canvas?.focus({ preventScroll: true })
   }
 
   private ensureSelectionAnimation(): void {
@@ -825,6 +937,10 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   }
 
   private pushUndo(layerId: string, before: Uint8ClampedArray, after: Uint8ClampedArray): void {
+    if (this.strokeRecorder) {
+      this.strokeRecorder(layerId, before, after)
+      return
+    }
     const last = this.undoStack[this.undoStack.length - 1]
     if (last && last.layerId === layerId) {
       last.after = after

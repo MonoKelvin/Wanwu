@@ -1,5 +1,4 @@
 import type {
-  ExportImageOptions,
   LayerPixelPatch,
   PixelDocument,
   PixelViewport,
@@ -15,6 +14,7 @@ export interface PixelPointerHandlers {
   onColorPicked?: (color: string) => void
   onSelectionChange?: (sel: { x: number; y: number; width: number; height: number } | null) => void
   onDocumentChange?: () => void
+  onViewportChange?: () => void
 }
 
 export interface IPixelEditorPort {
@@ -24,6 +24,9 @@ export interface IPixelEditorPort {
   getDocument(): PixelDocument
   setActiveLayer(layerId: string): void
   getActiveLayerId(): string
+  addLayer(name?: string): string
+  deleteLayer(layerId: string): void
+  reorderLayer(layerId: string, newIndex: number): void
   setTool(tool: ToolId, options?: Partial<ToolOptions>): void
   getTool(): { id: ToolId; options: ToolOptions }
   setForeground(color: string): void
@@ -52,6 +55,12 @@ export interface IPixelEditorPort {
   renameLayer(layerId: string, name: string): void
   mergeVisibleLayers(): boolean
   getSelection(): import('@modules/library/pixel-art/lib/selection').PixelSelection | null
+  selectAll(): void
+  moveSelection(dx: number, dy: number): boolean
+  clearSelectionContent(): boolean
+  clearSelection(): void
   getLayerCount(): number
   render(): void
+  resize(): void
+  focusCanvas(): void
 }

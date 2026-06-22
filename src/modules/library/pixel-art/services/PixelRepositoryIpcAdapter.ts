@@ -69,10 +69,6 @@ export class PixelRepositoryIpcAdapter {
     return window.wanwu.pixelArt.renameFile({ fileId, title })
   }
 
-  moveFile(fileId: string, folderId: string) {
-    return window.wanwu.pixelArt.moveFile({ fileId, folderId })
-  }
-
   softDeleteFile(fileId: string) {
     return window.wanwu.pixelArt.softDeleteFile({ fileId })
   }
@@ -83,10 +79,6 @@ export class PixelRepositoryIpcAdapter {
 
   purgeFile(fileId: string) {
     return window.wanwu.pixelArt.purgeFile({ fileId })
-  }
-
-  createFolder(name: string) {
-    return window.wanwu.pixelArt.createFolder({ name })
   }
 }
 

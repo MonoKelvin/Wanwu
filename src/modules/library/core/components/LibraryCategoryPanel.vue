@@ -19,7 +19,7 @@ import type { WwMenuItem } from '@shared/types/menu'
 import { isLibraryMajorId, type LibraryMajorId } from '@modules/library/core/config/majors'
 import { useLibraryCatalogTrees } from '@modules/library/core/composables/useLibraryCatalogTrees'
 import { isCatalogLoadingNodeKey } from '@modules/library/core/composables/libraryCategoryTree'
-import { librarySubmoduleById } from '@modules/library/core/registry/libraryModules'
+import { librarySubmoduleById, librarySubmodulesWithCatalog } from '@modules/library/core/registry/libraryModules'
 import { useIllustratedHandbookStore } from '@modules/library/illustrated-handbook/services/illustratedHandbookStore'
 import { LINKS_RECYCLE_BIN_ID, LOCAL_COLLECTIONS_ROOT_ID } from '@modules/library/links/domain/constants'
 import { useLinksStore } from '@modules/library/links/services/linksStore'
@@ -71,6 +71,10 @@ const diagramsContextMenu = ref<InstanceType<typeof WwContextMenu> | null>(null)
 const diagramsContextMenuOpen = ref(false)
 const diagramsContextFolderId = ref<string | null>(null)
 const diagramsContextMode = ref<'major' | 'custom-folder' | null>(null)
+
+const catalogContextMenu = ref<InstanceType<typeof WwContextMenu> | null>(null)
+const catalogContextMenuOpen = ref(false)
+const catalogContextMenuItems = ref<WwMenuItem[]>([])
 
 const {
   folderDialogVisible,
@@ -135,8 +139,14 @@ const catalogDefaultExpanded = computed(() => {
     if (hasCustom) expanded[`dg:sys:${DG_FILES}`] = true
     return expanded
   }
+  const hooks = activeMajor.value ? librarySubmoduleById(activeMajor.value)?.catalog : undefined
+  if (hooks?.defaultExpandedKeys) return hooks.defaultExpandedKeys()
   return {}
 })
+
+function catalogHooksForMajor(major: LibraryMajorId) {
+  return librarySubmoduleById(major)?.catalog
+}
 
 function selectionFromRoute(): Record<string, boolean> | null {
   const major = activeMajor.value
@@ -169,6 +179,12 @@ function selectionFromRoute(): Record<string, boolean> | null {
       : { [`hb:${catId}`]: true }
   }
 
+  const hooks = catalogHooksForMajor(major)
+  if (hooks) {
+    const fromRoute = hooks.selectionFromRoute(route)
+    if (fromRoute) return fromRoute
+  }
+
   return { [`major:${major}`]: true }
 }
 
@@ -176,6 +192,8 @@ function persistedSelectionForMajor(major: LibraryMajorId): Record<string, boole
   if (major === 'links') return readLinksCatalogSelection()
   if (major === 'diagrams') return readDiagramCatalogSelection()
   if (major === 'illustrated-handbook') return readHandbookCatalogSelection()
+  const hooks = catalogHooksForMajor(major)
+  if (hooks) return hooks.readPersistedSelection()
   return {}
 }
 
@@ -213,6 +231,7 @@ function syncSelectionFromRoute() {
     if (major === 'links') writeLinksCatalogSelection(fromRoute)
     else if (major === 'diagrams') writeDiagramCatalogSelection(fromRoute)
     else if (major === 'illustrated-handbook') writeHandbookCatalogSelection(fromRoute)
+    else catalogHooksForMajor(major)?.writePersistedSelection(fromRoute)
   }
 }
 
@@ -228,6 +247,7 @@ function persistSelection(keys: Record<string, boolean>) {
   if (major === 'links') writeLinksCatalogSelection(keys)
   else if (major === 'diagrams') writeDiagramCatalogSelection(keys)
   else if (major === 'illustrated-handbook') writeHandbookCatalogSelection(keys)
+  else catalogHooksForMajor(major)?.writePersistedSelection(keys)
 }
 
 onMounted(() => {
@@ -279,7 +299,15 @@ function diagramsCatalogNodeBadge(node: TreeNode): number | undefined {
 }
 
 function catalogNodeBadge(node: TreeNode): number | undefined {
-  return linksCatalogNodeBadge(node) ?? diagramsCatalogNodeBadge(node)
+  const linksBadge = linksCatalogNodeBadge(node)
+  if (linksBadge != null) return linksBadge
+  const diagramsBadge = diagramsCatalogNodeBadge(node)
+  if (diagramsBadge != null) return diagramsBadge
+  for (const mod of librarySubmodulesWithCatalog()) {
+    const badge = mod.catalog?.catalogNodeBadge?.(node)
+    if (badge != null) return badge
+  }
+  return undefined
 }
 
 function linksCatalogNodeBadge(node: TreeNode): number | undefined {
@@ -368,6 +396,15 @@ function onCatalogNodeContextMenu(event: MouseEvent, node: TreeNode) {
     return
   }
 
+  for (const mod of librarySubmodulesWithCatalog()) {
+    const items = mod.catalog?.getCatalogContextMenuItems?.(key)
+    if (items?.length) {
+      catalogContextMenuItems.value = items
+      catalogContextMenu.value?.show(event)
+      return
+    }
+  }
+
   if (!key.startsWith('ln:')) return
 
   const kind = linksCatalogNodeKind(node)
@@ -411,6 +448,15 @@ async function onNodeSelect(node: TreeNode) {
     } else {
       await pushLibraryRoute({ name: 'library-diagrams-folder', params: { folderId } })
     }
+    return
+  }
+
+  for (const mod of librarySubmodulesWithCatalog()) {
+    const hooks = mod.catalog!
+    if (!key.startsWith(hooks.treeKeyPrefix)) continue
+    const target = hooks.resolveRouteFromTreeKey(key)
+    if (target) await pushLibraryRoute(target)
+    return
   }
 }
 </script>
@@ -456,6 +502,11 @@ async function onNodeSelect(node: TreeNode) {
         ref="diagramsContextMenu"
         v-model:open="diagramsContextMenuOpen"
         :model="diagramsFolderContextItems"
+      />
+      <WwContextMenu
+        ref="catalogContextMenu"
+        v-model:open="catalogContextMenuOpen"
+        :model="catalogContextMenuItems"
       />
     </div>
 

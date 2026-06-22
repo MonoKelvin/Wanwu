@@ -1,9 +1,9 @@
 import type { PixelDocument, PixelFileMeta, PixelWritePatch, WriteResult } from '@modules/library/pixel-art/domain/types'
-import type { IPixelEditorPort } from '@modules/library/pixel-art/interfaces/IPixelEditorPort'
+import type { IPixelEditorPort } from '@modules/library/pixel-art/services/IPixelEditorPort'
 import type { PixelRepositoryIpcAdapter } from '@modules/library/pixel-art/services/PixelRepositoryIpcAdapter'
 import { createBlankPixelDocument, clonePixelDocument } from '@modules/library/pixel-art/lib/blankDocument'
-import { PA_FILES } from '@modules/library/pixel-art/domain/folderIds'
-import { PIXEL_AUTOSAVE_DEBOUNCE_MS } from '@modules/library/pixel-art/domain/constants'
+import { PA_FILES } from '@modules/library/pixel-art/domain/meta'
+import { PIXEL_AUTOSAVE_DEBOUNCE_MS } from '@modules/library/pixel-art/domain/meta'
 
 export class PixelEditorSession {
   readonly sessionId = crypto.randomUUID()

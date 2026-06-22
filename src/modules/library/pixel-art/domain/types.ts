@@ -79,6 +79,10 @@ export interface PixelFileRecord {
   content: PixelDocument
 }
 
+export interface PixelSearchHit {
+  meta: PixelFileMeta
+}
+
 export interface PixelWritePatch {
   dirtyLayerIds: string[]
   meta?: Partial<WppMetaFile>

@@ -9,7 +9,7 @@ import {
   type TransactionContext,
   type TransactionManagerOptions
 } from '@app/transaction'
-import type { IPixelEditorPort } from '@modules/library/pixel-art/interfaces/IPixelEditorPort'
+import type { IPixelEditorPort } from '@modules/library/pixel-art/services/IPixelEditorPort'
 
 export const PIXEL_STROKE_UNIT = 'pixel.stroke'
 export const PIXEL_LAYER_SNAPSHOT_UNIT = 'pixel.layerSnapshot'
@@ -56,6 +56,11 @@ export function tryMergeStrokeUnits(prev: ITransactionUnit, next: ITransactionUn
 function applyLayerPixels(ctx: TransactionContext, layerId: string, pixels: Uint8ClampedArray): OperationResult {
   const port = ctx.services.port as IPixelEditorPort | undefined
   if (!port) return { ok: false, code: 'NO_PORT', message: '画布未就绪' }
+  const engine = port as import('@modules/library/pixel-art/services/PixelCanvasEngine').PixelCanvasEngine
+  if (typeof engine.replaceLayerPixels === 'function') {
+    engine.replaceLayerPixels(layerId, pixels)
+    return txOk()
+  }
   const doc = port.getDocument()
   const layer = doc.layerPixels[layerId]
   if (!layer) return { ok: false, code: 'NOT_FOUND', message: '图层不存在' }
@@ -70,10 +75,10 @@ const PIXEL_TX_OPTIONS: TransactionManagerOptions = {
 }
 
 export function createPixelTransactionManager(
-  fileId: string,
+  resourceKey: string,
   port: IPixelEditorPort
 ): TransactionManager {
-  const resourceId = `pixel:${fileId}`
+  const resourceId = `pixel:${resourceKey}`
   const ctx: TransactionContext = {
     resourceId,
     services: { port }
@@ -81,6 +86,20 @@ export function createPixelTransactionManager(
   const unitRegistry = new UnitRegistry()
   const unitCodecRegistry = new UnitCodecRegistry()
   return new TransactionManager(ctx, unitRegistry, unitCodecRegistry, PIXEL_TX_OPTIONS)
+}
+
+export async function recordPixelStroke(
+  tx: TransactionManager,
+  layerId: string,
+  before: Uint8ClampedArray,
+  after: Uint8ClampedArray
+): Promise<void> {
+  const unit = createPixelStrokeUnit({ layerId, before, after })
+  await tx.runInTransaction('笔划', async (scope) => {
+    const applied = await tx.apply(scope, unit)
+    if (!applied.ok) return applied
+    return txOk()
+  })
 }
 
 export { tryMergeStrokeUnits as pixelStrokeTryMerge }

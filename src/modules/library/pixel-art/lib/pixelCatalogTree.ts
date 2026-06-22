@@ -1,54 +1,33 @@
+import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import type { TreeNode } from 'primevue/treenode'
+import type { LibraryCatalogHooks } from '@app/modules/librarySubmoduleTypes'
 import type { PixelFolder } from '@modules/library/pixel-art/domain/types'
 import {
   PA_FILES,
   PA_HOME,
   PA_RECYCLE,
-  isPixelCustomFolderId
-} from '@modules/library/pixel-art/domain/folderIds'
+  isPixelSystemFolderId,
+  LIBRARY_PIXEL_ART_FOLDER,
+  LIBRARY_PIXEL_ART_HOME,
+  isPixelEditorRoute
+} from '@modules/library/pixel-art/domain/meta'
+import { usePixelArtStore } from '@modules/library/pixel-art/services/pixelArtStore'
 
 const CATALOG_SELECTION_KEY = 'wanwu:library:pixel-art-catalog-selection'
 
-export function listPixelChildFolders(folders: PixelFolder[], parentId: string): PixelFolder[] {
-  return folders
-    .filter(
-      (f) =>
-        isPixelCustomFolderId(f.id) &&
-        !f.deletedAt &&
-        (f.parentId === parentId || (parentId === PA_FILES && f.parentId == null))
-    )
-    .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name, 'zh-CN'))
-}
-
-function buildCustomFolderNodes(folders: PixelFolder[]): TreeNode[] {
-  return listPixelChildFolders(folders, PA_FILES).map(
-    (f): TreeNode => ({
-      key: `pa:folder:${f.id}`,
-      label: f.name,
-      icon: 'folder',
-      leaf: true,
-      selectable: true,
-      data: { kind: 'custom-folder', folderId: f.id }
-    })
-  )
-}
-
 export function buildPixelCatalogTree(folders: PixelFolder[]): TreeNode[] {
   const systemOrder = [PA_HOME, PA_FILES, PA_RECYCLE]
-  const customNodes = buildCustomFolderNodes(folders)
   const systemNodes: TreeNode[] = []
 
   for (const id of systemOrder) {
     const folder = folders.find((f) => f.id === id)
     if (!folder) continue
-    const isFiles = id === PA_FILES
     systemNodes.push({
       key: `pa:sys:${folder.id}`,
       label: folder.name,
       icon: folderIcon(folder.id),
-      leaf: isFiles ? customNodes.length === 0 : true,
+      leaf: true,
       selectable: true,
-      children: isFiles && customNodes.length ? customNodes : undefined,
       data: { kind: 'system-folder', folderId: folder.id }
     })
   }
@@ -82,6 +61,49 @@ export function defaultPixelCatalogExpanded(): Record<string, boolean> {
 
 export function pixelFolderIdFromTreeKey(key: string): string | null {
   if (key.startsWith('pa:sys:')) return key.slice('pa:sys:'.length)
-  if (key.startsWith('pa:folder:')) return key.slice('pa:folder:'.length)
+  if (key.startsWith('pa:folder:')) return PA_FILES
   return null
+}
+
+export const pixelCatalogHooks: LibraryCatalogHooks = {
+  treeKeyPrefix: 'pa:',
+
+  folderIdFromTreeKey: pixelFolderIdFromTreeKey,
+
+  resolveRouteFromTreeKey(key) {
+    const folderId = pixelFolderIdFromTreeKey(key)
+    if (!folderId || folderId === PA_HOME) {
+      return { name: LIBRARY_PIXEL_ART_HOME }
+    }
+    return { name: LIBRARY_PIXEL_ART_FOLDER, params: { folderId } }
+  },
+
+  selectionFromRoute(route: RouteLocationNormalizedLoaded): Record<string, boolean> | null {
+    if (isPixelEditorRoute(route.name, route.path)) {
+      return { 'major:pixel-art': true }
+    }
+    const folderId = route.params.folderId as string | undefined
+    const keys: Record<string, boolean> = {}
+    if (folderId && isPixelSystemFolderId(folderId)) {
+      keys[`pa:sys:${folderId}`] = true
+      return keys
+    }
+    if (folderId) {
+      keys[`pa:sys:${PA_FILES}`] = true
+      return keys
+    }
+    keys[`pa:sys:${PA_HOME}`] = true
+    return keys
+  },
+
+  readPersistedSelection: readPixelCatalogSelection,
+  writePersistedSelection: writePixelCatalogSelection,
+
+  defaultExpandedKeys: defaultPixelCatalogExpanded,
+
+  catalogNodeBadge(node) {
+    const folderId = pixelFolderIdFromTreeKey(String(node.key))
+    if (folderId === PA_RECYCLE) return usePixelArtStore().recycleBinCount
+    return undefined
+  }
 }

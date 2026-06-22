@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import WwButton from '@shared/components/WwButton.vue'
-import DiagramShortcutsDialog from '@modules/library/diagrams/components/DiagramShortcutsDialog.vue'
+import WwShortcutsDialog from '@shared/components/WwShortcutsDialog.vue'
+import { DIAGRAM_SHORTCUT_SECTIONS } from '@modules/library/diagrams/lib/diagramShortcutSections'
 
 const dialogOpen = ref(false)
 </script>
@@ -18,6 +19,6 @@ const dialogOpen = ref(false)
       class="dg-shortcuts-hint__btn ww-glass-blur"
       @click="dialogOpen = true"
     />
-    <DiagramShortcutsDialog v-model:open="dialogOpen" />
+    <WwShortcutsDialog v-model:open="dialogOpen" :sections="DIAGRAM_SHORTCUT_SECTIONS" />
   </div>
 </template>

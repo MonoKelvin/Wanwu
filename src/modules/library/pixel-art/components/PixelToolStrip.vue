@@ -14,46 +14,45 @@ const emit = defineEmits<{
   select: [tool: ToolId]
 }>()
 
-const tools: Array<{ id: ToolId; icon: WwIconName }> = [
-  { id: 'pencil', icon: 'pencil' },
-  { id: 'eraser', icon: 'eraser' },
-  { id: 'fill', icon: 'paintbrush' },
-  { id: 'line', icon: 'minus' },
-  { id: 'rect', icon: 'square' },
-  { id: 'ellipse', icon: 'disc-3' },
-  { id: 'gradient', icon: 'sliders-horizontal' },
-  { id: 'marquee', icon: 'square-arrow-up-left' },
-  { id: 'eyedropper', icon: 'palette' },
-  { id: 'hand', icon: 'compass' },
-  { id: 'zoom', icon: 'maximize' }
+const toolGroups: Array<Array<{ id: ToolId; icon: WwIconName }>> = [
+  [
+    { id: 'pencil', icon: 'pencil' },
+    { id: 'eraser', icon: 'eraser' },
+    { id: 'fill', icon: 'paintbrush' }
+  ],
+  [
+    { id: 'line', icon: 'minus' },
+    { id: 'rect', icon: 'square' },
+    { id: 'ellipse', icon: 'disc-3' },
+    { id: 'gradient', icon: 'sliders-horizontal' }
+  ],
+  [
+    { id: 'marquee', icon: 'square-arrow-up-left' },
+    { id: 'eyedropper', icon: 'palette' }
+  ],
+  [
+    { id: 'hand', icon: 'hand' },
+    { id: 'zoom', icon: 'maximize' }
+  ]
 ]
 </script>
 
 <template>
-  <aside class="pixel-tool-strip">
-    <WwIconButton
-      v-for="tool in tools"
-      :key="tool.id"
-      :icon="tool.icon"
-      :ariaLabel="TOOL_LABELS[tool.id]"
-      :class="{ active: props.activeTool === tool.id }"
-      @click="emit('select', tool.id)"
-    />
+  <aside class="pa-tool-strip pa-panel-enter" aria-label="绘图工具">
+    <template v-for="(group, gi) in toolGroups" :key="gi">
+      <div v-if="gi > 0" class="pa-tool-strip__sep" aria-hidden="true" />
+      <WwIconButton
+        v-for="tool in group"
+        :key="tool.id"
+        :icon="tool.icon"
+        icon-size="sm"
+        :ariaLabel="TOOL_LABELS[tool.id]"
+        class="pa-tool-strip__btn"
+        :class="{ 'pa-tool-strip__btn--active': props.activeTool === tool.id }"
+        compact
+        v-tooltip.right="TOOL_LABELS[tool.id]"
+        @click="emit('select', tool.id)"
+      />
+    </template>
   </aside>
 </template>
-
-<style scoped>
-.pixel-tool-strip {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: 48px;
-  padding: 8px 4px;
-  border-right: 1px solid var(--ww-border);
-  background: var(--ww-surface);
-}
-
-.pixel-tool-strip :deep(.active) {
-  background: var(--ww-accent-subtle);
-}
-</style>

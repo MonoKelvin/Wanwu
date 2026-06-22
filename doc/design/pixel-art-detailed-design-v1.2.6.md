@@ -139,78 +139,72 @@ src/modules/library/pixel-art/
 ├── app/
 │   ├── register.ts
 │   ├── pixelArtAppModule.ts
-│   ├── PixelEditorSession.ts          # 单文档编辑会话（内存态）
-│   ├── command/
-│   │   ├── domain/ids.ts              # PixelCmd.*
-│   │   ├── PixelCommandRegistry.ts
-│   │   ├── registerPixelCommands.ts
-│   │   ├── createPixelCommandBus.ts
-│   │   └── handlers/                  # 按域合并：file.ts, canvas.ts, layer.ts, catalog.ts
-│   └── transaction/
-│       ├── createPixelTransactionManager.ts
-│       ├── canvasTransaction.ts
-│       ├── PixelStrokeUnit.ts
-│       ├── PixelLayerSnapshotUnit.ts
-│       └── PixelLayerPropertyUnit.ts
+│   ├── PixelEditorSession.ts
+│   ├── createPixelTransactionManager.ts   # 事务 + recordPixelStroke
+│   └── command/
+│       ├── PixelCommandRegistry.ts        # PixelCmd + Registry + Bus + registerPixelCommands
+│       ├── handlers.ts                    # canvas/layer/file/catalog 全部 handler
+│       └── pixelCanvasCommands.ts         # createPixelCanvasCommands
 ├── main/
 │   ├── register.ts
-│   ├── pixelArtMainModule.ts          # IPC 注册
+│   ├── pixelArtMainModule.ts
+│   ├── preloadApi.ts
 │   ├── pixelPaths.ts
 │   └── service/
-│       ├── service.ts                 # PixelArtService（SQLite CRUD）
-│       ├── pixelWppStore.ts           # temp-work + zip commit
-│       ├── wppPixelDocument.ts        # WppPixelDocument 包装类
-│       └── ipcCommands.ts
+│       ├── service.ts
+│       ├── pixelWppStore.ts
+│       └── wppPixelDocument.ts            # 含 layer PNG 编解码
 ├── preload/
-│   └── pixelArtApi.ts
+│   └── register.ts
 ├── domain/
-│   ├── types.ts                       # PixelDocument, PixelLayer, PixelFrame…
-│   ├── routes.ts
-│   ├── packagePaths.ts
-│   ├── folderIds.ts                   # pa-home, pa-files, pa-recycle
-│   ├── constants.ts                   # MAX_SIZE, DEFAULT_SIZE, AUTOSAVE_MS
-│   └── tools.ts                       # ToolId 枚举与默认参数
+│   ├── types.ts
+│   ├── meta.ts                            # moduleId、routes、常量、folderIds、packagePaths
+│   ├── tools.ts
+│   └── wanwuApi.ts
 ├── services/
-│   ├── pixelArtStore.ts               # Pinia：folders, recentFiles
+│   ├── pixelArtStore.ts
 │   ├── PixelRepositoryIpcAdapter.ts
-│   └── PixelCanvasEngine.ts           # IPixelEditorPort 默认实现
-├── interfaces/
-│   └── IPixelEditorPort.ts
+│   ├── IPixelEditorPort.ts
+│   └── PixelCanvasEngine.ts
 ├── views/
 │   ├── PixelHomeView.vue
 │   ├── PixelFileListView.vue
 │   └── PixelEditorView.vue
 ├── components/
-│   ├── PixelEditorToolbar.vue         # 顶栏 + 菜单
-│   ├── PixelToolStrip.vue             # 左侧工具
-│   ├── PixelSidePanel.vue             # 右侧 Tab 容器
-│   ├── PixelLayerPanel.vue
-│   ├── PixelPalettePanel.vue
-│   ├── PixelPropertyPanel.vue
-│   ├── PixelStatusBar.vue
-│   └── PixelExportDialog.vue
+│   ├── PixelEditorToolbar.vue
+│   ├── PixelToolStrip.vue
+│   ├── PixelSidePanel.vue
+│   ├── PixelRecentTable.vue
+│   ├── PixelSizePresetCard.vue
+│   ├── PixelImportImageDialog.vue
+│   ├── PixelFolderPickerDialog.vue
+│   ├── PixelFolderDialogsHost.vue
+│   ├── PixelExportDialog.vue
+│   ├── PixelUnsavedLeaveDialog.vue
+│   └── PixelSaveConflictDialog.vue
 ├── composables/
-│   ├── usePixelEditorBootstrap.ts
-│   ├── usePixelEditorCommandSetup.ts
-│   ├── usePixelPortBinding.ts
-│   ├── usePixelAutosave.ts
-│   ├── usePixelShortcuts.ts
-│   ├── usePixelUndoRedoState.ts
-│   ├── usePixelEditorLayout.ts
-│   └── usePixelSaveFlow.ts
+│   ├── usePixelEditorState.ts             # bootstrap、layout、command、autosave、undo
+│   ├── usePixelCatalogCommands.ts
+│   ├── usePixelImageImportFlow.ts
+│   ├── usePixelSaveFlow.ts
+│   └── usePixelShortcuts.ts
 └── lib/
-    ├── shapes.ts                      # Bresenham, 圆, 椭圆
-    ├── floodFill.ts                   # Scanline flood fill
+    ├── blankDocument.ts
+    ├── composite.ts
+    ├── exportImage.ts
+    ├── floodFill.ts
     ├── gradientFill.ts
-    ├── selection.ts                   # 矩形选区、蚂蚁线
-    ├── composite.ts                   # 图层合成
-    ├── exportPng.ts
-    ├── exportJpeg.ts
-    ├── exportSvg.ts                   # raster + vector 两种
-    └── blankDocument.ts
+    ├── pixelImageImport.ts
+    ├── pixelIpcCodec.ts
+    ├── pixelCatalogTree.ts              # 目录树 + catalogHooks
+    ├── pixelHomeUtils.ts
+    ├── pixelShortcutSections.ts         # PA_SHORTCUT + 说明
+    ├── usePixelFolderDialogs.ts         # 含 folderDialogBridge
+    ├── selection.ts
+    └── shapes.ts
 ```
 
-**合并原则**：handlers 按域 4 文件；components 控制在 8 个以内；不为单函数建目录。
+**合并原则**：单文件仅几行 re-export 的不单独建文件；`handlers/`、`transaction/`、`interfaces/` 等仅含少量文件的子目录已扁平化；`register.ts` 保留（框架 glob 入口）。
 
 ---
 
@@ -547,12 +541,12 @@ export const PixelCmd = {
 
 ### 6.4 组合根
 
-`usePixelEditorCommandSetup(session, port, tx)`：
+`usePixelEditorState` 内 `setupPixelEditorCommands()`：
 
 1. 创建 `PixelCommandBus`
 2. 注册 handlers
-3. 绑定 `usePixelUndoRedoState(tx)`
-4. 返回 `{ bus, canUndo, canRedo, undo, redo }`
+3. 内联订阅 `TransactionManager.onChange` 维护 `canUndo` / `canRedo`
+4. 返回 `{ bus, transactionManager, bindEditorRuntime, disposeEditorRuntime }`
 
 ### 6.5 对外 API（预留）
 
@@ -701,13 +695,11 @@ CREATE TABLE pa_files (
 仿 `DiagramEditorView.vue`：
 
 ```
-onMounted / onActivated
-  → usePixelEditorBootstrap()        # 加载文档、创建 Session
-  → usePixelEditorCommandSetup()     # Bus + TM
-  → usePixelPortBinding()            # port 事件
-  → attachPixelEditorFromRuntime()   # mount canvas
-  → usePixelAutosave()               # debounce 保存
-  → usePixelShortcuts()              # 快捷键 → commands
+onMounted / fileId 变化
+  → usePixelEditorState.bootstrap()    # 加载文档、mount canvas
+  → setupPixelEditorCommands()         # Bus + TM（内联于 usePixelEditorState）
+  → autosave（内联 debounce）
+  → usePixelShortcuts()                # 快捷键 → commands（含 Tool.HoldPan 空格平移）
 onBeforeUnmount
   → flush autosave
   → destroy port
@@ -715,12 +707,13 @@ onBeforeUnmount
 
 ### 9.2 面板布局
 
-`usePixelEditorLayout()` 提供：
+`usePixelEditorState` 内联布局逻辑（原 `usePixelEditorLayout`）：
 
 - `toolStripWidth`（固定 48px）
-- `sidePanelWidth`（默认 280px，可拖拽 240–360px）
+- `sidePanelWidth`（默认 280px，可拖拽 220–420px）
 - `sidePanelCollapsed` / `toggleSidePanel()`
-- 宽度持久化 `localStorage` key: `wanwu:pixel-art:editor-layout`
+- 宽度持久化 `localStorage` key: `wanwu.pixel-art.editorLayout`
+- `usePixelSidePanelResize` 仍从 `usePixelEditorState` 导出供 SidePanel 使用
 
 ### 9.3 共享组件映射
 
@@ -776,7 +769,7 @@ node scripts/check-mechanism-boundaries.mjs
 
 ## 11. 常量与限制
 
-`domain/constants.ts`：
+`domain/meta.ts`（常量段）：
 
 ```typescript
 export const PIXEL_DEFAULT_SIZE = { width: 32, height: 32 } as const

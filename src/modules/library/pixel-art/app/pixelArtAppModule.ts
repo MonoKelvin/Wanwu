@@ -6,8 +6,8 @@ import { readQuickAccessPayload } from '@shared/types/quickAccess'
 import {
   isPixelEditorRoute,
   LIBRARY_PIXEL_ART_EDITOR_ROUTE
-} from '@modules/library/pixel-art/domain/routes'
-import { buildPixelCatalogTree } from '@modules/library/pixel-art/lib/pixelCatalogTree'
+} from '@modules/library/pixel-art/domain/meta'
+import { buildPixelCatalogTree, pixelCatalogHooks } from '@modules/library/pixel-art/lib/pixelCatalogTree'
 import { usePixelArtStore } from '@modules/library/pixel-art/services/pixelArtStore'
 
 export const pixelArtAppModule: IAppModule = {
@@ -22,7 +22,7 @@ export const pixelArtAppModule: IAppModule = {
         meta: {
           module: 'library',
           major: 'pixel-art',
-          title: '像素画编辑器',
+          title: '僝素画编辑器',
           hideSubPanel: true
         }
       },
@@ -43,13 +43,13 @@ export const pixelArtAppModule: IAppModule = {
         path: 'pixel-art',
         name: 'library-pixel-art-home',
         component: () => import('@modules/library/pixel-art/views/PixelHomeView.vue'),
-        meta: { module: 'library', major: 'pixel-art', title: '像素画' }
+        meta: { module: 'library', major: 'pixel-art', title: '僝素画' }
       },
       {
         path: 'pixel-art/f/:folderId',
         name: 'library-pixel-art-folder',
         component: () => import('@modules/library/pixel-art/views/PixelFileListView.vue'),
-        meta: { module: 'library', major: 'pixel-art', title: '像素画' }
+        meta: { module: 'library', major: 'pixel-art', title: '僝素画' }
       }
     ]
   },
@@ -59,12 +59,13 @@ export const pixelArtAppModule: IAppModule = {
       id: 'pixel-art',
       major: {
         id: 'pixel-art',
-        name: '像素画',
+        name: '僝素画',
         icon: 'layout-grid',
-        description: '像素图创作与整理',
+        description: '僝素图创作与整睆',
         order: 25
       },
       routeName: 'library-pixel-art-home',
+      catalog: pixelCatalogHooks,
       buildSectionTree() {
         return buildPixelCatalogTree(usePixelArtStore().folders)
       },
@@ -99,7 +100,7 @@ export const pixelArtAppModule: IAppModule = {
   registerQuickAccess(register) {
     register({
       kind: 'pixel-art',
-      paletteMeta: { label: '像素画', icon: 'layout-grid', order: 28 },
+      paletteMeta: { label: '僝素画', icon: 'layout-grid', order: 28 },
       async open(target, ctx) {
         const payload = readQuickAccessPayload(target)
         const fileId =

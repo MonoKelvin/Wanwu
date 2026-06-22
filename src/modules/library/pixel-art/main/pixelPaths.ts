@@ -2,7 +2,7 @@ import { existsSync, readdirSync } from 'node:fs'
 import { isAbsolute, join, normalize } from 'node:path'
 import { tmpdir } from 'node:os'
 import type { WanwuPathLayout } from '@shared/lib/wanwuPaths'
-import { PIXEL_WPP_FILE_EXTENSION } from '@modules/library/pixel-art/domain/packagePaths'
+import { PIXEL_WPP_FILE_EXTENSION } from '@modules/library/pixel-art/domain/meta'
 
 export function pixelArtDbFile(layout: WanwuPathLayout): string {
   return join(layout.db, 'library_pixel_art.sqlite')
