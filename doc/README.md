@@ -25,6 +25,8 @@
 | [leisure-read-detailed-design-v1.2.5.md](design/leisure-read-detailed-design-v1.2.5.md) | **闲读 v1.2.5** — 详细设计 |
 | [weather-requirements-v1.0.md](requirements/weather-requirements-v1.0.md) | **侧栏天气 v1.0** — 需求 |
 | [weather-detailed-design-v1.0.md](design/weather-detailed-design-v1.0.md) | **侧栏天气 v1.0** — 详细设计 |
+| [pixel-art-requirements-v1.2.6.md](requirements/pixel-art-requirements-v1.2.6.md) | **像素画 v1.2.6** — 用户需求 |
+| [pixel-art-detailed-design-v1.2.6.md](design/pixel-art-detailed-design-v1.2.6.md) | **像素画 v1.2.6** — 详细设计 |
 
 ### 设计
 

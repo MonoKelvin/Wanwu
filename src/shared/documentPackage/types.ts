@@ -1,6 +1,6 @@
 import type { WANWU_DOCUMENT_PACKAGE_FORMAT } from './constants'
 
-export type WanwuDocType = 'flow-graph' | 'generic'
+export type WanwuDocType = 'flow-graph' | 'generic' | 'pixel-art'
 
 export type PackageEncryptionAlgorithm = 'none' | 'aes-256-gcm'
 

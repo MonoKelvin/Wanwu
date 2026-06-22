@@ -13,6 +13,7 @@
 | `format` | `wanwu-document-package` |
 | `formatVersion` | `1` |
 | 流程图扩展名 | `.wfg` |
+| 像素画扩展名 | `.wpp` |
 | 通用扩展名 | `.wwpkg` |
 
 ## 包内结构
@@ -25,7 +26,7 @@ assets/                # 图片、图标等二进制
 
 ### manifest.json 要点
 
-- `docType`：`flow-graph` | `generic`
+- `docType`：`flow-graph` | `generic` | `pixel-art`
 - `docId`、`title`、`createdAt`、`modifiedAt`
 - `encryption`：可选 AES-256-GCM（PBKDF2 派生密钥，按条目加密后写入 zip）
 - `entries[]`：每个条目的 `path`、`mediaType`、`size`、`sha256`
@@ -39,6 +40,16 @@ assets/                # 图片、图标等二进制
 | `assets/{assetId}.{ext}` | 内嵌图片/图标 |
 
 内存中仍组装为 `DiagramContent`；落盘时拆分为多文件。
+
+## 像素画（.wpp）条目约定
+
+| 路径 | 说明 |
+|------|------|
+| `content/meta.json` | 画布尺寸、调色板、网格等（`format: wanwu-pixel`） |
+| `content/frames/{frameId}.json` | 帧与图层元数据 |
+| `assets/layers/{layerId}.png` | 图层 RGBA 像素（PNG 编码） |
+
+内存中组装为 `PixelDocument`；导出为 `.wpp` zip 包。
 
 ## 架构分层
 
