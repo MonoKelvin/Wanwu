@@ -230,7 +230,7 @@ function focusCanvasForKeys() {
         <span class="pa-status-bar__item">{{ toolLabel }}</span>
         <span class="pa-status-bar__sep" aria-hidden="true" />
         <span class="pa-status-bar__item pa-status-bar__item--mono">
-          <template v-if="cursor.x >= 0">({{ cursor.x }}, {{ cursor.y }})</template>
+          <template v-if="cursor.x >= 0">格 ({{ cursor.x }}, {{ cursor.y }})</template>
           <template v-else>(—)</template>
         </span>
         <span class="pa-status-bar__sep" aria-hidden="true" />

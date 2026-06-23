@@ -9,6 +9,11 @@ const emit = defineEmits<{
   discard: []
   cancel: []
 }>()
+
+function onVisibleChange(visible: boolean) {
+  if (!visible && open.value) emit('cancel')
+  open.value = visible
+}
 </script>
 
 <template>
@@ -17,7 +22,7 @@ const emit = defineEmits<{
     header="未保存的更改"
     width-class="w-[min(26rem,92vw)]"
     dim-mask
-    @update:visible="(v) => (open = v)"
+    @update:visible="onVisibleChange"
   >
     <p class="pa-leave-msg">文档有未保存的更改。离开前可以保存、直接放弃，或留在此页继续编辑。</p>
     <template #footer>

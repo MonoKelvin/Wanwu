@@ -11,6 +11,7 @@ import type { PixelDocumentDto } from '@modules/library/pixel-art/lib/pixelIpcCo
 import { deserializePixelDocumentFromIpc } from '@modules/library/pixel-art/lib/pixelIpcCodec'
 import { recordPixelStroke } from '@modules/library/pixel-art/app/createPixelTransactionManager'
 import { getActiveFrame } from '@modules/library/pixel-art/lib/blankDocument'
+import { getGridCellSize } from '@modules/library/pixel-art/lib/pixelGridCell'
 import {
   getPixelLayerClipboard,
   setPixelLayerClipboard
@@ -189,8 +190,12 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
   })
 
   registry.register(PixelCmd.Document.MoveSelection, (cmd) => {
-    const dx = Number(cmd.payload?.dx ?? 0)
-    const dy = Number(cmd.payload?.dy ?? 0)
+    const rawDx = Number(cmd.payload?.dx ?? 0)
+    const rawDy = Number(cmd.payload?.dy ?? 0)
+    const meta = session()?.content?.meta
+    const step = meta ? getGridCellSize(meta) : 1
+    const dx = rawDx * step
+    const dy = rawDy * step
     const moved = port()?.moveSelection(dx, dy)
     if (!moved) return pixelCmdFail('NO_SELECTION', '无选区或无法移动')
     session()?.syncFromPort()
@@ -233,7 +238,8 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
     const x = Number(cmd.payload?.x)
     const y = Number(cmd.payload?.y)
     if (!Number.isFinite(x) || !Number.isFinite(y)) return pixelCmdFail('INVALID', '坐标无效')
-    port()?.fillAt(x, y)
+    const ok = port()?.fillAt(x, y)
+    if (!ok) return pixelCmdFail('NO_CHANGE', '无填充变化')
     return pixelCmdOk()
   })
 
@@ -254,7 +260,8 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
     const x1 = Number(cmd.payload?.x1)
     const y1 = Number(cmd.payload?.y1)
     if (![x0, y0, x1, y1].every(Number.isFinite)) return pixelCmdFail('INVALID', '坐标无效')
-    port()?.applyGradientAt(x0, y0, x1, y1)
+    const ok = port()?.applyGradientAt(x0, y0, x1, y1)
+    if (!ok) return pixelCmdFail('NO_CHANGE', '渐变未应用')
     return pixelCmdOk()
   })
 
@@ -265,7 +272,8 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
     const x1 = Number(cmd.payload?.x1)
     const y1 = Number(cmd.payload?.y1)
     if (!tool || ![x0, y0, x1, y1].every(Number.isFinite)) return pixelCmdFail('INVALID', '参数无效')
-    port()?.drawShapeAt(tool, x0, y0, x1, y1)
+    const ok = port()?.drawShapeAt(tool, x0, y0, x1, y1)
+    if (!ok) return pixelCmdFail('NO_CHANGE', '图形未绘制')
     return pixelCmdOk()
   })
 }

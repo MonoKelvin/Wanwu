@@ -25,7 +25,6 @@ export class PixelEditorSession {
     this.fileMeta = null
     this.content = createBlankPixelDocument(width, height, title)
     this.clearDirty()
-    this.dirty = true
     this.port.loadDocument(this.content)
   }
 

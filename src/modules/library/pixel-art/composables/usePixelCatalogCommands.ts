@@ -17,7 +17,7 @@ function getCatalogCommandBus(): IPixelCommandBus {
   return catalogBus
 }
 
-/** ??? Catalog ????? CRUD??????? */
+/** 首页 / 文件列表共用的 Catalog 文件 CRUD 命令封装 */
 export function usePixelCatalogCommands(options?: {
   afterMutate?: () => void | Promise<void>
 }) {
@@ -32,28 +32,28 @@ export function usePixelCatalogCommands(options?: {
   async function revealFile(fileId: string): Promise<void> {
     const path = await window.wanwu.pixelArt.getFileContentPath({ fileId })
     if (!path) {
-      toast.error('???????')
+      toast.error('找不到文件位置')
       return
     }
     const result = await window.wanwu.shell.showItemInFolder(path)
-    if (!result.ok) toast.error(result.error ?? '????????')
+    if (!result.ok) toast.error(result.error ?? '无法打开文件位置')
   }
 
   async function softDeleteFile(fileId: string): Promise<boolean> {
     const ok = await confirm.ask({
-      header: '??????',
-      message: '???????????',
+      header: '移入回收站？',
+      message: '删除后可在回收站恢复，并回到原来的分组。',
       danger: true,
-      acceptLabel: '?????',
+      acceptLabel: '移入回收站',
       width: 'min(92vw, 22rem)'
     })
     if (!ok) return false
     const result = await bus.dispatch({ type: PixelCmd.Catalog.File.SoftDelete, payload: { fileId } })
     if (!result.ok) {
-      toast.error(result.message ?? '????')
+      toast.error(result.message ?? '移入回收站失败')
       return false
     }
-    toast.success('??????')
+    toast.success('已移入回收站')
     await runAfterMutate()
     return true
   }

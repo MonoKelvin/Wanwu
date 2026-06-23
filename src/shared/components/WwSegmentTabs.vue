@@ -11,7 +11,10 @@ const model = defineModel<string>({ required: true })
 withDefaults(
   defineProps<{
     options: WwSegmentTabOption[]
+    /** 铺满容器宽度，各 Tab 均分 */
     wide?: boolean
+    /** 各 Tab 等宽，容器宽度随 Tab 数量收缩 */
+    equal?: boolean
     ariaLabel?: string
   }>(),
   { ariaLabel: '切换分类' }
@@ -27,7 +30,11 @@ withDefaults(
     data-key="value"
     :allow-empty="false"
     :aria-label="ariaLabel"
-    :class="['ww-segment-tabs', wide && 'ww-segment-tabs--wide']"
+    :class="[
+      'ww-segment-tabs',
+      wide && 'ww-segment-tabs--wide',
+      equal && 'ww-segment-tabs--equal'
+    ]"
   />
 </template>
 
@@ -91,6 +98,19 @@ withDefaults(
 
 .ww-segment-tabs--wide.p-selectbutton .p-togglebutton {
   min-width: 0;
+}
+
+.ww-segment-tabs--equal.p-selectbutton {
+  display: inline-flex;
+  width: auto;
+  max-width: 100%;
+}
+
+.ww-segment-tabs--equal.p-selectbutton .p-togglebutton {
+  flex: 0 0 5.25rem;
+  width: 5.25rem;
+  min-width: 5.25rem;
+  padding-inline: 0.375rem !important;
 }
 
 [data-theme='dark'] .ww-segment-tabs.p-selectbutton .p-togglebutton.p-togglebutton-checked,

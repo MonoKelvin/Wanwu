@@ -53,7 +53,7 @@ const shapeTools: ToolId[] = ['rect', 'ellipse', 'line']
 
     <WwSettingsGroup label="笔刷">
       <div class="pa-dock-row--wide">
-        <WwSettingsRow label="笔刷大小">
+        <WwSettingsRow label="笔刷大小 (格)">
           <PixelBrushSizeControl
             :model-value="toolOptions.brushSize"
             :shape="toolOptions.brushShape"

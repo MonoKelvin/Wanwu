@@ -10,7 +10,7 @@ import WwToggleSwitch from '@shared/components/WwToggleSwitch.vue'
 import type { PixelDocument } from '@modules/library/pixel-art/domain/types'
 import { PIXEL_MAX_HEIGHT, PIXEL_MAX_WIDTH } from '@modules/library/pixel-art/domain/meta'
 import type { PixelCanvasCommands } from '@modules/library/pixel-art/app/command/pixelCanvasCommands'
-import { formatMappingCaption, getPixelUnitSize } from '@modules/library/pixel-art/lib/pixelCanvasPresets'
+import { formatMappingCaption, getPixelUnitSize, getGridCellSize } from '@modules/library/pixel-art/lib/pixelCanvasPresets'
 
 const props = defineProps<{
   document: PixelDocument | null
@@ -39,8 +39,9 @@ watch(
 function mappingHint() {
   if (!props.document) return ''
   const unit = getPixelUnitSize(props.document.meta)
+  const cell = getGridCellSize(props.document.meta)
   const map = formatMappingCaption(props.document.meta.width, props.document.meta.height)
-  return `${map} · 100% 时 1px = ${unit} 屏幕像素`
+  return `${map} · 单元格 ${cell}×${cell}px · 100% 时 1px = ${unit} 屏幕像素`
 }
 
 function applyCanvasResize() {
@@ -68,7 +69,7 @@ function setCanvasBackground(value: string) {
           @update:model-value="(v) => v != null && canvas.setPixelUnitSize(v)"
         />
       </WwSettingsRow>
-      <WwSettingsRow label="网格细分">
+      <WwSettingsRow label="像素比率 1:N">
         <WwNumberInput
           size="compact"
           :model-value="document?.meta.grid.size ?? 1"

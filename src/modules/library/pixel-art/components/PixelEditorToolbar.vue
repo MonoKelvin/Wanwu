@@ -124,6 +124,13 @@ const fileMenuItems = computed((): WwMenuItem[] => {
       wwIcon: 'download',
       disabled: props.booting,
       command: () => emit('export')
+    },
+    { separator: true },
+    {
+      label: '关闭',
+      wwIcon: 'x',
+      disabled: props.booting,
+      command: () => emit('back')
     }
   ]
   return items

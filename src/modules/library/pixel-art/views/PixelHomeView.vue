@@ -285,7 +285,7 @@ async function commitRename() {
             <WwSegmentTabs
               v-model="activeTemplateCategory"
               :options="templateTabOptions"
-              wide
+              equal
               class="pa-home-template-tabs"
               aria-label="模板分类"
             />

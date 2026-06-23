@@ -13,7 +13,7 @@ import { createPixelTransactionManager } from '@modules/library/pixel-art/app/cr
 import { usePixelSaveFlow } from '@modules/library/pixel-art/composables/usePixelSaveFlow'
 import { usePixelShortcuts } from '@modules/library/pixel-art/composables/usePixelShortcuts'
 import { createPixelCanvasCommands } from '@modules/library/pixel-art/app/command/pixelCanvasCommands'
-import { getPixelUnitSize, zoomPercentFromViewport } from '@modules/library/pixel-art/lib/pixelCanvasPresets'
+import { getPixelUnitSize, getGridCellSize, zoomPercentFromViewport } from '@modules/library/pixel-art/lib/pixelCanvasPresets'
 import type { PixelViewport } from '@modules/library/pixel-art/domain/types'
 import { pixelCanvasCursorClass } from '@modules/library/pixel-art/lib/pixelToolCursors'
 import { usePixelArtStore } from '@modules/library/pixel-art/services/pixelArtStore'
@@ -268,7 +268,8 @@ export function usePixelEditorState() {
     const doc = sessionRef.value?.content
     if (!doc) return 1
     const unit = getPixelUnitSize(doc.meta)
-    return unit * port.value.getViewport().zoom
+    const cell = getGridCellSize(doc.meta)
+    return unit * port.value.getViewport().zoom * cell
   })
   const isDirty = computed(() => !!sessionRef.value?.dirty)
   const isSaved = computed(() => Boolean(sessionRef.value?.fileId) && !sessionRef.value?.dirty)
@@ -306,24 +307,22 @@ export function usePixelEditorState() {
 
   async function confirmUnsavedLeave(): Promise<boolean> {
     if (!sessionRef.value?.dirty) return true
+    cancelScheduledSave()
     const choice = await askUnsavedLeave()
     if (choice === 'cancel') return false
-    if (choice === 'discard') return true
+    if (choice === 'discard') {
+      sessionRef.value?.clearDirty()
+      return true
+    }
     const result = await saveFlow.saveDocument()
-    return result === 'ok'
+    if (result === 'ok') return true
+    return false
   }
 
   async function flushBeforeLeave(): Promise<NavigationGuardReturn> {
     const session = sessionRef.value
     if (!session?.dirty) return true
-
-    if (session.fileId) {
-      await flushSave()
-      if (!sessionRef.value?.dirty) return true
-    } else {
-      cancelScheduledSave()
-    }
-
+    cancelScheduledSave()
     return confirmUnsavedLeave()
   }
 
@@ -608,7 +607,8 @@ export function usePixelEditorState() {
 
     if (!sharedRemoveLeaveGuard) {
       sharedRemoveLeaveGuard = router.beforeEach(async (to, from) => {
-        if (!isPixelEditorPath(from.path) || isPixelEditorPath(to.path)) return true
+        if (!isPixelEditorPath(from.path)) return true
+        if (isPixelEditorPath(to.path) && to.params.fileId === from.params.fileId) return true
         return flushBeforeLeave()
       })
     }

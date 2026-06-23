@@ -73,3 +73,4 @@ export function zoomPercentFromViewport(zoom: number, pixelUnitSize: number): nu
 }
 
 export { computeMappingRatio, formatMappingCaption, computePixelUnitSize } from '@modules/library/pixel-art/lib/pixelDisplayMapping'
+export { getGridCellSize } from '@modules/library/pixel-art/lib/pixelGridCell'
