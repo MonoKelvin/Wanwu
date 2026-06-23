@@ -174,7 +174,11 @@ function drawPixelPreview() {
     tmp.height = result.height
     const tmpCtx = tmp.getContext('2d')
     if (!tmpCtx) return
-    tmpCtx.putImageData(new ImageData(result.pixels, result.width, result.height), 0, 0)
+    tmpCtx.putImageData(
+      new ImageData(new Uint8ClampedArray(result.pixels), result.width, result.height),
+      0,
+      0
+    )
     const ctx = canvas.getContext('2d')
     if (!ctx) return
     ctx.clearRect(0, 0, canvas.width, canvas.height)

@@ -18,6 +18,8 @@ export interface WppMetaFile {
   viewport?: PixelViewport
   grid: { visible: boolean; size: number }
   checkerboard: { visible: boolean }
+  /** 画笔/橡皮悬停时显示笔刷轮廓与单元格高亮 */
+  brushPreview?: { visible: boolean }
 }
 
 export type PixelCanvasResizeAnchor = 'top-left' | 'center'

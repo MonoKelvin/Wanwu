@@ -3,10 +3,10 @@ import { computed, ref } from 'vue'
 import WwIconButton from '@shared/components/WwIconButton.vue'
 import WwContextMenu from '@shared/components/WwContextMenu.vue'
 import type { WwMenuItem } from '@shared/types/menu'
-import type { PixelDocument } from '@modules/library/pixel-art/domain/types'
+import type { PixelDocument, PixelLayerMeta } from '@modules/library/pixel-art/domain/types'
 import { PixelCmd, type IPixelCommandBus } from '@modules/library/pixel-art/app/command/PixelCommandRegistry'
 import { getActiveFrame } from '@modules/library/pixel-art/lib/blankDocument'
-import { hasPixelLayerClipboard } from '@modules/library/pixel-art/lib/pixelLayerClipboard'
+import { hasPixelLayerClipboard } from '@modules/library/pixel-art/lib/pixelUndoSnapshot'
 
 const props = defineProps<{
   document: PixelDocument | null
@@ -22,9 +22,14 @@ const menuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
 const menuItems = ref<WwMenuItem[]>([])
 let menuLayerId = ''
 
-const layers = computed(() => {
+const layers = computed((): PixelLayerMeta[] => {
   if (!props.document) return []
-  return getActiveFrame(props.document).layers.slice().reverse()
+  const frame = getActiveFrame(props.document)
+  const byId = new Map(frame.layers.map((layer) => [layer.id, layer]))
+  return [...frame.layerOrder]
+    .reverse()
+    .map((id) => byId.get(id))
+    .filter((layer): layer is PixelLayerMeta => !!layer)
 })
 
 const activeLayerId = computed(() => props.document?.meta.activeLayerId ?? '')

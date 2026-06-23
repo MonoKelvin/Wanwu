@@ -167,6 +167,7 @@ function setupPixelEditorCommands(options: {
 
   function disposeEditorRuntime(): void {
     options.getPort()?.setStrokeRecorder(null)
+    transactionManager.value?.clear()
     setPixelTransactionManager(transactionManager, null)
   }
 
@@ -370,6 +371,7 @@ export function usePixelEditorState() {
     repo,
     activeTool,
     onChange: () => {
+      hasSelection.value = !!port.value.getSelection()
       refreshUndoState()
       scheduleAutosave()
       bumpUiRevision()
@@ -397,8 +399,9 @@ export function usePixelEditorState() {
 
   refreshUndoState = () => {
     const tx = transactionManager.value
-    canUndo.value = tx?.canUndo() ?? false
-    canRedo.value = tx?.canRedo() ?? false
+    const engine = port.value
+    canUndo.value = tx ? tx.canUndo() : engine.canUndo()
+    canRedo.value = tx ? tx.canRedo() : engine.canRedo()
   }
 
   watch(
@@ -503,10 +506,10 @@ export function usePixelEditorState() {
       onSelectionChange: (sel) => {
         hasSelection.value = !!sel
       },
-      onStrokeCommit: (layerId, before, after) => {
+      onStrokeCommit: (layerId, before, after, label) => {
         void bus.dispatch({
           type: PixelCmd.Document.DrawStroke,
-          payload: { layerId, before, after }
+          payload: { layerId, before, after, label: label ?? '笔划' }
         })
       },
       onFillAt: (x, y) => {

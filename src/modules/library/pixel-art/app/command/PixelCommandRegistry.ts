@@ -28,6 +28,7 @@ export const PixelCmd = {
     SetPan: 'Pixel.Document.SetPan',
     SetGrid: 'Pixel.Document.SetGrid',
     SetCheckerboard: 'Pixel.Document.SetCheckerboard',
+    SetBrushPreview: 'Pixel.Document.SetBrushPreview',
     SetCanvasBackground: 'Pixel.Document.SetCanvasBackground',
     SetPixelUnitSize: 'Pixel.Document.SetPixelUnitSize',
     SetGridSubdiv: 'Pixel.Document.SetGridSubdiv',

@@ -16,6 +16,27 @@ export function snapToCellOrigin(x: number, y: number, cellSize: number): Point 
   }
 }
 
+export function enumerateBrushCellOrigins(
+  originX: number,
+  originY: number,
+  cellSize: number,
+  brushCells: number,
+  shape: 'square' | 'circle' = 'square'
+): Point[] {
+  const cs = Math.max(1, cellSize)
+  const cells = Math.max(1, brushCells)
+  const half = Math.floor(cells / 2)
+  const radius = cells / 2
+  const origins: Point[] = []
+  for (let by = -half; by < cells - half; by++) {
+    for (let bx = -half; bx < cells - half; bx++) {
+      if (shape === 'circle' && Math.hypot(bx + 0.5, by + 0.5) > radius) continue
+      origins.push({ x: originX + bx * cs, y: originY + by * cs })
+    }
+  }
+  return origins
+}
+
 export function fillCellBlock(
   layer: Uint8ClampedArray,
   originX: number,
@@ -28,26 +49,24 @@ export function fillCellBlock(
   options?: { shape?: 'square' | 'circle' }
 ): void {
   const cs = Math.max(1, cellSize)
-  const cells = Math.max(1, brushCells)
-  const half = Math.floor(cells / 2)
-  const radius = cells / 2
   const shape = options?.shape ?? 'square'
-  for (let by = -half; by < cells - half; by++) {
-    for (let bx = -half; bx < cells - half; bx++) {
-      if (shape === 'circle' && Math.hypot(bx + 0.5, by + 0.5) > radius) continue
-      const ox = originX + bx * cs
-      const oy = originY + by * cs
-      for (let dy = 0; dy < cs; dy++) {
-        for (let dx = 0; dx < cs; dx++) {
-          const x = ox + dx
-          const y = oy + dy
-          if (x < 0 || y < 0 || x >= canvasWidth || y >= canvasHeight) continue
-          const i = (y * canvasWidth + x) * 4
-          layer[i] = rgba[0]!
-          layer[i + 1] = rgba[1]!
-          layer[i + 2] = rgba[2]!
-          layer[i + 3] = rgba[3]!
-        }
+  for (const { x: ox, y: oy } of enumerateBrushCellOrigins(
+    originX,
+    originY,
+    cs,
+    brushCells,
+    shape
+  )) {
+    for (let dy = 0; dy < cs; dy++) {
+      for (let dx = 0; dx < cs; dx++) {
+        const x = ox + dx
+        const y = oy + dy
+        if (x < 0 || y < 0 || x >= canvasWidth || y >= canvasHeight) continue
+        const i = (y * canvasWidth + x) * 4
+        layer[i] = rgba[0]!
+        layer[i + 1] = rgba[1]!
+        layer[i + 2] = rgba[2]!
+        layer[i + 3] = rgba[3]!
       }
     }
   }

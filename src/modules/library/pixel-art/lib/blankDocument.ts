@@ -51,7 +51,8 @@ export function createBlankPixelDocument(
       ],
       display: { pixelUnitSize: preset.pixelUnitSize },
       grid: { visible: preset.gridVisible, size: preset.gridSubdiv },
-      checkerboard: { visible: preset.checkerboardVisible }
+      checkerboard: { visible: preset.checkerboardVisible },
+      brushPreview: { visible: true }
     },
     frames: [
       {

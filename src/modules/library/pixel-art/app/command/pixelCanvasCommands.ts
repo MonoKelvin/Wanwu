@@ -20,6 +20,7 @@ export function createPixelCanvasCommands(bus: IPixelCommandBus) {
     setBackground: (color: string) => dispatch(PixelCmd.Document.SetBackground, { color }),
     toggleGrid: (visible: boolean) => dispatch(PixelCmd.Document.SetGrid, { visible }),
     toggleCheckerboard: (visible: boolean) => dispatch(PixelCmd.Document.SetCheckerboard, { visible }),
+    toggleBrushPreview: (visible: boolean) => dispatch(PixelCmd.Document.SetBrushPreview, { visible }),
     setCanvasBackground: (background: string) =>
       dispatch(PixelCmd.Document.SetCanvasBackground, { background }),
     setPixelUnitSize: (pixelUnitSize: number) =>

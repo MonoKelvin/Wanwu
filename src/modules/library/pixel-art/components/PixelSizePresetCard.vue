@@ -18,6 +18,10 @@ defineEmits<{ click: [] }>()
 
 const isCustom = computed(() => props.custom === true)
 
+const isPortrait = computed(
+  () => !isCustom.value && props.width != null && props.height != null && props.height > props.width
+)
+
 const innerLabel = computed(() => {
   if (isCustom.value) return '自定义'
   if (props.width != null && props.height != null) return formatCanvasSizeLabel(props.width, props.height)
@@ -27,7 +31,10 @@ const innerLabel = computed(() => {
 const bottomCaption = computed(() => {
   if (props.caption) return props.caption
   if (isCustom.value) return '任意尺寸'
-  return formatTemplateRatioCaption()
+  if (props.width != null && props.height != null) {
+    return formatTemplateRatioCaption(props.width, props.height)
+  }
+  return ''
 })
 
 const frameStyle = computed(() => {
@@ -47,7 +54,17 @@ const frameStyle = computed(() => {
         <WwIcon name="plus" size="md" />
       </span>
       <span v-else class="pa-type-card__frame" :style="frameStyle ?? undefined">
-        <span class="pa-type-card__frame-label">{{ innerLabel }}</span>
+        <span
+          class="pa-type-card__frame-label"
+          :class="{ 'pa-type-card__frame-label--stacked': isPortrait }"
+        >
+          <template v-if="isPortrait">
+            <span class="pa-type-card__dim">{{ width }}</span>
+            <span class="pa-type-card__dim-sep" aria-hidden="true">×</span>
+            <span class="pa-type-card__dim">{{ height }}</span>
+          </template>
+          <template v-else>{{ innerLabel }}</template>
+        </span>
       </span>
     </span>
     <span class="pa-type-card__caption">{{ bottomCaption }}</span>

@@ -119,14 +119,14 @@ function onRowClick(file: PixelFileMeta) {
             <WwIconButton
               icon="rotate-ccw"
               compact
-              aria-label="恢复"
+              ariaLabel="恢复"
               v-tooltip.bottom="'恢复'"
               @click="emit('restore', file.id)"
             />
             <WwIconButton
               icon="folder-open"
               compact
-              aria-label="打开文件位置"
+              ariaLabel="打开文件位置"
               v-tooltip.bottom="'打开文件位置'"
               @click="emit('reveal', file.id)"
             />
@@ -134,7 +134,7 @@ function onRowClick(file: PixelFileMeta) {
               icon="trash-2"
               compact
               class="pa-recent-table__act--danger"
-              aria-label="永久删除"
+              ariaLabel="永久删除"
               v-tooltip.bottom="'永久删除'"
               @click="emit('purge', file.id)"
             />

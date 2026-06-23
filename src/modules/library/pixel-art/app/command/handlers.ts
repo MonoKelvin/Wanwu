@@ -9,13 +9,17 @@ import type { PixelRepositoryIpcAdapter } from '@modules/library/pixel-art/servi
 import type { ToolId, ToolOptions } from '@modules/library/pixel-art/domain/tools'
 import type { PixelDocumentDto } from '@modules/library/pixel-art/lib/pixelIpcCodec'
 import { deserializePixelDocumentFromIpc } from '@modules/library/pixel-art/lib/pixelIpcCodec'
-import { recordPixelStroke } from '@modules/library/pixel-art/app/createPixelTransactionManager'
+import {
+  recordDocumentMutation,
+  recordPixelStroke
+} from '@modules/library/pixel-art/app/createPixelTransactionManager'
 import { getActiveFrame } from '@modules/library/pixel-art/lib/blankDocument'
 import { getGridCellSize } from '@modules/library/pixel-art/lib/pixelGridCell'
 import {
+  captureDocumentSnapshot,
   getPixelLayerClipboard,
   setPixelLayerClipboard
-} from '@modules/library/pixel-art/lib/pixelLayerClipboard'
+} from '@modules/library/pixel-art/lib/pixelUndoSnapshot'
 
 export interface EditorCommandDeps {
   getPort: () => IPixelEditorPort | null
@@ -31,6 +35,17 @@ export interface FileCommandDeps {
   onExport?: (payload: Record<string, unknown>) => void | Promise<void>
   onNew?: () => void | Promise<void>
   onOpenRecent?: () => void | Promise<void>
+}
+
+async function recordPortDocumentChange(
+  deps: EditorCommandDeps,
+  label: string,
+  before: ReturnType<typeof captureDocumentSnapshot>
+): Promise<void> {
+  const port = deps.getPort()
+  if (!port) return
+  const after = captureDocumentSnapshot(port)
+  await recordDocumentMutation(deps.getTransactionManager?.(), label, before, after)
 }
 
 export function registerCanvasCommands(registry: PixelCommandRegistry, deps: EditorCommandDeps): void {
@@ -68,68 +83,102 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Document.SetForeground, (cmd) => {
+  registry.register(PixelCmd.Document.SetForeground, async (cmd) => {
     const color = String(cmd.payload?.color ?? '')
-    if (!color) return pixelCmdFail('INVALID', '缺少 color')
-    port()?.setForeground(color)
+    const p = port()
+    if (!color || !p) return pixelCmdFail('INVALID', '缺少 color')
+    const before = captureDocumentSnapshot(p)
+    p.setForeground(color)
+    await recordPortDocumentChange(deps, '设置前景色', before)
     session()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Document.SetBackground, (cmd) => {
+  registry.register(PixelCmd.Document.SetBackground, async (cmd) => {
     const color = String(cmd.payload?.color ?? '')
-    if (!color) return pixelCmdFail('INVALID', '缺少 color')
-    port()?.setBackgroundColor(color)
+    const p = port()
+    if (!color || !p) return pixelCmdFail('INVALID', '缺少 color')
+    const before = captureDocumentSnapshot(p)
+    p.setBackgroundColor(color)
+    await recordPortDocumentChange(deps, '设置背景色', before)
     session()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Document.SetGrid, (cmd) => {
-    port()?.setGridVisible(Boolean(cmd.payload?.visible))
+  registry.register(PixelCmd.Document.SetGrid, async (cmd) => {
+    const p = port()
+    if (!p) return pixelCmdFail('NO_PORT', '画布未就绪')
+    const before = captureDocumentSnapshot(p)
+    p.setGridVisible(Boolean(cmd.payload?.visible))
+    await recordPortDocumentChange(deps, '切换网格', before)
     session()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Document.SetCheckerboard, (cmd) => {
-    port()?.setCheckerboardVisible(Boolean(cmd.payload?.visible))
+  registry.register(PixelCmd.Document.SetCheckerboard, async (cmd) => {
+    const p = port()
+    if (!p) return pixelCmdFail('NO_PORT', '画布未就绪')
+    const before = captureDocumentSnapshot(p)
+    p.setCheckerboardVisible(Boolean(cmd.payload?.visible))
+    await recordPortDocumentChange(deps, '切换棋盘格', before)
     session()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Document.SetCanvasBackground, (cmd) => {
+  registry.register(PixelCmd.Document.SetBrushPreview, async (cmd) => {
+    const p = port()
+    if (!p) return pixelCmdFail('NO_PORT', '画布未就绪')
+    const before = captureDocumentSnapshot(p)
+    p.setBrushPreviewVisible(Boolean(cmd.payload?.visible))
+    await recordPortDocumentChange(deps, '切换笔刷预览', before)
+    session()?.syncFromPort()
+    deps.onChange?.()
+    return pixelCmdOk()
+  })
+
+  registry.register(PixelCmd.Document.SetCanvasBackground, async (cmd) => {
     const s = session()
     const p = port()
     const background = cmd.payload?.background
     if (!s?.content || !p || typeof background !== 'string') return pixelCmdFail('INVALID', '参数无效')
-    s.content.meta.background = background === 'transparent' ? 'transparent' : background
-    p.render()
+    const value = background === 'transparent' ? 'transparent' : background
+    const before = captureDocumentSnapshot(p)
+    p.setCanvasBackground(value)
+    await recordPortDocumentChange(deps, '设置画布底色', before)
+    s.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Document.SetPixelUnitSize, (cmd) => {
+  registry.register(PixelCmd.Document.SetPixelUnitSize, async (cmd) => {
     const size = Number(cmd.payload?.pixelUnitSize)
-    if (!Number.isFinite(size)) return pixelCmdFail('INVALID', '参数无效')
-    port()?.setPixelUnitSize(size)
+    const p = port()
+    if (!Number.isFinite(size) || !p) return pixelCmdFail('INVALID', '参数无效')
+    const before = captureDocumentSnapshot(p)
+    p.setPixelUnitSize(size)
+    await recordPortDocumentChange(deps, '调整像素单位', before)
     session()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Document.SetGridSubdiv, (cmd) => {
+  registry.register(PixelCmd.Document.SetGridSubdiv, async (cmd) => {
     const size = Number(cmd.payload?.size)
-    if (!Number.isFinite(size)) return pixelCmdFail('INVALID', '参数无效')
-    port()?.setGridSubdiv(size)
+    const p = port()
+    if (!Number.isFinite(size) || !p) return pixelCmdFail('INVALID', '参数无效')
+    const before = captureDocumentSnapshot(p)
+    p.setGridSubdiv(size)
+    await recordPortDocumentChange(deps, '调整网格细分', before)
     session()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Document.ResizeCanvas, (cmd) => {
+  registry.register(PixelCmd.Document.ResizeCanvas, async (cmd) => {
     const p = port()
     const s = session()
     const width = Number(cmd.payload?.width)
@@ -138,20 +187,30 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
     if (!p || !s?.content || !Number.isFinite(width) || !Number.isFinite(height)) {
       return pixelCmdFail('INVALID', '参数无效')
     }
+    const before = captureDocumentSnapshot(p)
     const ok = p.resizeDocument(width, height, anchor)
     if (!ok) return pixelCmdFail('INVALID', '尺寸无效')
+    await recordPortDocumentChange(deps, '调整画布尺寸', before)
     s.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Document.ApplyPalettePreset, (cmd) => {
+  registry.register(PixelCmd.Document.ApplyPalettePreset, async (cmd) => {
     const preset = cmd.payload?.preset
     const s = session()
-    if (!s?.content || (preset !== 'default' && preset !== 'retro')) {
+    const p = port()
+    if (!s?.content || !p || (preset !== 'default' && preset !== 'retro')) {
       return pixelCmdFail('INVALID', '参数无效')
     }
-    s.content.meta.palette = [...PIXEL_PALETTE_PRESETS[preset]]
+    const before = captureDocumentSnapshot(p)
+    const palette = [...PIXEL_PALETTE_PRESETS[preset]]
+    s.content.meta.palette = palette
+    const after = p.getDocument()
+    after.meta.palette = palette
+    p.loadDocument(after)
+    await recordDocumentMutation(deps.getTransactionManager?.(), '应用调色板预设', before, after)
+    s.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
@@ -222,10 +281,11 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
     const layerId = String(cmd.payload?.layerId ?? '')
     const before = cmd.payload?.before as Uint8ClampedArray | undefined
     const after = cmd.payload?.after as Uint8ClampedArray | undefined
+    const label = String(cmd.payload?.label ?? '笔划')
     if (!layerId || !before || !after) return pixelCmdFail('INVALID', '参数无效')
     const manager = tx()
     if (manager) {
-      await recordPixelStroke(manager, layerId, before, after)
+      await recordPixelStroke(manager, layerId, before, after, label)
     } else {
       port()?.replaceLayerPixels(layerId, after)
     }
@@ -240,6 +300,8 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
     if (!Number.isFinite(x) || !Number.isFinite(y)) return pixelCmdFail('INVALID', '坐标无效')
     const ok = port()?.fillAt(x, y)
     if (!ok) return pixelCmdFail('NO_CHANGE', '无填充变化')
+    session()?.syncFromPort()
+    deps.onChange?.()
     return pixelCmdOk()
   })
 
@@ -262,6 +324,8 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
     if (![x0, y0, x1, y1].every(Number.isFinite)) return pixelCmdFail('INVALID', '坐标无效')
     const ok = port()?.applyGradientAt(x0, y0, x1, y1)
     if (!ok) return pixelCmdFail('NO_CHANGE', '渐变未应用')
+    session()?.syncFromPort()
+    deps.onChange?.()
     return pixelCmdOk()
   })
 
@@ -274,6 +338,8 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
     if (!tool || ![x0, y0, x1, y1].every(Number.isFinite)) return pixelCmdFail('INVALID', '参数无效')
     const ok = port()?.drawShapeAt(tool, x0, y0, x1, y1)
     if (!ok) return pixelCmdFail('NO_CHANGE', '图形未绘制')
+    session()?.syncFromPort()
+    deps.onChange?.()
     return pixelCmdOk()
   })
 }
@@ -325,15 +391,18 @@ export function registerToolSelectCommand(
     return pixelCmdOk({ brushSize: next })
   })
 
-  registry.register(PixelCmd.Tool.SwapColors, () => {
+  registry.register(PixelCmd.Tool.SwapColors, async () => {
     const s = deps.getSession()
     const p = deps.getPort()
     if (!s?.content || !p) return pixelCmdFail('NO_DOC', '无文档')
+    const before = captureDocumentSnapshot(p)
     const fg = s.content.meta.foreground
     s.content.meta.foreground = s.content.meta.backgroundColor
     s.content.meta.backgroundColor = fg
     p.setForeground(s.content.meta.foreground)
     p.setBackgroundColor(s.content.meta.backgroundColor)
+    await recordPortDocumentChange(deps, '交换前景/背景色', before)
+    s.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
@@ -342,17 +411,25 @@ export function registerToolSelectCommand(
 export function registerLayerCommands(registry: PixelCommandRegistry, deps: EditorCommandDeps): void {
   const port = () => deps.getPort()
 
-  registry.register(PixelCmd.Layer.Add, (cmd) => {
-    const id = port()?.addLayer(cmd.payload?.name as string | undefined)
+  registry.register(PixelCmd.Layer.Add, async (cmd) => {
+    const p = port()
+    if (!p) return pixelCmdFail('NO_PORT', '画布未就绪')
+    const before = captureDocumentSnapshot(p)
+    const id = p.addLayer(cmd.payload?.name as string | undefined)
+    if (!id) return pixelCmdFail('ADD_FAILED', '无法添加图层')
+    await recordPortDocumentChange(deps, '添加图层', before)
     deps.getSession()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk({ layerId: id })
   })
 
-  registry.register(PixelCmd.Layer.Delete, (cmd) => {
+  registry.register(PixelCmd.Layer.Delete, async (cmd) => {
     const layerId = String(cmd.payload?.layerId ?? '')
-    if (!layerId) return pixelCmdFail('INVALID', '缺少 layerId')
-    port()?.deleteLayer(layerId)
+    const p = port()
+    if (!layerId || !p) return pixelCmdFail('INVALID', '缺少 layerId')
+    const before = captureDocumentSnapshot(p)
+    p.deleteLayer(layerId)
+    await recordPortDocumentChange(deps, '删除图层', before)
     deps.getSession()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
@@ -367,67 +444,91 @@ export function registerLayerCommands(registry: PixelCommandRegistry, deps: Edit
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Layer.SetVisible, (cmd) => {
+  registry.register(PixelCmd.Layer.SetVisible, async (cmd) => {
     const layerId = String(cmd.payload?.layerId ?? '')
     const visible = cmd.payload?.visible as boolean | undefined
-    if (!layerId || visible === undefined) return pixelCmdFail('INVALID', '参数无效')
-    port()?.setLayerVisible(layerId, visible)
+    const p = port()
+    if (!layerId || visible === undefined || !p) return pixelCmdFail('INVALID', '参数无效')
+    const before = captureDocumentSnapshot(p)
+    p.setLayerVisible(layerId, visible)
+    await recordPortDocumentChange(deps, visible ? '显示图层' : '隐藏图层', before)
     deps.getSession()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Layer.SetLocked, (cmd) => {
+  registry.register(PixelCmd.Layer.SetLocked, async (cmd) => {
     const layerId = String(cmd.payload?.layerId ?? '')
     const locked = cmd.payload?.locked as boolean | undefined
-    if (!layerId || locked === undefined) return pixelCmdFail('INVALID', '参数无效')
-    port()?.setLayerLocked(layerId, locked)
+    const p = port()
+    if (!layerId || locked === undefined || !p) return pixelCmdFail('INVALID', '参数无效')
+    const before = captureDocumentSnapshot(p)
+    p.setLayerLocked(layerId, locked)
+    await recordPortDocumentChange(deps, locked ? '锁定图层' : '解锁图层', before)
     deps.getSession()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Layer.Rename, (cmd) => {
+  registry.register(PixelCmd.Layer.Rename, async (cmd) => {
     const layerId = String(cmd.payload?.layerId ?? '')
     const name = String(cmd.payload?.name ?? '')
-    if (!layerId || !name) return pixelCmdFail('INVALID', '参数无效')
-    port()?.renameLayer(layerId, name)
+    const p = port()
+    if (!layerId || !name || !p) return pixelCmdFail('INVALID', '参数无效')
+    const before = captureDocumentSnapshot(p)
+    p.renameLayer(layerId, name)
+    await recordPortDocumentChange(deps, '重命名图层', before)
     deps.getSession()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Layer.Reorder, (cmd) => {
+  registry.register(PixelCmd.Layer.Reorder, async (cmd) => {
     const layerId = String(cmd.payload?.layerId ?? '')
     const newIndex = Number(cmd.payload?.newIndex ?? -1)
-    if (!layerId || newIndex < 0) return pixelCmdFail('INVALID', '参数无效')
-    port()?.reorderLayer(layerId, newIndex)
+    const p = port()
+    if (!layerId || newIndex < 0 || !p) return pixelCmdFail('INVALID', '参数无效')
+    const before = captureDocumentSnapshot(p)
+    p.reorderLayer(layerId, newIndex)
+    await recordPortDocumentChange(deps, '调整图层顺序', before)
     deps.getSession()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Layer.MergeVisible, () => {
-    if (!port()?.mergeVisibleLayers()) return pixelCmdFail('MERGE_FAILED', '无可合并的可见层')
+  registry.register(PixelCmd.Layer.MergeVisible, async () => {
+    const p = port()
+    if (!p) return pixelCmdFail('NO_PORT', '画布未就绪')
+    const before = captureDocumentSnapshot(p)
+    if (!p.mergeVisibleLayers()) return pixelCmdFail('MERGE_FAILED', '无可合并的可见层')
+    await recordPortDocumentChange(deps, '合并可见图层', before)
     deps.getSession()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Layer.Duplicate, (cmd) => {
+  registry.register(PixelCmd.Layer.Duplicate, async (cmd) => {
     const layerId = String(cmd.payload?.layerId ?? '')
-    if (!layerId) return pixelCmdFail('INVALID', '缺少 layerId')
-    const id = port()?.duplicateLayer(layerId)
+    const p = port()
+    if (!layerId || !p) return pixelCmdFail('INVALID', '缺少 layerId')
+    const before = captureDocumentSnapshot(p)
+    const id = p.duplicateLayer(layerId)
     if (!id) return pixelCmdFail('DUPLICATE_FAILED', '无法复制图层')
+    await recordPortDocumentChange(deps, '复制图层', before)
     deps.getSession()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk({ layerId: id })
   })
 
-  registry.register(PixelCmd.Layer.Merge, (cmd) => {
+  registry.register(PixelCmd.Layer.Merge, async (cmd) => {
     const layerIds = cmd.payload?.layerIds as string[] | undefined
-    if (!Array.isArray(layerIds) || layerIds.length < 2) return pixelCmdFail('INVALID', '至少选择两个图层')
-    if (!port()?.mergeLayers(layerIds)) return pixelCmdFail('MERGE_FAILED', '无法合并图层')
+    const p = port()
+    if (!p || !Array.isArray(layerIds) || layerIds.length < 2) {
+      return pixelCmdFail('INVALID', '至少选择两个图层')
+    }
+    const before = captureDocumentSnapshot(p)
+    if (!p.mergeLayers(layerIds)) return pixelCmdFail('MERGE_FAILED', '无法合并图层')
+    await recordPortDocumentChange(deps, '合并图层', before)
     deps.getSession()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
@@ -450,11 +551,14 @@ export function registerLayerCommands(registry: PixelCommandRegistry, deps: Edit
     return pixelCmdOk()
   })
 
-  registry.register(PixelCmd.Layer.Paste, () => {
+  registry.register(PixelCmd.Layer.Paste, async () => {
     const clip = getPixelLayerClipboard()
-    if (!clip) return pixelCmdFail('EMPTY', '剪贴板为空')
-    const id = port()?.pasteLayer(clip)
+    const p = port()
+    if (!clip || !p) return pixelCmdFail('EMPTY', '剪贴板为空')
+    const before = captureDocumentSnapshot(p)
+    const id = p.pasteLayer(clip)
     if (!id) return pixelCmdFail('PASTE_FAILED', '无法粘贴图层')
+    await recordPortDocumentChange(deps, '粘贴图层', before)
     deps.getSession()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk({ layerId: id })

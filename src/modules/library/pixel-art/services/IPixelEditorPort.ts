@@ -11,7 +11,7 @@ export interface PixelPointerHandlers {
   onPixelCoords?: (x: number, y: number) => void
   onStrokeComplete?: (patch: LayerPixelPatch) => void
   onLayerSnapshot?: (layerId: string, before: Uint8ClampedArray, after: Uint8ClampedArray) => void
-  onStrokeCommit?: (layerId: string, before: Uint8ClampedArray, after: Uint8ClampedArray) => void
+  onStrokeCommit?: (layerId: string, before: Uint8ClampedArray, after: Uint8ClampedArray, label?: string) => void
   onFillAt?: (x: number, y: number) => void
   onPickColorAt?: (x: number, y: number) => void
   onGradientFill?: (x0: number, y0: number, x1: number, y1: number) => void
@@ -39,6 +39,7 @@ export interface IPixelEditorPort {
   getTool(): { id: ToolId; options: ToolOptions }
   setForeground(color: string): void
   setBackgroundColor(color: string): void
+  setCanvasBackground(background: string): void
   setViewport(viewport: Partial<PixelViewport>): void
   getViewport(): PixelViewport
   getLayerImageData(layerId: string): ImageData | null
@@ -46,7 +47,11 @@ export interface IPixelEditorPort {
   setTheme(resolved: 'light' | 'dark'): void
   setGridVisible(visible: boolean): void
   setCheckerboardVisible(visible: boolean): void
+  setBrushPreviewVisible(visible: boolean): void
   bindPointerHandlers(handlers: PixelPointerHandlers): void
+  setStrokeRecorder(
+    recorder: ((layerId: string, before: Uint8ClampedArray, after: Uint8ClampedArray) => void) | null
+  ): void
   undo(): boolean
   redo(): boolean
   canUndo(): boolean
@@ -83,6 +88,8 @@ export interface IPixelEditorPort {
   pickColorAtPixel(x: number, y: number): boolean
   applyGradientAt(x0: number, y0: number, x1: number, y1: number): boolean
   drawShapeAt(tool: 'line' | 'rect' | 'ellipse', x0: number, y0: number, x1: number, y1: number): boolean
+  replaceLayerPixels(layerId: string, pixels: Uint8ClampedArray): void
+  notifyDocumentChanged(): void
   render(options?: { viewportOnly?: boolean }): void
   resize(): void
   focusCanvas(): void

@@ -94,6 +94,14 @@ function setCanvasBackground(value: string) {
           @update:model-value="canvas.toggleCheckerboard($event)"
         />
       </WwSettingsRow>
+      <WwSettingsRow label="笔刷预览">
+        <WwToggleSwitch
+          :model-value="document?.meta.brushPreview?.visible ?? true"
+          :drag-to-change="false"
+          aria-label="悬停显示笔刷轮廓"
+          @update:model-value="canvas.toggleBrushPreview($event)"
+        />
+      </WwSettingsRow>
     </WwSettingsGroup>
 
     <WwSettingsGroup label="尺寸">

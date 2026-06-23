@@ -9,10 +9,13 @@
 
 export const TEMPLATE_PREVIEW_CELL_COUNT = 16
 
-/** 模板卡片预览：每格代表的画布像素数（标签固定为 1:8） */
+/** 新建/导入向导默认显示比例 1:N */
 export const TEMPLATE_PREVIEW_PIXEL_RATIO = 8
 
-export type PixelTemplateCategory = 'square' | 'desktop' | 'mobile' | 'web'
+/** 首页模板卡片底部比例说明（与 computeMappingRatio 一致） */
+export function formatTemplateRatioCaption(width: number, height: number): string {
+  return formatMappingCaption(width, height)
+}
 
 export interface PixelCanvasTemplate {
   id: string
@@ -73,12 +76,7 @@ export function formatMappingCaption(width: number, height: number): string {
   return `${formatCanvasSizeLabel(width, height)} 1:${ratio}`
 }
 
-/** 首页模板卡片底部比例说明 */
-export function formatTemplateRatioCaption(): string {
-  return `1:${TEMPLATE_PREVIEW_PIXEL_RATIO}`
-}
-
-/** 模板卡片内预览框尺寸（百分比，保持比例） */
+export type PixelTemplateCategory = 'square' | 'desktop' | 'mobile' | 'web'
 export function computePreviewFramePercent(width: number, height: number): { width: string; height: string } {
   const aspect = width / height
   const maxPct = 72

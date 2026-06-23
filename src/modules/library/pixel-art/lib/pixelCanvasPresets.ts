@@ -63,6 +63,9 @@ export function normalizePixelMetaDisplay(meta: WppMetaFile): WppMetaFile {
     checkerboard: {
       visible: meta.checkerboard?.visible ?? preset.checkerboardVisible
     },
+    brushPreview: {
+      visible: meta.brushPreview?.visible ?? true
+    },
     viewport
   }
 }
