@@ -29,7 +29,6 @@ const {
   activeTool,
   canUndo,
   canRedo,
-  sidePanelTab,
   exportDialogOpen,
   layout,
   viewportZoomPercent,
@@ -70,12 +69,18 @@ const {
   setSidePanelWidth,
   zoomToFit,
   document,
-  toolOptions
+  toolOptions,
+  brushPreviewScale
 } = editorState
 
 const recentFiles = computed(() => store.recentFiles)
 
-const layerCount = computed(() => document.value?.frames[0]?.layers.length ?? 0)
+const activeLayerName = computed(() => {
+  if (!document.value) return '—'
+  const frame = document.value.frames[0]
+  const layer = frame?.layers.find((l) => l.id === document.value?.meta.activeLayerId)
+  return layer?.name ?? '—'
+})
 
 const canvasWrapClass = computed(() => ({
   ready: editorReady.value,
@@ -156,8 +161,6 @@ function focusCanvasForKeys() {
         :checkerboard-visible="checkerboardVisible"
         :recent-files="recentFiles"
         :zoom-percent="viewportZoomPercent"
-        :tool-strip-collapsed="layout.toolStripCollapsed"
-        :side-panel-collapsed="layout.sidePanelCollapsed"
         @save="saveDocument"
         @save-as="promptSaveAs"
         @export="openExportDialog"
@@ -167,8 +170,6 @@ function focusCanvasForKeys() {
         @zoom-in="zoomIn"
         @zoom-out="zoomOut"
         @zoom-reset="zoomReset"
-        @toggle-tool-strip="toggleToolStrip"
-        @toggle-side-panel="toggleSidePanel"
         @back="goBack"
         @new-doc="createNewDocument"
         @open-recent="openRecentFile"
@@ -187,7 +188,7 @@ function focusCanvasForKeys() {
         />
         <WwIconButton
           v-else
-          icon="pencil"
+          icon="layout-panel-left"
           icon-size="sm"
           class="pa-panel-restore pa-panel-restore--left ww-glass-blur pa-panel-enter"
           ariaLabel="展开工具栏"
@@ -198,7 +199,6 @@ function focusCanvasForKeys() {
 
         <PixelSidePanel
           v-if="!layout.sidePanelCollapsed"
-          v-model:tab="sidePanelTab"
           class="pa-side-panel pa-float pa-float--right ww-glass-blur"
           :style="{ width: `${layout.sidePanelWidth}px` }"
           :panel-width="layout.sidePanelWidth"
@@ -207,12 +207,13 @@ function focusCanvasForKeys() {
           :active-tool="activeTool"
           :bus="editorState.bus"
           :tool-options="toolOptions"
+          :brush-preview-scale="brushPreviewScale"
           @collapse="toggleSidePanel"
           @resize-width="setSidePanelWidth"
         />
         <WwIconButton
           v-else
-          icon="sliders-horizontal"
+          icon="layout-panel-right"
           icon-size="sm"
           class="pa-panel-restore pa-panel-restore--right ww-glass-blur pa-panel-enter"
           ariaLabel="展开侧面板"
@@ -227,18 +228,16 @@ function focusCanvasForKeys() {
       <div class="pa-status-bar__group">
         <span class="pa-status-bar__item">{{ document?.meta.width ?? 0 }}×{{ document?.meta.height ?? 0 }}</span>
         <span class="pa-status-bar__sep" aria-hidden="true" />
-        <span class="pa-status-bar__item pa-status-bar__item--mono">{{ Math.round(viewportZoomPercent) }}%</span>
-        <span v-if="layerCount" class="pa-status-bar__item">{{ layerCount }} 层</span>
+        <span class="pa-status-bar__item pa-status-bar__item--layer">{{ activeLayerName }}</span>
       </div>
-      <div class="pa-status-bar__group pa-status-bar__group--center">
+      <div class="pa-status-bar__group pa-status-bar__group--end">
         <span class="pa-status-bar__item">{{ toolLabel }}</span>
         <span class="pa-status-bar__sep" aria-hidden="true" />
         <span class="pa-status-bar__item pa-status-bar__item--mono">
           <template v-if="cursor.x >= 0">({{ cursor.x }}, {{ cursor.y }})</template>
           <template v-else>(—)</template>
         </span>
-      </div>
-      <div class="pa-status-bar__group pa-status-bar__group--end">
+        <span class="pa-status-bar__sep" aria-hidden="true" />
         <span class="pa-status-bar__colors" aria-label="当前颜色">
           <span
             class="pa-status-bar__swatch"
@@ -251,7 +250,6 @@ function focusCanvasForKeys() {
             v-tooltip.top="'背景色'"
           />
         </span>
-        <span class="pa-status-bar__item pa-status-bar__item--mono">{{ document?.meta.foreground ?? '#000' }}</span>
       </div>
     </footer>
 

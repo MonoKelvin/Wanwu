@@ -46,6 +46,14 @@ async function show(event: Event) {
   await placeAt(e.clientX, e.clientY)
 }
 
+async function showBelowAnchorStart(anchor: HTMLElement, gap = 6) {
+  menuOrigin.value = '0% 0%'
+  open.value = true
+  await nextTick()
+  const rect = anchor.getBoundingClientRect()
+  pos.value = clampPosition(rect.left, rect.bottom + gap)
+}
+
 /** 锚点按钮下方、右对齐（图片区右上角菜单） */
 async function showBelowAnchor(anchor: HTMLElement, gap = 6) {
   menuOrigin.value = '100% 0%'
@@ -117,7 +125,7 @@ watch(open, (v) => {
 
 onUnmounted(unbindGlobal)
 
-defineExpose({ show, hide, placeAt, showBelowAnchor, showBelowAnchorLeft, toggleAnchor, containsTarget })
+defineExpose({ show, hide, placeAt, showBelowAnchor, showBelowAnchorStart, showBelowAnchorLeft, toggleAnchor, containsTarget })
 </script>
 
 <template>

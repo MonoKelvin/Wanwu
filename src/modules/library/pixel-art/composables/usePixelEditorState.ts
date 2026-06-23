@@ -1,4 +1,4 @@
-import { ref, shallowRef, onMounted, onBeforeUnmount, onActivated, watch, computed, provide, type Ref, type InjectionKey, type ShallowRef } from 'vue'
+import { ref, shallowRef, onMounted, onBeforeUnmount, onActivated, watch, computed, provide, nextTick, type Ref, type InjectionKey, type ShallowRef } from 'vue'
 import { useRoute, useRouter, type NavigationGuardReturn } from 'vue-router'
 import { pushShellRoute } from '@app/composables/shellNavigation'
 import type { TransactionManager } from '@app/transaction'
@@ -13,6 +13,7 @@ import { createPixelTransactionManager, recordPixelStroke } from '@modules/libra
 import { usePixelSaveFlow } from '@modules/library/pixel-art/composables/usePixelSaveFlow'
 import { usePixelShortcuts } from '@modules/library/pixel-art/composables/usePixelShortcuts'
 import { createPixelCanvasCommands } from '@modules/library/pixel-art/app/command/pixelCanvasCommands'
+import { getPixelUnitSize, zoomPercentFromViewport } from '@modules/library/pixel-art/lib/pixelCanvasPresets'
 import { usePixelArtStore } from '@modules/library/pixel-art/services/pixelArtStore'
 
 const LAYOUT_STORAGE_KEY = 'wanwu.pixel-art.editorLayout'
@@ -177,6 +178,12 @@ let editorShellMountCount = 0
 let sharedRemoveLeaveGuard: (() => void) | null = null
 let sharedRemoveBeforeUnload: (() => void) | null = null
 
+function waitForLayout(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  })
+}
+
 export function usePixelEditorState() {
   const route = useRoute()
   const router = useRouter()
@@ -201,9 +208,33 @@ export function usePixelEditorState() {
   }
   let resizeObserver: ResizeObserver | null = null
   let resizeRaf = 0
+  let bootstrapSeq = 0
   let undoUnsubscribe: (() => void) | null = null
   let refreshUndoState: () => void = () => {}
   let reloadFromDiskRef: () => Promise<void> = async () => {}
+
+  async function waitForCanvasWrap(): Promise<HTMLElement> {
+    for (let attempt = 0; attempt < 12; attempt += 1) {
+      await nextTick()
+      await waitForLayout()
+      const el = canvasWrapRef.value
+      if (el && el.clientWidth > 0 && el.clientHeight > 0) return el
+    }
+    const el = canvasWrapRef.value
+    if (el) return el
+    throw new Error('画布容器未就绪')
+  }
+
+  async function refreshEditorLayout(): Promise<void> {
+    await waitForLayout()
+    port.value.resize()
+    const el = canvasWrapRef.value
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    if (rect.width <= 0 || rect.height <= 0) return
+    await canvas.zoomToFit(rect.width, rect.height)
+    refreshViewportZoom()
+  }
 
   const { layout, toggleSidePanel, toggleToolStrip, setSidePanelWidth } = usePixelEditorLayout()
 
@@ -236,6 +267,13 @@ export function usePixelEditorState() {
   const toolOptions = computed(() => {
     uiRevision.value
     return port.value.getTool().options
+  })
+  const brushPreviewScale = computed(() => {
+    uiRevision.value
+    const doc = sessionRef.value?.content
+    if (!doc) return 1
+    const unit = getPixelUnitSize(doc.meta)
+    return unit * port.value.getViewport().zoom
   })
   const isDirty = computed(() => !!sessionRef.value?.dirty)
   const isSaved = computed(() => Boolean(sessionRef.value?.fileId) && !sessionRef.value?.dirty)
@@ -329,7 +367,7 @@ export function usePixelEditorState() {
   }
 
   function resolvedTheme(): 'light' | 'dark' {
-    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+    return globalThis.document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
   }
 
   const commandSetup = setupPixelEditorCommands({
@@ -428,7 +466,9 @@ export function usePixelEditorState() {
   }
 
   function refreshViewportZoom() {
-    viewportZoomPercent.value = Math.round(port.value.getViewport().zoom * 100)
+    const meta = sessionRef.value?.content?.meta
+    const unit = meta ? getPixelUnitSize(meta) : 1
+    viewportZoomPercent.value = zoomPercentFromViewport(port.value.getViewport().zoom, unit)
   }
 
   async function swapColors() {
@@ -450,6 +490,7 @@ export function usePixelEditorState() {
   }
 
   async function bootstrap() {
+    const seq = ++bootstrapSeq
     loadError.value = null
     editorReady.value = false
     spacePanActive.value = false
@@ -491,22 +532,24 @@ export function usePixelEditorState() {
       } else {
         await session.openFromFile(fileId.value)
       }
+      if (seq !== bootstrapSeq) return
+
+      bindEditorRuntime(session, engine)
+      engine.setTool(activeTool.value)
+      hasSelection.value = !!engine.getSelection()
+      bumpUiRevision()
+
+      const wrap = await waitForCanvasWrap()
+      if (seq !== bootstrapSeq) return
+      mountEditorCanvas(engine, wrap, resolvedTheme())
+      attachCanvasResizeObserver()
+      refreshUndoState()
+      refreshViewportZoom()
+      editorReady.value = true
     } catch (err) {
+      if (seq !== bootstrapSeq) return
       loadError.value = err instanceof Error ? err.message : String(err)
-      return
     }
-
-    bindEditorRuntime(session, engine)
-    engine.setTool(activeTool.value)
-    hasSelection.value = !!engine.getSelection()
-    bumpUiRevision()
-
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
-    mountEditorCanvas(engine, canvasWrapRef, resolvedTheme())
-    attachCanvasResizeObserver()
-    refreshUndoState()
-    refreshViewportZoom()
-    editorReady.value = true
   }
 
   function selectTool(tool: ToolId) {
@@ -550,9 +593,15 @@ export function usePixelEditorState() {
         sharedRemoveBeforeUnload = null
       }
     }
+
+    void bootstrap()
   })
 
   onActivated(() => {
+    if (editorReady.value) {
+      void refreshEditorLayout()
+      return
+    }
     void bootstrap()
   })
   onBeforeUnmount(() => {
@@ -578,12 +627,13 @@ export function usePixelEditorState() {
   watch(
     () => `${fileId.value}:${String(route.query.w ?? '')}:${String(route.query.h ?? '')}`,
     (next, prev) => {
-      if (next && next !== prev) void bootstrap()
+      if (!prev || next === prev) return
+      void bootstrap()
     }
   )
 
   watch(
-    () => document.documentElement.dataset.theme,
+    () => globalThis.document.documentElement.dataset.theme,
     () => port.value.setTheme(resolvedTheme())
   )
 
@@ -608,6 +658,7 @@ export function usePixelEditorState() {
     docTitle,
     document,
     toolOptions,
+    brushPreviewScale,
     isDirty,
     isSaved,
     hasSelection,
@@ -651,7 +702,7 @@ export function usePixelEditorState() {
   }
 }
 
-export function createDraftRoute(width = 32, height = 32) {
+export function createDraftRoute(width = 256, height = 256) {
   return {
     name: 'pixel-art-editor' as const,
     params: { fileId: `draft-${crypto.randomUUID()}` },
@@ -659,19 +710,17 @@ export function createDraftRoute(width = 32, height = 32) {
   }
 }
 
-export function openBlankEditor(router: ReturnType<typeof useRouter>, width = 32, height = 32) {
+export function openBlankEditor(router: ReturnType<typeof useRouter>, width = 256, height = 256) {
   return pushShellRoute(router, createDraftRoute(width, height))
 }
 
-function mountEditorCanvas(
-  engine: PixelCanvasEngine,
-  canvasWrapRef: Ref<HTMLElement | null>,
-  theme: 'light' | 'dark'
-): void {
-  const el = canvasWrapRef.value
-  if (!el) return
+function mountEditorCanvas(engine: PixelCanvasEngine, el: HTMLElement, theme: 'light' | 'dark'): void {
   engine.mount(el)
   engine.setTheme(theme)
   const rect = el.getBoundingClientRect()
-  engine.zoomToFit(rect.width, rect.height)
+  if (rect.width > 0 && rect.height > 0) {
+    engine.resetViewportAt100(rect.width, rect.height)
+  } else {
+    engine.applyDefaultZoom()
+  }
 }

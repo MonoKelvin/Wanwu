@@ -12,9 +12,13 @@ export interface WppMetaFile {
   foreground: string
   backgroundColor: string
   palette: string[]
+  /** 显示映射：100% 缩放时 1 画布像素对应的屏幕像素数 */
+  display?: { pixelUnitSize: number }
   grid: { visible: boolean; size: number }
   checkerboard: { visible: boolean }
 }
+
+export type PixelCanvasResizeAnchor = 'top-left' | 'center'
 
 export interface PixelLayerMeta {
   id: string

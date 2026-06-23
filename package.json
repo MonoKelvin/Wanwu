@@ -17,7 +17,6 @@
         "pack": "node scripts/run.mjs pack",
         "logo:ico": "node scripts/generate-app-ico.mjs",
         "check:mechanisms": "node scripts/check-mechanism-boundaries.mjs",
-        "check:hotplug": "node scripts/check-module-hotplug.mjs",
         "typecheck": "vue-tsc --noEmit -p tsconfig.web.json",
         "postinstall": "node scripts/run.mjs sqlite electron",
         "rebuild": "node scripts/run.mjs sqlite rebuild --force"

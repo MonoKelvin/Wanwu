@@ -102,7 +102,7 @@ function onRowClick(file: PixelFileMeta) {
         >
           <span class="pa-recent-table__cell pa-recent-table__cell--name">
             <span class="pa-recent-table__icon">
-              <WwIcon :name="isRecycle ? 'box' : 'grid-3x3'" size="sm" />
+              <WwIcon :name="isRecycle ? 'box' : 'image'" size="sm" />
             </span>
             <span class="pa-recent-table__title">
               <span class="pa-recent-table__name">{{ pixelTitleBase(file.title) }}</span>

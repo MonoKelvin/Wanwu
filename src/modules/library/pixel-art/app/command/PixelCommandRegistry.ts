@@ -29,6 +29,9 @@ export const PixelCmd = {
     SetGrid: 'Pixel.Document.SetGrid',
     SetCheckerboard: 'Pixel.Document.SetCheckerboard',
     SetCanvasBackground: 'Pixel.Document.SetCanvasBackground',
+    SetPixelUnitSize: 'Pixel.Document.SetPixelUnitSize',
+    SetGridSubdiv: 'Pixel.Document.SetGridSubdiv',
+    ResizeCanvas: 'Pixel.Document.ResizeCanvas',
     ApplyPalettePreset: 'Pixel.Document.ApplyPalettePreset',
     SelectAll: 'Pixel.Document.SelectAll',
     MoveSelection: 'Pixel.Document.MoveSelection',
@@ -42,7 +45,11 @@ export const PixelCmd = {
     SetVisible: 'Pixel.Layer.SetVisible',
     SetLocked: 'Pixel.Layer.SetLocked',
     SetActive: 'Pixel.Layer.SetActive',
-    MergeVisible: 'Pixel.Layer.MergeVisible'
+    MergeVisible: 'Pixel.Layer.MergeVisible',
+    Duplicate: 'Pixel.Layer.Duplicate',
+    Merge: 'Pixel.Layer.Merge',
+    Copy: 'Pixel.Layer.Copy',
+    Paste: 'Pixel.Layer.Paste'
   },
   Catalog: {
     File: {

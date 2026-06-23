@@ -1,6 +1,7 @@
 import type { IPixelEditorPort, PixelPointerHandlers } from '@modules/library/pixel-art/services/IPixelEditorPort'
 import type {
   LayerPixelPatch,
+  PixelCanvasResizeAnchor,
   PixelDocument,
   PixelViewport,
   SvgExportMode,
@@ -16,13 +17,7 @@ import { compositeDocument, pixelsToImageData } from '@modules/library/pixel-art
 import { floodFillScanline } from '@modules/library/pixel-art/lib/floodFill'
 import { applyLinearGradient, pickColorFromPixels } from '@modules/library/pixel-art/lib/gradientFill'
 import { normalizeSelection } from '@modules/library/pixel-art/lib/selection'
-import {
-  clampSelection,
-  clearRegion,
-  copyRegion,
-  pasteRegion,
-  type PixelSelection
-} from '@modules/library/pixel-art/lib/selection'
+import { selectionContains } from '@modules/library/pixel-art/lib/selection'
 import {
   ellipsePoints,
   filledEllipsePoints,
@@ -35,7 +30,8 @@ import {
   exportDocumentPng,
   exportDocumentSvg
 } from '@modules/library/pixel-art/lib/exportImage'
-import { PIXEL_MAX_LAYERS, PIXEL_ZOOM_LEVELS } from '@modules/library/pixel-art/domain/meta'
+import { PIXEL_MAX_HEIGHT, PIXEL_MAX_LAYERS, PIXEL_MAX_WIDTH, PIXEL_ZOOM_LEVELS } from '@modules/library/pixel-art/domain/meta'
+import { getPixelUnitSize } from '@modules/library/pixel-art/lib/pixelCanvasPresets'
 
 interface UndoEntry {
   layerId: string
@@ -81,6 +77,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   private lastPaintPos: { x: number; y: number } | null = null
   private capturedPointerId: number | null = null
   private panStart = { x: 0, y: 0, panX: 0, panY: 0 }
+  private moveDragLast: { x: number; y: number } | null = null
   private checkerPattern: CanvasPattern | null = null
   private selectionAnimPhase = 0
   private animFrameId: number | null = null
@@ -135,7 +132,16 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.undoStack = []
     this.redoStack = []
     this.selection = null
+    this.applyDefaultZoom()
     this.render()
+  }
+
+  private pixelUnitSize(): number {
+    return this.doc ? getPixelUnitSize(this.doc.meta) : 1
+  }
+
+  applyDefaultZoom(): void {
+    this.viewport.zoom = this.pixelUnitSize()
   }
 
   getDocument(): PixelDocument {
@@ -289,25 +295,67 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   }
 
   zoomIn(): void {
-    const idx = PIXEL_ZOOM_LEVELS.indexOf(this.viewport.zoom as (typeof PIXEL_ZOOM_LEVELS)[number])
-    const next = PIXEL_ZOOM_LEVELS[Math.min(idx + 1, PIXEL_ZOOM_LEVELS.length - 1)] ?? this.viewport.zoom * 2
-    this.viewport.zoom = next
-    this.bumpViewport()
+    this.zoomAtScreen(this.root ? this.root.clientWidth / 2 : 0, this.root ? this.root.clientHeight / 2 : 0, 1)
   }
 
   zoomOut(): void {
-    const idx = PIXEL_ZOOM_LEVELS.indexOf(this.viewport.zoom as (typeof PIXEL_ZOOM_LEVELS)[number])
-    const prev = PIXEL_ZOOM_LEVELS[Math.max(idx - 1, 0)] ?? Math.max(1, this.viewport.zoom / 2)
-    this.viewport.zoom = prev
+    this.zoomAtScreen(this.root ? this.root.clientWidth / 2 : 0, this.root ? this.root.clientHeight / 2 : 0, -1)
+  }
+
+  zoomInAt(clientX: number, clientY: number): void {
+    this.zoomAtScreen(clientX, clientY, 1)
+  }
+
+  zoomOutAt(clientX: number, clientY: number): void {
+    this.zoomAtScreen(clientX, clientY, -1)
+  }
+
+  private zoomAtScreen(clientX: number, clientY: number, direction: 1 | -1): void {
+    if (!this.canvas) {
+      if (direction > 0) this.stepZoomLevel(1)
+      else this.stepZoomLevel(-1)
+      return
+    }
+    const rect = this.canvas.getBoundingClientRect()
+    const cx = clientX - rect.left
+    const cy = clientY - rect.top
+    const oldZoom = this.viewport.zoom
+    const newZoom = this.nextZoomLevel(oldZoom, direction)
+    if (newZoom === oldZoom) return
+    const wx = (cx - this.viewport.panX) / oldZoom
+    const wy = (cy - this.viewport.panY) / oldZoom
+    this.viewport.zoom = newZoom
+    this.viewport.panX = cx - wx * newZoom
+    this.viewport.panY = cy - wy * newZoom
     this.bumpViewport()
+  }
+
+  private stepZoomLevel(direction: 1 | -1): void {
+    const oldZoom = this.viewport.zoom
+    const newZoom = this.nextZoomLevel(oldZoom, direction)
+    if (newZoom === oldZoom) return
+    this.viewport.zoom = newZoom
+    this.bumpViewport()
+  }
+
+  private nextZoomLevel(current: number, direction: 1 | -1): number {
+    const unit = this.pixelUnitSize()
+    const levels = PIXEL_ZOOM_LEVELS.map((level) => level * unit)
+    const idx = levels.findIndex((z) => z >= current - 0.001)
+    const baseIdx = idx < 0 ? levels.length - 1 : idx
+    if (direction > 0) {
+      return levels[Math.min(baseIdx + 1, levels.length - 1)] ?? current * 2
+    }
+    return levels[Math.max(baseIdx - 1, 0)] ?? Math.max(unit, current / 2)
   }
 
   zoomToFit(containerWidth: number, containerHeight: number): void {
     if (!this.doc) return
     const pad = 32
+    const unit = this.pixelUnitSize()
     const zx = Math.floor((containerWidth - pad) / this.doc.meta.width)
     const zy = Math.floor((containerHeight - pad) / this.doc.meta.height)
-    const zoom = Math.max(1, Math.min(zx, zy, 32))
+    const zoom = Math.max(unit, Math.min(zx, zy, 32 * unit))
     this.viewport.zoom = zoom
     this.viewport.panX = Math.floor((containerWidth - this.doc.meta.width * zoom) / 2)
     this.viewport.panY = Math.floor((containerHeight - this.doc.meta.height * zoom) / 2)
@@ -315,8 +363,93 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   }
 
   zoomReset(): void {
-    this.viewport.zoom = 1
+    this.viewport.zoom = this.pixelUnitSize()
     this.bumpViewport()
+  }
+
+  /** 在容器内居中当前缩放下的画布 */
+  centerInContainer(containerWidth: number, containerHeight: number): void {
+    if (!this.doc) return
+    const zoom = this.viewport.zoom
+    this.viewport.panX = Math.floor((containerWidth - this.doc.meta.width * zoom) / 2)
+    this.viewport.panY = Math.floor((containerHeight - this.doc.meta.height * zoom) / 2)
+    this.bumpViewport()
+  }
+
+  /** 100% 缩放并居中 */
+  resetViewportAt100(containerWidth: number, containerHeight: number): void {
+    this.applyDefaultZoom()
+    this.centerInContainer(containerWidth, containerHeight)
+  }
+
+  setPixelUnitSize(size: number): void {
+    if (!this.doc) return
+    const oldUnit = this.pixelUnitSize()
+    const next = Math.max(1, Math.min(64, Math.floor(size)))
+    if (!this.doc.meta.display) this.doc.meta.display = { pixelUnitSize: next }
+    else this.doc.meta.display.pixelUnitSize = next
+    if (oldUnit > 0 && oldUnit !== next) {
+      this.viewport.zoom = (this.viewport.zoom / oldUnit) * next
+      this.bumpViewport()
+    }
+    this.handlers.onDocumentChange?.()
+  }
+
+  setGridSubdiv(size: number): void {
+    if (!this.doc) return
+    this.doc.meta.grid.size = Math.max(1, Math.min(16, Math.floor(size)))
+    this.handlers.onDocumentChange?.()
+    this.render()
+  }
+
+  resizeDocument(width: number, height: number, anchor: PixelCanvasResizeAnchor = 'center'): boolean {
+    if (!this.doc) return false
+    const newW = Math.max(1, Math.min(PIXEL_MAX_WIDTH, Math.floor(width)))
+    const newH = Math.max(1, Math.min(PIXEL_MAX_HEIGHT, Math.floor(height)))
+    const oldW = this.doc.meta.width
+    const oldH = this.doc.meta.height
+    if (newW === oldW && newH === oldH) return false
+
+    const offsetX = anchor === 'center' ? Math.floor((newW - oldW) / 2) : 0
+    const offsetY = anchor === 'center' ? Math.floor((newH - oldH) / 2) : 0
+    const nextPixels: Record<string, Uint8ClampedArray> = {}
+
+    for (const [layerId, pixels] of Object.entries(this.doc.layerPixels)) {
+      const buf = new Uint8ClampedArray(newW * newH * 4)
+      for (let y = 0; y < oldH; y++) {
+        for (let x = 0; x < oldW; x++) {
+          const dstX = x + offsetX
+          const dstY = y + offsetY
+          if (dstX < 0 || dstY < 0 || dstX >= newW || dstY >= newH) continue
+          const srcI = (y * oldW + x) * 4
+          const dstI = (dstY * newW + dstX) * 4
+          buf[dstI] = pixels[srcI]!
+          buf[dstI + 1] = pixels[srcI + 1]!
+          buf[dstI + 2] = pixels[srcI + 2]!
+          buf[dstI + 3] = pixels[srcI + 3]!
+        }
+      }
+      nextPixels[layerId] = buf
+    }
+
+    this.doc.meta.width = newW
+    this.doc.meta.height = newH
+    this.doc.layerPixels = nextPixels
+    if (this.selection) {
+      this.selection = clampSelection(
+        {
+          x: this.selection.x + offsetX,
+          y: this.selection.y + offsetY,
+          width: this.selection.width,
+          height: this.selection.height
+        },
+        newW,
+        newH
+      )
+    }
+    this.handlers.onDocumentChange?.()
+    this.render()
+    return true
   }
 
   setLayerVisible(layerId: string, visible: boolean): void {
@@ -373,6 +506,52 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.doc.layerPixels[mergedId] = mergedPixels
     for (const id of removeIds) delete this.doc.layerPixels[id]
     this.doc.meta.activeLayerId = mergedId
+    this.handlers.onDocumentChange?.()
+    this.render()
+    return true
+  }
+
+  mergeLayers(layerIds: string[]): boolean {
+    if (!this.doc || layerIds.length < 2) return false
+    const frame = getActiveFrame(this.doc)
+    const order = frame.layerOrder
+    const sorted = [...new Set(layerIds)]
+      .filter((id) => order.includes(id))
+      .sort((a, b) => order.indexOf(a) - order.indexOf(b))
+    if (sorted.length < 2) return false
+
+    const targetId = sorted[0]!
+    const targetPixels = this.doc.layerPixels[targetId]
+    if (!targetPixels) return false
+
+    const merged = new Uint8ClampedArray(targetPixels)
+    for (let i = 1; i < sorted.length; i++) {
+      const src = this.doc.layerPixels[sorted[i]!]
+      const layer = frame.layers.find((l) => l.id === sorted[i])
+      if (!src || !layer?.visible) continue
+      for (let p = 0; p < merged.length; p += 4) {
+        const a = src[p + 3]! / 255
+        if (a <= 0) continue
+        if (a >= 1) {
+          merged[p] = src[p]!
+          merged[p + 1] = src[p + 1]!
+          merged[p + 2] = src[p + 2]!
+          merged[p + 3] = src[p + 3]!
+        } else {
+          merged[p] = Math.round(src[p]! * a + merged[p]! * (1 - a))
+          merged[p + 1] = Math.round(src[p + 1]! * a + merged[p + 1]! * (1 - a))
+          merged[p + 2] = Math.round(src[p + 2]! * a + merged[p + 2]! * (1 - a))
+          merged[p + 3] = Math.min(255, Math.round(src[p + 3]! + merged[p + 3]! * (1 - a)))
+        }
+      }
+    }
+
+    this.doc.layerPixels[targetId] = merged
+    const removeIds = new Set(sorted.slice(1))
+    frame.layers = frame.layers.filter((l) => !removeIds.has(l.id))
+    frame.layerOrder = frame.layerOrder.filter((id) => !removeIds.has(id))
+    for (const id of removeIds) delete this.doc.layerPixels[id]
+    this.doc.meta.activeLayerId = targetId
     this.handlers.onDocumentChange?.()
     this.render()
     return true
@@ -549,19 +728,29 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   }
 
   private drawGrid(w: number, h: number): void {
-    if (!this.ctx) return
-    this.ctx.strokeStyle = this.theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'
+    if (!this.ctx || !this.doc) return
+    const subdiv = Math.max(1, this.doc.meta.grid.size)
+    const linesX = w * subdiv
+    const linesY = h * subdiv
+    const major = this.theme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'
+    const minor = this.theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'
     this.ctx.lineWidth = 1 / this.viewport.zoom
-    this.ctx.beginPath()
-    for (let x = 0; x <= w; x++) {
+    for (let i = 0; i <= linesX; i++) {
+      const x = i / subdiv
+      this.ctx.strokeStyle = subdiv > 1 && i % subdiv !== 0 ? minor : major
+      this.ctx.beginPath()
       this.ctx.moveTo(x, 0)
       this.ctx.lineTo(x, h)
+      this.ctx.stroke()
     }
-    for (let y = 0; y <= h; y++) {
+    for (let j = 0; j <= linesY; j++) {
+      const y = j / subdiv
+      this.ctx.strokeStyle = subdiv > 1 && j % subdiv !== 0 ? minor : major
+      this.ctx.beginPath()
       this.ctx.moveTo(0, y)
       this.ctx.lineTo(w, y)
+      this.ctx.stroke()
     }
-    this.ctx.stroke()
   }
 
   private drawSelection(sel: PixelSelection): void {
@@ -667,6 +856,14 @@ export class PixelCanvasEngine implements IPixelEditorPort {
       return
     }
 
+    if (this.toolId === 'move') {
+      if (this.selection && selectionContains(this.selection, p.x, p.y)) {
+        this.moveDragLast = p
+        this.isDrawing = true
+      }
+      return
+    }
+
     if (this.toolId === 'zoom') {
       e.shiftKey ? this.zoomOut() : this.zoomIn()
       return
@@ -739,7 +936,17 @@ export class PixelCanvasEngine implements IPixelEditorPort {
       return
     }
 
-    if (!this.isDrawing || !this.doc || !this.shapeStart) return
+    if (!this.isDrawing || !this.doc || !this.shapeStart) {
+      if (this.toolId === 'move' && this.moveDragLast && p && this.selection) {
+        const dx = p.x - this.moveDragLast.x
+        const dy = p.y - this.moveDragLast.y
+        if (dx !== 0 || dy !== 0) {
+          this.moveSelection(dx, dy)
+          this.moveDragLast = p
+        }
+      }
+      return
+    }
 
     const layerMeta = getActiveLayerMeta(this.doc)
     if (!layerMeta?.visible || layerMeta.locked) return
@@ -788,6 +995,12 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     if (this.panning) {
       this.panning = false
       this.altPanPending = false
+      return
+    }
+
+    if (this.toolId === 'move' && this.moveDragLast) {
+      this.moveDragLast = null
+      this.isDrawing = false
       return
     }
 
@@ -859,8 +1072,8 @@ export class PixelCanvasEngine implements IPixelEditorPort {
 
   private onWheel(e: WheelEvent): void {
     e.preventDefault()
-    if (e.deltaY < 0) this.zoomIn()
-    else this.zoomOut()
+    if (e.deltaY < 0) this.zoomInAt(e.clientX, e.clientY)
+    else this.zoomOutAt(e.clientX, e.clientY)
   }
 
   private paintAt(layer: Uint8ClampedArray, cx: number, cy: number): void {
@@ -965,9 +1178,71 @@ export class PixelCanvasEngine implements IPixelEditorPort {
       locked: false,
       opacity: 1
     }
-    frame.layers.push(layer)
-    frame.layerOrder.push(id)
+    const activeId = this.doc.meta.activeLayerId
+    const order = [...frame.layerOrder]
+    const activeIdx = order.indexOf(activeId)
+    const insertAt = activeIdx >= 0 ? activeIdx + 1 : order.length
+    order.splice(insertAt, 0, id)
+    frame.layerOrder = order
+    frame.layers.splice(insertAt, 0, layer)
     this.doc.layerPixels[id] = new Uint8ClampedArray(width * height * 4)
+    this.doc.meta.activeLayerId = id
+    this.handlers.onDocumentChange?.()
+    this.render()
+    return id
+  }
+
+  duplicateLayer(layerId: string): string | null {
+    if (!this.doc) return null
+    const frame = getActiveFrame(this.doc)
+    if (frame.layers.length >= PIXEL_MAX_LAYERS) return null
+    const source = frame.layers.find((l) => l.id === layerId)
+    const pixels = this.doc.layerPixels[layerId]
+    if (!source || !pixels) return null
+
+    const id = `layer-${crypto.randomUUID()}`
+    const layer = {
+      id,
+      name: `${source.name} 副本`,
+      visible: source.visible,
+      locked: false,
+      opacity: source.opacity
+    }
+    const order = [...frame.layerOrder]
+    const idx = order.indexOf(layerId)
+    const insertAt = idx >= 0 ? idx + 1 : order.length
+    order.splice(insertAt, 0, id)
+    frame.layerOrder = order
+    frame.layers.splice(insertAt, 0, layer)
+    this.doc.layerPixels[id] = new Uint8ClampedArray(pixels)
+    this.doc.meta.activeLayerId = id
+    this.handlers.onDocumentChange?.()
+    this.render()
+    return id
+  }
+
+  pasteLayer(data: {
+    meta: Omit<import('@modules/library/pixel-art/domain/types').PixelLayerMeta, 'id'>
+    pixels: Uint8ClampedArray
+    width: number
+    height: number
+  }): string | null {
+    if (!this.doc) return null
+    const { width, height } = this.doc.meta
+    if (data.width !== width || data.height !== height) return null
+    const frame = getActiveFrame(this.doc)
+    if (frame.layers.length >= PIXEL_MAX_LAYERS) return null
+
+    const id = `layer-${crypto.randomUUID()}`
+    const layer = { ...data.meta, id, locked: false }
+    const activeId = this.doc.meta.activeLayerId
+    const order = [...frame.layerOrder]
+    const activeIdx = order.indexOf(activeId)
+    const insertAt = activeIdx >= 0 ? activeIdx + 1 : order.length
+    order.splice(insertAt, 0, id)
+    frame.layerOrder = order
+    frame.layers.splice(insertAt, 0, layer)
+    this.doc.layerPixels[id] = new Uint8ClampedArray(data.pixels)
     this.doc.meta.activeLayerId = id
     this.handlers.onDocumentChange?.()
     this.render()

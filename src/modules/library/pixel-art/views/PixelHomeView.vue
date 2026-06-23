@@ -15,7 +15,12 @@ import PixelHomeSearch from '@modules/library/pixel-art/components/PixelHomeSear
 import PixelSizePresetCard from '@modules/library/pixel-art/components/PixelSizePresetCard.vue'
 import PixelImportImageDialog from '@modules/library/pixel-art/components/PixelImportImageDialog.vue'
 import { usePixelArtStore } from '@modules/library/pixel-art/services/pixelArtStore'
-import { PIXEL_MAX_HEIGHT, PIXEL_MAX_WIDTH, PIXEL_SIZE_PRESETS } from '@modules/library/pixel-art/domain/meta'
+import {
+  PIXEL_TEMPLATE_CATEGORY_LABELS,
+  getTemplatesByCategory,
+  type PixelTemplateCategory
+} from '@modules/library/pixel-art/lib/pixelDisplayMapping'
+import { PIXEL_MAX_HEIGHT, PIXEL_MAX_WIDTH } from '@modules/library/pixel-art/domain/meta'
 import { openBlankEditor } from '@modules/library/pixel-art/composables/usePixelEditorState'
 import { usePixelCatalogCommands } from '@modules/library/pixel-art/composables/usePixelCatalogCommands'
 import { usePixelImageImportFlow } from '@modules/library/pixel-art/composables/usePixelImageImportFlow'
@@ -104,13 +109,15 @@ onBeforeUnmount(() => {
   searchGen++
 })
 
-function newBlank(size: number) {
-  void openBlankEditor(router, size, size)
+const templateCategories: PixelTemplateCategory[] = ['square', 'desktop', 'mobile', 'web']
+
+function newBlank(width: number, height: number) {
+  void openBlankEditor(router, width, height)
 }
 
 function newCustomSize() {
-  const w = Number(prompt('画布宽度（像素）', '64'))
-  const h = Number(prompt('画布高度（像素）', '64'))
+  const w = Number(prompt('画布宽度（像素）', '256'))
+  const h = Number(prompt('画布高度（像素）', '256'))
   if (!Number.isFinite(w) || !Number.isFinite(h)) return
   const width = Math.max(1, Math.min(PIXEL_MAX_WIDTH, Math.floor(w)))
   const height = Math.max(1, Math.min(PIXEL_MAX_HEIGHT, Math.floor(h)))
@@ -192,21 +199,19 @@ async function commitRename() {
           </div>
         </section>
 
-        <section class="pa-block">
-          <h3 class="pa-section-label">新建画布</h3>
+        <section v-for="cat in templateCategories" :key="cat" class="pa-block">
+          <h3 class="pa-section-label">{{ PIXEL_TEMPLATE_CATEGORY_LABELS[cat] }}</h3>
           <div class="pa-type-grid">
             <PixelSizePresetCard
-              v-for="size in PIXEL_SIZE_PRESETS"
-              :key="size"
-              :size="size"
-              :label="`${size}×${size}`"
-              hint="像素"
-              @click="newBlank(size)"
+              v-for="tpl in getTemplatesByCategory(cat)"
+              :key="tpl.id"
+              :width="tpl.width"
+              :height="tpl.height"
+              @click="newBlank(tpl.width, tpl.height)"
             />
             <PixelSizePresetCard
-              size="custom"
-              label="自定义"
-              hint="任意尺寸"
+              v-if="cat === 'square'"
+              custom
               @click="newCustomSize"
             />
           </div>

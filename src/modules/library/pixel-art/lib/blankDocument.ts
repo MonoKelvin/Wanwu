@@ -1,5 +1,6 @@
 import { DEFAULT_FRAME_ID } from '@modules/library/pixel-art/domain/meta'
 import type { PixelDocument, PixelLayerMeta } from '@modules/library/pixel-art/domain/types'
+import { getPixelCanvasPreset, normalizePixelMetaDisplay } from '@modules/library/pixel-art/lib/pixelCanvasPresets'
 
 function newLayerId(): string {
   return `layer-${crypto.randomUUID()}`
@@ -14,6 +15,7 @@ export function createBlankPixelDocument(
   height = 32,
   title = '未命名像素画'
 ): PixelDocument {
+  const preset = getPixelCanvasPreset(width, height)
   const layerId = newLayerId()
   const layer: PixelLayerMeta = {
     id: layerId,
@@ -47,8 +49,9 @@ export function createBlankPixelDocument(
         '#F38181',
         '#AA96DA'
       ],
-      grid: { visible: true, size: 1 },
-      checkerboard: { visible: true }
+      display: { pixelUnitSize: preset.pixelUnitSize },
+      grid: { visible: preset.gridVisible, size: preset.gridSubdiv },
+      checkerboard: { visible: preset.checkerboardVisible }
     },
     frames: [
       {
@@ -73,7 +76,10 @@ export function clonePixelDocument(doc: PixelDocument): PixelDocument {
   }
   return {
     ...doc,
-    meta: { ...doc.meta, palette: [...doc.meta.palette] },
+    meta: normalizePixelMetaDisplay({
+      ...doc.meta,
+      palette: [...doc.meta.palette]
+    }),
     frames: doc.frames.map((f) => ({
       ...f,
       layerOrder: [...f.layerOrder],

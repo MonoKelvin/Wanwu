@@ -25,6 +25,8 @@ export interface IPixelEditorPort {
   setActiveLayer(layerId: string): void
   getActiveLayerId(): string
   addLayer(name?: string): string
+  duplicateLayer(layerId: string): string | null
+  pasteLayer(data: { meta: Omit<import('@modules/library/pixel-art/domain/types').PixelLayerMeta, 'id'>; pixels: Uint8ClampedArray; width: number; height: number }): string | null
   deleteLayer(layerId: string): void
   reorderLayer(layerId: string, newIndex: number): void
   setTool(tool: ToolId, options?: Partial<ToolOptions>): void
@@ -48,12 +50,21 @@ export interface IPixelEditorPort {
   exportSvg(mode: SvgExportMode, strategy?: SvgVectorStrategy): Promise<Blob>
   zoomIn(): void
   zoomOut(): void
+  zoomInAt(clientX: number, clientY: number): void
+  zoomOutAt(clientX: number, clientY: number): void
   zoomToFit(containerWidth: number, containerHeight: number): void
   zoomReset(): void
+  applyDefaultZoom(): void
+  centerInContainer(containerWidth: number, containerHeight: number): void
+  resetViewportAt100(containerWidth: number, containerHeight: number): void
+  setPixelUnitSize(size: number): void
+  setGridSubdiv(size: number): void
+  resizeDocument(width: number, height: number, anchor?: import('@modules/library/pixel-art/domain/types').PixelCanvasResizeAnchor): boolean
   setLayerVisible(layerId: string, visible: boolean): void
   setLayerLocked(layerId: string, locked: boolean): void
   renameLayer(layerId: string, name: string): void
   mergeVisibleLayers(): boolean
+  mergeLayers(layerIds: string[]): boolean
   getSelection(): import('@modules/library/pixel-art/lib/selection').PixelSelection | null
   selectAll(): void
   moveSelection(dx: number, dy: number): boolean

@@ -48,8 +48,8 @@ export const PIXEL_SHORTCUT_SECTIONS: WwShortcutSection[] = [
       { keys: 'O', action: '椭圆' },
       { keys: 'I', action: '吸管' },
       { keys: 'M', action: '矩形选区' },
+      { keys: 'V', action: '偏移选区' },
       { keys: 'H', action: '抓手' },
-      { keys: 'Z', action: '缩放工具' },
       { keys: '[ / ]', action: '画笔大小 − / +' },
       { keys: 'X', action: '交换前景/背景色' },
       { keys: '空格（按住）', action: '临时平移画布' }

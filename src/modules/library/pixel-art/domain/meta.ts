@@ -48,10 +48,9 @@ export function isPixelVirtualHomeFolder(id: string): boolean {
   return id === PA_HOME
 }
 
-export const PIXEL_DEFAULT_SIZE = { width: 32, height: 32 } as const
-export const PIXEL_SIZE_PRESETS = [16, 32, 64, 128] as const
-export const PIXEL_MAX_WIDTH = 512
-export const PIXEL_MAX_HEIGHT = 512
+export const PIXEL_DEFAULT_SIZE = { width: 256, height: 256 } as const
+export const PIXEL_MAX_WIDTH = 2048
+export const PIXEL_MAX_HEIGHT = 2048
 export const PIXEL_MAX_LAYERS = 32
 export const PIXEL_AUTOSAVE_DEBOUNCE_MS = 2000
 export const PIXEL_MAX_UNDO_STACK = 100

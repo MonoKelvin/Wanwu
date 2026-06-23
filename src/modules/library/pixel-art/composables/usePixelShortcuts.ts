@@ -12,8 +12,8 @@ const TOOL_KEYS: Record<string, ToolId> = {
   o: 'ellipse',
   i: 'eyedropper',
   m: 'marquee',
-  h: 'hand',
-  z: 'zoom'
+  v: 'move',
+  h: 'hand'
 }
 
 function isEditableTarget(target: EventTarget | null): boolean {
@@ -85,7 +85,7 @@ export function usePixelShortcuts(options: {
     }
     if (mod && e.key === '0') {
       e.preventDefault()
-      dispatch(PixelCmd.Document.SetZoom, { zoom: 1 })
+      dispatch(PixelCmd.Document.SetZoom, { action: 'reset' })
       return
     }
     if (mod && e.key === '1') {

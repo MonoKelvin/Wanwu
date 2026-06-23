@@ -17,7 +17,8 @@ import {
   type PixelImportSettings
 } from '@modules/library/pixel-art/lib/pixelImageImport'
 import type { PixelDocument } from '@modules/library/pixel-art/domain/types'
-import { PIXEL_MAX_HEIGHT, PIXEL_MAX_WIDTH, PIXEL_SIZE_PRESETS } from '@modules/library/pixel-art/domain/meta'
+import { getTemplatesByCategory } from '@modules/library/pixel-art/lib/pixelDisplayMapping'
+import { PIXEL_MAX_HEIGHT, PIXEL_MAX_WIDTH } from '@modules/library/pixel-art/domain/meta'
 
 export type PixelImportSource =
   | { kind: 'path'; path: string }
@@ -378,13 +379,13 @@ function handleConfirm() {
           <span class="pa-import-dialog__section-label">输出尺寸</span>
           <div class="pa-import-dialog__preset-row">
             <button
-              v-for="size in PIXEL_SIZE_PRESETS"
-              :key="size"
+              v-for="tpl in getTemplatesByCategory('square')"
+              :key="tpl.id"
               type="button"
               class="pa-import-dialog__preset-btn"
-              @click="setOutputPreset(size)"
+              @click="setOutputPreset(tpl.width)"
             >
-              {{ size }}
+              {{ tpl.width }}
             </button>
           </div>
           <div class="pa-import-dialog__size-row">

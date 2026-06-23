@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Dialog from 'primevue/dialog'
-import WwButton from '@shared/components/WwButton.vue'
+import WwDialogFooterButton from '@shared/components/WwDialogFooterButton.vue'
+import WwGlassDialog from '@shared/components/WwGlassDialog.vue'
 
 const open = defineModel<boolean>('open', { default: false })
 
@@ -12,39 +12,38 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <Dialog
-    v-model:visible="open"
+  <WwGlassDialog
+    :visible="open"
     header="未保存的更改"
-    modal
-    append-to="body"
-    class="ww-glass-dialog w-[min(26rem,92vw)]"
-    :pt="{
-      root: { class: 'ww-glass-dialog-root' },
-      header: { class: 'ww-glass-dialog__header' },
-      content: { class: 'ww-glass-dialog__content' }
-    }"
+    width-class="w-[min(26rem,92vw)]"
+    dim-mask
+    @update:visible="(v) => (open = v)"
   >
     <p class="pa-leave-msg">文档有未保存的更改。离开前可以保存、直接放弃，或留在此页继续编辑。</p>
-    <div class="pa-leave-actions">
-      <WwButton label="留在此页" severity="secondary" text @click="emit('cancel')" />
-      <WwButton label="不保存离开" severity="secondary" @click="emit('discard')" />
-      <WwButton label="保存并离开" @click="emit('save')" />
-    </div>
-  </Dialog>
+    <template #footer>
+      <div class="pa-leave-footer">
+        <WwDialogFooterButton label="留在此页" cancel @click="emit('cancel')" />
+        <WwDialogFooterButton label="不保存离开" @click="emit('discard')" />
+        <WwDialogFooterButton label="保存并离开" @click="emit('save')" />
+      </div>
+    </template>
+  </WwGlassDialog>
 </template>
 
 <style scoped>
 .pa-leave-msg {
-  margin: 0 0 1rem;
+  margin: 0;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: var(--ww-text-muted);
+  color: var(--ww-ink-muted);
 }
 
-.pa-leave-actions {
+.pa-leave-footer {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 0.5rem;
+  width: 100%;
 }
 </style>

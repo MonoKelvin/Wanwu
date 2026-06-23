@@ -4,7 +4,8 @@ defineOptions({ name: 'PixelToolStrip' })
 import WwIconButton from '@shared/components/WwIconButton.vue'
 import type { WwIconName } from '@shared/icons/registry'
 import type { ToolId } from '@modules/library/pixel-art/domain/tools'
-import { TOOL_LABELS } from '@modules/library/pixel-art/domain/tools'
+import { PLACEHOLDER_TOOLS, TOOL_LABELS } from '@modules/library/pixel-art/domain/tools'
+import { useWanwuToast } from '@shared/composables/useWanwuToast'
 
 const props = defineProps<{
   activeTool: ToolId
@@ -14,27 +15,45 @@ const emit = defineEmits<{
   select: [tool: ToolId]
 }>()
 
-const toolGroups: Array<Array<{ id: ToolId; icon: WwIconName }>> = [
+const toast = useWanwuToast()
+
+interface ToolDef {
+  id: ToolId
+  icon: WwIconName
+  disabled?: boolean
+}
+
+const toolGroups: ToolDef[][] = [
   [
     { id: 'pencil', icon: 'pencil' },
-    { id: 'eraser', icon: 'eraser' },
-    { id: 'fill', icon: 'paintbrush' }
+    { id: 'eraser', icon: 'eraser' }
   ],
   [
-    { id: 'line', icon: 'minus' },
+    { id: 'line', icon: 'slash' },
     { id: 'rect', icon: 'square' },
-    { id: 'ellipse', icon: 'disc-3' },
-    { id: 'gradient', icon: 'sliders-horizontal' }
+    { id: 'polygon', icon: 'hexagon', disabled: true },
+    { id: 'ellipse', icon: 'circle' },
+    { id: 'spline', icon: 'spline', disabled: true }
+  ],
+  [
+    { id: 'fill', icon: 'paint-bucket' },
+    { id: 'gradient', icon: 'blend' },
+    { id: 'eyedropper', icon: 'pipette' }
   ],
   [
     { id: 'marquee', icon: 'square-arrow-up-left' },
-    { id: 'eyedropper', icon: 'palette' }
+    { id: 'move', icon: 'move' }
   ],
-  [
-    { id: 'hand', icon: 'hand' },
-    { id: 'zoom', icon: 'maximize' }
-  ]
+  [{ id: 'hand', icon: 'hand' }]
 ]
+
+function pickTool(tool: ToolDef) {
+  if (tool.disabled || PLACEHOLDER_TOOLS.has(tool.id)) {
+    toast.info(`${TOOL_LABELS[tool.id]} 即将推出`)
+    return
+  }
+  emit('select', tool.id)
+}
 </script>
 
 <template>
@@ -48,11 +67,20 @@ const toolGroups: Array<Array<{ id: ToolId; icon: WwIconName }>> = [
         icon-size="sm"
         :ariaLabel="TOOL_LABELS[tool.id]"
         class="pa-tool-strip__btn"
-        :class="{ 'pa-tool-strip__btn--active': props.activeTool === tool.id }"
+        :class="{
+          'pa-tool-strip__btn--active': props.activeTool === tool.id,
+          'pa-tool-strip__btn--disabled': tool.disabled
+        }"
         compact
-        v-tooltip.right="TOOL_LABELS[tool.id]"
-        @click="emit('select', tool.id)"
+        v-tooltip.right="tool.disabled ? `${TOOL_LABELS[tool.id]}（即将推出）` : TOOL_LABELS[tool.id]"
+        @click="pickTool(tool)"
       />
     </template>
   </aside>
 </template>
+
+<style scoped>
+.pa-tool-strip__btn--disabled {
+  opacity: 0.42;
+}
+</style>

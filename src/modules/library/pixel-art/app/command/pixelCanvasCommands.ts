@@ -22,13 +22,18 @@ export function createPixelCanvasCommands(bus: IPixelCommandBus) {
     toggleCheckerboard: (visible: boolean) => dispatch(PixelCmd.Document.SetCheckerboard, { visible }),
     setCanvasBackground: (background: string) =>
       dispatch(PixelCmd.Document.SetCanvasBackground, { background }),
+    setPixelUnitSize: (pixelUnitSize: number) =>
+      dispatch(PixelCmd.Document.SetPixelUnitSize, { pixelUnitSize }),
+    setGridSubdiv: (size: number) => dispatch(PixelCmd.Document.SetGridSubdiv, { size }),
+    resizeCanvas: (width: number, height: number, anchor: 'top-left' | 'center' = 'center') =>
+      dispatch(PixelCmd.Document.ResizeCanvas, { width, height, anchor }),
     applyPalettePreset: (preset: 'default' | 'retro') =>
       dispatch(PixelCmd.Document.ApplyPalettePreset, { preset }),
     selectAll: () => dispatch(PixelCmd.Document.SelectAll),
     clearSelection: () => dispatch(PixelCmd.Document.ClearSelection),
     zoomIn: () => dispatch(PixelCmd.Document.SetZoom, { action: 'in' }),
     zoomOut: () => dispatch(PixelCmd.Document.SetZoom, { action: 'out' }),
-    zoomReset: () => dispatch(PixelCmd.Document.SetZoom, { zoom: 1 }),
+    zoomReset: () => dispatch(PixelCmd.Document.SetZoom, { action: 'reset' }),
     zoomToFit: (width: number, height: number) =>
       dispatch(PixelCmd.Document.SetZoom, { action: 'fit', width, height })
   }

@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import WwNumberInput from '@shared/components/WwNumberInput/WwNumberInput.vue'
+import WwColorWheelCore from '@shared/components/WwColorWheelCore.vue'
 import { usePopTip } from '@shared/composables/usePopTip'
 import { useSettingsStore } from '@shared/stores/settings'
 import { describeColor } from '@shared/lib/colorDescriptiveName'
@@ -96,33 +97,6 @@ const hslFields = computed(() => {
     s: Math.round(s),
     l: Math.round(l),
     a: Math.round(c.a * 100)
-  }
-})
-
-const svStyle = computed(() => ({
-  backgroundColor: `hsl(${hsva.value.h} 100% 50%)`,
-  backgroundImage:
-    'linear-gradient(to top, rgb(0 0 0), transparent), linear-gradient(to right, rgb(255 255 255), transparent)'
-}))
-
-const svPointerStyle = computed(() => ({
-  left: `${hsva.value.s}%`,
-  top: `${100 - hsva.value.v}%`
-}))
-
-const huePointerStyle = computed(() => ({
-  left: `${(hsva.value.h / 360) * 100}%`
-}))
-
-const alphaPointerStyle = computed(() => ({
-  left: `${hsva.value.a * 100}%`
-}))
-
-const alphaTrackStyle = computed(() => {
-  const c = hsvaToParsed({ ...hsva.value, a: 1 })
-  const solid = `rgb(${c.r}, ${c.g}, ${c.b})`
-  return {
-    background: `linear-gradient(to right, transparent, ${solid})`
   }
 })
 
@@ -267,11 +241,6 @@ function onHslInput(channel: 'h' | 's' | 'l' | 'a', value: number | null) {
   patchHsva({ h, s, v, a: next.a / 100 })
 }
 
-type DragKind = 'sv' | 'hue' | 'alpha'
-
-let dragKind: DragKind | null = null
-let dragEl: HTMLElement | null = null
-
 let panelDragActive = false
 let panelDragStart = { x: 0, y: 0, top: 0, left: 0 }
 
@@ -285,68 +254,6 @@ function clampPanelPosition(top: number, left: number) {
     left: Math.min(Math.max(pad, left), Math.max(pad, window.innerWidth - pw - pad)),
     top: Math.min(Math.max(pad, top), Math.max(pad, window.innerHeight - ph - pad))
   }
-}
-
-function ratioFromPointer(event: PointerEvent, el: HTMLElement): number {
-  const rect = el.getBoundingClientRect()
-  if (rect.width <= 0) return 0
-  return Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width))
-}
-
-function ratioFromPointerY(event: PointerEvent, el: HTMLElement): number {
-  const rect = el.getBoundingClientRect()
-  if (rect.height <= 0) return 0
-  return Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height))
-}
-
-function applyDrag(event: PointerEvent) {
-  if (!dragKind || !dragEl) return
-  if (dragKind === 'sv') {
-    patchHsva({
-      s: ratioFromPointer(event, dragEl) * 100,
-      v: (1 - ratioFromPointerY(event, dragEl)) * 100
-    })
-    return
-  }
-  if (dragKind === 'hue') {
-    patchHsva({ h: ratioFromPointer(event, dragEl) * 360 })
-    return
-  }
-  patchHsva({ a: ratioFromPointer(event, dragEl) })
-}
-
-function onDocumentPointerMove(event: PointerEvent) {
-  if (!dragKind) return
-  event.preventDefault()
-  applyDrag(event)
-}
-
-function endDrag(event: PointerEvent) {
-  if (!dragKind || !dragEl) return
-  if (dragEl.hasPointerCapture(event.pointerId)) {
-    dragEl.releasePointerCapture(event.pointerId)
-  }
-  cleanupDrag()
-}
-
-function cleanupDrag() {
-  document.removeEventListener('pointermove', onDocumentPointerMove)
-  document.removeEventListener('pointerup', endDrag)
-  document.removeEventListener('pointercancel', endDrag)
-  dragKind = null
-  dragEl = null
-}
-
-function startDrag(kind: DragKind, event: PointerEvent) {
-  if (props.mixed) return
-  dragKind = kind
-  dragEl = event.currentTarget as HTMLElement
-  dragEl.setPointerCapture(event.pointerId)
-  event.preventDefault()
-  applyDrag(event)
-  document.addEventListener('pointermove', onDocumentPointerMove)
-  document.addEventListener('pointerup', endDrag)
-  document.addEventListener('pointercancel', endDrag)
 }
 
 function onPanelDragMove(event: PointerEvent) {
@@ -419,7 +326,6 @@ watch(open, (isOpen) => {
     document.removeEventListener('keydown', onKeydown, true)
     window.removeEventListener('scroll', onWindowChange, true)
     window.removeEventListener('resize', onWindowChange)
-    cleanupDrag()
     cleanupPanelDrag()
   }
 })
@@ -428,7 +334,6 @@ onBeforeUnmount(() => {
   document.removeEventListener('keydown', onKeydown, true)
   window.removeEventListener('scroll', onWindowChange, true)
   window.removeEventListener('resize', onWindowChange)
-  cleanupDrag()
   cleanupPanelDrag()
 })
 </script>
@@ -504,24 +409,7 @@ onBeforeUnmount(() => {
             </div>
           </header>
 
-          <div class="ww-color-input__sv" :style="svStyle" @pointerdown="startDrag('sv', $event)">
-            <span class="ww-color-input__sv-pointer" :style="svPointerStyle" aria-hidden="true" />
-          </div>
-
-          <div class="ww-color-input__sliders">
-            <div class="ww-color-input__slider" @pointerdown="startDrag('hue', $event)">
-              <div class="ww-color-input__slider-track ww-color-input__slider-track--hue" aria-hidden="true" />
-              <span class="ww-color-input__slider-pointer" :style="huePointerStyle" aria-hidden="true" />
-            </div>
-
-            <div class="ww-color-input__slider" @pointerdown="startDrag('alpha', $event)">
-              <div class="ww-color-input__slider-track ww-color-input__slider-track--alpha" aria-hidden="true">
-                <span class="ww-color-input__alpha-checker" aria-hidden="true" />
-                <span class="ww-color-input__alpha-gradient" :style="alphaTrackStyle" aria-hidden="true" />
-              </div>
-              <span class="ww-color-input__slider-pointer" :style="alphaPointerStyle" aria-hidden="true" />
-            </div>
-          </div>
+          <WwColorWheelCore :hsva="hsva" @update:hsva="(v) => (hsva = v)" />
 
           <div v-if="recentColors.length" class="ww-color-input__recent">
             <span class="ww-color-input__recent-label">最近</span>

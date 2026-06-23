@@ -28,8 +28,6 @@ const props = defineProps<{
   zoomPercent?: number
   foreground?: string
   background?: string
-  toolStripCollapsed?: boolean
-  sidePanelCollapsed?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -50,8 +48,6 @@ const emit = defineEmits<{
   selectAll: []
   clearSelection: []
   swapColors: []
-  toggleToolStrip: []
-  toggleSidePanel: []
 }>()
 
 const fileMenuRef = ref<InstanceType<typeof WwContextMenu> | null>(null)
@@ -215,7 +211,7 @@ const viewMenuItems = computed((): WwMenuItem[] => [
 function openMenu(event: MouseEvent, menu: InstanceType<typeof WwContextMenu> | null) {
   event.stopPropagation()
   const anchor = event.currentTarget as HTMLElement
-  void menu?.showBelowAnchor(anchor, 6)
+  void menu?.showBelowAnchorStart(anchor, 6)
 }
 
 function goBack() {
@@ -361,33 +357,6 @@ function goBack() {
         />
       </div>
 
-      <div class="pa-editor-toolbar__panels">
-        <WwButton
-          icon="layout-panel-left"
-          severity="secondary"
-          text
-          rounded
-          class="pa-toolbar-icon-btn"
-          :class="{ 'pa-toolbar-icon-btn--active': !toolStripCollapsed }"
-          aria-label="工具栏"
-          :disabled="booting"
-          v-tooltip.bottom="toolStripCollapsed ? '展开工具栏' : '折叠工具栏'"
-          @click="emit('toggleToolStrip')"
-        />
-        <WwButton
-          icon="layout-panel-right"
-          severity="secondary"
-          text
-          rounded
-          class="pa-toolbar-icon-btn"
-          :class="{ 'pa-toolbar-icon-btn--active': !sidePanelCollapsed }"
-          aria-label="侧面板"
-          :disabled="booting"
-          v-tooltip.bottom="sidePanelCollapsed ? '展开侧面板' : '折叠侧面板'"
-          @click="emit('toggleSidePanel')"
-        />
-      </div>
-
       <WwButton
         icon="circle-help"
         severity="secondary"
@@ -413,6 +382,11 @@ function goBack() {
   min-width: 2.25rem;
   padding-inline: 0.5rem;
   font-size: 0.8125rem;
+  color: var(--ww-ink) !important;
+}
+
+.pa-toolbar-menu-btn:disabled {
+  color: var(--ww-ink-faint) !important;
 }
 
 .pa-editor-toolbar__divider {

@@ -9,6 +9,11 @@ import type { PixelRepositoryIpcAdapter } from '@modules/library/pixel-art/servi
 import type { ToolId, ToolOptions } from '@modules/library/pixel-art/domain/tools'
 import type { PixelDocumentDto } from '@modules/library/pixel-art/lib/pixelIpcCodec'
 import { deserializePixelDocumentFromIpc } from '@modules/library/pixel-art/lib/pixelIpcCodec'
+import { getActiveFrame } from '@modules/library/pixel-art/lib/blankDocument'
+import {
+  getPixelLayerClipboard,
+  setPixelLayerClipboard
+} from '@modules/library/pixel-art/lib/pixelLayerClipboard'
 
 export interface EditorCommandDeps {
   getPort: () => IPixelEditorPort | null
@@ -104,6 +109,40 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
     return pixelCmdOk()
   })
 
+  registry.register(PixelCmd.Document.SetPixelUnitSize, (cmd) => {
+    const size = Number(cmd.payload?.pixelUnitSize)
+    if (!Number.isFinite(size)) return pixelCmdFail('INVALID', '参数无效')
+    port()?.setPixelUnitSize(size)
+    session()?.syncFromPort()
+    deps.onChange?.()
+    return pixelCmdOk()
+  })
+
+  registry.register(PixelCmd.Document.SetGridSubdiv, (cmd) => {
+    const size = Number(cmd.payload?.size)
+    if (!Number.isFinite(size)) return pixelCmdFail('INVALID', '参数无效')
+    port()?.setGridSubdiv(size)
+    session()?.syncFromPort()
+    deps.onChange?.()
+    return pixelCmdOk()
+  })
+
+  registry.register(PixelCmd.Document.ResizeCanvas, (cmd) => {
+    const p = port()
+    const s = session()
+    const width = Number(cmd.payload?.width)
+    const height = Number(cmd.payload?.height)
+    const anchor = (cmd.payload?.anchor as 'top-left' | 'center' | undefined) ?? 'center'
+    if (!p || !s?.content || !Number.isFinite(width) || !Number.isFinite(height)) {
+      return pixelCmdFail('INVALID', '参数无效')
+    }
+    const ok = p.resizeDocument(width, height, anchor)
+    if (!ok) return pixelCmdFail('INVALID', '尺寸无效')
+    s.syncFromPort()
+    deps.onChange?.()
+    return pixelCmdOk()
+  })
+
   registry.register(PixelCmd.Document.ApplyPalettePreset, (cmd) => {
     const preset = cmd.payload?.preset
     const s = session()
@@ -127,6 +166,8 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
       const w = Number(cmd.payload?.width ?? 0)
       const h = Number(cmd.payload?.height ?? 0)
       if (w > 0 && h > 0) p.zoomToFit(w, h)
+    } else if (action === 'reset') {
+      p.zoomReset()
     } else if (typeof cmd.payload?.zoom === 'number') {
       p.setViewport({ zoom: cmd.payload.zoom as number })
     }
@@ -306,6 +347,52 @@ export function registerLayerCommands(registry: PixelCommandRegistry, deps: Edit
     deps.getSession()?.syncFromPort()
     deps.onChange?.()
     return pixelCmdOk()
+  })
+
+  registry.register(PixelCmd.Layer.Duplicate, (cmd) => {
+    const layerId = String(cmd.payload?.layerId ?? '')
+    if (!layerId) return pixelCmdFail('INVALID', '缺少 layerId')
+    const id = port()?.duplicateLayer(layerId)
+    if (!id) return pixelCmdFail('DUPLICATE_FAILED', '无法复制图层')
+    deps.getSession()?.syncFromPort()
+    deps.onChange?.()
+    return pixelCmdOk({ layerId: id })
+  })
+
+  registry.register(PixelCmd.Layer.Merge, (cmd) => {
+    const layerIds = cmd.payload?.layerIds as string[] | undefined
+    if (!Array.isArray(layerIds) || layerIds.length < 2) return pixelCmdFail('INVALID', '至少选择两个图层')
+    if (!port()?.mergeLayers(layerIds)) return pixelCmdFail('MERGE_FAILED', '无法合并图层')
+    deps.getSession()?.syncFromPort()
+    deps.onChange?.()
+    return pixelCmdOk()
+  })
+
+  registry.register(PixelCmd.Layer.Copy, (cmd) => {
+    const layerId = String(cmd.payload?.layerId ?? '')
+    if (!layerId || !port()) return pixelCmdFail('INVALID', '缺少 layerId')
+    const doc = port()!.getDocument()
+    const layer = getActiveFrame(doc).layers.find((l) => l.id === layerId)
+    const pixels = doc.layerPixels[layerId]
+    if (!layer || !pixels) return pixelCmdFail('NOT_FOUND', '图层不存在')
+    const { id: _id, ...meta } = layer
+    setPixelLayerClipboard({
+      meta,
+      pixels: new Uint8ClampedArray(pixels),
+      width: doc.meta.width,
+      height: doc.meta.height
+    })
+    return pixelCmdOk()
+  })
+
+  registry.register(PixelCmd.Layer.Paste, () => {
+    const clip = getPixelLayerClipboard()
+    if (!clip) return pixelCmdFail('EMPTY', '剪贴板为空')
+    const id = port()?.pasteLayer(clip)
+    if (!id) return pixelCmdFail('PASTE_FAILED', '无法粘贴图层')
+    deps.getSession()?.syncFromPort()
+    deps.onChange?.()
+    return pixelCmdOk({ layerId: id })
   })
 }
 
