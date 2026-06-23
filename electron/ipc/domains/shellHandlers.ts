@@ -6,6 +6,7 @@ import {
   downloadMediaFile,
   openExternalUrl,
   pickImageFile,
+  pickSavePath,
   releaseViewerImageCache,
   saveImageDataUrl,
   saveClipboardImageDataUrlToTemp,
@@ -27,6 +28,11 @@ export function registerShellHandlers(services: AppServices): void {
   })
   ipcMain.handle('shell:copyImage', (_e, url: string) => copyImageToClipboard(url))
   ipcMain.handle('shell:pickImageFile', () => pickImageFile())
+  ipcMain.handle(
+    'shell:pickSavePath',
+    (_e, params: { defaultPath?: string; filters?: { name: string; extensions: string[] }[] }) =>
+      pickSavePath(params)
+  )
   ipcMain.handle(
     'shell:savePngDataUrl',
     (_e, params: { dataUrl: string; defaultName?: string }) =>

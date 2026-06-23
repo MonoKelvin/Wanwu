@@ -20,6 +20,10 @@ export interface WanwuPlatformApi {
     copyText: (text: string) => Promise<void>
     copyImage: (url: string) => Promise<{ ok: boolean; error?: string }>
     pickImageFile: () => Promise<{ ok: boolean; path?: string; canceled?: boolean }>
+    pickSavePath: (params: {
+      defaultPath?: string
+      filters?: { name: string; extensions: string[] }[]
+    }) => Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }>
     savePngDataUrl: (params: {
       dataUrl: string
       defaultName?: string

@@ -62,7 +62,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   private doc: PixelDocument | null = null
   private toolId: ToolId = 'pencil'
   private toolOptions: ToolOptions = { ...DEFAULT_TOOL_OPTIONS }
-  private viewport: PixelViewport = { zoom: 8, panX: 0, panY: 0 }
+  private viewport: PixelViewport = { zoom: 1, panX: 0, panY: 0 }
   private handlers: PixelPointerHandlers = {}
   private theme: 'light' | 'dark' = 'light'
   private isDrawing = false
@@ -79,6 +79,11 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   private panStart = { x: 0, y: 0, panX: 0, panY: 0 }
   private moveDragLast: { x: number; y: number } | null = null
   private checkerPattern: CanvasPattern | null = null
+  private compositeScratch: HTMLCanvasElement | null = null
+  private previewScratch: HTMLCanvasElement | null = null
+  private compositeCacheValid = false
+  private panRenderRaf = 0
+  private containerCssSize = { width: 0, height: 0 }
   private selectionAnimPhase = 0
   private animFrameId: number | null = null
   private undoStack: UndoEntry[] = []
@@ -97,6 +102,9 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.canvas = document.createElement('canvas')
     this.canvas.className = 'pixel-art-canvas'
     this.canvas.tabIndex = -1
+    this.canvas.style.position = 'absolute'
+    this.canvas.style.inset = '0'
+    this.canvas.style.display = 'block'
     this.canvas.style.imageRendering = 'pixelated'
     this.canvas.style.touchAction = 'none'
     el.appendChild(this.canvas)
@@ -123,6 +131,12 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.canvas = null
     this.ctx = null
     this.root = null
+    this.compositeScratch = null
+    this.previewScratch = null
+    this.compositeCacheValid = false
+    if (this.panRenderRaf) cancelAnimationFrame(this.panRenderRaf)
+    this.panRenderRaf = 0
+    this.containerCssSize = { width: 0, height: 0 }
     if (this.animFrameId != null) cancelAnimationFrame(this.animFrameId)
     this.animFrameId = null
   }
@@ -132,8 +146,18 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.undoStack = []
     this.redoStack = []
     this.selection = null
-    this.applyDefaultZoom()
+    const saved = doc.meta.viewport
+    if (saved && saved.zoom > 0) {
+      this.viewport = { zoom: saved.zoom, panX: saved.panX, panY: saved.panY }
+    } else {
+      this.viewport = { zoom: this.pixelUnitSize(), panX: 0, panY: 0 }
+    }
+    this.invalidateCompositeCache()
     this.render()
+  }
+
+  private invalidateCompositeCache(): void {
+    this.compositeCacheValid = false
   }
 
   private pixelUnitSize(): number {
@@ -146,7 +170,9 @@ export class PixelCanvasEngine implements IPixelEditorPort {
 
   getDocument(): PixelDocument {
     if (!this.doc) throw new Error('无文档')
-    return clonePixelDocument(this.doc)
+    const doc = clonePixelDocument(this.doc)
+    doc.meta.viewport = { ...this.viewport }
+    return doc
   }
 
   setActiveLayer(layerId: string): void {
@@ -244,6 +270,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     const layer = this.doc.layerPixels[layerId]
     if (!layer) return
     layer.set(pixels)
+    this.invalidateCompositeCache()
     this.render()
   }
 
@@ -338,15 +365,20 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.bumpViewport()
   }
 
-  private nextZoomLevel(current: number, direction: 1 | -1): number {
+  private listZoomLevels(): number[] {
     const unit = this.pixelUnitSize()
-    const levels = PIXEL_ZOOM_LEVELS.map((level) => level * unit)
+    const scaled = PIXEL_ZOOM_LEVELS.map((level) => level * unit)
+    return [...new Set([1, ...scaled])].sort((a, b) => a - b)
+  }
+
+  private nextZoomLevel(current: number, direction: 1 | -1): number {
+    const levels = this.listZoomLevels()
     const idx = levels.findIndex((z) => z >= current - 0.001)
     const baseIdx = idx < 0 ? levels.length - 1 : idx
     if (direction > 0) {
       return levels[Math.min(baseIdx + 1, levels.length - 1)] ?? current * 2
     }
-    return levels[Math.max(baseIdx - 1, 0)] ?? Math.max(unit, current / 2)
+    return levels[Math.max(baseIdx - 1, 0)] ?? Math.max(1, current / 2)
   }
 
   zoomToFit(containerWidth: number, containerHeight: number): void {
@@ -355,7 +387,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     const unit = this.pixelUnitSize()
     const zx = Math.floor((containerWidth - pad) / this.doc.meta.width)
     const zy = Math.floor((containerHeight - pad) / this.doc.meta.height)
-    const zoom = Math.max(unit, Math.min(zx, zy, 32 * unit))
+    const zoom = Math.max(1, Math.min(zx, zy, 32 * unit))
     this.viewport.zoom = zoom
     this.viewport.panX = Math.floor((containerWidth - this.doc.meta.width * zoom) / 2)
     this.viewport.panY = Math.floor((containerHeight - this.doc.meta.height * zoom) / 2)
@@ -363,7 +395,20 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   }
 
   zoomReset(): void {
-    this.viewport.zoom = this.pixelUnitSize()
+    if (!this.root) {
+      this.applyDefaultZoom()
+      this.bumpViewport()
+      return
+    }
+    this.applyInitialViewport(this.root.clientWidth, this.root.clientHeight)
+  }
+
+  applyViewport(viewport: PixelViewport): void {
+    this.viewport = {
+      zoom: viewport.zoom,
+      panX: viewport.panX,
+      panY: viewport.panY
+    }
     this.bumpViewport()
   }
 
@@ -376,10 +421,32 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.bumpViewport()
   }
 
-  /** 100% 缩放并居中 */
+  /**
+   * 首次打开：100%（zoom = pixelUnitSize）并居中；
+   * 若 100% 超出容器则缩小至合适尺寸并居中。
+   */
+  applyInitialViewport(containerWidth: number, containerHeight: number): void {
+    if (!this.doc) return
+    const pad = 32
+    const unit = this.pixelUnitSize()
+    const { width, height } = this.doc.meta
+    let zoom = unit
+    const at100W = width * zoom
+    const at100H = height * zoom
+    if (at100W > containerWidth - pad || at100H > containerHeight - pad) {
+      const zx = (containerWidth - pad) / width
+      const zy = (containerHeight - pad) / height
+      zoom = Math.max(1, Math.floor(Math.min(zx, zy)))
+    }
+    this.viewport.zoom = zoom
+    this.viewport.panX = Math.floor((containerWidth - width * zoom) / 2)
+    this.viewport.panY = Math.floor((containerHeight - height * zoom) / 2)
+    this.bumpViewport()
+  }
+
+  /** @deprecated 使用 applyInitialViewport */
   resetViewportAt100(containerWidth: number, containerHeight: number): void {
-    this.applyDefaultZoom()
-    this.centerInContainer(containerWidth, containerHeight)
+    this.applyInitialViewport(containerWidth, containerHeight)
   }
 
   setPixelUnitSize(size: number): void {
@@ -644,25 +711,115 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     return getActiveFrame(this.doc).layers.length
   }
 
-  render(): void {
+  fillAt(x: number, y: number): boolean {
+    if (!this.doc) return false
+    const layerMeta = getActiveLayerMeta(this.doc)
+    if (!layerMeta || layerMeta.locked || !layerMeta.visible) return false
+    const layer = this.doc.layerPixels[layerMeta.id]
+    if (!layer) return false
+    const before = new Uint8ClampedArray(layer)
+    const changed = floodFillScanline(
+      layer,
+      this.doc.meta.width,
+      this.doc.meta.height,
+      x,
+      y,
+      this.doc.meta.foreground,
+      this.toolOptions.fillTolerance
+    )
+    if (!changed) return false
+    const after = new Uint8ClampedArray(layer)
+    this.pushUndo(layerMeta.id, before, after)
+    this.invalidateCompositeCache()
+    this.render()
+    return true
+  }
+
+  pickColorAtPixel(x: number, y: number): boolean {
+    if (!this.doc) return false
+    if (x < 0 || y < 0 || x >= this.doc.meta.width || y >= this.doc.meta.height) return false
+    this.pickColorAt({ x, y })
+    return true
+  }
+
+  applyGradientAt(x0: number, y0: number, x1: number, y1: number): boolean {
+    if (!this.doc) return false
+    const layerMeta = getActiveLayerMeta(this.doc)
+    if (!layerMeta || layerMeta.locked || !layerMeta.visible) return false
+    const layer = this.doc.layerPixels[layerMeta.id]
+    if (!layer) return false
+    const before = new Uint8ClampedArray(layer)
+    applyLinearGradient(
+      layer,
+      this.doc.meta.width,
+      this.doc.meta.height,
+      x0,
+      y0,
+      x1,
+      y1,
+      this.doc.meta.foreground,
+      this.toolOptions.gradientEndColor,
+      this.toolOptions.gradientDither,
+      this.selection
+    )
+    const after = new Uint8ClampedArray(layer)
+    this.pushUndo(layerMeta.id, before, after)
+    this.invalidateCompositeCache()
+    this.render()
+    return true
+  }
+
+  drawShapeAt(tool: 'line' | 'rect' | 'ellipse', x0: number, y0: number, x1: number, y1: number): boolean {
+    if (!this.doc) return false
+    const layerMeta = getActiveLayerMeta(this.doc)
+    if (!layerMeta || layerMeta.locked || !layerMeta.visible) return false
+    const layer = this.doc.layerPixels[layerMeta.id]
+    if (!layer) return false
+    const prevTool = this.toolId
+    this.toolId = tool
+    const before = new Uint8ClampedArray(layer)
+    this.drawShapeOnLayer(layer, x0, y0, x1, y1, false)
+    this.toolId = prevTool
+    const after = new Uint8ClampedArray(layer)
+    this.pushUndo(layerMeta.id, before, after)
+    this.invalidateCompositeCache()
+    this.render()
+    return true
+  }
+
+  render(options?: { viewportOnly?: boolean }): void {
     if (!this.canvas || !this.ctx || !this.doc || !this.root) return
     this.resizeCanvasToContainer()
+    this.paintFrame(options?.viewportOnly === true)
+  }
+
+  private paintFrame(viewportOnly = false): void {
+    if (!this.canvas || !this.ctx || !this.doc) return
     const { width, height } = this.doc.meta
     const { zoom, panX, panY } = this.viewport
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    const { width: cw, height: ch } = this.containerCssSize
+    this.ctx.clearRect(0, 0, cw, ch)
     this.ctx.save()
     this.ctx.translate(panX, panY)
     this.ctx.scale(zoom, zoom)
 
     if (this.doc.meta.checkerboard.visible) this.drawCheckerboard(width, height)
-    this.drawComposite()
+    this.drawComposite(!viewportOnly)
     if (this.previewPixels) {
-      this.ctx.putImageData(pixelsToImageData(this.previewPixels, width, height), 0, 0)
+      this.drawPixelLayer(this.previewPixels, width, height, 'preview')
     }
     if (this.doc.meta.grid.visible) this.drawGrid(width, height)
     const sel = this.previewSelection ?? this.selection
     if (sel) this.drawSelection(sel)
     this.ctx.restore()
+  }
+
+  private schedulePanRender(): void {
+    if (this.panRenderRaf) return
+    this.panRenderRaf = requestAnimationFrame(() => {
+      this.panRenderRaf = 0
+      this.paintFrame(true)
+    })
   }
 
   resize(): void {
@@ -690,15 +847,31 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   private resizeCanvasToContainer(): void {
     if (!this.canvas || !this.root) return
     const rect = this.root.getBoundingClientRect()
+    const cssW = Math.max(1, rect.width)
+    const cssH = Math.max(1, rect.height)
+    this.containerCssSize = { width: cssW, height: cssH }
     const dpr = window.devicePixelRatio || 1
-    this.canvas.width = Math.max(1, Math.floor(rect.width * dpr))
-    this.canvas.height = Math.max(1, Math.floor(rect.height * dpr))
-    this.canvas.style.width = `${rect.width}px`
-    this.canvas.style.height = `${rect.height}px`
+    this.canvas.width = Math.max(1, Math.floor(cssW * dpr))
+    this.canvas.height = Math.max(1, Math.floor(cssH * dpr))
+    this.canvas.style.width = `${cssW}px`
+    this.canvas.style.height = `${cssH}px`
     if (this.ctx) {
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       this.ctx.imageSmoothingEnabled = false
     }
+  }
+
+  /** putImageData 不受变换矩阵影响，需经离屏 canvas + drawImage 绘制 */
+  private drawPixelLayer(
+    pixels: Uint8ClampedArray,
+    width: number,
+    height: number,
+    target: 'composite' | 'preview'
+  ): void {
+    if (!this.ctx) return
+    this.uploadPixelsToScratch(pixels, width, height, target)
+    const scratch = target === 'composite' ? this.compositeScratch : this.previewScratch
+    if (scratch) this.ctx.drawImage(scratch, 0, 0)
   }
 
   private drawCheckerboard(w: number, h: number): void {
@@ -721,10 +894,34 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     }
   }
 
-  private drawComposite(): void {
+  private drawComposite(rebuild = true): void {
     if (!this.ctx || !this.doc) return
-    const pixels = compositeDocument(this.doc)
-    this.ctx.putImageData(pixelsToImageData(pixels, this.doc.meta.width, this.doc.meta.height), 0, 0)
+    if (rebuild && !this.compositeCacheValid) {
+      const { width, height } = this.doc.meta
+      const pixels = compositeDocument(this.doc)
+      this.uploadPixelsToScratch(pixels, width, height, 'composite')
+      this.compositeCacheValid = true
+    }
+    if (this.compositeScratch) this.ctx.drawImage(this.compositeScratch, 0, 0)
+  }
+
+  private uploadPixelsToScratch(
+    pixels: Uint8ClampedArray,
+    width: number,
+    height: number,
+    target: 'composite' | 'preview'
+  ): void {
+    let scratch = target === 'composite' ? this.compositeScratch : this.previewScratch
+    if (!scratch || scratch.width !== width || scratch.height !== height) {
+      scratch = document.createElement('canvas')
+      scratch.width = width
+      scratch.height = height
+      if (target === 'composite') this.compositeScratch = scratch
+      else this.previewScratch = scratch
+    }
+    const sctx = scratch.getContext('2d')
+    if (!sctx) return
+    sctx.putImageData(pixelsToImageData(pixels, width, height), 0, 0)
   }
 
   private drawGrid(w: number, h: number): void {
@@ -732,12 +929,17 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     const subdiv = Math.max(1, this.doc.meta.grid.size)
     const linesX = w * subdiv
     const linesY = h * subdiv
-    const major = this.theme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'
-    const minor = this.theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'
+    const major =
+      this.theme === 'dark' ? 'rgba(255,255,255,0.32)' : 'rgba(0,0,0,0.28)'
+    const minor =
+      this.theme === 'dark' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.12)'
+    const pixelEdge =
+      this.theme === 'dark' ? 'rgba(255,255,255,0.22)' : 'rgba(0,0,0,0.18)'
     this.ctx.lineWidth = 1 / this.viewport.zoom
     for (let i = 0; i <= linesX; i++) {
       const x = i / subdiv
-      this.ctx.strokeStyle = subdiv > 1 && i % subdiv !== 0 ? minor : major
+      const isMajor = subdiv <= 1 || i % subdiv === 0
+      this.ctx.strokeStyle = isMajor ? major : minor
       this.ctx.beginPath()
       this.ctx.moveTo(x, 0)
       this.ctx.lineTo(x, h)
@@ -745,11 +947,16 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     }
     for (let j = 0; j <= linesY; j++) {
       const y = j / subdiv
-      this.ctx.strokeStyle = subdiv > 1 && j % subdiv !== 0 ? minor : major
+      const isMajor = subdiv <= 1 || j % subdiv === 0
+      this.ctx.strokeStyle = isMajor ? major : minor
       this.ctx.beginPath()
       this.ctx.moveTo(0, y)
       this.ctx.lineTo(w, y)
       this.ctx.stroke()
+    }
+    if (subdiv > 1) {
+      this.ctx.strokeStyle = pixelEdge
+      this.ctx.strokeRect(0, 0, w, h)
     }
   }
 
@@ -788,8 +995,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
       const layer = layerMeta ? this.doc.layerPixels[layerMeta.id] : null
       if (layer && layerMeta && (this.toolId === 'pencil' || this.toolId === 'eraser')) {
         const after = new Uint8ClampedArray(layer)
-        this.pushUndo(layerMeta.id, this.strokeBefore, after)
-        this.handlers.onDocumentChange?.()
+        this.commitStrokeUndo(layerMeta.id, this.strokeBefore, after)
       }
     }
     this.isDrawing = false
@@ -829,6 +1035,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
 
     if (this.toolId === 'hand' || e.button === 1) {
       this.panning = true
+      this.handlers.onPanningChange?.(true)
       this.panStart = { x: e.clientX, y: e.clientY, panX: this.viewport.panX, panY: this.viewport.panY }
       this.capturePointer(e)
       return
@@ -852,7 +1059,11 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.capturePointer(e)
 
     if (this.toolId === 'eyedropper') {
-      this.pickColorAt(p)
+      if (this.handlers.onPickColorAt) {
+        this.handlers.onPickColorAt(p.x, p.y)
+      } else {
+        this.pickColorAt(p)
+      }
       return
     }
 
@@ -877,28 +1088,16 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     }
 
     if (this.toolId === 'fill') {
-      const before = new Uint8ClampedArray(layer)
-      const changed = floodFillScanline(
-        layer,
-        this.doc.meta.width,
-        this.doc.meta.height,
-        p.x,
-        p.y,
-        this.doc.meta.foreground,
-        this.toolOptions.fillTolerance
-      )
-      if (changed) {
-        const after = new Uint8ClampedArray(layer)
-        this.pushUndo(layerId, before, after)
-        this.handlers.onDocumentChange?.()
-        this.render()
+      if (this.handlers.onFillAt) {
+        this.handlers.onFillAt(p.x, p.y)
+      } else {
+        this.fillAt(p.x, p.y)
       }
       return
     }
 
     if (this.toolId === 'gradient') {
       this.isDrawing = true
-      this.strokeBefore = new Uint8ClampedArray(layer)
       this.shapeStart = p
       return
     }
@@ -909,6 +1108,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.lastPaintPos = p
     if (this.toolId === 'pencil' || this.toolId === 'eraser') {
       this.paintAt(layer, p.x, p.y)
+      this.invalidateCompositeCache()
       this.render()
     } else if (['line', 'rect', 'ellipse'].includes(this.toolId)) {
       // shape tools wait for pointer up
@@ -925,6 +1125,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
       if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
         this.panning = true
         this.altPanPending = false
+        this.handlers.onPanningChange?.(true)
         this.panStart = { x: e.clientX, y: e.clientY, panX: this.viewport.panX, panY: this.viewport.panY }
       }
     }
@@ -932,7 +1133,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     if (this.panning) {
       this.viewport.panX = this.panStart.panX + (e.clientX - this.panStart.x)
       this.viewport.panY = this.panStart.panY + (e.clientY - this.panStart.y)
-      this.render()
+      this.schedulePanRender()
       return
     }
 
@@ -962,6 +1163,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
         this.paintAt(layer, p.x, p.y)
       }
       this.lastPaintPos = p
+      this.invalidateCompositeCache()
       this.render()
       return
     }
@@ -987,7 +1189,10 @@ export class PixelCanvasEngine implements IPixelEditorPort {
 
     if (this.altPanPending && !this.panning) {
       const p = this.screenToPixel(e.clientX, e.clientY)
-      if (p) this.pickColorAt(p)
+      if (p) {
+        if (this.handlers.onPickColorAt) this.handlers.onPickColorAt(p.x, p.y)
+        else this.pickColorAt(p)
+      }
       this.altPanPending = false
       return
     }
@@ -995,6 +1200,8 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     if (this.panning) {
       this.panning = false
       this.altPanPending = false
+      this.handlers.onPanningChange?.(false)
+      this.bumpViewport()
       return
     }
 
@@ -1029,45 +1236,34 @@ export class PixelCanvasEngine implements IPixelEditorPort {
       return
     }
 
-    if (this.toolId === 'gradient' && p && this.strokeBefore) {
-      applyLinearGradient(
-        layer,
-        this.doc.meta.width,
-        this.doc.meta.height,
-        this.shapeStart.x,
-        this.shapeStart.y,
-        p.x,
-        p.y,
-        this.doc.meta.foreground,
-        this.toolOptions.gradientEndColor,
-        this.toolOptions.gradientDither,
-        this.selection
-      )
-      const after = new Uint8ClampedArray(layer)
-      this.pushUndo(layerId, this.strokeBefore, after)
-      this.handlers.onDocumentChange?.()
+    if (this.toolId === 'gradient' && p && this.shapeStart) {
+      if (this.handlers.onGradientFill) {
+        this.handlers.onGradientFill(this.shapeStart.x, this.shapeStart.y, p.x, p.y)
+      } else {
+        this.applyGradientAt(this.shapeStart.x, this.shapeStart.y, p.x, p.y)
+      }
       this.finishPointerInteraction()
       return
     }
 
     if (this.strokeBefore && (this.toolId === 'pencil' || this.toolId === 'eraser')) {
       const after = new Uint8ClampedArray(layer)
-      this.pushUndo(layerId, this.strokeBefore, after)
-      this.handlers.onDocumentChange?.()
+      this.commitStrokeUndo(layerId, this.strokeBefore, after)
       this.finishPointerInteraction()
       return
     }
 
-    if (p && ['line', 'rect', 'ellipse'].includes(this.toolId)) {
-      const before = this.strokeBefore ?? new Uint8ClampedArray(layer)
-      this.drawShapeOnLayer(layer, this.shapeStart.x, this.shapeStart.y, p.x, p.y, false)
-      const after = new Uint8ClampedArray(layer)
-      this.pushUndo(layerId, before, after)
-      this.handlers.onDocumentChange?.()
+    if (p && ['line', 'rect', 'ellipse'].includes(this.toolId) && this.shapeStart) {
+      if (this.handlers.onShapeDraw) {
+        this.handlers.onShapeDraw(this.toolId, this.shapeStart.x, this.shapeStart.y, p.x, p.y)
+      } else {
+        this.drawShapeAt(this.toolId as 'line' | 'rect' | 'ellipse', this.shapeStart.x, this.shapeStart.y, p.x, p.y)
+      }
       this.finishPointerInteraction()
-    } else {
-      this.finishPointerInteraction()
+      return
     }
+
+    this.finishPointerInteraction()
   }
 
   private onWheel(e: WheelEvent): void {
@@ -1078,17 +1274,16 @@ export class PixelCanvasEngine implements IPixelEditorPort {
 
   private paintAt(layer: Uint8ClampedArray, cx: number, cy: number): void {
     if (!this.doc) return
-    const size = this.toolOptions.brushSize
+    const size = Math.max(1, this.toolOptions.brushSize)
     const [r, g, b, a] =
       this.toolId === 'eraser' ? [0, 0, 0, 0] : parseColor(this.doc.meta.foreground)
     const { width, height } = this.doc.meta
     const half = Math.floor(size / 2)
-    for (let dy = -half; dy < size - half; dy++) {
-      for (let dx = -half; dx < size - half; dx++) {
-        const x = cx + dx
-        const y = cy + dy
+    for (let dy = 0; dy < size; dy++) {
+      for (let dx = 0; dx < size; dx++) {
+        const x = cx - half + dx
+        const y = cy - half + dy
         if (x < 0 || y < 0 || x >= width || y >= height) continue
-        if (this.toolOptions.brushShape === 'circle' && dx * dx + dy * dy > half * half + 0.5) continue
         const i = (y * width + x) * 4
         layer[i] = r
         layer[i + 1] = g
@@ -1096,6 +1291,19 @@ export class PixelCanvasEngine implements IPixelEditorPort {
         layer[i + 3] = a
       }
     }
+  }
+
+  private commitStrokeUndo(layerId: string, before: Uint8ClampedArray, after: Uint8ClampedArray): void {
+    if (before.length !== after.length) return
+    let changed = false
+    for (let i = 0; i < before.length; i++) {
+      if (before[i] !== after[i]) {
+        changed = true
+        break
+      }
+    }
+    if (!changed) return
+    this.pushUndo(layerId, before, after)
   }
 
   private drawShapeOnLayer(
@@ -1150,6 +1358,10 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   }
 
   private pushUndo(layerId: string, before: Uint8ClampedArray, after: Uint8ClampedArray): void {
+    if (this.handlers.onStrokeCommit) {
+      this.handlers.onStrokeCommit(layerId, before, after)
+      return
+    }
     if (this.strokeRecorder) {
       this.strokeRecorder(layerId, before, after)
       return

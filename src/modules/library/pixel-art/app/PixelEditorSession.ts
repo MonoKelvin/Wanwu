@@ -57,6 +57,14 @@ export class PixelEditorSession {
     if (changedLayerId) this.dirtyLayerIds.add(changedLayerId)
   }
 
+  /** 同步视口到文档 meta，供保存/自动保存 */
+  syncViewportFromPort(): void {
+    if (!this.content) return
+    this.content.meta.viewport = this.port.getViewport()
+    this.metaDirty = true
+    this.dirty = true
+  }
+
   clearDirty(): void {
     this.dirty = false
     this.dirtyLayerIds.clear()

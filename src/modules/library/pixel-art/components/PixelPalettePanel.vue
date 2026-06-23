@@ -71,33 +71,36 @@ async function copyText(text: string, tip: string) {
 </script>
 
 <template>
-  <div class="pa-palette-panel">
-    <header class="pa-palette-panel__head">
-      <div class="pa-palette-panel__current">
-        <button
-          type="button"
-          class="pa-palette-panel__swatch"
-          draggable="true"
-          :style="{ backgroundColor: colorPreviewCss(currentColor) }"
-          :title="`${currentColor}（可拖拽到色板）`"
-          @dragstart="onDragCurrentColor"
-        />
-        <div class="pa-palette-panel__values">
-          <button type="button" class="pa-palette-panel__line" @click="copyText(rgbLine, '已复制 RGB')">
-            {{ rgbLine }}
-          </button>
-          <button type="button" class="pa-palette-panel__line" @click="copyText(hexLine, '已复制 HEX')">
-            {{ hexLine }}
-          </button>
+  <div class="pa-dock-panel pa-dock-panel--palette">
+    <header class="pa-dock-panel__toolbar">
+      <span class="pa-dock-panel__toolbar-title">当前色</span>
+      <div class="pa-palette-panel__actions">
+        <div class="pa-palette-panel__current">
+          <button
+            type="button"
+            class="pa-palette-panel__swatch"
+            draggable="true"
+            :style="{ backgroundColor: colorPreviewCss(currentColor) }"
+            :title="`${currentColor}（可拖拽到色板）`"
+            @dragstart="onDragCurrentColor"
+          />
+          <div class="pa-palette-panel__values">
+            <button type="button" class="pa-palette-panel__line" @click="copyText(rgbLine, '已复制 RGB')">
+              {{ rgbLine }}
+            </button>
+            <button type="button" class="pa-palette-panel__line" @click="copyText(hexLine, '已复制 HEX')">
+              {{ hexLine }}
+            </button>
+          </div>
         </div>
+        <WwIconButton
+          icon="save"
+          ariaLabel="保存到色板"
+          compact
+          v-tooltip.bottom="'保存到色板'"
+          @click="addCurrentToCustom"
+        />
       </div>
-      <WwIconButton
-        icon="save"
-        ariaLabel="保存到色板"
-        compact
-        v-tooltip.bottom="'保存到色板'"
-        @click="addCurrentToCustom"
-      />
     </header>
 
     <WwColorWheelCore v-model:hsva="hsva" v-model:mode="wheelMode" />
@@ -112,34 +115,26 @@ async function copyText(text: string, tip: string) {
 </template>
 
 <style scoped>
-.pa-palette-panel {
+.pa-palette-panel__actions {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.375rem 0.5rem 0.5rem;
-  overflow: auto;
-  min-height: 0;
-  flex: 1;
-}
-
-.pa-palette-panel__head {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.375rem;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: flex-end;
 }
 
 .pa-palette-panel__current {
   display: flex;
   align-items: center;
   gap: 0.4375rem;
-  flex: 1;
   min-width: 0;
 }
 
 .pa-palette-panel__swatch {
   flex-shrink: 0;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.375rem;
+  height: 1.375rem;
   padding: 0;
   border: 1px solid var(--ww-border-subtle);
   border-radius: 0.3125rem;

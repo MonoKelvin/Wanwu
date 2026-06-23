@@ -14,6 +14,8 @@ export interface WppMetaFile {
   palette: string[]
   /** 显示映射：100% 缩放时 1 画布像素对应的屏幕像素数 */
   display?: { pixelUnitSize: number }
+  /** 编辑器视口：缩放与平移，保存后下次打开恢复 */
+  viewport?: PixelViewport
   grid: { visible: boolean; size: number }
   checkerboard: { visible: boolean }
 }

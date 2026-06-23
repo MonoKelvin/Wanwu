@@ -9,6 +9,7 @@ import type { PixelRepositoryIpcAdapter } from '@modules/library/pixel-art/servi
 import type { ToolId, ToolOptions } from '@modules/library/pixel-art/domain/tools'
 import type { PixelDocumentDto } from '@modules/library/pixel-art/lib/pixelIpcCodec'
 import { deserializePixelDocumentFromIpc } from '@modules/library/pixel-art/lib/pixelIpcCodec'
+import { recordPixelStroke } from '@modules/library/pixel-art/app/createPixelTransactionManager'
 import { getActiveFrame } from '@modules/library/pixel-art/lib/blankDocument'
 import {
   getPixelLayerClipboard,
@@ -209,6 +210,62 @@ export function registerCanvasCommands(registry: PixelCommandRegistry, deps: Edi
     if (!cleared) return pixelCmdFail('NO_SELECTION', '无选区或无法清除')
     session()?.syncFromPort()
     deps.onChange?.()
+    return pixelCmdOk()
+  })
+
+  registry.register(PixelCmd.Document.DrawStroke, async (cmd) => {
+    const layerId = String(cmd.payload?.layerId ?? '')
+    const before = cmd.payload?.before as Uint8ClampedArray | undefined
+    const after = cmd.payload?.after as Uint8ClampedArray | undefined
+    if (!layerId || !before || !after) return pixelCmdFail('INVALID', '参数无效')
+    const manager = tx()
+    if (manager) {
+      await recordPixelStroke(manager, layerId, before, after)
+    } else {
+      port()?.replaceLayerPixels(layerId, after)
+    }
+    session()?.syncFromPort(layerId)
+    deps.onChange?.()
+    return pixelCmdOk()
+  })
+
+  registry.register(PixelCmd.Document.Fill, (cmd) => {
+    const x = Number(cmd.payload?.x)
+    const y = Number(cmd.payload?.y)
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return pixelCmdFail('INVALID', '坐标无效')
+    port()?.fillAt(x, y)
+    return pixelCmdOk()
+  })
+
+  registry.register(PixelCmd.Document.PickColor, (cmd) => {
+    const x = Number(cmd.payload?.x)
+    const y = Number(cmd.payload?.y)
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return pixelCmdFail('INVALID', '坐标无效')
+    const ok = port()?.pickColorAtPixel(x, y)
+    if (!ok) return pixelCmdFail('INVALID', '无法取色')
+    session()?.syncFromPort()
+    deps.onChange?.()
+    return pixelCmdOk()
+  })
+
+  registry.register(PixelCmd.Document.GradientFill, (cmd) => {
+    const x0 = Number(cmd.payload?.x0)
+    const y0 = Number(cmd.payload?.y0)
+    const x1 = Number(cmd.payload?.x1)
+    const y1 = Number(cmd.payload?.y1)
+    if (![x0, y0, x1, y1].every(Number.isFinite)) return pixelCmdFail('INVALID', '坐标无效')
+    port()?.applyGradientAt(x0, y0, x1, y1)
+    return pixelCmdOk()
+  })
+
+  registry.register(PixelCmd.Document.DrawShape, (cmd) => {
+    const tool = cmd.payload?.tool as 'line' | 'rect' | 'ellipse' | undefined
+    const x0 = Number(cmd.payload?.x0)
+    const y0 = Number(cmd.payload?.y0)
+    const x1 = Number(cmd.payload?.x1)
+    const y1 = Number(cmd.payload?.y1)
+    if (!tool || ![x0, y0, x1, y1].every(Number.isFinite)) return pixelCmdFail('INVALID', '参数无效')
+    port()?.drawShapeAt(tool, x0, y0, x1, y1)
     return pixelCmdOk()
   })
 }
@@ -447,9 +504,10 @@ export function registerCatalogCommands(
     const width = cmd.payload?.width != null ? Number(cmd.payload.width) : undefined
     const height = cmd.payload?.height != null ? Number(cmd.payload.height) : undefined
     const contentDto = cmd.payload?.content as PixelDocumentDto | undefined
+    const contentPath = cmd.payload?.contentPath != null ? String(cmd.payload.contentPath) : undefined
     if (!folderId || !title) return pixelCmdFail('INVALID', '参数无效')
     const content = contentDto ? deserializePixelDocumentFromIpc(contentDto) : undefined
-    const record = await deps.repo.createFile(folderId, title, width, height, content)
+    const record = await deps.repo.createFile(folderId, title, width, height, content, contentPath)
     return pixelCmdOk({ meta: record.meta, record })
   })
 

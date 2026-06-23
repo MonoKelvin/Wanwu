@@ -83,6 +83,7 @@ export const pixelArtMainModule: IMainProcessModule = {
           width?: number
           height?: number
           content?: ReturnType<typeof serializePixelDocumentForIpc>
+          contentPath?: string
         }
       ) => {
         const content = params.content
@@ -93,7 +94,8 @@ export const pixelArtMainModule: IMainProcessModule = {
           params.title,
           params.width,
           params.height,
-          content
+          content,
+          params.contentPath
         )
         if (!record) return null
         return { meta: record.meta, content: serializePixelDocumentForIpc(record.content) }
@@ -116,6 +118,9 @@ export const pixelArtMainModule: IMainProcessModule = {
     )
     ipcMain.handle('pixel-art:saveWppWithDialog', (_e, params: unknown) =>
       getService(ctx)?.saveWppWithDialog(params as Parameters<PixelArtService['saveWppWithDialog']>[0])
+    )
+    ipcMain.handle('pixel-art:pickWppSavePath', (_e, params: { defaultName: string }) =>
+      getService(ctx)?.pickWppSavePath(params)
     )
     ipcMain.handle('pixel-art:executeCommands', async (_e, _params: { cmds: unknown[] }) => {
       return []

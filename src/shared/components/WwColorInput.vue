@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import WwNumberInput from '@shared/components/WwNumberInput/WwNumberInput.vue'
 import WwColorWheelCore from '@shared/components/WwColorWheelCore.vue'
+import WwIcon from '@shared/components/WwIcon.vue'
 import { usePopTip } from '@shared/composables/usePopTip'
 import { useSettingsStore } from '@shared/stores/settings'
 import { describeColor } from '@shared/lib/colorDescriptiveName'
@@ -52,6 +53,7 @@ const rootRef = ref<HTMLElement | null>(null)
 const triggerRef = ref<HTMLButtonElement | null>(null)
 const panelRef = ref<HTMLElement | null>(null)
 const hsva = ref<HsvaColor>(parseColorToHsva('#ffffff'))
+const openSnapshot = ref<HsvaColor>(parseColorToHsva('#ffffff'))
 const valueFormat = ref<ColorValueFormat>('hex')
 const panelPos = ref({ top: 0, left: 0 })
 const panelDragged = ref(false)
@@ -169,7 +171,14 @@ async function toggleOpen() {
   open.value = true
   panelDragged.value = false
   syncFromModel()
+  openSnapshot.value = { ...hsva.value }
   await updatePanelPosition()
+}
+
+function cancelPanel() {
+  if (!open.value) return
+  hsva.value = { ...openSnapshot.value }
+  open.value = false
 }
 
 function rememberRecentColor() {
@@ -407,6 +416,15 @@ onBeforeUnmount(() => {
                 {{ headerDisplayValue }}
               </button>
             </div>
+            <button
+              type="button"
+              class="ww-color-input__close"
+              aria-label="关闭且不应用"
+              @pointerdown.stop
+              @click="cancelPanel"
+            >
+              <WwIcon name="x" size="sm" />
+            </button>
           </header>
 
           <WwColorWheelCore :hsva="hsva" @update:hsva="(v) => (hsva = v)" />
@@ -443,18 +461,19 @@ onBeforeUnmount(() => {
               </button>
             </div>
 
-            <div v-if="valueFormat === 'hex'" class="ww-color-input__fields">
-              <input
-                class="ww-color-input__field ww-color-input__field--hex"
-                type="text"
-                spellcheck="false"
-                :value="hexField"
-                aria-label="HEX 颜色值"
-                @change="onHexInput"
-              />
-            </div>
+            <div class="ww-color-input__fields-body">
+              <div v-if="valueFormat === 'hex'" class="ww-color-input__fields">
+                <input
+                  class="ww-color-input__field ww-color-input__field--hex"
+                  type="text"
+                  spellcheck="false"
+                  :value="hexField"
+                  aria-label="HEX 颜色值"
+                  @change="onHexInput"
+                />
+              </div>
 
-            <div v-else-if="valueFormat === 'rgb'" class="ww-color-input__fields ww-color-input__fields--grid">
+              <div v-else-if="valueFormat === 'rgb'" class="ww-color-input__fields ww-color-input__fields--grid">
               <label class="ww-color-input__field-wrap">
                 <span>R</span>
                 <WwNumberInput
@@ -539,6 +558,7 @@ onBeforeUnmount(() => {
                 />
               </label>
             </div>
+            </div>
           </footer>
         </div>
       </Transition>
@@ -614,12 +634,15 @@ onBeforeUnmount(() => {
   position: fixed;
   z-index: var(--ww-z-popover, 10045);
   width: 16rem;
-  padding: 0.75rem;
+  padding: 0.8125rem 0.8125rem 0.875rem;
   border-radius: 0.75rem;
   background: transparent;
   box-shadow:
     var(--ww-menu-shadow, 0 18px 44px -6px rgb(18 18 22 / 0.16)),
     0 24px 64px -16px rgb(18 18 22 / 0.22);
+  transition:
+    box-shadow var(--ww-duration-fast, 0.16s) var(--ww-ease-out, ease),
+    transform var(--ww-duration-fast, 0.16s) var(--ww-ease-out, ease);
 }
 
 .ww-color-input__panel.ww-glass-blur::before {
@@ -665,6 +688,31 @@ onBeforeUnmount(() => {
   align-items: flex-start;
   gap: 0.125rem;
   padding-block: 0.0625rem;
+}
+
+.ww-color-input__close {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  width: 1.625rem;
+  height: 1.625rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--ww-ink-muted);
+  cursor: pointer;
+  transition:
+    color var(--ww-duration-fast, 0.16s) var(--ww-ease-out, ease),
+    background var(--ww-duration-fast, 0.16s) var(--ww-ease-out, ease);
+}
+
+.ww-color-input__close:hover {
+  background: var(--ww-inset);
+  color: var(--ww-ink);
 }
 
 .ww-color-input__head-name,
@@ -874,6 +922,10 @@ onBeforeUnmount(() => {
   color: var(--ww-ink);
   background: var(--ww-content);
   box-shadow: 0 1px 2px rgb(18 18 22 / 0.08);
+}
+
+.ww-color-input__fields-body {
+  min-height: 3.375rem;
 }
 
 .ww-color-input__fields--grid {

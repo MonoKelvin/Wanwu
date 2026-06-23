@@ -18,6 +18,8 @@ const searchQuery = defineModel<string>('searchQuery', { required: true })
 const props = defineProps<{
   hits: PixelSearchHit[]
   loading?: boolean
+  /** 为 false 时仅渲染搜索框，结果由父级滚动区展示 */
+  showResults?: boolean
 }>()
 
 const emit = defineEmits<{ select: [fileId: string] }>()
@@ -54,7 +56,7 @@ defineExpose({ isActive })
       />
     </IconField>
 
-    <div v-if="isActive" class="pa-home-search-results">
+    <div v-if="showResults !== false && isActive" class="pa-home-search-results">
       <p v-if="loading" class="pa-hint pa-home-search-results__status">搜索中…</p>
       <p v-else-if="!hits.length" class="pa-hint pa-home-search-results__status">
         未找到匹配的像素画

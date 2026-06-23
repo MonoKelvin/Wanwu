@@ -39,6 +39,7 @@ export interface WanwuPixelArtApi {
       width?: number
       height?: number
       content?: PixelDocumentDto
+      contentPath?: string
     }) => Promise<PixelFileRecordDto>
     renameFile: (params: { fileId: string; title: string }) => Promise<PixelFileMeta | null>
     softDeleteFile: (params: { fileId: string }) => Promise<boolean>
@@ -56,6 +57,7 @@ export interface WanwuPixelArtApi {
       fileId?: string
       content?: PixelDocumentDto
     }) => Promise<PixelExportResult>
+    pickWppSavePath: (params: { defaultName: string }) => Promise<PixelExportResult>
     executeCommands: (
       cmds: PixelCommandEnvelope[],
       options?: { stopOnError?: boolean }

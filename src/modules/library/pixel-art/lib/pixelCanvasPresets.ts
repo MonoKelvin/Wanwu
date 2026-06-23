@@ -36,8 +36,23 @@ export function getPixelUnitSize(meta: Pick<WppMetaFile, 'display'>): number {
 
 export function normalizePixelMetaDisplay(meta: WppMetaFile): WppMetaFile {
   const preset = getPixelCanvasPreset(meta.width, meta.height)
-  const pixelUnitSize = meta.display?.pixelUnitSize ?? preset.pixelUnitSize
-  const gridSize = meta.grid?.size ?? preset.gridSubdiv
+  const computedUnit = computePixelUnitSize(meta.width, meta.height)
+  let pixelUnitSize = meta.display?.pixelUnitSize ?? preset.pixelUnitSize
+  let gridSize = meta.grid?.size ?? preset.gridSubdiv
+  let viewport = meta.viewport
+
+  // 旧版向导误将「显示 1:N」写入 display.pixelUnitSize，应存于 grid.size
+  if (
+    pixelUnitSize !== computedUnit &&
+    pixelUnitSize > computedUnit &&
+    pixelUnitSize <= 64 &&
+    gridSize === preset.gridSubdiv
+  ) {
+    gridSize = Math.max(1, Math.min(16, Math.floor(pixelUnitSize)))
+    pixelUnitSize = computedUnit
+    viewport = undefined
+  }
+
   return {
     ...meta,
     display: { pixelUnitSize: getPixelUnitSize({ display: { pixelUnitSize } }) },
@@ -47,7 +62,8 @@ export function normalizePixelMetaDisplay(meta: WppMetaFile): WppMetaFile {
     },
     checkerboard: {
       visible: meta.checkerboard?.visible ?? preset.checkerboardVisible
-    }
+    },
+    viewport
   }
 }
 

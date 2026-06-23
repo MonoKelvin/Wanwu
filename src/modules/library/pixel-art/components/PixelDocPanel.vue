@@ -55,8 +55,8 @@ function setCanvasBackground(value: string) {
 </script>
 
 <template>
-  <div class="pa-doc-panel">
-    <p class="pa-doc-panel__hint">{{ mappingHint() }}</p>
+  <div class="pa-dock-panel">
+    <p class="pa-dock-panel__hint">{{ mappingHint() }}</p>
 
     <WwSettingsGroup label="显示">
       <WwSettingsRow label="像素映射">
@@ -124,7 +124,7 @@ function setCanvasBackground(value: string) {
           @update:model-value="(v) => (resizeAnchor = v as 'center' | 'top-left')"
         />
       </WwSettingsRow>
-      <div class="pa-doc-panel__action">
+      <div class="pa-dock-panel__action">
         <WwButton size="sm" variant="ghost" label="应用尺寸" @click="applyCanvasResize" />
       </div>
     </WwSettingsGroup>
@@ -154,66 +154,3 @@ function setCanvasBackground(value: string) {
     </WwSettingsGroup>
   </div>
 </template>
-
-<style scoped>
-.pa-doc-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-  padding: 0.375rem 0.5rem 0.5rem;
-  overflow: auto;
-  min-height: 0;
-  flex: 1;
-}
-
-.pa-doc-panel__hint {
-  margin: 0;
-  padding: 0 0.125rem;
-  font-size: 0.625rem;
-  line-height: 1.45;
-  color: var(--ww-ink-faint);
-}
-
-.pa-doc-panel__action {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 0.125rem;
-}
-
-.pa-doc-panel :deep(.ww-settings-group) {
-  gap: 0.125rem;
-}
-
-.pa-doc-panel :deep(.ww-settings-group__label) {
-  margin-bottom: 0.125rem;
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ww-ink-faint);
-}
-
-.pa-doc-panel :deep(.ww-settings-row) {
-  gap: 0.5rem;
-  padding: 0.1875rem 0;
-}
-
-.pa-doc-panel :deep(.ww-settings-row__label) {
-  max-width: 38%;
-}
-
-.pa-doc-panel :deep(.ww-settings-row__control) {
-  justify-content: flex-end;
-}
-
-.pa-doc-panel :deep(.ww-color-input__trigger) {
-  width: 1.625rem;
-  height: 1.125rem;
-  min-height: 1.125rem;
-  border-radius: 0.25rem;
-}
-
-.pa-doc-panel :deep(.ww-select-trigger) {
-  min-width: 4.5rem;
-}
-</style>

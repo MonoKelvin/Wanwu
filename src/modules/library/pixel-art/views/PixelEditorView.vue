@@ -63,6 +63,8 @@ const {
   gridVisible,
   checkerboardVisible,
   spacePanActive,
+  canvasPanning,
+  canvasToolCursorClass,
   canvas,
   toggleSidePanel,
   toggleToolStrip,
@@ -84,13 +86,7 @@ const activeLayerName = computed(() => {
 
 const canvasWrapClass = computed(() => ({
   ready: editorReady.value,
-  'pa-canvas-wrap--cursor-grab': spacePanActive.value || activeTool.value === 'hand',
-  'pa-canvas-wrap--cursor-zoom': !spacePanActive.value && activeTool.value === 'zoom',
-  'pa-canvas-wrap--cursor-crosshair':
-    editorReady.value &&
-    !spacePanActive.value &&
-    activeTool.value !== 'hand' &&
-    activeTool.value !== 'zoom'
+  [canvasToolCursorClass.value]: Boolean(canvasToolCursorClass.value)
 }))
 
 const folderName = computed(() => {

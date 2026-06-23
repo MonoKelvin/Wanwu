@@ -49,7 +49,7 @@ const alphaTrackStyle = computed(() => {
 })
 
 const wheelRingStyle = computed(() => ({
-  background: `conic-gradient(from 0deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)`
+  background: `conic-gradient(from -90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)`
 }))
 
 const triangleBgStyle = computed(() => ({
@@ -60,14 +60,13 @@ const triangleBgStyle = computed(() => ({
   `
 }))
 
-const wheelPointerStyle = computed(() => {
-  const angle = (props.hsva.h / 360) * Math.PI * 2 - Math.PI / 2
-  const radius = 39.5
-  return {
-    left: `${50 + Math.cos(angle) * radius}%`,
-    top: `${50 + Math.sin(angle) * radius}%`
-  }
-})
+function wheelAngleToHue(angle: number) {
+  return (((angle + Math.PI / 2) / (Math.PI * 2)) * 360 + 360) % 360
+}
+
+const wheelPointerStyle = computed(() => ({
+  transform: `translate(-50%, -50%) rotate(${props.hsva.h}deg) translateY(calc(var(--ww-wheel-ring-mid-offset) * -1))`
+}))
 
 function trianglePointFromSv(s: number, v: number) {
   const wA = Math.min(1, Math.max(0, s / 100))
@@ -90,7 +89,11 @@ function trianglePointFromSv(s: number, v: number) {
 
 const trianglePointerStyle = computed(() => {
   const p = trianglePointFromSv(props.hsva.s, props.hsva.v)
-  return { left: `${p.x * 100}%`, top: `${p.y * 100}%` }
+  const xOff = p.x - 0.5
+  return {
+    left: `calc(50% + ${xOff} * var(--ww-wheel-triangle))`,
+    top: `calc(50% - var(--ww-wheel-inner-radius) * var(--ww-wheel-triangle-inset) + ${p.y} * var(--ww-wheel-triangle-height))`
+  }
 })
 
 function svFromTrianglePoint(nx: number, ny: number) {
@@ -115,15 +118,57 @@ function patch(patch: Partial<HsvaColor>) {
 type DragKind = 'sv' | 'hue' | 'alpha' | 'wheel-hue' | 'wheel-triangle'
 let dragKind: DragKind | null = null
 let dragEl: HTMLElement | null = null
+let dragCaptureEl: HTMLElement | null = null
 
-function ratioX(event: PointerEvent, el: HTMLElement) {
+function ratioX(event: PointerEvent, el: HTMLElement, clamp = true) {
   const rect = el.getBoundingClientRect()
-  return Math.min(1, Math.max(0, (event.clientX - rect.left) / Math.max(rect.width, 1)))
+  const v = (event.clientX - rect.left) / Math.max(rect.width, 1)
+  return clamp ? Math.min(1, Math.max(0, v)) : v
 }
 
-function ratioY(event: PointerEvent, el: HTMLElement) {
+function ratioY(event: PointerEvent, el: HTMLElement, clamp = true) {
   const rect = el.getBoundingClientRect()
-  return Math.min(1, Math.max(0, (event.clientY - rect.top) / Math.max(rect.height, 1)))
+  const v = (event.clientY - rect.top) / Math.max(rect.height, 1)
+  return clamp ? Math.min(1, Math.max(0, v)) : v
+}
+
+function closestPointOnSegment(
+  px: number,
+  py: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) {
+  const dx = x2 - x1
+  const dy = y2 - y1
+  const lenSq = dx * dx + dy * dy
+  if (lenSq === 0) return { x: x1, y: y1 }
+  let t = ((px - x1) * dx + (py - y1) * dy) / lenSq
+  t = Math.max(0, Math.min(1, t))
+  return { x: x1 + t * dx, y: y1 + t * dy }
+}
+
+function svFromTrianglePointClamped(nx: number, ny: number) {
+  const direct = svFromTrianglePoint(nx, ny)
+  if (direct) return direct
+
+  const edges: [number, number, number, number][] = [
+    [0.5, 0, 0, 1],
+    [0, 1, 1, 1],
+    [1, 1, 0.5, 0]
+  ]
+  let best = { x: 0.5, y: 0 }
+  let bestDist = Infinity
+  for (const [x1, y1, x2, y2] of edges) {
+    const p = closestPointOnSegment(nx, ny, x1, y1, x2, y2)
+    const d = (nx - p.x) ** 2 + (ny - p.y) ** 2
+    if (d < bestDist) {
+      bestDist = d
+      best = p
+    }
+  }
+  return svFromTrianglePoint(best.x, best.y)!
 }
 
 function applyDrag(event: PointerEvent) {
@@ -142,50 +187,70 @@ function applyDrag(event: PointerEvent) {
     const cy = rect.top + rect.height / 2
     const dx = event.clientX - cx
     const dy = event.clientY - cy
-    const dist = Math.hypot(dx, dy) / Math.max(rect.width / 2, 1)
-    if (dist < 0.56) return
-    const angle = Math.atan2(dy, dx)
-    patch({ h: ((angle * 180) / Math.PI + 360) % 360 })
+    patch({ h: wheelAngleToHue(Math.atan2(dy, dx)) })
     return
   }
   if (dragKind === 'alpha') {
     patch({ a: ratioX(event, dragEl) })
     return
   }
-  const nx = ratioX(event, dragEl)
-  const ny = ratioY(event, dragEl)
-  const sv = svFromTrianglePoint(nx, ny)
-  if (sv) patch(sv)
+  const nx = ratioX(event, dragEl, false)
+  const ny = ratioY(event, dragEl, false)
+  patch(svFromTrianglePointClamped(nx, ny))
 }
 
 function onMove(event: PointerEvent) {
   if (!dragKind) return
   event.preventDefault()
+  event.stopPropagation()
   applyDrag(event)
 }
 
 function endDrag(event: PointerEvent) {
-  if (!dragKind || !dragEl) return
-  if (dragEl.hasPointerCapture(event.pointerId)) dragEl.releasePointerCapture(event.pointerId)
-  document.removeEventListener('pointermove', onMove)
-  document.removeEventListener('pointerup', endDrag)
+  if (!dragKind || !dragCaptureEl) return
+  if (dragCaptureEl.hasPointerCapture(event.pointerId)) {
+    dragCaptureEl.releasePointerCapture(event.pointerId)
+  }
+  document.removeEventListener('pointermove', onMove, true)
+  document.removeEventListener('pointerup', endDrag, true)
+  document.removeEventListener('pointercancel', endDrag, true)
   dragKind = null
   dragEl = null
+  dragCaptureEl = null
+}
+
+function resolveDragElements(kind: DragKind, target: HTMLElement) {
+  const ps = target.closest('.ww-color-wheel-core__ps') as HTMLElement | null
+  if (kind === 'wheel-hue') {
+    return { captureEl: ps ?? target, metricEl: ps ?? target }
+  }
+  if (kind === 'wheel-triangle') {
+    const triangle =
+      (target.closest('.ww-color-wheel-core__ps-triangle') as HTMLElement | null) ?? target
+    return { captureEl: ps ?? triangle, metricEl: triangle }
+  }
+  return { captureEl: target, metricEl: target }
 }
 
 function startDrag(kind: DragKind, event: PointerEvent) {
+  if (event.button !== 0) return
+  const target = event.currentTarget as HTMLElement
+  const { captureEl, metricEl } = resolveDragElements(kind, target)
   dragKind = kind
-  dragEl = event.currentTarget as HTMLElement
-  dragEl.setPointerCapture(event.pointerId)
+  dragCaptureEl = captureEl
+  dragEl = metricEl
+  captureEl.setPointerCapture(event.pointerId)
   event.preventDefault()
+  event.stopPropagation()
   applyDrag(event)
-  document.addEventListener('pointermove', onMove)
-  document.addEventListener('pointerup', endDrag)
+  document.addEventListener('pointermove', onMove, true)
+  document.addEventListener('pointerup', endDrag, true)
+  document.addEventListener('pointercancel', endDrag, true)
 }
 </script>
 
 <template>
-  <div class="ww-color-wheel-core">
+  <div class="ww-color-wheel-core" :class="{ 'ww-color-wheel-core--wheel': modeValue === 'wheel' }">
     <div class="ww-color-wheel-core__mode" role="tablist" aria-label="色轮模式">
       <button
         type="button"
@@ -205,32 +270,39 @@ function startDrag(kind: DragKind, event: PointerEvent) {
       </button>
     </div>
 
-    <template v-if="modeValue === 'square'">
-      <div class="ww-color-wheel-core__sv" :style="svStyle" @pointerdown="startDrag('sv', $event)">
+    <div class="ww-color-wheel-core__stage">
+      <div
+        v-show="modeValue === 'square'"
+        class="ww-color-wheel-core__sv"
+        :style="svStyle"
+        @pointerdown="startDrag('sv', $event)"
+      >
         <span class="ww-color-wheel-core__pointer" :style="svPointerStyle" />
       </div>
-    </template>
-    <template v-else>
-      <div class="ww-color-wheel-core__ps">
+      <div v-show="modeValue === 'wheel'" class="ww-color-wheel-core__ps" @lostpointercapture="endDrag">
         <div
           class="ww-color-wheel-core__ps-ring"
           :style="wheelRingStyle"
           @pointerdown="startDrag('wheel-hue', $event)"
-        >
-          <span class="ww-color-wheel-core__wheel-pointer" :style="wheelPointerStyle" />
-        </div>
+        />
         <div
           class="ww-color-wheel-core__ps-triangle"
           :style="triangleBgStyle"
           @pointerdown="startDrag('wheel-triangle', $event)"
-        >
-          <span class="ww-color-wheel-core__pointer" :style="trianglePointerStyle" />
+        />
+        <div class="ww-color-wheel-core__ps-overlay" aria-hidden="true">
+          <span class="ww-color-wheel-core__pointer ww-color-wheel-core__triangle-pointer" :style="trianglePointerStyle" />
+          <span class="ww-color-wheel-core__pointer ww-color-wheel-core__wheel-pointer" :style="wheelPointerStyle" />
         </div>
       </div>
-    </template>
+    </div>
 
     <div class="ww-color-wheel-core__sliders">
-      <div v-if="modeValue === 'square'" class="ww-color-wheel-core__slider" @pointerdown="startDrag('hue', $event)">
+      <div
+        v-if="modeValue === 'square'"
+        class="ww-color-wheel-core__slider ww-color-wheel-core__slider--hue"
+        @pointerdown="startDrag('hue', $event)"
+      >
         <div class="ww-color-wheel-core__slider-track ww-color-wheel-core__slider-track--hue" />
         <span class="ww-color-wheel-core__slider-pointer" :style="huePointerStyle" />
       </div>
@@ -246,6 +318,10 @@ function startDrag(kind: DragKind, event: PointerEvent) {
 </template>
 
 <style scoped>
+.ww-color-wheel-core {
+  --ww-slider-stack: calc(0.875rem + 0.3125rem);
+}
+
 .ww-color-wheel-core__mode {
   display: flex;
   gap: 0.125rem;
@@ -265,27 +341,63 @@ function startDrag(kind: DragKind, event: PointerEvent) {
   font-weight: 600;
   color: var(--ww-ink-muted);
   cursor: pointer;
+  transition:
+    background var(--ww-duration-fast, 0.16s) var(--ww-ease-out, ease),
+    color var(--ww-duration-fast, 0.16s) var(--ww-ease-out, ease),
+    box-shadow var(--ww-duration-fast, 0.16s) var(--ww-ease-out, ease);
 }
 
 .ww-color-wheel-core__mode-btn--active {
   color: var(--ww-ink);
   background: var(--ww-content);
+  box-shadow: 0 1px 2px rgb(18 18 22 / 0.08);
+}
+
+.ww-color-wheel-core__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 9rem;
+  margin-bottom: 0.3125rem;
+  overflow: visible;
+}
+
+.ww-color-wheel-core--wheel .ww-color-wheel-core__stage {
+  height: calc(9rem + var(--ww-slider-stack));
 }
 
 .ww-color-wheel-core__sv {
   position: relative;
-  height: 7rem;
+  width: 100%;
+  height: 100%;
   border-radius: 0.4375rem;
   overflow: hidden;
   touch-action: none;
   cursor: crosshair;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.06);
 }
 
 .ww-color-wheel-core__ps {
+  --ww-wheel-size: 8rem;
+  --ww-wheel-ring-inner-stop: 78%;
+  --ww-wheel-ring-inner-norm: 0.78;
+  --ww-wheel-ring-mid-norm: 0.89;
+  --ww-wheel-inner-radius: calc(var(--ww-wheel-size) * 0.5 * var(--ww-wheel-ring-inner-norm));
+  --ww-wheel-triangle-inset: 0.9;
+  --ww-wheel-triangle: calc(var(--ww-wheel-inner-radius) * 1.732051 * var(--ww-wheel-triangle-inset));
+  --ww-wheel-triangle-height: calc(var(--ww-wheel-inner-radius) * 1.5 * var(--ww-wheel-triangle-inset));
+  --ww-wheel-ring-mid-offset: calc(var(--ww-wheel-size) * 0.5 * var(--ww-wheel-ring-mid-norm));
+
   position: relative;
-  width: 100%;
-  aspect-ratio: 1;
-  max-height: 8.5rem;
+  width: var(--ww-wheel-size);
+  height: var(--ww-wheel-size);
+  flex-shrink: 0;
+  overflow: visible;
+  touch-action: none;
+}
+
+.ww-color-wheel-core--wheel .ww-color-wheel-core__ps {
+  --ww-wheel-size: calc(9rem + var(--ww-slider-stack) - 0.3125rem);
 }
 
 .ww-color-wheel-core__ps-ring {
@@ -294,25 +406,40 @@ function startDrag(kind: DragKind, event: PointerEvent) {
   border-radius: 50%;
   touch-action: none;
   cursor: crosshair;
-  -webkit-mask: radial-gradient(circle, transparent 56%, #000 57%);
-  mask: radial-gradient(circle, transparent 56%, #000 57%);
+  -webkit-mask: radial-gradient(
+    circle closest-side,
+    transparent calc(var(--ww-wheel-ring-inner-stop) - 0.35%),
+    #000 var(--ww-wheel-ring-inner-stop),
+    #000 100%
+  );
+  mask: radial-gradient(
+    circle closest-side,
+    transparent calc(var(--ww-wheel-ring-inner-stop) - 0.35%),
+    #000 var(--ww-wheel-ring-inner-stop),
+    #000 100%
+  );
 }
 
 .ww-color-wheel-core__ps-triangle {
   position: absolute;
   left: 50%;
-  top: 50%;
-  width: 44%;
-  aspect-ratio: 1 / 0.866;
-  transform: translate(-50%, -46%);
+  top: calc(50% - var(--ww-wheel-inner-radius) * var(--ww-wheel-triangle-inset));
+  width: var(--ww-wheel-triangle);
+  height: var(--ww-wheel-triangle-height);
+  transform: translateX(-50%);
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   touch-action: none;
   cursor: crosshair;
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);
 }
 
-.ww-color-wheel-core__pointer,
-.ww-color-wheel-core__wheel-pointer {
+.ww-color-wheel-core__ps-overlay {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ww-color-wheel-core__pointer {
   position: absolute;
   z-index: 1;
   width: 0.75rem;
@@ -322,6 +449,18 @@ function startDrag(kind: DragKind, event: PointerEvent) {
   border-radius: 50%;
   box-shadow: 0 0 0 1px rgb(0 0 0 / 0.35);
   pointer-events: none;
+}
+
+.ww-color-wheel-core__triangle-pointer {
+  z-index: 1;
+}
+
+.ww-color-wheel-core__wheel-pointer {
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  margin: 0;
+  transform-origin: center center;
 }
 
 .ww-color-wheel-core__slider-pointer {
@@ -340,8 +479,12 @@ function startDrag(kind: DragKind, event: PointerEvent) {
 .ww-color-wheel-core__sliders {
   display: flex;
   flex-direction: column;
-  gap: 0.4375rem;
-  margin-top: 0.4375rem;
+  gap: 0.3125rem;
+  min-height: calc(0.875rem * 2 + 0.3125rem);
+}
+
+.ww-color-wheel-core--wheel .ww-color-wheel-core__sliders {
+  min-height: 0.875rem;
 }
 
 .ww-color-wheel-core__slider {

@@ -11,10 +11,16 @@ export interface PixelPointerHandlers {
   onPixelCoords?: (x: number, y: number) => void
   onStrokeComplete?: (patch: LayerPixelPatch) => void
   onLayerSnapshot?: (layerId: string, before: Uint8ClampedArray, after: Uint8ClampedArray) => void
+  onStrokeCommit?: (layerId: string, before: Uint8ClampedArray, after: Uint8ClampedArray) => void
+  onFillAt?: (x: number, y: number) => void
+  onPickColorAt?: (x: number, y: number) => void
+  onGradientFill?: (x0: number, y0: number, x1: number, y1: number) => void
+  onShapeDraw?: (tool: ToolId, x0: number, y0: number, x1: number, y1: number) => void
   onColorPicked?: (color: string) => void
   onSelectionChange?: (sel: { x: number; y: number; width: number; height: number } | null) => void
   onDocumentChange?: () => void
   onViewportChange?: () => void
+  onPanningChange?: (active: boolean) => void
 }
 
 export interface IPixelEditorPort {
@@ -54,6 +60,8 @@ export interface IPixelEditorPort {
   zoomOutAt(clientX: number, clientY: number): void
   zoomToFit(containerWidth: number, containerHeight: number): void
   zoomReset(): void
+  applyViewport(viewport: PixelViewport): void
+  applyInitialViewport(containerWidth: number, containerHeight: number): void
   applyDefaultZoom(): void
   centerInContainer(containerWidth: number, containerHeight: number): void
   resetViewportAt100(containerWidth: number, containerHeight: number): void
@@ -71,7 +79,11 @@ export interface IPixelEditorPort {
   clearSelectionContent(): boolean
   clearSelection(): void
   getLayerCount(): number
-  render(): void
+  fillAt(x: number, y: number): boolean
+  pickColorAtPixel(x: number, y: number): boolean
+  applyGradientAt(x0: number, y0: number, x1: number, y1: number): boolean
+  drawShapeAt(tool: 'line' | 'rect' | 'ellipse', x0: number, y0: number, x1: number, y1: number): boolean
+  render(options?: { viewportOnly?: boolean }): void
   resize(): void
   focusCanvas(): void
 }

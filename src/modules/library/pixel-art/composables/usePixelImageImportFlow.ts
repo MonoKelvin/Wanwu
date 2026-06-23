@@ -16,10 +16,12 @@ export function usePixelImageImportFlow(options?: { router?: Router }) {
 
   const importDialogOpen = ref(false)
   const importSource = ref<PixelImportSource | null>(null)
+  const importOnlineMode = ref(false)
   const importBusy = ref(false)
 
   async function startImportLocalImage() {
     if (importBusy.value) return
+    importOnlineMode.value = false
     const pick = await window.wanwu.shell.pickImageFile()
     if (!pick.ok || pick.canceled) return
     if (!pick.path) {
@@ -32,12 +34,14 @@ export function usePixelImageImportFlow(options?: { router?: Router }) {
 
   function startImportOnlineImage() {
     importSource.value = null
+    importOnlineMode.value = true
     importDialogOpen.value = true
   }
 
   async function onImportDialogConfirm(payload: { title: string; content: PixelDocument }) {
     importDialogOpen.value = false
     importSource.value = null
+    importOnlineMode.value = false
     importBusy.value = true
     try {
       const result = await catalog.file.create(
@@ -73,6 +77,7 @@ export function usePixelImageImportFlow(options?: { router?: Router }) {
   return {
     importDialogOpen,
     importSource,
+    importOnlineMode,
     importBusy,
     startImportLocalImage,
     startImportOnlineImage,

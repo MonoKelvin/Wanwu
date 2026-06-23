@@ -1,7 +1,6 @@
 import { PIXEL_MAX_HEIGHT, PIXEL_MAX_WIDTH } from '@modules/library/pixel-art/domain/meta'
 import { createBlankPixelDocument } from '@modules/library/pixel-art/lib/blankDocument'
 import type { PixelDocument } from '@modules/library/pixel-art/domain/types'
-import { resolveImageViewerUrl } from '@shared/markdown/utils/imageViewerUrl'
 
 export interface PixelImportCrop {
   /** 0–1，相对原图 */
@@ -31,17 +30,55 @@ export const DEFAULT_PIXEL_IMPORT_SETTINGS: PixelImportSettings = {
   color: { brightness: 0, contrast: 0, saturation: 0 }
 }
 
-function localPathToFileUrl(path: string): string {
-  const normalized = path.replace(/\\/g, '/')
-  return normalized.startsWith('/') ? `file://${normalized}` : `file:///${normalized}`
+async function resolveLoadableImageUrl(raw: string): Promise<{ url: string; revoke?: () => void }> {
+  const trimmed = raw.trim()
+  if (!trimmed) throw new Error('无法加载图片')
+
+  if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
+    return { url: trimmed }
+  }
+
+  const cached = await window.wanwu.shell.cacheImageForViewer(trimmed)
+  if (!cached.ok || !cached.displayUrl) {
+    throw new Error('无法加载图片')
+  }
+
+  const displayUrl = cached.displayUrl
+  const releaseCache =
+    cached.cacheId != null
+      ? () => window.wanwu.shell.releaseViewerImageCache(cached.cacheId!)
+      : undefined
+
+  if (displayUrl.startsWith('file://')) {
+    try {
+      const res = await fetch(displayUrl)
+      if (res.ok) {
+        const blob = await res.blob()
+        const blobUrl = URL.createObjectURL(blob)
+        return {
+          url: blobUrl,
+          revoke: () => {
+            URL.revokeObjectURL(blobUrl)
+            releaseCache?.()
+          }
+        }
+      }
+    } catch {
+      /* 回退直接加载 file:// */
+    }
+  }
+
+  return {
+    url: displayUrl,
+    revoke: releaseCache
+  }
 }
 
 export async function loadImageElementFromSource(
   source: { kind: 'path'; path: string } | { kind: 'url'; url: string }
 ): Promise<{ image: HTMLImageElement; revoke?: () => void }> {
-  const input =
-    source.kind === 'path' ? localPathToFileUrl(source.path) : source.url.trim()
-  const resolved = await resolveImageViewerUrl(input)
+  const input = source.kind === 'path' ? source.path : source.url.trim()
+  const resolved = await resolveLoadableImageUrl(input)
   const image = await loadImageElement(resolved.url)
   return { image, revoke: resolved.revoke }
 }
@@ -164,21 +201,24 @@ export function suggestOutputSize(
   image: HTMLImageElement,
   crop: PixelImportCrop
 ): { width: number; height: number } {
+  return outputSizeFromPixelRatio(image, crop, 8)
+}
+
+/** 按像素映射比例 1:N 计算输出尺寸（N 为分母） */
+export function outputSizeFromPixelRatio(
+  image: HTMLImageElement,
+  crop: PixelImportCrop,
+  ratioDenominator: number
+): { width: number; height: number } {
   const sw = Math.max(1, Math.round(image.naturalWidth * crop.w))
   const sh = Math.max(1, Math.round(image.naturalHeight * crop.h))
-  const maxSide = Math.max(sw, sh)
-  const presets = [16, 32, 64, 128, 256]
-  let target = presets.find((p) => p >= maxSide) ?? 128
-  if (target > PIXEL_MAX_WIDTH) target = PIXEL_MAX_WIDTH
-  const aspect = sw / sh
-  if (aspect >= 1) {
-    return {
-      width: target,
-      height: clampDimension(Math.round(target / aspect))
-    }
-  }
+  const ratio = Math.max(1, Math.floor(ratioDenominator))
   return {
-    width: clampDimension(Math.round(target * aspect)),
-    height: target
+    width: clampDimension(Math.round(sw / ratio)),
+    height: clampDimension(Math.round(sh / ratio))
   }
+}
+
+export function maxPixelRatioDenominator(width: number, height: number): number {
+  return Math.max(1, Math.floor(Math.min(width, height) / 2))
 }

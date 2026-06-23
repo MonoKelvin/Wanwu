@@ -9,11 +9,13 @@ import { PIXEL_DEFAULT_SIZE, PIXEL_AUTOSAVE_DEBOUNCE_MS, isPixelEditorPath, LIBR
 import type { ToolId } from '@modules/library/pixel-art/domain/tools'
 import { TOOL_LABELS } from '@modules/library/pixel-art/domain/tools'
 import { PixelCmd, createPixelCommandBus, type CreatePixelCommandBusOptions, type IPixelCommandBus } from '@modules/library/pixel-art/app/command/PixelCommandRegistry'
-import { createPixelTransactionManager, recordPixelStroke } from '@modules/library/pixel-art/app/createPixelTransactionManager'
+import { createPixelTransactionManager } from '@modules/library/pixel-art/app/createPixelTransactionManager'
 import { usePixelSaveFlow } from '@modules/library/pixel-art/composables/usePixelSaveFlow'
 import { usePixelShortcuts } from '@modules/library/pixel-art/composables/usePixelShortcuts'
 import { createPixelCanvasCommands } from '@modules/library/pixel-art/app/command/pixelCanvasCommands'
 import { getPixelUnitSize, zoomPercentFromViewport } from '@modules/library/pixel-art/lib/pixelCanvasPresets'
+import type { PixelViewport } from '@modules/library/pixel-art/domain/types'
+import { pixelCanvasCursorClass } from '@modules/library/pixel-art/lib/pixelToolCursors'
 import { usePixelArtStore } from '@modules/library/pixel-art/services/pixelArtStore'
 
 const LAYOUT_STORAGE_KEY = 'wanwu.pixel-art.editorLayout'
@@ -161,9 +163,6 @@ function setupPixelEditorCommands(options: {
     const resourceKey = session.fileId ?? session.sessionId
     const manager = createPixelTransactionManager(resourceKey, port)
     setPixelTransactionManager(transactionManager, manager)
-    port.setStrokeRecorder((layerId, before, after) => {
-      void recordPixelStroke(manager, layerId, before, after).then(() => options.onChange?.())
-    })
   }
 
   function disposeEditorRuntime(): void {
@@ -198,6 +197,7 @@ export function usePixelEditorState() {
   const sidePanelTab = ref<'props' | 'layers' | 'palette' | 'doc'>('props')
   const exportDialogOpen = ref(false)
   const spacePanActive = ref(false)
+  const canvasPanning = ref(false)
   const hasSelection = ref(false)
   const viewportZoomPercent = ref(100)
   const canUndo = ref(false)
@@ -228,11 +228,6 @@ export function usePixelEditorState() {
   async function refreshEditorLayout(): Promise<void> {
     await waitForLayout()
     port.value.resize()
-    const el = canvasWrapRef.value
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    if (rect.width <= 0 || rect.height <= 0) return
-    await canvas.zoomToFit(rect.width, rect.height)
     refreshViewportZoom()
   }
 
@@ -509,6 +504,34 @@ export function usePixelEditorState() {
       onSelectionChange: (sel) => {
         hasSelection.value = !!sel
       },
+      onStrokeCommit: (layerId, before, after) => {
+        void bus.dispatch({
+          type: PixelCmd.Document.DrawStroke,
+          payload: { layerId, before, after }
+        })
+      },
+      onFillAt: (x, y) => {
+        void bus.dispatch({ type: PixelCmd.Document.Fill, payload: { x, y } })
+      },
+      onPickColorAt: (x, y) => {
+        void bus.dispatch({ type: PixelCmd.Document.PickColor, payload: { x, y } })
+      },
+      onGradientFill: (x0, y0, x1, y1) => {
+        void bus.dispatch({
+          type: PixelCmd.Document.GradientFill,
+          payload: { x0, y0, x1, y1 }
+        })
+      },
+      onShapeDraw: (tool, x0, y0, x1, y1) => {
+        if (tool !== 'line' && tool !== 'rect' && tool !== 'ellipse') return
+        void bus.dispatch({
+          type: PixelCmd.Document.DrawShape,
+          payload: { tool, x0, y0, x1, y1 }
+        })
+      },
+      onPanningChange: (active) => {
+        canvasPanning.value = active
+      },
       onDocumentChange: () => {
         session.syncFromPort(session.content?.meta.activeLayerId)
         bumpUiRevision()
@@ -521,6 +544,8 @@ export function usePixelEditorState() {
       },
       onViewportChange: () => {
         refreshViewportZoom()
+        session.syncViewportFromPort()
+        scheduleAutosave()
       }
     })
 
@@ -541,7 +566,15 @@ export function usePixelEditorState() {
 
       const wrap = await waitForCanvasWrap()
       if (seq !== bootstrapSeq) return
-      mountEditorCanvas(engine, wrap, resolvedTheme())
+      mountEditorCanvas(
+        engine,
+        wrap,
+        resolvedTheme(),
+        session.content?.meta.viewport,
+        session.content
+          ? { width: session.content.meta.width, height: session.content.meta.height }
+          : undefined
+      )
       attachCanvasResizeObserver()
       refreshUndoState()
       refreshViewportZoom()
@@ -665,6 +698,15 @@ export function usePixelEditorState() {
     gridVisible,
     checkerboardVisible,
     spacePanActive,
+    canvasPanning,
+    canvasToolCursorClass: computed(() =>
+      editorReady.value
+        ? pixelCanvasCursorClass(activeTool.value, {
+            spacePan: spacePanActive.value,
+            panning: canvasPanning.value
+          })
+        : ''
+    ),
     toolLabel: computed(() => TOOL_LABELS[activeTool.value]),
     selectTool,
     undo,
@@ -714,13 +756,47 @@ export function openBlankEditor(router: ReturnType<typeof useRouter>, width = 25
   return pushShellRoute(router, createDraftRoute(width, height))
 }
 
-function mountEditorCanvas(engine: PixelCanvasEngine, el: HTMLElement, theme: 'light' | 'dark'): void {
+function isSavedViewportUsable(
+  viewport: PixelViewport,
+  docWidth: number,
+  docHeight: number,
+  containerWidth: number,
+  containerHeight: number
+): boolean {
+  if (viewport.zoom <= 0) return false
+  const contentW = docWidth * viewport.zoom
+  const contentH = docHeight * viewport.zoom
+  if (!Number.isFinite(contentW) || !Number.isFinite(contentH)) return false
+  const right = viewport.panX + contentW
+  const bottom = viewport.panY + contentH
+  if (right <= 0 || bottom <= 0) return false
+  if (viewport.panX >= containerWidth || viewport.panY >= containerHeight) return false
+  return true
+}
+
+function mountEditorCanvas(
+  engine: PixelCanvasEngine,
+  el: HTMLElement,
+  theme: 'light' | 'dark',
+  savedViewport?: PixelViewport,
+  docSize?: { width: number; height: number }
+): void {
   engine.mount(el)
   engine.setTheme(theme)
   const rect = el.getBoundingClientRect()
-  if (rect.width > 0 && rect.height > 0) {
-    engine.resetViewportAt100(rect.width, rect.height)
+  const cw = rect.width > 0 ? rect.width : el.clientWidth
+  const ch = rect.height > 0 ? rect.height : el.clientHeight
+  if (cw <= 0 || ch <= 0) {
+    engine.applyInitialViewport(1, 1)
+    return
+  }
+  const useSaved =
+    savedViewport &&
+    docSize &&
+    isSavedViewportUsable(savedViewport, docSize.width, docSize.height, cw, ch)
+  if (useSaved) {
+    engine.applyViewport(savedViewport)
   } else {
-    engine.applyDefaultZoom()
+    engine.applyInitialViewport(cw, ch)
   }
 }

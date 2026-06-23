@@ -203,6 +203,24 @@ export async function saveImageDataUrl(
   return { ok: true, path: result.filePath }
 }
 
+export async function pickSavePath(params: {
+  defaultPath?: string
+  filters?: { name: string; extensions: string[] }[]
+}): Promise<{ ok: boolean; path?: string; canceled?: boolean; error?: string }> {
+  const win = getMainWindow()
+  const saveOptions = {
+    defaultPath: params.defaultPath?.trim() || undefined,
+    filters: params.filters?.length
+      ? params.filters
+      : [{ name: 'All Files', extensions: ['*'] }]
+  }
+  const result = win
+    ? await dialog.showSaveDialog(win, saveOptions)
+    : await dialog.showSaveDialog(saveOptions)
+  if (result.canceled || !result.filePath) return { ok: false, canceled: true }
+  return { ok: true, path: result.filePath }
+}
+
 export async function saveTextFile(
   content: string,
   defaultName?: string,
@@ -266,7 +284,7 @@ export async function cacheImageForViewer(
     return { ok: true, displayUrl: trimmed }
   }
 
-  const localAbs = resolveMediaUrlToAbsolute(trimmed)
+  const localAbs = resolvePathOrMediaUrl(trimmed) ?? resolveMediaUrlToAbsolute(trimmed)
   if (localAbs && existsSync(localAbs)) {
     return { ok: true, displayUrl: pathToFileURL(localAbs).href }
   }

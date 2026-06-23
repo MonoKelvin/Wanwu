@@ -176,9 +176,9 @@ function openLayerMenu(event: MouseEvent, layerId: string) {
 </script>
 
 <template>
-  <div class="pa-layer-panel">
-    <header class="pa-layer-panel__head">
-      <span class="pa-layer-panel__count">{{ layers.length }} 层</span>
+  <div class="pa-dock-panel pa-dock-panel--layers">
+    <header class="pa-dock-panel__toolbar">
+      <span class="pa-dock-panel__toolbar-title">{{ layers.length }} 层</span>
       <WwIconButton icon="plus" ariaLabel="新增图层" compact v-tooltip.bottom="'在当前图层上方新建'" @click="addLayer" />
     </header>
 
@@ -237,38 +237,6 @@ function openLayerMenu(event: MouseEvent, layerId: string) {
 </template>
 
 <style scoped>
-.pa-layer-panel {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  flex: 1;
-  overflow: hidden;
-}
-
-.pa-layer-panel__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-  padding: 0.3125rem 0.5rem;
-  border-bottom: 1px solid var(--ww-border-subtle);
-}
-
-.pa-layer-panel__count {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: var(--ww-ink-muted);
-}
-
-.pa-layer-panel__list {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  margin: 0;
-  padding: 0.25rem 0.375rem 0.375rem;
-  list-style: none;
-}
-
 .pa-layer-panel__row {
   display: flex;
   align-items: center;

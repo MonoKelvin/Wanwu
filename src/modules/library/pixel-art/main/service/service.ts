@@ -2,6 +2,7 @@ import Database from 'better-sqlite3'
 import { randomUUID } from 'crypto'
 import { dialog } from 'electron'
 import { writeFileSync } from 'node:fs'
+import { isAbsolute, normalize } from 'node:path'
 import { ensureWanwuDataLayout, getWanwuPathLayout } from '../../../../../../electron/services/data/paths'
 import { ensureDirSync } from '@shared/lib/fsEnsure'
 import { getMainWindow } from '../../../../../../electron/windowState'
@@ -226,7 +227,8 @@ export class PixelArtService {
     title: string,
     width = 32,
     height = 32,
-    content?: PixelDocument
+    content?: PixelDocument,
+    contentPath?: string
   ): Promise<PixelFileRecord> {
     folderId = PA_FILES
     const normalizedTitle = stripWppExtension(title)
@@ -236,16 +238,18 @@ export class PixelArtService {
     body.meta.title = normalizedTitle
     body.meta.width = width
     body.meta.height = height
-    const contentPath = relativePixelWppPath(id, normalizedTitle)
-    await writePixelContent(this.mediaDir, id, contentPath, body)
-    registerPixelWppPath(id, contentPath, this.mediaDir)
+    const trimmedPath = contentPath?.trim()
+    const storedPath =
+      trimmedPath && isAbsolute(trimmedPath) ? normalize(trimmedPath) : relativePixelWppPath(id, normalizedTitle)
+    await writePixelContent(this.mediaDir, id, storedPath, body)
+    registerPixelWppPath(id, storedPath, this.mediaDir)
 
     this.db
       .prepare(
         `INSERT INTO pa_files (id, folder_id, previous_folder_id, title, width, height, content_path, pinned, created_at, updated_at, deleted_at)
          VALUES (?, ?, NULL, ?, ?, ?, ?, 0, ?, ?, NULL)`
       )
-      .run(id, folderId, normalizedTitle, width, height, contentPath, now, now)
+      .run(id, folderId, normalizedTitle, width, height, storedPath, now, now)
 
     const record = await this.readFile(id)
     if (!record) throw new Error('创建文件失败')
@@ -355,6 +359,21 @@ export class PixelArtService {
       return { ok: true, path: result.filePath }
     }
     return { ok: false, error: '缺少导出数据' }
+  }
+
+  async pickWppSavePath(params: { defaultName: string }): Promise<PixelExportResult> {
+    const win = getMainWindow()
+    const result = win
+      ? await dialog.showSaveDialog(win, {
+          defaultPath: pixelWppFileName(params.defaultName),
+          filters: [{ name: 'Wanwu Pixel', extensions: ['wpp'] }]
+        })
+      : await dialog.showSaveDialog({
+          defaultPath: pixelWppFileName(params.defaultName),
+          filters: [{ name: 'Wanwu Pixel', extensions: ['wpp'] }]
+        })
+    if (result.canceled || !result.filePath) return { ok: false, canceled: true }
+    return { ok: true, path: result.filePath }
   }
 
   async saveWppWithDialog(params: {

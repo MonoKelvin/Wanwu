@@ -63,7 +63,14 @@ export function usePixelCatalogCommands(options?: {
     revealFile,
     softDeleteFile,
     file: {
-      create: (folderId: string, title: string, width?: number, height?: number, content?: PixelDocument) =>
+      create: (
+        folderId: string,
+        title: string,
+        width?: number,
+        height?: number,
+        content?: PixelDocument,
+        contentPath?: string
+      ) =>
         bus.dispatch({
           type: PixelCmd.Catalog.File.Create,
           payload: {
@@ -71,7 +78,8 @@ export function usePixelCatalogCommands(options?: {
             title,
             width,
             height,
-            content: content ? serializePixelDocumentForIpc(content) : undefined
+            content: content ? serializePixelDocumentForIpc(content) : undefined,
+            contentPath
           }
         }),
       importFromImage: (folderId: string, title: string, content: PixelDocument) =>

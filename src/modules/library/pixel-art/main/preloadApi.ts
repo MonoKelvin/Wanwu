@@ -29,6 +29,8 @@ export const pixelArtPreloadModule: IPreloadModule = {
         purgeFile: (params: { fileId: string }) => ipcRenderer.invoke('pixel-art:purgeFile', params),
         exportImage: (params: unknown) => ipcRenderer.invoke('pixel-art:exportImage', params),
         saveWppWithDialog: (params: unknown) => ipcRenderer.invoke('pixel-art:saveWppWithDialog', params),
+        pickWppSavePath: (params: { defaultName: string }) =>
+          ipcRenderer.invoke('pixel-art:pickWppSavePath', params),
         executeCommands: (cmds: unknown, options?: unknown) =>
           ipcRenderer.invoke('pixel-art:executeCommands', { cmds, ...(options as object) })
       }

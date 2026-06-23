@@ -4,7 +4,7 @@ import WwIcon from '@shared/components/WwIcon.vue'
 import {
   computePreviewFramePercent,
   formatCanvasSizeLabel,
-  formatMappingCaption
+  formatTemplateRatioCaption
 } from '@modules/library/pixel-art/lib/pixelDisplayMapping'
 
 const props = defineProps<{
@@ -27,8 +27,7 @@ const innerLabel = computed(() => {
 const bottomCaption = computed(() => {
   if (props.caption) return props.caption
   if (isCustom.value) return '任意尺寸'
-  if (props.width != null && props.height != null) return formatMappingCaption(props.width, props.height)
-  return ''
+  return formatTemplateRatioCaption()
 })
 
 const frameStyle = computed(() => {

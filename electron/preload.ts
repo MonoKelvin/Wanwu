@@ -59,6 +59,10 @@ const api: WanwuApi = {
     copyText: (text) => ipcRenderer.invoke('shell:copyText', text),
     copyImage: (url) => ipcRenderer.invoke('shell:copyImage', url),
     pickImageFile: () => ipcRenderer.invoke('shell:pickImageFile'),
+    pickSavePath: (params: {
+      defaultPath?: string
+      filters?: { name: string; extensions: string[] }[]
+    }) => ipcRenderer.invoke('shell:pickSavePath', params),
     savePngDataUrl: (params) => ipcRenderer.invoke('shell:savePngDataUrl', params),
     saveImageDataUrl: (params) => ipcRenderer.invoke('shell:saveImageDataUrl', params),
     saveClipboardImageDataUrlToTemp: (params) =>

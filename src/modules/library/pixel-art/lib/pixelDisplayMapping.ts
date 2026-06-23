@@ -9,6 +9,9 @@
 
 export const TEMPLATE_PREVIEW_CELL_COUNT = 16
 
+/** 模板卡片预览：每格代表的画布像素数（标签固定为 1:8） */
+export const TEMPLATE_PREVIEW_PIXEL_RATIO = 8
+
 export type PixelTemplateCategory = 'square' | 'desktop' | 'mobile' | 'web'
 
 export interface PixelCanvasTemplate {
@@ -70,6 +73,11 @@ export function formatMappingCaption(width: number, height: number): string {
   return `${formatCanvasSizeLabel(width, height)} 1:${ratio}`
 }
 
+/** 首页模板卡片底部比例说明 */
+export function formatTemplateRatioCaption(): string {
+  return `1:${TEMPLATE_PREVIEW_PIXEL_RATIO}`
+}
+
 /** 模板卡片内预览框尺寸（百分比，保持比例） */
 export function computePreviewFramePercent(width: number, height: number): { width: string; height: string } {
   const aspect = width / height
@@ -78,6 +86,28 @@ export function computePreviewFramePercent(width: number, height: number): { wid
     return { width: `${maxPct}%`, height: `${maxPct / aspect}%` }
   }
   return { width: `${maxPct * aspect}%`, height: `${maxPct}%` }
+}
+
+/**
+ * 向导预览缩放：仅按容器 fit，上限 1（画布像素 1:1 显示）。
+ * 像素比率不参与画布尺寸，只影响网格步进。
+ */
+export function computePreviewFitScale(
+  docWidth: number,
+  docHeight: number,
+  maxWidth: number,
+  maxHeight: number
+): number {
+  const w = Math.max(1, Math.floor(docWidth))
+  const h = Math.max(1, Math.floor(docHeight))
+  const scale = Math.min(maxWidth / w, maxHeight / h, 1)
+  if (!Number.isFinite(scale) || scale <= 0) return 1
+  return scale
+}
+
+/** 向导预览网格步进（画布像素）：1:N 表示每 N×N 画布像素为一格 */
+export function computeWizardPreviewGridStep(pixelRatio: number): number {
+  return Math.max(1, Math.floor(pixelRatio))
 }
 
 export function findTemplateBySize(width: number, height: number): PixelCanvasTemplate | undefined {

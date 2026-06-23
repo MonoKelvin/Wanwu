@@ -50,14 +50,16 @@ export class PixelRepositoryIpcAdapter {
     title: string,
     width?: number,
     height?: number,
-    content?: PixelDocument
+    content?: PixelDocument,
+    contentPath?: string
   ): Promise<PixelFileRecord> {
     const record = await window.wanwu.pixelArt.createFile({
       folderId,
       title,
       width,
       height,
-      content: content ? serializePixelDocumentForIpc(content) : undefined
+      content: content ? serializePixelDocumentForIpc(content) : undefined,
+      contentPath
     })
     return {
       meta: record.meta,
