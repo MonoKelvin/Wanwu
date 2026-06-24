@@ -141,9 +141,13 @@ const { record: recordRecentShape } = useDiagramRecentShapes()
 const saveFlow = provideDiagramSaveFlow(bus, toast, { onDocumentSaved })
 
 const stageStyle = computed(() => ({
-  '--dg-asset-panel-w': editorLayout.assetCollapsed.value ? '0px' : '11.75rem',
-  '--dg-panel-w': editorLayout.propsCollapsed.value ? '0px' : '14.5rem'
+  '--dg-asset-panel-w': '11.75rem',
+  '--dg-panel-w': '14.5rem',
+  '--dg-minimap-right-offset': editorLayout.propsCollapsed.value ? '0.75rem' : '15.25rem'
 }))
+
+const assetPanelCollapsed = computed(() => editorLayout.assetCollapsed.value)
+const propsPanelCollapsed = computed(() => editorLayout.propsCollapsed.value)
 
 const { conflictOpen, folderPickerOpen, pickedFolderId } = toRefs(saveFlow)
 const {
@@ -424,7 +428,9 @@ onActivated(() => {
   const docKey = currentDocKey()
   if (isDiagramEditorRuntimeReady(docKey)) {
     loading.value = false
-    void attachFromExistingRuntime(docKey)
+    void attachFromExistingRuntime(docKey).then((attached) => {
+      if (!attached) void bootstrapEditorSurface('activate')
+    })
     return
   }
   if (hasDiagramEditorBootstrapInFlight()) return
@@ -622,7 +628,7 @@ function onCanvasDrop(event: DragEvent) {
         />
 
         <template v-if="editorReady">
-        <DiagramAssetPanel v-if="!editorLayout.assetCollapsed.value" />
+        <DiagramAssetPanel v-if="!assetPanelCollapsed" />
         <DiagramPanelRestoreButton
           v-else
           side="left"
@@ -631,7 +637,7 @@ function onCanvasDrop(event: DragEvent) {
           @click="toggleAssetPanelCollapsed(editorLayout)"
         />
         <DiagramPropertyPanel
-          v-if="!editorLayout.propsCollapsed.value"
+          v-if="!propsPanelCollapsed"
           :file-id="sessionRef?.fileId ?? null"
           :canvas-commands="canvasCommands"
         />

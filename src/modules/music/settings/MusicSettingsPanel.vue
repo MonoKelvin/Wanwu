@@ -122,7 +122,7 @@ async function onApiModeChange(v: MusicApiMode | null) {
 }
 
 async function onApiBaseUrlChange() {
-  await settingsStore.save({ musicApiBaseUrl: musicSettings.value.apiBaseUrl })
+  await patchMusic({ apiBaseUrl: musicSettings.value.apiBaseUrl })
 }
 
 async function onLocalPortChange(e: Event) {
@@ -132,15 +132,15 @@ async function onLocalPortChange(e: Event) {
 }
 
 async function onDiscoverCountryChange() {
-  await settingsStore.save({ musicDiscoverCountry: musicSettings.value.discoverCountry })
+  await patchMusic({ discoverCountry: musicSettings.value.discoverCountry })
 }
 
 async function onJamendoClientIdChange() {
-  await settingsStore.save({ musicJamendoClientId: musicSettings.value.jamendoClientId })
+  await patchMusic({ jamendoClientId: musicSettings.value.jamendoClientId })
 }
 
 async function onAudiusApiKeyChange() {
-  await settingsStore.save({ musicAudiusApiKey: musicSettings.value.audiusApiKey })
+  await patchMusic({ audiusApiKey: musicSettings.value.audiusApiKey })
 }
 
 async function loadLoginStatus() {
@@ -167,11 +167,11 @@ async function onQualityChange(v: typeof musicSettings.value.neteaseQuality | nu
 }
 
 async function onNeteaseRealIpChange() {
-  await settingsStore.save({ musicNeteaseRealIp: musicSettings.value.neteaseRealIp })
+  await patchMusic({ neteaseRealIp: musicSettings.value.neteaseRealIp })
 }
 
 async function onNeteaseProxyChange() {
-  await settingsStore.save({ musicNeteaseProxy: musicSettings.value.neteaseProxy })
+  await patchMusic({ neteaseProxy: musicSettings.value.neteaseProxy })
 }
 
 onMounted(() => {

@@ -33,6 +33,8 @@ export const useAppStore = defineStore('app', () => {
 
   function rememberModulePath(id: ModuleId, path: string) {
     if (!path || lastPathByModule.value[id] === path) return
+    const normalized = path.replace(/^#/, '').split('?')[0] ?? ''
+    if (normalized.startsWith('/item/')) return
     lastPathByModule.value = { ...lastPathByModule.value, [id]: path }
   }
 

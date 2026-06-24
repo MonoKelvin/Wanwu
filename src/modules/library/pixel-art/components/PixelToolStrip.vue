@@ -4,7 +4,7 @@ defineOptions({ name: 'PixelToolStrip' })
 import WwIconButton from '@shared/components/WwIconButton.vue'
 import type { WwIconName } from '@shared/icons/registry'
 import type { ToolId } from '@modules/library/pixel-art/domain/tools'
-import { PLACEHOLDER_TOOLS, TOOL_LABELS } from '@modules/library/pixel-art/domain/tools'
+import { PLACEHOLDER_TOOLS, toolTooltipLabel } from '@modules/library/pixel-art/domain/tools'
 import { useWanwuToast } from '@shared/composables/useWanwuToast'
 
 const props = defineProps<{
@@ -49,10 +49,17 @@ const toolGroups: ToolDef[][] = [
 
 function pickTool(tool: ToolDef) {
   if (tool.disabled || PLACEHOLDER_TOOLS.has(tool.id)) {
-    toast.info(`${TOOL_LABELS[tool.id]} 即将推出`)
+    toast.info(`${toolTooltipLabel(tool.id, { placeholder: true })}`)
     return
   }
   emit('select', tool.id)
+}
+
+function tooltipFor(tool: ToolDef): string {
+  return toolTooltipLabel(tool.id, {
+    disabled: tool.disabled,
+    placeholder: tool.disabled || PLACEHOLDER_TOOLS.has(tool.id)
+  })
 }
 </script>
 
@@ -65,14 +72,14 @@ function pickTool(tool: ToolDef) {
         :key="tool.id"
         :icon="tool.icon"
         icon-size="sm"
-        :ariaLabel="TOOL_LABELS[tool.id]"
+        :ariaLabel="tooltipFor(tool)"
         class="pa-tool-strip__btn"
         :class="{
           'pa-tool-strip__btn--active': props.activeTool === tool.id,
           'pa-tool-strip__btn--disabled': tool.disabled
         }"
         compact
-        v-tooltip.right="tool.disabled ? `${TOOL_LABELS[tool.id]}（即将推出）` : TOOL_LABELS[tool.id]"
+        v-tooltip.right="tooltipFor(tool)"
         @click="pickTool(tool)"
       />
     </template>

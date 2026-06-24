@@ -53,3 +53,24 @@ export const TOOL_LABELS: Record<ToolId, string> = {
   hand: '平移',
   zoom: '缩放'
 }
+
+/** 工具栏 tooltip / 快捷键说明用（与 usePixelShortcuts 一致） */
+export const TOOL_SHORTCUT_KEYS: Partial<Record<ToolId, string>> = {
+  pencil: 'B',
+  eraser: 'E',
+  fill: 'G',
+  line: 'L',
+  rect: 'U',
+  ellipse: 'O',
+  eyedropper: 'I',
+  marquee: 'M',
+  move: 'V',
+  hand: 'H'
+}
+
+export function toolTooltipLabel(toolId: ToolId, options?: { disabled?: boolean; placeholder?: boolean }): string {
+  const label = TOOL_LABELS[toolId]
+  if (options?.disabled || options?.placeholder) return `${label}（即将推出）`
+  const key = TOOL_SHORTCUT_KEYS[toolId]
+  return key ? `${label} (${key})` : label
+}

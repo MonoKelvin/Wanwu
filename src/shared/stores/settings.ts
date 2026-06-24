@@ -14,7 +14,7 @@ import {
 } from '@shared/types/settings'
 import { isModuleId } from '@app/config/modules'
 import { mergeModuleSettingsMaps, cloneModuleSettingsMap } from '@shared/lib/moduleSettings'
-import { normalizeAppSettings } from '@shared/settings/normalizeAppSettings'
+import { mergeAppSettings, normalizeAppSettings } from '@shared/settings/normalizeAppSettings'
 import { applyColorScheme, readStoredColorScheme, watchSystemColorScheme } from '@app/theme/applyTheme'
 import {
   bumpRecentString,
@@ -53,11 +53,12 @@ export const useSettingsStore = defineStore('settings', () => {
     beginSettingsWrite()
     try {
       const saved = await window.wanwu.app.patchSettings(patch)
-      const next = normalizeAppSettings({
-        ...saved,
-        ...optimistic,
-        moduleSettings: mergeModuleSettingsMaps(saved.moduleSettings, optimistic.moduleSettings)
-      })
+      const next = mergeAppSettings(
+        {
+          moduleSettings: mergeModuleSettingsMaps(saved.moduleSettings, optimistic.moduleSettings)
+        },
+        optimistic
+      )
       settings.value = next
       applySettingsToDocument(next)
       return next
@@ -96,7 +97,7 @@ export const useSettingsStore = defineStore('settings', () => {
 
   async function save(patch: Partial<AppSettings>) {
     const snapshot = settings.value
-    const optimistic = normalizeAppSettings({ ...snapshot, ...patch })
+    const optimistic = mergeAppSettings(patch, snapshot)
     settings.value = optimistic
     applySettingsToDocument(optimistic)
     try {
@@ -110,7 +111,7 @@ export const useSettingsStore = defineStore('settings', () => {
 
   async function patchSetting<K extends keyof AppSettings>(key: K, value: AppSettings[K]) {
     const snapshot = settings.value
-    const optimistic = normalizeAppSettings({ ...snapshot, [key]: value })
+    const optimistic = mergeAppSettings({ [key]: value } as Partial<AppSettings>, snapshot)
     settings.value = optimistic
     applySettingsToDocument(optimistic)
     try {
@@ -125,7 +126,7 @@ export const useSettingsStore = defineStore('settings', () => {
   async function patchLastActiveModule(moduleId: ModuleId) {
     if (settings.value.lastActiveModule === moduleId) return
     const snapshot = settings.value
-    const optimistic = normalizeAppSettings({ ...snapshot, lastActiveModule: moduleId })
+    const optimistic = mergeAppSettings({ lastActiveModule: moduleId }, snapshot)
     settings.value = optimistic
     beginSettingsWrite()
     try {
@@ -194,7 +195,7 @@ export const useSettingsStore = defineStore('settings', () => {
     if (closeBehavior === 'tray' || closeBehavior === 'ask') {
       patch.trayEnabled = true
     }
-    const optimistic = normalizeAppSettings({ ...snapshot, ...patch })
+    const optimistic = mergeAppSettings(patch, snapshot)
     settings.value = optimistic
     applySettingsToDocument(optimistic)
     try {
@@ -229,11 +230,13 @@ export const useSettingsStore = defineStore('settings', () => {
   function syncFromRemote(remote: Partial<AppSettings>) {
     if (settingsWriteDepth > 0) return
     const snapshot = settings.value
-    const merged = normalizeAppSettings({
-      ...snapshot,
-      ...remote,
-      moduleSettings: mergeModuleSettingsMaps(snapshot.moduleSettings, remote.moduleSettings)
-    })
+    const merged = mergeAppSettings(
+      {
+        ...remote,
+        moduleSettings: mergeModuleSettingsMaps(snapshot.moduleSettings, remote.moduleSettings)
+      },
+      snapshot
+    )
     settings.value = merged
     applySettingsToDocument(merged)
   }

@@ -31,9 +31,20 @@ const emit = defineEmits<{
 
 const dockPanels: WwDockPanelItem[] = [
   { id: 'props', title: '属性', icon: 'sliders-horizontal' },
-  { id: 'palette', title: '调色板', icon: 'palette' },
+  { id: 'palette', title: '调色', icon: 'palette' },
   { id: 'doc', title: '画布', icon: 'layout-grid' },
-  { id: 'layers', title: '图层', icon: 'layers' }
+  { id: 'layers', title: '图层', icon: 'layers', defaultExpanded: true }
+]
+
+const sideDockStacks = [
+  {
+    id: 'main-tabs',
+    type: 'tabs' as const,
+    panelIds: ['props', 'palette', 'doc'],
+    activeTabId: 'props',
+    weight: 1.1
+  },
+  { id: 'layers-pane', type: 'pane' as const, panelIds: ['layers'], weight: 1 }
 ]
 
 const panelWidthRef = toRef(props, 'panelWidth')
@@ -61,7 +72,6 @@ function onResizePointerDown(e: PointerEvent) {
     <div class="pa-side-panel__resize" aria-hidden="true" @pointerdown="onResizePointerDown" />
 
     <header class="pa-side-panel__head pa-side-panel__head--dock">
-      <span class="pa-side-panel__head-title">面板</span>
       <WwIconButton
         icon="chevron-right"
         icon-size="sm"
@@ -75,6 +85,7 @@ function onResizePointerDown(e: PointerEvent) {
 
     <WwDockPanel
       :panels="dockPanels"
+      :default-stacks="sideDockStacks"
       storage-key="wanwu.pixel-art.sideDock"
       class="pa-side-panel__dock"
     >
@@ -107,7 +118,9 @@ function onResizePointerDown(e: PointerEvent) {
 
 <style scoped>
 .pa-side-panel__head--dock {
-  justify-content: space-between;
+  justify-content: flex-end;
+  padding: 0.375rem 0.5rem 0.125rem;
+  min-height: 0;
 }
 
 .pa-side-panel__dock {

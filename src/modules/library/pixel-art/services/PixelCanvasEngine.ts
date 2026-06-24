@@ -13,6 +13,7 @@ import {
   type ToolOptions
 } from '@modules/library/pixel-art/domain/tools'
 import { clonePixelDocument, getActiveFrame, getActiveLayerMeta } from '@modules/library/pixel-art/lib/blankDocument'
+import { formatColorFromInput } from '@shared/lib/colorWithAlpha'
 import { compositeDocument, pixelsToImageData } from '@modules/library/pixel-art/lib/composite'
 import { floodFillScanline } from '@modules/library/pixel-art/lib/floodFill'
 import { applyLinearGradient, applyLinearGradientByCells, pickColorFromPixels } from '@modules/library/pixel-art/lib/gradientFill'
@@ -33,13 +34,12 @@ import { PIXEL_MAX_HEIGHT, PIXEL_MAX_LAYERS, PIXEL_MAX_WIDTH, PIXEL_ZOOM_LEVELS 
 import { getPixelUnitSize } from '@modules/library/pixel-art/lib/pixelCanvasPresets'
 import {
   cellIndex,
-  ellipseCellOrigins,
   enumerateBrushCellOrigins,
   fillCellBlock,
   getGridCellSize,
   lineCellOrigins,
   normalizeSelectionToCells,
-  rectCellOrigins,
+  shapeToolCellOrigins,
   snapToCellOrigin
 } from '@modules/library/pixel-art/lib/pixelGridCell'
 
@@ -73,10 +73,21 @@ function parseColor(input: string): [number, number, number, number] {
   return [0, 0, 0, 255]
 }
 
-/** 画笔/形状绘制时使用不透明 RGB，避免色轮 alpha 导致颜色偏浅 */
+/** 画笔写入色：保留用户调节的前景 alpha（Shift+滚轮） */
+function paintRgbaFromForeground(color: string): [number, number, number, number] {
+  return parseColor(color)
+}
+
+/** 填充/形状等需要实色的场景（alpha 强制 255） */
 function opaquePaintRgba(color: string): [number, number, number, number] {
   const [r, g, b] = parseColor(color)
   return [r, g, b, 255]
+}
+
+function foregroundToFillHex(color: string): string {
+  const [r, g, b] = opaquePaintRgba(color)
+  const hex = (n: number) => n.toString(16).padStart(2, '0')
+  return `#${hex(r)}${hex(g)}${hex(b)}`
 }
 
 export class PixelCanvasEngine implements IPixelEditorPort {
@@ -105,8 +116,11 @@ export class PixelCanvasEngine implements IPixelEditorPort {
   private moveDragBefore: Uint8ClampedArray | null = null
   private moveDragLayerId: string | null = null
   private brushHover: { x: number; y: number } | null = null
+  /** 笔划进行中指针位置（捕获后仍更新，供笔刷预览） */
+  private strokePointer: { x: number; y: number } | null = null
   private previewCellOrigins: { x: number; y: number }[] | null = null
   private checkerPattern: CanvasPattern | null = null
+  private compositePixels: Uint8ClampedArray | null = null
   private compositeScratch: HTMLCanvasElement | null = null
   private previewScratch: HTMLCanvasElement | null = null
   private compositeCacheValid = false
@@ -139,6 +153,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     el.appendChild(this.canvas)
     this.ctx = this.canvas.getContext('2d')!
     this.ctx.imageSmoothingEnabled = false
+    this.ctx.imageSmoothingQuality = 'low'
     this.canvas.addEventListener('pointerdown', this.boundOnPointerDown)
     this.canvas.addEventListener('pointermove', this.boundOnPointerMove)
     this.canvas.addEventListener('pointerup', this.boundOnPointerUp)
@@ -163,9 +178,9 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.ctx = null
     this.root = null
     this.compositeScratch = null
+    this.compositePixels = null
     this.previewScratch = null
     this.compositeCacheValid = false
-    if (this.panRenderRaf) cancelAnimationFrame(this.panRenderRaf)
     this.panRenderRaf = 0
     this.containerCssSize = { width: 0, height: 0 }
     if (this.animFrameId != null) cancelAnimationFrame(this.animFrameId)
@@ -239,7 +254,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
 
   setForeground(color: string): void {
     if (!this.doc) return
-    this.doc.meta.foreground = color
+    this.doc.meta.foreground = formatColorFromInput(color)
   }
 
   setBackgroundColor(color: string): void {
@@ -797,14 +812,13 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     const layer = this.doc.layerPixels[layerMeta.id]
     if (!layer) return false
     const before = new Uint8ClampedArray(layer)
-    const [r, g, b] = opaquePaintRgba(this.doc.meta.foreground)
     const changed = floodFillScanline(
       layer,
       this.doc.meta.width,
       this.doc.meta.height,
       origin.x,
       origin.y,
-      `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`,
+      foregroundToFillHex(this.doc.meta.foreground),
       this.toolOptions.fillTolerance
     )
     if (!changed) return false
@@ -903,16 +917,35 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.ctx.save()
     this.ctx.translate(panX, panY)
     this.ctx.scale(zoom, zoom)
+    this.ctx.globalAlpha = 1
+    this.ctx.globalCompositeOperation = 'source-over'
 
-    if (this.doc.meta.checkerboard.visible) this.drawCheckerboard(width, height)
+    // 文档区内：先清空再合成（与导出一致），避免网格/笔刷 underlay 从下方混色导致发浅
+    this.ctx.save()
+    this.ctx.beginPath()
+    this.ctx.rect(0, 0, width, height)
+    this.ctx.clip()
+    this.ctx.clearRect(0, 0, width, height)
+
     this.drawComposite(!viewportOnly)
     if (this.previewPixels) {
       this.drawPixelLayer(this.previewPixels, width, height, 'preview')
     }
-    if (this.doc.meta.grid.visible) this.drawGrid(width, height)
+
+    if (this.doc.meta.checkerboard.visible) {
+      this.ctx.globalCompositeOperation = 'destination-over'
+      this.drawCheckerboard(width, height)
+      this.ctx.globalCompositeOperation = 'source-over'
+    }
+
+    if (this.doc.meta.grid.visible) {
+      this.drawGrid(width, height)
+    }
+    this.ctx.restore()
+
     const sel = this.previewSelection ?? this.selection
     if (sel) this.drawSelection(sel)
-    this.drawBrushPreview()
+    this.drawBrushPreview('overlay')
     this.ctx.restore()
   }
 
@@ -952,7 +985,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     const cssW = Math.max(1, rect.width)
     const cssH = Math.max(1, rect.height)
     this.containerCssSize = { width: cssW, height: cssH }
-    const dpr = window.devicePixelRatio || 1
+    const dpr = 1 // 禁用devicePixelRatio以测试
     this.canvas.width = Math.max(1, Math.floor(cssW * dpr))
     this.canvas.height = Math.max(1, Math.floor(cssH * dpr))
     this.canvas.style.width = `${cssW}px`
@@ -960,10 +993,11 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     if (this.ctx) {
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       this.ctx.imageSmoothingEnabled = false
+      this.ctx.imageSmoothingQuality = 'low'
     }
   }
 
-  /** putImageData 不受变换矩阵影响，需经离屏 canvas + drawImage 绘制 */
+  /** 使用离屏canvas绘制，然后drawImage到主canvas */
   private drawPixelLayer(
     pixels: Uint8ClampedArray,
     width: number,
@@ -971,9 +1005,16 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     target: 'composite' | 'preview'
   ): void {
     if (!this.ctx) return
+
     this.uploadPixelsToScratch(pixels, width, height, target)
     const scratch = target === 'composite' ? this.compositeScratch : this.previewScratch
-    if (scratch) this.ctx.drawImage(scratch, 0, 0)
+    if (scratch) {
+      this.ctx.imageSmoothingEnabled = false
+      this.ctx.imageSmoothingQuality = 'low'
+
+      // 使用drawImage绘制到正确的位置（考虑pan和zoom）
+      this.ctx.drawImage(scratch, 0, 0, width, height)
+    }
   }
 
   private drawCheckerboard(w: number, h: number): void {
@@ -1000,13 +1041,22 @@ export class PixelCanvasEngine implements IPixelEditorPort {
 
   private drawComposite(rebuild = true): void {
     if (!this.ctx || !this.doc) return
+    const { width, height } = this.doc.meta
+
     if (rebuild && !this.compositeCacheValid) {
-      const { width, height } = this.doc.meta
-      const pixels = compositeDocument(this.doc)
-      this.uploadPixelsToScratch(pixels, width, height, 'composite')
+      this.compositePixels = compositeDocument(this.doc)
       this.compositeCacheValid = true
     }
-    if (this.compositeScratch) this.ctx.drawImage(this.compositeScratch, 0, 0)
+    if (!this.compositePixels) return
+
+    this.ctx.imageSmoothingEnabled = false
+    this.ctx.imageSmoothingQuality = 'low'
+
+    // 使用drawImage而不是putImageData，以确保变换正确应用
+    this.uploadPixelsToScratch(this.compositePixels, width, height, 'composite')
+    if (this.compositeScratch) {
+      this.ctx.drawImage(this.compositeScratch, 0, 0, width, height)
+    }
   }
 
   private uploadPixelsToScratch(
@@ -1026,50 +1076,31 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     const sctx = scratch.getContext('2d')
     if (!sctx) return
     sctx.imageSmoothingEnabled = false
-    sctx.putImageData(pixelsToImageData(pixels, width, height), 0, 0)
+    sctx.imageSmoothingQuality = 'low'
+
+    // 直接使用putImageData绘制，不使用drawImage，避免变换影响
+    const imageData = pixelsToImageData(pixels, width, height)
+    sctx.putImageData(imageData, 0, 0)
   }
 
   private drawGrid(w: number, h: number): void {
     if (!this.ctx || !this.doc) return
-    const cellSize = this.gridCellSize()
-    const lineW = 1 / this.viewport.zoom
+    const cellSize = Math.max(1, this.gridCellSize())
+    const lineW = Math.max(1 / this.viewport.zoom, 1)
     this.ctx.lineWidth = lineW
-
-    if (cellSize <= 1) {
-      const major =
-        this.theme === 'dark' ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.52)'
-      this.ctx.strokeStyle = major
-      for (let x = 0; x <= w; x++) {
-        this.ctx.beginPath()
-        this.ctx.moveTo(x, 0)
-        this.ctx.lineTo(x, h)
-        this.ctx.stroke()
-      }
-      for (let y = 0; y <= h; y++) {
-        this.ctx.beginPath()
-        this.ctx.moveTo(0, y)
-        this.ctx.lineTo(w, y)
-        this.ctx.stroke()
-      }
-      return
-    }
-
     const major =
-      this.theme === 'dark' ? 'rgba(255,255,255,0.72)' : 'rgba(0,0,0,0.58)'
-    const minor =
-      this.theme === 'dark' ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.26)'
+      this.theme === 'dark' ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.22)'
     const border =
-      this.theme === 'dark' ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.48)'
+      this.theme === 'dark' ? 'rgba(255,255,255,0.36)' : 'rgba(0,0,0,0.28)'
 
-    for (let x = 0; x <= w; x++) {
-      this.ctx.strokeStyle = x % cellSize === 0 ? major : minor
+    this.ctx.strokeStyle = major
+    for (let x = 0; x <= w; x += cellSize) {
       this.ctx.beginPath()
       this.ctx.moveTo(x, 0)
       this.ctx.lineTo(x, h)
       this.ctx.stroke()
     }
-    for (let y = 0; y <= h; y++) {
-      this.ctx.strokeStyle = y % cellSize === 0 ? major : minor
+    for (let y = 0; y <= h; y += cellSize) {
       this.ctx.beginPath()
       this.ctx.moveTo(0, y)
       this.ctx.lineTo(w, y)
@@ -1125,11 +1156,11 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     return []
   }
 
-  /** 悬停单元格描边（不填充，避免盖住真实绘制色） */
+  /** 悬停/绘制单元格描边（不填充，避免盖住真实绘制色） */
   private drawCellOutlines(
     origins: { x: number; y: number }[],
     cellSize: number,
-    accent: 'neutral' | 'eraser' | 'fill' = 'neutral'
+    accent: 'neutral' | 'eraser' | 'fill' | 'drawing' = 'neutral'
   ): void {
     if (!this.ctx || !this.doc || !origins.length) return
     const cs = Math.max(1, cellSize)
@@ -1145,9 +1176,13 @@ export class PixelCanvasEngine implements IPixelEditorPort {
           ? dark
             ? 'rgba(120,220,160,0.95)'
             : 'rgba(30,150,90,0.9)'
-          : dark
-            ? 'rgba(255,255,255,0.92)'
-            : 'rgba(0,0,0,0.82)'
+          : accent === 'drawing'
+            ? dark
+              ? 'rgba(255,210,90,0.98)'
+              : 'rgba(220,140,20,0.92)'
+            : dark
+              ? 'rgba(255,255,255,0.92)'
+              : 'rgba(0,0,0,0.82)'
     this.ctx.save()
     this.ctx.lineWidth = lineW
     this.ctx.strokeStyle = stroke
@@ -1160,26 +1195,48 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.ctx.restore()
   }
 
-  /** 笔刷粗细外框（圆形/方形） */
-  private drawBrushShapeOutline(
+  /** 笔刷形状外框（与属性面板调节笔刷大小时的预览一致） */
+  private drawBrushFootprintPreview(
     originX: number,
     originY: number,
     cellSize: number,
     brushCells: number,
-    shape: 'square' | 'circle'
+    shape: 'square' | 'circle',
+    phase: 'underlay' | 'overlay'
   ): void {
     if (!this.ctx) return
     const { x, y, width, height } = this.brushFootprintBounds(originX, originY, cellSize, brushCells)
-    const lineW = Math.max(1.5 / this.viewport.zoom, 1 / this.viewport.zoom)
+    const isEraser = this.toolId === 'eraser'
     const dark = this.theme === 'dark'
-    const stroke =
-      this.toolId === 'eraser'
-        ? dark
-          ? 'rgba(255,100,100,0.98)'
-          : 'rgba(210,35,35,0.95)'
-        : dark
-          ? 'rgba(140,190,255,0.98)'
-          : 'rgba(25,110,240,0.95)'
+
+    if (phase === 'underlay') {
+      this.ctx.save()
+      if (isEraser) {
+        this.ctx.fillStyle = dark ? 'rgba(255,100,100,0.16)' : 'rgba(210,35,35,0.14)'
+      } else {
+        this.ctx.fillStyle = dark ? 'rgba(140,190,255,0.16)' : 'rgba(25,110,240,0.14)'
+      }
+      if (shape === 'circle') {
+        const cx = x + width / 2
+        const cy = y + height / 2
+        this.ctx.beginPath()
+        this.ctx.ellipse(cx, cy, width / 2, height / 2, 0, 0, Math.PI * 2)
+        this.ctx.fill()
+      } else {
+        this.ctx.fillRect(x, y, width, height)
+      }
+      this.ctx.restore()
+      return
+    }
+
+    const lineW = Math.max(1.5 / this.viewport.zoom, 1 / this.viewport.zoom)
+    const stroke = isEraser
+      ? dark
+        ? 'rgba(255,120,120,0.98)'
+        : 'rgba(210,35,35,0.95)'
+      : dark
+        ? 'rgba(160,200,255,0.98)'
+        : 'rgba(25,110,240,0.92)'
     this.ctx.save()
     this.ctx.lineWidth = lineW
     this.ctx.strokeStyle = stroke
@@ -1195,40 +1252,48 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.ctx.restore()
   }
 
-  private drawBrushPreview(): void {
+  private brushPreviewOrigin(): { x: number; y: number } | null {
+    if (!this.doc) return null
+    const p = this.brushHover ?? this.strokePointer
+    if (!p) return null
+    return snapToCellOrigin(p.x, p.y, this.gridCellSize())
+  }
+
+  private drawBrushPreview(phase: 'underlay' | 'overlay'): void {
     if (!this.ctx || !this.doc || !this.isBrushPreviewEnabled()) return
     if (this.panning || this.altPanPending) return
 
     const cellSize = this.gridCellSize()
+    const drawingStroke =
+      this.isDrawing && (this.toolId === 'pencil' || this.toolId === 'eraser')
+    const origin = this.brushPreviewOrigin()
+    const brushCells = Math.max(1, this.toolOptions.brushSize)
+    const shape = this.toolOptions.brushShape
 
-    if (this.previewCellOrigins?.length) {
-      this.drawCellOutlines(this.previewCellOrigins, cellSize)
-    }
-
-    // 笔划绘制中不显示悬停预览，避免半透明叠层盖住真实颜色
-    if (this.isDrawing && (this.toolId === 'pencil' || this.toolId === 'eraser')) return
-
-    if (!this.brushHover) return
-
-    if (this.toolId === 'fill') {
-      const origins = this.hoverCellOrigins()
-      this.drawCellOutlines(origins, cellSize, 'fill')
+    if (this.toolId === 'pencil' || this.toolId === 'eraser') {
+      if (origin) {
+        this.drawBrushFootprintPreview(origin.x, origin.y, cellSize, brushCells, shape, phase)
+      }
+      if (phase === 'overlay' && !drawingStroke && origin) {
+        const origins = this.hoverCellOrigins()
+        if (origins.length) {
+          const accent = this.toolId === 'eraser' ? 'eraser' : 'neutral'
+          this.drawCellOutlines(origins, cellSize, accent)
+        }
+      }
       return
     }
 
-    if (this.toolId === 'pencil' || this.toolId === 'eraser') {
-      const origins = this.hoverCellOrigins()
-      if (!origins.length) return
-      const origin = snapToCellOrigin(this.brushHover.x, this.brushHover.y, cellSize)
-      const accent = this.toolId === 'eraser' ? 'eraser' : 'neutral'
-      this.drawCellOutlines(origins, cellSize, accent)
-      this.drawBrushShapeOutline(
-        origin.x,
-        origin.y,
-        cellSize,
-        Math.max(1, this.toolOptions.brushSize),
-        this.toolOptions.brushShape
-      )
+    if (phase === 'underlay') return
+
+    if (this.toolId === 'fill') {
+      if (drawingStroke || !origin) return
+      this.drawCellOutlines(this.hoverCellOrigins(), cellSize, 'fill')
+      return
+    }
+
+    if (this.previewCellOrigins?.length) {
+      this.drawCellOutlines(this.previewCellOrigins, cellSize)
     }
   }
 
@@ -1241,7 +1306,11 @@ export class PixelCanvasEngine implements IPixelEditorPort {
       if (this.brushHover) this.brushHover = null
       return
     }
-    this.brushHover = this.pointerPixel(e.clientX, e.clientY)
+    const p = this.pointerPixel(e.clientX, e.clientY)
+    this.brushHover = p
+    if (this.isDrawing && (this.toolId === 'pencil' || this.toolId === 'eraser') && p) {
+      this.strokePointer = p
+    }
   }
 
   private onPointerLeave(): void {
@@ -1284,8 +1353,10 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.previewPixels = null
     this.previewSelection = null
     this.previewCellOrigins = null
+    this.strokePointer = null
     this.shapeStart = null
     this.capturedPointerId = null
+    this.invalidateCompositeCache()
     this.render()
   }
 
@@ -1346,6 +1417,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
 
   private onPointerDown(e: PointerEvent): void {
     if (!this.doc || !this.canvas) return
+    this.syncBrushHover(e)
     const p = this.pointerPixel(e.clientX, e.clientY)
     this.emitPixelCoords(p)
 
@@ -1429,6 +1501,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     this.shapeStart = p
     this.lastPaintPos = p
     if (this.toolId === 'pencil' || this.toolId === 'eraser') {
+      this.strokePointer = p
       this.paintAt(layer, p.x, p.y)
       this.invalidateCompositeCache()
       this.render()
@@ -1485,7 +1558,6 @@ export class PixelCanvasEngine implements IPixelEditorPort {
 
     if ((this.toolId === 'pencil' || this.toolId === 'eraser') && p) {
       const cellSize = this.gridCellSize()
-      const brushCells = Math.max(1, this.toolOptions.brushSize)
       if (this.lastPaintPos) {
         for (const origin of lineCellOrigins(this.lastPaintPos.x, this.lastPaintPos.y, p.x, p.y, cellSize)) {
           this.paintAt(layer, origin.x, origin.y)
@@ -1494,6 +1566,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
         this.paintAt(layer, p.x, p.y)
       }
       this.lastPaintPos = p
+      this.strokePointer = p
       this.invalidateCompositeCache()
       this.render()
       return
@@ -1521,29 +1594,39 @@ export class PixelCanvasEngine implements IPixelEditorPort {
       const cellSize = this.gridCellSize()
       const filled = this.toolOptions.shapeFilled
       if (this.toolId === 'line') {
-        this.previewCellOrigins = lineCellOrigins(
-          this.shapeStart.x,
-          this.shapeStart.y,
-          p.x,
-          p.y,
-          cellSize
-        )
-      } else if (this.toolId === 'rect') {
-        this.previewCellOrigins = rectCellOrigins(
+        this.previewCellOrigins = shapeToolCellOrigins(
+          'line',
           this.shapeStart.x,
           this.shapeStart.y,
           p.x,
           p.y,
           cellSize,
+          Math.max(1, this.toolOptions.brushSize),
+          this.toolOptions.brushShape,
+          false
+        )
+      } else if (this.toolId === 'rect') {
+        this.previewCellOrigins = shapeToolCellOrigins(
+          'rect',
+          this.shapeStart.x,
+          this.shapeStart.y,
+          p.x,
+          p.y,
+          cellSize,
+          Math.max(1, this.toolOptions.brushSize),
+          this.toolOptions.brushShape,
           filled
         )
       } else if (this.toolId === 'ellipse') {
-        this.previewCellOrigins = ellipseCellOrigins(
+        this.previewCellOrigins = shapeToolCellOrigins(
+          'ellipse',
           this.shapeStart.x,
           this.shapeStart.y,
           p.x,
           p.y,
           cellSize,
+          Math.max(1, this.toolOptions.brushSize),
+          this.toolOptions.brushShape,
           filled
         )
       } else {
@@ -1677,8 +1760,36 @@ export class PixelCanvasEngine implements IPixelEditorPort {
 
   private onWheel(e: WheelEvent): void {
     e.preventDefault()
+    const mod = e.ctrlKey || e.metaKey
+    if (mod) {
+      this.nudgeBrushSize(e.deltaY < 0 ? 1 : -1)
+      return
+    }
+    if (e.shiftKey) {
+      this.nudgeForegroundAlpha(e.deltaY < 0 ? 1 : -1)
+      return
+    }
     if (e.deltaY < 0) this.zoomInAt(e.clientX, e.clientY)
     else this.zoomOutAt(e.clientX, e.clientY)
+  }
+
+  nudgeBrushSize(delta: number): void {
+    const next = Math.max(1, Math.min(8, this.toolOptions.brushSize + delta))
+    if (next === this.toolOptions.brushSize) return
+    this.setTool(this.toolId, { brushSize: next })
+    this.handlers.onToolOptionsChange?.()
+  }
+
+  nudgeForegroundAlpha(direction: 1 | -1): void {
+    if (!this.doc) return
+    const [r, g, b, a] = parseColor(this.doc.meta.foreground)
+    const step = 0.05
+    const nextAlpha = Math.max(0, Math.min(255, Math.round(a + direction * step * 255)))
+    if (nextAlpha === a) return
+    const hex = (n: number) => n.toString(16).padStart(2, '0')
+    this.doc.meta.foreground =
+      nextAlpha >= 255 ? `#${hex(r)}${hex(g)}${hex(b)}` : `#${hex(r)}${hex(g)}${hex(b)}${hex(nextAlpha)}`
+    this.handlers.onColorPicked?.(this.doc.meta.foreground)
   }
 
   private paintAt(layer: Uint8ClampedArray, cx: number, cy: number): void {
@@ -1687,7 +1798,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     const origin = snapToCellOrigin(cx, cy, cellSize)
     const brushCells = Math.max(1, this.toolOptions.brushSize)
     const rgba: [number, number, number, number] =
-      this.toolId === 'eraser' ? [0, 0, 0, 0] : opaquePaintRgba(this.doc.meta.foreground)
+      this.toolId === 'eraser' ? [0, 0, 0, 0] : paintRgbaFromForeground(this.doc.meta.foreground)
     fillCellBlock(
       layer,
       origin.x,
@@ -1725,17 +1836,48 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     const cellSize = this.gridCellSize()
     const { width, height } = this.doc.meta
     const filled = this.toolOptions.shapeFilled
+    const brushCells = Math.max(1, this.toolOptions.brushSize)
     let origins: { x: number; y: number }[] = []
     if (this.toolId === 'line') {
-      origins = lineCellOrigins(x0, y0, x1, y1, cellSize)
+      origins = shapeToolCellOrigins(
+        'line',
+        x0,
+        y0,
+        x1,
+        y1,
+        cellSize,
+        brushCells,
+        this.toolOptions.brushShape,
+        false
+      )
     } else if (this.toolId === 'rect') {
-      origins = rectCellOrigins(x0, y0, x1, y1, cellSize, filled)
+      origins = shapeToolCellOrigins(
+        'rect',
+        x0,
+        y0,
+        x1,
+        y1,
+        cellSize,
+        brushCells,
+        this.toolOptions.brushShape,
+        filled
+      )
     } else if (this.toolId === 'ellipse') {
-      origins = ellipseCellOrigins(x0, y0, x1, y1, cellSize, filled)
+      origins = shapeToolCellOrigins(
+        'ellipse',
+        x0,
+        y0,
+        x1,
+        y1,
+        cellSize,
+        brushCells,
+        this.toolOptions.brushShape,
+        filled
+      )
     }
-    const [r, g, b] = opaquePaintRgba(this.doc.meta.foreground)
+    const [r, g, b, a] = opaquePaintRgba(this.doc.meta.foreground)
     for (const origin of origins) {
-      fillCellBlock(layer, origin.x, origin.y, cellSize, 1, width, height, [r, g, b, 255])
+      fillCellBlock(layer, origin.x, origin.y, cellSize, 1, width, height, [r, g, b, a])
     }
   }
 

@@ -11,10 +11,12 @@ import PixelUnsavedLeaveDialog from '@modules/library/pixel-art/components/Pixel
 import PixelSaveConflictDialog from '@modules/library/pixel-art/components/PixelSaveConflictDialog.vue'
 import { usePixelEditorState } from '@modules/library/pixel-art/composables/usePixelEditorState'
 import { usePixelArtStore } from '@modules/library/pixel-art/services/pixelArtStore'
-import { downloadBlob } from '@modules/library/pixel-art/lib/exportImage'
+import { blobToBase64, downloadBlob } from '@modules/library/pixel-art/lib/exportImage'
+import { useWanwuToast } from '@shared/composables/useWanwuToast'
 
 const editorState = usePixelEditorState()
 const store = usePixelArtStore()
+const toast = useWanwuToast()
 
 onMounted(() => {
   void store.loadFolders()
@@ -107,13 +109,37 @@ async function handleExport(options: {
 }) {
   try {
     let blob: Blob
+    let svgContent: string | undefined
     const ext = options.format === 'jpeg' ? 'jpg' : options.format
     if (options.format === 'png') blob = await port.value.exportMergedPng()
     else if (options.format === 'jpeg') blob = await port.value.exportMergedJpeg(options.jpegQuality)
-    else blob = await port.value.exportSvg(options.svgMode, options.svgStrategy)
+    else {
+      blob = await port.value.exportSvg(options.svgMode, options.svgStrategy)
+      if (options.svgMode === 'vector') svgContent = await blob.text()
+    }
+
+    if (window.wanwu?.pixelArt?.exportImage) {
+      const result = await window.wanwu.pixelArt.exportImage({
+        defaultName: docTitle.value,
+        format: options.format,
+        dataBase64: svgContent ? undefined : await blobToBase64(blob),
+        svgContent,
+        jpegQuality: options.jpegQuality
+      })
+      if (result.canceled) return
+      if (!result.ok || !result.path) {
+        toast.error(result.error ?? '导出失败')
+        return
+      }
+      toast.success('图像已导出', undefined, { action: toast.revealInFolderAction(result.path) })
+      return
+    }
+
     downloadBlob(blob, `${docTitle.value}.${ext}`)
+    toast.success('图像已开始下载')
   } catch (err) {
     editorState.loadError.value = err instanceof Error ? err.message : String(err)
+    toast.error(err instanceof Error ? err.message : String(err))
   }
 }
 

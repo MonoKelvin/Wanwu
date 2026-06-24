@@ -28,10 +28,12 @@ function blendPixel(
   src: Uint8ClampedArray,
   opacity: number
 ): void {
-  const sa = (src[i + 3]! / 255) * opacity
+  const srcA = src[i + 3]! / 255
+  const sa = srcA * opacity
   if (sa <= 0) return
   const da = out[i + 3]! / 255
   const outA = sa + da * (1 - sa)
+
   if (outA <= 0) {
     out[i] = 0
     out[i + 1] = 0
@@ -39,10 +41,53 @@ function blendPixel(
     out[i + 3] = 0
     return
   }
-  out[i] = Math.round((src[i]! * sa + out[i]! * da * (1 - sa)) / outA)
-  out[i + 1] = Math.round((src[i + 1]! * sa + out[i + 1]! * da * (1 - sa)) / outA)
-  out[i + 2] = Math.round((src[i + 2]! * sa + out[i + 2]! * da * (1 - sa)) / outA)
+
+  // 使用标准的颜色叠加算法
+  // 当源像素不透明且目标像素透明时，源像素完全覆盖
+  // 当目标像素不透明时，两者按alpha比例混合
+  let r = (src[i]! * sa + out[i]! * da * (1 - sa)) / outA
+  let g = (src[i + 1]! * sa + out[i + 1]! * da * (1 - sa)) / outA
+  let b = (src[i + 2]! * sa + out[i + 2]! * da * (1 - sa)) / outA
+
+  // 确保颜色值在有效范围内
+  out[i] = Math.max(0, Math.min(255, Math.round(r)))
+  out[i + 1] = Math.max(0, Math.min(255, Math.round(g)))
+  out[i + 2] = Math.max(0, Math.min(255, Math.round(b)))
   out[i + 3] = Math.round(outA * 255)
+}
+
+/** 合成除指定图层外的所有可见图层（用于绘制时单独叠加当前层，避免透明度二次混合） */
+export function compositeDocumentExceptLayer(
+  doc: PixelDocument,
+  excludeLayerId: string,
+  frameId?: string
+): Uint8ClampedArray {
+  const { width, height, background } = doc.meta
+  const out = new Uint8ClampedArray(width * height * 4)
+  if (background !== 'transparent') {
+    const [r, g, b] = parseColor(background)
+    for (let i = 0; i < out.length; i += 4) {
+      out[i] = r
+      out[i + 1] = g
+      out[i + 2] = b
+      out[i + 3] = 255
+    }
+  }
+
+  const frame = doc.frames.find((f) => f.id === (frameId ?? doc.meta.defaultFrameId)) ?? getActiveFrame(doc)
+  const layerMap = new Map(frame.layers.map((l) => [l.id, l]))
+
+  for (const layerId of frame.layerOrder) {
+    if (layerId === excludeLayerId) continue
+    const meta = layerMap.get(layerId)
+    if (!meta?.visible) continue
+    const src = doc.layerPixels[layerId]
+    if (!src) continue
+    for (let i = 0; i < out.length; i += 4) {
+      blendPixel(out, i, src, meta.opacity)
+    }
+  }
+  return out
 }
 
 export function compositeDocument(
@@ -58,6 +103,11 @@ export function compositeDocument(
       out[i + 1] = g
       out[i + 2] = b
       out[i + 3] = 255
+    }
+  } else {
+    // 透明背景：初始化为全透明
+    for (let i = 0; i < out.length; i += 4) {
+      out[i + 3] = 0
     }
   }
 

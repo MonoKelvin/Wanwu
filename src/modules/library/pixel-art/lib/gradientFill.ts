@@ -42,7 +42,7 @@ export function applyLinearGradient(
       data[i] = Math.round(a[0]! + (b[0]! - a[0]!) * t)
       data[i + 1] = Math.round(a[1]! + (b[1]! - a[1]!) * t)
       data[i + 2] = Math.round(a[2]! + (b[2]! - a[2]!) * t)
-      data[i + 3] = Math.round(a[3]! + (b[3]! - a[3]!) * t)
+      data[i + 3] = 255
     }
   }
 }

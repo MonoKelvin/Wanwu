@@ -2,11 +2,12 @@ import { compositeDocument, pixelsToImageData } from '@modules/library/pixel-art
 import type { PixelDocument, SvgExportMode, SvgVectorStrategy } from '@modules/library/pixel-art/domain/types'
 
 export async function exportDocumentPng(doc: PixelDocument): Promise<Blob> {
-  const pixels = compositeDocument(doc)
+  const pixels = sanitizeExportPixels(compositeDocument(doc))
   const canvas = document.createElement('canvas')
   canvas.width = doc.meta.width
   canvas.height = doc.meta.height
-  const ctx = canvas.getContext('2d')!
+  const ctx = canvas.getContext('2d', { alpha: true })!
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
   ctx.putImageData(pixelsToImageData(pixels, doc.meta.width, doc.meta.height), 0, 0)
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('PNG 导出失败'))), 'image/png')
@@ -14,7 +15,7 @@ export async function exportDocumentPng(doc: PixelDocument): Promise<Blob> {
 }
 
 export async function exportDocumentJpeg(doc: PixelDocument, quality = 0.92): Promise<Blob> {
-  const pixels = compositeDocument(doc)
+  const pixels = sanitizeExportPixels(compositeDocument(doc))
   const canvas = document.createElement('canvas')
   canvas.width = doc.meta.width
   canvas.height = doc.meta.height
@@ -46,7 +47,7 @@ export async function exportDocumentSvg(
     return new Blob([svg], { type: 'image/svg+xml' })
   }
 
-  const pixels = compositeDocument(doc)
+  const pixels = sanitizeExportPixels(compositeDocument(doc))
   const rects: string[] = []
   if (vectorStrategy === 'per-pixel') {
     for (let y = 0; y < height; y++) {
@@ -103,6 +104,21 @@ async function blobToBase64(blob: Blob): Promise<string> {
   const bytes = new Uint8Array(buffer)
   for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]!)
   return btoa(binary)
+}
+
+export { blobToBase64 }
+
+/** 透明区域 RGB 清零，避免 PNG 查看器把残留色当成棋盘格底色 */
+function sanitizeExportPixels(pixels: Uint8ClampedArray): Uint8ClampedArray {
+  const out = new Uint8ClampedArray(pixels)
+  for (let i = 0; i < out.length; i += 4) {
+    if (out[i + 3]! === 0) {
+      out[i] = 0
+      out[i + 1] = 0
+      out[i + 2] = 0
+    }
+  }
+  return out
 }
 
 export function downloadBlob(blob: Blob, filename: string): void {

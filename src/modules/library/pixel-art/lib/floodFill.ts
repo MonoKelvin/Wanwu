@@ -48,6 +48,7 @@ export function floodFillScanline(
     temp[startPos + 3]!
   ]
   const fill = parseColor(fillHex)
+  fill[3] = 255
 
   if (
     cluster[0] === fill[0] &&

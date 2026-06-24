@@ -279,7 +279,7 @@ function goBack() {
           class="pa-toolbar-icon-btn"
           aria-label="保存"
           :disabled="booting || (!dirty && saved)"
-          v-tooltip.bottom="'保存 (Ctrl+S)'"
+          v-tooltip.bottom="`保存 (${PA_SHORTCUT.save})`"
           @click="emit('save')"
         />
         <WwButton
@@ -290,7 +290,7 @@ function goBack() {
           class="pa-toolbar-icon-btn"
           aria-label="撤销"
           :disabled="booting || !canUndo"
-          v-tooltip.bottom="'撤销 (Ctrl+Z)'"
+          v-tooltip.bottom="`撤销 (${PA_SHORTCUT.undo})`"
           @click="emit('undo')"
         />
         <WwButton
@@ -301,7 +301,7 @@ function goBack() {
           class="pa-toolbar-icon-btn"
           aria-label="重做"
           :disabled="booting || !canRedo"
-          v-tooltip.bottom="'重做 (Ctrl+Y)'"
+          v-tooltip.bottom="`重做 (${PA_SHORTCUT.redo})`"
           @click="emit('redo')"
         />
       </div>
@@ -328,7 +328,7 @@ function goBack() {
           class="pa-toolbar-icon-btn"
           aria-label="缩小"
           :disabled="booting"
-          v-tooltip.bottom="'缩小'"
+          v-tooltip.bottom="`缩小 (${PA_SHORTCUT.zoomOut})`"
           @click="emit('zoomOut')"
         />
         <button
@@ -348,7 +348,7 @@ function goBack() {
           class="pa-toolbar-icon-btn"
           aria-label="放大"
           :disabled="booting"
-          v-tooltip.bottom="'放大'"
+          v-tooltip.bottom="`放大 (${PA_SHORTCUT.zoomIn})`"
           @click="emit('zoomIn')"
         />
         <WwButton
@@ -359,7 +359,7 @@ function goBack() {
           class="pa-toolbar-icon-btn"
           aria-label="适应画布"
           :disabled="booting"
-          v-tooltip.bottom="'适应画布'"
+          v-tooltip.bottom="`适应画布 (${PA_SHORTCUT.zoomFit})`"
           @click="emit('zoomFit')"
         />
       </div>
@@ -385,17 +385,6 @@ function goBack() {
 </template>
 
 <style scoped>
-.pa-toolbar-menu-btn {
-  min-width: 2.25rem;
-  padding-inline: 0.5rem;
-  font-size: 0.8125rem;
-  color: var(--ww-ink) !important;
-}
-
-.pa-toolbar-menu-btn:disabled {
-  color: var(--ww-ink-faint) !important;
-}
-
 .pa-editor-toolbar__divider {
   width: 1px;
   height: 1.25rem;

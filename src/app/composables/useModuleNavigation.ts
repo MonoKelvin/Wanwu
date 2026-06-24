@@ -28,7 +28,10 @@ export function useModuleNavigation() {
 
   async function navigateToModule(id: ModuleId) {
     const remembered = appStore.pathForModule(id)
-    const path = belongsToModule(remembered, id) ? remembered : modulePathById(id)
+    const path =
+      belongsToModule(remembered, id) && !isItemDetailPath(remembered) ?
+        remembered
+      : modulePathById(id)
     const active = currentRouteModule(router)
     const resolved = router.resolve(path)
     const samePath = router.currentRoute.value.fullPath === resolved.fullPath

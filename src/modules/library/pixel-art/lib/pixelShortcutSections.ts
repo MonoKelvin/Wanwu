@@ -10,6 +10,8 @@ export const PA_SHORTCUT = {
   redo: 'Ctrl+Y',
   selectAll: 'Ctrl+A',
   delete: 'Delete',
+  brushSizeWheel: 'Ctrl+滚轮',
+  opacityWheel: 'Shift+滚轮',
   zoomIn: 'Ctrl++',
   zoomOut: 'Ctrl+-',
   zoomReset: 'Ctrl+0',
@@ -51,6 +53,8 @@ export const PIXEL_SHORTCUT_SECTIONS: WwShortcutSection[] = [
       { keys: 'V', action: '偏移选区' },
       { keys: 'H', action: '抓手' },
       { keys: '[ / ]', action: '画笔大小 − / +' },
+      { keys: PA_SHORTCUT.brushSizeWheel, action: '画笔大小 − / +' },
+      { keys: PA_SHORTCUT.opacityWheel, action: '前景色透明度 − / +' },
       { keys: 'X', action: '交换前景/背景色' },
       { keys: '空格（按住）', action: '临时平移画布' }
     ]
@@ -62,7 +66,7 @@ export const PIXEL_SHORTCUT_SECTIONS: WwShortcutSection[] = [
       { keys: 'Ctrl + -', action: '缩小' },
       { keys: 'Ctrl + 0', action: '重置缩放' },
       { keys: 'Ctrl + 1', action: '适应画布' },
-      { keys: '滚轮', action: '缩放画布' }
+      { keys: '滚轮', action: '缩放画布（以指针为中心）' }
     ]
   }
 ]

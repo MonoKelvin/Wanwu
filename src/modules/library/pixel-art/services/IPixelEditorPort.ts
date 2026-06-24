@@ -19,6 +19,7 @@ export interface PixelPointerHandlers {
   onColorPicked?: (color: string) => void
   onSelectionChange?: (sel: { x: number; y: number; width: number; height: number } | null) => void
   onDocumentChange?: () => void
+  onToolOptionsChange?: () => void
   onViewportChange?: () => void
   onPanningChange?: (active: boolean) => void
 }

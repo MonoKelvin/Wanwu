@@ -544,6 +544,9 @@ export function usePixelEditorState() {
         if (session.content) session.content.meta.foreground = color
         bumpUiRevision()
       },
+      onToolOptionsChange: () => {
+        bumpUiRevision()
+      },
       onViewportChange: () => {
         refreshViewportZoom()
         session.syncViewportFromPort()

@@ -24,8 +24,8 @@ export function setupModulePathMemory(router: Router) {
           : isModuleId(String(to.meta.module)) ?
             (to.meta.module as ModuleId)
           : undefined
-        if (toModule !== owner) {
-          store.rememberModulePath(owner, from.fullPath)
+        if (!isItemDetailRoute(to.name) && toModule === owner) {
+          store.rememberModulePath(owner, to.fullPath)
         }
       }
     }
@@ -62,8 +62,6 @@ export function setupModulePathMemory(router: Router) {
     const store = useAppStore()
 
     if (isItemDetailRoute(to.name)) {
-      const owner = moduleIdForItemDetailSource(to.params.source as string | undefined)
-      if (owner) store.rememberModulePath(owner, to.fullPath)
       return
     }
 

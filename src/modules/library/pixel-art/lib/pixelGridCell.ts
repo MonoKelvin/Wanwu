@@ -50,6 +50,11 @@ export function fillCellBlock(
 ): void {
   const cs = Math.max(1, cellSize)
   const shape = options?.shape ?? 'square'
+  const srcR = rgba[0]!
+  const srcG = rgba[1]!
+  const srcB = rgba[2]!
+  const srcA = rgba[3]! / 255
+
   for (const { x: ox, y: oy } of enumerateBrushCellOrigins(
     originX,
     originY,
@@ -63,10 +68,27 @@ export function fillCellBlock(
         const y = oy + dy
         if (x < 0 || y < 0 || x >= canvasWidth || y >= canvasHeight) continue
         const i = (y * canvasWidth + x) * 4
-        layer[i] = rgba[0]!
-        layer[i + 1] = rgba[1]!
-        layer[i + 2] = rgba[2]!
-        layer[i + 3] = rgba[3]!
+        const da = layer[i + 3]! / 255
+
+        // 使用标准的颜色叠加算法
+        // 如果源像素完全透明，保持目标像素不变
+        if (srcA <= 0) continue
+
+        // 如果源像素完全不透明（alpha = 1），直接覆盖目标像素
+        if (srcA >= 1) {
+          layer[i] = srcR
+          layer[i + 1] = srcG
+          layer[i + 2] = srcB
+          layer[i + 3] = 255
+          continue
+        }
+
+        // 源像素半透明：与目标像素混合
+        const outA = srcA + da * (1 - srcA)
+        layer[i] = Math.max(0, Math.min(255, Math.round((srcR * srcA + layer[i]! * da * (1 - srcA)) / outA)))
+        layer[i + 1] = Math.max(0, Math.min(255, Math.round((srcG * srcA + layer[i + 1]! * da * (1 - srcA)) / outA)))
+        layer[i + 2] = Math.max(0, Math.min(255, Math.round((srcB * srcA + layer[i + 2]! * da * (1 - srcA)) / outA)))
+        layer[i + 3] = Math.round(outA * 255)
       }
     }
   }
@@ -194,4 +216,49 @@ export function normalizeSelectionToCells(
 export function cellIndex(x: number, y: number, cellSize: number): Point {
   const cs = Math.max(1, cellSize)
   return { x: Math.floor(x / cs), y: Math.floor(y / cs) }
+}
+
+export function expandOriginsWithBrush(
+  origins: Point[],
+  cellSize: number,
+  brushCells: number,
+  shape: 'square' | 'circle' = 'square'
+): Point[] {
+  const cs = Math.max(1, cellSize)
+  const cells = Math.max(1, brushCells)
+  if (cells <= 1 && shape === 'square') return origins
+  const seen = new Set<string>()
+  const out: Point[] = []
+  for (const { x, y } of origins) {
+    for (const origin of enumerateBrushCellOrigins(x, y, cs, cells, shape)) {
+      const key = `${origin.x},${origin.y}`
+      if (seen.has(key)) continue
+      seen.add(key)
+      out.push(origin)
+    }
+  }
+  return out
+}
+
+/** 基础图形线宽 = 画笔格数，按映射单元格绘制 */
+export function shapeToolCellOrigins(
+  tool: 'line' | 'rect' | 'ellipse',
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number,
+  cellSize: number,
+  brushCells: number,
+  brushShape: 'square' | 'circle',
+  filled: boolean
+): Point[] {
+  let base: Point[] = []
+  if (tool === 'line') {
+    base = lineCellOrigins(x0, y0, x1, y1, cellSize)
+  } else if (tool === 'rect') {
+    base = rectCellOrigins(x0, y0, x1, y1, cellSize, filled)
+  } else {
+    base = ellipseCellOrigins(x0, y0, x1, y1, cellSize, filled)
+  }
+  return expandOriginsWithBrush(base, cellSize, brushCells, brushShape)
 }

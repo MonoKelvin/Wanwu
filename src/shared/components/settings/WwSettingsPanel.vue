@@ -97,6 +97,7 @@ function onTextChange(field: WwSettingsField, value: string) {
           <WwToggleSwitch
             v-else-if="field.type === 'toggle'"
             :model-value="field.modelValue"
+            :drag-to-change="false"
             :aria-label="field.ariaLabel ?? field.label"
             @update:model-value="onToggleChange(field, $event)"
           />
@@ -141,6 +142,7 @@ function onTextChange(field: WwSettingsField, value: string) {
         <WwToggleSwitch
           v-else-if="field.type === 'toggle'"
           :model-value="field.modelValue"
+          :drag-to-change="false"
           :aria-label="field.ariaLabel ?? field.label"
           @update:model-value="onToggleChange(field, $event)"
         />
@@ -184,6 +186,7 @@ function onTextChange(field: WwSettingsField, value: string) {
         <WwToggleSwitch
           v-else-if="field.type === 'toggle'"
           :model-value="field.modelValue"
+          :drag-to-change="false"
           :aria-label="field.ariaLabel ?? field.label"
           @update:model-value="onToggleChange(field, $event)"
         />

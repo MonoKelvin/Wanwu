@@ -68,7 +68,8 @@ export function buildModuleSettings(
   for (const contributor of getSettingsContributors()) {
     const migrated = contributor.migrateLegacy(raw)
     if (migrated) {
-      base[contributor.moduleId] = { ...base[contributor.moduleId], ...migrated }
+      // moduleSettings 优先于 legacy 顶层字段，避免迁移后 patch 被旧字段覆盖
+      base[contributor.moduleId] = { ...migrated, ...(base[contributor.moduleId] ?? {}) }
     }
   }
 

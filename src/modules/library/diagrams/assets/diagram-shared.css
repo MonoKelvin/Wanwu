@@ -1762,7 +1762,7 @@
 
 .dg-panel-restore {
   position: absolute;
-  z-index: 3;
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3334,7 +3334,7 @@
 
 .dg-canvas-frame .lf-mini-map {
   display: block !important;
-  right: calc(var(--dg-panel-w) + var(--dg-float-inset) + 0.5rem) !important;
+  right: var(--dg-minimap-right-offset, calc(var(--dg-panel-w) + var(--dg-float-inset) + 0.5rem)) !important;
   bottom: var(--dg-float-inset) !important;
   left: auto !important;
   top: auto !important;
