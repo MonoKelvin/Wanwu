@@ -32,9 +32,9 @@ function blendPixel(
   const sa = srcA * opacity
   if (sa <= 0) return
   const da = out[i + 3]! / 255
-  const outA = sa + da * (1 - sa)
+  const outA = sa + da * (1 - srcA)
 
-  if (outA <= 0) {
+  if (outA <= 0.001) {
     out[i] = 0
     out[i + 1] = 0
     out[i + 2] = 0
@@ -42,12 +42,10 @@ function blendPixel(
     return
   }
 
-  // 使用标准的颜色叠加算法
-  // 当源像素不透明且目标像素透明时，源像素完全覆盖
-  // 当目标像素不透明时，两者按alpha比例混合
-  let r = (src[i]! * sa + out[i]! * da * (1 - sa)) / outA
-  let g = (src[i + 1]! * sa + out[i + 1]! * da * (1 - sa)) / outA
-  let b = (src[i + 2]! * sa + out[i + 2]! * da * (1 - sa)) / outA
+  // 新颜色 = (源颜色 * srcA + 目标颜色 * 目标alpha * (1 - srcA)) / outA
+  let r = (src[i]! * srcA + out[i]! * da * (1 - srcA)) / outA
+  let g = (src[i + 1]! * srcA + out[i + 1]! * da * (1 - srcA)) / outA
+  let b = (src[i + 2]! * srcA + out[i + 2]! * da * (1 - srcA)) / outA
 
   // 确保颜色值在有效范围内
   out[i] = Math.max(0, Math.min(255, Math.round(r)))
@@ -72,21 +70,23 @@ export function compositeDocumentExceptLayer(
       out[i + 2] = b
       out[i + 3] = 255
     }
-  }
+  } else {
+    const frame = doc.frames.find((f) => f.id === (frameId ?? doc.meta.defaultFrameId)) ?? getActiveFrame(doc)
+    const layerMap = new Map(frame.layers.map((l) => [l.id, l]))
 
-  const frame = doc.frames.find((f) => f.id === (frameId ?? doc.meta.defaultFrameId)) ?? getActiveFrame(doc)
-  const layerMap = new Map(frame.layers.map((l) => [l.id, l]))
+    for (const layerId of frame.layerOrder) {
+      if (layerId === excludeLayerId) continue
+      const meta = layerMap.get(layerId)
+      if (!meta?.visible) continue
+      const src = doc.layerPixels[layerId]
+      if (!src) continue
 
-  for (const layerId of frame.layerOrder) {
-    if (layerId === excludeLayerId) continue
-    const meta = layerMap.get(layerId)
-    if (!meta?.visible) continue
-    const src = doc.layerPixels[layerId]
-    if (!src) continue
-    for (let i = 0; i < out.length; i += 4) {
-      blendPixel(out, i, src, meta.opacity)
+      for (let i = 0; i < out.length; i += 4) {
+        blendPixel(out, i, src, meta.opacity)
+      }
     }
   }
+
   return out
 }
 

@@ -532,6 +532,7 @@
   position: absolute;
   inset: 0;
   display: block;
+  image-rendering: pixelated;
 }
 
 .pa-canvas-wrap.ready.pa-canvas-wrap--cursor-crosshair {

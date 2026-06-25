@@ -68,14 +68,12 @@ export function fillCellBlock(
         const y = oy + dy
         if (x < 0 || y < 0 || x >= canvasWidth || y >= canvasHeight) continue
         const i = (y * canvasWidth + x) * 4
-        const da = layer[i + 3]! / 255
 
-        // 使用标准的颜色叠加算法
-        // 如果源像素完全透明，保持目标像素不变
-        if (srcA <= 0) continue
+        // 如果源像素完全透明（alpha = 0），保持目标像素不变
+        if (srcA <= 0.001) continue
 
         // 如果源像素完全不透明（alpha = 1），直接覆盖目标像素
-        if (srcA >= 1) {
+        if (srcA >= 0.999) {
           layer[i] = srcR
           layer[i + 1] = srcG
           layer[i + 2] = srcB
@@ -84,10 +82,21 @@ export function fillCellBlock(
         }
 
         // 源像素半透明：与目标像素混合
-        const outA = srcA + da * (1 - srcA)
-        layer[i] = Math.max(0, Math.min(255, Math.round((srcR * srcA + layer[i]! * da * (1 - srcA)) / outA)))
-        layer[i + 1] = Math.max(0, Math.min(255, Math.round((srcG * srcA + layer[i + 1]! * da * (1 - srcA)) / outA)))
-        layer[i + 2] = Math.max(0, Math.min(255, Math.round((srcB * srcA + layer[i + 2]! * da * (1 - srcA)) / outA)))
+        const da = layer[i + 3]! / 255
+        const srcOpacity = srcA
+        const outA = srcOpacity + da * (1 - srcOpacity)
+
+        // 如果新的 alpha 仍然为 0，则跳过
+        if (outA <= 0.001) continue
+
+        // 计算混合后的颜色：新颜色 = (源颜色 * srcOpacity + 目标颜色 * da * (1 - srcOpacity)) / outA
+        const r = (srcR * srcOpacity + layer[i]! * da * (1 - srcOpacity)) / outA
+        const g = (srcG * srcOpacity + layer[i + 1]! * da * (1 - srcOpacity)) / outA
+        const b = (srcB * srcOpacity + layer[i + 2]! * da * (1 - srcOpacity)) / outA
+
+        layer[i] = Math.max(0, Math.min(255, Math.round(r)))
+        layer[i + 1] = Math.max(0, Math.min(255, Math.round(g)))
+        layer[i + 2] = Math.max(0, Math.min(255, Math.round(b)))
         layer[i + 3] = Math.round(outA * 255)
       }
     }

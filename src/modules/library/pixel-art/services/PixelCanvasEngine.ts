@@ -75,7 +75,8 @@ function parseColor(input: string): [number, number, number, number] {
 
 /** 画笔写入色：保留用户调节的前景 alpha（Shift+滚轮） */
 function paintRgbaFromForeground(color: string): [number, number, number, number] {
-  return parseColor(color)
+  const rgba = parseColor(color)
+  return rgba
 }
 
 /** 填充/形状等需要实色的场景（alpha 强制 255） */
@@ -1799,6 +1800,7 @@ export class PixelCanvasEngine implements IPixelEditorPort {
     const brushCells = Math.max(1, this.toolOptions.brushSize)
     const rgba: [number, number, number, number] =
       this.toolId === 'eraser' ? [0, 0, 0, 0] : paintRgbaFromForeground(this.doc.meta.foreground)
+
     fillCellBlock(
       layer,
       origin.x,
